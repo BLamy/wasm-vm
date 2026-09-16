@@ -1,0 +1,18 @@
+{
+  "image": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "size": 24208896,
+    "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+  },
+  "symbols": {
+    "_start": "0xffffffff80000000",
+    "__start_notes": "0xffffffff812a1ed8",
+    "__stop_notes": "0xffffffff812a1f2c"
+  },
+  "notes": {
+    "offset": 19537624,
+    "size": 84,
+    "sha256": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f"
+  },
+  "systemMapSha256": "0d41b2aa48bea3396aa6719991e69c89c47eb7331a11762d4e5a6b6ec28cbfad"
+}

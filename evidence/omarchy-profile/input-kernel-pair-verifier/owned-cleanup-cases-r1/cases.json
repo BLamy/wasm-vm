@@ -1,0 +1,22 @@
+{
+  "sourceSha256": "7710c792dd84353fcda6d9cccc995586f2e1c92bf7e22e14fba40455cf7317b4",
+  "cases": [
+    {
+      "name": "already exited group",
+      "cleanup": {
+        "termSent": false,
+        "killSent": false,
+        "groupGone": true
+      }
+    },
+    {
+      "name": "cooperative leader and descendant",
+      "cleanup": {
+        "termSent": true,
+        "killSent": false,
+        "groupGone": true
+      },
+      "leaderReturncode": -15
+    }
+  ]
+}

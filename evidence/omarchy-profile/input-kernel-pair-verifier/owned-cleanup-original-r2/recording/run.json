@@ -1,0 +1,46 @@
+{
+  "kind": "input-buffer-native-pair",
+  "passed": false,
+  "keyboardAcceptance": false,
+  "startedAt": 1789558945.814411,
+  "command": [
+    "bash",
+    "tools/build-omarchy-snapshot.sh"
+  ],
+  "head": "synthetic-cleanup-fixture",
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/target/new-pair",
+  "kernelNotesSha256": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f",
+  "bootBudgetSeconds": 7200,
+  "pipelineBudgetSeconds": 7380,
+  "cleanupBudgetSeconds": 15,
+  "inputs": {
+    "kernel": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/target/omarchy-input-kernel-r3/Image",
+      "size": 0,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "baseImage": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/target/omarchy-profile-sdr-r3.ext4",
+      "size": 0,
+      "sha256": "fixture-only"
+    },
+    "cli": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/target/release/wasm-vm",
+      "size": 0,
+      "sha256": "fixture-only"
+    },
+    "chunkManifest": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "size": 0,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "wasm": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/owned-cleanup-original-r2/fixture/web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "size": 0,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    }
+  },
+  "pid": 65144,
+  "watchdog": true,
+  "finishedAt": 1789558945.862628
+}

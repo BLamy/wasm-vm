@@ -1,0 +1,1319 @@
+1: [    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+2: [    0.000000] Machine model: riscv-virtio,qemu
+3: [    0.000000] SBI specification v2.0 detected
+4: [    0.000000] SBI implementation ID=0x574d Version=0x100
+5: [    0.000000] SBI TIME extension detected
+6: [    0.000000] SBI IPI extension detected
+7: [    0.000000] SBI RFENCE extension detected
+8: [    0.000000] SBI SRST extension detected
+9: [    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+10: [    0.000000] printk: bootconsole [sbi0] enabled
+11: [    0.000000] efi: UEFI not found.
+12: [    0.000000] Zone ranges:
+13: [    0.000000]   DMA32    [mem 0x0000000080000000-0x00000000bfffffff]
+14: [    0.000000]   Normal   empty
+15: [    0.000000] Movable zone start for each node
+16: [    0.000000] Early memory node ranges
+17: [    0.000000]   node   0: [mem 0x0000000080000000-0x00000000bfffffff]
+18: [    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000bfffffff]
+19: [    0.000000] SBI HSM extension detected
+20: [    0.000000] Falling back to deprecated "riscv,isa"
+21: [    0.000000] riscv: base ISA extensions acdfim
+22: [    0.000000] riscv: ELF capabilities acdfim
+23: [    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+24: [    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0
+25: [    0.000000] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+26: [    0.000000] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+27: [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 258048
+28: [    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+29: [    0.000000] Virtual kernel memory layout:
+30: [    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+31: [    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+32: [    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+33: [    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+34: [    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+35: [    0.000000]       lowmem : 0xff60000000000000 - 0xff60000040000000   (1024 MB)
+36: [    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+37: [    0.000000] Memory: 989528K/1048576K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 59048K reserved, 0K cma-reserved)
+38: [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+39: [    0.000000] rcu: Hierarchical RCU implementation.
+40: [    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+41: [    0.000000] rcu: 	RCU debug extended QS entry/exit.
+42: [    0.000000] 	Tracing variant of Tasks RCU enabled.
+43: [    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+44: [    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+45: [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+46: [    0.000000] riscv-intc: 64 local interrupts mapped
+47: [    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+48: [    0.000000] riscv: providing IPIs using SBI IPI extension
+49: [    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+50: [    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+51: [    0.000000] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+52: [    0.000203] Console: colour dummy device 80x25
+53: [    0.000234] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+54: [    0.000259] pid_max: default: 32768 minimum: 301
+55: [    0.000338] LSM: initializing lsm=capability,integrity
+56: [    0.000455] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+57: [    0.000478] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+58: [    0.002303] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+59: [    0.002413] riscv: ELF compat mode unsupported
+60: [    0.002425] ASID allocator using 16 bits (65536 entries)
+61: [    0.002589] rcu: Hierarchical SRCU implementation.
+62: [    0.002601] rcu: 	Max phase no-delay instances is 1000.
+63: [    0.002835] EFI services will not be available.
+64: [    0.002966] smp: Bringing up secondary CPUs ...
+65: [    0.002983] smp: Brought up 1 node, 1 CPU
+66: [    0.003459] devtmpfs: initialized
+67: [    0.005127] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+68: [    0.005151] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+69: [    0.005307] pinctrl core: initialized pinctrl subsystem
+70: [    0.006793] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+71: [    0.007473] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+72: [    0.007506] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+73: [    0.007557] audit: initializing netlink subsys (disabled)
+74: [    0.008102] thermal_sys: Registered thermal governor 'step_wise'
+75: [    0.008129] audit: type=2000 audit(0.004:1): state=initialized audit_enabled=0 res=1
+76: [    0.008171] cpuidle: using governor menu
+77: [    0.032092] cpu0: Ratio of byte access time to unaligned word access is 8.08, unaligned accesses are fast
+78: [    0.035478] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+79: [    0.035493] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+80: [    0.100171] raid6: int64x8  gen()   268 MB/s
+81: [    0.168235] raid6: int64x4  gen()   364 MB/s
+82: [    0.236329] raid6: int64x2  gen()   375 MB/s
+83: [    0.304409] raid6: int64x1  gen()   332 MB/s
+84: [    0.304422] raid6: using algorithm int64x2 gen() 375 MB/s
+85: [    0.372503] raid6: .... xor() 204 MB/s, rmw enabled
+86: [    0.372516] raid6: using intx1 recovery algorithm
+87: [    0.372662] ACPI: Interpreter disabled.
+88: [    0.372786] iommu: Default domain type: Translated
+89: [    0.372799] iommu: DMA domain TLB invalidation policy: strict mode
+90: [    0.373338] SCSI subsystem initialized
+91: [    0.373862] Advanced Linux Sound Architecture Driver Initialized.
+92: [    0.374832] clocksource: Switched to clocksource riscv_clocksource
+93: [    0.375169] pnp: PnP ACPI: disabled
+94: [    0.384729] NET: Registered PF_INET protocol family
+95: [    0.384971] IP idents hash table entries: 16384 (order: 5, 131072 bytes, linear)
+96: [    0.389381] tcp_listen_portaddr_hash hash table entries: 512 (order: 2, 16384 bytes, linear)
+97: [    0.389428] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+98: [    0.389454] TCP established hash table entries: 8192 (order: 4, 65536 bytes, linear)
+99: [    0.389622] TCP bind hash table entries: 8192 (order: 7, 524288 bytes, linear)
+100: [    0.390306] TCP: Hash tables configured (established 8192 bind 8192)
+101: [    0.390380] UDP hash table entries: 512 (order: 3, 49152 bytes, linear)
+102: [    0.390461] UDP-Lite hash table entries: 512 (order: 3, 49152 bytes, linear)
+103: [    0.390644] NET: Registered PF_UNIX/PF_LOCAL protocol family
+104: [    0.391105] RPC: Registered named UNIX socket transport module.
+105: [    0.391118] RPC: Registered udp transport module.
+106: [    0.391131] RPC: Registered tcp transport module.
+107: [    0.391143] RPC: Registered tcp-with-tls transport module.
+108: [    0.391157] RPC: Registered tcp NFSv4.1 backchannel transport module.
+109: [    0.391208] kvm [1]: hypervisor extension not available
+110: [    0.392040] workingset: timestamp_bits=46 max_order=18 bucket_order=0
+111: [    0.392567] NFS: Registering the id_resolver key type
+112: [    0.392610] Key type id_resolver registered
+113: [    0.392622] Key type id_legacy registered
+114: [    0.392654] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+115: [    0.392674] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+116: [    0.392839] 9p: Installing v9fs 9p2000 file system support
+117: [    0.456192] jitterentropy: Initialization failed with host not compliant with requirements: 9
+118: [    0.456209] NET: Registered PF_ALG protocol family
+119: [    0.456225] xor: measuring software checksum speed
+120: [    0.459152]    8regs           :  1125 MB/sec
+121: [    0.462078]    8regs_prefetch  :  1126 MB/sec
+122: [    0.465007]    32regs          :  1125 MB/sec
+123: [    0.467939]    32regs_prefetch :  1124 MB/sec
+124: [    0.467952] xor: using function: 8regs_prefetch (1126 MB/sec)
+125: [    0.468002] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+126: [    0.468018] io scheduler mq-deadline registered
+127: [    0.468031] io scheduler kyber registered
+128: [    0.468055] io scheduler bfq registered
+129: [    0.471527] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0
+130: [    0.471925] input: wasm-vm virtio tablet as /devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1
+131: [    0.472309] input: wasm-vm virtio mouse as /devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2
+132: [    0.532098] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+133: [    0.534204] printk: console [ttyS0] disabled
+134: [    0.534555] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 15, base_baud = 230400) is a 16550A
+135: [    0.534588] printk: console [ttyS0] enabled
+136: [    0.534615] printk: bootconsole [sbi0] disabled
+137: [    0.534588] printk: console [ttyS0] enabled
+138: [    0.534615] printk: bootconsole [sbi0] disabled
+139: [    0.535024] SuperH (H)SCI(F) driver initialized
+140: [    0.537099] random: crng init done
+141: [    0.538167] [drm] features: -virgl +edid -resource_blob -host_visible
+142: [    0.538175] [drm] features: -context_init
+143: [    0.538355] [drm] number of scanouts: 1
+144: [    0.538373] [drm] number of cap sets: 0
+145: [    0.539152] [drm] Initialized virtio_gpu 0.1.0 0 for 10008000.virtio_mmio on minor 0
+146: [    0.565296] Console: switching to colour frame buffer device 160x50
+147: [    0.583491] virtio-mmio 10008000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+148: [    0.588934] loop: module loaded
+149: [    0.588982] virtio_blk virtio0: 1/0/0 default/read/poll queues
+150: [    0.589181] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+151: [    0.593598] mousedev: PS/2 mouse device common for all mice
+152: [    0.594335] goldfish_rtc 101000.rtc: registered as rtc0
+153: [    0.594364] goldfish_rtc 101000.rtc: setting system clock to 2026-09-16T11:40:10 UTC (1789558810)
+154: [    0.594881] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+155: [    0.594919] syscon-poweroff: probe of poweroff failed with error -16
+156: [    0.595250] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+157: [    0.595679] sdhci: Secure Digital Host Controller Interface driver
+158: [    0.595702] sdhci: Copyright(c) Pierre Ossman
+159: [    0.595875] sdhci-pltfm: SDHCI platform and OF driver helper
+160: [    0.597492] IPVS: Registered protocols (TCP, UDP)
+161: [    0.597517] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+162: [    0.597682] IPVS: ipvs loaded.
+163: [    0.597699] IPVS: [rr] scheduler registered.
+164: [    0.597976] Initializing XFRM netlink socket
+165: [    0.598034] NET: Registered PF_INET6 protocol family
+166: [    0.598918] Segment Routing with IPv6
+167: [    0.598962] In-situ OAM (IOAM) with IPv6
+168: [    0.599104] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+169: [    0.599680] NET: Registered PF_PACKET protocol family
+170: [    0.599737] Bridge firewalling registered
+171: [    0.599799] 8021q: 802.1Q VLAN Support v1.8
+172: [    0.599889] 9pnet: Installing 9P2000 support
+173: [    0.599951] Key type dns_resolver registered
+174: [    0.635835] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+175: [    0.637665] Btrfs loaded, zoned=no, fsverity=no
+176: [    0.638053] Legacy PMU implementation is available
+177: [    0.638216] clk: Disabling unused clocks
+178: [    0.638238] ALSA device list:
+179: [    0.638253]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio6
+180: [    0.641577] EXT4-fs (vda): mounted filesystem d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w with ordered data mode. Quota mode: disabled.
+181: [    0.641623] VFS: Mounted root (ext4 filesystem) on device 254:0.
+182: [    0.641766] devtmpfs: mounted
+183: [    0.642748] Freeing unused kernel image (initmem) memory: 2200K
+184: [    0.642774] Run /sbin/init as init process
+185: 78[    1.604108] systemd[1]: systemd 261.2-1-arch running in system mode (+PAM +AUDIT -SELINUX +APPARMOR -IMA +IPE +SMACK +SECCOMP +GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF +XKBCOMMON +UTMP +LIBARCHIVE)
+186: [    1.604162] systemd[1]: Detected architecture riscv64.
+187: 
+188: Welcome to Arch Linux!
+189: 
+190: [    1.606545] systemd[1]: Initializing machine ID from random generator.
+191: [    1.609824] systemd[1]: Hostname set to <omarchy-demo>.
+192: [    2.132144] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+193: [    3.410330] systemd[1]: Queued start job for default target Graphical Interface.
+194: [    3.433611] systemd[1]: Created slice Slice /system/dirmngr.
+195: [  OK  ] Created slice Slice /system/dirmngr.
+196: [    3.436302] systemd[1]: Created slice Slice /system/gpg-agent.
+197: [  OK  ] Created slice Slice /system/gpg-agent.
+198: [    3.438937] systemd[1]: Created slice Slice /system/gpg-agent-browser.
+199: [  OK  ] Created slice Slice /system/gpg-agent-browser.
+200: [    3.441519] systemd[1]: Created slice Slice /system/gpg-agent-extra.
+201: [  OK  ] Created slice Slice /system/gpg-agent-extra.
+202: [    3.444152] systemd[1]: Created slice Slice /system/gpg-agent-ssh.
+203: [  OK  ] Created slice Slice /system/gpg-agent-ssh.
+204: [    3.446756] systemd[1]: Created slice Slice /system/keyboxd.
+205: [  OK  ] Created slice Slice /system/keyboxd.
+206: [    3.449434] systemd[1]: Created slice Slice /system/modprobe.
+207: [  OK  ] Created slice Slice /system/modprobe.
+208: [    3.452034] systemd[1]: Created slice Slice /system/serial-getty.
+209: [  OK  ] Created slice Slice /system/serial-getty.
+210: [    3.453580] systemd[1]: Created slice User and Session Slice.
+211: [  OK  ] Created slice User and Session Slice.
+212: [    3.454169] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+213: [  OK  ] Started Forward Password Requests to Wall Directory Watch.
+214: [    3.454636] systemd[1]: Arbitrary Executable File Formats File System Automount Point skipped, unmet condition check ConditionPathExists=/proc/sys/fs/binfmt_misc
+215: [    3.454725] systemd[1]: Expecting device /dev/ttyS0...
+216:          Expecting device /dev/ttyS0...
+217: [    3.455221] systemd[1]: Reached target Image Downloads.
+218: [  OK  ] Reached target Image Downloads.
+219: [    3.455644] systemd[1]: Reached target Local Integrity Protected Volumes.
+220: [  OK  ] Reached target Local Integrity Protected Volumes.
+221: [    3.456156] systemd[1]: Reached target Slice Units.
+222: [  OK  ] Reached target Slice Units.
+223: [    3.456609] systemd[1]: Reached target Swaps.
+224: [  OK  ] Reached target Swaps.
+225: [    3.457062] systemd[1]: Reached target Local Verity Protected Volumes.
+226: [  OK  ] Reached target Local Verity Protected Volumes.
+227: [    3.457839] systemd[1]: Listening on Device-mapper event daemon FIFOs.
+228: [  OK  ] Listening on Device-mapper event daemon FIFOs.
+229: [    3.473392] systemd[1]: Listening on Query the User Interactively for a Password.
+230: [  OK  ] Listening on Query the User Interactively for a Password.
+231: [    3.487563] systemd[1]: Listening on Process Core Dump Socket.
+232: [  OK  ] Listening on Process Core Dump Socket.
+233: [    3.497318] systemd[1]: Listening on Credential Encryption/Decryption.
+234: [  OK  ] Listening on Credential Encryption/Decryption.
+235: [    3.513194] systemd[1]: Listening on Factory Reset Management.
+236: [  OK  ] Listening on Factory Reset Management.
+237: [    3.513842] systemd[1]: Listening on Hostname Service Socket.
+238: [  OK  ] Listening on Hostname Service Socket.
+239: [    3.514589] systemd[1]: Listening on Journal Socket (/dev/log).
+240: [  OK  ] Listening on Journal Socket (/dev/log).
+241: [    3.515338] systemd[1]: Listening on Journal Sockets.
+242: [  OK  ] Listening on Journal Sockets.
+243: [    3.531292] systemd[1]: Listening on Console Output Muting Service Socket.
+244: [  OK  ] Listening on Console Output Muting Service Socket.
+245: [    3.531798] systemd[1]: TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-os
+246: [    3.531920] systemd[1]: Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+247: [    3.542000] systemd[1]: Listening on Disk Repartitioning Service Socket.
+248: [  OK  ] Listening on Disk Repartitioning Service Socket.
+249: [    3.558050] systemd[1]: Listening on Simple Block Device Backed Storage Provider.
+250: [  OK  ] Listening on Simple Block Device Backed Storage Provider.
+251: [    3.574337] systemd[1]: Listening on Simple File System Backed Storage Provider.
+252: [  OK  ] Listening on Simple File System Backed Storage Provider.
+253: [    3.575051] systemd[1]: Listening on udev Control Socket.
+254: [  OK  ] Listening on udev Control Socket.
+255: [    3.575673] systemd[1]: Listening on udev Kernel Socket.
+256: [  OK  ] Listening on udev Kernel Socket.
+257: [    3.576314] systemd[1]: Listening on udev Varlink Socket.
+258: [  OK  ] Listening on udev Varlink Socket.
+259: [    3.583013] systemd[1]: Mounting Huge Pages File System...
+260:          Mounting Huge Pages File System...
+261: [    3.595049] systemd[1]: Mounting POSIX Message Queue File System...
+262:          Mounting POSIX Message Queue File System...
+263: [    3.611227] systemd[1]: Mounting Kernel Debug File System...
+264:          Mounting Kernel Debug File System...
+265: [    3.612147] systemd[1]: Kernel Trace File System skipped, unmet condition check ConditionPathExists=/sys/kernel/tracing
+266: [    3.612704] systemd[1]: tmp.mount: x-systemd.graceful-option=usrquota specified, but option is not available, suppressing.
+267: [    3.631020] systemd[1]: Mounting Temporary Directory /tmp...
+268:          Mounting Temporary Directory /tmp...
+269: [    3.631669] systemd[1]: Create List of Static Device Nodes skipped, unmet condition check ConditionFileNotEmpty=/lib/modules/6.6.63/modules.devname
+270: [    3.671212] systemd[1]: Starting Load Kernel Module configfs...
+271:          Starting Load Kernel Module configfs...
+272: [    3.671636] systemd[1]: Load Kernel Module drm skipped, unmet condition check ConditionKernelModuleLoaded=!drm
+273: [    3.707293] systemd[1]: Starting Load Kernel Module fuse...
+274:          Starting Load Kernel Module fuse...
+275: [    3.708251] systemd[1]: File System Check on Root Device skipped, unmet condition check ConditionPathIsReadWrite=!/
+276: [    3.708445] systemd[1]: Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+277: [    3.787227] systemd[1]: Starting Journal Service...
+278:          Starting Journal Service...
+279: [    3.795704] systemd[1]: Load Kernel Modules skipped, no trigger condition checks were met.
+280: [    3.795856] systemd[1]: TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+281: [    3.796068] systemd[1]: TPM PCR OS Separator skipped, unmet condition check ConditionSecurity=measured-os
+282: [    3.831319] systemd[1]: Starting Remount Root and Kernel File Systems...
+283:          Starting Remount Root and Kernel File Systems...
+284: [    3.903210] systemd[1]: Starting Apply Kernel Variables...
+285:          Starting Apply Kernel Variables...
+286: [    3.955218] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+287:          Starting Create Static Device Nodes in /dev gracefully...
+288: [    3.955689] systemd[1]: Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+289: [    3.955864] systemd[1]: TPM PCR NvPCR Initialization Separator skipped, unmet condition check ConditionPathExists=/etc/initrd-release
+290: [    3.956047] systemd[1]: TPM NvPCR Product ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+291: [    4.030509] systemd[1]: Starting Load udev Rules from Credentials...
+292:          Starting Load udev Rules from Credentials...
+293: [    4.071234] systemd[1]: Starting Coldplug All udev Devices...
+294:          Starting Coldplug All udev Devices...
+295: [    4.111293] systemd[1]: Starting Virtual Console Setup...
+296:          Starting Virtual Console Setup...
+297: [    4.234133] systemd[1]: Mounted Huge Pages File System.
+298: [  OK  ] Mounted Huge Pages File System.
+299: [    4.265687] systemd[1]: Mounted POSIX Message Queue File System.
+300: [  OK  ] Mounted POSIX Message Queue File System.
+301: [    4.287430] systemd[1]: Mounted Kernel Debug File System.
+302: [  OK  ] Mounted Kernel Debug File System.
+303: [    4.295430] systemd[1]: Mounted Temporary Directory /tmp.
+304: [  OK  ] Mounted Temporary Directory /tmp.
+305: [    4.296653] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+306: [    4.318892] systemd[1]: Finished Load Kernel Module configfs.
+307: [  OK  ] Finished Load Kernel Module configfs.
+308: [    4.321845] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+309: [    4.322664] systemd[1]: Finished Load Kernel Module fuse.
+310: [  OK  ] Finished Load Kernel Module fuse.
+311: [    4.351046] systemd[1]: Finished Apply Kernel Variables.
+312: [  OK  ] Finished Apply Kernel Variables.
+313: [    4.375526] systemd[1]: FUSE Control File System skipped, unmet condition check ConditionPathExists=/sys/fs/fuse/connections
+314: [    4.376131] systemd[1]: Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+315: [    4.390920] EXT4-fs (vda): re-mounted d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w. Quota mode: disabled.
+316: [    4.399003] systemd[1]: Finished Load udev Rules from Credentials.
+317: [  OK  ] Finished Load udev Rules from Credentials.
+318: [    4.422959] systemd[1]: Finished Remount Root and Kernel File Systems.
+319: [  OK  ] Finished Remount Root and Kernel File Systems.
+320: [    4.428290] systemd[1]: Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+321: [    4.447205] systemd[1]: Starting Load/Save OS Random Seed...
+322:          Starting Load/Save OS Random Seed...
+323: [    4.447586] systemd[1]: TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+324: [    4.613420] systemd-journald[72]: Collecting audit messages is disabled.
+325: [    4.634455] loadkeys[85]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+326: [    4.721862] systemd[1]: Finished Load/Save OS Random Seed.
+327: [  OK  ] Finished Load/Save OS Random Seed.
+328: [    4.724783] systemd[1]: Finished Create Static Device Nodes in /dev gracefully.
+329: [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
+330: [    4.739275] systemd[1]: Create System Users skipped, no trigger condition checks were met.
+331: [    4.799022] systemd[1]: Starting Journal Log Access Socket...
+332:          Starting Journal Log Access Socket...
+333: [    4.823254] systemd[1]: Starting Create Static Device Nodes in /dev...
+334:          Starting Create Static Device Nodes in /dev...
+335: [    4.839312] systemd[1]: Finished Virtual Console Setup.
+336: [  OK  ] Finished Virtual Console Setup.
+337: [    4.847011] systemd[1]: Listening on Journal Log Access Socket.
+338: [  OK  ] Listening on Journal Log Access Socket.
+339: [    4.851287] systemd[1]: Started Journal Service.
+340: [  OK  ] Started Journal Service.
+341:          Starting Flush Journal to Persistent Storage...
+342: [    5.143563] systemd-journald[72]: Received client request to flush runtime journal.
+343: [  OK  ] Finished Create Static Device Nodes in /dev.
+344: [  OK  ] Reached target Preparation for Local File Systems.
+345: [  OK  ] Reached target Local File Systems.
+346: [  OK  ] Listening on Boot Loader Control Service Socket.
+347: [  OK  ] Listening on Disk Image Download Service Socket.
+348: [  OK  ] Listening on System Extension Image Management.
+349:          Starting Tell Plymouth To Write Out Runtime Data...
+350:          Starting Rule-based Manager for Device Events and Files...
+351: [  OK  ] Finished Flush Journal to Persistent Storage.
+352:          Starting Create System Files and Directories...
+353: [  OK  ] Finished Tell Plymouth To Write Out Runtime Data.
+354: [  OK  ] Finished Create System Files and Directories.
+355:          Starting Record System Boot/Shutdown in UTMP...
+356: [  OK  ] Started Rule-based Manager for Device Events and Files.
+357: [  OK  ] Finished Record System Boot/Shutdown in UTMP.
+358: [  OK  ] Finished Coldplug All udev Devices.
+359: [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+360: [  OK  ] Reached target Local Encrypted Volumes.
+361: [  OK  ] Reached target Path Units.
+362: [  OK  ] Reached target System Initialization.
+363: [  OK  ] Started Refresh existing PGP keys of archlinux-keyring regularly.
+364: [  OK  ] Started Daily verification of password and group files.
+365: [  OK  ] Started Daily Cleanup of Temporary Directories.
+366: [  OK  ] Reached target Timer Units.
+367: [  OK  ] Listening on D-Bus System Message Bus Socket.
+368: [  OK  ] Listening on Authorization Manager Agent Helper.
+369: [  OK  ] Listening on OpenSSH Server Socket…temd-ssh-generator, AF_UNIX Local).
+370: [  OK  ] Listening on User Login Management Varlink Socket.
+371: [  OK  ] Listening on Virtual Machine and C…tainer Registration Service Socket.
+372: [  OK  ] Reached target Socket Units.
+373:          Starting D-Bus System Message Bus...
+374: [  OK  ] Started D-Bus System Message Bus.
+375: [  OK  ] Reached target Basic System.
+376:          Starting Network Manager...
+377:          Starting User Login Management...
+378: [  OK  ] Found device /dev/ttyS0.
+379: [  OK  ] Started User Login Management.
+380: [*     ] A start job is running for Network Manager (8s / 10min 4s)
+381: M[**    ] A start job is running for Network Manager (9s / 10min 4s)
+382: M[***   ] A start job is running for Network Manager (9s / 10min 4s)
+383: M[ ***  ] A start job is running for Network Manager (9s / 10min 4s)
+384: M[  *** ] A start job is running for Network Manager (10s / 10min 4s)
+385: M[   ***] A start job is running for Network Manager (10s / 10min 4s)
+386: M[  OK  ] Reached target Sound Card.
+387:          Starting Hostname Service...
+388: [  OK  ] Stopped Virtual Console Setup.
+389:          Stopping Virtual Console Setup...
+390:          Starting Virtual Console Setup...
+391: [  OK  ] Finished Virtual Console Setup.
+392: [  OK  ] Started Hostname Service.
+393: [  OK  ] Started Network Manager.
+394: [  OK  ] Reached target Network.
+395:          Starting Permit User Sessions...
+396: [  OK  ] Finished Permit User Sessions.
+397:          Starting Hold until boot process finishes up...
+398:          Starting Terminate Plymouth Boot Screen...
+399: [  OK  ] Finished Hold until boot process finishes up.
+400: [  OK  ] Started Serial Getty on ttyS0.
+401: [  OK  ] Reached target Login Prompts.
+402: [  OK  ] Finished Terminate Plymouth Boot Screen.
+403: [  OK  ] Reached target Multi-User System.
+404: [  OK  ] Started Simple Desktop Display Manager.
+405: [  OK  ] Reached target Graphical Interface.
+406: 7878
+407: Arch Linux 6.6.63 (ttyS0)
+408: 
+409: omarchy-demo login: omarchy (automatic login)
+410: 
+411: Omarchy RISC-V browser demo candidate
+412: Optional applications and toolchains are not bundled.
+413: No personal accounts, credentials or VM session state were imported.
+414: Desktop/browser verification is recorded separately.
+415: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_1_begin'; ( id -u ); wv_rc=$?; printf '\n%s:%s\n' 'capture_1_end' "$wv_rc"
+416: 
+417: capture_1_begin
+418: 1000
+419: 
+420: capture_1_end:0
+421: printf '\n%s\n' 'capture_2_begin'; ( sha256sum /sys/kernel/notes ); wv_rc=$?; printf '\n%s:%s\n' 'capture_2_end' "$wv_rc"
+422: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_2_begin'; ( sha256sum /sys/kernel/notes ); wv_rc=$?; printf '\n%s:%s\n' 'capture_2_end' "$wv_rc"
+423: 
+424: capture_2_begin
+425: 7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f  /sys/kernel/notes
+426: 
+427: capture_2_end:0
+428: 
+429: OMARCHY_KERNEL_IDENTITY {"command":"sha256sum /sys/kernel/notes","status":0,"output":"7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f  /sys/kernel/notes","beginLine":424,"endLine":427}
+430: printf '\n%s\n' 'capture_3_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_3_end' "$wv_rc"
+431: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_3_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_3_end' "$wv_rc"
+432: 
+433: capture_3_begin
+434: 
+435: ]
+436: 
+437: 
+438: capture_3_end:0
+439: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_4_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_4_end' "$wv_rc"
+440: 
+441: capture_4_begin
+442: 
+443: ]
+444: 
+445: 
+446: capture_4_end:0
+447: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_5_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_5_end' "$wv_rc"
+448: 
+449: capture_5_begin
+450: 
+451: ]
+452: 
+453: 
+454: capture_5_end:0
+455: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_6_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_6_end' "$wv_rc"
+456: 
+457: capture_6_begin
+458: 
+459: ]
+460: 
+461: 
+462: capture_6_end:0
+463: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_7_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_7_end' "$wv_rc"
+464: 
+465: capture_7_begin
+466: 
+467: ]
+468: 
+469: 
+470: capture_7_end:0
+471: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_8_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_8_end' "$wv_rc"
+472: 
+473: capture_8_begin
+474: 
+475: ]
+476: 
+477: 
+478: capture_8_end:0
+479: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_9_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_9_end' "$wv_rc"
+480: 
+481: capture_9_begin
+482: 
+483: ]
+484: 
+485: 
+486: capture_9_end:0
+487: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_10_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_10_end' "$wv_rc"
+488: 
+489: capture_10_begin
+490: 
+491: ]
+492: 
+493: 
+494: capture_10_end:0
+495: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_11_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_11_end' "$wv_rc"
+496: 
+497: capture_11_begin
+498: 
+499: ]
+500: 
+501: 
+502: capture_11_end:0
+503: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_12_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_12_end' "$wv_rc"
+504: 
+505: capture_12_begin
+506: 
+507: ]
+508: 
+509: 
+510: capture_12_end:0
+511: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_13_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_13_end' "$wv_rc"
+512: 
+513: capture_13_begin
+514: 
+515: ]
+516: 
+517: 
+518: capture_13_end:0
+519: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_14_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_14_end' "$wv_rc"
+520: 
+521: capture_14_begin
+522: 
+523: ]
+524: 
+525: 
+526: capture_14_end:0
+527: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_15_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_15_end' "$wv_rc"
+528: 
+529: capture_15_begin
+530: 
+531: ]
+532: 
+533: 
+534: capture_15_end:0
+535: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_16_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_16_end' "$wv_rc"
+536: 
+537: capture_16_begin
+538: 
+539: ]
+540: 
+541: 
+542: capture_16_end:0
+543: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_17_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_17_end' "$wv_rc"
+544: 
+545: capture_17_begin
+546: 
+547: ]
+548: 
+549: 
+550: capture_17_end:0
+551: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_18_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_18_end' "$wv_rc"
+552: 
+553: capture_18_begin
+554: 
+555: ]
+556: 
+557: 
+558: capture_18_end:0
+559: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_19_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_19_end' "$wv_rc"
+560: 
+561: capture_19_begin
+562: 
+563: ]
+564: 
+565: 
+566: capture_19_end:0
+567: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_20_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_20_end' "$wv_rc"
+568: 
+569: capture_20_begin
+570: 
+571: ]
+572: 
+573: 
+574: capture_20_end:0
+575: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_21_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_21_end' "$wv_rc"
+576: 
+577: capture_21_begin
+578: 
+579: ]
+580: 
+581: 
+582: capture_21_end:0
+583: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_22_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_22_end' "$wv_rc"
+584: 
+585: capture_22_begin
+586: 
+587: ]
+588: 
+589: 
+590: capture_22_end:0
+591: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_23_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_23_end' "$wv_rc"
+592: 
+593: capture_23_begin
+594: 
+595: ]
+596: 
+597: 
+598: capture_23_end:0
+599: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_24_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_24_end' "$wv_rc"
+600: 
+601: capture_24_begin
+602: 
+603: ]
+604: 
+605: 
+606: capture_24_end:0
+607: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_25_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_25_end' "$wv_rc"
+608: 
+609: capture_25_begin
+610: 
+611: ]
+612: 
+613: 
+614: capture_25_end:0
+615: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_26_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_26_end' "$wv_rc"
+616: 
+617: capture_26_begin
+618: 
+619: ]
+620: 
+621: 
+622: capture_26_end:0
+623: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_27_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_27_end' "$wv_rc"
+624: 
+625: capture_27_begin
+626: 
+627: ]
+628: 
+629: 
+630: capture_27_end:0
+631: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_28_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_28_end' "$wv_rc"
+632: 
+633: capture_28_begin
+634: 
+635: ]
+636: 
+637: 
+638: capture_28_end:0
+639: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_29_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_29_end' "$wv_rc"
+640: 
+641: capture_29_begin
+642: 
+643: ]
+644: 
+645: 
+646: capture_29_end:0
+647: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_30_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_30_end' "$wv_rc"
+648: 
+649: capture_30_begin
+650: [
+651: {
+652:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+653:     "time": 1789558845,
+654:     "pid": 398,
+655:     "wl_socket": "wayland-1"
+656: }
+657: ]
+658: 
+659: 
+660: capture_30_end:0
+661: printf '\n%s\n' 'capture_31_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_31_end' "$wv_rc"
+662: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_31_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_31_end' "$wv_rc"
+663: 
+664: capture_31_begin
+665: []
+666: 
+667: capture_31_end:0
+668: printf '\n%s\n' 'capture_32_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_32_end' "$wv_rc"
+669: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_32_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_32_end' "$wv_rc"
+670: 
+671: capture_32_begin
+672: {
+673: "Virtual-1": {
+674:     "levels": {
+675: 
+676:         "0": [
+677: ],
+678:         "1": [
+679: ],
+680:         "2": [
+681: ],
+682:         "3": [
+683: ]
+684:     }
+685: }
+686: }
+687: 
+688: 
+689: capture_32_end:0
+690: printf '\n%s\n' 'capture_33_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_33_end' "$wv_rc"
+691: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_33_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_33_end' "$wv_rc"
+692: 
+693: capture_33_begin
+694:     165 systemd         /usr/lib/systemd/systemd --user
+695:     167 (sd-pam)        (sd-pam)
+696:     175 bash            -bash
+697:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+698:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+699:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+700:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+701:     297 waitpid         waitpid -e 193
+702:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+703:     363 start-hyprland  /usr/bin/start-hyprland
+704:     398 Hyprland        Hyprland --watchdog-fd 4
+705:     466 dconf-service   /usr/lib/dconf-service
+706:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+707:     473 foot            foot
+708:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+709:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+710:     530 xdg-permission- /usr/lib/xdg-permission-store
+711:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+712:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+713:     672 ps              ps -u 1000 -o pid=,comm=,args=
+714: 
+715: capture_33_end:0
+716: 
+717: OMARCHY_DESKTOP_OBSERVATION {"foot":null,"shellProcesses":[{"pid":484,"command":"quickshell","args":"quickshell -n -p /usr/share/omarchy/shell"}],"shellLayers":[],"shellClients":[],"mappedFoot":false,"quickshellObserved":false}
+718: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_34_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_34_end' "$wv_rc"
+719: 
+720: capture_34_begin
+721: [
+722: {
+723:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+724:     "time": 1789558845,
+725:     "pid": 398,
+726:     "wl_socket": "wayland-1"
+727: }
+728: ]
+729: 
+730: 
+731: capture_34_end:0
+732: printf '\n%s\n' 'capture_35_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_35_end' "$wv_rc"
+733: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_35_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_35_end' "$wv_rc"
+734: 
+735: capture_35_begin
+736: []
+737: 
+738: capture_35_end:0
+739: printf '\n%s\n' 'capture_36_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_36_end' "$wv_rc"
+740: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_36_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_36_end' "$wv_rc"
+741: 
+742: capture_36_begin
+743: {
+744: "Virtual-1": {
+745:     "levels": {
+746: 
+747:         "0": [
+748: ],
+749:         "1": [
+750: ],
+751:         "2": [
+752: ],
+753:         "3": [
+754: ]
+755:     }
+756: }
+757: }
+758: 
+759: 
+760: capture_36_end:0
+761: printf '\n%s\n' 'capture_37_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_37_end' "$wv_rc"
+762: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_37_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_37_end' "$wv_rc"
+763: 
+764: capture_37_begin
+765:     165 systemd         /usr/lib/systemd/systemd --user
+766:     167 (sd-pam)        (sd-pam)
+767:     175 bash            -bash
+768:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+769:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+770:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+771:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+772:     297 waitpid         waitpid -e 193
+773:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+774:     363 start-hyprland  /usr/bin/start-hyprland
+775:     398 Hyprland        Hyprland --watchdog-fd 4
+776:     466 dconf-service   /usr/lib/dconf-service
+777:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+778:     473 foot            foot
+779:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+780:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+781:     530 xdg-permission- /usr/lib/xdg-permission-store
+782:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+783:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+784:     702 bash            /bin/bash
+785:     717 (at-spi-bus-la) (at-spi-bus-launcher)
+786:     723 sh              sh -c "/usr/bin/xkbcomp" -w 1 "-R/usr/share/X11/xkb" -xk
+787:     729 ps              ps -u 1000 -o pid=,comm=,args=
+788: 
+789: capture_37_end:0
+790: 
+791: OMARCHY_DESKTOP_OBSERVATION {"foot":null,"shellProcesses":[{"pid":484,"command":"quickshell","args":"quickshell -n -p /usr/share/omarchy/shell"}],"shellLayers":[],"shellClients":[],"mappedFoot":false,"quickshellObserved":false}
+792: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_38_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_38_end' "$wv_rc"
+793: 
+794: capture_38_begin
+795: [
+796: {
+797:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+798:     "time": 1789558845,
+799:     "pid": 398,
+800:     "wl_socket": "wayland-1"
+801: }
+802: ]
+803: 
+804: 
+805: capture_38_end:0
+806: printf '\n%s\n' 'capture_39_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_39_end' "$wv_rc"
+807: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_39_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_39_end' "$wv_rc"
+808: 
+809: capture_39_begin
+810: Hyprland IPC didn't respond in time
+811: 
+812: Couldn't read (6)
+813: 
+814: capture_39_end:6
+815: printf '\n%s\n' 'capture_40_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_40_end' "$wv_rc"
+816: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_40_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_40_end' "$wv_rc"
+817: 
+818: capture_40_begin
+819: Hyprland IPC didn't respond in time
+820: 
+821: Couldn't read (6)
+822: 
+823: capture_40_end:6
+824: printf '\n%s\n' 'capture_41_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_41_end' "$wv_rc"
+825: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_41_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_41_end' "$wv_rc"
+826: 
+827: capture_41_begin
+828:     165 systemd         /usr/lib/systemd/systemd --user
+829:     167 (sd-pam)        (sd-pam)
+830:     175 bash            -bash
+831:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+832:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+833:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+834:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+835:     297 waitpid         waitpid -e 193
+836:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+837:     363 start-hyprland  /usr/bin/start-hyprland
+838:     398 Hyprland        Hyprland --watchdog-fd 4
+839:     466 dconf-service   /usr/lib/dconf-service
+840:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+841:     473 foot            foot
+842:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+843:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+844:     530 xdg-permission- /usr/lib/xdg-permission-store
+845:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+846:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+847:     702 bash            /bin/bash
+848:     717 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+849:     739 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+850:     740 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+851:     750 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+852:     770 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+853:     776 hyprctl <defunc [hyprctl] <defunct>
+854:     777 hyprctl <defunc [hyprctl] <defunct>
+855:     890 ps              ps -u 1000 -o pid=,comm=,args=
+856: 
+857: capture_41_end:0
+858: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_42_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_42_end' "$wv_rc"
+859: 
+860: capture_42_begin
+861: [
+862: {
+863:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+864:     "time": 1789558845,
+865:     "pid": 398,
+866:     "wl_socket": "wayland-1"
+867: }
+868: ]
+869: 
+870: 
+871: capture_42_end:0
+872: printf '\n%s\n' 'capture_43_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_43_end' "$wv_rc"
+873: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_43_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_43_end' "$wv_rc"
+874: 
+875: capture_43_begin
+876: Hyprland IPC didn't respond in time
+877: 
+878: Couldn't read (6)
+879: 
+880: capture_43_end:6
+881: printf '\n%s\n' 'capture_44_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_44_end' "$wv_rc"
+882: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_44_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_44_end' "$wv_rc"
+883: 
+884: capture_44_begin
+885: {
+886: "Virtual-1": {
+887:     "levels": {
+888: 
+889:         "0": [
+890: ],
+891:         "1": [
+892: ],
+893:         "2": [
+894:                 {
+895:                     "address": "0x5555851adf40",
+896:                     "x": 0,
+897:                     "y": 0,
+898:                     "w": 1280,
+899:                     "h": 26,
+900:                     "alpha": 0,
+901:                     "namespace": "omarchy-bar",
+902:                     "pid": 484
+903:                 }
+904:         ],
+905:         "3": [
+906: ]
+907:     }
+908: }
+909: }
+910: 
+911: 
+912: capture_44_end:0
+913: printf '\n%s\n' 'capture_45_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_45_end' "$wv_rc"
+914: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_45_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_45_end' "$wv_rc"
+915: 
+916: capture_45_begin
+917:     165 systemd         /usr/lib/systemd/systemd --user
+918:     167 (sd-pam)        (sd-pam)
+919:     175 bash            -bash
+920:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+921:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+922:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+923:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+924:     297 waitpid         waitpid -e 193
+925:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+926:     363 start-hyprland  /usr/bin/start-hyprland
+927:     398 Hyprland        Hyprland --watchdog-fd 4
+928:     466 dconf-service   /usr/lib/dconf-service
+929:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+930:     473 foot            foot
+931:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+932:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+933:     530 xdg-permission- /usr/lib/xdg-permission-store
+934:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+935:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+936:     702 bash            /bin/bash
+937:     717 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+938:     739 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+939:     740 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+940:     750 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+941:     770 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+942:     776 hyprctl <defunc [hyprctl] <defunct>
+943:     777 hyprctl <defunc [hyprctl] <defunct>
+944:     911 readlink <defun [readlink] <defunct>
+945:     922 readlink <defun [readlink] <defunct>
+946:     923 bash <defunct>  [bash] <defunct>
+947:     924 omarchy-hyprlan /bin/bash /usr/share/omarchy/bin/omarchy-hyprland-sessio
+948:     927 mkdir <defunct> [mkdir] <defunct>
+949:     929 bash <defunct>  [bash] <defunct>
+950:     932 hyprctl <defunc [hyprctl] <defunct>
+951:     933 find <defunct>  [find] <defunct>
+952:     934 omarchy-voxtype [omarchy-voxtype] <defunct>
+953:     935 omarchy-reminde [omarchy-reminde] <defunct>
+954:     938 omarchy-voxtype [omarchy-voxtype] <defunct>
+955:     939 omarchy-reminde [omarchy-reminde] <defunct>
+956:     944 pgrep <defunct> [pgrep] <defunct>
+957:     945 pgrep <defunct> [pgrep] <defunct>
+958:     947 xkbcli-list     /usr/lib/xkbcommon/xkbcli-list --load-exotic
+959:     948 hyprctl <defunc [hyprctl] <defunct>
+960:     956 omarchy-audio-o [omarchy-audio-o] <defunct>
+961:     959 omarchy-monitor /bin/bash /usr/share/omarchy/bin/omarchy-monitor-state
+962:     961 omarchy-network [omarchy-network] <defunct>
+963:     962 omarchy-dns     /bin/bash /usr/share/omarchy/bin/omarchy-dns
+964:     963 omarchy-network /bin/bash /usr/share/omarchy/bin/omarchy-network-band
+965:     965 omarchy-network /bin/bash /usr/share/omarchy/bin/omarchy-network-band
+966:     967 omarchy-network /bin/bash /usr/share/omarchy/bin/omarchy-network-band
+967:     968 awk             awk -F: $2 == "wifi" && $3 == "connected" { print $1; ex
+968:     969 nmcli           nmcli -e no -g DEVICE,TYPE,STATE device status
+969:     977 omarchy-dns     /bin/bash /usr/share/omarchy/bin/omarchy-dns
+970:     978 awk             awk -F=      /^[[:space:]]*#/ { next }     /^[[:space:]]
+971:     983 omarchy-hyprlan /bin/bash /usr/share/omarchy/bin/omarchy-hyprland-sessio
+972:     987 omarchy-monitor /bin/bash /usr/share/omarchy/bin/omarchy-monitor-state
+973:     991 jq              jq    def blockers: .solitaryBlockedBy // [];   def read
+974:     993 jq              jq -r [.[] | select(.focused == true)][0].name // ""
+975:     995 ps              ps -u 1000 -o pid=,comm=,args=
+976: 
+977: capture_45_end:0
+978: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_46_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_46_end' "$wv_rc"
+979: 
+980: capture_46_begin
+981: [
+982: {
+983:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+984:     "time": 1789558845,
+985:     "pid": 398,
+986:     "wl_socket": "wayland-1"
+987: }
+988: ]
+989: 
+990: 
+991: capture_46_end:0
+992: printf '\n%s\n' 'capture_47_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_47_end' "$wv_rc"
+993: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_47_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_47_end' "$wv_rc"
+994: 
+995: capture_47_begin
+996: Hyprland IPC didn't respond in time
+997: 
+998: Couldn't read (6)
+999: 
+1000: capture_47_end:6
+1001: printf '\n%s\n' 'capture_48_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_48_end' "$wv_rc"
+1002: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_48_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_48_end' "$wv_rc"
+1003: 
+1004: capture_48_begin
+1005: Hyprland IPC didn't respond in time
+1006: 
+1007: Couldn't read (6)
+1008: 
+1009: capture_48_end:6
+1010: printf '\n%s\n' 'capture_49_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_49_end' "$wv_rc"
+1011: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_49_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_49_end' "$wv_rc"
+1012: 
+1013: capture_49_begin
+1014:     165 systemd         /usr/lib/systemd/systemd --user
+1015:     167 (sd-pam)        (sd-pam)
+1016:     175 bash            -bash
+1017:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+1018:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+1019:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+1020:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1021:     297 waitpid         waitpid -e 193
+1022:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+1023:     363 start-hyprland  /usr/bin/start-hyprland
+1024:     398 Hyprland        Hyprland --watchdog-fd 4
+1025:     466 dconf-service   /usr/lib/dconf-service
+1026:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+1027:     473 foot            foot
+1028:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+1029:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+1030:     530 xdg-permission- /usr/lib/xdg-permission-store
+1031:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+1032:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+1033:     702 bash            /bin/bash
+1034:     717 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+1035:     739 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+1036:     740 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1037:     750 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+1038:     770 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+1039:     959 omarchy-monitor /bin/bash /usr/share/omarchy/bin/omarchy-monitor-state
+1040:    1059 bash            /usr/bin/bash -lc declare -A __omarchy_pkgs=() mapfile -
+1041:    1079 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1042:    1080 wl-paste        wl-paste --type text --watch /usr/share/omarchy/shell/pl
+1043:    1081 wl-paste        wl-paste --type image/png --watch /usr/share/omarchy/she
+1044:    1090 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1045:    1092 wl-paste        wl-paste --list-types
+1046:    1124 omarchy-hyprlan /bin/bash /usr/share/omarchy/bin/omarchy-hyprland-monito
+1047:    1127 omarchy-hyprlan /bin/bash /usr/share/omarchy/bin/omarchy-hyprland-monito
+1048:    1130 hyprctl         hyprctl monitors -j
+1049:    1131 omarchy-hyprlan /bin/bash /usr/share/omarchy/bin/omarchy-hyprland-monito
+1050:    1132 jq              jq -er .[] | select(.focused == true) | .scale
+1051:    1133 awk             awk NR == 1 { printf "%g\n", $0 }
+1052:    1157 bash            /usr/bin/bash -lc declare -A __omarchy_pkgs=() mapfile -
+1053:    1158 omarchy-default /bin/bash /usr/share/omarchy/bin/omarchy-default-browser
+1054:    1159 xdg-settings    /bin/sh /usr/bin/xdg-settings get default-web-browser
+1055:    1170 xdg-mime        /bin/sh /usr/bin/xdg-mime query default x-scheme-handler
+1056:    1245 ps              ps -u 1000 -o pid=,comm=,args=
+1057: 
+1058: capture_49_end:0
+1059: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_50_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_50_end' "$wv_rc"
+1060: 
+1061: capture_50_begin
+1062: [
+1063: {
+1064:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+1065:     "time": 1789558845,
+1066:     "pid": 398,
+1067:     "wl_socket": "wayland-1"
+1068: }
+1069: ]
+1070: 
+1071: 
+1072: capture_50_end:0
+1073: printf '\n%s\n' 'capture_51_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_51_end' "$wv_rc"
+1074: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_51_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_51_end' "$wv_rc"
+1075: 
+1076: capture_51_begin
+1077: Hyprland IPC didn't respond in time
+1078: 
+1079: Couldn't read (6)
+1080: 
+1081: capture_51_end:6
+1082: printf '\n%s\n' 'capture_52_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_52_end' "$wv_rc"
+1083: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_52_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_52_end' "$wv_rc"
+1084: 
+1085: capture_52_begin
+1086: Hyprland IPC didn't respond in time
+1087: 
+1088: Couldn't read (6)
+1089: 
+1090: capture_52_end:6
+1091: printf '\n%s\n' 'capture_53_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_53_end' "$wv_rc"
+1092: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_53_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_53_end' "$wv_rc"
+1093: 
+1094: capture_53_begin
+1095:     165 systemd         /usr/lib/systemd/systemd --user
+1096:     167 (sd-pam)        (sd-pam)
+1097:     175 bash            -bash
+1098:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+1099:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+1100:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+1101:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1102:     297 waitpid         waitpid -e 193
+1103:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+1104:     363 start-hyprland  /usr/bin/start-hyprland
+1105:     398 Hyprland        Hyprland --watchdog-fd 4
+1106:     466 dconf-service   /usr/lib/dconf-service
+1107:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+1108:     473 foot            foot
+1109:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+1110:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+1111:     530 xdg-permission- /usr/lib/xdg-permission-store
+1112:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+1113:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+1114:     702 bash            /bin/bash
+1115:     717 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+1116:     739 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+1117:     740 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1118:     750 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+1119:     770 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+1120:    1059 bash            /usr/bin/bash -lc declare -A __omarchy_pkgs=() mapfile -
+1121:    1079 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1122:    1080 wl-paste        wl-paste --type text --watch /usr/share/omarchy/shell/pl
+1123:    1081 wl-paste        wl-paste --type image/png --watch /usr/share/omarchy/she
+1124:    1090 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1125:    1092 wl-paste        wl-paste --list-types
+1126:    1434 omarchy-hw-touc /bin/bash /usr/share/omarchy/bin/omarchy-hw-touchscreen
+1127:    1435 omarchy-hw-touc /bin/bash /usr/share/omarchy/bin/omarchy-hw-touchscreen
+1128:    1436 hyprctl         hyprctl devices -j
+1129:    1437 jq              jq -r [.touch[]?.name, .tablets[]?.name] | first // empt
+1130:    1438 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1131:    1439 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1132:    1442 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1133:    1443 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1134:    1444 wl-paste        wl-paste --list-types
+1135:    1445 wl-paste        wl-paste --list-types
+1136:    1455 ps              ps -u 1000 -o pid=,comm=,args=
+1137: 
+1138: capture_53_end:0
+1139: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_54_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances ); wv_rc=$?; printf '\n%s:%s\n' 'capture_54_end' "$wv_rc"
+1140: 
+1141: capture_54_begin
+1142: [
+1143: {
+1144:     "instance": "efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898",
+1145:     "time": 1789558845,
+1146:     "pid": 398,
+1147:     "wl_socket": "wayland-1"
+1148: }
+1149: ]
+1150: 
+1151: 
+1152: capture_54_end:0
+1153: printf '\n%s\n' 'capture_55_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_55_end' "$wv_rc"
+1154: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_55_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j clients ); wv_rc=$?; printf '\n%s:%s\n' 'capture_55_end' "$wv_rc"
+1155: 
+1156: capture_55_begin
+1157: [{
+1158:     "address": "0x55558518d650",
+1159:     "mapped": true,
+1160:     "hidden": false,
+1161:     "visible": true,
+1162:     "acceptsInput": true,
+1163:     "at": [12, 38],
+1164:     "size": [1256, 750],
+1165:     "workspace": {
+1166:         "id": 1,
+1167:         "name": "1"
+1168:     },
+1169:     "floating": false,
+1170:     "monitor": 0,
+1171:     "class": "foot",
+1172:     "title": "omarchy@omarchy-demo:~",
+1173:     "initialClass": "foot",
+1174:     "initialTitle": "foot",
+1175:     "pid": 473,
+1176:     "xwayland": false,
+1177:     "pinned": false,
+1178:     "pinFullscreened": false,
+1179:     "fullscreen": 0,
+1180:     "fullscreenClient": 0,
+1181:     "fullscreenHandler": "default",
+1182:     "allowedOverFullscreen": true,
+1183:     "grouped": [],
+1184:     "tags": ["default-opacity*", "terminal*"],
+1185:     "swallowing": "0x0",
+1186:     "focusHistoryID": 0,
+1187:     "inhibitingIdle": false,
+1188:     "xdgTag": "",
+1189:     "xdgDescription": "",
+1190:     "contentType": "none",
+1191:     "tearingHint": false,
+1192:     "stableId": "18000000"
+1193: }]
+1194: 
+1195: capture_55_end:0
+1196: printf '\n%s\n' 'capture_56_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_56_end' "$wv_rc"
+1197: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_56_begin'; ( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898 -j layers ); wv_rc=$?; printf '\n%s:%s\n' 'capture_56_end' "$wv_rc"
+1198: 
+1199: capture_56_begin
+1200: {
+1201: "Virtual-1": {
+1202:     "levels": {
+1203: 
+1204:         "0": [
+1205:                 {
+1206:                     "address": "0x555584dc5b70",
+1207:                     "x": 0,
+1208:                     "y": 0,
+1209:                     "w": 1280,
+1210:                     "h": 800,
+1211:                     "alpha": 1,
+1212:                     "namespace": "omarchy-background",
+1213:                     "pid": 484
+1214:                 }
+1215:         ],
+1216:         "1": [
+1217: ],
+1218:         "2": [
+1219:                 {
+1220:                     "address": "0x5555851adf40",
+1221:                     "x": 0,
+1222:                     "y": 0,
+1223:                     "w": 1280,
+1224:                     "h": 26,
+1225:                     "alpha": 1,
+1226:                     "namespace": "omarchy-bar",
+1227:                     "pid": 484
+1228:                 }
+1229:         ],
+1230:         "3": [
+1231: ]
+1232:     }
+1233: }
+1234: }
+1235: 
+1236: 
+1237: capture_56_end:0
+1238: printf '\n%s\n' 'capture_57_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_57_end' "$wv_rc"
+1239: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_57_begin'; ( ps -u 1000 -o pid=,comm=,args= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_57_end' "$wv_rc"
+1240: 
+1241: capture_57_begin
+1242:     165 systemd         /usr/lib/systemd/systemd --user
+1243:     167 (sd-pam)        (sd-pam)
+1244:     175 bash            -bash
+1245:     182 gnome-keyring-d /usr/bin/gnome-keyring-daemon --daemonize --login
+1246:     193 sh              /usr/bin/sh /usr/lib/uwsm/signal-handler.sh wayland-sess
+1247:     250 dbus-broker-lau /usr/bin/dbus-broker-launch --scope user
+1248:     251 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1249:     297 waitpid         waitpid -e 193
+1250:     298 systemctl       systemctl --user start --wait wayland-session-envelope@h
+1251:     363 start-hyprland  /usr/bin/start-hyprland
+1252:     398 Hyprland        Hyprland --watchdog-fd 4
+1253:     466 dconf-service   /usr/lib/dconf-service
+1254:     472 omarchy-launch- /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell
+1255:     473 foot            foot
+1256:     484 quickshell      quickshell -n -p /usr/share/omarchy/shell
+1257:     515 xdg-desktop-por /usr/lib/xdg-desktop-portal
+1258:     530 xdg-permission- /usr/lib/xdg-permission-store
+1259:     542 xdg-desktop-por /usr/lib/xdg-desktop-portal-gtk
+1260:     652 Xwayland        Xwayland :0 -rootless -core -listenfd 45 -listenfd 46 -d
+1261:     702 bash            /bin/bash
+1262:     717 at-spi-bus-laun /usr/lib/at-spi-bus-launcher
+1263:     739 dbus-broker-lau /usr/bin/dbus-broker-launch --config-file=/usr/share/def
+1264:     740 dbus-broker     dbus-broker --log 10 --controller 9 --machine-id 455fe41
+1265:     750 at-spi2-registr /usr/lib/at-spi2-registryd --use-gnome-session
+1266:     770 xdg-desktop-por /usr/lib/xdg-desktop-portal-hyprland
+1267:    1080 wl-paste        wl-paste --type text --watch /usr/share/omarchy/shell/pl
+1268:    1081 wl-paste        wl-paste --type image/png --watch /usr/share/omarchy/she
+1269:    1438 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1270:    1439 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1271:    1442 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1272:    1443 capture.sh      /bin/bash /usr/share/omarchy/shell/plugins/clipboard/cap
+1273:    1444 wl-paste        wl-paste --list-types
+1274:    1445 wl-paste        wl-paste --list-types
+1275:    1531 ps              ps -u 1000 -o pid=,comm=,args=
+1276: 
+1277: capture_57_end:0
+1278: 
+1279: OMARCHY_DESKTOP_OBSERVATION {"foot":{"address":"0x55558518d650","mapped":true,"hidden":false,"visible":true,"acceptsInput":true,"at":[12,38],"size":[1256,750],"workspace":{"id":1,"name":"1"},"floating":false,"monitor":0,"class":"foot","title":"omarchy@omarchy-demo:~","initialClass":"foot","initialTitle":"foot","pid":473,"xwayland":false,"pinned":false,"pinFullscreened":false,"fullscreen":0,"fullscreenClient":0,"fullscreenHandler":"default","allowedOverFullscreen":true,"grouped":[],"tags":["default-opacity*","terminal*"],"swallowing":"0x0","focusHistoryID":0,"inhibitingIdle":false,"xdgTag":"","xdgDescription":"","contentType":"none","tearingHint":false,"stableId":"18000000"},"shellProcesses":[{"pid":484,"command":"quickshell","args":"quickshell -n -p /usr/share/omarchy/shell"}],"shellLayers":[{"address":"0x555584dc5b70","x":0,"y":0,"w":1280,"h":800,"alpha":1,"namespace":"omarchy-background","pid":484},{"address":"0x5555851adf40","x":0,"y":0,"w":1280,"h":26,"alpha":1,"namespace":"omarchy-bar","pid":484}],"shellClients":[],"mappedFoot":true,"quickshellObserved":true}
+1280: printf '\n%s\n' 'capture_58_begin'; ( tr '\000' '\n' < /proc/398/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p' ); wv_rc=$?; printf '\n%s:%s\n' 'capture_58_end' "$wv_rc"
+1281: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_58_begin'; ( tr '\000' '\n' < /proc/398/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p' ); wv_rc=$?; printf '\n%s:%s\n' 'capture_58_end' "$wv_rc"
+1282: 
+1283: capture_58_begin
+1284: LIBGL_ALWAYS_SOFTWARE=1
+1285: GALLIUM_DRIVER=llvmpipe
+1286: LP_NUM_THREADS=1
+1287: 
+1288: capture_58_end:0
+1289: printf '\n%s\n' 'capture_59_begin'; ( ps -T -p 398 -o comm= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_59_end' "$wv_rc"
+1290: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_59_begin'; ( ps -T -p 398 -o comm= ); wv_rc=$?; printf '\n%s:%s\n' 'capture_59_end' "$wv_rc"
+1291: 
+1292: capture_59_begin
+1293: Hyprland
+1294: Hyprland
+1295: llvmpipe-0
+1296: Hyprland
+1297: Hyprlan:disk$0
+1298: Hyprlan:disk$1
+1299: Hyprlan:disk$2
+1300: pool-spawner
+1301: gmain
+1302: dconf worker
+1303: gdbus
+1304: [pango] fontcon
+1305: 
+1306: capture_59_end:0
+1307: printf '\n%s\n' 'capture_60_begin'; ( sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p;/GL_RENDERER/p;/GL_VENDOR/p;/GL_VERSION/p;/OpenGL renderer/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898/hyprland.log ); wv_rc=$?; printf '\n%s:%s\n' 'capture_60_end' "$wv_rc"
+1308: [omarchy@omarchy-demo ~]$ printf '\n%s\n' 'capture_60_begin'; ( sed -n '/DEBUG ]: Renderer:/p;/DEBUG ]: Vendor:/p;/GL_RENDERER/p;/GL_VENDOR/p;/GL_VERSION/p;/OpenGL renderer/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898/hyprland.log ); wv_rc=$?; printf '\n%s:%s\n' 'capture_60_end' "$wv_rc"
+1309: 
+1310: capture_60_begin
+1311: 
+1312: capture_60_end:0
+1313: 
+1314: OMARCHY_RENDERER_OBSERVATION {"expectedRenderer":"llvmpipe","expectedLpNumThreads":"1","instance":{"instance":"efb50993780079460b0cbed1363e2166a2de1d9f_1789558845_636571898","time":1789558845,"pid":398,"wl_socket":"wayland-1"},"environment":{"status":0,"output":"LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=1","beginLine":1275,"endLine":1280},"threads":{"status":0,"output":"Hyprland\nHyprland\nllvmpipe-0\nHyprland\nHyprlan:disk$0\nHyprlan:disk$1\nHyprlan:disk$2\npool-spawner\ngmain\ndconf worker\ngdbus\n[pango] fontcon","beginLine":1284,"endLine":1298},"log":{"status":0,"output":"","beginLine":1302,"endLine":1304},"threadSetting":{"GALLIUM_DRIVER":"llvmpipe","LIBGL_ALWAYS_SOFTWARE":"1","LP_NUM_THREADS":"1","activeRendererValidated":false,"configurationObserved":"lp1-configuration-observed"}}
+1315: sync && printf '\n%s%s\n' 'WVM_OMARCHY_DESKTOP_' 'READY'
+1316: [omarchy@omarchy-demo ~]$ sync && printf '\n%s%s\n' 'WVM_OMARCHY_DESKTOP_' 'READY'
+1317: 
+1318: WVM_OMARCHY_DESKTOP_READY
+1319: 

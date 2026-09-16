@@ -1,0 +1,14 @@
+{
+  "purpose": "owned-cleanup-only-synthetic-fixture",
+  "source": "/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-input-kernel-native.py",
+  "sourceSha256": "09b54da3a5f68f8a674cf99b64a9da7628c8fb777cd12904fba8a7f10a6be220",
+  "wrapperError": "TimeoutExpired: Command 'owned-fixture-deadline' timed out after 7380 seconds",
+  "leaderPid": 65144,
+  "leaderReturncode": -15,
+  "descendantPid": 65145,
+  "descendantPgid": 65144,
+  "heartbeatAtWrapperReturn": "23489416",
+  "heartbeatAfterWrapperReturn": "123938125",
+  "descendantSurvivedWrapper": true,
+  "heartbeatStoppedAfterVerifierCleanup": true
+}
