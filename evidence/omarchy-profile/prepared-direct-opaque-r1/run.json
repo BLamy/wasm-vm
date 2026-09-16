@@ -1,0 +1,59 @@
+{
+  "purpose": "offline-direct-opaque-preparation",
+  "keyboardAcceptance": false,
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-opaque-r1",
+  "head": "32c412f7ea0fe34d1b2f9f28ace3004a1ed64fad",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "startedAt": "2026-09-16T05:22:42.702Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-direct-opaque-r1/desktop",
+    "direct-opaque-pair"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T05:32:50.077Z",
+  "serial": [
+    {
+      "rid": "mu3nmpmh0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-16T05:22:49.529Z",
+      "completedAt": "2026-09-16T05:23:17.027Z",
+      "response": {
+        "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu3nnxzu1",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T05:23:47.034Z",
+      "completedAt": "2026-09-16T05:24:47.324Z",
+      "response": {
+        "stdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    }
+  ],
+  "configuration": {
+    "configuration": "properties-confirmed",
+    "wire": {
+      "rid": "mu3nnxzu1",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T05:23:47.034Z",
+      "completedAt": "2026-09-16T05:24:47.324Z",
+      "response": {
+        "stdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    "physicalInputTested": false
+  },
+  "result": "preparation-failed-input-untested",
+  "usablePair": false
+}
