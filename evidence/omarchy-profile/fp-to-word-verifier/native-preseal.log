@@ -1,0 +1,18 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.05s
+     Running tests/fp_to_word_verifier.rs (target/debug/deps/fp_to_word_verifier-9fbd82d76aca750e)
+
+running 5 tests
+CRITIC_NATIVE_TO_WORD_CONTROL Receipt { cases: 12, illegal: 0, digest: 8504544371684976080 }
+test verifier_native_conversion_control_and_faults ... ok
+CRITIC_TO_WORD_INDICES imports=8 exports=run0:8,run1:9,run2:10,run3:11 all_optional_combinations=4 mixed_chain_executed=true integer_imports=5 unsupported_families=8
+test verifier_mixed_optional_indices_and_integer_behavior ... ok
+CRITIC_NATIVE_TO_WORD_LITERALS Receipt { cases: 21120, illegal: 0, digest: 4083560513975942652 }
+test verifier_native_conversion_literals ... ok
+CRITIC_NATIVE_TO_WORD_SEEDED Receipt { cases: 1792, illegal: 868, digest: 4721190114470949240 }
+test verifier_native_conversion_seeded_aliases_and_illegal ... ok
+CRITIC_TO_WORD_PURITY cases=2048 legal_helper_calls=1080 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_conversion_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.80s
+

@@ -1,0 +1,59 @@
+{
+  "reportSha256": "9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687",
+  "head": "53a095a485787e4ce6177712830d76728342b083",
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "nonce": "2c6f139f234713fa",
+  "readbackStartedAt": "2026-09-15T23:40:59.984Z",
+  "deadlineAt": "2026-09-15T23:42:59.984Z",
+  "deadlineDurationMs": 120000,
+  "typedTrustedEvents": 128,
+  "focusedCanvasEvents": 128,
+  "independentReadbackCommands": 13,
+  "readbackExits": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+  ],
+  "nonceReadbackPassed": false,
+  "baselineImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "failureImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "sameImages": true,
+  "visualObservation": "Both actual terminal images show only the original Omarchy shell prompt and cursor. No typed command, nonce or response appears.",
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "closed": true,
+  "desktopResponsive": false,
+  "T03q": "must remain gated",
+  "pendingReadbackCommands": 1,
+  "actualSettings": {
+    "hasExecutor": true,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "decodedCacheEntries": 4096,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24
+  },
+  "actualClock": {
+    "mode": "icount",
+    "mtime": "1386748882",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "workerAcknowledgedKeyboardEvents": 128
+}
