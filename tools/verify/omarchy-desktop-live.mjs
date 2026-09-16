@@ -1111,7 +1111,6 @@ async function capturePair(baseBinding, pairDirectory = out) {
   }
   let exactOverlayName = `wvov-${base}`;
   if (modePair) {
-    if (report.inputKernel) await requestInputKernelNotes((command, ms) => exec(command, page, "input-kernel:identity", ms), coldDeadline, report);
     const seed = await page.evaluate(() => window.__linuxCtl.overlaySeedIdentity());
     const expectedSeed = createHash("sha256").update(`${candidate.source.bootSnapshot.sha256}:${candidate.source.overlayDelta.sha256}`).digest("hex");
     assert.equal(seed, expectedSeed, "wrong warm overlay namespace");
@@ -1232,6 +1231,7 @@ async function runLive() {
   const loaderIdentity = mode === "capture" || coldPair || ownedRecording ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
   if (modePair) {
+    if (report.inputKernel) await requestInputKernelNotes((command, ms) => exec(command, page, "input-kernel:identity", ms), coldDeadline, report);
     await (mode === "direct-opaque-pair" ? prepareDirectOpaqueDesktop : opaquePair ? prepareOpaqueDesktop : prepareSmallerDesktop)(page, coldDeadline, report, {
       exec: (command, stage, ms) => exec(command, page, stage, ms),
       observeRuntime: label => runtimeDiagnostics(page, label),
