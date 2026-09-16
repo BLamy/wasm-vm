@@ -1,0 +1,104 @@
+{
+  "deployment": "https://6d0d0ece.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev",
+  "checks": [
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "expectedSha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "matches": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/artifacts-omarchy.json",
+      "status": 200,
+      "size": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "expectedSha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "matches": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/main.js",
+      "status": 200,
+      "size": 149578,
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "expectedSha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "matches": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "size": 51836,
+      "sha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "expectedSha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "matches": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/tasks.json",
+      "status": 200,
+      "size": 3679609,
+      "sha256": "8466ff58ca0acc8a927b39edef47a46ed4c5167cc92a44e1606fec46d8bf7775",
+      "expectedSha256": "8466ff58ca0acc8a927b39edef47a46ed4c5167cc92a44e1606fec46d8bf7775",
+      "matches": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/app.html",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "expectedSha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json",
+      "status": 200,
+      "size": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "expectedSha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/main.js",
+      "status": 200,
+      "size": 149578,
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "expectedSha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "size": 51836,
+      "sha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "expectedSha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/tasks.json",
+      "status": 200,
+      "size": 3679609,
+      "sha256": "8466ff58ca0acc8a927b39edef47a46ed4c5167cc92a44e1606fec46d8bf7775",
+      "expectedSha256": "8466ff58ca0acc8a927b39edef47a46ed4c5167cc92a44e1606fec46d8bf7775",
+      "matches": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/app.html",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "matches": true
+    }
+  ],
+  "passed": true,
+  "claim": "GPU source-offset correction published; existing desktop defaults retained; responsiveness remains unsolved"
+}

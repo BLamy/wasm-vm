@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:56085/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.84",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "detail": "E5.5-T03at\nIN PROGRESS\n✕ Close\nCorrect GPU 2D transfer source offsets\nEpic\nE5.5 — 5.5\nStatus\nin progress\nEstimate\nS\nDepends on\nE5.5-T03as\nVERIFICATION LOG — EVIDENCE\n### 2026-09-16 — worker activation\n\nAS critic commit27e31ea3 verifies physical execution and the negative visual\nmeasurement. Activate only the existing transfer source-address boundary. Q\nremains gated on a real physical and visible response with unchanged deadlines.\n\n### 2026-09-16 — planned from AS visual failure and source comparison\n\nASr2 reportSHA97252137eed0cc5a4eae2e477e733a5d3f42dd0ad3e911358d8afd6b51afb174:\nnonce arrives89.104s after Enter; subsequent frame4→5 has terminal damage\nrect10,36,1260,754, yet the real PNG remains an empty prompt. Kernel input loss\nis repaired; visible response is not. Reference implementation:\nhttps://raw.githubusercontent.com/qemu/qemu/v9.2.0/hw/display/virtio-gpu.c\nand the pinned local Linux6.6.63 tarball. No new rendering feature is proposed.\nADVERSARIAL VERIFICATION\nA fresh critic predicts the literal copied pixels from Linux/QEMU's source\naddressing contract, independently attacks SG boundaries and large offsets,\nsabotage-checks sensitivity to the old extra-origin arithmetic, and audits\nchanged-hunk coverage. Independently review actual physical-only nonce,\noriginal deadlines and real screenshot. Any unbound-scanout issue is a separate\nfollow-up unless evidence makes it necessary; do not broaden this task.\nsource: tasks/epic-5.5-omarchy/E5.5-T03at-gpu-transfer-offset.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:56085/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:56085/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:56085/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:56085/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "10a2961588d3cd344c409699035eeb0b2672dcae44f63833fb0b0eabb53d856d"
+}
