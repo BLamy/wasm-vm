@@ -1,4 +1,4 @@
-// Fixed T03k experiment policy. These guards never create guest input or readiness.
+// Fixed local experiments. These guards never create guest input or readiness.
 import assert from "node:assert/strict";
 
 export const INPUT_TRIAL_STARTUP_MS = 300000;
@@ -13,13 +13,21 @@ export const R3_IDENTITIES = Object.freeze({
   chunkManifest: { size: 1097812, sha256: "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44" },
 });
 
-export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, timeout }) {
+function residencyForArm(arm) {
+  assert.ok(["control", "candidate"].includes(arm), "residency requires an explicit arm");
+  return arm === "candidate" ? { jitResidencyPolicy: "cap-256", jitResidencyCap: 256 }
+    : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
+}
+
+export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, timeout, experiment = "recycling" }) {
   assert.equal(urlArg, "local", "input-trial requires local (never production)");
   assert.ok(pair && chunks, "input-trial requires the pinned R3 pair and chunks");
   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
-  return { arm, recycling: arm === "candidate", startupMs: INPUT_TRIAL_STARTUP_MS,
+  assert.ok(["recycling", "residency"].includes(experiment), "unsupported input-trial experiment");
+  return { arm, recycling: experiment === "recycling" && arm === "candidate",
+    ...(experiment === "residency" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
 }
@@ -32,6 +40,10 @@ export function inputTrialUrl(input, options) {
   url.searchParams.set("omarchyDivider", "64");
   url.searchParams.set("jit", "1");
   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
+  if (options.experiment === "residency") {
+    assert.equal(options.recycling, false, "residency keeps recycling off");
+    url.searchParams.set("jitResidency", residencyForArm(options.arm).jitResidencyPolicy);
+  }
   return url;
 }
 
@@ -55,8 +67,11 @@ export function assertInputTrialRuntime(state, options) {
     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
   }
   assert.equal(jit.decodedCacheEntries, 4096);
-  assert.equal(jit.jitResidencyPolicy, "repack-off");
-  assert.equal(jit.jitResidencyCap, 24);
+  const residency = options.experiment === "residency" ? residencyForArm(options.arm)
+    : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
+  if (options.experiment === "residency") assert.equal(options.recycling, false);
+  assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
+  assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
   assert.equal(jit.entryCost?.timingEnabled, false);
   assert.equal(state.clock?.mode, "icount");
   assert.equal(state.clock?.clockDiv, 64);

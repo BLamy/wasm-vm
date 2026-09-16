@@ -81,9 +81,13 @@ if (candidateRequested && !inputTrial) assert.ok(expectedRenderer,
   "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
 const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   arm: process.env.OMARCHY_INPUT_TRIAL_ARM, renderer: expectedRenderer, lp: expectedLpNumThreads,
+  experiment: process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT,
   timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
-if (!inputTrial) assert.equal(process.env.OMARCHY_INPUT_TRIAL_ARM, undefined,
-  "OMARCHY_INPUT_TRIAL_ARM requires input-trial mode");
+if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
+  assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
+}
+if (trial?.experiment === "residency") assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+  "residency is isolated from other experiments");
 const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   renderer: expectedRenderer, lp: expectedLpNumThreads, timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
 const out = path.resolve(output);
@@ -396,7 +400,7 @@ if (compositorMode) report.compositorModeRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
 if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
-    "tools/verify/omarchy-recycling-ab.mjs",
+    "tools/verify/omarchy-recycling-ab.mjs", "tools/verify/omarchy-residency-ab.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
     "tools/verify/omarchy-render-mode.mjs", "tools/verify/omarchy-render-budget.mjs",

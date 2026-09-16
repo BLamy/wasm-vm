@@ -5,14 +5,57 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
   R3_IDENTITIES, remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
 
 const options = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm, renderer: null, lp: null });
+const residencyOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+  renderer: null, lp: null, experiment: "residency" });
 test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
     typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
   const base = { urlArg: "local", pair: "pair", chunks: "chunks", arm: "control", renderer: null, lp: null };
   for (const mutation of [{ urlArg: "https://wasm-vm.pages.dev" }, { urlArg: "selftest" }, { pair: "" },
-    { chunks: "" }, { arm: "" }, { arm: true }, { renderer: "llvmpipe" }, { lp: "1" }, { timeout: "300000" }]) {
+    { chunks: "" }, { arm: "" }, { arm: true }, { renderer: "llvmpipe" }, { lp: "1" }, { timeout: "300000" },
+    { experiment: "cap-1024" }, { experiment: "" }, { experiment: null }]) {
     assert.throws(() => inputTrialOptions({ ...base, ...mutation }));
   }
+});
+test("residency URLs differ only in the fixed module cap with recycling disabled", () => {
+  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
+  const controlOptions = residencyOptions("control"), candidateOptions = residencyOptions("candidate");
+  for (const trial of [controlOptions, candidateOptions]) {
+    assert.equal(trial.recycling, false);
+    assert.equal(trial.readbackMs, 120000);
+    assert.equal(trial.startupMs, 300000);
+  }
+  assert.equal(controlOptions.jitResidencyCap, 24);
+  assert.equal(candidateOptions.jitResidencyCap, 256);
+  const control = inputTrialUrl(base, controlOptions), candidate = inputTrialUrl(base, candidateOptions);
+  assert.equal(control.searchParams.get("jitColdCounterRecycling"), "0");
+  assert.equal(candidate.searchParams.get("jitColdCounterRecycling"), "0");
+  assert.equal(control.searchParams.get("jitResidency"), "repack-off");
+  assert.equal(candidate.searchParams.get("jitResidency"), "cap-256");
+  candidate.searchParams.set("jitResidency", "repack-off");
+  assert.equal(control.href, candidate.href);
+  assert.throws(() => inputTrialUrl(base, { ...candidateOptions, recycling: true }));
+  assert.throws(() => inputTrialUrl(base.replace("#ide", "&jitResidency=cap-1024#ide"), candidateOptions));
+});
+test("residency checks the actual selected cap and rejects recycling or policy drift", () => {
+  const state = { jit: { hasExecutor: true, admissionProbe: false,
+    coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
+    decodedCacheEntries: 4096, jitResidencyPolicy: "cap-256", jitResidencyCap: 256,
+    entryCost: { timingEnabled: false } }, clock: { mode: "icount", clockDiv: 64 } };
+  assertInputTrialRuntime(state, residencyOptions("candidate"));
+  assert.throws(() => assertInputTrialRuntime(state, residencyOptions("control")));
+  for (const [key, value] of [["jitResidencyCap", 24], ["jitResidencyCap", 1024],
+    ["jitResidencyPolicy", "repack-off"], ["decodedCacheEntries", 16384],
+    ["coldCounterRecycling", { ...state.jit.coldCounterRecycling, enabled: true }]]) {
+    const bad = structuredClone(state); bad.jit[key] = value;
+    assert.throws(() => assertInputTrialRuntime(bad, residencyOptions("candidate")));
+  }
+  state.jit.jitResidencyCap = 24; state.jit.jitResidencyPolicy = "repack-off";
+  assertInputTrialRuntime(state, residencyOptions("control"));
+});
+test("pair driver rejects unknown experiments before starting any arm", async () => {
+  const { runInputTrialPair } = await import("./omarchy-recycling-ab.mjs");
+  await assert.rejects(runInputTrialPair("unused", "cap-1024"), /unsupported input-trial experiment/u);
 });
 test("arm URLs have exactly one policy difference and forbid inherited query tuning", () => {
   const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
