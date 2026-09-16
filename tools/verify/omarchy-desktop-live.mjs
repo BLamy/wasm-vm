@@ -509,7 +509,7 @@ const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
 let loaderManifestResponse = null;
-if (mode === "capture" || coldPair || inputTrial) {
+if (mode === "capture" || coldPair || ownedRecording) {
   // Retain the exact response delivered to the actual loader. Chrome can discard
   // a worker request's CDP body while the large snapshot is downloading, even
   // when response.body() was requested at the response event. APIResponse owns
