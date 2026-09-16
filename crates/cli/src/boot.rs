@@ -1649,7 +1649,8 @@ impl KeyboardProof {
             };
             let mut state = state.borrow_mut();
             use wasm_vm_core::dev::virtio::input::EV_KEY;
-            use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEY_B};
+            use wasm_vm_core::dev::virtio::input::keyboard::KEY_A;
+            const KEY_B: u16 = 48; // Linux input-event-codes.h; completion sentinel only.
             if let Some(pairs) = self.burst_pairs {
                 // A proof fixture must not drop events in the host before testing the
                 // Linux client's bounded queue. This does not change normal input policy.

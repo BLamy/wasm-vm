@@ -1710,8 +1710,8 @@ verify-E5_5-T03ap:
 .PHONY: verify-E5_5-T03aq
 verify-E5_5-T03aq:
 	cargo fmt --check
-	cargo clippy -p wasm-vm-cli -- -D warnings
-	cargo test -p wasm-vm-cli --bin wasm-vm cli_config_tests
-	cargo build --release -p wasm-vm-cli --bin wasm-vm
+	cargo clippy -p wasm-vm-cli --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --features gpu-trace --bin wasm-vm cli_config_tests
+	cargo build --release -p wasm-vm-cli --features gpu-trace --bin wasm-vm
 	python3 tools/build-omarchy-input-kernel.py $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
 	python3 tools/verify/omarchy-evdev-burst.py $(or $(EVDEV_PROOF_OUT),evidence/omarchy-profile/evdev-burst-r1) $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
