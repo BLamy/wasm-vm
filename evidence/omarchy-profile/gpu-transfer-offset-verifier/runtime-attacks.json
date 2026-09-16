@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "files": {
+    "crates/core/src/dev/virtio/gpu/resources.rs": {
+      "size": 63306,
+      "sha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f"
+    },
+    "crates/core/src/dev/virtio/gpu/mod.rs": {
+      "size": 169241,
+      "sha256": "035c9ddce5b9bcaadc96257aa067c12fcea50235096660783728e82f59d971bf"
+    },
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+    }
+  },
+  "attacks": [
+    {
+      "name": "changed bytes: crates/core/src/dev/virtio/gpu/resources.rs",
+      "rejected": true
+    },
+    {
+      "name": "changed size: crates/core/src/dev/virtio/gpu/resources.rs",
+      "rejected": true
+    },
+    {
+      "name": "missing actual: crates/core/src/dev/virtio/gpu/resources.rs",
+      "rejected": true
+    },
+    {
+      "name": "missing frozen: crates/core/src/dev/virtio/gpu/resources.rs",
+      "rejected": true
+    },
+    {
+      "name": "changed bytes: crates/core/src/dev/virtio/gpu/mod.rs",
+      "rejected": true
+    },
+    {
+      "name": "changed size: crates/core/src/dev/virtio/gpu/mod.rs",
+      "rejected": true
+    },
+    {
+      "name": "missing actual: crates/core/src/dev/virtio/gpu/mod.rs",
+      "rejected": true
+    },
+    {
+      "name": "missing frozen: crates/core/src/dev/virtio/gpu/mod.rs",
+      "rejected": true
+    },
+    {
+      "name": "changed bytes: web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "rejected": true
+    },
+    {
+      "name": "changed size: web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "rejected": true
+    },
+    {
+      "name": "missing actual: web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "rejected": true
+    },
+    {
+      "name": "missing frozen: web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "rejected": true
+    },
+    {
+      "name": "extra actual role",
+      "rejected": true
+    },
+    {
+      "name": "extra frozen role",
+      "rejected": true
+    },
+    {
+      "name": "wrong task",
+      "rejected": true
+    },
+    {
+      "name": "AO WASM substituted for corrected runtime",
+      "rejected": true
+    },
+    {
+      "name": "invalid size 0",
+      "rejected": true
+    },
+    {
+      "name": "invalid size -1",
+      "rejected": true
+    },
+    {
+      "name": "invalid size 1.5",
+      "rejected": true
+    },
+    {
+      "name": "invalid size 9007199254740992",
+      "rejected": true
+    },
+    {
+      "name": "invalid size 1602266",
+      "rejected": true
+    },
+    {
+      "name": "invalid digest ffff length 63",
+      "rejected": true
+    },
+    {
+      "name": "invalid digest ffff length 65",
+      "rejected": true
+    },
+    {
+      "name": "invalid digest FFFF length 64",
+      "rejected": true
+    },
+    {
+      "name": "invalid digest gggg length 64",
+      "rejected": true
+    },
+    {
+      "name": "default AS audit rejects corrected-runtime substitution",
+      "rejected": true
+    }
+  ],
+  "historicalAsDefaultHeld": true
+}

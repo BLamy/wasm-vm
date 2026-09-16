@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 1 test
+
+thread 'dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence' (28120974) panicked at crates/core/src/dev/virtio/gpu/mod.rs:3937:9:
+assertion `left == right` failed
+  left: 3405643778
+ right: 3405643777
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... FAILED
+
+failures:
+
+failures:
+    dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 355 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`

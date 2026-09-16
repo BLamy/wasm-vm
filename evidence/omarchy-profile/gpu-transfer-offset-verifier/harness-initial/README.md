@@ -1,0 +1,1 @@
+The initial critic runner used the top-level rlib parent as its dependency search path. rustc returned E0463 before any probe ran or sabotage was applied. Correcting the runner to target/debug/deps is a harness correction, not a candidate finding. The original source was restored by finally; these failed logs are preserved.

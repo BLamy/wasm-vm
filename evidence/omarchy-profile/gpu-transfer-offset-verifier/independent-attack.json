@@ -1,0 +1,167 @@
+{
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "clone": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+  "steps": [
+    {
+      "label": "clean-build",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--message-format=json"
+      ],
+      "code": 0,
+      "logSha256": "6f473f0d84feca62ce320cfe4691f4e6af2e4364eb400007ad9d09b039345e54"
+    },
+    {
+      "label": "clean-compile",
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "--test",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs",
+        "--extern",
+        "wasm_vm_core=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/libwasm_vm_core.rlib",
+        "-L",
+        "dependency=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/deps",
+        "-o",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-clean"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "clean",
+      "command": [
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-clean",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "code": 0,
+      "logSha256": "c46fabb46d9447ba2758173f444823adc8585fe284d8aa743071cf3cf861aa58"
+    },
+    {
+      "label": "worker-literal-sabotage",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly",
+        "--",
+        "--nocapture"
+      ],
+      "code": 101,
+      "logSha256": "28b8010766feadcf5257673b32228d01066a8173bb9b7e10ccca9836faae1252"
+    },
+    {
+      "label": "worker-queue-sabotage",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "gpu_transfer_controlq_copies_sg_rows_and_echoes_fence",
+        "--",
+        "--nocapture"
+      ],
+      "code": 101,
+      "logSha256": "b6783f27798e9eac4279f63623f8ee9cd6652d76817012b512d3bd7b1826a26b"
+    },
+    {
+      "label": "sabotaged-build",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--message-format=json"
+      ],
+      "code": 0,
+      "logSha256": "30b58841a9f94342eccab1b8510444d4de92ec8781204f0935cd628f45da4a99"
+    },
+    {
+      "label": "sabotaged-compile",
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "--test",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs",
+        "--extern",
+        "wasm_vm_core=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/libwasm_vm_core.rlib",
+        "-L",
+        "dependency=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/deps",
+        "-o",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-sabotaged"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "sabotaged",
+      "command": [
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-sabotaged",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "code": 101,
+      "logSha256": "1a58ac4154a1ac6395008ed21585c552955d23ce3df85b37f3b7ffb92af40f4f"
+    },
+    {
+      "label": "restored-build",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--message-format=json"
+      ],
+      "code": 0,
+      "logSha256": "1e432284ddb8068bf2edea938836232a3ce9b805fa4750778b9a3bc9262e4b96"
+    },
+    {
+      "label": "restored-compile",
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "--test",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs",
+        "--extern",
+        "wasm_vm_core=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/libwasm_vm_core.rlib",
+        "-L",
+        "dependency=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/deps",
+        "-o",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-restored"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "restored",
+      "command": [
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-restored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "code": 0,
+      "logSha256": "b685ac57e369053b87858ab1b6fb7368ac217c0d1bcebab8da62050b382f827a"
+    }
+  ],
+  "passed": true,
+  "originalSourceSha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f",
+  "cleanBinarySha256": "9ff346edf39d51e6a6758cace287ee5676aa51fbc0377670a54b2ea806dbb518",
+  "sabotagedSourceSha256": "e45acb1da433bb5019024a9fef18a662b05a421a501b110edc87710c64c782a6",
+  "sabotageDiff": "diff --git a/crates/core/src/dev/virtio/gpu/resources.rs b/crates/core/src/dev/virtio/gpu/resources.rs\nindex 6280cd2d..7ff8fc47 100644\n--- a/crates/core/src/dev/virtio/gpu/resources.rs\n+++ b/crates/core/src/dev/virtio/gpu/resources.rs\n@@ -784,7 +784,17 @@ impl ResourceMap {\n             .ok_or(TransferError::InvalidParameter)?;\n         // `offset` names the first source byte in the backing stream. Linux already\n         // includes x * cpp + y * pitch; the rectangle origin addresses only the shadow.\n-        let first_row = offset;\n+        let first_row = offset\n+            .checked_add(\n+                u64::from(rect.y)\n+                    .checked_mul(stride)\n+                    .ok_or(TransferError::InvalidParameter)?,\n+            )\n+            .and_then(|start| {\n+                start\n+                    .checked_add(u64::from(rect.x).checked_mul(core::mem::size_of::<u32>() as u64)?)\n+            })\n+            .ok_or(TransferError::InvalidParameter)?;\n         let last_row_advance = u64::from(rect.height.saturating_sub(1))\n             .checked_mul(stride)\n             .ok_or(TransferError::InvalidParameter)?;\n",
+  "sabotagedBinarySha256": "aba4c6de7bd0282c9ad42837f2361d546f6aa72f04cd87b8d2619cdb37cb5bc2",
+  "sourceRestored": true,
+  "restoredBinarySha256": "f2cc01e809fd75cbe7a44d75ab43492dd5402835a6438e5d1addac099b62113b",
+  "trackedCloneClean": true
+}

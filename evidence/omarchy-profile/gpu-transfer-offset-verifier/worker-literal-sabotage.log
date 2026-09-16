@@ -1,0 +1,21 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.78s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 1 test
+
+thread 'dev::virtio::gpu::resources::tests::gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly' (28120951) panicked at crates/core/src/dev/virtio/gpu/resources.rs:1240:13:
+assertion `left == right` failed
+  left: [0, 0, 0, 0, 0, 0, 2768240652, 2768240653, 2768240654, 0, 0, 2768240657, 2768240658, 2768240659, 0, 0, 0, 0, 0, 0]
+ right: [0, 0, 0, 0, 0, 0, 2768240646, 2768240647, 2768240648, 0, 0, 2768240651, 2768240652, 2768240653, 0, 0, 0, 0, 0, 0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test dev::virtio::gpu::resources::tests::gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly ... FAILED
+
+failures:
+
+failures:
+    dev::virtio::gpu::resources::tests::gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 355 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`

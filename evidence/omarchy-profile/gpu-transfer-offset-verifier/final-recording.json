@@ -1,0 +1,344 @@
+{
+  "passed": true,
+  "purpose": "physical/byte evidence only; image inspection remains required",
+  "reportSha256": "9267a589a00aedba038dc9a3b36ad9b823e002a94530073c438c590a38c2eb19",
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "helpersChecked": 45,
+  "wasmSha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+  "captureMs": 15963,
+  "postNonceFrames": [
+    4,
+    5
+  ],
+  "servedRows": 96,
+  "gitResourcesChecked": 67,
+  "trustedKeyEvents": 128,
+  "acknowledgedKeyAndSyncCalls": 256,
+  "serialCommands": [
+    {
+      "rid": "mu4px83d0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-16T23:14:45.433Z",
+      "completedAt": "2026-09-16T23:15:05.330Z",
+      "response": {
+        "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x555584dc5b70\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 484\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x5555851adf40\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 484\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4pxtb91",
+      "command": "sha256sum /sys/kernel/notes",
+      "sentAt": "2026-09-16T23:15:12.933Z",
+      "completedAt": "2026-09-16T23:15:15.472Z",
+      "response": {
+        "stdout": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f  /sys/kernel/notes\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4pxv9t2",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T23:15:15.473Z",
+      "completedAt": "2026-09-16T23:15:28.146Z",
+      "response": {
+        "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55558518d650\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 473,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4py7693",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:30.897Z",
+      "completedAt": "2026-09-16T23:15:32.670Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4py9be4",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:33.674Z",
+      "completedAt": "2026-09-16T23:15:35.725Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pybo95",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:36.729Z",
+      "completedAt": "2026-09-16T23:15:38.915Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pye4u6",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:39.918Z",
+      "completedAt": "2026-09-16T23:15:42.251Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pygpi7",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:43.254Z",
+      "completedAt": "2026-09-16T23:15:45.132Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyixk8",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:46.136Z",
+      "completedAt": "2026-09-16T23:15:47.884Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyl1z9",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:48.887Z",
+      "completedAt": "2026-09-16T23:15:51.427Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pynsf10",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:52.431Z",
+      "completedAt": "2026-09-16T23:15:54.903Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyqgy11",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:55.906Z",
+      "completedAt": "2026-09-16T23:15:58.359Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyt4z12",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:15:59.363Z",
+      "completedAt": "2026-09-16T23:16:01.618Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyvnh13",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:02.621Z",
+      "completedAt": "2026-09-16T23:16:04.991Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pyy9614",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:05.994Z",
+      "completedAt": "2026-09-16T23:16:08.481Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pz0y515",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:09.485Z",
+      "completedAt": "2026-09-16T23:16:11.669Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pz3eo16",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:12.672Z",
+      "completedAt": "2026-09-16T23:16:15.035Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pz60717",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:16.039Z",
+      "completedAt": "2026-09-16T23:16:18.361Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pz8kl18",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:19.365Z",
+      "completedAt": "2026-09-16T23:16:21.660Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzb4719",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:22.663Z",
+      "completedAt": "2026-09-16T23:16:25.074Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzdr220",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:26.078Z",
+      "completedAt": "2026-09-16T23:16:28.489Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzgdx21",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:29.493Z",
+      "completedAt": "2026-09-16T23:16:31.757Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pziwp22",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:32.761Z",
+      "completedAt": "2026-09-16T23:16:35.105Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzlho23",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:36.108Z",
+      "completedAt": "2026-09-16T23:16:38.347Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pznzp24",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:39.349Z",
+      "completedAt": "2026-09-16T23:16:41.661Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzqjs25",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:42.664Z",
+      "completedAt": "2026-09-16T23:16:45.241Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pztbb26",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:46.247Z",
+      "completedAt": "2026-09-16T23:16:48.425Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzvro27",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:49.428Z",
+      "completedAt": "2026-09-16T23:16:51.520Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4pzy5n28",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:52.523Z",
+      "completedAt": "2026-09-16T23:16:55.331Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 75
+      }
+    },
+    {
+      "rid": "mu4q013j29",
+      "command": "if [ -f '/tmp/desktop-keys-670f9732fd0339b6' ]; then cat '/tmp/desktop-keys-670f9732fd0339b6'; else (exit 75); fi",
+      "sentAt": "2026-09-16T23:16:56.335Z",
+      "completedAt": "2026-09-16T23:16:58.814Z",
+      "response": {
+        "stdout": "160cbfd4ae8e0c08\n",
+        "exit": 0
+      }
+    }
+  ],
+  "completedReads": 27,
+  "pendingReads": 0,
+  "nonceReplies": 1,
+  "nonceLatencyMs": 87920,
+  "cleanupMs": 166,
+  "images": [
+    {
+      "file": "desktop.png",
+      "size": 10912,
+      "sha256": "2b9c0a0815e29d5e5385df5ae68cc08539c6919c559d951b6da658db280be155",
+      "capturedAt": "2026-09-16T23:15:12.929Z"
+    },
+    {
+      "file": "prepared-direct.png",
+      "size": 11336,
+      "sha256": "6f9aa9ba446807c988dc28e89e62919088b97c6a4be668d5eca88f944b44463d",
+      "capturedAt": "2026-09-16T23:15:28.179Z"
+    },
+    {
+      "file": "desktop-keyboard.png",
+      "size": 10908,
+      "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24",
+      "capturedAt": "2026-09-16T23:17:14.778Z"
+    }
+  ]
+}

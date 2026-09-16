@@ -1,0 +1,32 @@
+
+running 6 tests
+test detached_and_destination_bounds_do_not_mutate ... ok
+test independent_sg_partition_seeds_preserve_the_literal_oracle ... 
+thread 'independent_sg_partition_seeds_preserve_the_literal_oracle' (28121304) panicked at /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs:187:13:
+assertion `left == right` failed: seed=7c0f11f29b47a503 case=0
+  left: Err(InvalidParameter)
+ right: Ok(())
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test invalid_later_backing_range_is_prevalidated_before_the_first_row ... ok
+test invalid_tail_and_large_offsets_preserve_shadow_damage_and_guest_ram ... rejected offset=4, shadow/damage/RAM unchanged
+rejected offset=27, shadow/damage/RAM unchanged
+rejected offset=18446744073709551612, shadow/damage/RAM unchanged
+rejected offset=18446744073709551615, shadow/damage/RAM unchanged
+ok
+test literal_unaligned_source_crosses_sg_and_ram_pages_at_exact_end ... 
+thread 'literal_unaligned_source_crosses_sg_and_ram_pages_at_exact_end' (28121307) panicked at /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs:61:5:
+assertion `left == right` failed
+  left: Err(InvalidParameter)
+ right: Ok(())
+FAILED
+test zero_area_retains_checked_noop_behavior ... ok
+
+failures:
+
+failures:
+    independent_sg_partition_seeds_preserve_the_literal_oracle
+    literal_unaligned_source_crosses_sg_and_ram_pages_at_exact_end
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

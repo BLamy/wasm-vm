@@ -1,0 +1,9 @@
+error[E0463]: can't find crate for `wasm_vm_core`
+ --> /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs:2:5
+  |
+2 | use wasm_vm_core::dev::virtio::gpu::protocol::{FORMAT_B8G8R8A8_UNORM, Rect};
+  |     ^^^^^^^^^^^^ can't find crate
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0463`.

@@ -1,0 +1,39 @@
+{
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "clone": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+  "steps": [
+    {
+      "label": "clean-build",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--message-format=json"
+      ],
+      "code": 0,
+      "logSha256": "0cd942400cd5d756f20226ecc5be76cdb35865311a6b13725703b29331defed1"
+    },
+    {
+      "label": "clean-compile",
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "--test",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-verifier/independent-offset-attack.rs",
+        "--extern",
+        "wasm_vm_core=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug/libwasm_vm_core.rlib",
+        "-L",
+        "dependency=/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/debug",
+        "-o",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/critic-offset-clean"
+      ],
+      "code": 1,
+      "logSha256": "68b42a63266ab216d49c0d648b6a2cfdba503a2424fbbf71f5ce29e3b5369c7d"
+    }
+  ],
+  "passed": false,
+  "originalSourceSha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f",
+  "sourceRestored": true
+}
