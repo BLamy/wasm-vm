@@ -1,0 +1,417 @@
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 4adc081b..a1c3b440 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -27,6 +27,7 @@ import { captureWorkerCost, fenceWorkerCostInput } from "./omarchy-worker-cost-c
+ import { modePreparationOptions, prepareSmallerDesktop } from "./omarchy-mode-preparation.mjs";
+ import { requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
+ import { prepareOpaqueDesktop } from "./omarchy-opaque-preparation.mjs";
++import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
+ 
+ const [urlArg, output, mode = "verify"] = process.argv.slice(2);
+ if (urlArg === "--selftest-presentation") {
+@@ -59,6 +60,7 @@ const ownedRecording = inputTrial || modePair;
+ const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
+ const workerCost = process.env.OMARCHY_WORKER_COST === "1";
+ const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
++const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
+ const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+ const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+ if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+@@ -103,9 +105,14 @@ if (process.env.OMARCHY_WORKER_COST !== undefined) {
+ }
+ if (process.env.OMARCHY_OPAQUE_FOOT !== undefined) {
+   assert.ok(opaqueFoot && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
+-    && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
++    && !directOpaque && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
+   "opaque Foot requires its isolated fixed residency candidate input trial");
+ }
++if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
++  assert.ok(directOpaque && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
++    && !opaqueFoot && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
++  "direct opaque requires its isolated fixed residency candidate input trial");
++}
+ let modePairOutput = null;
+ if (modePair) {
+   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
+@@ -427,6 +434,7 @@ const report = { url, mode, startedAt: new Date().toISOString(), errors: [], obs
+ if (renderBudget) report.renderBudgetRequested = true;
+ if (compositorMode) report.compositorModeRequested = true;
+ if (opaqueFoot) report.opaqueFootRequested = true;
++if (directOpaque) report.directOpaqueRequested = true;
+ if (coldPair) report.progressCaptureErrors = [];
+ if (ownedRecording) {
+   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
+@@ -434,6 +442,7 @@ if (ownedRecording) {
+     "tools/verify/omarchy-worker-cost.mjs", "tools/verify/omarchy-worker-cost-capture.mjs",
+     "tools/verify/omarchy-mode-preparation.mjs", "tools/verify/omarchy-prepare-mode.mjs",
+     "tools/verify/omarchy-opaque-foot.mjs", "tools/verify/omarchy-opaque-foot-command.mjs",
++    "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
+     "tools/verify/omarchy-input-audit.mjs",
+     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
+     "tools/verify/e5-t22c-cpu-profile.mjs",
+@@ -1207,6 +1216,12 @@ async function runLive() {
+     assertOriginalPresentation(report.opaqueFoot.presentation);
+     await startupCall(() => screenshot("opaque-foot.png"));
+   }
++  if (directOpaque) {
++    await requestDirectOpaque((command, timeout) => exec(command, page, "direct-opaque:configure", timeout), coldDeadline, report);
++    report.directOpaque.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
++    assertOriginalPresentation(report.directOpaque.presentation);
++    await startupCall(() => screenshot("direct-opaque.png"));
++  }
+   if (coldPair) {
+     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
+       shipped: window.__linux.restoredFromBootSnapshot(),
+@@ -1256,7 +1271,7 @@ async function runLive() {
+   const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
+   if (inputTrial) {
+     assertInputTrialRuntime(beforeInput, trial);
+-    if (opaqueFoot) assertOriginalPresentation(beforeInput.presentation);
++    if (opaqueFoot || directOpaque) assertOriginalPresentation(beforeInput.presentation);
+     remainingTrialMs(coldDeadline);
+     report.startup.readyProvenAt = new Date().toISOString();
+     report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
+@@ -1283,6 +1298,7 @@ async function runLive() {
+   try {
+     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
++    if (directOpaque) report.directOpaqueInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     report.keyboard.stage = "post-enter-focus";
+     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
+       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
+@@ -1459,7 +1475,7 @@ try {
+     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
+     // Disconnect the recorder's Playwright client as well as closing the owned
+     // browser server; debugger sessions must not retain its websocket transport.
+-    if (failureCheckpoint || workerCost || modePair || opaqueFoot) {
++    if (failureCheckpoint || workerCost || modePair || opaqueFoot || directOpaque) {
+       try {
+         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
+         report.cleanup.clientClosed = true;
+diff --git a/tools/verify/omarchy-desktop-live.test.mjs b/tools/verify/omarchy-desktop-live.test.mjs
+index 29e6e578..03bb5a6e 100644
+--- a/tools/verify/omarchy-desktop-live.test.mjs
++++ b/tools/verify/omarchy-desktop-live.test.mjs
+@@ -205,7 +205,7 @@ test("harness-only actual cold orchestration inspects storage before app and ret
+     setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
+   };
+   const bindings = {
+-    coldPair: true, inputTrial: false, opaqueFoot: false, modePair: false, ownedRecording: false,
++    coldPair: true, inputTrial: false, opaqueFoot: false, directOpaque: false, modePair: false, ownedRecording: false,
+     coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
+     URL, Date, assert, remainingStartupMs, assertColdRestore,
+     assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },
+diff --git a/tools/verify/omarchy-direct-opaque-command.mjs b/tools/verify/omarchy-direct-opaque-command.mjs
+new file mode 100644
+index 00000000..fbdffa6e
+--- /dev/null
++++ b/tools/verify/omarchy-direct-opaque-command.mjs
+@@ -0,0 +1,77 @@
++// Direct window properties, with actual readback in the same synchronous batch.
++import assert from "node:assert/strict";
++import { remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
++import { auditSerial } from "./omarchy-latency-receipt.mjs";
++
++const properties = ["opaque", "force_rgbx", "opacity", "opacity_inactive", "opacity_fullscreen",
++  "opacity_override", "opacity_inactive_override", "opacity_fullscreen_override"];
++export const DIRECT_OPAQUE_COMMAND = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch '${[
++  ...properties.map(prop => `dispatch setprop active ${prop} 1`),
++  ...properties.map(prop => `getprop active ${prop}`), "j/activewindow",
++].join("; ")}'`;
++
++export function assertDirectOpaqueProperties(response) {
++  assert.equal(response?.exit, 0, "direct property batch failed");
++  const lines = response.stdout.split(/\r?\n/u).map(s => s.trim()).filter(Boolean);
++  assert.ok(lines.length > 16, "missing direct property or active-window output");
++  assert.deepEqual(lines.slice(0, 8), Array(8).fill("ok"), "every direct write must succeed");
++  for (let i = 0; i < properties.length; i++) {
++    if (i >= 2 && i <= 4) assert.match(lines[8+i], /^1(?:\.0+)?$/u, `${properties[i]} is not one`);
++    else assert.equal(lines[8+i], "true", `${properties[i]} is not true`);
++  }
++  const foot = JSON.parse(lines.slice(16).join("\n"));
++  assert.equal(foot.class, "foot"); assert.equal(foot.mapped, true); assert.equal(foot.hidden, false);
++  assert.match(foot.address, /^0x[0-9a-f]+$/iu); assert.notEqual(BigInt(foot.address), 0n);
++  assert.ok(Array.isArray(foot.at) && foot.at.length === 2 && Array.isArray(foot.size) && foot.size.length === 2);
++  const [x,y] = foot.at, [width,height] = foot.size;
++  assert.ok([x,y,width,height].every(Number.isFinite));
++  assert.ok(x >= 0 && y >= 26 && width >= 200 && height >= 100 && x+width <= 1280 && y+height <= 800);
++  return foot;
++}
++
++export async function requestDirectOpaque(exec, deadline, report) {
++  const receipt = report.directOpaque = { command: DIRECT_OPAQUE_COMMAND, requestCount: 0,
++    startedAt: new Date().toISOString(), deadlineAtMs: deadline, status: "requesting" };
++  try {
++    const timeout = remainingTrialMs(deadline); receipt.requestCount++;
++    receipt.response = await withinTrialDeadline(() => exec(DIRECT_OPAQUE_COMMAND, timeout), deadline, "direct opaque startup");
++    receipt.respondedAt = new Date().toISOString();
++    receipt.foot = assertDirectOpaqueProperties(receipt.response);
++    receipt.status = "properties-confirmed";
++  } catch (error) { receipt.status = "configuration-failed"; receipt.error = String(error); throw error; }
++  finally { receipt.finishedAt = new Date().toISOString(); }
++}
++
++export function auditDirectOpaque(report) {
++  assert.equal(report.directOpaqueRequested, true);
++  const receipt = report.directOpaque;
++  const read = report.keyboard ? `if [ -f '${report.keyboard.guestFile}' ]; then cat '${report.keyboard.guestFile}'; else (exit 75); fi` : null;
++  const serial = auditSerial(report.workerTraffic, [DIRECT_OPAQUE_COMMAND, ...(read ? [read] : [])]);
++  assert.ok(serial.every(row => [DIRECT_OPAQUE_COMMAND, read,
++    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers"].includes(row.command)), "unexpected serial command");
++  const commands = serial.filter(row => row.command === DIRECT_OPAQUE_COMMAND);
++  if (!receipt) {
++    assert.equal(commands.length, 0); assert.equal(report.keyboard, undefined);
++    assert.equal(report.trial.outcome, "startup-failed-input-not-tested");
++    return { configuration: "not-reached", physicalInputTested: false };
++  }
++  assert.equal(receipt.command, DIRECT_OPAQUE_COMMAND);
++  assert.equal(receipt.requestCount, 1); assert.equal(commands.length, 1);
++  assert.equal(receipt.deadlineAtMs, Date.parse(report.startup.deadlineAt));
++  const wire = commands[0];
++  assert.ok(Date.parse(wire.sentAt) >= Date.parse(receipt.startedAt));
++  assert.ok(Date.parse(wire.sentAt) < receipt.deadlineAtMs);
++  if (receipt.response) {
++    assert.deepEqual(receipt.response, wire.response, "reported properties disagree with actual wire");
++    assert.ok(Date.parse(wire.completedAt) <= Date.parse(receipt.respondedAt));
++    assert.ok(Date.parse(receipt.respondedAt) < receipt.deadlineAtMs);
++  }
++  if (receipt.status === "properties-confirmed") {
++    assert.deepEqual(receipt.foot, assertDirectOpaqueProperties(receipt.response));
++    if (report.keyboard) assert.ok(Date.parse(report.keyboard.startedAt) >= Date.parse(receipt.respondedAt));
++  } else {
++    assert.equal(receipt.status, "configuration-failed");
++    assert.equal(report.keyboard, undefined, "unconfirmed properties cannot reach physical input");
++  }
++  return { configuration: receipt.status, wire, physicalInputTested: Boolean(report.keyboard?.typedAt) };
++}
+diff --git a/tools/verify/omarchy-direct-opaque.mjs b/tools/verify/omarchy-direct-opaque.mjs
+new file mode 100644
+index 00000000..7ba5ff8f
+--- /dev/null
++++ b/tools/verify/omarchy-direct-opaque.mjs
+@@ -0,0 +1,62 @@
++#!/usr/bin/env node
++// One fixed direct-property experiment. No global refresh or runtime change.
++import assert from "node:assert/strict";
++import fs from "node:fs/promises";
++import { createWriteStream } from "node:fs";
++import { spawn, execFileSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { fileURLToPath } from "node:url";
++import path from "node:path";
++import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
++import { auditInputReport } from "./omarchy-input-audit.mjs";
++import { DIRECT_OPAQUE_COMMAND, auditDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
++import { assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
++
++const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
++assert.ok(process.argv[2], "usage: omarchy-direct-opaque.mjs NEW_OUTPUT_DIR");
++const out = path.resolve(process.argv[2]); await fs.mkdir(out, { recursive: false });
++const sha = bytes => createHash("sha256").update(bytes).digest("hex");
++const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim();
++const receipt = { purpose: "fixed-direct-opaque-input", acceptanceClaim: false, head,
++  wasmSha256: sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))),
++  startedAt: new Date().toISOString() };
++const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
++await save();
++const env = { ...process.env };
++for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[key];
++Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: "residency",
++  OMARCHY_DIRECT_OPAQUE: "1", OMARCHY_CANDIDATE_PAIR_DIR: path.join(repo, "target/omarchy-sdr-r3-snapshot"),
++  OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
++receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
++const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
++const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
++child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
++receipt.exit = await watchOwnedTrial(child);
++child.stdout.unpipe(log); child.stderr.unpipe(log); await new Promise(resolve => log.end(resolve));
++receipt.finishedAt = new Date().toISOString(); await save();
++if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
++  child.unref(); child.stdout.destroy(); child.stderr.destroy(); if (child.connected) child.disconnect();
++  throw Error("direct opaque trial did not close normally; UNPROVEN");
++}
++const bytes = await fs.readFile(path.join(out, "desktop/report.json"));
++const report = JSON.parse(bytes);
++try {
++  receipt.reportSha256 = sha(bytes);
++  receipt.input = auditInputReport(report, { head, wasmSha256: receipt.wasmSha256, arm: "candidate",
++    startupCommands: [DIRECT_OPAQUE_COMMAND] });
++  receipt.configuration = auditDirectOpaque(report);
++  for (const row of report.observations.filter(row => row.runtime)) assertOriginalPresentation(row.runtime.presentation);
++  if (report.keyboard?.typedAt) {
++    const fence = report.directOpaqueInputFence;
++    assert.equal(fence.method, "Input.setIgnoreInputEvents"); assert.equal(fence.ignore, true);
++    assert.ok(Date.parse(fence.startedAt) >= report.keyboard.enteredAtMs);
++    assert.ok(Date.parse(fence.acknowledgedAt) >= Date.parse(fence.startedAt));
++    assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt));
++    assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(fence.startedAt)));
++  }
++  receipt.result = report.result;
++  receipt.desktopAcceptance = false; // Root and separate critic must personally inspect real response.
++  receipt.visualInspectionRequired = true;
++} catch (error) { receipt.auditError = String(error); throw error; }
++finally { await save(); }
++console.log(JSON.stringify(receipt, null, 2));
+diff --git a/tools/verify/omarchy-direct-opaque.test.mjs b/tools/verify/omarchy-direct-opaque.test.mjs
+new file mode 100644
+index 00000000..b7384d3c
+--- /dev/null
++++ b/tools/verify/omarchy-direct-opaque.test.mjs
+@@ -0,0 +1,84 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { formatRpcCommand } from "../../web/guest-rpc.js";
++import { DIRECT_OPAQUE_COMMAND, assertDirectOpaqueProperties, requestDirectOpaque,
++  auditDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
++
++const iso = value => new Date(value).toISOString();
++const foot = { address: "0x55555eed", class: "foot", mapped: true, hidden: false, at: [12,38], size: [1256,750] };
++const values = [...Array(8).fill("ok"), "true", "true", "1", "1.000000", "1", "true", "true", "true"];
++const response = { exit: 0, stdout: `${values.join("\n\n\n")}\n\n\n${JSON.stringify(foot,null,2)}\n` };
++function fixture() {
++  return { directOpaqueRequested: true, startup: { deadlineAt: iso(5000) },
++    directOpaque: { command: DIRECT_OPAQUE_COMMAND, requestCount: 1, startedAt: iso(1200),
++      deadlineAtMs: 5000, respondedAt: iso(1500), finishedAt: iso(1500),
++      status: "properties-confirmed", response: structuredClone(response), foot: structuredClone(foot) },
++    trial: { outcome: "startup-failed-input-not-tested" },
++    workerTraffic: [
++      { type: "serial-input", sent: true, bytes: [...Buffer.from(formatRpcCommand(DIRECT_OPAQUE_COMMAND,"op1"))], ms: 1300, timestamp: iso(1300) },
++      { type: "serial-output", text: `\n__WVBEGIN_op1\n${response.stdout}__WVEND_op1_0\n`, ms: 1400, timestamp: iso(1400) },
++    ] };
++}
++
++test("one synchronous direct batch contains only the specified writes then reads", async () => {
++  assert.doesNotMatch(DIRECT_OPAQUE_COMMAND, /(?: -r |eval|window_rule|reload|nonce|sendkey)/u);
++  const batch = DIRECT_OPAQUE_COMMAND.split("--batch '")[1].slice(0,-1).split("; ");
++  assert.equal(batch.length,17);
++  assert.ok(batch.slice(0,8).every(row=>row.startsWith("dispatch setprop active ") && row.endsWith(" 1")));
++  assert.ok(batch.slice(8,16).every(row=>row.startsWith("getprop active ")));
++  assert.equal(batch[16],"j/activewindow");
++  assert.deepEqual(assertDirectOpaqueProperties(response),foot);
++  const report = {}, calls = [], deadline = Date.now()+1000;
++  await requestDirectOpaque(async (command, timeout) => {
++    assert.ok(timeout>0 && timeout<=1000); calls.push(command); return response;
++  },deadline,report);
++  assert.deepEqual(calls,[DIRECT_OPAQUE_COMMAND]);
++  assert.equal(report.directOpaque.status,"properties-confirmed");
++  assert.equal(report.directOpaque.deadlineAtMs,deadline);
++});
++
++test("every property and acknowledgment is required; exit0 error strings never pass", () => {
++  for (let i=0;i<values.length;i++) {
++    const bad=[...values];bad[i]=i<8?"error":i>=10&&i<=12?"0.985":"false";
++    assert.throws(()=>assertDirectOpaqueProperties({exit:0,stdout:bad.join("\n")+"\n"+JSON.stringify(foot)}));
++    bad.splice(i,1);
++    assert.throws(()=>assertDirectOpaqueProperties({exit:0,stdout:bad.join("\n")+"\n"+JSON.stringify(foot)}));
++  }
++  for(const bad of ["ok\nHyprland IPC didn't respond in time\nCouldn't read (6)\n",values.join("\n"),
++    response.stdout+"trailing",response.stdout.replace("1.000000","1.000001")])
++    assert.throws(()=>assertDirectOpaqueProperties({exit:0,stdout:bad}));
++  assert.throws(()=>assertDirectOpaqueProperties({...response,exit:1}));
++  for(const fields of [{class:"kitty"},{mapped:false},{hidden:true},{address:"0x0"},
++    {at:[12,0]},{size:[2000,500]},{at:[12]},{size:[0,0]}])
++    assert.throws(()=>assertDirectOpaqueProperties({exit:0,stdout:values.join("\n")+"\n"+JSON.stringify({...foot,...fields})}));
++});
++
++test("expired, late and rejected configuration cannot reach input or renew the deadline", async t => {
++  t.mock.timers.enable({apis:["Date"],now:1000});
++  const report={};let calls=0;
++  await assert.rejects(requestDirectOpaque(async()=>{calls++;},999,report),/deadline/u);
++  assert.equal(calls,0);
++  await assert.rejects(requestDirectOpaque(async()=>{calls++;t.mock.timers.tick(1001);return response;},2000,report),/deadline/u);
++  assert.equal(calls,1);assert.equal(report.directOpaque.status,"configuration-failed");
++  await assert.rejects(requestDirectOpaque(async()=>({exit:0,stdout:"ok"}),3000,report));
++  assert.equal(report.directOpaque.status,"configuration-failed");
++});
++
++test("direct audit binds complete actual wire and rejects reordered, forged, duplicate and late evidence", () => {
++  assert.equal(auditDirectOpaque(fixture()).configuration,"properties-confirmed");
++  for(const mutate of [
++    r=>r.workerTraffic.pop(),
++    r=>{r.workerTraffic[1].text=r.workerTraffic[1].text.replace("true","false");},
++    r=>{r.directOpaque.foot.class="kitty";},
++    r=>r.workerTraffic.push({...r.workerTraffic[0],bytes:[...Buffer.from(formatRpcCommand(DIRECT_OPAQUE_COMMAND,"op2"))]}),
++    r=>{r.directOpaque.respondedAt=iso(5001);},
++    r=>{r.keyboard={startedAt:iso(1400)};},
++    r=>{r.workerTraffic[0].bytes=[...Buffer.from(formatRpcCommand("echo forbidden","op1"))];},
++  ]){const r=fixture();mutate(r);assert.throws(()=>auditDirectOpaque(r));}
++  const negative=fixture();delete negative.directOpaque.response;delete negative.directOpaque.respondedAt;
++  negative.directOpaque.status="configuration-failed";negative.workerTraffic.pop();
++  assert.equal(auditDirectOpaque(negative).physicalInputTested,false);
++  negative.keyboard={startedAt:iso(1600)};assert.throws(()=>auditDirectOpaque(negative));
++  const early=fixture();delete early.directOpaque;early.workerTraffic=[];
++  assert.equal(auditDirectOpaque(early).configuration,"not-reached");
++});
+diff --git a/tools/verify/omarchy-user-input.test.mjs b/tools/verify/omarchy-user-input.test.mjs
+index 41753352..a78ee9e3 100644
+--- a/tools/verify/omarchy-user-input.test.mjs
++++ b/tools/verify/omarchy-user-input.test.mjs
+@@ -6,6 +6,7 @@ import vm from "node:vm";
+ import { physicalStroke } from "./omarchy-browser-session.mjs";
+ import { assertInputTrialRuntime, inputTrialOptions } from "./omarchy-input-trial.mjs";
+ import { OPAQUE_FOOT_COMMAND, requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
++import { DIRECT_OPAQUE_COMMAND, requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
+ 
+ const source = readFileSync(new URL("./omarchy-desktop-live.mjs", import.meta.url), "utf8");
+ const trialSource = readFileSync(new URL("./omarchy-input-trial.mjs", import.meta.url), "utf8");
+@@ -28,11 +29,11 @@ const actualHelpers = [
+ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false,
+   wrongNonce = false, lateReadback = false, stalePresentation = false,
+   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
+-  lateTyping = false, opaqueFoot = false, badOpaque = false } = {}) {
++  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false } = {}) {
+   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
+   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
+   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
+-    arm: opaqueFoot ? "candidate" : "control", experiment: opaqueFoot ? "residency" : "recycling", renderer: null, lp: null });
++    arm: opaqueFoot || directOpaque ? "candidate" : "control", experiment: opaqueFoot || directOpaque ? "residency" : "recycling", renderer: null, lp: null });
+   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
+   let randomCall = 0;
+   const epoch = now, readyMs = 5;
+@@ -94,14 +95,14 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+   const state = { presentation: before, clock: { mode: "icount", clockDiv: 64 },
+     jit: { hasExecutor: true, admissionProbe: false,
+       coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
+-      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot ? 256 : 24, entryCost: { timingEnabled: false } } };
++      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque ? 256 : 24, entryCost: { timingEnabled: false } } };
+   const bindings = {
+     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
+     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
+-    coldPair: false, workerCost: false, opaqueFoot, modePair: false, ownedRecording: mode === "input-trial",
++    coldPair: false, workerCost: false, opaqueFoot, directOpaque, modePair: false, ownedRecording: mode === "input-trial",
+     coldDeadline: null, trialCaptureDeadline: null, mode,
+     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
+-    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, assertOriginalPresentation,
++    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, assertOriginalPresentation,
+     fenceWorkerCostInput: async () => { trace.push("input-fence"); return { synthetic: true }; },
+     randomBytes: () => Buffer.from((randomCall++ ? "b" : "a").repeat(16), "hex"),
+     assertRealOmarchyLayout: async () => { trace.push("layout"); },
+@@ -115,6 +116,10 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+       commands.push(command);
+       if (command === OPAQUE_FOOT_COMMAND) { trace.push("opaque-rule");
+         assert.equal(keys.length, 0); return { exit: 0, stdout: badOpaque ? "ok\ntrue\nfalse\n1" : "ok\ntrue\ntrue\n1" }; }
++      if (command === DIRECT_OPAQUE_COMMAND) { trace.push("direct-property");
++        assert.equal(keys.length,0); return { exit:0, stdout: badOpaque ? "ok\nIPC timeout" :
++          [...Array(8).fill("ok"),"true","true","1","1","1","true","true","true",
++            JSON.stringify({class:"foot",mapped:true,hidden:false,address:"0x123",at:[12,38],size:[1256,750]})].join("\n\n\n") }; }
+       if (command.endsWith("-j clients")) return { exit: 0, stdout: JSON.stringify(missingFoot ? [] :
+         [{ class: "foot", mapped: true, hidden: false, size: [1280, 800], address: "0x123" }]) };
+       if (command.endsWith("-j activewindow")) return { exit: 0, stdout: JSON.stringify({ address: wrongActive ? "0x456" : "0x123" }) };
+@@ -166,6 +171,16 @@ test("synthetic actual opaque branch verifies properties before keys and fences
+   assert.equal(bad.keys.length, 0); assert.equal(bad.report.result, undefined);
+ });
+ 
++test("synthetic actual direct-property branch reads all values before keys and fences after Enter", async () => {
++  const f=fixture({directOpaque:true});assert.equal(await f.run(),null);
++  assert.equal(f.report.result,"input-trial-physical-nonce-and-fresh-presentation");
++  assert.equal(f.report.directOpaque.status,"properties-confirmed");
++  const order=["direct-property","direct-opaque.png","key","input-fence","readback","desktop-keyboard.png"];
++  for(let i=1;i<order.length;i++)assert.ok(f.trace.indexOf(order[i-1])<f.trace.indexOf(order[i]));
++  const bad=fixture({directOpaque:true,badOpaque:true});assert.ok(await bad.run());
++  assert.equal(bad.keys.length,0);assert.equal(bad.report.result,undefined);
++});
++
+ test("synthetic capture and verify retain actual mapped-Foot and active-window checks before keys", async () => {
+   for (const mode of ["capture", "verify"]) {
+     const f = fixture({ mode, stopAtFirstKey: true });

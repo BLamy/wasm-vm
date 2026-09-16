@@ -1,0 +1,30 @@
+{
+  "oldHead": "f55923bda86172359f73db8ea998692ceb155fae",
+  "newHead": "141bdd5a055aa3f03592f127246a8b6e131f9125",
+  "r1PreservationSha256": "a01612fc587965470d97d5ed1ed88549adcafaadf46bbff75ad822734dc049f4",
+  "r1FilesRehashed": 14,
+  "unchangedModules": [
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "fe6613d037f081e8b96d293e058f57dc62f93012be89abbb24e58b1dafdca2f3"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque.mjs",
+      "sha256": "4e0f051b955a19578b31149cb37025d5df74c52971abd71ba89dac550178e002"
+    },
+    {
+      "path": "tools/verify/omarchy-input-audit.mjs",
+      "sha256": "17aeff63db4441fc45b996af66f8102cde630b9b7b04f14b045f679b4f74e38f"
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost-capture.mjs",
+      "sha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520"
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8"
+    }
+  ],
+  "unchangedDirectParserAndRequestAndAuditBodySha256": "1a494b875ee3acbe598b0cb42a9e0c845124041748b9f91a963868b90730b832",
+  "note": "Only fixed direct write syntax changes behavior; prior parser/control/fence/runtime results carry. Corrected guest application is pending real evidence."
+}
