@@ -1,0 +1,65 @@
+{
+  "kind": "input-buffer-native-pair",
+  "passed": true,
+  "keyboardAcceptance": false,
+  "startedAt": 1789558799.928766,
+  "command": [
+    "bash",
+    "tools/build-omarchy-snapshot.sh"
+  ],
+  "head": "c2cbcfd0d0d8b18ccc0d109363eca370c2dbf847",
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-native-pair-r1",
+  "kernelNotesSha256": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f",
+  "bootBudgetSeconds": 7200,
+  "pipelineBudgetSeconds": 7380,
+  "cleanupBudgetSeconds": 15,
+  "inputs": {
+    "kernel": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+      "size": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "baseImage": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4",
+      "size": 4294967296,
+      "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+    },
+    "cli": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+      "size": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    },
+    "chunkManifest": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "wasm": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "size": 1602331,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    }
+  },
+  "pid": 64485,
+  "returncode": 0,
+  "kernelObservation": {
+    "command": "sha256sum /sys/kernel/notes",
+    "status": 0,
+    "output": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f  /sys/kernel/notes",
+    "beginLine": 424,
+    "endLine": 427
+  },
+  "artifacts": {
+    "bootSnapshot": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-native-pair-r1/omarchy-ready.snap.gz",
+      "size": 201704786,
+      "sha256": "413b49b0d9220d8b43fc258760f60430923a604e436d3aede44791076f2d6b2b"
+    },
+    "overlayDelta": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-native-pair-r1/omarchy-overlay-delta.bin.gz",
+      "size": 1233174,
+      "sha256": "96837e2d6fc893fb329ec698d985c7f190d3f95d268a903ef62ba20a2e8578eb"
+    }
+  },
+  "finishedAt": 1789562460.344565
+}

@@ -1,0 +1,86 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.495666ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.097291ms)
+✔ post-marker presentation helper rejects typing frames (101.252167ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.146417ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.148125ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.096416ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.127625ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.483583ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.642ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.167084ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.266375ms)
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (118.416917ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (2.544667ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.164334ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.261292ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.235958ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.076834ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.128542ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.583292ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (1.733708ms)
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T22:00:11.520Z","brightPixels":100,"brightColors":20,"nonblank":true,"frames":4}
+✔ direct preparation uses embedded active Foot and post-response fresh pixels before export (5.021ms)
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T22:00:11.581Z","brightPixels":0,"brightColors":0,"nonblank":false,"frames":5}
+✔ wrong properties/window, stale image, blank terminal and failed export cannot make a prepared pair (126.957959ms)
+✔ native terminal ROI rejects bar-only pixels, wrong geometry and expired startup (3.352208ms)
+✔ one synchronous direct batch contains only the specified writes then reads (1.585708ms)
+✔ every property and acknowledgment is required; exit0 error strings never pass (3.270167ms)
+✔ expired, late and rejected configuration cannot reach input or renew the deadline (0.45275ms)
+✔ direct audit binds complete actual wire and rejects reordered, forged, duplicate and late evidence (2.285667ms)
+✔ running kernel fingerprint rejects old kernel, command echo and failed reads (0.833791ms)
+✔ native artifact roles cannot override pinned kernel or base chunks (1.150084ms)
+✔ actual warm capture exports every exact-seed block while paused and binds both headers (77.171834ms)
+✔ actual warm capture rejects a running guest, foreign overlay seed and stale restore decision (143.568208ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.772166ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (15.0325ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (14.750541ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (64.201208ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (84.409292ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (3.6905ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.053333ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (11.018333ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (50.51625ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (12.344209ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 40
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5120.619916
+
+✖ failing tests:
+
+test at tools/verify/omarchy-desktop-live.test.mjs:155:1
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (118.416917ms)
+  AssertionError [ERR_ASSERTION]: node:net:2302
+        const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                      ^
+  
+  Error: listen EPERM: operation not permitted 127.0.0.1
+      at Server.setupListenHandle [as _listen2] (node:net:2302:21)
+      at listenInCluster (node:net:2433:12)
+      at node:net:2662:7
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    code: 'EPERM',
+    errno: -1,
+    syscall: 'listen',
+    address: '127.0.0.1'
+  }
+  
+  Node.js v24.20.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.test.mjs:171:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
