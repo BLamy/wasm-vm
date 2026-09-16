@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 321,
-    "total": 497
+    "verified": 322,
+    "total": 498
   },
   "epics": [
     {
@@ -23006,7 +23006,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03y"
+        "E5.5-T03z"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23021,18 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 9,
+          "commits": 10,
           "labels": [
+            "Plan measured renderer division boundary after word conversions",
             "Plan measured word conversions after failed desktop input",
             "Plan measured integer-to-float boundary after failed desktop input",
-            "Plan measured FP arithmetic helper after failed desktop input",
-            "Keep desktop release gated on measured comparison follow-up"
+            "Plan measured FP arithmetic helper after failed desktop input"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-15",
-      "commitCount": 9
+      "commitCount": 10
     },
     {
       "id": "E5.5-T03r",
@@ -23292,7 +23292,7 @@
       "epicKey": "5.5",
       "title": "Keep measured float-to-word conversions in compiled renderer blocks",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03x"
       ],
@@ -23303,16 +23303,52 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — coordinator — remaining measured conversion boundary\n\nT03x's source `b587faf6f1bee5db45c5c9368d0a748f9badaff4` and WASM\n`0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312`\npass the focused native/private/shared and actual built-browser acceptance;\nthe browser guest retires 3,611/4,000 instructions via JIT and the live suite\npasses 127/127. Its physical trial accepts 128 trusted events but fails at\n`2026-09-15T22:40:14.941Z`: no nonce, frames 2→2 and a byte-identical Foot image.\nThe physical report SHA-256 is\n`29b15c67cd97e1d8daac22b4bf449ba7bd35f3ec5fd6703e8a1e8054fdd7f1fa`.\nEvidence is under `evidence/omarchy-profile/fp-from-integer-r1/`; the static\ninstruction scan, its source hash and its limitations are recorded in\n`saved-word-conversion-encodings.json`. The family count comes from the verified\n`renderer-opcodes-r1/report.json`. These observations justify this bounded\nnext slice; they do not establish that it will solve responsiveness.\n\n### 2026-09-15 — worker — activated after independent conversion verification\n\nT03x is independently verified at `86c4d2c8c4b7539a56d4379dafeb6fc5dcf2cc99`\nand published as open PR #392. Its physical-input trial remains failed. This\nslice starts W/WU destinations only, with independent literal clipping/rounding\nchecks, the existing software backend, a fresh critic and the original desktop\ndeadline. No status or instruction result is taken as a usability verdict.",
+      "verificationLog": "### 2026-09-15 — coordinator — remaining measured conversion boundary\n\nT03x's source `b587faf6f1bee5db45c5c9368d0a748f9badaff4` and WASM\n`0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312`\npass the focused native/private/shared and actual built-browser acceptance;\nthe browser guest retires 3,611/4,000 instructions via JIT and the live suite\npasses 127/127. Its physical trial accepts 128 trusted events but fails at\n`2026-09-15T22:40:14.941Z`: no nonce, frames 2→2 and a byte-identical Foot image.\nThe physical report SHA-256 is\n`29b15c67cd97e1d8daac22b4bf449ba7bd35f3ec5fd6703e8a1e8054fdd7f1fa`.\nEvidence is under `evidence/omarchy-profile/fp-from-integer-r1/`; the static\ninstruction scan, its source hash and its limitations are recorded in\n`saved-word-conversion-encodings.json`. The family count comes from the verified\n`renderer-opcodes-r1/report.json`. These observations justify this bounded\nnext slice; they do not establish that it will solve responsiveness.\n\n### 2026-09-15 — worker — activated after independent conversion verification\n\nT03x is independently verified at `86c4d2c8c4b7539a56d4379dafeb6fc5dcf2cc99`\nand published as open PR #392. Its physical-input trial remains failed. This\nslice starts W/WU destinations only, with independent literal clipping/rounding\nchecks, the existing software backend, a fresh critic and the original desktop\ndeadline. No status or instruction result is taken as a usability verdict.\n\n### 2026-09-15 — worker — implemented, physical response still failed\n\nRuntime, fixtures, browser harness and bundle are frozen at\n`53a095a485787e4ce6177712830d76728342b083`. The pure W/WU helper and generated\nsource-box/rounding checks, sign extension, integer masks and flags use the\nexisting backend; decoder, interpreter, softfloat and handoff ABI are unchanged.\nWASM SHA-256 is `7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9`.\n\nCommands and full output: `record-submission.py affected` (nine commands,\nall exit 0), `record-submission.py ci` (`make -k ci`, exit 2), the unchanged\nphysical-input harness, `bash tools/deploy-cloudflare.sh`, `check-public.py`,\n`run-cold.py` and `seal.py`, all under\n`evidence/omarchy-profile/fp-to-word-r1/`. The final evidence index contains\n54 files; `sha256.txt` SHA-256 is\n`63857c1c4d19812d2ecf599c3cab24a348248feacf2d16875a1defe47b7d8591`.\n`submission.json` preserves both `broadCiPassed: false` and\n`desktopResponsive: false`.\n\nThe worker's 52,224-case corpus has register/flags FNV `9311f74cb245717f`,\nplus 192 CSR/consume/fault cases and three real run-loop traps. Independent\nfixtures cover 21,120 literal and 1,792 seeded states, 2,048 instrumented cases\nwith 1,080 legal helper calls and zero illegal calls, all optional import\ncombinations, real chains and memory growth. Focused Clippy, handoff, old FP\nregressions, native FP ISA and WASM-library gates pass. Full CI retains the\nfive documented unchanged failures; native ISA passes 128/128 and the ALU\nfloor passes at 25.1 MIPS. No broad CI pass is claimed.\n\nThe production page executes 3,605/4,000 instructions via JIT and passes\n127/127 live tests with zero errors. Root inspected all three screenshots.\nGuest ELF SHA-256 is `00645db64ba22d39876c0db2fe80a05756004ce256e3583efe971338f67bc71f`;\nRAM-only digest is `dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8`.\nBoth Cloudflare origins serve the exact frozen bundle at\nhttps://f8fc09fa.wasm-vm.pages.dev and https://wasm-vm.pages.dev. The final\npristine clone at `95c250fe56fb15f28ee022a21a3766176adca054` rebuilds the\nidentical WASM and passes all 17 focused tests plus the built browser at\n2026-09-16 00:03:42 UTC. The changed post-freeze commits contain only pending\ntask metadata and deployment manifests.\n\nPhysical input remains failed: startup takes 126,553 ms, all 128 trusted\nevents are accepted, but 13 completed reads return 75 and no nonce appears\nby the original deadline, `2026-09-15T23:42:59.984Z`. Frames remain 2→2 and\nthe actual terminal images are byte-identical. The raw report SHA-256 is\n`9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687`.\nRoot and critic independently inspect that failure. No responsiveness or\nspeedup claim follows from instruction support. T03q stays gated; pending\nT03z addresses the measured remaining division boundary after fresh verification.\n\n### 2026-09-15 — verifier — VERDICT: verified\n\nVerified the W/WU conversion boundary and required recording protocol, **not\ndesktop responsiveness**. Worker submission is\n`4b438ca2980a4b57b5eeb832ff1a6f7d880128ef`; runtime/fixtures/artifact remain\n`53a095a485787e4ce6177712830d76728342b083`, with final pristine clone\n`95c250fe56fb15f28ee022a21a3766176adca054`. Predictions preceded evidence\ninspection. The complete report and hunk coverage are in\n`evidence/omarchy-profile/fp-to-word-verifier/final-verdict.md` and `coverage.md`.\nIts 24-file evidence index SHA-256 is\n`6211039762dde5cc5d87e2169cd77645d5b375a88fa19683291da9ed96efb7f8`.\n\n- P1–P4 — HELD. Each actual native/private/shared executor passes 21,120\n  independent literal states and 1,792 seeded alias/illegal states. Literal\n  digest `4083560513975942652`, seeded digest `4721190114470949240` and control\n  digest `8504544371684976080` agree across all three. Assertions cover negative\n  fractional WU, all rounding, clipped/NaN/bad-box inputs, sign extension,\n  source preservation, sticky flags and exact x0 FS Dirty. Worker\n  `acceptance.log:30–38,75–77,95–97`; cold acceptance repeats the same results.\n- P5–P7 — HELD. Instrumentation observes 1,080 legal helper calls in 2,048\n  executions and zero illegal calls, with exact canonical source/rm arguments.\n  Actual mixed eight-import execution, every optional ordering, exact X write\n  mask, zero FPR dirty writes, integer-only behavior and unsupported L/LU/D\n  contrasts hold. Six real 65,536-byte memory-growth scenarios and sixteen\n  same/cross-module budget/fault scenarios preserve converted integers,\n  interpreted CSR changes, exact raw parcel and virtual fault prefix. Worker\n  `acceptance.log:32,38,70–107`; `coverage.md` maps each changed runtime hunk.\n- P8 sensitivity/provenance — HELD. The isolated NV→NV|NX literal mutation\n  fails at its named assertion and the restored fixture passes. The critic\n  independently rehashed all 54 sealed worker files and all source fixtures in\n  the cold clone, viewed and rehashed six built/cold screenshots, and checked\n  ten public HTTP fetches against frozen Git bytes, including the service\n  worker. Cold acceptance passes 17/17 plus 127/127 live ISA tests with zero\n  browser errors; both built guests retire 3,605/4,000 through JIT. WASM, ELF\n  and RAM-only digests exactly match the worker entry above. See `final-audit.json`,\n  `sabotage.json`, `production-inspection.json` and `public-inspection.json`.\n- P9 measurement/gating — HELD; actual desktop response FAILED. The deadline\n  is exactly 120 seconds, ending `2026-09-15T23:42:59.984Z`. All 128 physical\n  events are trusted, focused and acknowledged, but 13 completed guest-file\n  reads exit 75 without a nonce and one further request is pending. Both actual\n  terminal images show only the original prompt and have SHA-256\n  `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`;\n  frames stay 2→2. `physical-input/desktop/report.json:26110–26115`, report\n  SHA-256 `9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687`.\n  See independent `physical-inspection.json`. T03q remains gated.\n- LIMITS/CARRY — Full CI still fails its five inherited targets. Compiler\n  errors and independently hashed failure boundaries match verified T03x;\n  `ci-inspection.json` keeps them failed. Affected Clippy and all nine focused\n  commands pass; native ISA is 128/128 and ALU smoke is 25.1 MIPS against 15.\n  Unchanged interpreter/SoftFloat/decoder claims remain HELD. No broad CI pass\n  or desktop speedup is claimed.\n- SUITE — Retain the three promoted verifier fixtures under\n  `make verify-E5_5-T03y`: literal, alias/illegal, instrumented ABI/index,\n  integer-consumption, fault and actual memory-growth checks. The isolated\n  sabotage copy is discarded; its failure/restoration receipts are retained.",
       "adversarial": "A fresh critic predicts literal clipping, rounding and flag outcomes before\nreading evidence. Independently vary operand bits, malformed boxes, rounding,\ndestination aliases and prior flags; attack zero-helper illegal paths, x0/FS\nbehavior, negative fractional WU inputs and sign extension above bit 31. Audit\nmixed helper indices, changed register masks and fault publication; sabotage\none literal in an isolated test copy. Carry unchanged HELD evidence forward\nand independently inspect cold/public identities and the physical result.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03y-jit-fp-to-word.md",
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 2,
+          "commits": 4,
           "labels": [
+            "Verify float-to-word JIT evidence and preserve desktop gate",
+            "Submit float-to-word proof and retain failed desktop gate",
             "Start measured float-to-word JIT conversion slice",
             "Plan measured word conversions after failed desktop input"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-15",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03z",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep measured single-precision divisions in compiled renderer blocks",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03y"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-15 — coordinator — remaining measured division boundary\n\nT03y's runtime and built artifact at `53a095a485787e4ce6177712830d76728342b083`\npass the focused native/private/shared acceptance and production browser guest,\nwith 3,605/4,000 JIT retirements and 127/127 live ISA tests. Its WASM SHA-256 is\n`7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9`.\nThe actual physical trial fails the original deadline at\n`2026-09-15T23:42:59.984Z`, after 128 trusted accepted events and 13 completed\nfile reads returning 75. There is no nonce or visible typed response; frames\nremain 2→2 and the Foot images are byte-identical. Raw report SHA-256:\n`9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687`.\nThe independent critic confirms this failure. The static parcel scan and its\nsource hash are recorded in\n`evidence/omarchy-profile/fp-to-word-r1/saved-division-encodings.json`;\nthe dynamic count comes from verified `renderer-opcodes-r1/report.json`.\n\n### 2026-09-15 — worker — activated after independent word-conversion verification\n\nT03y is verified at `dffdff3548b5cbc22ee9ede6e5a3233c2cea79fd` and published\nas open PR #393. Its physical result remains failed. This slice admits FDIV.S\nonly, with independent rounded-result/flag goldens, precise illegal exits,\nmixed helper indices and the unchanged real desktop deadline. The fresh critic\nwill check the new boundary independently before a verified status is possible.",
+      "adversarial": "A fresh critic predicts concrete rounded bits and flags before reading worker\nevidence, including finite/zero versus infinity/zero, zero/zero, negative ratios,\nhalf-minimum subnormal, rounded-normal underflow boundaries and directed finite\noverflow. Independently vary raw operands/boxes, modes, aliases and prior flags;\ninstrument helper calls and illegal exits; audit mixed import indices, exact\ndirty masks and all changed publication paths; sabotage a literal in an\nisolated test copy. Carry unchanged HELD results forward. Independently inspect\nthe final cold rebuild, public bytes and physical result.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03z-jit-fp-division.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 2,
+          "labels": [
+            "Start measured renderer division JIT slice",
+            "Plan measured renderer division boundary after word conversions"
           ]
         }
       ],

@@ -141,6 +141,61 @@ fn f32_saturating_overflow(a: u32, b: u32, multiply: bool) -> bool {
     exact.ilogb() >= 128
 }
 
+/// Correct two pinned APFloat division flag gaps without changing its result:
+/// finite overflow saturation, and tiny values rounded to the smallest normal.
+/// Both need only comparisons of normalized 24-bit integer significands.
+fn f32_division_flags(a: u32, b: u32, rm: RoundMode, bits: u32, status: Status) -> Flags {
+    let mut flags = Flags::from_status(status);
+    let magnitude = bits & 0x7fff_ffff;
+    if status != Status::INEXACT || !matches!(magnitude, 0x7f7f_ffff | 0x0080_0000) {
+        return flags;
+    }
+    // An inexact nonzero finite result guarantees finite, nonzero operands.
+    fn normalized(bits: u32) -> (u64, i32) {
+        let exponent = ((bits >> 23) & 255) as i32;
+        let significand = bits & 0x007f_ffff;
+        if exponent == 0 {
+            let shift = significand.leading_zeros() - 8;
+            (u64::from(significand << shift), -126 - shift as i32)
+        } else {
+            (u64::from(significand | 0x0080_0000), exponent - 127)
+        }
+    }
+    let (numerator, a_exp) = normalized(a);
+    let (denominator, b_exp) = normalized(b);
+    let difference = a_exp - b_exp;
+    if magnitude == 0x7f7f_ffff {
+        // |a/b| >= 2^128 iff the exponent difference exceeds 128,
+        // or is exactly 128 and the significand ratio is at least one.
+        if difference > 128 || (difference == 128 && numerator >= denominator) {
+            flags.0 |= Flags::OF;
+        }
+    } else {
+        // Tininess is decided after precision-24 rounding with an UNBOUNDED
+        // exponent, independently of the final subnormal rounding. Just below
+        // 2^-126, that precision has spacing 2^-150. Nearest modes reach the
+        // normal boundary at 2^-126 - 2^-151; rounding away from zero reaches
+        // it strictly above 2^-126 - 2^-150. Toward zero needs |a/b| >= 2^-126.
+        // A result at the smallest normal bounds the shifts below to 0..=26.
+        debug_assert!((-127..=-125).contains(&difference));
+        let negative = (a ^ b) >> 31 != 0;
+        let away =
+            matches!(rm, RoundMode::Rdn) && negative || matches!(rm, RoundMode::Rup) && !negative;
+        let tiny = if matches!(rm, RoundMode::Rne | RoundMode::Rmm) || away {
+            let precision = if away { 24 } else { 25 };
+            let left = numerator << (difference + 126 + precision);
+            let right = denominator * ((1_u64 << precision) - 1);
+            if away { left <= right } else { left < right }
+        } else {
+            numerator << (difference + 127) < denominator << 1
+        };
+        if tiny {
+            flags.0 |= Flags::UF;
+        }
+    }
+    flags
+}
+
 /// Generate the [`SoftFloat`] impl for one format from its apfloat type + geometry.
 macro_rules! impl_softfloat {
     ($marker:ident, $ap:ty, $bits:ty, $mant:expr, $exp:expr, $bias:expr) => {
@@ -208,7 +263,13 @@ macro_rules! impl_softfloat {
             }
             fn div(a: $bits, b: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::div_r(Self::of(a), Self::of(b), rm.to_apfloat());
-                (Self::bits(r.value), Flags::from_status(r.status))
+                let bits = Self::bits(r.value);
+                let flags = if $mant == 23 {
+                    f32_division_flags(a as u32, b as u32, rm, bits as u32, r.status)
+                } else {
+                    Flags::from_status(r.status)
+                };
+                (bits, flags)
             }
             fn fma(a: $bits, b: $bits, c: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::mul_add_r(Self::of(a), Self::of(b), Self::of(c), rm.to_apfloat());

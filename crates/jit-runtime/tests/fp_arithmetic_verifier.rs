@@ -351,7 +351,7 @@ fn verifier_mixed_batch_function_indices_and_unselected_fallbacks() {
     assert_eq!(function_imports(&unchanged_integer).len(), 5);
     for raw in [
         0x0800_0053,
-        0x1800_0053,
+        0x5800_0053, // FSQRT.S remains unsupported after the division slice.
         0x0200_0053,
         0x1200_0053,
         0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.

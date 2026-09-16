@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–11
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–12
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -271,3 +271,37 @@ sign extension, NaNs, flags, reserved modes and fault prefixes. The software
 backend, decoder and interpreter remain unchanged. Desktop responsiveness is
 still judged by physical input, independent nonce readback and real pixels at
 the original deadline.
+
+## 12. Measured single-precision division (E5.5-T03z)
+
+The renderer recording contains 213,132 FDIV.S retirements; its saved code page
+contains four dynamic-rounding division parcels. FDIV.S now calls the pure
+`env.fp_div_s(i32 a, i32 b, i32 resolved_rm) -> i64` helper through the existing
+integer-only `F32::div` backend. Source NaN boxes and FS/resolved rounding are
+checked before the call. Boxed result bits, sticky flags and FPR dirty masks
+use the established arithmetic publication path. The helper takes no guest
+context and cannot touch memory, devices or scheduling. Its optional import
+comes after the three existing FP helpers; every call retains the allocated
+index (5 alone, up to 8 with all three predecessors). Modules without division
+retain their previous import layout and emitted behavior.
+
+Independent exact-rational literals exposed two inherited division flag gaps
+in the pinned APFloat backend. F32 division alone corrects missing OF for an
+inexact largest finite result whose exact magnitude reaches 2^128, and missing
+UF when a tiny value rounds to the smallest normal. Original rounded bits and
+all other FP families/formats remain unchanged. Normalized 24-bit integer
+significands make both checks exact; no host floating point is used.
+
+For tininess, precision-24 rounding with an unbounded exponent is distinct
+from the final subnormal rounding. Immediately below 2^-126, nearest modes
+reach normal at 2^-126−2^-151; away-from-zero rounding reaches normal strictly
+above 2^-126−2^-150. Comparisons against those rational boundaries retain UF
+where the final result itself is normal. This follows the primary
+[SoftFloat division](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/f32_div.c)
+and [rounding](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c)
+paths and the [RISC-V tininess rule](https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf).
+The worker retains the original failing literal run and a direct backend
+regression, alongside native/private/shared generated-module evidence.
+
+Instruction correctness does not establish desktop responsiveness. The actual
+trusted-keyboard, independent nonce and visible-response gate remains 120 seconds.

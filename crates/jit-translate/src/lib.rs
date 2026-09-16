@@ -753,9 +753,10 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     if uses_fp_arithmetic(block) {
         add_fp_arithmetic_import(&mut m);
     }
-    let fp_imports = FpConversionImports {
+    let fp_imports = FpHelperImports {
         from_int: uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m)),
         to_word: uses_fp_to_word(block).then(|| add_fp_to_word_import(&mut m)),
+        division: uses_fp_division(block).then(|| add_fp_division_import(&mut m)),
     };
 
     let (reads, writes) = block_register_masks(block);
@@ -867,9 +868,10 @@ fn add_fp_from_int_import(m: &mut ModuleBuilder) -> u32 {
 }
 
 #[derive(Clone, Copy)]
-struct FpConversionImports {
+struct FpHelperImports {
     from_int: Option<u32>,
     to_word: Option<u32>,
+    division: Option<u32>,
 }
 
 fn uses_fp_to_word(block: &DecodedBlock) -> bool {
@@ -889,6 +891,25 @@ fn uses_fp_to_word(block: &DecodedBlock) -> bool {
 fn add_fp_to_word_import(m: &mut ModuleBuilder) -> u32 {
     let ty = m.add_type(FuncType::new(&[ValType::I32; 3], &[ValType::I64]));
     m.import_func("env", "fp_to_word_s", ty)
+}
+
+fn uses_fp_division(block: &DecodedBlock) -> bool {
+    block.ops.iter().any(|op| {
+        matches!(
+            op.instr,
+            Instr::FpArithS {
+                op: FpArithOp::Div,
+                ..
+            }
+        )
+    })
+}
+
+/// Keep modules without division unchanged. Allocate this helper after any
+/// arithmetic/from-integer/to-word imports, retaining its actual call index.
+fn add_fp_division_import(m: &mut ModuleBuilder) -> u32 {
+    let ty = m.add_type(FuncType::new(&[ValType::I32; 3], &[ValType::I64]));
+    m.import_func("env", "fp_div_s", ty)
 }
 
 /// The third parameter in the browser direct-chain function signature. Host and cross-module
@@ -1262,7 +1283,7 @@ pub fn translate_batch_with_static_slots(
     if blocks.iter().any(uses_fp_arithmetic) {
         add_fp_arithmetic_import(&mut m);
     }
-    let fp_imports = FpConversionImports {
+    let fp_imports = FpHelperImports {
         from_int: blocks
             .iter()
             .any(uses_fp_from_int)
@@ -1271,6 +1292,10 @@ pub fn translate_batch_with_static_slots(
             .iter()
             .any(uses_fp_to_word)
             .then(|| add_fp_to_word_import(&mut m)),
+        division: blocks
+            .iter()
+            .any(uses_fp_division)
+            .then(|| add_fp_division_import(&mut m)),
     };
 
     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
@@ -1440,7 +1465,7 @@ fn emit_body(
     global_info: Option<GlobalInfo>,
     root_local: Option<u32>,
     block_write_mask: u32,
-    fp_imports: FpConversionImports,
+    fp_imports: FpHelperImports,
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
@@ -2049,7 +2074,7 @@ fn supported(instr: &Instr) -> bool {
             | FmvWX { .. }
             | FmvXW { .. }
             | FpCmpS { .. }
-            | FpArithS { op: FpArithOp::Add | FpArithOp::Mul, .. }
+            | FpArithS { op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div, .. }
             | FcvtFromIntS { .. }
             | FcvtToIntS { width: FpIntWidth::W | FpIntWidth::Wu, .. }
             | Flw { .. }
@@ -2071,7 +2096,7 @@ fn is_fp(instr: &Instr) -> bool {
             | Instr::FmvXW { .. }
             | Instr::FpCmpS { .. }
             | Instr::FpArithS {
-                op: FpArithOp::Add | FpArithOp::Mul,
+                op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div,
                 ..
             }
             | Instr::FcvtFromIntS { .. }
@@ -2438,7 +2463,7 @@ fn emit_alu(
     abi: &Abi,
     instr: Instr,
     pc: u64,
-    fp_imports: FpConversionImports,
+    fp_imports: FpHelperImports,
     retired_before: u64,
 ) {
     use Instr::*;
@@ -2494,9 +2519,18 @@ fn emit_alu(
             f.i32_wrap_i64();
             push_boxed_f32(f, abi, rs2);
             f.i32_wrap_i64();
-            f.i32_const(i32::from(op == FpArithOp::Mul));
-            push_rounding_mode(f, abi, rm);
-            f.call(FP_ARITH_IMPORT);
+            if op == FpArithOp::Div {
+                push_rounding_mode(f, abi, rm);
+                f.call(
+                    fp_imports
+                        .division
+                        .expect("selected division imports its helper"),
+                );
+            } else {
+                f.i32_const(i32::from(op == FpArithOp::Mul));
+                push_rounding_mode(f, abi, rm);
+                f.call(FP_ARITH_IMPORT);
+            }
             emit_fp_packed_result(f, abi, rd);
         }
         FcvtFromIntS { width, rd, rs1, rm } => {

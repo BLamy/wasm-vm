@@ -442,7 +442,7 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
     }
     for raw in [
         0x0800_0053,
-        0x1800_0053,
+        0x5800_0053, // FSQRT.S remains unsupported after the division slice.
         0x0200_0053,
         0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
         0xd200_0053,

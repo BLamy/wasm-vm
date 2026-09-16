@@ -1675,3 +1675,12 @@ verify-E5_5-T03y:
 	cargo test -p wasm-vm-jit-runtime --test fp_to_word --test fp_to_word_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_to_word --test jit_fp_to_word_verifier -- --nocapture
 	node tools/verify/omarchy-fp-to-word-browser.mjs $(or $(FP_TO_WORD_OUT),evidence/omarchy-profile/fp-to-word-browser)
+
+.PHONY: verify-E5_5-T03z
+verify-E5_5-T03z:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_division_flags
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_division --test fp_division_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_division --test jit_fp_division_verifier -- --nocapture
+	node tools/verify/omarchy-fp-division-browser.mjs $(or $(FP_DIVISION_OUT),evidence/omarchy-profile/fp-division-browser)
