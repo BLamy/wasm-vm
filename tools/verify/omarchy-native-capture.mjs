@@ -6,6 +6,7 @@ import { spawn } from "node:child_process";
 import { plainTerminal, parseProbe, probeCommand, parseInstances, desktopObservation } from "./omarchy-browser-session.mjs";
 import { hasOmarchyDesktopLayers } from "../../web/omarchy-desktop-readiness.js";
 import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
+import { INPUT_BUFFER_NOTES_SHA256, INPUT_BUFFER_NOTES_COMMAND, assertInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
 
 const [binary, ...args] = process.argv.slice(2);
 assert.ok(binary && args.length, "usage: omarchy-native-capture.mjs BINARY boot ARGS...");
@@ -15,6 +16,8 @@ const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPEC
 if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe", "llvmpipe",
   "OMARCHY_EXPECT_LP_NUM_THREADS requires llvmpipe renderer expectation");
 const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
+const expectedKernelNotes = process.env.OMARCHY_EXPECT_KERNEL_NOTES_SHA256;
+if (expectedKernelNotes) assert.equal(expectedKernelNotes, INPUT_BUFFER_NOTES_SHA256);
 const child = spawn(binary, args, { stdio: ["pipe", "pipe", "inherit"] });
 let serial = "", exited = false;
 const observers = new Set();
@@ -59,6 +62,11 @@ async function probe(command) {
 try {
   await waitFor(() => /\[omarchy@omarchy-demo [^\n]*\]\$ /u.test(plainTerminal(serial)), 7_200_000);
   assert.equal((await probe("id -u")).output, "1000");
+  if (expectedKernelNotes) {
+    const observed = await probe(INPUT_BUFFER_NOTES_COMMAND);
+    assertInputKernelNotes({ exit: observed.status, stdout: observed.output });
+    console.log(`\nOMARCHY_KERNEL_IDENTITY ${JSON.stringify({ command: INPUT_BUFFER_NOTES_COMMAND, ...observed })}`);
+  }
   while (Date.now() < deadline) {
     const instances = parseInstances(await probe("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances"));
     assert.ok(instances.length <= 1, "warm desktop requires one Hyprland instance");
