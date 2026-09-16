@@ -1,0 +1,46 @@
+{
+  "inspector": "independent fresh verifier",
+  "recordedAt": "2026-09-16T02:01:05.880622+00:00",
+  "arms": [
+    {
+      "arm": "control",
+      "images": [
+        {
+          "path": "evidence/omarchy-profile/residency-after-fp-r1/control/desktop.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+          "bytes": 10726,
+          "personallyViewed": true
+        },
+        {
+          "path": "evidence/omarchy-profile/residency-after-fp-r1/control/failure.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+          "bytes": 10726,
+          "personallyViewed": true
+        }
+      ],
+      "observed": "Full-size Foot terminal retains its original empty prompt and cursor; no typed command or output. Desktop bar remains visible.",
+      "genuineTypedResponse": false
+    },
+    {
+      "arm": "candidate",
+      "images": [
+        {
+          "path": "evidence/omarchy-profile/residency-after-fp-r1/candidate/desktop.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+          "bytes": 10726,
+          "personallyViewed": true
+        },
+        {
+          "path": "evidence/omarchy-profile/residency-after-fp-r1/candidate/failure.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+          "bytes": 10726,
+          "personallyViewed": true
+        }
+      ],
+      "observed": "Full-size Foot terminal retains its original empty prompt and cursor; no typed command or output. Desktop bar remains visible.",
+      "genuineTypedResponse": false
+    }
+  ],
+  "allFourByteIdentical": true,
+  "inferenceLimit": "Byte equality corroborates personally inspected pixels; no image or counter is used as independent nonce evidence."
+}
