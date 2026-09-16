@@ -26,6 +26,7 @@ import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
 import { captureWorkerCost, fenceWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
 import { modePreparationOptions, prepareSmallerDesktop } from "./omarchy-mode-preparation.mjs";
 import { requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
+import { prepareOpaqueDesktop } from "./omarchy-opaque-preparation.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -49,10 +50,11 @@ if (urlArg === "--selftest-presentation") {
   process.exit(0);
 }
 assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair|input-trial|mode-pair]");
-assert.ok(["capture", "verify", "cold-pair", "input-trial", "mode-pair"].includes(mode), `invalid mode: ${mode}`);
+assert.ok(["capture", "verify", "cold-pair", "input-trial", "mode-pair", "opaque-pair"].includes(mode), `invalid mode: ${mode}`);
 const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
-const modePair = mode === "mode-pair";
+const opaquePair = mode === "opaque-pair";
+const modePair = mode === "mode-pair" || opaquePair;
 const ownedRecording = inputTrial || modePair;
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
 const workerCost = process.env.OMARCHY_WORKER_COST === "1";
@@ -433,6 +435,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-mode-preparation.mjs", "tools/verify/omarchy-prepare-mode.mjs",
     "tools/verify/omarchy-opaque-foot.mjs", "tools/verify/omarchy-opaque-foot-command.mjs",
     "tools/verify/omarchy-input-audit.mjs",
+    "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
@@ -1184,7 +1187,7 @@ async function runLive() {
   const loaderIdentity = mode === "capture" || coldPair || ownedRecording ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
   if (modePair) {
-    await prepareSmallerDesktop(page, coldDeadline, report, {
+    await (opaquePair ? prepareOpaqueDesktop : prepareSmallerDesktop)(page, coldDeadline, report, {
       exec: (command, stage, ms) => exec(command, page, stage, ms),
       observeRuntime: label => runtimeDiagnostics(page, label),
       screenshot: name => screenshot(name),

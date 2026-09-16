@@ -34,12 +34,12 @@ export function assertOriginalPresentation(state) {
   assert.ok(state.framesReceived > 0 && state.successfulPresents > 0);
 }
 
-export function auditOpaqueFoot(report) {
+export function auditOpaqueFoot(report, { additionalCommands = [] } = {}) {
   assert.equal(report.opaqueFootRequested, true);
   const receipt = report.opaqueFoot;
   const read = report.keyboard ? `if [ -f '${report.keyboard.guestFile}' ]; then cat '${report.keyboard.guestFile}'; else (exit 75); fi` : null;
-  const serial = auditSerial(report.workerTraffic, [OPAQUE_FOOT_COMMAND, ...(read ? [read] : [])]);
-  assert.ok(serial.every(row => [OPAQUE_FOOT_COMMAND, read,
+  const serial = auditSerial(report.workerTraffic, [OPAQUE_FOOT_COMMAND, ...additionalCommands, ...(read ? [read] : [])]);
+  assert.ok(serial.every(row => [OPAQUE_FOOT_COMMAND, read, ...additionalCommands,
     "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers"].includes(row.command)), "unexpected serial command");
   const commands = serial.filter(row => row.command === OPAQUE_FOOT_COMMAND);
   if (!receipt) {
