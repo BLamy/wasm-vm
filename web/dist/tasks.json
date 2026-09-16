@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 322,
-    "total": 498
+    "verified": 334,
+    "total": 512
   },
   "epics": [
     {
@@ -60,7 +60,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-09-15"
+    "end": "2026-09-16"
   },
   "tasks": [
     {
@@ -22401,6 +22401,538 @@
       "commitCount": 6
     },
     {
+      "id": "E5.5-T03aa",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Retest bounded admission recycling with measured renderer FP supported",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03z"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — independent verifier — VERDICT: verified\n\nVerified scope: the completed bounded experiment and honest negative outcome.\n**Desktop response fails in both arms; T03q remains gated.** Reviewed submission\n`a933ed5f2509d03a92e9b7691e083b32531959c4` and pre-arm predictions A1–A8.\nAll 29 worker files match index SHA-256\n`259068acb1383a640be7a3b725813dab649350cf95803d68c4c3b3a281b45a06`.\nNo runtime or recorder source differs from verified T03z.\n\n- A1/A2 — HELD. Independently hashed both arms' 95 served receipts, 13 helper\n  pins and exact R3 kernel/snapshot/delta/base. Same frozen HEAD and WASM;\n  actual recycling false/true is the sole selected policy difference. All\n  cache/clock/display/threshold/capacity/profiling/timing bounds agree.\n- A3/A4 — HELD. Exactly one control then candidate, normal nonoverlapping\n  owned cleanup, no watchdog or retry. Real app readiness/restore/canvas focus\n  qualify in 128,411/128,564 ms. T03m's recorder-only window queries stay absent.\n- A5/A6 — HELD; actual input acceptance FAILED. Each raw trace reconstructs\n  all 128 exact trusted events and 256 ordered keyboard/sync calls with matching\n  acknowledgements. Independently parsed guest fences show 12/13 completed\n  exit-75 replies and one pending read each, no nonce, at original Enter+120s\n  deadlines 01:25:27.477Z/01:29:46.053Z. Raw control `report.json:25874` and\n  candidate `:26241`; neither serial requests nor command echoes supply success.\n- A7 — HELD as faithful failure. I viewed all four actual baseline/failure\n  PNGs: the identical original Foot prompt, no typed command or response.\n  Common SHA `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`;\n  frames and successful presents remain 2→2 in both arms.\n- A8 — HELD. T03k/T03m unchanged boundaries and all 69 sealed T03z files\n  rehash correctly. Worker gates pass 7 policy, 1 wrapper, 54 recorder/adapter\n  tests and syntax. One independent in-memory counterfeit-success attack\n  reaches the worker audit's nonce guard and fails with `no timely nonce on\n  the raw wire`; the original report is unchanged and no browser is launched.\n\nControl report SHA `d07c1228c8181a6828bc88a1408bda8036fd0aa2695a342a694c6fa99fa05713`;\ncandidate SHA `cb8147bcdea6c4bf36481b0a374d6386477e6462a7bbb536b93135f51454c1c0`.\nCandidate zero refusals and epochs 1→2 do not establish responsiveness or cause.\nIndependent input-window JIT shares are 33.469566%/32.169244%. Physical-PC\nrecurrence and batch-eviction counters retain their stated attribution limits.\n\nCOVERAGE/SUITE: no runtime diff; task/queue metadata is waived. Recorded gates,\nboth actual option paths, offline audit, seal and forged-success rejection\nexercise this evidence submission. Retain the failed pair and reusable audit;\nno extra build/cold clone/deployment is required. Full predictions, source\nreview, raw response reparse, identity receipts, novel attack and final verdict\nare in `evidence/omarchy-profile/admission-after-fp-verifier/`. Its read-only\n`audit-carry-forward.py`, `audit-pair.py`, `audit-seal.py` and\n`attack-offline-audit.mjs` reproduce the checks. No product promotion follows.\n\n### 2026-09-16 — worker — completed pair; both actual input attempts fail\n\nRecording head `81f01ba31171b8d670f3842948e556b62bcb0d75`; submission source\n`b5a455a276f042cbb1506873aa3874d465384003` differs only by pending task metadata.\nRuntime and recorder are unchanged from verified T03z\n`53103e762c6c4003a5976bfa90131a03702fd2e7`. WASM SHA-256 remains\n`1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d`.\n\nCommands, with `DEVELOPER_DIR=/Library/Developer/CommandLineTools`:\n\n- `python3 evidence/omarchy-profile/admission-after-fp-gates/record.py`: seven\n  core policy tests, one wrapper test, 54 recorder/adapter tests and runner\n  syntax pass. Exact arguments and timestamps are in `commands.json`.\n- `node tools/verify/omarchy-recycling-ab.mjs evidence/omarchy-profile/admission-after-fp-r1`:\n  one control then candidate, same HEAD/artifact/R3/settings, actual recycling\n  false/true. Both children exit1 and close normally; the parent exits0 after\n  recording both failures. No watchdog, overlap, retry or competing build.\n- `node evidence/omarchy-profile/admission-after-fp-gates/audit.mjs evidence/omarchy-profile/admission-after-fp-r1`:\n  offline policy/source/deadline/input/nonce audit passes while recording both\n  machine outcomes as false. Physical command and acknowledgements are matched;\n  raw serial fences contain only allowed readiness/read-only lookup commands.\n- `python3 evidence/omarchy-profile/admission-after-fp-gates/seal.py`: all 29\n  worker files across gates/run folders hash correctly. Index\n  `admission-after-fp-gates/sha256.txt` SHA-256:\n  `259068acb1383a640be7a3b725813dab649350cf95803d68c4c3b3a281b45a06`.\n\nClaim: the bounded experiment is complete and negative. Control/candidate\nstartup qualifies in128,411/128,564ms; each sends128 trusted events. Control\nhas12 completed missing-file replies plus1pending at01:25:27.477Z; candidate\nhas13 plus1pending at01:29:46.053Z, each exactly Enter+120s. No nonce or typed\nresponse appears. All four personally inspected baseline/failure PNGs show\nthe same empty Foot prompt; frames2→2 and common SHA\n`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nControl report SHA `d07c1228c8181a6828bc88a1408bda8036fd0aa2695a342a694c6fa99fa05713`;\ncandidate SHA `cb8147bcdea6c4bf36481b0a374d6386477e6462a7bbb536b93135f51454c1c0`.\n\nThe candidate removes full-table refusals (0→0, recycling epochs1→2) but its\ninput-interval JIT share is32.169244% versus control33.469566%. This is not a\nspeedup estimate or a stall diagnosis. Cache counters count physical-PC\nrecurrence, not equal-code bytes; evictions count batches rather than blocks.\n`cache-observations.json` preserves those distinctions. Pending T03ab tests\none existing residency option; this does not promote recycling or unblock\nT03q. Carry unchanged runtime/cold/public proof and the five inherited CI\nfailures from T03z. No new runtime build, deployment or GitHub publication.\n\n### 2026-09-16 — worker — activated after independent division verification\n\nT03z is verified at `53103e762c6c4003a5976bfa90131a03702fd2e7`.\nThe measured renderer instruction families are supported; its physical trial\nstill fails. Begin only the bounded existing-policy experiment described above.\nThe division publication is pending explicit approval after automatic review\nrejected the GitHub stack submission; this local work requires no publication.\nRuntime source, built bytes, guest artifacts and recorder remain unchanged.\n\nBefore either arm, the fresh critic found that the pending plan's\n\"mapped-Foot/active-window readiness\" wording contradicted verified T03m.\nThe description is corrected to the current app readiness and physical focus\npath. Neither arm had started; no runtime, recorder or deadline is changed.\n\n### 2026-09-16 — coordinator — pending follow-up to failed division desktop trial\n\nPlanning only while T03z is in progress. No second active task, changed policy\nor responsiveness claim. The division run completed normally and the baseline\nand final empty Foot images are byte-identical. Both arms of this new trial\nremain unrun until T03z has a fresh verified verdict.",
+      "adversarial": "A fresh critic writes predictions before either arm, checks the sole selected\npolicy difference and all bound/source/cleanup invariants, independently\nreparses physical events and nonce replies, and inspects both terminal images.\nUse one bounded novel attack on the offline result audit, such as a stale\nartifact hash or success receipt with a missing/future nonce. Carry unchanged\nT03k/T03m/T03z HELD proof by code and evidence digest. Verification certifies\nthe honest experiment outcome; it is not automatic production promotion.\n\nIf the candidate demonstrates actual success, T03q must separately promote\nand publish the validated remedy with its required final application proof.\nOtherwise retain the failure and plan the next boundary from the new evidence.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03aa-admission-after-fp.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 5,
+          "labels": [
+            "Verify bounded recycling experiment and retain failed desktop gate",
+            "Submit bounded recycling experiment with both input failures",
+            "Clarify existing user-path readiness before admission trial",
+            "Start bounded admission comparison with full measured FP support"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03ab",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test existing compiled-code retention after measured FP support",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03aa"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — independent verifier — VERDICT: verified\n\nVerified scope is the completed bounded experiment and honest negative\noutcome. **Desktop response fails in both arms; T03q remains gated.**\nReviewed submission `9245901f0d0e9dfbba2f0e937acf6e02929f6dfb` against\npre-arm predictions R1-R8 and frozen recording source\n`f730bc553ee63eec303aa36ab8291e3af2afac24`. All 32 worker files match index\nSHA `3bbc03e8e0138754100d48c05d1735ce70fc567801a6cc5342e499456e5a4548`.\n\n- R1-R3 — HELD. Fixed option/URL/runtime paths preserve recycling defaults;\n  actual arms select cap 24/256 with recycling off and all other settings\n  fixed. Independently checked both sets of 95 served receipts, 14 helper\n  pins, exact R3 bytes and unchanged WASM SHA\n  `1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d`.\n  The unchanged selector modifies only max_batches; other budgets carry by\n  source identity. All 69 T03z and 29 T03aa sealed files rehash; unchanged\n  runtime/cold/deployment proof and earlier negatives carry forward.\n- R4-R6 — HELD; actual nonce acceptance FAILED. One control then candidate,\n  normal nonoverlapping cleanup, no watchdog/retry. Actual readiness and\n  restored state qualify in 127,803/66,718 ms. Each raw trace reconstructs\n  128 trusted events and 256 ordered acknowledged keyboard/sync calls.\n  Control has 12 completed exit-75 reads plus one pending; candidate has 17\n  plus one pending, no nonce at original Enter+120s deadlines\n  01:53:12.013Z/01:56:27.208Z. Final raw fences are control\n  `report.json:25026` and candidate `:24069`; failure receipts are\n  `:25868-25876` and `:24791-24799`. No serial writer supplies success.\n- R7 — HELD as faithful failure. I personally viewed all four actual PNGs:\n  identical original empty Foot prompt, no typed command/output. Common SHA\n  `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`;\n  frames and successful presents remain 2->2. Input-window JIT shares of\n  32.820343%/66.339546% do not establish responsiveness or speedup.\n- R8 — HELD. Recorded gates pass 62 tests and three syntax checks. Two\n  actual CLI preflight guards reject invalid experiment combinations before\n  output/browser setup. One independent in-memory favorable-result attack\n  substitutes observed cap 256 into the declared cap-24 control; the worker\n  audit rejects at its runtime guard. Original evidence is unchanged; no\n  additional browser or guest runs.\n\nControl/candidate report SHAs:\n`65fb5dc0ac51e50702ea0583ea8bdb15f8bab98455c9068b1165581a2c86bdd5` /\n`33eaa82a64ade55c36efb27aca5ac021a3d028ab77dbdd696b83a4be6d8dc037`.\nPhysical-PC recurrence is not equal-code identity; evictions count batches.\n\nCOVERAGE/SUITE: retain the three new fixed-selection tests, original tests,\noffline audit and failed pair. Both actual option paths and all changed\nharness boundaries have coverage; task/queue metadata is waived. No runtime\nhunk changed, and no build/cold clone/deployment repeat applies. Detailed\npredictions, source/coverage review, independent raw reparse, inspected-image\nreceipt, novel attack and final verdict are in\n`evidence/omarchy-profile/residency-after-fp-verifier/`. Read-only reproductions:\n`audit-carry-forward.py`, `audit-pair.py`, `audit-seal.py`,\n`check-preflight.mjs`, `attack-offline-audit.mjs`. Policy check precedes queue\nregeneration. No product promotion or GitHub publication follows.\n\n### 2026-09-16 — coordinator — pending existing-option comparison\n\nT03aa's one pair failed actual input in both arms. Its fresh critic agrees this\nseparately scoped existing-option comparison is a defensible, cheaper test of\nefficacy, with no requirement for new runtime instrumentation first. No new arm\nhas started. Activate only after T03aa is independently verified.\n\n### 2026-09-16 — worker — activated\n\nT03aa is independently verified at `0879464ea33b02c86371a3098abe6311e25f4067`\nas an honest negative experiment. Its two physical-input failures remain\nbinding. Start the single existing-option comparison on a separate local\nstack layer; no publication or merge. The fresh critic will predict before\neither physical arm starts.\n\n### 2026-09-16 — worker — one pair completed; both fail physical input\n\nFrozen harness `f730bc553ee63eec303aa36ab8291e3af2afac24`; unchanged verified\nruntime parent `53103e762c6c4003a5976bfa90131a03702fd2e7`. Full claim,\nexact commands, raw reports, image inspections and SHA index are under\n`evidence/omarchy-profile/residency-after-fp-gates/` and\n`evidence/omarchy-profile/residency-after-fp-r1/`. `freeze.py` rehashes all69\nT03z worker files and the unchanged crates/web/WASM boundary. `record.py`\npasses62 affected recorder/adapter tests and three syntax checks. The stated\nacceptance command completes exactly one control then candidate at this head,\nnormal closure/no watchdog/no overlap. No runtime build/deploy is applicable.\n\nBoth arms send128 trusted events but get no independent nonce at Enter+120s:\ncontrol12 missing-file replies plus one pending, candidate17 plus one pending.\nAll four personally inspected actual images show the original empty Foot\nprompt; frames remain2→2. Actual selected caps are24/256 with recyclingOFF.\nUnchanged source supplies code32MiB/table32768/metadata8MiB budgets. Candidate\ninput-interval compiled share is66.339546% versus control32.820343%, but both\nabsolute acceptance failures stand. Counters do not establish responsiveness,\nequal-code recurrence or a comparative speedup. T03q remains gated, and the\nnext bounded investigation must identify remaining execution cost.\n\nThe fresh critic recorded predictions before either arm, independently parsed\nboth raw input/serial reports, viewed all four images, and rejected a forged\nactual-cap result. Final sealed-evidence verdict remains its responsibility.",
+      "adversarial": "A fresh critic predicts before either arm, checks that only module capacity\ndiffers and recycling stays off, audits fixed deadline/source/cleanup guards,\nreconstructs physical input and raw nonce replies, and views both final images.\nPerform one bounded novel harness/audit attack. Preserve earlier negatives and\ndistinguish physical-PC recurrence from equal-code retranslation, batches from\nblocks, and absolute acceptance from an unsupported speedup estimate.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ab-residency-after-fp.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 4,
+          "labels": [
+            "Verify bounded residency comparison and preserve desktop failure",
+            "Record failed fixed-cap desktop comparison",
+            "Start bounded post-FP residency comparison",
+            "Plan bounded existing residency option test after negative recycling pair"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ac",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Profile exact worker cost after the fixed Omarchy input verdict",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ab"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — coordinator — bounded cost diagnostic activated\n\nT03ab independently verified its honest negative comparison at\n`9a79c517d3a10562eae7d765eaca7633513d292d`. Desktop response still fails in\nboth arms. This task reuses the existing exact-worker profiler and strict\noffline symbol binder to measure the remaining cost. Only one instrumented\npost-verdict diagnostic run is authorized by this slice; T03q remains gated.\n\n### 2026-09-16 — fresh critic — R1 VERDICT: refuted\n\nAt harness `3cb109d87f1bf08ad0ba6c6122ff0e884d4d3030`, R1 sends tablet RPCs\n949–951 at `02:20:33.124Z`, after its fixed failure at `02:20:33.050Z`;\ntheir acknowledgements arrive during the CPU sample. See raw report lines\n26029–26107, SHA256\n`69482a435e023895d5d1aa3a6d689ef89b212faac57bf5748820426cfb693a5b`.\nThe authoritative full digest and independent recheck are in\n`evidence/omarchy-profile/worker-cost-verifier/r1-verdict.md`.\nThis refutes observation-only capture; the 120-second failed nonce verdict\nremains failed. Preserve the entire R1 report/profile/images unchanged.\n\n### 2026-09-16 — worker — bounded harness correction\n\nOne corrective R2 recording replaces R1 as protocol evidence. The host-only\n`Input.setIgnoreInputEvents` fence follows Enter keyup and consumes the original\nreadback budget. No guest state is changed or queued guest input flushed.\nThe parent now rejects non-observational worker RPCs and mutation replies after\nthe verdict. A real Chrome regression provokes keyboard/pointer events across\nscreenshot and worker-profiler attachment; unit attacks cover each ingress\nchannel and a fence acknowledgement that misses the original deadline.\nCarry unchanged R1 identity, symbol-binder, raw arithmetic and misattribution\nattack results; rerun only affected recorder checks, then the single R2 run.\nThe remaining desktop failure and T03q release gate are unchanged.\n\n### 2026-09-16 — worker — corrected exact-worker profile; input still failed\n\nFrozen head `8ad5886126ddf062403455e266471d83e0e7feee`. Commands:\n`python3 evidence/omarchy-profile/worker-cost-gates-r2/record.py`,\n`python3 evidence/omarchy-profile/worker-cost-gates-r2/freeze.py`, the R2\nacceptance command above, and\n`node tools/verify/e5-t22c-symbolize-cpu.mjs web/dist/pkg/wasm_vm_wasm_bg.wasm target/omarchy-worker-cost-symbols/named.wasm evidence/omarchy-profile/worker-cost-r2/desktop evidence/omarchy-profile/worker-cost-r2/symbolized`.\nAll13 affected checks, the actual Chrome fence regression and both syntax\nchecks pass. Unchanged runtime/cold/deployment and strict-symbol evidence carry.\n\nEnter at02:35:41.466Z fixes the original02:37:41.466Z deadline. The host fence\nacknowledges at41.468Z; no guest input or mutation follows the failed verdict\nat02:37:41.467Z. Nonce readback remains failed and the actual final image shows\nthe same empty Foot prompt. One30s sample follows that saved image, with20,007\nsamples and30,024,349 weighted microseconds. Raw report SHA256\n`41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555`;\nraw profile SHA256\n`a6e8f0c8189b783efc4e293f6001df4d9e559e3ca814bd5097ae394b781146b2`.\nAll25 corrective evidence files are sealed by `worker-cost-gates-r2/sha256.txt`,\nindex SHA256 `dc0366bc3a2e2b4d7279ad82f299bfc0b6deeee56e987726f286b6065d20c2ae`.\nR1's30 original artifacts remain unchanged and refuted for observation protocol.\n\n`worker-cost-r2/RESULT.md` gives exact weighted costs, overlap limits and the\nbounded next investigation: prepare one fully rendered640×400 paired checkpoint\nbefore a fresh fixed-deadline input trial. The profile measures emulator work\nbut proves no single causal hotspot or responsiveness remedy. T03q remains\ngated; desktop responsiveness is not solved.\n\n\n### 2026-09-16 — independent verifier — VERDICT: verified\n\nVerified scope: the corrected bounded worker-cost diagnostic. **Desktop\nresponsiveness remains unsolved; T03q remains gated.** R1 stays refuted.\nReviewed submission `70d4b5e6`, recording head\n`8ad5886126ddf062403455e266471d83e0e7feee`, and the measured-cost clarification.\nAll 25 corrective files rehash against index\n`dc0366bc3a2e2b4d7279ad82f299bfc0b6deeee56e987726f286b6065d20c2ae`;\nall 30 preserved R1 artifacts remain unchanged.\n\n- P1–P5/P9–P10 — HELD. Independently bound 95 served receipts, 17 helper\n  pins, exact R3/WASM and runtime settings. Reconstructed 128 trusted events\n  and 256 acknowledged keyboard RPCs. The fence acknowledges Enter+2ms;\n  original Enter+120s deadline remains fixed. There are 21 on-time exit75\n  reads and one pending late exit75 reply. No post-verdict guest input or\n  mutation remains. Personally viewed the same empty Foot image; frames 2→3\n  do not prove response. Exact-worker sampling and normal cleanup stay bounded.\n- P6–P8/P11–P12 — HELD. Independent recount matches all weighted totals:\n  20,007 samples, 2,743 nodes, 30,024,349 microseconds. All 11 non-custom WASM\n  sections match; 1,911 offline names preserve anonymous/foreign frames.\n  Thirteen affected tests, the Chrome input-fence regression and two syntax\n  checks pass. Unchanged runtime and earlier guards/decoy attack carry.\n  Independent replay rejects R1's actual tablet traffic despite forged fence\n  metadata. Measured self costs identify work, not a cause or remedy.\n\nReport SHA `41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555`;\nprofile SHA `a6e8f0c8189b783efc4e293f6001df4d9e559e3ca814bd5097ae394b781146b2`.\nFull predictions, raw line/node/sample citations, image receipts, coverage and\nindependent audit commands are in\n`evidence/omarchy-profile/worker-cost-verifier/final-verdict.md`. Retain the\nregressions, audits and both negative recordings. Policy check precedes queue\nregeneration. No runtime gate repeat, deployment, publication or merge applies.",
+      "adversarial": "A fresh critic predicts before the recording, inspects the harness diff,\naudits exact worker/source ownership and all phase boundaries, reconstructs\nthe physical input and independent readback, and personally views the actual\nfailure image. Independently recount raw samples and validate offline names\nagainst executable-section identity. Perform one bounded novel false-profile\nor misattribution attack. Do not promote earlier endpoint waits, counters,\nanonymous function indices or this later sample into unsupported causal claims.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ac-worker-cost-profile.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 4,
+          "labels": [
+            "Verify corrected worker-cost diagnostic; preserve desktop failure",
+            "Record corrected worker profile with desktop input still failing",
+            "Fence host input during post-verdict worker observation",
+            "Start bounded post-verdict worker cost profile"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ad",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Prepare one fully rendered smaller Omarchy desktop checkpoint",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ac"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — coordinator — bounded preparation activated\n\nT03ac verified its corrected negative diagnostic at\n`213fa4f3fd6bd6814bee2ca72316a513fa085a4b`. Its profile supports investigating\nrendering work but identifies no complete causal remedy. T03r already requires\na fully visible application in the selected mode for the next experiment.\nThis task prepares one pair; T03ae separately tests fresh physical response.\n\n### 2026-09-16 — worker — R1 startup observer failure preserved\n\nFrozen harness `1cfedb179a63ac274bf36fa42202b6e5eb10e177` passed48 affected\nchecks, the actual Chrome pre-navigation input fence and two syntax checks.\nR1 restored the pinned desktop, but stopped before any modeset or export:\n`observeLoaderIdentity` required a response observer that the new mode had\nnot installed. The actual browser/server record shows the pinned manifest\nrequest; the failure was recorder wiring, not guest rendering behavior.\nChild exit1, normal browser/client cleanup, zero physical input; no usable pair.\nEvidence: `evidence/omarchy-profile/prepared-mode-r1/`, with exact retained\nhashes in `prepared-mode-gates-r2/r1-preserved.json`.\n\nCorrection extends the existing same-response manifest observer to mode-pair.\nAn actual Chrome fixture now executes that exact route-install block, checks\nthe body delivered to the page, and retains navigation/input-fence coverage.\nRepeat the unchanged finite preparation as R2; preserve all R1 artifacts.\n\n### 2026-09-16 — worker — bounded preparation negative; no usable pair\n\nRecorded command: `node tools/verify/omarchy-prepare-mode.mjs\n evidence/omarchy-profile/prepared-mode-r2 target/omarchy-mode640-r2` at frozen\n`545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e`. Current release WASM remains\n`1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d`; pinned\nR3/kernel/manifest and prior runtime/cold/deployment evidence are unchanged.\n\nThe original900000ms phase ran03:14:19.640Z→03:29:19.640Z. The one command\nreturned `ok` at03:18:38.270Z. Actual guest640×448 storage/640×400 frame and\nreceived/presented counters3→6 were observed03:19:30.619Z. The clients query\nreturned03:25:24.695Z: mapped/visible Foot at(12,38), size616×350. The subsequent\nactive-window query did not answer before the unchanged cutoff; failure was\nrecorded03:29:19.643Z. I personally inspected `desktop/failure.png`: entirely\nblack. No terminal-pixel qualification, screenshot of a prepared desktop,\nexport, nonce or physical input occurred. The private pair directory is empty.\nChild exit1, no watchdog, normal browser/client cleanup; browser errors empty.\nThis result **does not solve responsiveness or authorize T03ae/T03q**.\n\nEvidence: `evidence/omarchy-profile/prepared-mode-r2/` and\n`prepared-mode-gates-r2/worker-claim.json`. The 21 corrective-run artifacts\nare sealed by `prepared-mode-gates-r2/sha256.txt` (index SHA-256 `b3fd0051965f62799c41bd7a283b2ce48a1aa20094c81ca48a7670e880c86708`).\nR1 artifacts remain byte-identical to `r1-preserved.json`.\n\nChecks: exact frozen-head48 affected tests + one real Chrome manifest/fence\nregression + two syntax checks passed (`commands.json`). After guest cleanup,\ntwo capture-body tests at test-only commit\n`4d3aef8ec125aefe9c00a162619bd9aa0591de36` covered every exact seeded overlay\nblock, real gzip/header output, paused/drained ordering, foreign seed, running\nguest and stale-pair rejection (`capture-paths.json`, `capture-paths.log`).\nThe actual recorder source is byte-identical to the guest head; no repeated\nruntime, workspace, clone or deployment gates were needed for these fixtures.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified (negative diagnostic only)\n\nThe separate `/root/prepared_mode_verifier` session returned this verdict after\nits independent source, raw traffic, image, artifact-seal and coverage audit.\nRoot applies that verdict; root is not the verifier for this implementation.\n\n- P1/P2/P3 — HELD. Frozen identity, exact command/mode, zero input and the\n  original900000ms deadline are independently reconstructed in\n  `prepared-mode-verifier/r2-run-audit.json`; R1 was solely a startup observer\n  failure and remains preserved (`r1-run-audit.json`, `r1-boundary.json`).\n- P4/P5/P6 — HELD for rejection. Actual640×448 allocation/640×400 frame arrived,\n  but activewindow missed the deadline. Personal inspection and independent\n  decoding of `failure.png` found all1,024,000 pixels black. Both private pair\n  directories are empty. No focus proof, usable checkpoint or keyboard result.\n- P7 — HELD. The real pixel callback rejects synthetic nonblank pixels with\n  stale counters before screenshot/export (`stale-frame-attack.log`).\n- P8 — HELD. The two actual capture-body tests cover the seeded export and\n  rejection branches omitted by the negative guest. Independent synthetic\n  postprocessing and the sealed worker checks cover remaining harness paths;\n  these are not guest proof (`positive-postprocessor-fixture.json`,\n  `final-audit.json`). All21 corrective and17 retained R1 artifacts match.\n\nNo preparation success or T03ae/T03q eligibility follows from this verdict.\nThe next experiment must address remaining rendering work, not lengthen the\naccepted physical-input deadline.\n\nFull independent report: `evidence/omarchy-profile/prepared-mode-verifier/verdict.md`\nand `coverage.md`. Its16 evidence files are sealed by `sha256.txt`, index\nSHA-256 `be6a32f1d0cc9224162cdd4848ced1cf610c533ba1a07d88377e28f02d666f08`;\nroot rechecked every digest before committing the report.",
+      "adversarial": "A fresh critic predicts first, audits source/runtime identity and phase bounds,\npersonally views the actual smaller terminal, binds geometry to guest scanout,\nchecks no keyboard/pointer ingress and the exact modeset transaction, and checks\ncoherent pair headers/full delta enumeration. One bounded novel attack must\nreject a black/stale/foreign candidate or mismatched pair. Carry unchanged\nruntime and export mechanism evidence; exercise changed harness branches with\nfocused deterministic tests. A negative diagnostic cannot authorize T03q.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ad-prepare-smaller-desktop.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 5,
+          "labels": [
+            "Seal independent smaller-desktop diagnostic verification",
+            "Apply independent negative preparation verdict; no responsive desktop claim",
+            "Record failed smaller-desktop preparation at its fixed deadline",
+            "Capture the delivered manifest during desktop preparation"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03ae",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test physical input after restoring the prepared smaller desktop",
+      "priority": null,
+      "status": "blocked",
+      "depends_on": [
+        "E5.5-T03ad"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — blocked — required pair does not exist\n\nExact repro at545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e:\n`node tools/verify/omarchy-prepare-mode.mjs evidence/omarchy-profile/prepared-mode-r2 target/omarchy-mode640-r2`.\nThe unchanged900s preparation deadline expired awaiting activewindow; the\nfinal actual640×400 image is black and the output directory is empty.\nT03ad's separate verifier confirms no usable pair. Acceptance here is\nimpossible until a later preparation task provides that named dependency.\nT03af investigates one independent original-resolution rendering boundary.",
+      "adversarial": "A fresh critic reconstructs physical events/worker acknowledgements, independent\nreadback and deadline, verifies paired hashes and actual640×400 scanout, and\npersonally inspects initial/final images. One bounded stale/foreign pair or\nfalse-input-success attack; carry unchanged runtime/export evidence.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ae-prepared-mode-input.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 2,
+          "labels": [
+            "Start fixed opaque Foot input experiment",
+            "Start bounded preparation of a rendered smaller desktop"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 2
+    },
+    {
+      "id": "E5.5-T03af",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test fixed opaque Foot rendering with physical input",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ad"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — worker — active\n\nT03ad is independently verified only as a negative preparation: its actual\n640×400 frame stayed black and no pair exists. T03ae cannot start. This one\nconfiguration boundary returns to the pinned original R3 pair and resolution;\nall physical-input deadlines remain unchanged.\n\n### 2026-09-16 — worker — R1 rejected stale in-batch properties before any input\n\nFrozen94647c4993b062961b26e82bc2c8484431fe8c05 command:\n`node tools/verify/omarchy-opaque-foot.mjs evidence/omarchy-profile/opaque-foot-r1`.\nThe fixed update/query batch returned03:56:01.414Z with actual wire values\n`ok,false,false,0.985`; the parser rejected this before any key. No physical\nresponse was tested. Startup began03:53:52.927Z with original deadline\n03:58:52.927Z. Normal owned cleanup finished03:56:01.619Z, childexit1, no\nwatchdog, no browser errors. Initial/final images personally inspected: same\nempty visible Foot prompt, no typed response. All47 affected tests and2 syntax\nchecks passed at that frozen head. R1 artifacts remain sealed in\n`opaque-foot-gates/sha256.txt`.\n\nThe official0.55 hyprctl Flags documentation says `-r` refreshes state after\nissuing commands: <https://wiki.hypr.land/0.55.0/Configuring/Advanced-and-Cool/Using-hyprctl/>.\nThe same-batch property results may precede that refresh. R2 therefore retains\nthe identical rule but issues its property batch after the update command has\nreturned, still within the original300s startup. This is a measured wiring\ncorrection, not a successful opacity or responsiveness claim.\n\n### 2026-09-16 — worker — configuration remains unconfirmed; physical input untested\n\nR2 and one identical R3 repeat ran at frozen\n`20737fb7bd9051286629beafc2a4f15ae839ee64` using\n`node tools/verify/omarchy-opaque-foot.mjs evidence/omarchy-profile/opaque-foot-r2`\nand the same command with `opaque-foot-r3`. All 47 affected tests and two\nsyntax checks passed before R2. Runtime, R3 pair, dimensions and deadlines\nwere unchanged between runs. No repeated runtime/clone/deployment gates.\n\nR2 started 03:58:24.613Z; readiness/configuration began 04:02:12.593Z and the\noriginal 300-second cutoff was 04:03:24.613Z. The update/query never completed.\nR3 started 04:05:07.629Z; configuration began 04:06:45.551Z, the update printed\n`ok` at 04:07:32.045Z, and its property query was still pending when the\noriginal cutoff fired at 04:10:07.633Z (deadline 04:10:07.629Z). Neither run\ncreated keyboard metadata or sent keys. Both closed normally with child exit1,\nno watchdog and no browser errors. Personal inspection of every final image:\nthe same empty Foot prompt, no typed command or response. This establishes\nneither confirmed opacity nor desktop responsiveness; T03q remains ineligible.\n\nThe identical repeat was selected because average 500k-instruction slice time\nchanged from R1's 11.025ms to R2's 68.191ms with no fetch waits; R3 averaged\n33.176ms. These are observed differences, not a causal host-performance claim.\nThe decision and R2 preservation hashes precede R3 in\n`opaque-foot-gates-r2/r2-preserved-before-repeat.json`.\n\nThe separate critic found an offline positive-classification gap: missing\nphysical events could bypass the audit's conditional sequence check. Audit-only\ncommit `ed7edad7e1bdfa627809c93dc11a4838311180b5`, made after guest cleanup,\nrequires completed typing metadata, the exact full down/up/Shift/Enter sequence\nand consistent timing. Twelve affected tests pass at that commit; actual\nnegative recordings remain unchanged. The critic is rechecking its attack.\n\nEvidence: `opaque-foot-gates-r2/worker-claim.json` and its 24-file\n`sha256.txt`, index SHA-256\n`4d5bc22a99cf407a23ce30da34cdae4ec2033982437461d56ef4677fbb139a0a`.\nR1's 14-file index remains\n`09dde7caab1023dfe531cce991e6fe873e587d5413bee6dec98b97821b5cc432`.\n\n### 2026-09-16 — independent verifier — VERDICT: verified\n\nVerified only as a **negative configuration diagnostic**. Opacity remains\nunconfirmed; no physical keys were sent in any of the three runs; desktop\nresponsiveness remains unresolved and T03q remains ineligible.\n\n- P1/P6 — HELD. Rehashed 22 frozen helpers and 93 served resources per run,\n  unchanged R3/runtime bytes and all 69 prior runtime/cold/deployment files.\n  R1's 14-file and R2/R3's 24-file seals pass. All owned children exit1 and close\n  normally, without watchdogs or browser errors; cleanup takes 141/724/212ms.\n- P2/P4 — fail-closed controls HELD; configuration FAILED/UNPROVEN. R1 raw\n  properties are `ok,false,false,0.985` (`opaque-foot-r1/desktop/report.json:8654`).\n  R2 and R3 have no completed property response at their unchanged 300s deadlines\n  (`opaque-foot-r2/desktop/report.json:14133`, R3 `:15483`). Both failures remain\n  recorded; no retry result replaces an earlier failure.\n- P3/P5 — input/response untested. Zero key events and no nonce reads. Personally\n  viewed all six initial/final PNGs: the same empty Foot prompt, SHA\n  `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\n- F1 — fixed and independently rechecked. The critic twice reproduced a positive\n  machine-audit classification without physical events. Audit-only\n  `ed7edad7e1bdfa627809c93dc11a4838311180b5` now requires the full completed key\n  sequence/timing; the original fixture rejects and the valid control still\n  passes. Original reproductions are preserved separately from the fixed recheck.\n- P7 — HELD for this diagnostic claim. Every changed hunk has an execution or\n  explicit waiver in `opaque-foot-verifier/coverage.md`. Bounded forged-property,\n  late-readback and stale-frame fixtures reject; final focused tests pass12/12.\n  Synthetic controls establish guards, never product responsiveness.\n\nDetailed predictions, raw audit scripts/results, source/worker seal checks,\nresolved finding and evidence hashes are in\n`evidence/omarchy-profile/opaque-foot-verifier/final-verdict.md` and `sha256.txt`.\nNo runtime rebuild, cold clone, guest launch, deployment or merge was performed\nby this critic. No implementation was edited.",
+      "adversarial": "A fresh critic predicts before examining the recording, audits exact source,\nconfiguration wire, property response, keyboard events/ordered acknowledgments,\nreadback deadline, actual frames and owned cleanup. Personally inspect the\nimages. One bounded forged-property or late-readback attack. Carry unchanged\nruntime, cold-clone and deployment evidence; this diagnostic publishes nothing.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03af-opaque-foot-input.md",
+      "activity": [
+        {
+          "date": "2026-09-15",
+          "commits": 2,
+          "labels": [
+            "Read Foot properties after the completed Hyprland refresh",
+            "Start fixed opaque Foot input experiment"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 2,
+          "labels": [
+            "Verify negative opacity diagnostic and gate prepared input follow-up",
+            "Submit bounded opaque Foot configuration failures for verification"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ag",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Prepare a confirmed opaque desktop checkpoint at original resolution",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03af"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — plan\n\nT03af's R1 returned old properties; corrected R2 and its identical R3 repeat\nhit the original startup deadline while property readback was pending. No\nphysical input ran. This preparation separates configuration work from the\nfresh-input trial without changing the latter's acceptance clock.\n\n### 2026-09-16 — worker — guest IPC timeout; no usable pair\n\nFrozen head `e841c3a19934ebe4144f6920849b918eb9bcc566`. Ran\n`python3 evidence/omarchy-profile/prepared-opaque-gates/record.py`,\n`python3 evidence/omarchy-profile/prepared-opaque-gates/freeze.py`, and the\ndeterministic acceptance command above. All53 affected tests, the actual\nChrome pre-navigation input-fence/manifest test, and2 syntax checks pass.\nRuntime and original R3 inputs are unchanged.\n\nStartup04:24:28.366Z retained its original04:39:28.366Z cutoff. The exact\nconfiguration request at04:25:00.703Z returned at04:32:46.633Z with exit0\nbut actual stdout `ok`, `Hyprland IPC didn't respond in time`, and\n`Couldn't read (6)`. The property parser correctly rejected that reply.\nNo active-window query, accepted fresh image, snapshot export, keyboard or\nnonce followed. The private pair directory is empty; cleanup closed normally.\nPersonally inspected initial/final PNGs show the same empty Foot prompt.\n\nFull commands, timestamps, raw serial/wire and real images are retained in\n`evidence/omarchy-profile/prepared-opaque-r1/`; `RESULT.md` states the limited\nclaim. Report SHA256 is\n`fc9ca57469a5d8a1b1c4215512a8752eb064c1e2a39d8a04ba9053930d8ec166`.\nThis is a negative configuration diagnostic only. Desktop responsiveness\nremains unsolved and T03ah/T03q remain inadmissible. Fresh critique follows.\n\n### 2026-09-16 — fresh independent verifier — VERDICT: verified\n\nVerified only as a **negative configuration/preparation diagnostic**. No opaque\ncheckpoint or physical response is established; T03ah/T03q remain gated.\n\n- P1/P2 — HELD. Rehashed24 frozen helpers,93 actual served resources and pinned\n  R3/runtime bytes. The pre-navigation input fence precedes navigation; raw\n  traffic contains no physical input, nonce, or resolution change.\n- P3 — properties FAILED/UNPROVEN; rejection HELD. The exact fixed command at\n 04:25:00.703Z completes04:32:46.633Z with exit0 but actual IPC-timeout/error\n  text (`prepared-opaque-r1/desktop/report.json:21805`, raw worker event1598).\n  The strict parser rejects without treating `ok` as property proof.\n- P4/P5/P7 — no positive evidence. No active-window query, native ROI gate or\n  export ran; the private0700 pair directory is empty. Personally viewed both\n  actual PNGs: identical empty Foot prompts. Independent decoding confirms\n  SHA256 `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\n- P6/P8 — HELD. Original900000-ms cutoff remains04:39:28.366Z; failure stops\n  early. Cleanup takes200ms, childexit1 closes normally, no watchdog or browser\n  errors. Parent records `usablePair:false`.\n- P9 — HELD for the scoped claim. Worker53 tests, real Chrome fence1, syntax2\n  and independent4 tests pass. The bounded stale-image attack rejects bright\n  old frame5 against post-query baseline5; foreign paired generations reject.\n  Exact parent/CLI controls cover unexecuted new classifier branches and are\n  explicitly synthetic. Full source-hunk accounting is in `coverage.md`.\n\nAll16 worker artifacts and69 carried runtime artifacts match their seals.\nThe coherent export body is byte-identical to AD; its fixture evidence is not\na real prepared checkpoint. Full report and reproducible audit scripts are in\n`evidence/omarchy-profile/prepared-opaque-verifier/verdict.md`, sealed alongside\nthe independent evidence by `sha256.txt`. Root applies this separate-session\nverdict; the verifier did not change implementation, status, queue, or Git.",
+      "adversarial": "A fresh critic predicts before evidence, audits source/serial/property/window/\nframe/pixel/deadline/input-fence evidence, personally inspects the image, and\nchecks complete paired bytes if exported. One bounded stale-pixel or foreign\npair attack. Carry unchanged runtime and export proofs. No rr or remote host.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ag-prepare-opaque-desktop.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify negative opaque preparation and preserve independent evidence",
+            "Record opaque preparation IPC timeout without admitting input or export",
+            "Start bounded original-resolution opaque checkpoint preparation",
+            "Verify negative opacity diagnostic and gate prepared input follow-up"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ah",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Verify physical input after restoring the prepared opaque desktop",
+      "priority": null,
+      "status": "blocked",
+      "depends_on": [
+        "E5.5-T03ag"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — blocked by missing prepared pair\n\nExact repro:\n`node tools/verify/omarchy-prepare-opaque.mjs evidence/omarchy-profile/prepared-opaque-r1 target/omarchy-opaque-r1`\nat `e841c3a19934ebe4144f6920849b918eb9bcc566` returned a guest Hyprland IPC\ntimeout during property readback. No pair was exported; the target directory\nis empty. The raw report and negative result are committed in T03ag's\n`prepared-opaque-r1` evidence. This task cannot start from a stale/unproven\npair. T03ai instead tests the direct-property route from original R3.",
+      "adversarial": "A fresh critic reconstructs actual key down/up/Shift/Enter events, ordered\nworker acknowledgments and independent raw readback before the original\ndeadline; audits paired hashes/dimensions and personally inspects images.\nOne bounded false-success attack. Carry unchanged preparation/runtime proof.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ah-prepared-opaque-input.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 2,
+          "labels": [
+            "Plan direct window properties after global refresh IPC timeout",
+            "Verify negative opacity diagnostic and gate prepared input follow-up"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 2
+    },
+    {
+      "id": "E5.5-T03ai",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test physical input with direct opaque Foot properties",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ag"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — source-grounded plan\n\nActual prior guest version evidence identifies Hyprland0.56.2, commit\n`efb50993780079460b0cbed1363e2166a2de1d9f` in\n`evidence/omarchy-profile/softpipe-r1/renderer-label-inspection/diagnostic.json`.\nIts [HyprCtl.cpp](https://github.com/hyprwm/Hyprland/blob/efb50993780079460b0cbed1363e2166a2de1d9f/src/debug/HyprCtl.cpp#L1973)\nshows global refresh work; the\n[legacy dispatcher](https://github.com/hyprwm/Hyprland/blob/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/legacy/DispatcherTranslator.cpp#L698)\nroutes setprop directly to\n[Actions::setProp](https://github.com/hyprwm/Hyprland/blob/efb50993780079460b0cbed1363e2166a2de1d9f/src/config/shared/actions/ConfigActions.cpp#L669).\nThis gives a testable narrower operation, not a proven cause or speedup.\n\n### 2026-09-16 — R1 route refutation and corrective R2 plan\n\nAt frozen `f55923bda86172359f73db8ea998692ceb155fae`,52 affected checks and\ntwo syntax checks passed. The actual R1 then returned eight Lua parse errors\nwith exit0, followed by unchanged properties false,false,0.985,0.96,1 and\nthree false override flags. Its strict parser rejected before any physical\ninput. Raw report SHA256:\n`edf2736a39f59d2035d8e9f0607e031b1cdefe9fba9e305e734b9c13eed63411`.\nR1 and its original gate receipts are preserved, with a complete file index\nin `direct-opaque-r1/preserved-before-lua-correction.json`.\n\nThe fresh critic independently refuted the legacy-dispatch route. At the\npinned source's HyprCtl.cpp:1043–1055, Lua configurations wrap dispatch input\nin `hl.dispatch(...)` before the legacy translator. Correct the eight write\nexpressions to `hl.dsp.window.set_prop({prop=...,value=\"1\",window=\"activewindow\"})`.\nRetain the same property reads, original deadlines/runtime and strict parser.\nOne R2 corrective recording follows at a new frozen head; R1 remains negative.\n\n### 2026-09-16 — worker — confirmed properties, physical input failed\n\nFrozen corrective head `141bdd5a055aa3f03592f127246a8b6e131f9125` passed52\naffected deterministic checks and two syntax checks, recorded under\n`evidence/omarchy-profile/direct-opaque-gates-r2/`. The actual command above\nran04:54:25.404–04:58:21.649 UTC. The eight Lua dispatchers returned eight\n`ok` replies, then true,true,1,1,1,true,true,true and mapped visible Foot at\n[12,38],1256×750. The raw configuration response completed04:56:18.471.\n\nPhysical Enter completed04:56:21.344; the unchanged120s deadline expired\n04:58:21.345. All128 trusted events matched ordered keyboard acknowledgments.\nFourteen completed independent reads returned75 with no nonce, one remained\npending at cutoff. Frames stayed3→3 while1,404,942,946 instructions retired\n(53.6000% compiled). Parent audit passed and owned cleanup closed normally;\nthe child correctly exited1. Report SHA256:\n`b7f4b5578d1beba34661417f5a535639b7644f7473694d8c36a30ade63f78ef7`.\n\nThe worker personally inspected the real R1 failure and R2 direct-property\nand final failure images. Each shows the same empty Foot prompt; original,\ndirect-property and final R2 images all hash\n`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nThis is a negative diagnostic, not a desktop fix or release authorization.\nThe next bounded test prepares a post-property fresh rendered checkpoint\nbefore a separate unchanged input trial. All R1/R2 and gate files are sealed\nin `evidence/omarchy-profile/direct-opaque-gates-r2/sha256.txt`.\n\n### 2026-09-16 — verifier — VERDICT: verified (negative diagnostic only)\n\n- **P1 — HELD after correction.** The critic refuted the original legacy\n  syntax against the actual Lua errors, then independently checked the\n  corrected pinned Lua caller/factory/executor chain. At R2 head\n  `141bdd5a055aa3f03592f127246a8b6e131f9125`, raw report line 11165 and\n  receipt 27670 confirm eight write acknowledgments, all eight expected\n  values and mapped active Foot. R1 remains preserved as a route failure.\n- **P2–P6/P8 — HELD.** Independent audits bind 26 recorded helpers and 95\n  served resources, exact R3/runtime identities, 128 trusted physical events\n  with ordered keyboard/sync acknowledgments, the unchanged 300/60/120/20/30\n  budgets, and the after-Enter fence. Enter 04:56:21.344Z expires at\n  04:58:21.344Z; failure is 1 ms later; owned cleanup closes in 235 ms.\n- **P7 — response hypothesis FAILED; negative result verified.** All 14\n  completed raw reads return 75, one remains pending, no nonce arrives,\n  and frames stay 3→3. The critic personally inspected all three R2 images:\n  each is the identical empty Foot prompt, with no typed command or new\n  returned prompt. R2 report SHA256 is\n  `b7f4b5578d1beba34661417f5a535639b7644f7473694d8c36a30ade63f78ef7`.\n- **COVERAGE/SUITE.** Twelve pure tests per version, independent partial/\n  false-success attacks repeated twice, and actual-wrapper synthetic\n  checks cover the changed harness. The worker's 52-test/two-syntax gates\n  hold. All 30 worker-sealed files and the unchanged 69 runtime/59 prior\n  input-verifier proof files rehash correctly. Keep the strict property,\n  actual-source orchestration and adversarial fixtures as harness tests.\n\nFull predictions, F1, source/wire/image/coverage and seal audit:\n`evidence/omarchy-profile/direct-opaque-verifier/final-verdict.md` and its\nadjacent evidence. This status verifies only the honest negative trial.\n**Desktop responsiveness remains unsolved; T03q remains ineligible.**",
+      "adversarial": "A fresh critic predicts before evidence, audits the pinned-source command\nsemantics, strict property and active-window parser, actual serial/wire,\nruntime identities, physical keys, raw timely nonce, images and cleanup.\nOne bounded partial-property or false-success attack. Carry unchanged runtime,\nearlier input-auditor, browser-fence and cold/deployment proofs; rerun only\naffected harness checks. No synthetic fixture proves actual desktop response.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ai-direct-opaque-input.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify direct opacity trial as a negative diagnostic",
+            "Record direct opacity input failure and plan rendered checkpoint",
+            "Use Lua window dispatcher and preserve rejected legacy trial",
+            "Start direct-property physical desktop input trial"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03aj",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Prepare a freshly rendered direct-opaque desktop checkpoint",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ai",
+        "E5.5-T03al"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — plan\n\nT03ai R2 confirmed the direct properties but images stayed identical and\nframes3→3 across failed input. A post-property rendered checkpoint has not\nyet been tested: T03ag's global-refresh command never confirmed properties.\nThis separates one initial redraw from the subsequent acceptance interval.\n\n### 2026-09-16 — worker — fresh frame reached; export failed\n\nFrozen implementation: `32c412f7ea0fe34d1b2f9f28ace3004a1ed64fad`.\nCommand: `node tools/verify/omarchy-prepare-direct-opaque.mjs evidence/omarchy-profile/prepared-direct-opaque-r1 target/omarchy-direct-opaque-r1`.\nAffected submission: `python3 evidence/omarchy-profile/prepared-direct-opaque-gates/record.py`\n(67 tests and two syntax checks passed), followed by the recorded `freeze.py`\nsource closure and rehash of the unchanged runtime evidence.\n\nThe direct batch returned all eight required values and active Foot at\n05:24:47.324Z. The post-response baseline was frames/presents5/5; a new6/6\nframe was visible at05:32:48.176Z within the900s preparation limit. The real\nprepared image shows Foot's empty prompt at1280×800; no keys or nonce were\nsent. Its SHA256 is`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nBoth paused persistence samples were idle. `snapshotSave` was sent at\n05:32:48.250Z and trapped with`RuntimeError: unreachable` at the actual\n`capturePair` call on line1048. No export completed and the pair directory is\nempty. Cleanup closed the client/browser; the parent correctly reports\n`usablePair:false`. **No coherent checkpoint or responsiveness claim.**\n\nEvidence: `evidence/omarchy-profile/prepared-direct-opaque-r1/{run.json,desktop.log,desktop/report.json}`\nand the original desktop/prepared/failure PNGs. Report SHA256:\n`abc4f6e07166f2569b6e619e4556844897f53fc432a40571ba683e2432d7a771`.\nThe15-file worker seal is`evidence/omarchy-profile/prepared-direct-opaque-gates/sha256.txt`\n(repo-relative paths), SHA256\n`22917f60a59d5825e0afd9bfd6ffde22f58bcec34e70b6c3c9ebead547b1b0bb`.\nThe fresh critic must decide the failed pair criterion separately from the\nconfirmed frame/input-fence evidence. T03ak and release remain gated.\n\n### 2026-09-16 — verifier — VERDICT: refuted\n\n- **P7 coherent export — FAILED.** Frozen `32c412f7` R1 reaches a fresh visible\n  direct-opaque Foot image, then `snapshotSave` traps with\n  `RuntimeError: unreachable` at `omarchy-desktop-live.mjs:1048`. Actual wire\n  call is `desktop/report.json` workerTraffic[1930] / line26357; two drained\n  persistence samples precede it (line27351), and line27367 records the stack.\n  The private pair directory is empty; no pair or export completion exists.\n  Diagnose and repair snapshot save, then record a complete coherent pair.\n- **P1–P6 — HELD.** Independent source/wire/image audits confirm unchanged R3,\n  runtime and geometry, pre-navigation input fence, zero physical input, one\n  actual8-property/Foot batch, and post-response frame/present counters5→6.\n  Baseline05:24:47.326; prepared image05:32:48.176; native ROI486 bright pixels /\n  74 colors. Personally inspected real1280×800 empty Foot prompt, SHA\n  `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\n  Carry these R1 findings while repairing the export boundary.\n- **P8 admission — HELD.** Exit1, normal owned cleanup, false usability and\n  keyboard acceptance; no responsiveness/release claim. The prediction's\n  overbroad image clause failed as a verifier prediction: an export failure\n  can retain valid earlier image evidence. P5 remains HELD.\n- **P9 COVERAGE — NEEDS EVIDENCE.** New orchestration and negative classification\n  execute in R1; success completion and real pair validation need the repaired\n  recording. Exact hunk map is `prepared-direct-opaque-verifier/coverage.md`.\n  Bounded stale-frame attack rejects nonblank5 vs baseline5; foreign-generation\n  pair and owned-wrapper controls are explicitly synthetic. Frozen gates:\n  67 tests +2 syntax checks pass. No new guest/browser/heavy build by verifier.\n\nReport SHA `abc4f6e07166f2569b6e619e4556844897f53fc432a40571ba683e2432d7a771`.\nWorker seal15 files, index\n`22917f60a59d5825e0afd9bfd6ffde22f58bcec34e70b6c3c9ebead547b1b0bb`.\nFull findings and independent audits:\n`evidence/omarchy-profile/prepared-direct-opaque-verifier/verdict.md`.\nNo runtime cause or harness-only fix is established by the current trap stack.\nSUITE: retain current tests/control artifacts; no successful-pair promotion yet.\n\n\n### 2026-09-16 — blocked on runtime allocation repair\n\nThe exact R1 acceptance command above reaches a fresh frame but export traps.\nThe required coherent pair is impossible on this runtime at that boundary.\nT03al repairs the measured allocation failure; after its separate verification,\nresume this task and repeat only the actual preparation/export proof. All\nunchanged critic HELD results carry forward. No pair or input claim is admitted.\n\n### 2026-09-16 — resume after verified allocation repair\n\nT03al is independently verified at27eab37c78167479866e511cbf6f54f3e5664841.\nIts sole runtime change bounds snapshot container reservation; guest execution,\nrendering and the complete preparation harness remain unchanged. Carry the R1\ncritic HELD results and affected67-test proof. Run exactly the missing actual\npreparation/export boundary on the new verified runtime, using new paths:\n`node tools/verify/omarchy-prepare-direct-opaque.mjs evidence/omarchy-profile/prepared-direct-opaque-r2 target/omarchy-direct-opaque-r2`.\nThe900s preparation and180s export limits, no-input fence and personal image\ninspection are unchanged. A positive pair still does not prove responsiveness.\n\n### 2026-09-16 — worker — R2 coherent visible pair exported\n\nFrozen head: `7a3f3f3583220c320b850dfb10d7aca87fd1525e`.\nRan the R2 acceptance command above with the unchanged preparation harness and\nverified T03al WASM `8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4`.\nThe original prelaunch `freeze.py` passed explicit clean source/runtime checks,\nthen failed its broad worktree comparison because it included the preserved\nunrelated `e5-t22c-guest-mode.mjs` edit. The run was mistakenly launched despite\nthat metadata failure. The disclosed supplemental `freeze-head-only.py` passed\nat06:32:03Z after launch, comparing committed changes while retaining all\nexplicit worktree source checks. No runtime or recorder changed. The fresh\ncritic must independently confirm that the unrelated file is outside the\nactual dependency closure; this is not a passing prelaunch check.\n\nActual eight-property/active-Foot readback completed at06:32:19.437Z. The\npost-response baseline at06:32:19.439Z was5/5; a fresh6/6 frame and real empty\nFoot prompt were captured at06:38:29.011Z, before06:45:18.564Z. I personally\ninspected `desktop/prepared-desktop.png` at1280×800 (SHA256\n`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`).\nNo physical input or nonce was supplied. Paused, drained export completed at\n06:40:59.800Z before its06:41:29.011Z deadline; owned cleanup closed normally,\nand both child and parent exited0.\n\nPrivate pair in `target/omarchy-direct-opaque-r2`: snapshot207172408 bytes,\nSHA256 `989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75`;\ndelta1232847 bytes, SHA256\n`4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972`.\nRaw snapshot898619715 bytes, SHA256\n`fb4898e95759a8ee1921e28af3b124c37be75a1ac473e8583ef92584c25b0f3f`;\nraw delta SHA256 `0115f679cfd3fd24daf6ce29bd70fb20d8dca22bbf8a8d8c62ab92cd87bbeb6c`.\nBoth bind the original R3 chunk base, core0.0.1 and generation0; delta contains\nall2638 recorded blocks and the stored restore decision is `resume`.\n\nEvidence: `evidence/omarchy-profile/prepared-direct-opaque-r2/`, report SHA256\n`c3c9650269f392bb58cb4e5757f9429f86784cd1d013c88345250cbf71e467dc`.\nSource closure, disclosed metadata correction and the worker evidence seal\nare in `evidence/omarchy-profile/prepared-direct-opaque-gates-r2/`.\nCarry unchanged R1 67-test/two-syntax proof and T03al runtime/cold-clone proof.\nThe automatic receipt remains `usablePair:false` pending fresh review. This\nsubmission claims only a visible coherent checkpoint; physical responsiveness\nremains unproven and T03q stays gated.\n\n### 2026-09-16 — verifier — VERDICT: verified\n\nFrozen R2 `7a3f3f35`, worker `c89c3288`, verified AL prerequisite `27eab37c`.\nAll R2 predictions HELD. Independently rehashed the actual28 helper identities,\n93 served receipts and unchanged R1/AL seals. The broad prelaunch metadata check\nfailed on a preserved unrelated user script; its exclusion from AJ's actual24\nmodule import/spawn/server closure is independently proven. The supplemental\ncheck remains explicitly post-launch (`metadata-audit.json`).\n\nActual one direct-property/Foot wire response precedes baseline5/5; actual\nframe/present6/6 and the personally inspected native1280×800 Foot prompt pass.\nROI486 bright pixels/74 colors; prepared PNG SHA\n`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nNo host/agent input, nonce, guest error or watchdog. Preparation490.447s/900s;\ncoherent export150.789s/180s; owned closure normal, exit0.\n\nIndependent complete pair parsing proves898,619,715 raw snapshot bytes,\nall16 machine sections, exactly1GiB reconstructed RAM and all2,638 delta blocks.\nHeaders, core0.0.1, original base, generation0, exact R3 seed, paused/drained\nstate, complete compressed/raw hashes and `resume` decision agree. R1's missing\nreal positive export/classifier coverage is closed; unchanged attacks and gates\ncarry forward. Worker12-file indexSHA\n`3a0f9c5dda2451270754cf3df8a23461d1710c8d95eb17376aa642d08476b1c6`.\n\nFull scoped verdict, byte audit and hunk coverage:\n`evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/`.\nThe private pair `target/omarchy-direct-opaque-r2` is admitted for T03ak's\nseparate physical-input trial only. **Responsiveness and release remain\nunproven.** Historical R1 seals are unchanged; no runtime implementation edit.",
+      "adversarial": "Fresh critic predicts first, checks actual property wire, post-response frame\nbaseline and images, no-input fence, original geometry, exact runtime and\ncoherent pair. Attack one stale-frame or stale-pair case. Carry unchanged\nruntime, direct setter, ROI, exporter and browser-fence proofs; rerun affected\nharness checks. No deployment or external publication.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03aj-prepare-direct-opaque.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 7,
+          "labels": [
+            "Verify freshly rendered direct-opaque checkpoint pair",
+            "Submit visible coherent direct-opaque desktop checkpoint",
+            "Resume fresh opaque checkpoint with verified export allocation fix",
+            "Record independent export refutation and scope allocation repair"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 7
+    },
+    {
+      "id": "E5.5-T03ak",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test physical input from the rendered direct-opaque checkpoint",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03aj"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — plan\n\nThe prerequisite must produce a visible post-property pair. Neither T03ai's\nconfirmed settings nor T03aj's preparation can substitute for physical input.\n\n### 2026-09-16 — activation\n\nT03aj R2 is independently verified at39c1441e. Pin its exact207172408-byte\nsnapshot (`989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75`)\nand1232847-byte delta (`4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972`).\nUse the unchanged verified T03al runtime, original R3 kernel/chunk base and\nfixed cap256/recyclingOFF/ICount64. The only new startup command reads all\neight saved properties and active Foot; no setter or extra warm-up. Preserve\nall existing input deadlines and raw-wire checks. A failed physical trial\nremains an explicit negative requiring measured replanning.\n\n### 2026-09-16 — worker — actual physical trial failed unchanged deadline\n\nFrozen implementation `9cc377180921be98f904c3689a1d7c48b9df3947`.\nCommands: `python3 evidence/omarchy-profile/prepared-direct-input-gates/record.py`\n(73 affected tests and two syntax checks pass), followed by `freeze.py`\n(passed before launch), then the deterministic acceptance command above.\nThe recorded module closure is committed and clean; runtime/crates/web are\nunchanged from verified AJ/AL, and the exact AJ pair and carried seals rehash.\nAn exploratory sandboxed selftest could not bind localhost; the recorded\nauthorized local-server test passes. No runtime or guest configuration changed.\n\nActual restore/startup qualifies in39406ms. One read-only batch confirms all\neight saved properties and the original active Foot, without setters.\nAll128 trusted physical events and their ordered keyboard/sync acknowledgments\nare recorded. Enter at07:12:43.215Z fixes the deadline at07:14:43.215Z;\nfailure is recorded at.217. All32 completed independent reads returned75\n(file missing), none are pending and no nonce was supplied over serial.\nThe VM produced frames/presents2→3, but the personally inspected failure image\nstill shows the empty Foot prompt, identical to its initial image. Their\nSHA256 is `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nNormal owned cleanup completes at07:14:43.437Z; childexit1 and the parent's\nnegative-result audit exits0. **No physical responsiveness or release claim.**\n\nReport: `evidence/omarchy-profile/prepared-direct-input-r1/desktop/report.json`,\nSHA256 `0d4f8f50d2d9e940ce098f744202bcff49ae3c1048b39d692231d1d2c7fa38ea`.\nThe interval retires3109374721 instructions,1872851136 via JIT (60.2324%).\nThe tracking map remains full at65536; dropped counts grow8765528→51372386,\na42606858 increase. These counters motivate one bounded test of the existing\nrecycling option with this newly prepared pair and cap256, not a causal or\nspeedup claim. Carry AK as the unchanged-option control; no repeated control\nrun is required. Pending T03am records that distinct experiment before T03q.\nWorker evidence and its seal are in `prepared-direct-input-gates/` and\n`prepared-direct-input-r1/`. Fresh critic must verify the honest negative.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified (negative diagnostic only)\n\nThe frozen `9cc377180921be98f904c3689a1d7c48b9df3947` recording and worker\nsubmission `ddb675b2` prove an honest failed physical-input trial. They do\n**not** prove desktop responsiveness or admit T03q. P1–P5/P8–P9 held;\nthe positive nonce and visible-response hypotheses P6/P7 failed as measured.\n\nI independently rehashed the exact AJ pair, original kernel/chunk base,\nAL runtime, 26 frozen dependencies, actual helper/served-resource receipts,\nall 16 worker-sealed files, and 189 carried prerequisite evidence entries.\nThe eight saved properties and exact active Foot are confirmed by one raw\nread-only batch; no setters or deadline changes occurred. All 128 trusted\nphysical events have ordered positive keyboard/sync acknowledgments. Enter\n07:12:43.215Z fixes deadline 07:14:43.215Z; all 32 reads return exit 75 and no\nnonce, and failure occurs at .217. Source report lines 28522, 28642–28666,\nSHA256 `0d4f8f50d2d9e940ce098f744202bcff49ae3c1048b39d692231d1d2c7fa38ea`.\n\nI personally opened the initial, prepared, and final failure images: each\nshows only the original empty Foot prompt. Frames/presents 2→3 are insufficient;\nthe three 1280×800 images are byte-identical SHA256\n`97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`.\nOwned cleanup is 173 ms without a watchdog. Child exit 1 and the parent's\nexplicit nonacceptance classification remain intact.\n\nSeven bounded false-success attacks reject twice each; two synthetic controls\nhold. Eight actual-wrapper synthetic cases cover pin rejection, cleanup,\naudit error, late fencing and explicit nonacceptance. The frozen worker's\n73 affected tests and two syntax checks pass; my 14 pure helper/actual-source\ntests also pass. No additional browser, guest, runtime gate, or publication.\nFull predictions, raw audit, source checks, coverage and verdict are in\n`evidence/omarchy-profile/prepared-direct-input-verifier/`. Preserve this\nfailed control for the separately planned measured follow-up; no response claim.",
+      "adversarial": "Fresh critic checks pair lineage, actual wire/events/deadline, source closure,\nruntime and images; one bounded false-success attack. Carry unchanged runtime\nand existing input-auditor proof. No publication in this diagnostic task.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ak-prepared-direct-input.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify prepared desktop input failure and exact evidence",
+            "Record failed prepared input trial and measured policy follow-up",
+            "Start physical input trial from verified opaque checkpoint",
+            "Record direct opacity input failure and plan rendered checkpoint"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03al",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Bound snapshot container allocation for the 1 GiB Omarchy guest",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ai"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — plan\n\nThe failed desktop export is not evidence of a responsive desktop. The source\ninvestigation found no wrong harness call: the failure is inside the intended\n`persistSnapshot`→`save_resume` route. The immediate zero-instruction probe\nnarrows this to runtime allocation, allowing a small independent prerequisite.\n\n### 2026-09-16 — worker — full-size save and durable export pass\n\nFrozen implementation:`512ba6acc9b0293d04d96115372ddef2b1cccfab`.\nFinal deployment artifact head:`bb3c13dd6014ca15f29fe897b3ba207d65bc67b8`;\nthe intervening commit changes only the four manifest URL representations.\n`snapshot-allocation-gates/source-closure.json` binds the unchanged runtime\nand harness bytes at both heads. WASM SHA256:\n`8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4`.\n\nCommands: `python3 evidence/omarchy-profile/snapshot-allocation-gates/record.py affected`,\nthe same recorder with`browser` and`ci`, and\n`python3 evidence/omarchy-profile/snapshot-allocation-gates/cold.py`.\nExact subprocess commands, timestamps and results are retained in their JSON\nreceipts. The affected format17, machine/coherence49 and native-WASM33 tests\npass, as do format, wasm-target lint and explicit affected native-target lint.\nThe initial unspecialized all-tests lint hit the existing`plic_sparse` missing\ntrace-feature import;`affected-clippy.json` records the successful scoped check.\n\nActual Chrome restored the pinned1GiB R3 state with zero guest instructions,\nsaved899,181,735 bytes, restored/saved again, durably persisted and exported\nthe complete snapshot, and restored the persisted state. Every full-blob hash\nmatches the independently derived R3 transition oracle: first save\n`18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8`,\nsecond save and durable export\n`82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9`,\npost-stored-restore save\n`43976354793566e4fbca8f2935f122f0a857893d1f674aba9c0316ed32fd8dba`.\nOnly the existing agent TX shadow and session-generation restore transitions\napply; no bytes are excluded from comparison. RAM digest stayed\n`7b4695440b7bb6bfaa07b19e90afb758692627bd571fa2d6dd40d2e68e37616b`.\nStale generation and foreign base still refuse. The first save needs no\nlinear-memory growth; repeated restore reaches4,183,490,560 bytes and completes.\nThis is a proof for the pinned Omarchy state, not every possible1GiB RAM shape.\n\nThe final pristine clone began clean with`RUSTFLAGS`, all`CARGO_*` and\n`RUST_LOG` unset; it used explicitly hashed copies of the pinned private R3\nfixtures, rebuilt the identical WASM, passed native format checks, and repeated\nthe full browser acceptance. Both built-page runs show127 passed,0 failed and\nzero console errors; both actual suite images were personally inspected.\n\n`make -k ci` completed with exit2. Its five failure families match the prior\nrecorded division gauntlet: macOS Linux-only seccomp APIs, old all-feature dead\nmethods, old WASM resume RNG expectation, quarantined zicsr-stub API mismatch,\nand the existing GPU test's Instant static-scan finding. The exact comparison\nis`gauntlet-classification.json`; no failed gate is labeled green. The native\ninstruction wall passed128/128 and the performance smoke passed58.4 MIPS.\n\n`bash tools/deploy-cloudflare.sh` succeeded at\nhttps://46ecc765.wasm-vm.pages.dev ;`public.json` independently matches WASM,\nroadmap, service worker and Omarchy manifest bytes on that deployment and\nhttps://wasm-vm.pages.dev . The roadmap still says responsiveness unresolved.\n\nEvidence:`evidence/omarchy-profile/snapshot-allocation-r1/`,\n`snapshot-allocation-gates/` and`snapshot-allocation-baseline/`.\nThe33-file repo-relative worker seal is`snapshot-allocation-gates/sha256.txt`,\nindex SHA256:`01786a6b6a15415c7977b4dc23fde07a2e1d82cb1b775340aefe8c888cb42632`.\nOriginal allocation failure and source sabotage remain independently recorded.\nThis removes the export prerequisite; it does not prove physical responsiveness.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified\n\nVerified the frozen implementation `512ba6ac`, unchanged runtime at final\nartifact head `bb3c13dd`, and worker submission `d6cd6853`. Predictions were\nrecorded before final evidence in\n`evidence/omarchy-profile/snapshot-allocation-verifier/predictions.md`.\nFull findings, coverage and reproducible attack commands are in that directory's\n`verdict.md`, `coverage.md`, and three audit JSON receipts.\n\n- **P1–P3 HELD:** actual 1 GiB R3 save returns all 899,181,735 bytes. Every\n  save/load/save and persisted-export hash matches an independently streamed\n  oracle derived from the pinned R3 before final evidence. Only the documented\n  console queue-shadow and generation restore transitions apply; plain\n  persist/save/read is byte-identical. RAM digest remains unchanged\n  (`snapshot-allocation-r1/report.json:128-132`). Original WASM still records\n  the allocator trap; the new first save needs no linear-memory growth.\n- **P4 HELD:** actual stale/foreign decisions refuse\n  (`snapshot-allocation-r1/report.json:161-164`), and native coherence tests\n  preserve target state on refusal (`snapshot-allocation-gates/resume-machines.log:220-226`).\n- **P5–P6 HELD:** four independent native seeds check 192 prefix\n  serializations and 102,904,884 exact oracle bytes. Removing only the new\n  reservation in an isolated source copy is detected: 131,171 bytes used,\n  262,326 capacity (`reservation-removed-sabotage/attack.log:3`); candidate\n  capacity is exactly 131,171 (`candidate-byte-attack/attack.log:1`).\n- **P7 HELD:** actual direct/persistent saves exercise every changed runtime\n  success-path line. Defensive overflow, comments and generated metadata are\n  individually waived in `coverage.md`; no uncovered semantic hunk remains.\n- **P8 HELD:** all 33 worker-sealed files rehash correctly. Affected checks\n  pass; final pristine clone rebuilds identical WASM and repeats the full\n  acceptance. I personally inspected both suite PNGs: 127 passed, 0 failed.\n  Browser reports have zero errors. Deployment and production receipts match\n  the final artifact bytes. Full `make -k ci` remains exit 2; independently\n  checked all five error families against the previous recording and unchanged\n  source (`final-audit.json`). No failed wall is labeled green.\n- **P9 HELD:** this verifies the pinned snapshot allocation boundary only.\n  Repeated restore reaches 4,183,490,560 bytes. T03aj/T03ak still require their\n  own fresh-frame and physical-input proofs; responsiveness remains unresolved.\n- **SUITE:** retain the built-WASM regression and verifier byte oracle,\n  source sabotage and independent R3 expected hashes. No generated native\n  executable is required in committed evidence.\n\nVerifier seal: 25 repo-relative paths in\n`evidence/omarchy-profile/snapshot-allocation-verifier/sha256.txt`, index SHA-256\n`beb56a096ced5f60cbac0c5b1c3d0304046addf599011be2f3812935944a496f`.",
+      "adversarial": "A fresh critic predicts before inspecting the final run: whole-state bytes follow only the specified existing restore transition and\nRAM digest is unchanged, real1GiB restore/save succeeds, stale/foreign identities still\nreject, and the unchanged original allocator fails the same browser case.\nInspect every changed allocation hunk, run one bounded novel serialization\nattack and sabotage the regression once. Carry unchanged guest semantics and\nrecordings; no unrelated performance or architectural claims.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03al-snapshot-allocation.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify bounded Omarchy snapshot allocation and durable export",
+            "Submit snapshot allocation proof, clean rebuild, and deployment",
+            "Avoid geometric snapshot buffer growth after large RAM sections",
+            "Start bounded snapshot container allocation repair"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03am",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test existing counter recycling on the prepared cap256 desktop",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ak",
+        "E5.5-T03aa"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — measured follow-up plan\n\nAK report SHA256 `0d4f8f50d2d9e940ce098f744202bcff49ae3c1048b39d692231d1d2c7fa38ea`.\nIts actual new frame remained an empty terminal; all32 readbacks report the\nfile missing. This experiment tests a bounded remaining policy combination,\nwithout claiming that full-table refusals caused the missing response.\n\n### 2026-09-16 — activation\n\nAK has a fresh verified negative verdict; its control remains unchanged.\nActivate only this fixed existing-option candidate. The plan's initial15s\nprofile wording was corrected to the existing30s constant before activation;\nneither the input deadline nor the180s diagnostic budget is changed.\n\n### 2026-09-16 — worker — bounded candidate negative, exact worker profile retained\n\nFrozen implementation `e7e378288581069ae0471e3ca141507e1f5faf30`.\nThe deterministic acceptance command closes normally (child1, audited parent0),\nwithout watchdog. Startup38002ms and typing2689ms. Enter at07:35:39.736Z;\nreadback deadline07:37:39.736Z; failure07:37:39.739Z. All128 trusted events and\nordered keyboard/sync acknowledgments are present. All35 completed independent\nreads return exit75/file absent, none pending and no nonce response. The saved\nproperties are read once and unchanged. Frames2→3, but the actual failure PNG\nis the same empty Foot prompt (SHA256 `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`).\nThe worker personally inspected it. Desktop acceptance is false.\n\nThe input interval retires3382363807 instructions,2275188610 via JIT\n(67.2662298%). Recycling epochs3→6 and count refusals remain0. These counters\nneither establish causation nor override the failed physical response.\nReport SHA256 `bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4`;\nrun receipt SHA256 `3319d0284bd5cd8b2c2d4edbc8f85b6f5584f72e0d471cc791594bc823a53611`.\n\nAfter the fixed negative verdict, the existing recorder samples the exact\nlinux-worker for30032.554ms/20004 samples, beginning07:37:39.809Z and stopping\n07:38:09.837Z. Profile SHA256 `064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9`.\nThe post-Enter CDP fence acknowledges at07:35:39.737Z; the independent input\naudit finds no post-verdict ingress. Profiling preserves the frozen negative\nverdict and ends within its separate180s diagnostic budget; cleanup closes\nnormally at07:38:10.008Z. No extra acceptance read or deadline extension.\n\nDebug names recovered from the already built AL artifact match all11\nnon-custom executable sections of the actual release. The named companion\nSHA256 is `40247ad9b55204d5d23aff7e462dfc7b6d4292c5fd81ccac20af40aab8b52f7e`.\nMeasured self costs include Machine::run12.7814%, Hart::execute8.2346%,\nBlockCache::flush_page6.1219% and F32::fma1.5445%; runTick is94.3319% inclusive.\nInclusive values overlap and are not summed. This is a post-failure sample,\nnot proof of the earlier critical path or an optimization benefit.\n\nCommands (all git/Python use DEVELOPER_DIR=/Library/Developer/CommandLineTools):\n\n- `python3 evidence/omarchy-profile/prepared-recycling-gates/record.py`:89 affected\n  deterministic tests plus runner/recorder syntax pass at the frozen head.\n- `python3 evidence/omarchy-profile/prepared-recycling-gates/freeze.py`: passes\n  before actual navigation; exact source closure, unchanged runtime, pair and\n  carried AK/AJ/AL/AA/AC evidence digests all agree.\n- The acceptance command above: one candidate only; AK OFF control carried.\n- `python3 evidence/omarchy-profile/prepared-recycling-gates/symbols.py`: only\n  bindgen/wasm-opt on the existing raw AL module, no Rust build. `bind-names.mjs`\n  proves executable section equality before symbol attribution.\n- `node tools/verify/e5-t22c-symbolize-cpu.mjs web/dist/pkg/wasm_vm_wasm_bg.wasm target/omarchy-prepared-recycling-symbols/named.wasm evidence/omarchy-profile/prepared-recycling-input-r1/desktop evidence/omarchy-profile/prepared-recycling-input-r1/symbolized`.\n- `python3 evidence/omarchy-profile/prepared-recycling-gates/seal.py` seals the\n  actual run, profile, captures, gates and explicit visual inspection.\n\nNo runtime, deployment or performance-success claim; Q remains gated. The\nmeasured follow-up examines the still-unsupported FMADD.S boundary, rather\nthan repeating this negative option test.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified (negative experiment only)\n\nIndependently audited frozen `e7e378288581069ae0471e3ca141507e1f5faf30`, worker\n`678c7346`, and the sealed actual AM recording. P1–P7 HELD in\n`evidence/omarchy-profile/prepared-recycling-verifier/verdict.md`.\n\nSame AJ R2 pair and AL runtime as AK; sole runtime difference is recycling ON\nat cap256. Actual wire has 128 trusted keys / 256 ordered acknowledgments; 35\ncompleted exit75 reads, zero pending/nonce. Enter 07:35:39.736Z → original\ndeadline 07:37:39.736Z → failure 07:37:39.739Z. Personally viewed the empty native\nFoot failure PNG (`97fc180d…`); frames 2→3 and 67.2662% JIT share do not establish\nresponse. Desktop acceptance remains false and Q remains gated.\n\nOne fence acknowledges 07:35:39.737Z. Exact owned-worker profile starts only after\nthe immutable negative verdict; no new input/read or deadline extension.\nIndependent recount gives 20,004 samples, 3,500 nodes, 30,031,577 weightedµs;\nall 11 executable sections and 1,911 names match AL and the worker summary.\nNormal child1/parent0 close;155ms cleanup, no watchdog.\n\nBounded counterfeit success is rejected without a timely raw nonce. 89 frozen\naffected tests/two syntax checks, 26-module closure, 31 helper pins, 32 worker\nfiles and 237 carried AK/AJ/AL/AA/AC evidence entries pass. Every changed hunk is\nclassified in `coverage.md`; dormant wrapper guards have eight explicit\nsynthetic controls. The independent adapter's omitted carried layers query and\nits correction are preserved; no implementation or actual evidence changed.\n\nCommands: verifier `audit-prerequisites.py`, `audit-source.py`, `audit-run.py`,\n`audit-profile.py`; Node `attack.mjs` and `wrapper-test.mjs`; direct PNG inspection\nand exact worker-summary/seal comparisons. No additional guest/browser/build,\ncontrol rerun, sweep or deployment. Retain deterministic tests and sealed raw\nnegative/profile evidence.\n\nActual report SHA256 `bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4`;\nprofile `064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9`.\nWorker32-file index `f0ad60cfc8edde45bf80076e6eb2649e81bc291d2d0faea7b95112c8fb6d5dd0`.\nVerifier artifacts are sealed by `prepared-recycling-verifier/sha256.txt`.",
+      "adversarial": "Fresh critic predicts before evidence, checks exact pair/runtime and the sole\nruntime option difference against AK, then independently reconstructs input,\nnonce and presentation evidence. One bounded counterfeit-success attack.\nCarry unchanged AK/AJ/AL and recycling-policy HELD proofs. If the post-verdict\nprofile runs, verify input fencing, exact worker attribution and non-extension\nof acceptance. Verification certifies an honest result, not automatic release.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03am-prepared-recycling-input.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify negative recycling trial and plan measured FMADD boundary",
+            "Record negative prepared recycling trial and exact worker costs",
+            "Start fixed recycling trial on the prepared desktop",
+            "Record failed prepared input trial and measured policy follow-up"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03an",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep measured FMADD.S renderer blocks compiled",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03am",
+        "E5.5-T03z"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — measured follow-up plan\n\nT03am report SHA256 bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4.\nPost-failure profile SHA256 064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9\nbinds all 11 executable sections to AL. Static saved renderer page SHA256\n68e042889bbbe68b7fb56eb2bca604d2b79f384620da6d33a1e3b1bb6b680f9b;\nits FMADD.S examples include 0x1116fec3 at 0x7fff6c08a6d6 and0x11f6f4c3 at\n0x7fff6c08a746. The dynamic raw histogram has no S/D distinction, so the page\nbinding and format-bit decode are required rather than silently assuming it.\n\n### 2026-09-16 — activation\n\nAM is independently verified negative at 29ea3537. Activate only the measured\nFMADD.S boundary. A fresh critic recorded P1–P10 before worker evidence.",
+      "adversarial": "A fresh critic predicts fused result/flags before reading worker evidence,\nincluding cancellation, zero×infinity plus qNaN, opposite infinite sum,\nunderflow and finite overflow. Independently vary operands/NaN boxes, modes,\naliases and prior flags; instrument helper purity/counts and illegal exits;\naudit exact dirty masks, call indices and each changed publication boundary;\nsabotage one new assertion in an isolated copy. Carry unchanged HELD proofs.\nIndependently verify final cold build, public bytes and actual physical result.\nNo extra runtime policy experiment or extended input deadline is acceptance.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03an-jit-fmadd-single.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 2,
+          "labels": [
+            "Start measured FMADD.S compiled helper slice",
+            "Verify negative recycling trial and plan measured FMADD boundary"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 2
+    },
+    {
       "id": "E5.5-T03b",
       "epic": "5.5",
       "epicKey": "5.5",
@@ -23006,7 +23538,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03z"
+        "E5.5-T03an"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23021,18 +23553,28 @@
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 10,
+          "commits": 15,
           "labels": [
-            "Plan measured renderer division boundary after word conversions",
-            "Plan measured word conversions after failed desktop input",
-            "Plan measured integer-to-float boundary after failed desktop input",
-            "Plan measured FP arithmetic helper after failed desktop input"
+            "Start fixed opaque Foot input experiment",
+            "Start bounded preparation of a rendered smaller desktop",
+            "Start bounded post-verdict worker cost profile",
+            "Plan bounded existing residency option test after negative recycling pair"
+          ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify negative recycling trial and plan measured FMADD boundary",
+            "Record failed prepared input trial and measured policy follow-up",
+            "Record direct opacity input failure and plan rendered checkpoint",
+            "Plan direct window properties after global refresh IPC timeout"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
-      "lastActivity": "2026-09-15",
-      "commitCount": 10
+      "lastActivity": "2026-09-16",
+      "commitCount": 20
     },
     {
       "id": "E5.5-T03r",
@@ -23316,10 +23858,15 @@
             "Start measured float-to-word JIT conversion slice",
             "Plan measured word conversions after failed desktop input"
           ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-09-15",
-      "lastActivity": "2026-09-15",
+      "lastActivity": "2026-09-16",
       "commitCount": 4
     },
     {
@@ -23328,7 +23875,7 @@
       "epicKey": "5.5",
       "title": "Keep measured single-precision divisions in compiled renderer blocks",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03y"
       ],
@@ -23339,22 +23886,29 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-15 — coordinator — remaining measured division boundary\n\nT03y's runtime and built artifact at `53a095a485787e4ce6177712830d76728342b083`\npass the focused native/private/shared acceptance and production browser guest,\nwith 3,605/4,000 JIT retirements and 127/127 live ISA tests. Its WASM SHA-256 is\n`7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9`.\nThe actual physical trial fails the original deadline at\n`2026-09-15T23:42:59.984Z`, after 128 trusted accepted events and 13 completed\nfile reads returning 75. There is no nonce or visible typed response; frames\nremain 2→2 and the Foot images are byte-identical. Raw report SHA-256:\n`9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687`.\nThe independent critic confirms this failure. The static parcel scan and its\nsource hash are recorded in\n`evidence/omarchy-profile/fp-to-word-r1/saved-division-encodings.json`;\nthe dynamic count comes from verified `renderer-opcodes-r1/report.json`.\n\n### 2026-09-15 — worker — activated after independent word-conversion verification\n\nT03y is verified at `dffdff3548b5cbc22ee9ede6e5a3233c2cea79fd` and published\nas open PR #393. Its physical result remains failed. This slice admits FDIV.S\nonly, with independent rounded-result/flag goldens, precise illegal exits,\nmixed helper indices and the unchanged real desktop deadline. The fresh critic\nwill check the new boundary independently before a verified status is possible.",
+      "verificationLog": "### 2026-09-16 — worker — frozen division submission; desktop still fails\n\nRuntime, fixtures, harness, policy and dist are frozen at\n`f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a`. Final source/cold head is\n`619a569e4f97ad3d7d68dbf68fb8c3693082da79`; intervening commits only plan\nthe next task and record deployed manifests. WASM SHA-256 is\n`1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d`\n(1,597,495 bytes; service-worker version `d4e82fe7e700`). Evidence root:\n`evidence/omarchy-profile/fp-division-r1/`; all 69 retained files are bound by\n`sha256.txt`, whose SHA-256 is\n`da8b6685880651034ec46f81a030ba2dcb516d8c1eb5fba551bb7158829e902a`.\n\nClaim: actual generated FDIV.S modules obey precise FS/rm/source-box handling,\nindependent integer-only rounded bits/flags, exact publication and helper\nindices, including mixed arithmetic/conversion modules. Exact-rational\npreflight exposes 16 inherited F32 division flag mismatches (six missing UF,\nten missing OF); the scoped normalized-integer correction fixes only those\nflags. Literal normal-boundary and near-overflow regressions accompany it.\nWorker corpus: 30,720 cases, FNV `fc9d8c60370e34a2`, plus 80 prefix/CSR/fault\ncases and three real run-loop traps. Native/private/shared tests pass;\nindependent critic fixtures are included in the final recorded acceptance.\n\nCommands (all use `DEVELOPER_DIR=/Library/Developer/CommandLineTools`):\n\n- `python3 evidence/omarchy-profile/fp-division-r1/record-submission.py affected`\n  records all 11 commands/arguments in `affected-commands.json`, all exit 0.\n  This includes production/fixture Clippy; 13 software-FP tests; two handoff\n  tests; 39 FP/precise-trap regressions; 23 native FP ISA binaries inside one\n  test; 33 WASM-library tests; no-host-float enforcement; and\n  `make verify-E5_5-T03z FP_DIVISION_OUT=.../browser` (six targets/18 tests).\n- `node tools/verify/omarchy-fp-division-browser.mjs .../browser` runs inside\n  acceptance: 5,000 guest retirements, 4,601 JIT, 127/127 live ISA results,\n  zero browser errors, division pip live 1/1. Root views all three captures.\n  Guest ELF SHA `b587726be44a8f2ced1e146946861bd5db0d2492b1575eb6eb80c70ec88bbe46`;\n  RAM-only SHA `fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca`.\n- `node tools/verify/omarchy-desktop-services.mjs .../physical-input` runs alone\n  with unchanged R3/settings/deadlines. Startup qualifies in 130,927 ms;\n  128 trusted events are accepted but 13 completed file reads return 75,\n  with one pending at the Enter-anchored 120-second deadline\n  `2026-09-16T00:47:57.719Z`. No nonce or visible typed output; frames 2→2;\n  personally inspected baseline/failure images are byte-identical. Normal\n  cleanup, no browser errors. Raw report SHA:\n  `6c220572738d7bcb6a7a03c184823a2dbf310dc1f0492a7f66a8262eb455425e`.\n- `python3 .../record-submission.py ci` records `make -k ci`, exit 2. The five\n  inherited failures remain: macOS wvseccomp/dead-method clippy, native test\n  wvseccomp, old VIRTIO_RNG resume assertion, zicsr-stub test methods and GPU\n  test-only Instant lint. Native ISA is 128/128; perf is 24.8 MIPS ≥15.\n  Unchanged failure boundaries and complete logs are retained, not relabeled.\n- `bash tools/deploy-cloudflare.sh` and `python3 .../check-public.py` publish\n  https://1a65f9cb.wasm-vm.pages.dev and the public alias. Eight HTTP 200\n  body hashes match exact local WASM/JS/roadmap/page bytes. Only four deploy\n  manifests change, committed at `619a569e`.\n- `python3 .../run-cold.py` records one pristine clone at final source head,\n  scrubs Rust/Cargo overrides, rebuilds identical WASM with `make web-dist`,\n  then passes all 18 acceptance tests and browser 127/127 with zero errors.\n  Finished `2026-09-16T01:08:38Z`; all three cold PNGs personally inspected.\n- `python3 .../seal.py` validates runtime/artifact/receipt identity and writes\n  `submission.json` plus the 69-file digest index.\n\nThis claims instruction correctness and an honest failed physical retry, not\ndesktop responsiveness or speedup. Pending T03aa follows measured full-table\nrefusals under the expanded instruction boundary; T03q stays gated. A fresh\nverifier must adjudicate this submission before the next task activates.\n\n### 2026-09-15 — coordinator — remaining measured division boundary\n\nT03y's runtime and built artifact at `53a095a485787e4ce6177712830d76728342b083`\npass the focused native/private/shared acceptance and production browser guest,\nwith 3,605/4,000 JIT retirements and 127/127 live ISA tests. Its WASM SHA-256 is\n`7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9`.\nThe actual physical trial fails the original deadline at\n`2026-09-15T23:42:59.984Z`, after 128 trusted accepted events and 13 completed\nfile reads returning 75. There is no nonce or visible typed response; frames\nremain 2→2 and the Foot images are byte-identical. Raw report SHA-256:\n`9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687`.\nThe independent critic confirms this failure. The static parcel scan and its\nsource hash are recorded in\n`evidence/omarchy-profile/fp-to-word-r1/saved-division-encodings.json`;\nthe dynamic count comes from verified `renderer-opcodes-r1/report.json`.\n\n### 2026-09-15 — worker — activated after independent word-conversion verification\n\nT03y is verified at `dffdff3548b5cbc22ee9ede6e5a3233c2cea79fd` and published\nas open PR #393. Its physical result remains failed. This slice admits FDIV.S\nonly, with independent rounded-result/flag goldens, precise illegal exits,\nmixed helper indices and the unchanged real desktop deadline. The fresh critic\nwill check the new boundary independently before a verified status is possible.\n\n### 2026-09-15 — independent verifier — VERDICT: verified\n\nScope is FDIV.S correctness and its recorded submission. **Desktop response\nstill fails; T03q remains gated.** Worker submission\n`74b3713cdcb0a6c8d518188eb27077055471a3aa` preserves runtime/fixtures/artifact\n`f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a`; pristine clone\n`619a569e4f97ad3d7d68dbf68fb8c3693082da79` rebuilds the identical WASM and passes\nall 18 focused tests. All 69 sealed worker files rehash correctly; index SHA\n`da8b6685880651034ec46f81a030ba2dcb516d8c1eb5fba551bb7158829e902a`.\n\n- P1–P6 — HELD. Independent rational-derived bits/flags match 11,328 literal\n  cases per native/private/shared executor, including rounded-normal UF and\n  directed finite OF. The F32-only flag repair is independently exercised on\n  both sides of its thresholds and both normalized operands. Literal digest\n  `13921326542630639717`; `fp-division-r1/acceptance.log:42,86,106`.\n- P7–P9 — HELD. 3,072 seeded states include 1,488 precise illegal exits per\n  executor. Instrumentation proves exactly 810 legal calls in 1,536 cases,\n  zero illegal calls, canonical arguments and exact dirty masks. All eight\n  optional-helper combinations execute, including nine actual imports and\n  exports 9–13. `fp-division-r1/acceptance.log:44,46,48`.\n- P10–P11 — HELD. Interpreted CSR changes, same/cross-module budgets and faults,\n  and six real private/shared 65,536-byte memory growth cases preserve exact\n  prefixes. All cold semantic output lines and nine digests match the freeze;\n  `fp-division-r1/acceptance.log:81–118`, `cold/acceptance.log`.\n- P12 — HELD. Isolated one-bit literal sabotage fails at\n  `CRITIC_FDIV_THIRD_GOLDEN`, restoration passes. Scrubbed cold source and WASM\n  identity, all final evidence hashes and ten independent public HTTP 200 body\n  comparisons pass; `fp-division-verifier/final-audit.json`.\n- P13 production — HELD. Built and cold production guests retire 4,601/5,000\n  through JIT, 127/127 live tests with zero errors. Independent ELF decoding,\n  literal register checks and complete RAM reconstruction give digest\n  `fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca`.\n  Six built/cold screenshots were viewed and rehashed.\n- P13 physical/gating — HELD; actual response FAILED. Independent raw audit\n  confirms 128 trusted/focused/acknowledged events, thirteen completed reads\n  returning 75 plus one pending at the unchanged 120-second deadline\n  `2026-09-16T00:47:57.719Z`. Frames remain 2→2; viewed Foot images are identical\n  and show no typed output. Raw SHA\n  `6c220572738d7bcb6a7a03c184823a2dbf310dc1f0492a7f66a8262eb455425e`;\n  `fp-division-r1/physical-input/desktop/report.json:26331–26334`.\n\nAll eleven affected commands pass. Broad CI remains failed with the same five\ninherited targets; nine independently hashed failure boundaries are unchanged.\nNative ISA passes 128/128; ALU smoke is 24.8 MIPS against the 15 MIPS floor.\nUnchanged predecessor HELD results carry forward. No responsiveness, speedup\nor broad-green claim is made.\n\nCOVERAGE/SUITE: `evidence/omarchy-profile/fp-division-verifier/coverage.md` maps\nevery changed hunk. All three promoted verifier fixtures remain in\n`make verify-E5_5-T03z`; no implementation was edited by this critic. Detailed\npredictions, observations, citations and waivers are in that directory's\n`final-verdict.md`. Independent commands include focused native/WASM tests,\nboth fixture Clippy gates, isolated `sabotage.py`, and read-only `audit-cold.py`,\n`audit-production.py`, `audit-physical.py`, `audit-ci.py`, `audit-public.py` and\n`audit-seal.py`. Policy check precedes queue regeneration for this verdict.",
       "adversarial": "A fresh critic predicts concrete rounded bits and flags before reading worker\nevidence, including finite/zero versus infinity/zero, zero/zero, negative ratios,\nhalf-minimum subnormal, rounded-normal underflow boundaries and directed finite\noverflow. Independently vary raw operands/boxes, modes, aliases and prior flags;\ninstrument helper calls and illegal exits; audit mixed import indices, exact\ndirty masks and all changed publication paths; sabotage a literal in an\nisolated test copy. Carry unchanged HELD results forward. Independently inspect\nthe final cold rebuild, public bytes and physical result.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03z-jit-fp-division.md",
       "activity": [
         {
           "date": "2026-09-15",
-          "commits": 2,
+          "commits": 4,
           "labels": [
+            "Verify bounded FDIV.S support and retain desktop gate",
+            "Submit recorded FDIV.S correctness and desktop failure evidence",
             "Start measured renderer division JIT slice",
             "Plan measured renderer division boundary after word conversions"
           ]
+        },
+        {
+          "date": "2026-09-16",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-09-15",
-      "lastActivity": "2026-09-15",
-      "commitCount": 2
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
     },
     {
       "id": "E5.5-T04a",
