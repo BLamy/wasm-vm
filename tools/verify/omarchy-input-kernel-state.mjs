@@ -27,6 +27,8 @@ export function assertInputKernelProvenance(record) {
   assert.equal(record.inputs.chunkManifest.size, R3_IDENTITIES.chunkManifest.size);
   assert.equal(record.inputs.wasm.sha256, "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916");
   assert.match(record.head, /^[a-f0-9]{40}$/u);
+  assert.deepEqual(Object.keys(record.artifacts).sort(), ["bootSnapshot", "overlayDelta"],
+    "native pair must contain only snapshot and delta artifact roles");
   for (const role of ["bootSnapshot", "overlayDelta"]) {
     assert.match(record.artifacts[role].sha256, /^[a-f0-9]{64}$/u);
     assert.ok(Number.isSafeInteger(record.artifacts[role].size) && record.artifacts[role].size > 1000);
@@ -39,7 +41,8 @@ export function assertInputKernelProvenance(record) {
 export function assertInputKernelSource(source, record) {
   assertInputKernelProvenance(record);
   for (const [role, expected] of Object.entries({ kernel: INPUT_BUFFER_KERNEL,
-    chunkManifest: R3_IDENTITIES.chunkManifest, ...record.artifacts })) {
+    chunkManifest: R3_IDENTITIES.chunkManifest, bootSnapshot: record.artifacts.bootSnapshot,
+    overlayDelta: record.artifacts.overlayDelta })) {
     assert.equal(source?.[role]?.size, expected.size, `${role}: wrong input-kernel size`);
     assert.equal(source?.[role]?.sha256, expected.sha256, `${role}: wrong input-kernel bytes`);
   }
