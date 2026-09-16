@@ -96,7 +96,7 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
   const bindings = {
     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
-    coldPair: false, coldDeadline: null, trialCaptureDeadline: null, mode,
+    coldPair: false, workerCost: false, coldDeadline: null, trialCaptureDeadline: null, mode,
     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
     physicalStroke, assertInputTrialRuntime,
     randomBytes: () => Buffer.from((randomCall++ ? "b" : "a").repeat(16), "hex"),

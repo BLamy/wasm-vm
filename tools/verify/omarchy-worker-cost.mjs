@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
 import { inputTrialOptions, assertInputTrialRuntime, assertInputTrialSource } from "./omarchy-input-trial.mjs";
-import { WORKER_COST_CAPTURE_MS, validateWorkerCostProfile, workerCostInputVerdict } from "./omarchy-worker-cost-capture.mjs";
+import { WORKER_COST_CAPTURE_MS, validateWorkerCostProfile, workerCostInputVerdict, auditWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
 import { auditSerial } from "./omarchy-latency-receipt.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -68,8 +68,7 @@ try {
       assert.ok(!Buffer.from(row.bytes).toString("ascii").includes(report.keyboard.nonce));
       assert.ok(Date.parse(row.timestamp) <= Date.parse(report.keyboard.failedAt), "new serial input after verdict");
     }
-    assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(report.keyboard.failedAt)),
-      "new physical input after verdict");
+    receipt.inputAudit = auditWorkerCostInput(report);
     receipt.result = "post-verdict CPU sample captured; desktop acceptance remains failed";
   }
 } catch (error) { receipt.auditError = String(error); throw error; }

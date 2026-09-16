@@ -23,7 +23,7 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
 import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
-import { captureWorkerCost } from "./omarchy-worker-cost-capture.mjs";
+import { captureWorkerCost, fenceWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -1216,6 +1216,7 @@ async function runLive() {
     readbackTimeoutMs: trial.readbackMs, deadlineMs: trial.readbackMs,
     deadlineAt: new Date(report.keyboard.enteredAtMs + trial.readbackMs).toISOString() });
   try {
+    if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
     report.keyboard.stage = "post-enter-focus";
     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");

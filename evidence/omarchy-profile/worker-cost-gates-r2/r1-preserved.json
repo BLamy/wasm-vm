@@ -1,0 +1,126 @@
+{
+  "r1Protocol": "refuted: post-verdict tablet input",
+  "desktopResponsive": false,
+  "files": [
+    {
+      "path": "worker-cost-gates/bindgen-version.log",
+      "sha256": "9665b51d243c180bb4c9c723552ddca2ee5a212f1dd5f4d27424266754321d91"
+    },
+    {
+      "path": "worker-cost-gates/bindgen.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/commands.json",
+      "sha256": "daa47a3d8dcf74594bb2e4bb4be0eed4a05c53d938d381c05c0a621916149aad"
+    },
+    {
+      "path": "worker-cost-gates/cost-runner-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/driver.log",
+      "sha256": "a97c4d1f28649e3deb623add187cd9fcd6df8bdc5fa322270c5a8e9f0c1273bd"
+    },
+    {
+      "path": "worker-cost-gates/freeze.log",
+      "sha256": "f6bdfec986609c9ec06e7acaff319b795fb68129720f902fc2096203147da7be"
+    },
+    {
+      "path": "worker-cost-gates/freeze.py",
+      "sha256": "14bc4b786e1ed64ac724dcb1e8a1ce250fcf011ffb4ac4f67a4b2c2a1743207c"
+    },
+    {
+      "path": "worker-cost-gates/frozen.json",
+      "sha256": "f6bdfec986609c9ec06e7acaff319b795fb68129720f902fc2096203147da7be"
+    },
+    {
+      "path": "worker-cost-gates/name-binding.json",
+      "sha256": "9725b324e8b8595c02b3637b3cf4bec75a2e5b1814658d2f1829d41cea9e8de6"
+    },
+    {
+      "path": "worker-cost-gates/named-companion.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/prepare-symbols.log",
+      "sha256": "0c717c84a4b9df6adeeb24a9d82e4953aba9a9addc67903edde4787b09cd2139"
+    },
+    {
+      "path": "worker-cost-gates/prepare-symbols.py",
+      "sha256": "86ed2b8a0b9f32d1130a3e9f6c853a5bde2b731114a15663f993cd87013dcbe3"
+    },
+    {
+      "path": "worker-cost-gates/real-worker-profiler.log",
+      "sha256": "2fb8ecb2af158beb5fc425735fbc6f068c3e56aee0dbbf79e75c2071be4782f2"
+    },
+    {
+      "path": "worker-cost-gates/record.py",
+      "sha256": "b84b1348204241a826bdc3aa1c53a72bf422ecd0b3c76b55cbdee1b6fefaf4ec"
+    },
+    {
+      "path": "worker-cost-gates/recorder-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/recorder.log",
+      "sha256": "44755cb8b6e17d8c6f2fa297220d4912b8cbe149a6929ff8e8a8ae3082e7c125"
+    },
+    {
+      "path": "worker-cost-gates/recycling-runner-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/residency-runner-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker-cost-gates/symbol-build.json",
+      "sha256": "0c717c84a4b9df6adeeb24a9d82e4953aba9a9addc67903edde4787b09cd2139"
+    },
+    {
+      "path": "worker-cost-gates/symbolize.log",
+      "sha256": "e36f62bd31c91ee4bcf8001561ee11be2ce4fbd77bdf2c6b78d7c7f9b6abe4f5"
+    },
+    {
+      "path": "worker-cost-gates/wasmopt-version.log",
+      "sha256": "15647c8ddc59943b287606b47782e10b3316bde2afc42d96318ebc4072764639"
+    },
+    {
+      "path": "worker-cost-r1/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "worker-cost-r1/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "worker-cost-r1/desktop/latest.png",
+      "sha256": "f410ff2c59bbba780638688eeee23f6d82e0093dcced2faee523a5da35b8b14f"
+    },
+    {
+      "path": "worker-cost-r1/desktop/report.json",
+      "sha256": "69482a435e023895d5d1aa3a6d689ef89b212faac57bf5748820426cfb693a5b"
+    },
+    {
+      "path": "worker-cost-r1/desktop/serial.log",
+      "sha256": "ed20120067fd908a6514c40fd4f88def5623fcd8cedec47db42550fa2aec7ebc"
+    },
+    {
+      "path": "worker-cost-r1/desktop/worker-cpu.json",
+      "sha256": "5abf906b70d3fc544038040ff945fbbd915c29259e5514c6d50313b19c308f8f"
+    },
+    {
+      "path": "worker-cost-r1/desktop.log",
+      "sha256": "b12a374c8e52daa164e8ac517efa99e3d1095136ae5855ee3d151ceb5db67241"
+    },
+    {
+      "path": "worker-cost-r1/run.json",
+      "sha256": "a97c4d1f28649e3deb623add187cd9fcd6df8bdc5fa322270c5a8e9f0c1273bd"
+    },
+    {
+      "path": "worker-cost-r1/symbolized/cpu-summary.json",
+      "sha256": "482133e2085e4cae2909d32cca852cd19a72aea08211584efa7bf10a250d2701"
+    }
+  ]
+}

@@ -3,7 +3,31 @@ import test from "node:test";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { captureWorkerCost, validateWorkerCostProfile, workerCostInputVerdict } from "./omarchy-worker-cost-capture.mjs";
+import { captureWorkerCost, validateWorkerCostProfile, workerCostInputVerdict, auditWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
+
+test("post-verdict audit rejects every ingress channel, including R1 tablet sends and acknowledgements", () => {
+  const r = failed(), stamp = new Date(Date.parse(r.keyboard.failedAt)+1).toISOString();
+  r.workerCostInputFence = { method: "Input.setIgnoreInputEvents", ignore: true,
+    startedAt: r.keyboard.typedAt, acknowledgedAt: new Date(r.keyboard.enteredAtMs+1).toISOString() };
+  r.inputEvents = [];
+  r.workerTraffic = [{ type: "worker-call", method: "jitStats", args: [], sent: true, timestamp: stamp },
+    { type: "serial-output", timestamp: stamp }];
+  assert.equal(auditWorkerCostInput(r).noPostVerdictIngress, true);
+  for (const method of ["sendKeyboardEvent", "syncKeyboard", "sendTabletEvent", "syncTablet", "sendMouseEvent",
+    "syncMouse", "setDisplay", "sendAgentInput", "unknownMutation"]) {
+    for (const type of ["worker-call", "input-result"]) {
+      const mutated = structuredClone(r);
+      mutated.workerTraffic.push({ type, method, args: [], sent: true, timestamp: stamp });
+      assert.throws(() => auditWorkerCostInput(mutated));
+    }
+  }
+  for (const type of ["serial-input", "worker-boot", "unobserved-input"]) {
+    const mutated = structuredClone(r); mutated.workerTraffic.push({ type, timestamp: stamp });
+    assert.throws(() => auditWorkerCostInput(mutated));
+  }
+  r.workerCostInputFence.acknowledgedAt = r.keyboard.deadlineAt;
+  assert.throws(() => auditWorkerCostInput(r), /existing deadline/);
+});
 
 const url = "http://127.0.0.1:1234/linux-worker.js";
 function profile() {

@@ -11,6 +11,42 @@ export const WORKER_COST_SAMPLE_MS = 30000;
 export const WORKER_COST_CAPTURE_MS = 180000;
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 
+// CDP's host-side audit fence; no guest RPC or input-queue flush. Keep this
+// session attached until the owned browser closes so screenshot/profiler setup
+// cannot admit incidental host pointer input after the physical command.
+export async function fenceWorkerCostInput(page, keyboard) {
+  const deadline = keyboard.enteredAtMs + keyboard.readbackTimeoutMs;
+  assert.equal(keyboard.readbackTimeoutMs, 120000);
+  assert.equal(Date.parse(keyboard.deadlineAt), deadline);
+  const receipt = { startedAt: new Date().toISOString(), method: "Input.setIgnoreInputEvents", ignore: true };
+  const bounded = fn => withinTrialDeadline(fn, deadline, "worker cost host-input fence");
+  const session = await bounded(() => page.context().newCDPSession(page));
+  await bounded(() => session.send(receipt.method, { ignore: true }));
+  receipt.acknowledgedAt = new Date().toISOString();
+  return receipt;
+}
+
+export function auditWorkerCostInput(report) {
+  const failedAt = Date.parse(report.keyboard.failedAt), fence = report.workerCostInputFence;
+  assert.equal(fence?.method, "Input.setIgnoreInputEvents"); assert.equal(fence.ignore, true);
+  const started = Date.parse(fence.startedAt), acknowledged = Date.parse(fence.acknowledgedAt);
+  assert.ok(started >= report.keyboard.enteredAtMs && acknowledged >= started &&
+    acknowledged < Date.parse(report.keyboard.deadlineAt), "host-input fence must consume the existing deadline");
+  assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= started), "physical input after fence");
+  // A read-only allowlist rejects future/alternate ingress methods as well as
+  // the tablet RPCs missed by R1. Replies to earlier read-only commands may finish.
+  const reads = new Set(["keyboardLedState", "inputDeviceStats", "jitStats", "schedulerStats", "guestClockState"]);
+  for (const row of report.workerTraffic) {
+    assert.ok(Number.isFinite(Date.parse(row.timestamp)), "invalid worker event timestamp");
+    if (Date.parse(row.timestamp) <= failedAt) continue;
+    if (row.type === "serial-output") continue;
+    assert.equal(row.type, "worker-call", "new input or mutation acknowledgement after verdict");
+    assert.ok(reads.has(row.method) && row.sent === true && row.args.length === 0,
+      `non-observational worker RPC after verdict: ${row.method}`);
+  }
+  return { fenceAcknowledgedAt: fence.acknowledgedAt, noPostVerdictIngress: true };
+}
+
 export function workerCostInputVerdict(report) {
   const verdict = JSON.parse(assertFailedInput(report));
   // Cleanup adds these observations after sampling; they are not verdict fields.
