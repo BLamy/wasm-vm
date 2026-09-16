@@ -1,0 +1,27 @@
+{
+  "purpose": "synthetic positive-branch coverage and bounded late-readback rejection",
+  "productEvidence": false,
+  "sourceFixture": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/worker-cost-r2/desktop/report.json",
+  "sourceFixtureSha256": "41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555",
+  "helperSha256": "17aeff63db4441fc45b996af66f8102cde630b9b7b04f14b045f679b4f74e38f",
+  "positiveControl": {
+    "acceptedAsMachineOnly": true,
+    "visualInspectionStillRequired": true,
+    "nonceReplies": 1
+  },
+  "lateWireAttack": {
+    "summaryCompletedAt": "2026-09-16T02:35:41.471Z",
+    "deadlineAt": "2026-09-16T02:37:41.466Z",
+    "rawWireCompletedAt": "2026-09-16T02:37:41.467Z",
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+  },
+  "stalePresentationRejected": true,
+  "missingPhysicalAttack": {
+    "removedTypedAt": true,
+    "removedDomKeyEvents": true,
+    "removedKeyboardCallsAndAcks": true,
+    "acceptedAsMachine": false,
+    "error": "AssertionError [ERR_ASSERTION]: input success requires a completed physical sequence"
+  }
+}

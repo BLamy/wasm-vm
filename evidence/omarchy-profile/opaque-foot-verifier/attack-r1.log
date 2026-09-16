@@ -1,0 +1,25 @@
+{
+  "baselineAccepted": true,
+  "attacks": [
+    {
+      "name": "forged-summary-over-false-opaque-wire",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: reported properties disagree with actual wire\n+ actual - expected\n\n  {\n    exit: 0,\n+   stdout: 'ok\\ntrue\\ntrue\\n1.0\\n'\n-   stdout: 'ok\\nfalse\\ntrue\\n1.0\\n'\n  }\n"
+    },
+    {
+      "name": "false-property-in-both-summary-and-wire",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Hyprland did not confirm opaque/RGBX\n+ actual - expected\n\n  [\n    'ok',\n    'true',\n+   'false'\n-   'true'\n  ]\n"
+    },
+    {
+      "name": "late-property-with-backdated-summary",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(wire.completedAt) <= Date.parse(receipt.respondedAt))\n"
+    },
+    {
+      "name": "echo-without-real-property-reply",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: reported properties disagree with actual wire\n+ actual - expected\n\n+ {\n+   exit: 0,\n+   stdout: 'ok\\ntrue\\ntrue\\n1.0\\n'\n+ }\n- null\n"
+    }
+  ]
+}

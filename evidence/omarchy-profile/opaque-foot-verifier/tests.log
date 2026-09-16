@@ -1,0 +1,20 @@
+✔ fixed opaque rule requires all real properties and consumes the existing startup deadline (15.130917ms)
+✔ an expired or late configuration cannot restart the original clock (3.44925ms)
+✔ property audit binds to the wire and rejects missing, forged, duplicate, late and pre-configuration input (21.737542ms)
+✔ actual original resource and frame dimensions are required, regardless of canvas size (0.918125ms)
+✔ retained real negative input recording passes reusable audit; missing sync or fabricated success fails (202.751333ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (109.6595ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (102.257917ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (28.296208ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (8.514042ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (117.407833ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (185.080459ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (80.092959ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 962.420292

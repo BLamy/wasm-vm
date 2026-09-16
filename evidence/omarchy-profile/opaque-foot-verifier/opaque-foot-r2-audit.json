@@ -1,0 +1,137 @@
+{
+  "head": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+  "reportSha256": "8252db4688dd509e5afc797ed900eb1ea1f47d20e8597127fb98e44878795d9c",
+  "runSha256": "f718d1594522b616b44ec9e19bbc3bd487c398df0530bbcca24898687ca2e2dd",
+  "fixedCommand": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+  "verifiedHelperFiles": 22,
+  "rehashedResources": 93,
+  "configuration": {
+    "configured": false,
+    "properties": [],
+    "raw": {
+      "rid": "mu3kr1f91",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+      "sentAt": "2026-09-16T04:02:12.597Z",
+      "completedAt": null,
+      "response": null
+    }
+  },
+  "input": {
+    "arm": "candidate",
+    "machineAcceptance": false,
+    "visualInspectionRequired": true,
+    "result": "failed",
+    "outcome": "startup-failed-input-not-tested",
+    "startup": {
+      "startedAt": "2026-09-16T03:58:24.613Z",
+      "timeoutMs": 300000,
+      "deadlineAt": "2026-09-16T04:03:24.613Z"
+    },
+    "keyboard": null,
+    "trustedEvents": 0,
+    "matchedKeyboardCalls": 0,
+    "completedReads": 0,
+    "pendingReads": 0,
+    "readExits": [],
+    "nonceReplies": 0,
+    "framesBefore": 2,
+    "framesAfter": 2,
+    "intervalRetired": 0,
+    "intervalJitRetired": 0,
+    "intervalJitShare": null,
+    "discoveryBefore": {
+      "nominated": 19035,
+      "deduped": 15478974,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 1930661,
+      "excluded": 129,
+      "queueDepth": 0,
+      "queueHighWater": 459,
+      "candidates": 65533,
+      "generation": 5
+    },
+    "discoveryAfter": {
+      "nominated": 19035,
+      "deduped": 15478974,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 1930661,
+      "excluded": 129,
+      "queueDepth": 0,
+      "queueHighWater": 459,
+      "candidates": 65533,
+      "generation": 5
+    },
+    "recyclingBefore": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "recyclingAfter": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "residency": {
+      "policy": "cap-256",
+      "cap": 256
+    },
+    "cacheBefore": {
+      "blocks": 913,
+      "installs": 5662,
+      "evictions": 1170
+    },
+    "cacheAfter": {
+      "blocks": 913,
+      "installs": 5662,
+      "evictions": 1170
+    },
+    "serial": [
+      {
+        "rid": "mu3kmlh30",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-16T03:58:45.304Z",
+        "completedAt": "2026-09-16T04:01:46.517Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3kr1f91",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+        "sentAt": "2026-09-16T04:02:12.597Z",
+        "completedAt": null,
+        "response": null
+      }
+    ]
+  },
+  "cleanupElapsedMs": 724,
+  "images": [
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "size": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55",
+      "capturedAt": "2026-09-16T04:01:42.368Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r2/desktop/desktop.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T04:02:12.568Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r2/desktop/failure.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T04:03:24.762Z"
+    }
+  ],
+  "visibleResponse": "Requires direct image inspection; no image/counter inference made by this script.",
+  "productAcceptance": false
+}

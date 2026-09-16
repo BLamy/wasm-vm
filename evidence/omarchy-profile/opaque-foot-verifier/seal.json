@@ -1,0 +1,16 @@
+{
+  "verdict": "verified",
+  "scope": "negative configuration diagnostic only",
+  "desktopSolved": false,
+  "releaseEligible": false,
+  "files": 59,
+  "bytes": 5901196,
+  "indexSha256": "2e3a3b3be066c3dff0b6fbb3754560a20289bfe6e2bd2fe1bb1651ef91e3b175",
+  "finalVerdictSha256": "9ab6aca74109ec4818037795eb9f86678c5235747240e02e5defcf9616609ba5",
+  "coverageSha256": "7c8d36b3676c02e3bbf9fab703f8e36a5955f2d989269494836d8f222eec6d83",
+  "auditCorrectionHead": "ed7edad7e1bdfa627809c93dc11a4838311180b5",
+  "recordingHeads": [
+    "94647c4993b062961b26e82bc2c8484431fe8c05",
+    "20737fb7bd9051286629beafc2a4f15ae839ee64"
+  ]
+}

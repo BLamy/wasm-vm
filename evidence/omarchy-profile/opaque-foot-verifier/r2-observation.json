@@ -1,0 +1,142 @@
+{
+  "reportSha256": "8252db4688dd509e5afc797ed900eb1ea1f47d20e8597127fb98e44878795d9c",
+  "head": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+  "startup": {
+    "startedAt": "2026-09-16T03:58:24.613Z",
+    "timeoutMs": 300000,
+    "deadlineAt": "2026-09-16T04:03:24.613Z"
+  },
+  "config": {
+    "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+    "requestCount": 1,
+    "startedAt": "2026-09-16T04:02:12.592Z",
+    "deadlineAtMs": 1789531404613,
+    "status": "configuration-failed",
+    "error": "Error: opaque Foot startup: deadline exceeded (UNPROVEN)",
+    "finishedAt": "2026-09-16T04:03:24.616Z"
+  },
+  "keyboard": null,
+  "result": "failed",
+  "outcome": "startup-failed-input-not-tested",
+  "errors": [],
+  "cleanup": {
+    "startedAt": "2026-09-16T04:03:24.764Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  },
+  "finishedAt": "2026-09-16T04:03:25.488Z",
+  "images": [
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T03:58:40.618Z",
+      "sha256": "ea54266ba9e8f50ad4ba097be7e0ad1b7d82c9bdd01ec3d678ae4081fd85ee76"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T03:59:11.198Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T03:59:41.412Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T04:00:11.637Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T04:00:41.874Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T04:01:12.128Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T04:01:42.368Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/desktop.png",
+      "timestamp": "2026-09-16T04:02:12.568Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/opaque-foot-r2/desktop/failure.png",
+      "timestamp": "2026-09-16T04:03:24.762Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ],
+  "runtime": [
+    {
+      "timestamp": "2026-09-16T04:03:24.692Z",
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    }
+  ]
+}

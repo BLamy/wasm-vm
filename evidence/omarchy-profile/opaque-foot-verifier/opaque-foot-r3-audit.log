@@ -1,0 +1,31 @@
+{
+  "head": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+  "reportSha256": "4a83b9cf1a4ed360a0d0ab2e98c431019bc97df103a7724b631b6d24f8748db9",
+  "configured": false,
+  "properties": [],
+  "result": "failed",
+  "outcome": "startup-failed-input-not-tested",
+  "keyEvents": 0,
+  "nonceReplies": 0,
+  "images": [
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r3/desktop/latest.png",
+      "size": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55",
+      "capturedAt": "2026-09-16T04:06:15.459Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r3/desktop/desktop.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T04:06:45.543Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/opaque-foot-r3/desktop/failure.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T04:10:07.686Z"
+    }
+  ],
+  "cleanupElapsedMs": 212
+}
