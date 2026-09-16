@@ -319,6 +319,11 @@ pub struct BootArgs {
     /// echo-proof `WVM_KB_INJECT` marker, inject one KEY_A make frame followed by one break frame.
     #[arg(long)]
     pub keyboard_proof: bool,
+    /// Diagnostic only: inject N KEY_A make/break pairs, then KEY_B down as a completion
+    /// sentinel. The separately opened guest state fd can observe it without draining the
+    /// measured evdev reader. Omit this option to retain the original four-event proof.
+    #[arg(long, requires = "keyboard_proof", value_parser = clap::value_parser!(u16).range(1..=512))]
+    pub keyboard_proof_burst_pairs: Option<u16>,
     /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
     #[arg(long)]
     pub no_reboot: bool,
@@ -772,7 +777,9 @@ pub fn boot(a: BootArgs) -> ExitCode {
         (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
         _ => None,
     };
-    let mut keyboard_proof = a.keyboard_proof.then(KeyboardProof::new);
+    let mut keyboard_proof = a
+        .keyboard_proof
+        .then(|| KeyboardProof::new(a.keyboard_proof_burst_pairs));
     #[cfg(feature = "gpu-trace")]
     if a.display_workload && a.gpu_trace.is_none() {
         eprintln!("wasm-vm: --display-workload requires --gpu-trace");
@@ -1614,16 +1621,18 @@ struct KeyboardProof {
     tail: String,
     injected: bool,
     last_pending_events: Option<usize>,
+    burst_pairs: Option<u16>,
 }
 
 impl KeyboardProof {
     const MARKER: &'static str = "WVM_KB_INJECT";
 
-    fn new() -> Self {
+    fn new(burst_pairs: Option<u16>) -> Self {
         Self {
             tail: String::new(),
             injected: false,
             last_pending_events: None,
+            burst_pairs,
         }
     }
 
@@ -1640,11 +1649,26 @@ impl KeyboardProof {
             };
             let mut state = state.borrow_mut();
             use wasm_vm_core::dev::virtio::input::EV_KEY;
-            use wasm_vm_core::dev::virtio::input::keyboard::KEY_A;
-            state.inject_event(EV_KEY, KEY_A, 1);
-            state.sync();
-            state.inject_event(EV_KEY, KEY_A, 0);
-            state.sync();
+            use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEY_B};
+            if let Some(pairs) = self.burst_pairs {
+                // A proof fixture must not drop events in the host before testing the
+                // Linux client's bounded queue. This does not change normal input policy.
+                state.set_pending_event_budget(usize::from(pairs) * 4 + 2);
+            }
+            for _ in 0..self.burst_pairs.unwrap_or(1) {
+                state.inject_event(EV_KEY, KEY_A, 1);
+                state.sync();
+                state.inject_event(EV_KEY, KEY_A, 0);
+                state.sync();
+            }
+            if let Some(pairs) = self.burst_pairs {
+                state.inject_event(EV_KEY, KEY_B, 1);
+                state.sync();
+                eprintln!(
+                    "wasm-vm: keyboard burst proof pairs={pairs} events={}",
+                    usize::from(pairs) * 4 + 2
+                );
+            }
             self.injected = true;
             eprintln!("wasm-vm: keyboard proof injected KEY_A make/break frames");
         }
@@ -2442,6 +2466,57 @@ mod cli_config_tests {
             .try_get_matches_from(["boot", "--kernel", "Image", "--icount-divider", "0"])
             .expect_err("zero divider must be rejected");
         assert!(error.to_string().contains("nonzero"));
+    }
+
+    #[test]
+    fn keyboard_burst_proof_is_opt_in_and_bounded() {
+        assert_eq!(
+            parse(&["boot", "--kernel", "Image", "--keyboard-proof"]).keyboard_proof_burst_pairs,
+            None
+        );
+        assert_eq!(
+            parse(&[
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "64",
+            ])
+            .keyboard_proof_burst_pairs,
+            Some(64)
+        );
+        for args in [
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof-burst-pairs",
+                "64",
+            ],
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "0",
+            ],
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "513",
+            ],
+        ] {
+            assert!(
+                BootArgs::augment_args(Command::new("boot"))
+                    .try_get_matches_from(args)
+                    .is_err()
+            );
+        }
     }
 }
 

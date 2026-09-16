@@ -1706,3 +1706,12 @@ verify-E5_5-T03ap:
 	node --test tools/verify/omarchy-compositor-input.test.mjs
 	python3 tools/verify/omarchy-input-observer-build.py $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build
 	node tools/verify/omarchy-compositor-input.mjs $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/physical $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build/observer-riscv64 $(or $(COMPOSITOR_INPUT_PAIR),target/omarchy-direct-opaque-r2)
+
+.PHONY: verify-E5_5-T03aq
+verify-E5_5-T03aq:
+	cargo fmt --check
+	cargo clippy -p wasm-vm-cli -- -D warnings
+	cargo test -p wasm-vm-cli --bin wasm-vm cli_config_tests
+	cargo build --release -p wasm-vm-cli --bin wasm-vm
+	python3 tools/build-omarchy-input-kernel.py $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
+	python3 tools/verify/omarchy-evdev-burst.py $(or $(EVDEV_PROOF_OUT),evidence/omarchy-profile/evdev-burst-r1) $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
