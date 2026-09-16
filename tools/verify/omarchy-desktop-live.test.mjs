@@ -367,3 +367,25 @@ test("harness-only screenshot helper forwards the supplied timeout and keeps the
   assert.deepEqual(calls, [{ path: "/synthetic/latest.png", timeout: 20000 }, { path: "/synthetic/desktop.png", timeout: 321000 }]);
   assert.equal(report.observations.length, 2);
 });
+
+
+test("actual direct-pair route fences before navigation and never enters physical input", async () => {
+  const start=source.indexOf("async function runLive()"), end=source.indexOf("\ntry {\n  await runLive();",start);
+  assert.ok(start>0&&end>start);
+  const events=[], report={errors:[]}, bindings={
+    ownedRecording:true, modePair:true, coldPair:false, opaquePair:false, mode:"direct-opaque-pair",
+    trial:{startupMs:900000}, report, coldDeadline:null, process:{send:()=>{}},
+    context:{newCDPSession:async()=>({send:async(method,args)=>{assert.equal(method,"Input.setIgnoreInputEvents");assert.deepEqual(args,{ignore:true});events.push("fence");}})},
+    page:{goto:async()=>events.push("navigate"),waitForFunction:async()=>{},evaluate:async()=>true},
+    startupCall:fn=>fn(),url:"http://127.0.0.1/app.html?guest=omarchy&desktop=1",assert,Date,URL,
+    assertRealOmarchyLayout:async()=>{},recordBuildIdentities:async()=>{},observeServiceWorker:async()=>{},
+    screenshot:async()=>events.push("image"),observeLoaderIdentity:async()=>({baseBinding:"synthetic-base"}),
+    prepareDirectOpaqueDesktop:async(page,deadline,r,hooks)=>{events.push("direct-preparation");assert.equal(r,report);assert.equal(typeof hooks.capturePair,"function");},
+    modePairOutput:"synthetic-only",console:{log:()=>{}},
+  };
+  const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+  await new AsyncFunction(...Object.keys(bindings),`${source.slice(start,end)}\nreturn runLive();`)(...Object.values(bindings));
+  assert.deepEqual(events,["fence","navigate","image","direct-preparation"]);
+  assert.equal(report.result,"prepared-mode-pair-input-untested");assert.equal(report.keyboard,undefined);
+  assert.equal(report.startup.timeoutMs,900000);
+});
