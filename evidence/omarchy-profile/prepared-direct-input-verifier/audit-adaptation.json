@@ -1,0 +1,5 @@
+{
+  "source": "evidence/omarchy-profile/direct-opaque-verifier/audit-run.mjs",
+  "sha256": "d288f73a2a959a61cf352dfc80ab7cf6d9bb9fb2f1b5276b07d86e29114ca214",
+  "adaptation": "Reuse the previously independently verified generic raw-wire, helper/resource, physical-key, deadline and image-digest audit. Change only AK literal read command, strict eight-property parser, pair/runtime pins, prepared flag and input-fence path; add explicit fixed negative-outcome and required served-route assertions. This does not run a guest."
+}

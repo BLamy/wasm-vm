@@ -1,0 +1,16 @@
+[
+  {
+    "command": [
+      "python3",
+      "tools/check_task_policy.py"
+    ],
+    "exitCode": 0
+  },
+  {
+    "command": [
+      "python3",
+      "tools/build_queue.py"
+    ],
+    "exitCode": 0
+  }
+]

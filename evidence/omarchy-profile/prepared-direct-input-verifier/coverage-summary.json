@@ -1,0 +1,192 @@
+[
+  {
+    "file": "evidence/omarchy-profile/prepared-direct-input-verifier/v8-coverage/coverage-11851-1789542926282-0.json",
+    "url": "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-prepared-direct-state.mjs",
+    "functions": [
+      {
+        "name": "",
+        "calls": 1
+      },
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "assertPreparedDirectSource",
+        "calls": 16
+      },
+      {
+        "name": "assertPreparedDirectProperties",
+        "calls": 2
+      },
+      {
+        "name": "",
+        "calls": 52
+      },
+      {
+        "name": "requestPreparedDirectProperties",
+        "calls": 0
+      },
+      {
+        "name": "auditPreparedDirect",
+        "calls": 6
+      },
+      {
+        "name": "",
+        "calls": 12
+      },
+      {
+        "name": "",
+        "calls": 12
+      }
+    ]
+  },
+  {
+    "file": "evidence/omarchy-profile/prepared-direct-input-verifier/v8-coverage/coverage-13271-1789543047647-0.json",
+    "url": "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-prepared-direct-state.mjs",
+    "functions": [
+      {
+        "name": "",
+        "calls": 1
+      },
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "assertPreparedDirectSource",
+        "calls": 11
+      },
+      {
+        "name": "assertPreparedDirectProperties",
+        "calls": 35
+      },
+      {
+        "name": "",
+        "calls": 521
+      },
+      {
+        "name": "requestPreparedDirectProperties",
+        "calls": 3
+      },
+      {
+        "name": "",
+        "calls": 2
+      },
+      {
+        "name": "auditPreparedDirect",
+        "calls": 11
+      },
+      {
+        "name": "",
+        "calls": 10
+      },
+      {
+        "name": "",
+        "calls": 10
+      }
+    ]
+  },
+  {
+    "file": "evidence/omarchy-profile/prepared-direct-input-verifier/v8-coverage/coverage-13272-1789543047840-0.json",
+    "url": "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-prepared-direct-state.mjs",
+    "functions": [
+      {
+        "name": "",
+        "calls": 1
+      },
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "assertPreparedDirectSource",
+        "calls": 0
+      },
+      {
+        "name": "assertPreparedDirectProperties",
+        "calls": 4
+      },
+      {
+        "name": "",
+        "calls": 76
+      },
+      {
+        "name": "requestPreparedDirectProperties",
+        "calls": 4
+      },
+      {
+        "name": "",
+        "calls": 4
+      },
+      {
+        "name": "auditPreparedDirect",
+        "calls": 0
+      }
+    ]
+  },
+  {
+    "file": "evidence/omarchy-profile/prepared-direct-input-verifier/v8-coverage/coverage-14219-1789543261797-0.json",
+    "url": "file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-prepared-direct-state.mjs",
+    "functions": [
+      {
+        "name": "",
+        "calls": 1
+      },
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "assertPreparedDirectSource",
+        "calls": 0
+      },
+      {
+        "name": "assertPreparedDirectProperties",
+        "calls": 0
+      },
+      {
+        "name": "requestPreparedDirectProperties",
+        "calls": 0
+      },
+      {
+        "name": "auditPreparedDirect",
+        "calls": 0
+      }
+    ]
+  },
+  {
+    "file": "evidence/omarchy-profile/prepared-direct-input-verifier/v8-coverage/coverage-14219-1789543261797-0.json",
+    "url": "actual-prepared-direct-wrapper.mjs",
+    "functions": [
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "",
+        "calls": 8
+      },
+      {
+        "name": "sha",
+        "calls": 23
+      },
+      {
+        "name": "save",
+        "calls": 14
+      },
+      {
+        "name": "",
+        "calls": 5
+      },
+      {
+        "name": "",
+        "calls": 3
+      },
+      {
+        "name": "",
+        "calls": 0
+      }
+    ]
+  }
+]

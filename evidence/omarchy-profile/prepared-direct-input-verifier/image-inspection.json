@@ -1,0 +1,35 @@
+{
+  "productAcceptance": false,
+  "images": [
+    {
+      "path": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "personallyInspected": true,
+      "observed": "Original empty Foot prompt; no typed nonce command or returned command prompt."
+    },
+    {
+      "path": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/prepared-direct.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "personallyInspected": true,
+      "observed": "Original empty Foot prompt; no typed nonce command or returned command prompt."
+    },
+    {
+      "path": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "personallyInspected": true,
+      "observed": "Original empty Foot prompt; no typed nonce command or returned command prompt."
+    }
+  ]
+}
