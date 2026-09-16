@@ -1740,3 +1740,8 @@ verify-E5_5-T03at-device:
 verify-E5_5-T03at: verify-E5_5-T03at-device
 	E5_DEMO_TASK=E5.5-T03at E5_DEMO_OUT=$(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/demo node tools/verify/e5-t18e-demo-smoke.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --gpu-transfer-offset
+
+.PHONY: verify-E5_5-T03au
+verify-E5_5-T03au:
+	node --test tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_PIXEL_OUT),evidence/omarchy-profile/display-pixel-boundary-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-pixel-probe

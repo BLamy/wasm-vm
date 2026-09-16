@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// One uninstrumented physical-input run on AR's exact verified desktop pair.
+// One physical-input run on AR's exact verified desktop pair; optional pixel diagnostics.
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { createWriteStream } from "node:fs";
@@ -12,12 +12,14 @@ import { INPUT_BUFFER_PREPARED_IDENTITIES, INPUT_BUFFER_PREPARED_RECORD_SHA256,
   INPUT_BUFFER_RESPONSE_WASM } from "./omarchy-input-kernel-response-state.mjs";
 import { auditInputKernelResponse } from "./omarchy-input-kernel-response-audit.mjs";
 import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
+import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
 
-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && process.argv[4] === "--gpu-transfer-offset"),
-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset]");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe"].includes(process.argv[4])),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
 const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
+const displayPixelProbe = process.argv[4] === "--display-pixel-probe";
 const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
@@ -30,6 +32,7 @@ assert.equal(sha(await fs.readFile(preparedRecord)), INPUT_BUFFER_PREPARED_RECOR
 assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), wasmSha256);
 await fs.mkdir(out, { recursive: false });
 const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: false, visualInspectionRequired: true,
+  diagnosticOnly: displayPixelProbe,
   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   wasmSha256, gpuRuntime: gpuRuntime?.record ?? null, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
@@ -41,6 +44,7 @@ for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[k
 Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: "prepared-recycling",
   OMARCHY_PREPARED_DIRECT: "1", OMARCHY_INPUT_KERNEL_PREPARED: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
   OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
+if (displayPixelProbe) env.OMARCHY_DISPLAY_PIXEL_PROBE = "1";
 receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
 const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
 const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
@@ -55,7 +59,8 @@ if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
 try {
   const bytes = await fs.readFile(path.join(out, "desktop/report.json")), report = JSON.parse(bytes);
   receipt.reportSha256 = sha(bytes);
-  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256 }));
+  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe }));
+  if (displayPixelProbe) receipt.displayPixels = await auditDisplayPixelProbe(report, path.join(out, "desktop"));
   receipt.result = report.result;
   receipt.machineAcceptance = receipt.input.machineAcceptance;
   assert.equal(receipt.exit.code, receipt.machineAcceptance ? 0 : 1);

@@ -33,6 +33,7 @@ import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./o
 import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
 import { assertInputKernelProvenance, assertInputKernelSource, requestInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
 import { assertInputKernelPreparedSource, INPUT_BUFFER_PREPARED_FOOT } from "./omarchy-input-kernel-response-state.mjs";
+import { installDisplayPixelProbe, collectDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -70,9 +71,13 @@ const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
 const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
 const inputKernelRecordPath = process.env.OMARCHY_INPUT_KERNEL_RECORD || null;
 const inputKernelPrepared = process.env.OMARCHY_INPUT_KERNEL_PREPARED === "1";
+const displayPixelProbe = process.env.OMARCHY_DISPLAY_PIXEL_PROBE === "1";
+if (process.env.OMARCHY_DISPLAY_PIXEL_PROBE !== undefined) assert.ok(displayPixelProbe && inputKernelPrepared
+  && urlArg === "local" && inputTrial && preparedDirect && !inputObserver && !workerCost && !failureCheckpoint,
+  "display pixel probe is an isolated local AR diagnostic");
 if (process.env.OMARCHY_INPUT_KERNEL_PREPARED !== undefined) assert.ok(inputKernelPrepared
   && urlArg === "local" && inputTrial && preparedDirect && !inputKernelRecordPath
-  && !inputObserver && !workerCost && !failureCheckpoint, "AR input requires its isolated uninstrumented local trial");
+  && !inputObserver && !workerCost && !failureCheckpoint, "AR input requires its isolated local trial");
 if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaque-pair"
   && !inputObserver && !workerCost && !failureCheckpoint, "input-kernel provenance is isolated local preparation");
 if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
@@ -470,6 +475,7 @@ if (opaqueFoot) report.opaqueFootRequested = true;
 if (directOpaque) report.directOpaqueRequested = true;
 if (preparedDirect) report.preparedDirectRequested = true;
 if (inputKernelPrepared) report.inputKernelPrepared = true;
+if (displayPixelProbe) report.displayPixelProbeRequested = true;
 if (inputKernelRecord) report.inputKernel = { provenance: inputKernelRecord,
   filename: path.resolve(inputKernelRecordPath), sha256: createHash("sha256").update(inputKernelRecordBytes).digest("hex") };
 if (coldPair) report.progressCaptureErrors = [];
@@ -498,6 +504,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-input-kernel-response-state.mjs", "tools/verify/omarchy-input-kernel-response.mjs",
     "tools/verify/omarchy-input-kernel-response-audit.mjs",
     "tools/verify/omarchy-gpu-transfer-runtime.mjs", "tools/verify/omarchy-gpu-transfer-runtime.json",
+    "tools/verify/omarchy-display-pixel-probe.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
     "crates/core/src/dev/virtio/gpu",
@@ -575,6 +582,7 @@ const context = await browser.newContext({ viewport: { width: 1280, height: 800 
 context.on("request", request => report.browserRequests.push({ timestamp: new Date().toISOString(),
   url: request.url(), method: request.method(), resourceType: request.resourceType() }));
 await context.addInitScript(installWireEvidence);
+if (displayPixelProbe) await context.addInitScript(installDisplayPixelProbe, { enabled: true });
 const page = await context.newPage();
 let secondPage = null;
 let failurePage = page;
@@ -1539,6 +1547,7 @@ try {
     report.cleanup = { startedAt: new Date().toISOString(), timeoutMs: trial.cleanupMs, closed: false };
     try {
       await withinTrialDeadline(async () => {
+        if (displayPixelProbe) await collectDisplayPixelProbe(page, out, report);
         await collectWireEvidence(page, "final");
         const evidence = await page.evaluate(() => window.__omarchyLiveEvidence);
         report.events = evidence?.events ?? [];
@@ -1554,7 +1563,7 @@ try {
           }
         }
         await fs.writeFile(path.join(out, "serial.log"), evidence?.serial ?? "");
-      }, Math.min(cleanupDeadline, Date.now() + 10000), "cleanup evidence");
+      }, Math.min(cleanupDeadline, Date.now() + (displayPixelProbe ? 20000 : 10000)), "cleanup evidence");
     } catch (error) {
       report.errors.push(`wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
     }
