@@ -74,6 +74,12 @@ test("retained real negative input recording passes reusable audit; missing sync
   for (const mutate of [
     r => { r.workerTraffic.splice(r.workerTraffic.findIndex(x => x.type === "input-result" && x.method === "syncKeyboard"), 1); },
     r => { r.keyboard.verified = true; r.keyboard.completedAt = r.keyboard.deadlineAt; },
+    r => { r.result = "input-trial-physical-nonce-and-fresh-presentation";
+      r.keyboard.verified = true; delete r.keyboard.typedAt; r.inputEvents = [];
+      r.workerTraffic = r.workerTraffic.filter(x => !["sendKeyboardEvent", "syncKeyboard"].includes(x.method)); },
+    r => { r.inputEvents.pop();
+      const calls = r.workerTraffic.filter(x => x.type === "worker-call" && ["sendKeyboardEvent", "syncKeyboard"].includes(x.method));
+      const ids = calls.slice(-2).map(x => x.id); r.workerTraffic = r.workerTraffic.filter(x => !ids.includes(x.id)); },
     r => { r.startup.deadlineAt = iso(Date.parse(r.startup.deadlineAt)+1); },
   ]) { const bad = structuredClone(report); mutate(bad); assert.throws(() => auditInputReport(bad, expected)); }
 });

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { inputTrialOptions, assertInputTrialRuntime, assertInputTrialSource } from "./omarchy-input-trial.mjs";
 import { auditSerial } from "./omarchy-latency-receipt.mjs";
 import { evdevForCode } from "../../web/src/input/keymap.js";
+import { physicalStroke } from "./omarchy-browser-session.mjs";
 const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n), "invalid timestamp"); return n; };
 const success = "input-trial-physical-nonce-and-fresh-presentation";
 const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
@@ -34,6 +35,11 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
       assert.equal(runtime.inputDevice[field], 0, `input queue ${field}`);
   }
   const keyboard = report.keyboard;
+  if (report.result === success || keyboard?.verified) {
+    assert.ok(keyboard?.typedAt, "input success requires a completed physical sequence");
+    assert.ok(Number.isSafeInteger(keyboard.enteredAtMs));
+    assert.ok(at(keyboard.typedAt) >= keyboard.enteredAtMs);
+  }
   const read = keyboard ? `if [ -f '${keyboard.guestFile}' ]; then cat '${keyboard.guestFile}'; else (exit 75); fi` : null;
   if (keyboard) {
     assert.match(keyboard.nonce, /^[a-f0-9]{16}$/u);
@@ -74,12 +80,24 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
     assert.ok(at(responses[0].timestamp) >= at(call.timestamp));
   }
   if (keyboard?.typedAt) {
+    const expectedEvents = [];
+    for (const character of `printf '${keyboard.nonce}' > ${keyboard.guestFile}`) {
+      const { code, shift } = physicalStroke(character);
+      if (shift) expectedEvents.push(["keydown", "ShiftLeft"]);
+      expectedEvents.push(["keydown", code], ["keyup", code]);
+      if (shift) expectedEvents.push(["keyup", "ShiftLeft"]);
+    }
+    expectedEvents.push(["keydown", "Enter"], ["keyup", "Enter"]);
+    assert.deepEqual(keys.map(row => [row.type, row.code]), expectedEvents, "incomplete physical key sequence");
+    assert.ok(at(keys[0].timestamp) >= at(keyboard.startedAt));
+    assert.ok(at(keys.at(-1).timestamp) <= keyboard.enteredAtMs);
     const typed = keys.filter(row => row.type === "keydown" && row.key.length === 1).map(row => row.key).join("");
     assert.equal(typed, `printf '${keyboard.nonce}' > ${keyboard.guestFile}`);
     assert.ok(keys.some(row => row.type === "keydown" && row.code === "Enter"));
     assert.equal(keyboard.readbackTimeoutMs, 120000);
     assert.equal(at(keyboard.deadlineAt), keyboard.enteredAtMs + 120000);
     assert.ok(keyboard.typingMs <= 60000);
+    assert.equal(keyboard.typingMs, keyboard.enteredAtMs - at(keyboard.startedAt));
     assert.ok(at(report.startup.readyProvenAt) <= at(report.startup.deadlineAt));
     assert.ok(report.events.some(row => row.type === "wvm:desktop-ready"));
   }
@@ -87,6 +105,7 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
   const nonceReplies = reads.filter(row => row.response?.exit === 0 && row.response.stdout.trim() === keyboard?.nonce);
   if (report.result === success || keyboard?.verified) {
     assert.equal(keyboard.verified, true);
+    assert.ok(at(keyboard.completedAt) >= keyboard.enteredAtMs);
     assert.ok(at(keyboard.completedAt) <= at(keyboard.deadlineAt), "late nonce acceptance");
     assert.ok(nonceReplies.some(row => at(row.completedAt) <= at(keyboard.deadlineAt)), "no timely nonce on the raw wire");
   }
@@ -112,4 +131,3 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
     cacheAfter: { blocks: after.jit.compiledBlocks, installs: after.jit.jitCacheInstalls, evictions: after.jit.jitCacheEvictions },
     serial };
 }
-
