@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/worker-cost-verifier/audit-run.py", line 297, in <module>
+    main()
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/worker-cost-verifier/audit-run.py", line 288, in main
+    assert not any(e['method'] in ['pause','step','setProfiling','enableEntryCostTiming','sendAgentInput','sendKeyboardEvent','syncKeyboard','sendTabletEvent','syncTablet','sendMouseEvent','syncMouse','setDisplay'] for e in post_calls), 'guest input or mutation after fixed verdict'
+AssertionError: guest input or mutation after fixed verdict

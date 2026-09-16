@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-09-16T02:22:18.995Z",
+  "kind": "same-origin decoy worker/module misattribution",
+  "rawSha256": "5abf906b70d3fc544038040ff945fbbd915c29259e5514c6d50313b19c308f8f",
+  "namedSha256": "106b3345fbf40110f6de4cb1f89e772f8f539ef0c617bec8f6c597da90d1805b",
+  "releaseSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "originalNodeId": 7,
+  "functionIndex": 187,
+  "boundReleaseName": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+  "nodeWeightUs": 3990420,
+  "shadowWorkerRejected": true,
+  "ownershipError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'http://127.0.0.1:58810/decoy/linux-worker.js'\n- 'http://127.0.0.1:58810/linux-worker.js'\n",
+  "decoyModuleUrl": "http://127.0.0.1:58810/decoy/pkg/wasm_vm_wasm_bg.wasm",
+  "retainedForeignLabel": "wasm-function[187] http://127.0.0.1:58810/decoy/pkg/wasm_vm_wasm_bg.wasm",
+  "foreignWeightUs": 3990420,
+  "exactReleaseAttributionReducedByUs": 3990420,
+  "totalUsPreserved": true,
+  "rawFilesUnchanged": true,
+  "guestRerun": false
+}

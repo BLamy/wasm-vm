@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-09-16T02:18:03.539Z",
+  "results": [
+    {
+      "name": "cost-outside-input-trial",
+      "status": 1,
+      "assertion": "worker cost requires the fixed residency candidate input trial",
+      "outputCreated": false,
+      "browserStarted": false
+    },
+    {
+      "name": "cost-control-arm",
+      "status": 1,
+      "assertion": "worker cost requires the fixed residency candidate input trial",
+      "outputCreated": false,
+      "browserStarted": false
+    },
+    {
+      "name": "cost-recycling-arm",
+      "status": 1,
+      "assertion": "worker cost requires the fixed residency candidate input trial",
+      "outputCreated": false,
+      "browserStarted": false
+    }
+  ]
+}

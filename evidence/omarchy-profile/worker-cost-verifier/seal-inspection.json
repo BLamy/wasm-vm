@@ -1,0 +1,138 @@
+{
+  "checkedAt": "2026-09-16T02:45:12.574879+00:00",
+  "recordingHead": "8ad5886126ddf062403455e266471d83e0e7feee",
+  "checkedHead": "70d4b5e649a6898ba5c523cea18c2e6d9a7e9ce8",
+  "indexSha256": "dc0366bc3a2e2b4d7279ad82f299bfc0b6deeee56e987726f286b6065d20c2ae",
+  "sealedFiles": [
+    {
+      "path": "worker-cost-gates-r2/affected-recorder.log",
+      "sha256": "3b21f0213e9bb0ef2a9c74e653db244cdaa676da4f5fc5f821c3e4b742969689",
+      "bytes": 1431
+    },
+    {
+      "path": "worker-cost-gates-r2/commands.json",
+      "sha256": "a5746089901bd95f38e65fd9bfddf1c878cceff693348c246557e98788d768d5",
+      "bytes": 1471
+    },
+    {
+      "path": "worker-cost-gates-r2/cost-runner-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "worker-cost-gates-r2/driver.log",
+      "sha256": "8099c95135b1915e385e41de7088e1975b2d9c6ad82d46514c17f460e67a82b3",
+      "bytes": 1649
+    },
+    {
+      "path": "worker-cost-gates-r2/freeze.log",
+      "sha256": "093a4569b1992aee50880b4461407252fc75624caeba965066310a95b4d27d15",
+      "bytes": 3473
+    },
+    {
+      "path": "worker-cost-gates-r2/freeze.py",
+      "sha256": "14bc4b786e1ed64ac724dcb1e8a1ce250fcf011ffb4ac4f67a4b2c2a1743207c",
+      "bytes": 3003
+    },
+    {
+      "path": "worker-cost-gates-r2/frozen.json",
+      "sha256": "093a4569b1992aee50880b4461407252fc75624caeba965066310a95b4d27d15",
+      "bytes": 3473
+    },
+    {
+      "path": "worker-cost-gates-r2/r1-preserved.json",
+      "sha256": "15540d1b9ea6c45d57fd15acb0a882db5689ef7fcb4e918a338a09fe36f24f21",
+      "bytes": 4544
+    },
+    {
+      "path": "worker-cost-gates-r2/real-input-fence.log",
+      "sha256": "b8513907b7e8dfbf31109736f10504f8fa54a06918d352d49d09cffb2d46d7e2",
+      "bytes": 231
+    },
+    {
+      "path": "worker-cost-gates-r2/record.py",
+      "sha256": "eb012cf47d0242460d8f149ebe650270ca4f294c75b7c31d750e76b065ab5f5c",
+      "bytes": 1842
+    },
+    {
+      "path": "worker-cost-gates-r2/recorder-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "worker-cost-gates-r2/seal.py",
+      "sha256": "b323390cfcaa4a970a7f842644c5ef88f7793a17ef839eec256cc73ffe990b45",
+      "bytes": 2518
+    },
+    {
+      "path": "worker-cost-gates-r2/submission.json",
+      "sha256": "8652df96148e4d279c71bdd3197906107ed0b5f7b89cb505af4b5c29b76ac2ac",
+      "bytes": 705
+    },
+    {
+      "path": "worker-cost-gates-r2/symbolize.log",
+      "sha256": "e36f62bd31c91ee4bcf8001561ee11be2ce4fbd77bdf2c6b78d7c7f9b6abe4f5",
+      "bytes": 93
+    },
+    {
+      "path": "worker-cost-gates-r2/visual-inspection.json",
+      "sha256": "44e416758047dee483c72a640957482c21acb1a84a993e055d7616f29d0ff160",
+      "bytes": 365
+    },
+    {
+      "path": "worker-cost-r2/RESULT.md",
+      "sha256": "7f0914067e52c7830f6b516702d38c6d3ff4aa5e96ebd31974c8205d8e5b62ba",
+      "bytes": 3569
+    },
+    {
+      "path": "worker-cost-r2/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "bytes": 10726
+    },
+    {
+      "path": "worker-cost-r2/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "bytes": 10726
+    },
+    {
+      "path": "worker-cost-r2/desktop/latest.png",
+      "sha256": "f410ff2c59bbba780638688eeee23f6d82e0093dcced2faee523a5da35b8b14f",
+      "bytes": 29106
+    },
+    {
+      "path": "worker-cost-r2/desktop/report.json",
+      "sha256": "41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555",
+      "bytes": 659878
+    },
+    {
+      "path": "worker-cost-r2/desktop/serial.log",
+      "sha256": "eb83a964d2bf1f9d0a40a2f1e250b9c5dadf167d1b5d0ff1d26c970b3ba54daa",
+      "bytes": 3265
+    },
+    {
+      "path": "worker-cost-r2/desktop/worker-cpu.json",
+      "sha256": "a6e8f0c8189b783efc4e293f6001df4d9e559e3ca814bd5097ae394b781146b2",
+      "bytes": 726428
+    },
+    {
+      "path": "worker-cost-r2/desktop.log",
+      "sha256": "f73bb110be6e9f8c2b419b17e2773cad8b2229e056d54e490c1c86f73363e7d7",
+      "bytes": 4412
+    },
+    {
+      "path": "worker-cost-r2/run.json",
+      "sha256": "8099c95135b1915e385e41de7088e1975b2d9c6ad82d46514c17f460e67a82b3",
+      "bytes": 1649
+    },
+    {
+      "path": "worker-cost-r2/symbolized/cpu-summary.json",
+      "sha256": "7d386d4dfcf7bcb63b80dda638fba30b1d89244aae53266ec079847b03cb3bd7",
+      "bytes": 477725
+    }
+  ],
+  "preservedR1Files": 30,
+  "sourcePins": 15,
+  "actualRunAndSubmissionIdentitiesMatch": true,
+  "desktopResponsive": false,
+  "verifiableScope": "Corrected post-verdict CPU diagnostic only."
+}

@@ -40,9 +40,9 @@ The companion is never served or executed. Dynamic JIT frames remain anonymous.
 
 This later interval measures substantial emulator execution, not a continuous
 trace of the preceding input failure or proof that any sampled function causes
-the blocked desktop. Even deleting `flush_page` would remove at most its sampled
-6.64% share in this interval; such a change is not a demonstrated responsiveness
-remedy and would risk instruction coherency.
+the blocked desktop. `flush_page` accounts for 6.64% of this sample; that share
+cannot predict a responsiveness benefit from changing it. Instruction coherency
+must still hold under any later cache-invalidation change.
 
 The next bounded experiment should prepare one fully rendered 640×400 warm
 desktop before a fresh restore and the unchanged physical-input deadline.

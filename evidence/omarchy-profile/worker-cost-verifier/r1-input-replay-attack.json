@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-16T02:37:48.442Z",
+  "originalReportSha256": "69482a435e023895d5d1aa3a6d689ef89b212faac57bf5748820426cfb693a5b",
+  "guardSourceSha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520",
+  "syntheticMetadataOnly": true,
+  "actualRawTrafficPreserved": true,
+  "rejection": "AssertionError [ERR_ASSERTION]: non-observational worker RPC after verdict: sendTabletEvent",
+  "expectedRejection": "sendTabletEvent after fixed verdict",
+  "guestRerun": false,
+  "originalFileUnchanged": true
+}

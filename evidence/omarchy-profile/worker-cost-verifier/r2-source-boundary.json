@@ -1,0 +1,7 @@
+{
+  "runLiveOnlyAddedFenceCall": true,
+  "captureVerdictProfileParsingAndSamplingUnchanged": true,
+  "exactTargetHelperAndSymbolBinderUnchanged": true,
+  "r1PreservedFiles": 30,
+  "preservationIndexSha256": "15540d1b9ea6c45d57fd15acb0a882db5689ef7fcb4e918a338a09fe36f24f21"
+}
