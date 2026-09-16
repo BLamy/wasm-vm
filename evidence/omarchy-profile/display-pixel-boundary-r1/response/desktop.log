@@ -1,0 +1,34 @@
+OMARCHY_SCREENSHOT /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1/response/desktop/latest.png
+OMARCHY_PROGRESS {"status":"Unpacking boot snapshot…","state":{"backend":"canvas2d","defaultBackend":"canvas2d","width":1280,"height":800,"fixedViewport":true,"sizeMismatch":false,"framesReceived":0,"successfulPresents":0,"drawnPresents":0,"drawnBytes":0,"replayedFrames":0,"droppedFrames":0,"contextLosses":0,"contextRestores":0,"fallbacks":0,"listenerCount":2,"scheduler":{"enqueued":0,"coalesced":0,"presented":0,"skipped":0,"overruns":0,"pending":0,"maxPending":0,"paused":false,"disposed":false,"scheduled":false,"hidden":false,"mode":"raf","timerMs":250},"gpu":{"framesReceived":0,"enqueued":0,"coalesced":0,"presented":0,"successfulPresents":0,"skipped":0,"droppedFrames":0,"overruns":0,"pending":0,"maxPending":0,"uploadedBytes":0,"drawnPresents":0,"drawnBytes":0,"width":1280,"height":800},"latest":null,"errors":[]}}
+OMARCHY_SCREENSHOT /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1/response/desktop/desktop.png
+OMARCHY_EXEC {"stage":"input-kernel:identity","context":"primary","exit":0}
+OMARCHY_EXEC {"stage":"prepared-direct:read","context":"primary","exit":0}
+OMARCHY_SCREENSHOT /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1/response/desktop/prepared-direct.png
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":75}
+OMARCHY_EXEC {"stage":"physical keyboard:nonce-readback","context":"primary","exit":0}
+OMARCHY_SCREENSHOT /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1/response/desktop/desktop-keyboard.png
