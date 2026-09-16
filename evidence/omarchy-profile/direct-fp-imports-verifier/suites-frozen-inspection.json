@@ -1,0 +1,63 @@
+{
+  "logPath": "evidence/omarchy-profile/direct-fp-imports-r1/acceptance.log",
+  "logSha256": "978dc14e620cb93717a9ae9c4798605e237d94c8007c3909abcd92611c38ca03",
+  "testSourceSha256": "0ac8b08bf56d981e6a0f80cccf54e2032abbfeacfaba1ddb4535f22564a0fa18",
+  "testCounts": {
+    "jit_fp_arithmetic_verifier": 6,
+    "jit_fp_direct_imports_verifier": 2,
+    "jit_fp_division_verifier": 6,
+    "jit_fp_fmadd_verifier": 6,
+    "jit_fp_from_integer_verifier": 6,
+    "jit_fp_to_word_verifier": 6
+  },
+  "totalPassed": 32,
+  "actualImportReceipts": [
+    {
+      "line": 61,
+      "compiledExecutions": 9,
+      "memoryGrowth": 65536,
+      "rows": 6,
+      "shared": true,
+      "helpers": 5,
+      "literals": 132,
+      "digests": [
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09"
+      ],
+      "correctTypes": 5,
+      "rejectedTypes": 22,
+      "identitySabotageRejected": true,
+      "wrongTypedTrampolineLinks": true,
+      "restoredIdentity": true,
+      "afterAllExecutorsDropped": true
+    },
+    {
+      "line": 64,
+      "compiledExecutions": 9,
+      "memoryGrowth": 65536,
+      "rows": 6,
+      "shared": false,
+      "helpers": 5,
+      "literals": 132,
+      "digests": [
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09",
+        "f5c775ff0b743b09"
+      ],
+      "correctTypes": 5,
+      "rejectedTypes": 22,
+      "identitySabotageRejected": true,
+      "wrongTypedTrampolineLinks": true,
+      "restoredIdentity": true,
+      "afterAllExecutorsDropped": true
+    }
+  ],
+  "sabotageScope": "local copy of actual captured import replaced with equivalent JS trampoline; production unchanged; named identity assertion rejects then restoration passes"
+}

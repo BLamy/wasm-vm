@@ -1,0 +1,44 @@
+{
+  "broadCiPassed": false,
+  "exitCode": 2,
+  "failingTargets": [
+    [
+      "clippy",
+      "101"
+    ],
+    [
+      "test",
+      "101"
+    ],
+    [
+      "wasm",
+      "1"
+    ],
+    [
+      "test-riscv",
+      "1"
+    ],
+    [
+      "determinism",
+      "1"
+    ]
+  ],
+  "noNewCompilerError": true,
+  "sameFailedTargets": true,
+  "unchangedFailureBoundaries": {
+    "crates/wvseccomp/src/main.rs": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+    "crates/core/src/dispatch.rs": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+    "crates/core/src/hart/mod.rs": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "crates/core/src/lib.rs": "32bea9ae8c42a11e117c63efd81668d57f5dda51a23a792f21b81bd77d69c409",
+    "crates/wasm/tests/resume.rs": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+    "crates/core/src/dev/virtio/gpu/resources.rs": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "crates/wasm/src/jit_browser.rs::test_module": "fe500269d3f90eab6590b50bf7f70431874d0d9dacbe9ea515ddb1f0929d38ec"
+  },
+  "nativeIsa": "128/128",
+  "perfMedianMips": 58.8,
+  "perfFloorMips": 15,
+  "currentSha256": "07892fdbde54d9a272bffd246936459e97b6ed84a789b02215c847cee4239fc4",
+  "baselineSha256": "7b14ffacc5864d379fdfc67aaeec2b20f618ad2302230202ca8d4ea9ee5e0456",
+  "note": "These five inherited categories remain failures; affected and frozen acceptance results are separate."
+}

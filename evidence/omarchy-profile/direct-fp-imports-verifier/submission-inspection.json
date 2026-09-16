@@ -1,0 +1,610 @@
+{
+  "checkedAt": "2026-09-16T10:09:55.846796+00:00",
+  "passed": true,
+  "workerSubmissionHead": "7d648143e92b7fe861fa4ae7b1f34c0a84451f39",
+  "frozenHead": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+  "artifactColdPhysicalHead": "a3beb0e8dc5da21374a6d59e25658f5db5ce79da",
+  "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "workerIndexSha256": "e9160dbff703ac19aa5d4fb591fa1cc4651738916f04c0535905b189e53c2bbf",
+  "sealedFiles": [
+    {
+      "name": "README.md",
+      "bytes": 3238,
+      "sha256": "96ab361f36c0fd21b66b80b8d5301c510fe67845245e6ea01bc8fea9c3cb103a"
+    },
+    {
+      "name": "acceptance.log",
+      "bytes": 24188,
+      "sha256": "978dc14e620cb93717a9ae9c4798605e237d94c8007c3909abcd92611c38ca03"
+    },
+    {
+      "name": "affected-commands.json",
+      "bytes": 2778,
+      "sha256": "45e27c05895ac2b07942aec0525e1032d03442068ba38f4741006b348236ec98"
+    },
+    {
+      "name": "affected-run.log",
+      "bytes": 2380,
+      "sha256": "6b2b42d949c702cd32ff942e0ab4b1246f95f3c17ffbbe974dc257928ffeffc3"
+    },
+    {
+      "name": "audit-physical.mjs",
+      "bytes": 4804,
+      "sha256": "62a10fbf16f01ecf31d45ea47dfaea2caf09600477141d96a6104a5449f26148"
+    },
+    {
+      "name": "baseline-preflight.json",
+      "bytes": 1524,
+      "sha256": "48ca06f22e95045b069d80dcd4a8ef7d10bad4f8b4c55b1becd2c770dd3a165c"
+    },
+    {
+      "name": "baseline.json",
+      "bytes": 1591,
+      "sha256": "eb18adaf056ffb940f26cdac2499ee9f833276f8c0e7fe6e955be99439c65039"
+    },
+    {
+      "name": "benchmark/mixed-fp.elf",
+      "bytes": 12384,
+      "sha256": "0bab8b3db0163f99a56f020576eb56f9ed5355b1379b948e7ffa7854e673a263"
+    },
+    {
+      "name": "benchmark/report.json",
+      "bytes": 85359,
+      "sha256": "ed40d3ee1b0fc41d7388381f4817778ea285f43440c12afff73f5de0b769b0d5"
+    },
+    {
+      "name": "benchmark-preflight/mixed-fp.elf",
+      "bytes": 12384,
+      "sha256": "0bab8b3db0163f99a56f020576eb56f9ed5355b1379b948e7ffa7854e673a263"
+    },
+    {
+      "name": "benchmark-preflight/report.json",
+      "bytes": 82165,
+      "sha256": "b7bf69e1f6dc4c19361eb7523ce07f103dc4840a0a94d81d3c9a3a593075db6a"
+    },
+    {
+      "name": "benchmark-preflight.log",
+      "bytes": 211,
+      "sha256": "e276929b4473b54af79999285892399c02100824d50f106ad9044774cdec882a"
+    },
+    {
+      "name": "bind-names.mjs",
+      "bytes": 605,
+      "sha256": "4abe37c7056e405ec3b175304f686d0db1a209aa04f72ca203faa54d8fecabcf"
+    },
+    {
+      "name": "bindgen-version.log",
+      "bytes": 21,
+      "sha256": "9665b51d243c180bb4c9c723552ddca2ee5a212f1dd5f4d27424266754321d91"
+    },
+    {
+      "name": "bindgen.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "binding.log",
+      "bytes": 193,
+      "sha256": "b9235d14979f565bc1410abd620e666a079287fc5bf0c723158a454ecc5e3e36"
+    },
+    {
+      "name": "browser/built-page.png",
+      "bytes": 289810,
+      "sha256": "db64ac70c4dea61a68483cf49558973ac766be68270659612faaa503cb7d1721"
+    },
+    {
+      "name": "browser/capability-inspection.png",
+      "bytes": 6260,
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f"
+    },
+    {
+      "name": "browser/fmadd.elf",
+      "bytes": 12384,
+      "sha256": "cdc10b57f4dc79970036ea0661907f0c5e07c88bc7fcea433925b8804c0ddaee"
+    },
+    {
+      "name": "browser/report.json",
+      "bytes": 13163,
+      "sha256": "db46e9874695c7214e78fa2287fd51c525d015d36f40136577960dbc083b5110"
+    },
+    {
+      "name": "browser/suite.png",
+      "bytes": 50053,
+      "sha256": "9c0dc4ad49c1b1a91a3643aea63503e6fdd45f9f2f872ad6c97df9ae3544071a"
+    },
+    {
+      "name": "check-public.py",
+      "bytes": 1357,
+      "sha256": "4604fad5c7e78e63e0f11f312ab6417104547b6e883ad5b92c430e85d20d48ff"
+    },
+    {
+      "name": "ci-commands.json",
+      "bytes": 458,
+      "sha256": "c5f6a55c01c0ccd8de29b109af46ad425f349295e422c4ae4da70ef480429bbe"
+    },
+    {
+      "name": "ci-failures.json",
+      "bytes": 6912,
+      "sha256": "0baf91d0c2b2ebdc4b324634d51daf032834597f90534473b8430f89ead338d7"
+    },
+    {
+      "name": "ci-run.log",
+      "bytes": 385,
+      "sha256": "98817b8f95dad2a1575fde8acfab5adc16b904614250acdffed47157aed20225"
+    },
+    {
+      "name": "ci.log",
+      "bytes": 47636,
+      "sha256": "07892fdbde54d9a272bffd246936459e97b6ed84a789b02215c847cee4239fc4"
+    },
+    {
+      "name": "clippy.log",
+      "bytes": 518,
+      "sha256": "d616ced0e37b3d64b67d5ecbdda83e2a2cd57c3e7562ef27c329f3243f3612a2"
+    },
+    {
+      "name": "cloudflare-deploy-initial.log",
+      "bytes": 4246,
+      "sha256": "bbec996db08aa9bd55866b87136a040e7d291fee8e88a96aaa40faf7bbefe6f6"
+    },
+    {
+      "name": "cloudflare-deploy.log",
+      "bytes": 6337,
+      "sha256": "e6ca858b335f2cda0e2878447abb55957e40e14816206153edbe24fb6525b967"
+    },
+    {
+      "name": "cloudflare-public.json",
+      "bytes": 3665,
+      "sha256": "f9a966cb1cbec0cceefb7279b25576d374a98b0aeb6c174073f0a94ce042cb0b"
+    },
+    {
+      "name": "cloudflare-recovery.log",
+      "bytes": 2022,
+      "sha256": "9ec5e8d91d8c4a939033332722b18773ecfa90789be90d464f7e56a95d8d78aa"
+    },
+    {
+      "name": "cold/acceptance.log",
+      "bytes": 26803,
+      "sha256": "f8e2651fdcc6c43a405541c18e3f90ed1b35a914464a1a9d08f1376147349374"
+    },
+    {
+      "name": "cold/benchmark/mixed-fp.elf",
+      "bytes": 12384,
+      "sha256": "0bab8b3db0163f99a56f020576eb56f9ed5355b1379b948e7ffa7854e673a263"
+    },
+    {
+      "name": "cold/benchmark/report.json",
+      "bytes": 85370,
+      "sha256": "c87bd01c8b83ddd8481809e79a4f26215fa8def238659c118cdf5a239e0313c7"
+    },
+    {
+      "name": "cold/browser/built-page.png",
+      "bytes": 289810,
+      "sha256": "db64ac70c4dea61a68483cf49558973ac766be68270659612faaa503cb7d1721"
+    },
+    {
+      "name": "cold/browser/capability-inspection.png",
+      "bytes": 6260,
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f"
+    },
+    {
+      "name": "cold/browser/fmadd.elf",
+      "bytes": 12384,
+      "sha256": "cdc10b57f4dc79970036ea0661907f0c5e07c88bc7fcea433925b8804c0ddaee"
+    },
+    {
+      "name": "cold/browser/report.json",
+      "bytes": 13163,
+      "sha256": "82dd4e04084c1dde078cba11b73e428b9dc21fff2a92586b8c1ec48b0f64fa5d"
+    },
+    {
+      "name": "cold/browser/suite.png",
+      "bytes": 50123,
+      "sha256": "9a84e0f4bf5ac775d9c5579bec39f0fcf43cd093ac0a5c39bff0515cbd690baf"
+    },
+    {
+      "name": "cold/build.log",
+      "bytes": 4969,
+      "sha256": "55026288d62d4577d4b7cfb4af7c83eaec053e9ea6f7cef6f889f374c89ed338"
+    },
+    {
+      "name": "cold/checkout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cold/clone.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cold/report.json",
+      "bytes": 1989,
+      "sha256": "c89536d2aeea6e3f6ae275b6b567aedb9dba2bbc65a49918a2ce980cdce24351"
+    },
+    {
+      "name": "cold-run.log",
+      "bytes": 1677,
+      "sha256": "233c2994dbcd944e356350eed8f7827fafb3d22dd63ae3f28d960d73e07ccee8"
+    },
+    {
+      "name": "deploy-recovery.json",
+      "bytes": 8900,
+      "sha256": "b0eb382e5acc49dadd19d18b0a79dabf756f3c46aaf4fb83f0b40cc0b226a1a9"
+    },
+    {
+      "name": "deploy-recovery.py",
+      "bytes": 2291,
+      "sha256": "f2e4d042e5b6e4c1c6b48e590820f6fd5617a89c00210c2fd14e5b33b8d0b085"
+    },
+    {
+      "name": "freeze.log",
+      "bytes": 13419,
+      "sha256": "d0eef61fac623d2d000b17430d8f4ea3ae849b820c92e5fc428f4d6e43e701e4"
+    },
+    {
+      "name": "freeze.py",
+      "bytes": 3689,
+      "sha256": "b64798db6fff2b93b780b6613c1a4fec5049749f277d63fff428d57d1e8b2b29"
+    },
+    {
+      "name": "frozen-build.log",
+      "bytes": 4559,
+      "sha256": "e072cccb88138fbbbc2032a18d2f5fc88b7c1af815e774b2a32ef50d1560bdb8"
+    },
+    {
+      "name": "frozen.json",
+      "bytes": 13419,
+      "sha256": "d0eef61fac623d2d000b17430d8f4ea3ae849b820c92e5fc428f4d6e43e701e4"
+    },
+    {
+      "name": "name-binding.json",
+      "bytes": 194807,
+      "sha256": "94deab68432ba593948bb74498aa966ffe496a95341e8abf6cd722f96309a1fe"
+    },
+    {
+      "name": "named-companion.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "no-host-float.log",
+      "bytes": 67,
+      "sha256": "5f2dd5d383f61a940a1066a790ba9d6bc817c0910cc1215ab93bede39ea8d024"
+    },
+    {
+      "name": "physical-audit.json",
+      "bytes": 22250,
+      "sha256": "d9ad31a913e30e196f52b2f2815c8fc04c8949885aefb880e514d5c658586130"
+    },
+    {
+      "name": "physical-audit.log",
+      "bytes": 156,
+      "sha256": "9c011d21092858391bb1210050fd3de0c35a1c31dac8154e83733e8f9f65a6ff"
+    },
+    {
+      "name": "physical-input/desktop/desktop.png",
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "name": "physical-input/desktop/failure.png",
+      "bytes": 11157,
+      "sha256": "3977a9bd9fd46d708229c964e4b55ce3398c9449de71a8ae565455839cfeceeb"
+    },
+    {
+      "name": "physical-input/desktop/latest.png",
+      "bytes": 18058,
+      "sha256": "190d29b3ae59119de8bda5acaf64e8b627236612a942e9d9dbc86288c3f8953a"
+    },
+    {
+      "name": "physical-input/desktop/prepared-direct.png",
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "name": "physical-input/desktop/report.json",
+      "bytes": 743293,
+      "sha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af"
+    },
+    {
+      "name": "physical-input/desktop/serial.log",
+      "bytes": 4235,
+      "sha256": "4a996171f120514d8d34649d24e25f57d9ebb99096604e0ca503290bd95df2ea"
+    },
+    {
+      "name": "physical-input/desktop/worker-cpu.json",
+      "bytes": 1249767,
+      "sha256": "24a461f002de9a6a22c22088a6162599546793889f7a5652690b796e0fcf4256"
+    },
+    {
+      "name": "physical-input/desktop.log",
+      "bytes": 5127,
+      "sha256": "a4bb670c5f550ed18c4fbfa0dd44d800f5ab0e0a9fb8aa1831d4ce59a4255c77"
+    },
+    {
+      "name": "physical-input/run.json",
+      "bytes": 22417,
+      "sha256": "21ed636604dcd1dcee703c60e8ebd7370af50509c14a6d354a5826fdd36ce4ff"
+    },
+    {
+      "name": "physical-input.log",
+      "bytes": 739,
+      "sha256": "2c49aef168d362f403855d61cc6d3f2cb025cf117ded8dcd049b6591b902397e"
+    },
+    {
+      "name": "physical-interval.json",
+      "bytes": 97,
+      "sha256": "87041b74f36c47192d6d1b1dc05e0d1c9feb82a2db66ca82a6da741cbe3b3e9d"
+    },
+    {
+      "name": "physical-summary.json",
+      "bytes": 4348,
+      "sha256": "1e61652a27bde7b6e2ca967db2c21006ed53d782b01628e895dcebdf8dfa7cd3"
+    },
+    {
+      "name": "physical-summary.log",
+      "bytes": 4348,
+      "sha256": "1e61652a27bde7b6e2ca967db2c21006ed53d782b01628e895dcebdf8dfa7cd3"
+    },
+    {
+      "name": "preflight-all-fp.log",
+      "bytes": 21676,
+      "sha256": "c9922c75037e609c2f2be17600cac79fba291916e9e5d03c3459e45d216202ba"
+    },
+    {
+      "name": "preflight-build.log",
+      "bytes": 2912,
+      "sha256": "28573aaf1c766f7e09dc58d90b681e48eefc3785d20952d64f375fa7970b5ee6"
+    },
+    {
+      "name": "preflight-clippy.log",
+      "bytes": 156,
+      "sha256": "2911821a1e7f5dabc7b27f153e5b777a6e11e5d1c42eaf55c2a359095e267a2a"
+    },
+    {
+      "name": "preflight-export-path.log",
+      "bytes": 4741,
+      "sha256": "de01e1dc73ef2806ee9fb3c566ca6a8144999859bfe67fe4a85304cfb2901d5d"
+    },
+    {
+      "name": "preflight-test-clippy.log",
+      "bytes": 156,
+      "sha256": "6f7e63aa680bcbd0b3242618f4475a999ed1594fdf1882f8fa4134f7d5766a56"
+    },
+    {
+      "name": "public-check.log",
+      "bytes": 3665,
+      "sha256": "f9a966cb1cbec0cceefb7279b25576d374a98b0aeb6c174073f0a94ce042cb0b"
+    },
+    {
+      "name": "record-submission.py",
+      "bytes": 2176,
+      "sha256": "9f9aaf7f52441f48ee7accaf469ea317308f59bd4ad0aeab40b8b3e2bc28986f"
+    },
+    {
+      "name": "recorder-harness.log",
+      "bytes": 5961,
+      "sha256": "4ccc2d523346c27edd01bc29cf2a7f517486d19276675332a56d3efa42c017ac"
+    },
+    {
+      "name": "run-cold.py",
+      "bytes": 2340,
+      "sha256": "2577f1067efd91cb053931e67e1add09ab18a7f4eb533ebfd858d4564c674404"
+    },
+    {
+      "name": "seal.py",
+      "bytes": 4394,
+      "sha256": "4c4013f2bb9982263602aa6b8894c47a68fd30b1db40928ff25871d1ea09289c"
+    },
+    {
+      "name": "submission.json",
+      "bytes": 1490,
+      "sha256": "8451a02fa503a54c14adde8c2527f05bd74d5a27b82e6ae0542922cdd5faac1e"
+    },
+    {
+      "name": "summarize-physical.py",
+      "bytes": 2407,
+      "sha256": "4cf034bcb46542acd8eec2d7374f52913c427c334c2bde11ee437d43381847de"
+    },
+    {
+      "name": "symbol-build.json",
+      "bytes": 2312,
+      "sha256": "7e6c95996e241bca00e15ba54b720cd1ad46fd80135bbcc9a501e5e02c1ff792"
+    },
+    {
+      "name": "symbolize.log",
+      "bytes": 93,
+      "sha256": "79e52044edca9c3a9d19aa1e503d39520bd5df8549979f91945b7efae9f8a520"
+    },
+    {
+      "name": "symbolized/cpu-summary.json",
+      "bytes": 680601,
+      "sha256": "dfbcf7b322a5cbf65fb73daf26ee36f24003b2e06a3d26615e06e70723a1e43c"
+    },
+    {
+      "name": "symbols.log",
+      "bytes": 69,
+      "sha256": "225401639fb20d1c7eb5f5fc9fd8cd2cf93211b551f70d849fd05a1cad88603a"
+    },
+    {
+      "name": "symbols.py",
+      "bytes": 1903,
+      "sha256": "7c6e4db04bacdf91cf777f23b3f57209be392cea1e3ac6ef35f4a099dcab3f4a"
+    },
+    {
+      "name": "visual-inspection.json",
+      "bytes": 1468,
+      "sha256": "31e0c153f1982f9fb3151132b148d92fbe7a74c62d3fd96d0653ab23525538f2"
+    },
+    {
+      "name": "wasm-native-lib.log",
+      "bytes": 3235,
+      "sha256": "45a44d7bc12ff029bee446da08218e23ef666fe702fe11c7aadc0cd4b3564b78"
+    },
+    {
+      "name": "wasm-test-clippy.log",
+      "bytes": 72,
+      "sha256": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd"
+    },
+    {
+      "name": "wasmopt-version.log",
+      "bytes": 35,
+      "sha256": "15647c8ddc59943b287606b47782e10b3316bde2afc42d96318ebc4072764639"
+    }
+  ],
+  "sourceArtifactFilesChecked": [
+    "Makefile",
+    "crates/core/src/jit.rs",
+    "crates/core/src/softfloat.rs",
+    "crates/jit-runtime/src/lib.rs",
+    "crates/jit-translate/src/lib.rs",
+    "crates/wasm/src/jit_browser.rs",
+    "crates/wasm/tests/jit_fp_arithmetic_verifier.rs",
+    "crates/wasm/tests/jit_fp_direct_imports_verifier.rs",
+    "crates/wasm/tests/jit_fp_division_verifier.rs",
+    "crates/wasm/tests/jit_fp_fmadd_verifier.rs",
+    "crates/wasm/tests/jit_fp_from_integer_verifier.rs",
+    "crates/wasm/tests/jit_fp_to_word_verifier.rs",
+    "docs/jit-fp-policy.md",
+    "evidence/omarchy-profile/direct-fp-imports-r1/bind-names.mjs",
+    "evidence/omarchy-profile/direct-fp-imports-r1/check-public.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/freeze.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/record-submission.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/run-cold.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/seal.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/summarize-physical.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/symbols.py",
+    "tools/verify/e5-t22c-cpu-profile.mjs",
+    "tools/verify/omarchy-browser-session.mjs",
+    "tools/verify/omarchy-cold-pair.mjs",
+    "tools/verify/omarchy-compositor-command.mjs",
+    "tools/verify/omarchy-desktop-live.mjs",
+    "tools/verify/omarchy-direct-fp-baseline.py",
+    "tools/verify/omarchy-direct-fp-benchmark.mjs",
+    "tools/verify/omarchy-direct-fp-browser.mjs",
+    "tools/verify/omarchy-direct-fp-fixture.mjs",
+    "tools/verify/omarchy-direct-fp-input.mjs",
+    "tools/verify/omarchy-direct-opaque-command.mjs",
+    "tools/verify/omarchy-direct-opaque-preparation.mjs",
+    "tools/verify/omarchy-failure-checkpoint.mjs",
+    "tools/verify/omarchy-input-audit.mjs",
+    "tools/verify/omarchy-input-trial.mjs",
+    "tools/verify/omarchy-latency-receipt.mjs",
+    "tools/verify/omarchy-live-recording.mjs",
+    "tools/verify/omarchy-mode-preparation.mjs",
+    "tools/verify/omarchy-opaque-foot-command.mjs",
+    "tools/verify/omarchy-opaque-preparation.mjs",
+    "tools/verify/omarchy-owned-trial.mjs",
+    "tools/verify/omarchy-prepared-direct-state.mjs",
+    "tools/verify/omarchy-process-sample.mjs",
+    "tools/verify/omarchy-render-mode.mjs",
+    "tools/verify/omarchy-renderer-log.mjs",
+    "tools/verify/omarchy-thread-setting.mjs",
+    "tools/verify/omarchy-worker-cost-capture.mjs",
+    "web/guest-rpc.js",
+    "web/omarchy-desktop-readiness.js",
+    "web/roadmap.js",
+    "web/src/input/keymap.js",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "web/dist/pkg/wasm_vm_wasm.js",
+    "web/dist/roadmap.js",
+    "web/dist/app.html",
+    "web/dist/tasks.json",
+    "web/dist/sw.js"
+  ],
+  "submissionOnlyChanges": [
+    "evidence/omarchy-profile/direct-fp-imports-r1/README.md",
+    "evidence/omarchy-profile/direct-fp-imports-r1/acceptance.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/affected-commands.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/affected-run.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/audit-physical.mjs",
+    "evidence/omarchy-profile/direct-fp-imports-r1/baseline-preflight.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/baseline.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/benchmark-preflight.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/benchmark-preflight/mixed-fp.elf",
+    "evidence/omarchy-profile/direct-fp-imports-r1/benchmark-preflight/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/benchmark/mixed-fp.elf",
+    "evidence/omarchy-profile/direct-fp-imports-r1/benchmark/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/bindgen-version.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/bindgen.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/binding.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/browser/built-page.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/browser/capability-inspection.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/browser/fmadd.elf",
+    "evidence/omarchy-profile/direct-fp-imports-r1/browser/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/browser/suite.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/ci-commands.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/ci-failures.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/ci-run.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/ci.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/clippy.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cloudflare-deploy-initial.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cloudflare-deploy.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cloudflare-public.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cloudflare-recovery.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold-run.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/acceptance.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/benchmark/mixed-fp.elf",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/benchmark/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/browser/built-page.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/browser/capability-inspection.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/browser/fmadd.elf",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/browser/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/browser/suite.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/build.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/checkout.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/clone.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/cold/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/deploy-recovery.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/deploy-recovery.py",
+    "evidence/omarchy-profile/direct-fp-imports-r1/freeze.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/frozen-build.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/frozen.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/name-binding.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/named-companion.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/no-host-float.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-audit.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-audit.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/desktop.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/failure.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/latest.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/prepared-direct.png",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/report.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/serial.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/worker-cpu.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/run.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-interval.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-summary.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/physical-summary.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/preflight-all-fp.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/preflight-build.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/preflight-clippy.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/preflight-export-path.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/preflight-test-clippy.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/public-check.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/recorder-harness.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/sha256.txt",
+    "evidence/omarchy-profile/direct-fp-imports-r1/submission.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/symbol-build.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/symbolize.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/symbolized/cpu-summary.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/symbols.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/visual-inspection.json",
+    "evidence/omarchy-profile/direct-fp-imports-r1/wasm-native-lib.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/wasm-test-clippy.log",
+    "evidence/omarchy-profile/direct-fp-imports-r1/wasmopt-version.log",
+    "tasks/QUEUE.md",
+    "tasks/epic-5.5-omarchy/E5.5-T03ao-direct-fp-imports.md"
+  ],
+  "rawPhysicalSha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af",
+  "originalWrapperFailurePreserved": true,
+  "offlineCorrectionIndependentlySupported": true,
+  "independentGeometryMutationsRejected": 15,
+  "desktopResponsive": false,
+  "broadCiPassed": false,
+  "qStillPending": true,
+  "note": "Final verdict applies to the direct pure FP import boundary; physical outcome remains negative."
+}

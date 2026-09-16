@@ -1,0 +1,20 @@
+{
+  "critic": "/root/direct_fp_imports_verifier",
+  "typedCommandAndReturnedPrompt": false,
+  "desktopResponsive": false,
+  "personalObservation": "Viewed all three actual PNGs. Initial/prepared captures show the initial empty Foot prompt. Failure capture still shows no printf command, nonce text or returned prompt after such a command. Failure image bytes differ from initial; a counter advance or changed pixels does not establish the required response.",
+  "images": [
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/prepared-direct.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/physical-input/desktop/failure.png",
+      "sha256": "3977a9bd9fd46d708229c964e4b55ce3398c9449de71a8ae565455839cfeceeb"
+    }
+  ]
+}

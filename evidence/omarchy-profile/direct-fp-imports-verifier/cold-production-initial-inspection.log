@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-verifier/audit-built-browser.py", line 41, in <module>
+    assert report['head'] == expected_head
+AssertionError

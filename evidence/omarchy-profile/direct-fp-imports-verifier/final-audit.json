@@ -1,0 +1,166 @@
+{
+  "sealedAt": "2026-09-16T10:14:27.725561+00:00",
+  "verdict": "verified",
+  "task": "E5.5-T03ao",
+  "workerSubmissionHead": "7d648143e92b7fe861fa4ae7b1f34c0a84451f39",
+  "frozenRuntimeHarnessHead": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+  "artifactColdPhysicalHead": "a3beb0e8dc5da21374a6d59e25658f5db5ce79da",
+  "baselineVerifiedHead": "04ea9fe4",
+  "workerFilesSealed": 89,
+  "workerIndexSha256": "e9160dbff703ac19aa5d4fb591fa1cc4651738916f04c0535905b189e53c2bbf",
+  "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "P9": "HELD"
+  },
+  "physicalPredictionMeaning": "Negative outcome preserved, not desktop acceptance",
+  "promotedTest": {
+    "path": "crates/wasm/tests/jit_fp_direct_imports_verifier.rs",
+    "sha256": "0ac8b08bf56d981e6a0f80cccf54e2032abbfeacfaba1ddb4535f22564a0fa18"
+  },
+  "rawPhysicalSha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af",
+  "rawProfileSha256": "24a461f002de9a6a22c22088a6162599546793889f7a5652690b796e0fcf4256",
+  "benchmark": {
+    "frozenRatio": 0.5877374020759919,
+    "coldRatio": 0.5949656768504615,
+    "claim": "Same finite mixed-FP workload only"
+  },
+  "numericalSuites": {
+    "frozenPassed": 32,
+    "coldPassed": 32,
+    "failed": 0,
+    "ignored": 0
+  },
+  "sourceArtifactsMatched": 58,
+  "nonCustomProfileSectionsMatched": 11,
+  "publicFilesIndependentlyFetched": 12,
+  "pristineClones": 1,
+  "physicalTrials": 1,
+  "broadCiPassed": false,
+  "desktopResponsive": false,
+  "qMustRemainGated": true,
+  "originalWrapperFailurePreserved": true,
+  "offlineGeometryCorrectionAccepted": true,
+  "independentBadGeometryControlsRejected": 15,
+  "profileDiagnosticOnly": true,
+  "remainingScopedEvidenceGaps": [],
+  "receiptFiles": [
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/benchmark-cold-inspection.json",
+      "sha256": "ea4ea17af76cf7b7d5338e80b503a1d28a1be7b1564d02f69e844fe660095d71"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/benchmark-frozen-inspection.json",
+      "sha256": "396c3162f0493ef2cb4f4dc260269222cd916a7e532506f94bd86f56fbbe71fd"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/benchmark-preflight-inspection.json",
+      "sha256": "f0109e2ed3d86ddd0f1ded655392b9f9022dd4cb52f5a6e747260374aecd1b38"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/carry-inspection.json",
+      "sha256": "bbb26e271b1035b2ee4d1fe7f963a6b9cce7c0b759c11fbf829d20d2c2b88b09"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/ci-inspection.json",
+      "sha256": "040da4bc276ed5077721b3bf30d50880fd473f1d2fade21686001934d32349c4"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/cold-inspection.json",
+      "sha256": "3aa953c2ede0003697c9c637c074f9d6666b6dc95ea9b9fdf7276a569909f906"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/cold-production-inspection.json",
+      "sha256": "533df75a34e365e63bf751ce14709386e3c6ad6fd0e38c47a4d2da0cab7bc07f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/exports-preflight.json",
+      "sha256": "18776408c9868ae08d9f7bece988180fcc044c4c63383e15c4daae8bf0603bfc"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/frozen-inspection.json",
+      "sha256": "e9f59171f1b582b617b2e0366e6e538d942605769d74123806a2c295c595a824"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/geometry-inspection.json",
+      "sha256": "0012004f951d2f380c1d24f87995290a2046653464dd3866329f5e24e4b93873"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/harness-parity.json",
+      "sha256": "ace636d4d7f9e9377c4fe874eca0209e1971b4150650ccb050b73a62243b9e05"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/physical-fidelity.json",
+      "sha256": "91c7a07ba466cdac75e3f4cfc08760e8d582fbc5d7c949edd34a99e379186a5d"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/physical-inspection.json",
+      "sha256": "d1487706018c9fb51b93529d364334df6256bce738e03b9881c2d2ac5ebc78b1"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/production-inspection.json",
+      "sha256": "6e3d4bb0f13049a24f93fef8df5d26ee73ae0970466e924bca345d9ecb378457"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/production-preflight.json",
+      "sha256": "3638329c31716cdcd79d04a0d12c8d0eab13c7a6a128f5fdec48267121f6406a"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/profile-inspection.json",
+      "sha256": "feb633a38a3216083234c91bd7c8c3520df2be7b02f50afe85db6b3ebd28798e"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/public-inspection.json",
+      "sha256": "86e84a4a6bebcbf13dd452eabce9f058f6a1bf0fb5355b837ba1e1b26a4ecdf6"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/recovery-inspection.json",
+      "sha256": "1445113f206e151a9651285cb34a80bb54bd723da5f213d8ac54a57f415f723a"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/source-before.json",
+      "sha256": "73f39153896f5aad6f5c937d8cb2930b5e50adfee89b0f770f6b0807c755d412"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/submission-inspection.json",
+      "sha256": "34ef92644f59a754330fff22518b7eb22ec5dd229029b92e2339636132f2673a"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/suites-cold-inspection.json",
+      "sha256": "16102e1f593e1d2100ed39295c04dfb9b81e5eb81d9623edbfb93936d25e49eb"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/suites-frozen-inspection.json",
+      "sha256": "8eb75761d9ff94db3e5919dda231973390f60477a3e9a72fbf838e4c2a5a1539"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/suites-preflight-inspection.json",
+      "sha256": "4ab033c14315cc3818b69db8b36dc5aad2fde9dcbe9cb46f5a6ee9c340a73418"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/visual-built-inspection.json",
+      "sha256": "679823c9170ecf33a8a66e2e70dd69d73e460fad9de3aea65aec128289335bfd"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/visual-cold-inspection.json",
+      "sha256": "a9b037062ba9225294627bad1512f44c876f2ca2785ae4d8f44ef659662e28ac"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-verifier/visual-physical-inspection.json",
+      "sha256": "8271f935d751051944a80b6ce97de1561b3aaafafdd4830782bdb93115720311"
+    }
+  ],
+  "limits": [
+    "The physical nonce and personally inspected terminal criteria failed.",
+    "Broad CI has five inherited failing categories; no green workspace claim.",
+    "The critic audited recorded range recovery against the pinned local snapshot, without downloading 205 MB again.",
+    "Root applies task status/queue and commits administratively; critic made no implementation or status edits."
+  ]
+}

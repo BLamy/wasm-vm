@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "artifacts": [
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 1602331,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+      "expectedSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 119569,
+      "sha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6",
+      "expectedSha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6"
+    },
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/roadmap.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 51571,
+      "sha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949",
+      "expectedSha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949"
+    },
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/app.html?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/tasks.json?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 3641626,
+      "sha256": "34439008cc88b55226a2b38cf1c1c7d01ae85fa0cd6401ed95c609433fef8266",
+      "expectedSha256": "34439008cc88b55226a2b38cf1c1c7d01ae85fa0cd6401ed95c609433fef8266"
+    },
+    {
+      "url": "https://5256a6c7.wasm-vm.pages.dev/sw.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "ffee0bfe31421a4a3f2fcb0109b0bf70d4114e71751728203320ff3104247169",
+      "expectedSha256": "ffee0bfe31421a4a3f2fcb0109b0bf70d4114e71751728203320ff3104247169"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 1602331,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+      "expectedSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 119569,
+      "sha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6",
+      "expectedSha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 51571,
+      "sha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949",
+      "expectedSha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/app.html?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/tasks.json?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 3641626,
+      "sha256": "34439008cc88b55226a2b38cf1c1c7d01ae85fa0cd6401ed95c609433fef8266",
+      "expectedSha256": "34439008cc88b55226a2b38cf1c1c7d01ae85fa0cd6401ed95c609433fef8266"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/sw.js?critic=8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "ffee0bfe31421a4a3f2fcb0109b0bf70d4114e71751728203320ff3104247169",
+      "expectedSha256": "ffee0bfe31421a4a3f2fcb0109b0bf70d4114e71751728203320ff3104247169"
+    }
+  ]
+}

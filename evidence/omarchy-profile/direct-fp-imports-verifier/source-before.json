@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-16T09:02:23.888224+00:00",
+  "head": "72fc438ad6dc3e70e8770af6f5f29e054176b111",
+  "purpose": "pre-evidence source boundary; no worker results read",
+  "files": {
+    "crates/core/src/jit.rs": "eb7f86b7fda3d5f520cc27fddb15f810eef6a560b230baa67e835a1873ee202f",
+    "crates/core/src/softfloat.rs": "bd18494f8a8224c54f88bdedb354c3dd8f515a9299e7882899ed50f2c3fd1d02",
+    "crates/jit-translate/src/lib.rs": "fc3883e53bb28182cd7033c1a337bc51008193576392563b5d2e7779cee4d134",
+    "crates/jit-runtime/src/lib.rs": "6b853f29caf4257ac172187ac29200a48f4f43aa11ac7be61b88f38c84b64566",
+    "crates/wasm/src/jit_browser.rs": "a3223bcfb2afa0dbf530edc7e260fea69581135316d8ea8872d2390b8ae96f64"
+  }
+}

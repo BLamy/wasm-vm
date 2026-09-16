@@ -1,0 +1,6 @@
+{
+  "validObservedStates": 2,
+  "rejectedMutations": 15,
+  "fixedGeometry": true,
+  "desktopAcceptance": false
+}

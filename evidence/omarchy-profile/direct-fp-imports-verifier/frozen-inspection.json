@@ -1,0 +1,66 @@
+{
+  "head": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+  "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "frozenReceiptSha256": "d0eef61fac623d2d000b17430d8f4ea3ae849b820c92e5fc428f4d6e43e701e4",
+  "sourceFiles": 52,
+  "builtArtifacts": 6,
+  "unchangedRecorderFiles": 24,
+  "preparedPairRehashed": {
+    "omarchy-ready.snap.gz": [
+      207172408,
+      "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    ],
+    "omarchy-overlay-delta.bin.gz": [
+      1232847,
+      "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    ]
+  },
+  "changedCrateFiles": [
+    "crates/wasm/src/jit_browser.rs",
+    "crates/wasm/tests/jit_fp_direct_imports_verifier.rs"
+  ],
+  "affectedGates": [
+    {
+      "label": "clippy",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/clippy.log",
+      "sha256": "d616ced0e37b3d64b67d5ecbdda83e2a2cd57c3e7562ef27c329f3243f3612a2",
+      "bytes": 518,
+      "code": 0
+    },
+    {
+      "label": "wasm-test-clippy",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/wasm-test-clippy.log",
+      "sha256": "ee1d3fffa2022e962e63e0dbe4d35c9c198450a20c29fc09030f635dbb38bfcd",
+      "bytes": 72,
+      "code": 0
+    },
+    {
+      "label": "wasm-native-lib",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/wasm-native-lib.log",
+      "sha256": "45a44d7bc12ff029bee446da08218e23ef666fe702fe11c7aadc0cd4b3564b78",
+      "bytes": 3235,
+      "code": 0
+    },
+    {
+      "label": "recorder-harness",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/recorder-harness.log",
+      "sha256": "4ccc2d523346c27edd01bc29cf2a7f517486d19276675332a56d3efa42c017ac",
+      "bytes": 5961,
+      "code": 0
+    },
+    {
+      "label": "no-host-float",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/no-host-float.log",
+      "sha256": "5f2dd5d383f61a940a1066a790ba9d6bc817c0910cc1215ab93bede39ea8d024",
+      "bytes": 67,
+      "code": 0
+    },
+    {
+      "label": "acceptance",
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/acceptance.log",
+      "sha256": "978dc14e620cb93717a9ae9c4798605e237d94c8007c3909abcd92611c38ca03",
+      "bytes": 24188,
+      "code": 0
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "critic": "/root/direct_fp_imports_verifier",
+  "scope": "frozen built browser images only; physical trial still pending",
+  "images": [
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/browser/suite.png",
+      "sha256": "9c0dc4ad49c1b1a91a3643aea63503e6fdd45f9f2f872ad6c97df9ae3544071a",
+      "observation": "Personally viewed: total127, passed127, failed0, done127; all seven ISA groups green."
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/browser/capability-inspection.png",
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+      "observation": "Personally viewed: green Single-precision fused multiply-add pip, 1/1 passing and live in browser."
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-fp-imports-r1/browser/built-page.png",
+      "sha256": "db64ac70c4dea61a68483cf49558973ac766be68270659612faaa503cb7d1721",
+      "observation": "Personally viewed: actual E5.5-T03ao task detail, in-progress, title Call pure FP helpers directly across WASM modules; existing roadmap/ISA pips live."
+    }
+  ]
+}

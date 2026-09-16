@@ -1,0 +1,30 @@
+{
+  "recoveryReceiptSha256": "b0eb382e5acc49dadd19d18b0a79dabf756f3c46aaf4fb83f0b40cc0b226a1a9",
+  "recoverySourceSha256": "f2e4d042e5b6e4c1c6b48e590820f6fd5617a89c00210c2fd14e5b33b8d0b085",
+  "initialFailureLogSha256": "bbec996db08aa9bd55866b87136a040e7d291fee8e88a96aaa40faf7bbefe6f6",
+  "deployLogSha256": "e6ca858b335f2cda0e2878447abb55957e40e14816206153edbe24fb6525b967",
+  "initialTimeoutsPreserved": 2,
+  "recordedRangeCount": 49,
+  "rangeCoverage": [
+    0,
+    205050832
+  ],
+  "allRecordedRangesMatchLocalPinnedArtifact": true,
+  "localArtifactSha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+  "fullContentRangeAndDigestGuardsInspected": true,
+  "sameFinalPagesCommand": [
+    "npx",
+    "--yes",
+    "wrangler",
+    "pages",
+    "deploy",
+    "web/dist",
+    "--project-name",
+    "wasm-vm",
+    "--branch",
+    "main",
+    "--commit-dirty=true"
+  ],
+  "publicationExit": 0,
+  "scope": "unchanged boot artifact recovery recording reviewed; new runtime/public files independently downloaded separately"
+}

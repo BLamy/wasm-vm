@@ -1,0 +1,8 @@
+{
+  "independentRamSha256": "c55029e8cbc137ddab4624cc75bfd853a46c1d385f29b173028ac388de31fd94",
+  "medians": {
+    "baseline": 24.03499984741211,
+    "candidate": 14.299999952316284
+  },
+  "candidateRatio": 0.5949656768504615
+}

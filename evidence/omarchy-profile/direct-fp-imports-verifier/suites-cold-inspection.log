@@ -1,0 +1,7 @@
+{
+  "passed": 32,
+  "actualInstances": 12,
+  "scalarCases": 264,
+  "rejectedTypes": 44,
+  "sabotage": "rejected both modes, restored"
+}
