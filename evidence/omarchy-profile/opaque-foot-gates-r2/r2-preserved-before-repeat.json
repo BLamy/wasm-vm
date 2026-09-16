@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-09-16T04:04:56.036871+00:00",
+  "decision": "One identical frozen-head repeat; retain R2 startup failure. No source, property, cache, resolution or deadline change.",
+  "r1MeanSliceMs": 11.025488938589012,
+  "r2MeanSliceMs": 68.19114278573507,
+  "r2FetchWaits": 0,
+  "thermalRead": "No thermal or performance warning recorded by pmset -g therm; AC power100percent. No causal host-throttle claim.",
+  "preserved": {
+    "evidence/omarchy-profile/opaque-foot-r2/run.json": "f718d1594522b616b44ec9e19bbc3bd487c398df0530bbcca24898687ca2e2dd",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop.log": "6b86d7794e5b9613615a562a3a0053ce1c775b5e25dd822f21fa605101e64032",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop/desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop/report.json": "8252db4688dd509e5afc797ed900eb1ea1f47d20e8597127fb98e44878795d9c",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop/serial.log": "8eefda95333344a8a90d4b867d44f7a83b90dcf194e386fd8acb486bff9a97d5",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop/latest.png": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55",
+    "evidence/omarchy-profile/opaque-foot-r2/desktop/failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+  }
+}

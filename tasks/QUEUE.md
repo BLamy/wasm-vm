@@ -473,7 +473,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02696` [E5.5-T03ab](epic-5.5-omarchy/E5.5-T03ab-residency-after-fp.md) — Test existing compiled-code retention after measured FP support *(deps: E5.5-T03aa)*
 - [x] `525.02697` [E5.5-T03ac](epic-5.5-omarchy/E5.5-T03ac-worker-cost-profile.md) — Profile exact worker cost after the fixed Omarchy input verdict *(deps: E5.5-T03ab)*
 - [x] `525.02698` [E5.5-T03ad](epic-5.5-omarchy/E5.5-T03ad-prepare-smaller-desktop.md) — Prepare one fully rendered smaller Omarchy desktop checkpoint *(deps: E5.5-T03ac)*
-- [~] `525.026985` [E5.5-T03af](epic-5.5-omarchy/E5.5-T03af-opaque-foot-input.md) — Test fixed opaque Foot rendering with physical input *(deps: E5.5-T03ad)*
+- [?] `525.026985` [E5.5-T03af](epic-5.5-omarchy/E5.5-T03af-opaque-foot-input.md) — Test fixed opaque Foot rendering with physical input *(deps: E5.5-T03ad)*
 - [b] `525.02699` [E5.5-T03ae](epic-5.5-omarchy/E5.5-T03ae-prepared-mode-input.md) — Test physical input after restoring the prepared smaller desktop *(deps: E5.5-T03ad)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03af)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
