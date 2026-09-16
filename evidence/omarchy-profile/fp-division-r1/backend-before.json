@@ -1,0 +1,7 @@
+{
+  "verifiedParent": "dffdff3548b5cbc22ee9ede6e5a3233c2cea79fd",
+  "softfloatSha256": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25",
+  "failureLogSha256": "d47a72ffe031960fb1f6574cbbd5b8fa66aa15fdf5892a85624b8c49cb265c65",
+  "literalFlagMismatches": 16,
+  "resultBitsMismatches": 0
+}

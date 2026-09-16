@@ -1,0 +1,16 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.35s
+     Running tests/fp_division.rs (target/debug/deps/fp_division-2e8905c5540d9dfd)
+
+running 3 tests
+FP_DIVISION runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test division_native_runloop ... ok
+FP_DIVISION CSR/later-fault/invalid-prefix/aliases cases=80
+test division_native_handoff_and_faults ... ok
+FP_DIVISION corpus cases=30720 register_flags_fnv=fc9d8c60370e34a2
+test division_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.79s
+

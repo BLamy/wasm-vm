@@ -1,0 +1,227 @@
+{
+  "head": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "phase": "affected",
+  "commands": [
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:35Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:37:35Z"
+    },
+    {
+      "label": "core-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "fp_division_flags",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:35Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:37:35Z"
+    },
+    {
+      "label": "native-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_division",
+        "--test",
+        "fp_division_verifier",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer_verifier",
+        "--test",
+        "fp_to_word_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:35Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:37:38Z"
+    },
+    {
+      "label": "wasm-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--test",
+        "jit_fp_division",
+        "--test",
+        "jit_fp_division_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:38Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:37:41Z"
+    },
+    {
+      "label": "software-fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "softfloat",
+        "--test",
+        "fp_arithmetic_flags",
+        "--test",
+        "fp_division_flags",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:41Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:37:53Z"
+    },
+    {
+      "label": "core-handoff",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace",
+        "--lib",
+        "jit::tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:37:53Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:38:01Z"
+    },
+    {
+      "label": "fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_moves",
+        "--test",
+        "fp_memory",
+        "--test",
+        "fp_comparisons",
+        "--test",
+        "fp_arithmetic",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer",
+        "--test",
+        "fp_from_integer_verifier",
+        "--test",
+        "fp_to_word",
+        "--test",
+        "fp_to_word_verifier",
+        "--test",
+        "precise_traps",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:38:01Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:40:33Z"
+    },
+    {
+      "label": "native-fp-isa",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "jit_execution",
+        "fp_suites_verdict_identical_under_jit",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:40:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:41:03Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:41:03Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:41:15Z"
+    },
+    {
+      "label": "no-host-float",
+      "args": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:41:15Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:41:15Z"
+    },
+    {
+      "label": "acceptance",
+      "args": [
+        "make",
+        "verify-E5_5-T03z",
+        "FP_DIVISION_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-division-r1/browser"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T00:41:15Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:43:13Z"
+    }
+  ],
+  "allPassed": true
+}
