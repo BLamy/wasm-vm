@@ -1,0 +1,45 @@
+{
+  "head": "141bdd5a055aa3f03592f127246a8b6e131f9125",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "commands": [
+    {
+      "label": "affected-harness",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-direct-opaque.test.mjs",
+        "tools/verify/omarchy-opaque-foot.test.mjs",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-desktop-live.test.mjs"
+      ],
+      "startedAt": "2026-09-16T04:50:30Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T04:50:31Z"
+    },
+    {
+      "label": "runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-direct-opaque.mjs"
+      ],
+      "startedAt": "2026-09-16T04:50:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T04:50:31Z"
+    },
+    {
+      "label": "recorder-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-desktop-live.mjs"
+      ],
+      "startedAt": "2026-09-16T04:50:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T04:50:31Z"
+    }
+  ],
+  "allPassed": true
+}
