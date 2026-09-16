@@ -57,6 +57,51 @@ use wasm_vm_core::mmio::SystemBus;
 
 extern crate alloc;
 
+// Generated FP imports link to these raw scalar exports in the owning core
+// instance. They have no guest-context or memory argument; the translator
+// validates FS and rounding before entering the existing pure helpers.
+#[unsafe(export_name = "__jit_fp_arith_s")]
+pub extern "C" fn jit_fp_arith_s(a: i32, b: i32, mul: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_arith_s(a as u32, b as u32, mul != 0, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_from_int_s")]
+pub extern "C" fn jit_fp_from_int_s(value: i64, width: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_to_word_s")]
+pub extern "C" fn jit_fp_to_word_s(bits: i32, unsigned: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_div_s")]
+pub extern "C" fn jit_fp_div_s(a: i32, b: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_fmadd_s")]
+pub extern "C" fn jit_fp_fmadd_s(a: i32, b: i32, c: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
+}
+
+fn set_fp_helper_imports(env: &Object) {
+    let exports = wasm_bindgen::exports();
+    for (import, export) in [
+        ("fp_arith_s", "__jit_fp_arith_s"),
+        ("fp_from_int_s", "__jit_fp_from_int_s"),
+        ("fp_to_word_s", "__jit_fp_to_word_s"),
+        ("fp_div_s", "__jit_fp_div_s"),
+        ("fp_fmadd_s", "__jit_fp_fmadd_s"),
+    ] {
+        let function: Function = Reflect::get(&exports, &JsValue::from_str(export))
+            .unwrap_throw()
+            .dyn_into()
+            .unwrap_throw();
+        Reflect::set(env, &JsValue::from_str(import), function.as_ref()).unwrap_throw();
+    }
+}
+
 const INLINE_TLB_ENTRIES: u32 = 256;
 const INLINE_TLB_ARRAY_BYTES: u32 = INLINE_TLB_ENTRIES * TlbLayout::SLOT;
 const INLINE_TLB_ARRAY_WORDS: usize = INLINE_TLB_ENTRIES as usize * 2;
@@ -985,11 +1030,6 @@ pub struct BrowserExecutor {
     _closures_amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64>,
     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
-    _closures_fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
-    _closures_fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
-    _closures_fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64>,
-    _closures_fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
-    _closures_fp_div_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
     /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
     /// fixed externref floor and is refreshed only if outer memory growth detached it.
     handoff: BrowserHandoff,
@@ -1165,28 +1205,6 @@ impl BrowserExecutor {
                 value
             });
 
-        // Pure arithmetic: no active execution context or chain-abort side effect.
-        let fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64> =
-            Closure::new(|a: i32, b: i32, mul: i32, rm: i32| {
-                wasm_vm_core::jit::fp_arith_s(a as u32, b as u32, mul != 0, rm as u8) as i64
-            });
-        let fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64> =
-            Closure::new(|value: i64, width: i32, rm: i32| {
-                wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
-            });
-        let fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64> =
-            Closure::new(|bits: i32, unsigned: i32, rm: i32| {
-                wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
-            });
-        let fp_div_s: Closure<dyn FnMut(i32, i32, i32) -> i64> =
-            Closure::new(|a: i32, b: i32, rm: i32| {
-                wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
-            });
-        let fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64> =
-            Closure::new(|a: i32, b: i32, c: i32, rm: i32| {
-                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
-            });
-
         let env = Object::new();
         set_fn(&env, "load", &load);
         set_fn(&env, "store", &store);
@@ -1200,11 +1218,7 @@ impl BrowserExecutor {
         set_fn(&env, "amo", &amo);
         set_fn(&env, "lr", &lr);
         set_fn(&env, "sc", &sc);
-        set_fn(&env, "fp_arith_s", &fp_arith_s);
-        set_fn(&env, "fp_from_int_s", &fp_from_int_s);
-        set_fn(&env, "fp_to_word_s", &fp_to_word_s);
-        set_fn(&env, "fp_div_s", &fp_div_s);
-        set_fn(&env, "fp_fmadd_s", &fp_fmadd_s);
+        set_fp_helper_imports(&env);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
@@ -1222,11 +1236,6 @@ impl BrowserExecutor {
             _closures_amo: amo,
             _closures_lr: lr,
             _closures_sc: sc,
-            _closures_fp_arith_s: fp_arith_s,
-            _closures_fp_fmadd_s: fp_fmadd_s,
-            _closures_fp_from_int_s: fp_from_int_s,
-            _closures_fp_to_word_s: fp_to_word_s,
-            _closures_fp_div_s: fp_div_s,
             handoff: BrowserHandoff::new(),
             abi,
             inline_tlb,

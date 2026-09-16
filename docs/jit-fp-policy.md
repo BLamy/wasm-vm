@@ -341,3 +341,18 @@ Semantics follow the [RISC-V fused-operation rules](https://github.com/riscv/ris
 and the primary [SoftFloat fused operation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_mulAddF32.c)
 and [rounding implementation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c).
 The actual physical nonce and visible returned-prompt gate remains 120 seconds.
+
+
+## 14. Direct browser imports for pure FP helpers (E5.5-T03ao)
+
+The browser executor binds its five pure FP imports directly to scalar exports
+from the owning main WebAssembly instance. Each exported function delegates to
+the same integer-only numerical helper with the existing i32/i64 signature.
+Generated modules retain their existing import layout and guard/publication
+code. Loads, stores and atomics keep their context-dependent closures.
+
+The independent browser tests check actual function identity, all five types,
+full packed i64 results, retained imports after executor replacement/drop, and
+memory growth. A paired browser benchmark compares the frozen closure bundle
+with this bundle on identical compiled guest work. The physical keyboard nonce
+and visible returned-prompt acceptance remain separate, at Enter+120 seconds.

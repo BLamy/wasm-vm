@@ -1693,3 +1693,10 @@ verify-E5_5-T03an:
 	cargo test -p wasm-vm-jit-runtime --test fp_fmadd --test fp_fmadd_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_fmadd --test jit_fp_fmadd_verifier -- --nocapture
 	node tools/verify/omarchy-fmadd-browser.mjs $(or $(FP_FMADD_OUT),evidence/omarchy-profile/fmadd-browser)
+
+.PHONY: verify-E5_5-T03ao
+verify-E5_5-T03ao:
+	cargo fmt --all --check
+	wasm-pack test --node crates/wasm --test jit_fp_direct_imports_verifier --test jit_fp_arithmetic_verifier --test jit_fp_from_integer_verifier --test jit_fp_to_word_verifier --test jit_fp_division_verifier --test jit_fp_fmadd_verifier -- --nocapture
+	node tools/verify/omarchy-direct-fp-browser.mjs $(or $(DIRECT_FP_BROWSER_OUT),evidence/omarchy-profile/direct-fp-browser)
+	node tools/verify/omarchy-direct-fp-benchmark.mjs $(or $(DIRECT_FP_BENCH_OUT),evidence/omarchy-profile/direct-fp-benchmark)

@@ -457,7 +457,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
     "tools/verify/omarchy-input-audit.mjs",
     "tools/verify/omarchy-prepared-direct-state.mjs", "tools/verify/omarchy-prepared-direct-input.mjs",
-    "tools/verify/omarchy-prepared-recycling-input.mjs", "tools/verify/omarchy-fmadd-input.mjs",
+    "tools/verify/omarchy-prepared-recycling-input.mjs", "tools/verify/omarchy-fmadd-input.mjs", "tools/verify/omarchy-direct-fp-input.mjs",
     "tools/verify/omarchy-direct-opaque-preparation.mjs", "tools/verify/omarchy-prepare-direct-opaque.mjs",
     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",

@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 334,
-    "total": 512
+    "verified": 335,
+    "total": 513
   },
   "epics": [
     {
@@ -22903,7 +22903,7 @@
       "epicKey": "5.5",
       "title": "Keep measured FMADD.S renderer blocks compiled",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03am",
         "E5.5-T03z"
@@ -22915,16 +22915,52 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-16 — measured follow-up plan\n\nT03am report SHA256 bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4.\nPost-failure profile SHA256 064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9\nbinds all 11 executable sections to AL. Static saved renderer page SHA256\n68e042889bbbe68b7fb56eb2bca604d2b79f384620da6d33a1e3b1bb6b680f9b;\nits FMADD.S examples include 0x1116fec3 at 0x7fff6c08a6d6 and0x11f6f4c3 at\n0x7fff6c08a746. The dynamic raw histogram has no S/D distinction, so the page\nbinding and format-bit decode are required rather than silently assuming it.\n\n### 2026-09-16 — activation\n\nAM is independently verified negative at 29ea3537. Activate only the measured\nFMADD.S boundary. A fresh critic recorded P1–P10 before worker evidence.",
+      "verificationLog": "### 2026-09-16 — measured follow-up plan\n\nT03am report SHA256 bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4.\nPost-failure profile SHA256 064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9\nbinds all 11 executable sections to AL. Static saved renderer page SHA256\n68e042889bbbe68b7fb56eb2bca604d2b79f384620da6d33a1e3b1bb6b680f9b;\nits FMADD.S examples include 0x1116fec3 at 0x7fff6c08a6d6 and0x11f6f4c3 at\n0x7fff6c08a746. The dynamic raw histogram has no S/D distinction, so the page\nbinding and format-bit decode are required rather than silently assuming it.\n\n### 2026-09-16 — activation\n\nAM is independently verified negative at 29ea3537. Activate only the measured\nFMADD.S boundary. A fresh critic recorded P1–P10 before worker evidence.\n\n### 2026-09-16 — worker — compiled instruction proven; desktop still fails\n\nRuntime/harness freeze `618286f3b1431990bbeddb9ef40d894b67be0605`;\nartifact-reference and final cold/physical head\n`c531ceffb9b7adc8de9f5ebc927d00076a26f1dd`. Release WASM is\n`0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced`\n(1,600,200 bytes). Only deployed manifest URL references changed after freeze.\n\nCommands use `DEVELOPER_DIR=/Library/Developer/CommandLineTools`:\n\n- `python3 evidence/omarchy-profile/fmadd-single-r1/freeze.py` pins the 54\n  source/harness files, exact AJ R2 pair, unchanged recorder modules and AM seals.\n- `python3 evidence/omarchy-profile/fmadd-single-r1/record-submission.py affected`\n  passes all selected commands: warnings-denied affected code/test checks,\n  14 software-FP tests, 2 handoff tests, 47 prior FP/trap regressions, native FP\n  ISA, 33 WASM-library tests, 89 recorder checks, integer-only audit, and the\n  18-test `make verify-E5_5-T03an` acceptance. Worker generated-code corpus is\n  58,368 cases, digest `71132465cba70984`, plus 80 control/fault/alias cases.\n  Critic literals are independent: 175 triples / 875 mode outputs, 12,250\n  publication/sticky cases per native/private/shared path, 6,144 aliases/illegal\n  states, 20,480 instrumented states, 10,800 legal calls and zero illegal calls.\n- The same recorder's `ci` phase runs full `make -k ci`, honestly exit 2.\n  `ci-failures.json` cites all five inherited AL failure categories in both logs:\n  macOS seccomp, all-feature unused methods, existing resume RNG assertion,\n  quarantined zicsr-stub helpers and GPU wall-clock lint. This is not a green\n  workspace claim; affected gates passed, native ISA passed 128/128 and the\n  performance floor passed at 58.4 MIPS.\n- Built Chrome acceptance executes the actual ELF and all prior FP helpers,\n  grows WASM memory by 65,536 bytes, and matches full interpreter state digest\n  `3510fa25cda976048c595e95ae16fabadebe668f0170d9615ac68c103430003e`.\n  It retires 4,570/5,000 instructions via JIT; all 127 live ISA tests pass with\n  zero browser errors. Actual suite/live-capability/task images were inspected.\n- `bash tools/deploy-cloudflare.sh` publishes\n  `https://267908e9.wasm-vm.pages.dev`; `check-public.py` verifies six exact files\n  at both that URL and `https://wasm-vm.pages.dev` (twelve matches).\n  `run-cold.py` performs one pristine clone with scrubbed Rust/Cargo settings,\n  rebuilds the identical WASM and passes the same 18 tests plus Chrome acceptance.\n- `node tools/verify/omarchy-fmadd-input.mjs evidence/omarchy-profile/fmadd-single-r1/physical-input target/omarchy-direct-opaque-r2`\n  performs one candidate on the unchanged prepared pair, cap 256/recycling ON,\n  original resolution and original deadlines. Startup takes 49,569ms; all 128\n  trusted events have 256 ordered acknowledged keyboard/sync calls. Enter is\n  08:42:17.860Z; failure is 08:44:17.862Z at the original 120s deadline.\n  Eleven completed reads return missing-file exit 75, none remain pending,\n  frames stay 2→2, and personally inspected images show the same empty Foot\n  prompt (SHA `97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f`).\n  Interval retirements are 1,061,955,852 total / 801,561,173 compiled (75.4797%);\n  this does not establish a speedup. The report explicitly records browser-close\n  timeout followed by successful bounded owned-process cleanup; no parent\n  watchdog and no extra trial. Raw report SHA\n  `31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea`.\n- The unchanged post-failure capture records 30,012.977ms and 19,792 samples,\n  strictly after the verdict. `symbols.py` / `bind-names.mjs` match all eleven\n  executable sections before naming it. The callback subtree occupies 20.5777%\n  of weighted samples; that inclusive value overlaps its descendants and is\n  diagnostic, not a causal latency or isolated bridge-cost measurement.\n- `python3 evidence/omarchy-profile/fmadd-single-r1/seal.py` validates all records\n  and seals 83 files. Relative index `sha256.txt` SHA\n  `656107deda13733b1d493aa30b9c5d955145d7e1aa257e3fc8702f897c0db0a6`.\n\nClaim: FMADD.S admission, pure-helper behavior and exact results/flags/exits are\nrecorded across native, private/shared WASM, real built browser and clean clone.\nThe retained 24 original backend mismatches were flag-only and now pass an\nindependent exact oracle. Physical desktop responsiveness remains unproven and\nactually failed in this trial. T03q remains gated. A fresh critic must judge\nthis submission; no GitHub push, merge or responsiveness promotion occurred.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified\n\nVerified **E5.5-T03an only** at worker submission\n`1479a26360eb5ee70144440a25941a8d10ee4493`; runtime/harness\n`618286f3b1431990bbeddb9ef40d894b67be0605`, artifact/cold/physical\n`c531ceffb9b7adc8de9f5ebc927d00076a26f1dd`. Desktop responsiveness remains\nunsolved and T03q stays gated.\n\n- **P1–P3 HELD:** independent exact rational literals, including cancellation,\n  three-source NaNs/boxes, signed zeros, finite overflow and after-rounding\n  tininess. Final native/private/shared paths each pass 12,250 publications;\n  wide-gap boundary attacks distinguish incorrect widened nearest rounding.\n- **P4–P8 HELD:** 6,144 independently seeded alias/illegal states; 20,480\n  instrumented states with 10,800 legal/zero illegal helper calls; exact\n  arguments/masks/trap prefixes; all 16 optional-helper combinations and\n  unrelated admission guards; same/cross-module budgets and faults; actual\n  65,536-byte browser memory growth. One isolated false assertion fails\n  (exit 101); restored proof passes (exit 0). Promoted verifier tests are\n  committed in the three `*_fmadd_verifier.rs` paths.\n- **P9 HELD:** 83 sealed worker files match committed bytes; 54 source/harness\n  files and six artifacts remain frozen. AM's 70-file proof carries forward.\n  Independent page decode finds 24 pinned FMADD.S parcels. Built and cold\n  Chrome guest/register/RAM proofs agree, with RAM SHA `3510fa25…`,\n  4,570/5,000 compiled retirements, actual growth and 127/0 ISA tests. Six\n  captures personally inspected; twelve independent public downloads match.\n  Broad CI remains exit 2 in five unchanged AL categories, explicitly disclosed.\n- **P10 HELD as negative:** exact AJ R2/cap256/recycling/geometry/deadline\n  fidelity; 128 trusted events and 256 acknowledged calls, eleven completed\n  exit-75 reads, no nonce and no new frame. Enter `08:42:17.860Z`; failure\n  `08:44:17.862Z`. I viewed all three identical physical images: only the initial\n  empty Foot prompt. Raw report SHA\n  `31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea`.\n  Browser-server close timed out at 10s; the unchanged owned kill fallback\n  completed total cleanup in 10,138ms within 30s, no parent watchdog. The\n  post-verdict 19,792-sample profile binds all 11 executable sections and is\n  diagnostic only; no new guest input or deadline extension occurred.\n\nFull predictions, oracle, sabotage, changed-hunk coverage and independent\nreceipts: `evidence/omarchy-profile/fmadd-single-verifier/final-verdict.md`,\n`coverage.md`, `final-audit.json` and `sha256.txt`. The worker's original backend\nfailures, negative physical proof, inherited CI failures and critic parser/\ntransport failures are retained. No scoped proof gap remains; no desktop\nresponsiveness or speedup claim is accepted.\n\nCommands: focused native verifier tests and isolated sabotage; read-only\n`audit-frozen.py`, `audit-page.py`, `audit-production.py` (hot/cold),\n`audit-cold.py`, `audit-public.py`, `audit-ci.py`, `audit-physical.py`,\n`audit-fidelity.py`, `audit-profile.py`, `audit-submission.py` in the critic\ndirectory. No repeated full CI, clone or physical trial.",
       "adversarial": "A fresh critic predicts fused result/flags before reading worker evidence,\nincluding cancellation, zero×infinity plus qNaN, opposite infinite sum,\nunderflow and finite overflow. Independently vary operands/NaN boxes, modes,\naliases and prior flags; instrument helper purity/counts and illegal exits;\naudit exact dirty masks, call indices and each changed publication boundary;\nsabotage one new assertion in an isolated copy. Carry unchanged HELD proofs.\nIndependently verify final cold build, public bytes and actual physical result.\nNo extra runtime policy experiment or extended input deadline is acceptance.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03an-jit-fmadd-single.md",
       "activity": [
         {
           "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify FMADD and plan direct pure-helper imports",
+            "Record FMADD proofs and failed physical desktop trial",
+            "Compile measured FMADD.S blocks with exact fused flags",
+            "Start measured FMADD.S compiled helper slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03ao",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Call pure FP helpers directly across WASM modules",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03an"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — pending measured follow-up\n\nAN worker submission is `1479a263`; it still requires the fresh critic's final\nverdict before this task enters the lane. Exact AN WASM SHA\n`0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced`.\nIts recorded callback path is visible in\n`evidence/omarchy-profile/fmadd-single-r1/symbolized/cpu-summary.json`.\nThe pinned wasm-bindgen 0.2.126 source exposes the actual instance exports;\nthe existing pure helpers already use the required scalar signatures.\nNo implementation, benchmark or additional guest run has started for this task.\n\n### 2026-09-16 — activation\n\nAN is independently verified at `04ea9fe4`, including its negative physical\ntrial. Activate only the pure browser-helper import boundary. The compiled\ntranslation, numerical backend and previous correctness proofs remain fixed.\nA fresh critic will predict and independently attack this boundary.",
+      "adversarial": "A fresh critic predicts actual import identity/type and exact helper output\nbefore reading results. Audit the raw production exports and test every scalar\nsignature, including all 64 integer bits. Attack multiple instances/executors,\nsource aliases, invalid guards and memory growth. Sabotage one new assertion\nin isolation, carry unchanged HELD proofs, independently reconstruct the\nbenchmark state, check pairing/order and inspect raw actual input and images.\nNo speedup claim follows merely from moving a function or removing Closure fields.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ao-direct-fp-imports.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
           "commits": 2,
           "labels": [
-            "Start measured FMADD.S compiled helper slice",
-            "Verify negative recycling trial and plan measured FMADD boundary"
+            "Start direct WASM imports for pure FP helpers",
+            "Verify FMADD and plan direct pure-helper imports"
           ]
         }
       ],
@@ -23538,7 +23574,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03an"
+        "E5.5-T03ao"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23563,18 +23599,18 @@
         },
         {
           "date": "2026-09-16",
-          "commits": 5,
+          "commits": 6,
           "labels": [
+            "Verify FMADD and plan direct pure-helper imports",
             "Verify negative recycling trial and plan measured FMADD boundary",
             "Record failed prepared input trial and measured policy follow-up",
-            "Record direct opacity input failure and plan rendered checkpoint",
-            "Plan direct window properties after global refresh IPC timeout"
+            "Record direct opacity input failure and plan rendered checkpoint"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-16",
-      "commitCount": 20
+      "commitCount": 21
     },
     {
       "id": "E5.5-T03r",
