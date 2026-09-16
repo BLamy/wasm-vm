@@ -24,7 +24,7 @@ export function assertPreparedDirectSource(source) {
   assert.deepEqual(source.image, { imageLen: 4294967296, chunkSize: 262144, chunkCount: 16384 });
 }
 
-export function assertPreparedDirectProperties(response) {
+export function assertPreparedDirectProperties(response, expectedFoot = { address: "0x55555eb73630", pid: 503 }) {
   assert.equal(response?.exit, 0, "prepared property read failed");
   const lines = response.stdout.split(/\r?\n/u).map(s => s.trim()).filter(Boolean);
   assert.ok(lines.length > 8, "missing saved properties or active Foot");
@@ -35,30 +35,30 @@ export function assertPreparedDirectProperties(response) {
   const foot = JSON.parse(lines.slice(8).join("\n"));
   assert.equal(foot.class, "foot"); assert.equal(foot.mapped, true); assert.equal(foot.hidden, false);
   assert.equal(foot.visible, true); assert.equal(foot.acceptsInput, true);
-  assert.equal(foot.address, "0x55555eb73630"); assert.equal(foot.pid, 503);
+  assert.equal(foot.address, expectedFoot.address); assert.equal(foot.pid, expectedFoot.pid);
   assert.deepEqual(foot.at, [12, 38]); assert.deepEqual(foot.size, [1256, 750]);
   return foot;
 }
 
-export async function requestPreparedDirectProperties(exec, deadline, report) {
+export async function requestPreparedDirectProperties(exec, deadline, report, expectedFoot) {
   const receipt = report.preparedDirect = { command: PREPARED_DIRECT_COMMAND, requestCount: 0,
     startedAt: new Date().toISOString(), deadlineAtMs: deadline, status: "reading" };
   try {
     const timeout = remainingTrialMs(deadline); receipt.requestCount++;
     receipt.response = await withinTrialDeadline(() => exec(PREPARED_DIRECT_COMMAND, timeout), deadline, "saved opaque properties");
     receipt.respondedAt = new Date().toISOString();
-    receipt.foot = assertPreparedDirectProperties(receipt.response);
+    receipt.foot = assertPreparedDirectProperties(receipt.response, expectedFoot);
     receipt.status = "properties-confirmed";
   } catch (error) { receipt.status = "properties-unproven"; receipt.error = String(error); throw error; }
   finally { receipt.finishedAt = new Date().toISOString(); }
 }
 
-export function auditPreparedDirect(report) {
+export function auditPreparedDirect(report, { expectedFoot, startupCommands = [] } = {}) {
   assert.equal(report.preparedDirectRequested, true);
   const receipt = report.preparedDirect;
   const read = report.keyboard ? `if [ -f '${report.keyboard.guestFile}' ]; then cat '${report.keyboard.guestFile}'; else (exit 75); fi` : null;
-  const serial = auditSerial(report.workerTraffic, [PREPARED_DIRECT_COMMAND, ...(read ? [read] : [])]);
-  assert.ok(serial.every(row => [PREPARED_DIRECT_COMMAND, read,
+  const serial = auditSerial(report.workerTraffic, [PREPARED_DIRECT_COMMAND, ...startupCommands, ...(read ? [read] : [])]);
+  assert.ok(serial.every(row => [PREPARED_DIRECT_COMMAND, read, ...startupCommands,
     "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers"].includes(row.command)), "unexpected serial command");
   const commands = serial.filter(row => row.command === PREPARED_DIRECT_COMMAND);
   if (!receipt) {
@@ -78,7 +78,7 @@ export function auditPreparedDirect(report) {
     assert.ok(Date.parse(receipt.respondedAt) < receipt.deadlineAtMs);
   }
   if (receipt.status === "properties-confirmed") {
-    assert.deepEqual(receipt.foot, assertPreparedDirectProperties(receipt.response));
+    assert.deepEqual(receipt.foot, assertPreparedDirectProperties(receipt.response, expectedFoot));
     if (report.keyboard) assert.ok(Date.parse(report.keyboard.startedAt) >= Date.parse(receipt.respondedAt));
   } else {
     assert.equal(receipt.status, "properties-unproven");

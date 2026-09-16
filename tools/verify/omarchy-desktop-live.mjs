@@ -32,6 +32,7 @@ import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
 import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
 import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
 import { assertInputKernelProvenance, assertInputKernelSource, requestInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
+import { assertInputKernelPreparedSource, INPUT_BUFFER_PREPARED_FOOT } from "./omarchy-input-kernel-response-state.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -68,11 +69,15 @@ const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
 const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
 const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
 const inputKernelRecordPath = process.env.OMARCHY_INPUT_KERNEL_RECORD || null;
+const inputKernelPrepared = process.env.OMARCHY_INPUT_KERNEL_PREPARED === "1";
+if (process.env.OMARCHY_INPUT_KERNEL_PREPARED !== undefined) assert.ok(inputKernelPrepared
+  && urlArg === "local" && inputTrial && preparedDirect && !inputKernelRecordPath
+  && !inputObserver && !workerCost && !failureCheckpoint, "AR input requires its isolated uninstrumented local trial");
 if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaque-pair"
   && !inputObserver && !workerCost && !failureCheckpoint, "input-kernel provenance is isolated local preparation");
 if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
   "compositor observation requires the isolated prepared physical trial");
-const originalInputPresentation = inputObserver ? assertOriginalInputGeometry : assertOriginalPresentation;
+const originalInputPresentation = inputObserver || inputKernelPrepared ? assertOriginalInputGeometry : assertOriginalPresentation;
 const preparedRecycling = process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT === "prepared-recycling";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
@@ -128,10 +133,11 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
 }
 if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
   assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate"
-    && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
+    && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver || inputKernelPrepared) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
   "prepared direct input requires its isolated fixed residency candidate trial");
 }
-if (preparedRecycling) assert.ok(preparedDirect && (workerCost || inputObserver), "prepared recycling requires the exact prepared trial and bounded diagnostic recorder");
+if (preparedRecycling) assert.ok(preparedDirect && (workerCost || inputObserver || inputKernelPrepared), "prepared recycling requires an exact prepared trial");
+if (inputKernelPrepared) assert.equal(preparedRecycling, true, "AR input preserves AO recycling-on");
 let modePairOutput = null;
 if (modePair) {
   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
@@ -193,8 +199,9 @@ async function prepareLocalCandidate() {
   const pairSnapshot = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-ready.snap.gz"), "candidate boot snapshot", pairDirectory);
   const pairDelta = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-overlay-delta.bin.gz"), "candidate overlay delta", pairDirectory);
   const template = JSON.parse(await fs.readFile(path.join(repoRoot, "web", "artifacts-omarchy.json"), "utf8"));
-  const kernelPath = inputKernelRecord
-    ? await candidateRegularFile(inputKernelRecord.inputs.kernel.filename, "input-buffer kernel", path.join(repoRoot, "target"))
+  const kernelPath = inputKernelRecord || inputKernelPrepared
+    ? await candidateRegularFile(inputKernelRecord?.inputs.kernel.filename ?? path.join(repoRoot, "target/omarchy-input-kernel-r3/Image"),
+      "input-buffer kernel", path.join(repoRoot, "target"))
     : await candidateRegularFile(path.resolve(repoRoot, template.artifacts.kernel.url), "candidate kernel", path.join(repoRoot, "releases"));
   const manifestBytes = await fs.readFile(manifestPath);
   let imageManifest;
@@ -444,6 +451,7 @@ async function runHttpSelfTest(baseUrl) {
 
 candidate = await prepareLocalCandidate();
 if (inputKernelRecord) assertInputKernelSource(candidate.source, inputKernelRecord);
+else if (inputKernelPrepared) assertInputKernelPreparedSource(candidate.source);
 else if (preparedDirect) assertPreparedDirectSource(candidate.source);
 else if (ownedRecording) assertInputTrialSource(candidate.source);
 if (modePair) await fs.mkdir(modePairOutput, { recursive: false, mode: 0o700 });
@@ -461,6 +469,7 @@ if (compositorMode) report.compositorModeRequested = true;
 if (opaqueFoot) report.opaqueFootRequested = true;
 if (directOpaque) report.directOpaqueRequested = true;
 if (preparedDirect) report.preparedDirectRequested = true;
+if (inputKernelPrepared) report.inputKernelPrepared = true;
 if (inputKernelRecord) report.inputKernel = { provenance: inputKernelRecord,
   filename: path.resolve(inputKernelRecordPath), sha256: createHash("sha256").update(inputKernelRecordBytes).digest("hex") };
 if (coldPair) report.progressCaptureErrors = [];
@@ -486,6 +495,8 @@ if (ownedRecording) {
     "tools/verify/omarchy-compositor-input-audit.mjs", "tools/verify/omarchy-process-sample.mjs",
     "tools/verify/omarchy-input-observer.c",
     "tools/verify/omarchy-input-kernel-state.mjs", "tools/verify/omarchy-prepare-input-kernel.mjs",
+    "tools/verify/omarchy-input-kernel-response-state.mjs", "tools/verify/omarchy-input-kernel-response.mjs",
+    "tools/verify/omarchy-input-kernel-response-audit.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
     "web"];
@@ -1269,7 +1280,10 @@ async function runLive() {
     await startupCall(() => screenshot("direct-opaque.png"));
   }
   if (preparedDirect) {
-    await requestPreparedDirectProperties((command, timeout) => exec(command, page, "prepared-direct:read", timeout), coldDeadline, report);
+    if (report.inputKernelPrepared) await requestInputKernelNotes(
+      (command, ms) => exec(command, page, "input-kernel:identity", ms), coldDeadline, report);
+    await requestPreparedDirectProperties((command, timeout) => exec(command, page, "prepared-direct:read", timeout),
+      coldDeadline, report, report.inputKernelPrepared ? INPUT_BUFFER_PREPARED_FOOT : undefined);
     report.preparedDirect.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
     originalInputPresentation(report.preparedDirect.presentation);
     await startupCall(() => screenshot("prepared-direct.png"));

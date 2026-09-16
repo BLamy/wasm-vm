@@ -1721,3 +1721,8 @@ verify-E5_5-T03ar:
 	node --test tools/verify/omarchy-input-kernel-state.test.mjs tools/verify/omarchy-direct-opaque-preparation.test.mjs tools/verify/omarchy-desktop-live.test.mjs
 	python3 tools/verify/omarchy-input-kernel-native.py $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native $(or $(INPUT_KERNEL_NATIVE_PAIR),target/omarchy-input-kernel-native-pair-r1)
 	node tools/verify/omarchy-prepare-input-kernel.mjs $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/browser $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native/run.json
+
+.PHONY: verify-E5_5-T03as
+verify-E5_5-T03as:
+	node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(INPUT_KERNEL_RESPONSE_OUT),evidence/omarchy-profile/input-kernel-response-r1) $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1)

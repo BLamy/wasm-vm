@@ -5,15 +5,22 @@ import { auditSerial } from "./omarchy-latency-receipt.mjs";
 import { evdevForCode } from "../../web/src/input/keymap.js";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { assertPreparedDirectSource } from "./omarchy-prepared-direct-state.mjs";
+import { assertInputKernelPreparedSource, INPUT_BUFFER_RESPONSE_WASM } from "./omarchy-input-kernel-response-state.mjs";
 const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n), "invalid timestamp"); return n; };
 const success = "input-trial-physical-nonce-and-fresh-presentation";
 const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
 
 export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false,
-  preparedRecycling = false }) {
+  preparedRecycling = false, inputKernelPrepared = false }) {
   assert.equal(typeof preparedDirect, "boolean");
   assert.equal(typeof preparedRecycling, "boolean");
   if (preparedRecycling) assert.equal(preparedDirect, true);
+  assert.equal(typeof inputKernelPrepared, "boolean");
+  assert.equal(report.inputKernelPrepared === true, inputKernelPrepared);
+  if (inputKernelPrepared) {
+    assert.equal(preparedDirect, true); assert.equal(preparedRecycling, true);
+    assert.equal(wasmSha256, INPUT_BUFFER_RESPONSE_WASM);
+  }
   assert.equal(report.preparedDirectRequested === true, preparedDirect);
   assert.equal(report.trial.head, head, "wrong source head");
   assert.equal(report.trial.scopedStatus, "");
@@ -31,7 +38,8 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
   assert.equal(report.startup.timeoutMs, 300000);
   assert.equal(at(report.startup.deadlineAt)-at(report.startup.startedAt), 300000);
   assert.equal(report.restored, true);
-  if (preparedDirect) assertPreparedDirectSource(report.candidate.source);
+  if (inputKernelPrepared) assertInputKernelPreparedSource(report.candidate.source);
+  else if (preparedDirect) assertPreparedDirectSource(report.candidate.source);
   else assertInputTrialSource(report.candidate.source);
   assert.deepEqual(report.errors, []);
   assert.equal(report.cleanup.closed, true);

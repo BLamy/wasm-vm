@@ -8,6 +8,9 @@ import { assertInputTrialRuntime, inputTrialOptions } from "./omarchy-input-tria
 import { OPAQUE_FOOT_COMMAND, requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
 import { DIRECT_OPAQUE_COMMAND, requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
 import { PREPARED_DIRECT_COMMAND, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
+import { INPUT_BUFFER_PREPARED_FOOT } from "./omarchy-input-kernel-response-state.mjs";
+import { requestInputKernelNotes, INPUT_BUFFER_NOTES_COMMAND, INPUT_BUFFER_NOTES_SHA256 } from "./omarchy-input-kernel-state.mjs";
+import { assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
 
 const source = readFileSync(new URL("./omarchy-desktop-live.mjs", import.meta.url), "utf8");
 const trialSource = readFileSync(new URL("./omarchy-input-trial.mjs", import.meta.url), "utf8");
@@ -31,9 +34,10 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
   wrongNonce = false, lateReadback = false, stalePresentation = false,
   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
   lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false,
-  preparedRecycling = false } = {}) {
+  preparedRecycling = false, inputKernelPrepared = false, wrongKernel = false } = {}) {
   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
+  if (inputKernelPrepared) report.inputKernelPrepared = true;
   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
     arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control",
     experiment: preparedRecycling ? "prepared-recycling" : opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling",
@@ -46,7 +50,8 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
     static now() { return now; }
   }
   const url = "http://127.0.0.1:4321/app.html?guest=omarchy&desktop=1#ide";
-  const before = { framesReceived: 2, successfulPresents: 2, latest: { resourceWidth: 1280, resourceHeight: 832,
+  const before = { width: 1280, height: 800, fixedViewport: true, gpu: { width: 1280, height: 800 },
+    framesReceived: 2, successfulPresents: 2, latest: { resourceWidth: 1280, resourceHeight: 832,
     rect: { x: 0, y: 0, width: 1280, height: 800 } } };
   const pageWindow = {
     __omarchyLiveEvidence: { ready: !missingReady, events: [{ type: "wvm:desktop-ready", ms: readyMs }] },
@@ -103,11 +108,12 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
   const bindings = {
     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
-    coldPair: false, workerCost: preparedRecycling, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
-    inputObserver: null, originalInputPresentation: assertOriginalPresentation,
+    coldPair: false, workerCost: preparedRecycling && !inputKernelPrepared, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
+    inputObserver: null, originalInputPresentation: inputKernelPrepared ? assertOriginalInputGeometry : assertOriginalPresentation,
     coldDeadline: null, trialCaptureDeadline: null, mode,
     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
     physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, requestPreparedDirectProperties, assertOriginalPresentation,
+    requestInputKernelNotes, INPUT_BUFFER_PREPARED_FOOT,
     fenceWorkerCostInput: async () => { trace.push("input-fence"); return { synthetic: true }; },
     randomBytes: () => Buffer.from((randomCall++ ? "b" : "a").repeat(16), "hex"),
     assertRealOmarchyLayout: async () => { trace.push("layout"); },
@@ -119,6 +125,10 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
     runtimeDiagnostics: async () => { trace.push("runtime"); return structuredClone(state); },
     exec: async (command, target, label, timeout) => {
       commands.push(command);
+      if (command === INPUT_BUFFER_NOTES_COMMAND) {
+        trace.push("kernel-notes"); assert.equal(keys.length, 0);
+        return { exit: 0, stdout: `${wrongKernel ? "0".repeat(64) : INPUT_BUFFER_NOTES_SHA256}  /sys/kernel/notes\n` };
+      }
       if (command === OPAQUE_FOOT_COMMAND) { trace.push("opaque-rule");
         assert.equal(keys.length, 0); return { exit: 0, stdout: badOpaque ? "ok\ntrue\nfalse\n1" : "ok\ntrue\ntrue\n1" }; }
       if (command === DIRECT_OPAQUE_COMMAND) { trace.push("direct-property");
@@ -128,7 +138,7 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
       if (command === PREPARED_DIRECT_COMMAND) { trace.push("saved-property-read");
         assert.equal(keys.length,0); return {exit:0,stdout:badOpaque ? "IPC timeout" :
           ["true","true","1","1","1","true","true","true", JSON.stringify({class:"foot",mapped:true,
-            hidden:false,visible:true,acceptsInput:true,address:"0x55555eb73630",pid:503,at:[12,38],size:[1256,750]})].join("\n\n\n")}; }
+            hidden:false,visible:true,acceptsInput:true,...(inputKernelPrepared ? INPUT_BUFFER_PREPARED_FOOT : {address:"0x55555eb73630",pid:503}),at:[12,38],size:[1256,750]})].join("\n\n\n")}; }
       if (command.endsWith("-j clients")) return { exit: 0, stdout: JSON.stringify(missingFoot ? [] :
         [{ class: "foot", mapped: true, hidden: false, size: [1280, 800], address: "0x123" }]) };
       if (command.endsWith("-j activewindow")) return { exit: 0, stdout: JSON.stringify({ address: wrongActive ? "0x456" : "0x123" }) };
@@ -220,6 +230,26 @@ test("synthetic prepared recycling reuses one post-Enter fence and retains the i
   for (const mutation of [{ badOpaque: true }, { lateReadback: true }, { wrongNonce: true }, { stalePresentation: true }]) {
     const bad = fixture({ preparedDirect: true, preparedRecycling: true, ...mutation });
     assert.ok(await bad.run()); assert.equal(bad.report.result, undefined);
+  }
+});
+
+test("synthetic AR input checks loaded kernel before properties and keeps uninstrumented original deadlines", async () => {
+  const selection = { preparedDirect: true, preparedRecycling: true, inputKernelPrepared: true };
+  const f = fixture(selection);
+  assert.equal(await f.run(), null);
+  assert.equal(f.report.result, "input-trial-physical-nonce-and-fresh-presentation");
+  const order = ["kernel-notes", "saved-property-read", "key", "input-fence", "readback", "desktop-keyboard.png"];
+  for (let i = 1; i < order.length; i++) assert.ok(f.trace.indexOf(order[i-1]) < f.trace.indexOf(order[i]));
+  assert.equal(f.report.workerCostInputFence, undefined);
+  assert.equal(f.trace.filter(step => step === "input-fence").length, 1);
+  assert.equal(f.report.startup.timeoutMs, 300000);
+  assert.equal(Date.parse(f.report.keyboard.deadlineAt), f.report.keyboard.enteredAtMs + 120000);
+  assert.equal(f.trial.recycling, true);
+  for (const mutation of [{ wrongKernel: true }, { badOpaque: true }, { wrongNonce: true }, { stalePresentation: true }, { lateReadback: true }]) {
+    const bad = fixture({ ...selection, ...mutation });
+    assert.ok(await bad.run()); assert.equal(bad.report.result, undefined);
+    if (mutation.wrongKernel || mutation.badOpaque) assert.equal(bad.keys.length, 0);
+    if (mutation.wrongKernel) assert.deepEqual(bad.commands, [INPUT_BUFFER_NOTES_COMMAND]);
   }
 });
 
