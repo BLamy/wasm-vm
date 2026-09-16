@@ -1,0 +1,23 @@
+{
+  "verdict": "verified",
+  "scope": "E5.5-T03y FCVT.W.S/WU.S correctness and recorded proof only; desktop response failed",
+  "workerSubmissionHead": "4b438ca2980a4b57b5eeb832ff1a6f7d880128ef",
+  "runtimeHead": "53a095a485787e4ce6177712830d76728342b083",
+  "coldHead": "95c250fe56fb15f28ee022a21a3766176adca054",
+  "workerEvidenceFiles": 54,
+  "workerEvidenceIndexSha256": "63857c1c4d19812d2ecf599c3cab24a348248feacf2d16875a1defe47b7d8591",
+  "workerEvidenceAllDigestsMatch": true,
+  "runtimeAndFixturesMatchColdClone": true,
+  "runtimeInputsUnchangedSinceFreeze": true,
+  "coldAcceptanceTestsPassed": 17,
+  "coldBrowserIsaPassed": 127,
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "elfSha256": "00645db64ba22d39876c0db2fe80a05756004ce256e3583efe971338f67bc71f",
+  "ramOnlyDigest": "dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8",
+  "coldJitRetired": 3605,
+  "publicFetchesMatched": 10,
+  "coldScreenshotsViewed": 3,
+  "broadCiPassed": false,
+  "desktopResponsive": false,
+  "T03q": "remains gated"
+}

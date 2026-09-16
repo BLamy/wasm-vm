@@ -987,6 +987,7 @@ pub struct BrowserExecutor {
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
     _closures_fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
     _closures_fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64>,
+    _closures_fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
     /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
     /// fixed externref floor and is refreshed only if outer memory growth detached it.
     handoff: BrowserHandoff,
@@ -1171,6 +1172,10 @@ impl BrowserExecutor {
             Closure::new(|value: i64, width: i32, rm: i32| {
                 wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
             });
+        let fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64> =
+            Closure::new(|bits: i32, unsigned: i32, rm: i32| {
+                wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
+            });
 
         let env = Object::new();
         set_fn(&env, "load", &load);
@@ -1187,6 +1192,7 @@ impl BrowserExecutor {
         set_fn(&env, "sc", &sc);
         set_fn(&env, "fp_arith_s", &fp_arith_s);
         set_fn(&env, "fp_from_int_s", &fp_from_int_s);
+        set_fn(&env, "fp_to_word_s", &fp_to_word_s);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
@@ -1206,6 +1212,7 @@ impl BrowserExecutor {
             _closures_sc: sc,
             _closures_fp_arith_s: fp_arith_s,
             _closures_fp_from_int_s: fp_from_int_s,
+            _closures_fp_to_word_s: fp_to_word_s,
             handoff: BrowserHandoff::new(),
             abi,
             inline_tlb,

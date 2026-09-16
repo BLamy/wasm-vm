@@ -1,0 +1,24 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling fp-to-word-critic-sabotage v0.0.0 (/private/tmp/wasm-vm-to-word-critic-i6m9e_5p)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.19s
+     Running tests/fp_to_word_verifier.rs (target/debug/deps/fp_to_word_verifier-0546bf955b7f9e8f)
+
+running 1 test
+
+thread 'verifier_native_conversion_literals' (26169646) panicked at tests/../support/jit_fp_to_word_verifier.rs:234:29:
+assertion `left == right` failed: CRITIC_TO_WORD_NEGATIVE_HALF_RMM_GOLDEN
+  left: 16
+ right: 17
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test verifier_native_conversion_literals ... FAILED
+
+failures:
+
+failures:
+    verifier_native_conversion_literals
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.97s
+
+error: test failed, to rerun pass `--test fp_to_word_verifier`

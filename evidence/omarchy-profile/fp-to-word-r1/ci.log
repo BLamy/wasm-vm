@@ -1,0 +1,803 @@
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-wvseccomp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/wvseccomp)
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp" test) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp") due to 4 previous errors
+error: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:256:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+256 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+    |
+    = note: `-D dead-code` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:996:19
+    |
+783 | impl Hart {
+    | --------- method in this implementation
+...
+996 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+error: could not compile `wasm-vm-core` (lib) due to 2 previous errors
+error: could not compile `wasm-vm-core` (lib test) due to 2 previous errors
+make: *** [clippy] Error 101
+cargo test --workspace
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-wvseccomp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/wvseccomp)
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp" test) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+make: *** [test] Error 101
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.56s
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.16s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+[INFO]: Optimizing wasm binaries with `wasm-opt`...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 7.92s
+[INFO]: 📦   Your wasm pkg is ready to publish at crates/wasm/pkg.
+wasm-pack test --node crates/wasm
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.17s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/wasm_vm_wasm-9581999851bd4c84.wasm)
+running 14 tests
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+test guest_clock_tests::seeded_linux_wrapper_uses_raw_resume_identity_without_snapshot_store ... ok
+test guest_clock_tests::exported_state_is_lossless_readonly_and_blob_restore_rebases_only_on_success ... ok
+test guest_clock_tests::exported_clock_selection_preserves_default_and_reports_unavailable_source ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_to_u_enters_compiled_then_clears_s_authority ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_to_s_preserves_inline_and_both_links ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_stip_preempts_then_nested_sret_reuses ... ok
+test jit_browser::spp_guest_tests::browser_guest_sret_pending_ssip_guest_clear_variant ... ok
+test display_tests::display_reset_guest_trace_preserves_monitor_and_releases_resources ... ok
+test display_tests::display_hotplug_strict_validation_is_atomic ... ok
+test display_tests::display_hotplug_storm_preserves_actual_old_resource ... ok
+test display_tests::display_hotplug_guest_trace_reads_event_after_request ... ok
+test display_tests::display_hotplug_absence_and_reentrancy_fail_boundedly ... ok
+test jit_browser::inline_tlb_context_tests::inline_tlb_context_masks_exactly_interrupt_stack_bits ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 filtered out; finished in 8.84s
+
+     Running tests/block.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/block-b40cfa7243204f24.wasm)
+running 2 tests
+test mem_backend_roundtrip_and_ro_on_wasm32 ... ok
+test five_gib_sparse_on_32bit_usize ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/compile_queue_stats.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/compile_queue_stats-b7469b0377ab5816.wasm)
+running 5 tests
+test restore_keeps_lifetime_queue_counters_then_actual_pump_cancels_old_generation ... ok
+test repeated_reads_and_detached_object_mutation_preserve_backlog_guest_and_all_stats ... ok
+test real_backlog_backpressure_and_pop_obey_conservation_and_browser_run_budgets ... ok
+test initial_exact_shape_and_capacity_are_shared_by_both_wrappers_without_executor ... ok
+test bare_metal_shared_projection_reports_real_compilation_and_is_read_only ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 17.88s
+
+     Running tests/console.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/console-0811b0d1abfe730c.wasm)
+running 3 tests
+test lsr_ready_and_boundary_fault_on_wasm32 ... ok
+test byte_exact_and_widths_on_wasm32 ... ok
+test all_256_values_exact_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/csr.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/csr-802d1cfeb5ff68ec.wasm)
+running 1 test
+test csr_semantics_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.03s
+
+     Running tests/decode.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decode-e3e5e3d90891e6e7.wasm)
+running 3 tests
+test random_sweep_never_panics_on_wasm32 ... ok
+test negatives_on_wasm32 ... ok
+test golden_subset_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.03s
+
+     Running tests/decode_props.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decode_props-60d6533215ae1eda.wasm)
+running 2 tests
+test negative_immediates_decode_signed_on_wasm32 ... ok
+test decoder_round_trips_1000_cases_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/decoded_cache_capacity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/decoded_cache_capacity-37f0fa3b359e1120.wasm)
+running 3 tests
+test whole_machine_restore_retains_selected_host_capacity_and_flushes_real_compiled_state ... ok
+test strict_numeric_boundary_rejects_before_any_architectural_or_live_cache_mutation ... ok
+test resize_clears_real_compiled_and_discovery_state_preserving_guest_bytes_and_policy ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 6.94s
+
+     Running tests/determinism.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/determinism-0ae4cb7acac5b2ea.wasm)
+running 1 test
+test pinned_fingerprints_match_golden_on_wasm ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 8.32s
+
+     Running tests/discovery_stats.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/discovery_stats-786cbcf7d0787b56.wasm)
+running 6 tests
+test real_csr_terminator_is_excluded_while_supported_jump_is_nominated ... ok
+test real_candidates_nomination_dedup_and_compiled_progress_are_observed_without_mutation ... ok
+test one_bounded_real_jal_stream_overflows_queue_and_restore_resets_live_gauges ... ok
+test initial_shape_is_actual_and_shared_by_both_wrappers ... ok
+test bounded_cold_flood_reports_actual_counter_map_exhaustion_without_jit ... ok
+test bare_metal_shared_projection_tracks_real_jit_without_changing_guest_or_stats ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 17.08s
+
+     Running tests/fdt.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/fdt-9b2cdd99a907d53a.wasm)
+running 3 tests
+test placement_on_wasm32 ... ok
+test header_and_totalsize_on_wasm32 ... ok
+test blob_tracks_platform_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.03s
+
+     Running tests/gpu_protocol.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-8ed9e588f4d12e67.wasm)
+running 5 tests
+test gpu_wire_fixture_is_little_endian_on_wasm32 ... ok
+test gpu_mmio_identity_and_config_on_wasm32 ... ok
+test gpu_flush_golden_crc_fixtures_on_wasm32 ... ok
+test gpu_edid_resize_fixture_on_wasm32 ... ok
+test gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.16s
+
+     Running tests/guest_clock.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/guest_clock-ac70823acdca127f.wasm)
+running 5 tests
+test guest_clock::rejected_resume_preserves_policy_anchor_and_guest_state ... ok
+test guest_clock::icount_rebase_selection_and_restore_preserve_trace_digest_and_subtick_phase ... ok
+test guest_clock::fresh_and_same_machine_restore_rebase_at_restored_mtime_and_preserve_deadline ... ok
+test guest_clock::explicit_resume_freezes_pause_but_background_retains_jump_policy ... ok
+test guest_clock::busy_rdtime_tracks_ten_mhz_not_retire_count_and_clamps_jitter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.10s
+
+     Running tests/hart.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/hart-8641618088adbccf.wasm)
+running 2 tests
+test determinism_checksum_matches_native_pin ... ok
+test acceptance_anchors_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.09s
+
+     Running tests/hart_ctrl.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/hart_ctrl-f32ec722ad497143.wasm)
+running 2 tests
+test target_alignment_semantics_on_wasm32 ... ok
+test jal_jalr_and_loop_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+     Running tests/hart_mem.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/hart_mem-2d656fd757508a55.wasm)
+running 2 tests
+test misaligned_ram_succeeds_and_fault_purity_on_wasm32 ... ok
+test extension_and_roundtrip_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
+     Running tests/htif.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/htif-b87703d321a22c0e.wasm)
+running 3 tests
+test load_elf_arms_htif_on_wasm32 ... ok
+test htif_exit_on_wasm32 ... ok
+test ecall_ebreak_and_maxinstrs_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+     Running tests/icount_divider.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/icount_divider-4d0797b60ff5c2d8.wasm)
+running 11 tests
+test core_icount_divider::wall_mode_refuses_even_same_divider_without_touching_the_host_anchor ... ok
+test core_icount_divider::same_divider_is_byte_exact_and_preserves_pending_irqs_device_and_cache_identity ... ok
+test core_icount_divider::resume_retains_selected_phase_and_explicit_post_restore_override_maps_it_once ... ok
+test core_icount_divider::missing_clint_and_out_of_range_inputs_are_atomic ... ok
+test core_icount_divider::invalid_saved_phases_refuse_before_same_divider_or_any_other_mutation ... ok
+test core_icount_divider::huge_prior_dividers_and_resumed_phases_map_with_full_u128_precision ... ok
+test core_icount_divider::busy_guest_rdtime_matches_independent_phase_oracle_and_trace_across_cache_modes ... ok
+test core_icount_divider::all_small_ratios_and_phases_preserve_state_and_land_the_next_tick_exactly ... ok
+test strict_js_values_reject_without_coercion_or_machine_mutation ... ok
+test numeric_boundaries_same_divider_and_resume_preserve_fractional_progress ... ok
+test divider_preserves_live_compiled_executor_counters_policy_and_guest_memory ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.87s
+
+     Running tests/input_config.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/input_config-88b40de128feb0f1.wasm)
+running 1 test
+test input_config_fixture_is_identical_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/input_queues.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/input_queues-ecca27483270a507.wasm)
+running 2 tests
+test input_event_wire_bytes_match_native_layout ... ok
+test inject_sync_stream_crosses_eventq_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
+     Running tests/jit_browser_parity.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 39 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+test page_write_invalidates_compiled_block ... ok
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test directed_eviction_through_the_single_ordered_path ... ok
+test compile_instantiate_and_cache_by_phys_pc ... ok
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+test browser_machine_xie_enable_preempts_reused_inline_target ... ok
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+test browser_jit_matches_interpreter_m_block ... ok
+test browser_jit_matches_interpreter_i_block ... ok
+test browser_jit_matches_interpreter_a_block ... ok
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+test browser_inline_static_link_retains_across_interrupt_stack_bits ... ok
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+test browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... ok
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+test browser_inline_direct_chain_honors_depth_budget ... ok
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+test browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links ... ok
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 14.22s
+
+     Running tests/jit_fp_arithmetic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_arithmetic-850992f292214c98.wasm)
+running 2 tests
+test arithmetic_browser_private ... ok
+test arithmetic_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 21.97s
+
+     Running tests/jit_fp_arithmetic_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_arithmetic_verifier-92334c500db83fe3.wasm)
+running 6 tests
+test verifier_shared_arithmetic_survives_growth ... ok
+test verifier_shared_arithmetic ... ok
+test verifier_same_module_arithmetic_successors ... ok
+test verifier_private_arithmetic_survives_growth ... ok
+test verifier_private_arithmetic ... ok
+test verifier_cross_module_arithmetic_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.58s
+
+     Running tests/jit_fp_comparisons.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons-2cabeaf3666bd552.wasm)
+running 2 tests
+test comparisons_browser_private ... ok
+test comparisons_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 9.86s
+
+     Running tests/jit_fp_comparisons_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm)
+running 6 tests
+test verifier_shared_comparisons ... ok
+test verifier_shared_comparison_flags_survive_growth ... ok
+test verifier_same_module_comparison_successors ... ok
+test verifier_private_comparisons ... ok
+test verifier_private_comparison_flags_survive_growth ... ok
+test verifier_cross_module_comparison_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.89s
+
+     Running tests/jit_fp_from_integer.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer-b81a6ce18aad00aa.wasm)
+running 2 tests
+test from_integer_browser_private ... ok
+test from_integer_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 27.52s
+
+     Running tests/jit_fp_from_integer_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer_verifier-bce268b8315f4cd6.wasm)
+running 6 tests
+test verifier_shared_conversion_memory_growth ... ok
+test verifier_shared_conversion ... ok
+test verifier_same_module_conversion_successors ... ok
+test verifier_private_conversion_memory_growth ... ok
+test verifier_private_conversion ... ok
+test verifier_cross_module_conversion_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.44s
+
+     Running tests/jit_fp_memory.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory-cbaae28ae20bbfab.wasm)
+running 6 tests
+test fp_memory_browser_successors ... ok
+test fp_memory_browser_store_barriers ... ok
+test fp_memory_browser_proves_inline_hits ... ok
+test fp_memory_browser_private ... ok
+test fp_memory_browser_inline ... ok
+test fp_memory_browser_full_store_log ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 4.25s
+
+     Running tests/jit_fp_memory_critic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_critic-8cd3935d9ce091cf.wasm)
+running 4 tests
+test critic_pmp_two_fp_stores_respect_narrow_authority ... ok
+test critic_pmp_two_fp_loads_respect_narrow_authority ... ok
+test critic_pmp_integer_store_control ... ok
+test critic_pmp_integer_load_control ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.06s
+
+     Running tests/jit_fp_memory_growth_critic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_growth_critic-5423a30b3e875881.wasm)
+running 2 tests
+test critic_fp_growth_shared_success_and_precise_faults ... ok
+test critic_fp_growth_private_success_and_precise_faults ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.06s
+
+     Running tests/jit_fp_memory_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_verifier-5cfb98a8a325b795.wasm)
+running 2 tests
+test verifier_shared_raw_memory_and_permissions ... ok
+test verifier_private_raw_memory_and_permissions ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.18s
+
+     Running tests/jit_fp_moves.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_moves-9b684554d9513150.wasm)
+running 6 tests
+test fp_moves_browser_same_module_chain ... ok
+test fp_moves_browser_precise_runloop ... ok
+test fp_moves_browser_handoff_reuse ... ok
+test fp_moves_browser_fp_prefix_survives_chained_memory_fault ... ok
+test fp_moves_browser_directed ... ok
+test fp_moves_browser_cross_module_chain ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.44s
+
+     Running tests/jit_fp_to_word.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_to_word-c4d493f067f3f80d.wasm)
+running 2 tests
+test to_word_browser_private ... ok
+test to_word_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 64.85s
+
+     Running tests/jit_fp_to_word_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_to_word_verifier-0fb85bbc8c94a29d.wasm)
+running 6 tests
+test verifier_shared_conversion_memory_growth ... ok
+test verifier_shared_conversion ... ok
+test verifier_same_module_conversion_successors ... ok
+test verifier_private_conversion_memory_growth ... ok
+test verifier_private_conversion ... ok
+test verifier_cross_module_conversion_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 4.52s
+
+     Running tests/keyboard_guest_stream.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/keyboard_guest_stream-252721d54ae13a6c.wasm)
+running 2 tests
+test keyboard_make_break_stream_crosses_eventq_on_wasm32 ... ok
+test keyboard_keydown_does_not_create_transport_repeat_on_wasm32 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+     Running tests/keyboard_registration.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/keyboard_registration-5c2b53fd868965eb.wasm)
+running 1 test
+test keyboard_registration_and_config_are_stable_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.09s
+
+     Running tests/keyboard_spec.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/keyboard_spec-056c0c9f0bb88f57.wasm)
+running 1 test
+test keyboard_config_fixture_is_exact_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/loader.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/loader-845e75ae0dd81701.wasm)
+running 3 tests
+test mutation_fuzz_10k_no_panics_on_wasm32 ... ok
+test fixture_loads_on_wasm32 ... ok
+test bss_zero_fill_and_errors_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.49s
+
+     Running tests/mmio.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/mmio-9438ad527e4afe2e.wasm)
+running 5 tests
+test ram_and_device_route_correctly ... ok
+test offset_width_value_forwarding ... ok
+test hole_and_straddle_fault_without_device_calls ... ok
+test device_read_masking ... ok
+test attach_rejections_on_wasm32 ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/platform.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/platform-3bd3d69154371770.wasm)
+running 3 tests
+test irq_layout_on_wasm32 ... ok
+test default_map_validates_on_wasm32 ... ok
+test boundaries_and_overflow_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/plic_sparse.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/plic_sparse-8c9dab3dc6f52302.wasm)
+running 3 tests
+test selector_and_snapshot_cases_match_old_range_oracle ... ok
+test real_bus_gateway_sequence_preserves_observability ... ok
+test encoded_guest_plic_trace_and_digest_are_exact ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.18s
+
+     Running tests/plic_sparse_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/plic_sparse_verifier-89f92e241263fb85.wasm)
+running 1 test
+test reserved_seed_and_reversed_completion_preserve_plic_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s
+
+     Running tests/pmp_privilege_adversarial.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/pmp_privilege_adversarial-9643ba4c7d71b881.wasm)
+running 1 test
+test seeded_mode_map_pte_sequence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 29.11s
+
+     Running tests/pmp_privilege_audit.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/pmp_privilege_audit-abd02abbb7b31b49.wasm)
+running 5 tests
+test su_snapshot_and_host_sequence ... ok
+test su_revision_revocation ... ok
+test su_midblock_revision_revocation ... ok
+test su_guest_trace_parity ... ok
+test browser_jit_su_transitions_match_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.48s
+
+     Running tests/privilege.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/privilege-21e62acbce24eb7f.wasm)
+running 1 test
+test mstatus_state_machine_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/ram_bus.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/ram_bus-0e04c8fcc329810a.wasm)
+running 6 tests
+test straddling_the_end_is_access_not_panic ... ok
+test slice_escape_hatch_and_clean_failure_sizes ... ok
+test roundtrip_every_width_at_base_and_last_slot ... ok
+test misaligned_in_range_faults_misaligned ... ok
+test little_endian_byte_order ... ok
+test extreme_addresses_fault_without_overflow_panics ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/regs.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/regs-c96d281bfbf83dd5.wasm)
+running 3 tests
+test x0_invariant_under_lcg_sequence ... ok
+test fresh_instance_is_all_zero_on_wasm32 ... ok
+test dump_format_stable_on_wasm32 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/reset.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/reset-93c475c2b2b2c691.wasm)
+running 1 test
+test reset_state_is_identical_on_wasm32 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.02s
+
+     Running tests/resume.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/resume-8c7646f39208116c.wasm)
+running 7 tests
+test virtio_blk_section_round_trips_on_wasm32 ... ok
+test stamped_boot_snapshot_restores_only_for_matching_identity_on_wasm32 ... ok
+test sparse_codec_round_trips_and_bounds_a_hostile_run_on_wasm32 ... ok
+test reserved_section_is_refused_as_unsupported_on_wasm32 ... FAIL
+test ram_snapshot_round_trips_byte_identically_on_wasm32 ... ok
+test overlay_delta_round_trips_and_bounds_on_wasm32 ... ok
+test cpu_section_round_trips_on_wasm32 ... ok
+
+failures:
+
+---- reserved_section_is_refused_as_unsupported_on_wasm32 output ----
+    error output:
+        panicked at crates/wasm/tests/resume.rs:93:5:
+        assertion failed: !is_supported_section(section::VIRTIO_RNG)
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpi7g0lh/wasm-bindgen-test.js:329:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpi7g0lh/wasm-bindgen-test.js:662:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmpi7g0lh/wasm-bindgen-test.js:328:57)
+            at resume-8c7646f39208116c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5832]:0x1232a4)
+            at resume-8c7646f39208116c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[3236]:0x10749b)
+            at resume-8c7646f39208116c.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[1326]:0xcc940)
+            at resume-8c7646f39208116c.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[3696]:0x10ea59)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[1084]:0xbf33c)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[2161]:0xedb50)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5961]:0x1239a0)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at resume-8c7646f39208116c.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5994]:0x123a9c)
+            at resume-8c7646f39208116c.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5985]:0x123a66)
+            at resume-8c7646f39208116c.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5873]:0x123524)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[1084]:0xbf3ad)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[2161]:0xedb50)
+            at resume-8c7646f39208116c.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5961]:0x1239a0)
+            at resume-8c7646f39208116c.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[4379]:0x1171ac)
+            at resume-8c7646f39208116c.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[3655]:0x10e107)
+            at resume-8c7646f39208116c.wasm.core[2c5ad5f686fcca5c]::panicking::panic (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[5753]:0x122c5d)
+            at resume-8c7646f39208116c.wasm.resume::reserved_section_is_refused_as_unsupported_on_wasm32::h96a1b69b65d38abb (wasm://wasm/resume-8c7646f39208116c.wasm-04b2dc72:wasm-function[346]:0x79adc)
+
+failures:
+
+    reserved_section_is_refused_as_unsupported_on_wasm32
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test resume`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/resume-8c7646f39208116c.wasm` (exit status: 1)
+note: test exited abnormally; to see the full output pass --no-capture to the harness.
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown"
+make: *** [wasm] Error 1
+cargo build -p wasm-vm-core --no-default-features
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.63s
+cargo build -p wasm-vm-core --no-default-features --features std
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.27s
+cargo build -p wasm-vm-core --no-default-features --features trace
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s
+cargo build -p wasm-vm-core --no-default-features --features std,trace
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.31s
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+cargo build -p wasm-vm-core --no-default-features --features trace --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+warning: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:256:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+256 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:996:19
+    |
+783 | impl Hart {
+    | --------- method in this implementation
+...
+996 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+warning: `wasm-vm-core` (lib) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.72s
+     Running tests/riscv_tests.rs (target/debug/deps/riscv_tests-acb12b94033a2617)
+
+running 3 tests
+test rv64um_p_suite_all_pass ... ok
+test rv64ua_p_suite_all_pass ... ok
+test rv64ui_p_suite_passes_except_documented_skips ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.23s
+
+wasm-pack test --node crates/wasm --features zicsr-stub
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+warning: method `live_blocks` is never used
+   --> crates/core/src/dispatch.rs:256:19
+    |
+154 | impl BlockCache {
+    | --------------- method in this implementation
+...
+256 |     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
+    |                   ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `fetch_phys` is never used
+   --> crates/core/src/hart/mod.rs:996:19
+    |
+783 | impl Hart {
+    | --------- method in this implementation
+...
+996 |     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    |                   ^^^^^^^^^^
+
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+warning: `wasm-vm-core` (lib) generated 2 warnings
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+error[E0599]: no method named `boot_supervisor` found for struct `wasm_vm_core::Machine` in the current scope
+    --> crates/wasm/src/jit_browser.rs:2643:21
+     |
+2643 |             machine.boot_supervisor(0, 0); // open PMP and delegate S interrupts/page faults
+     |                     ^^^^^^^^^^^^^^^ method not found in `wasm_vm_core::Machine`
+
+error[E0599]: no method named `enable_builtin_sbi` found for struct `wasm_vm_core::Machine` in the current scope
+    --> crates/wasm/src/jit_browser.rs:2921:29
+     |
+2921 |             fixture.machine.enable_builtin_sbi();
+     |                             ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `enable_clint` with a similar name, but with different arguments
+    --> crates/core/src/lib.rs:1355:5
+     |
+1355 | /     pub fn enable_clint(
+1356 | |         &mut self,
+1357 | |         clock_div: u64,
+1358 | |     ) -> alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>> {
+     | |___________________________________________________________________^
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `wasm-vm-wasm` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+Error: Compilation of your program failed
+Caused by: Compilation of your program failed
+Caused by: failed to execute `cargo build`: exited with exit status: 101
+  full command: cd "crates/wasm" && CARGO_BUILD_TARGET="wasm32-unknown-unknown" "cargo" "build" "--tests" "--features" "zicsr-stub"
+make: *** [test-riscv] Error 1
+bash tools/run_riscv_tests.sh
+== riscv-tests regression wall (native, real CSR file) ==
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.35s
+     Running tests/riscv_tests_suite.rs (target/debug/deps/riscv_tests_suite-7d7e9e30f2863d44)
+
+running 5 tests
+test empty_dir_is_not_a_green_run ... ok
+test discovered_suite_counts_match_manifest ... ok
+test fail_exit_code_is_reported_as_fail ... ok
+test corrupted_binary_does_not_pass ... ok
+test riscv_tests_suite_matches_allowlist ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.21s
+
+
+== report: target/riscv-tests-report.md ==
+# riscv-tests report (E1-T19)
+
+- our git rev: `95c250fe56fb15f28ee022a21a3766176adca054`
+- corpus fingerprint (FNV-1a 64): `0x12ffd571f24eb40e`
+- passing: **128 / 128**
+
+(full per-test table in target/riscv-tests-report.md and target/riscv-tests-report.json)
+bash tools/determinism_check.sh 
+== determinism hazards (static) ==
+determinism-hazards: banned nondeterminism source(s) in crates/core/src:
+crates/core/src/dev/virtio/gpu/resources.rs:1225:        let started = std::time::Instant::now();
+crates/core/src/dev/virtio/gpu/resources.rs:1242:            elapsed < std::time::Duration::from_millis(5),
+  (use BTreeMap for ordered maps; the only legal clock is the T12 retire-count CLINT)
+make: *** [determinism] Error 1
+cargo test -p wasm-vm-core --release --test perf_baseline perf_smoke_alu_above_floor -- --ignored --nocapture
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `release` profile [optimized + debuginfo] target(s) in 24.61s
+     Running tests/perf_baseline.rs (target/release/deps/perf_baseline-192935589b9a066d)
+
+running 1 test
+perf-smoke: alu median 25.1 MIPS ≥ floor 15
+test perf_smoke_alu_above_floor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 3.19s
+
+make: Target `ci' not remade because of errors.

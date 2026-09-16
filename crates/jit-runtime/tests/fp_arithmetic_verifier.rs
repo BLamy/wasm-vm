@@ -354,7 +354,7 @@ fn verifier_mixed_batch_function_indices_and_unselected_fallbacks() {
         0x1800_0053,
         0x0200_0053,
         0x1200_0053,
-        0xc000_0053,
+        0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
     ] {
         assert!(
             translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),

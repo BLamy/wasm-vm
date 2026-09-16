@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://f8fc09fa.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+    "expectedSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9"
+  },
+  {
+    "url": "https://f8fc09fa.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "337dc1885e9590b436f0c1d8c71ec0eef96ba5459830de966de71688675a8954",
+    "expectedSha256": "337dc1885e9590b436f0c1d8c71ec0eef96ba5459830de966de71688675a8954"
+  },
+  {
+    "url": "https://f8fc09fa.wasm-vm.pages.dev/roadmap.js?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "da7154ffbcf591aa9cad4d2e98edd0beb37aa47d351c5f02d6b4881d04702362",
+    "expectedSha256": "da7154ffbcf591aa9cad4d2e98edd0beb37aa47d351c5f02d6b4881d04702362"
+  },
+  {
+    "url": "https://f8fc09fa.wasm-vm.pages.dev/app.html?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+    "expectedSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "337dc1885e9590b436f0c1d8c71ec0eef96ba5459830de966de71688675a8954",
+    "expectedSha256": "337dc1885e9590b436f0c1d8c71ec0eef96ba5459830de966de71688675a8954"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/roadmap.js?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "da7154ffbcf591aa9cad4d2e98edd0beb37aa47d351c5f02d6b4881d04702362",
+    "expectedSha256": "da7154ffbcf591aa9cad4d2e98edd0beb37aa47d351c5f02d6b4881d04702362"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/app.html?verify=a4824f5768ab2b76dac8907830516f9befbf3ccf",
+    "status": 200,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+  }
+]

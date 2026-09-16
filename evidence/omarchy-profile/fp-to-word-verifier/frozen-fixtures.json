@@ -1,0 +1,22 @@
+{
+  "head": "53a095a485787e4ce6177712830d76728342b083",
+  "fixtures": {
+    "tests/support/jit_fp_to_word_verifier.rs": {
+      "committed": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57",
+      "working": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57",
+      "predicted": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57"
+    },
+    "crates/jit-runtime/tests/fp_to_word_verifier.rs": {
+      "committed": "5c5863ad415b324910b886bfec1ad35d35a0a4efe2fec0c1d0d280cf7148b753",
+      "working": "5c5863ad415b324910b886bfec1ad35d35a0a4efe2fec0c1d0d280cf7148b753",
+      "predicted": "5c5863ad415b324910b886bfec1ad35d35a0a4efe2fec0c1d0d280cf7148b753"
+    },
+    "crates/wasm/tests/jit_fp_to_word_verifier.rs": {
+      "committed": "87628ce8b1a2342960b89d41c87a7ea0f7ee2b50d78bda946094c878946b2bf1",
+      "working": "87628ce8b1a2342960b89d41c87a7ea0f7ee2b50d78bda946094c878946b2bf1",
+      "predicted": "87628ce8b1a2342960b89d41c87a7ea0f7ee2b50d78bda946094c878946b2bf1"
+    }
+  },
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "no_fixture_changes_since_preseal": true
+}

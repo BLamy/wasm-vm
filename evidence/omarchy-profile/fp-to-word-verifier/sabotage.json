@@ -1,0 +1,16 @@
+{
+  "scratch": "/private/tmp/wasm-vm-to-word-critic-i6m9e_5p",
+  "mutation": "Expected WU(-0.5,RMM) new fflags NV=16 replaced with NV|NX=17 in one isolated assertion",
+  "original_support_sha256": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57",
+  "mutant_support_sha256": "bf948aeefdbe44cf2be70f9c840d9836b621e5b4a917e691fdf383f137475ade",
+  "wrapper_sha256": "91df938b359c451a87b490aeedad5577733fe8cb672885be9b4e3420bdc5d333",
+  "mutant_exit": 101,
+  "restored_exit": 0,
+  "observed_mutant_actual": 16,
+  "observed_mutant_expected": 17,
+  "restored_support_sha256": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57",
+  "logs": {
+    "sabotage-mutant.log": "270e2e6e13113eeaa731bc5e24e8dd376a166a29cf36701c67f05a139804260b",
+    "sabotage-restored.log": "b49fd42bd2694eec0fbfed04270ef11170cc89df70b7a8bfe00c454305aa2278"
+  }
+}
