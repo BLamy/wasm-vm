@@ -1,0 +1,135 @@
+{
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "runSha256": "3319d0284bd5cd8b2c2d4edbc8f85b6f5584f72e0d471cc791594bc823a53611",
+  "reportSha256": "bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4",
+  "outcome": "nonce-readback-failed",
+  "startupMs": 38002,
+  "typingMs": 2689,
+  "enteredAt": "2026-09-16T07:35:39.736Z",
+  "deadlineAt": "2026-09-16T07:37:39.736Z",
+  "failedAt": "2026-09-16T07:37:39.739Z",
+  "completedMissingFileReads": 35,
+  "pendingReads": 0,
+  "trustedEvents": 128,
+  "intervalRetired": 3382363807,
+  "intervalJitRetired": 2275188610,
+  "intervalJitShare": 0.6726622976781398,
+  "framesBefore": 2,
+  "framesAfter": 3,
+  "countRefusals": 0,
+  "epochsBefore": "3",
+  "epochsAfter": "6",
+  "profile": {
+    "startedAt": "2026-09-16T07:37:39.776Z",
+    "deadlineAt": "2026-09-16T07:40:39.776Z",
+    "sampleStartedAt": "2026-09-16T07:37:39.809Z",
+    "sampleStoppedAt": "2026-09-16T07:38:09.837Z",
+    "finishedAt": "2026-09-16T07:38:09.847Z",
+    "sha256": "064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9",
+    "summary": {
+      "durationMs": 30032.554,
+      "samples": 20004,
+      "nodes": 3500,
+      "sampledUs": 30031577
+    }
+  },
+  "costSelf": [
+    {
+      "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+      "us": 3838447,
+      "percent": 12.781370089223087
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+      "us": 2472984,
+      "percent": 8.234612521347113
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::flush_page::h7e4f5a8e39056cfd",
+      "us": 1838510,
+      "percent": 6.121922934649752
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h95922160ac631d34",
+      "us": 1166362,
+      "percent": 3.883785390291026
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+      "us": 1158330,
+      "percent": 3.8570402080450186
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+      "us": 1077354,
+      "percent": 3.5874040181106706
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+      "us": 1001967,
+      "percent": 3.336378239477734
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h090ab5e8d762af0f",
+      "us": 849369,
+      "percent": 2.8282530750882646
+    },
+    {
+      "name": "__udivti3",
+      "us": 769878,
+      "percent": 2.563561680427238
+    },
+    {
+      "name": "js-to-wasm:iil:i wasm://wasm/73938e46",
+      "us": 744785,
+      "percent": 2.4800062947077337
+    },
+    {
+      "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+      "us": 587024,
+      "percent": 1.9546892259437458
+    },
+    {
+      "name": "rustc_apfloat::ieee::sig::mul::h05bcd4e13dd4cace",
+      "us": 560157,
+      "percent": 1.8652267245239902
+    },
+    {
+      "name": "wasm-to-js",
+      "us": 558784,
+      "percent": 1.8606548700389594
+    },
+    {
+      "name": "wasm_vm_wasm::jit_browser::BrowserHandoff::commit_registers::h2370d04ac5a1a0bc",
+      "us": 514683,
+      "percent": 1.7138061048209356
+    },
+    {
+      "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::mul_r::ha9b0486279c76e53",
+      "us": 514349,
+      "percent": 1.7126939421129965
+    },
+    {
+      "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+      "us": 514011,
+      "percent": 1.71156846009119
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry_decision::hb45be7cac1b16bd0",
+      "us": 497712,
+      "percent": 1.6572955859094578
+    },
+    {
+      "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+      "us": 463827,
+      "percent": 1.5444643483091147
+    }
+  ],
+  "acceptance": false,
+  "cleanup": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  }
+}

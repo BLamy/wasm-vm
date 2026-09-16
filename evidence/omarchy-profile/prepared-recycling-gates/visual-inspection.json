@@ -1,0 +1,7 @@
+{
+  "image": "evidence/omarchy-profile/prepared-recycling-input-r1/desktop/failure.png",
+  "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "personallyInspected": true,
+  "observation": "Original 1280x800 Foot terminal and shell prompt. No typed command or returned prompt. The failure frame is byte-identical to the prepared baseline.",
+  "desktopAcceptance": false
+}
