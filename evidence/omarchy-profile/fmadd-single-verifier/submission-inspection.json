@@ -1,0 +1,504 @@
+{
+  "passed": true,
+  "submissionCommit": "1479a26360eb5ee70144440a25941a8d10ee4493",
+  "indexSha256": "656107deda13733b1d493aa30b9c5d955145d7e1aa257e3fc8702f897c0db0a6",
+  "files": [
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/README.md",
+      "sha256": "c564a1cba01f9be3e6d5a0709705ae5a17ac4babc83ffa11ac024d025cbd72a4",
+      "bytes": 3003
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/acceptance.log",
+      "sha256": "af6671a614688a89d16f2598218cc434969dabd3f83e6cd8a240e36f4d336579",
+      "bytes": 9905
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/affected-commands.json",
+      "sha256": "ff7de3e658ead8224a53a03b1cbd4a54431024942ec057d808aa2078f8cf2ae2",
+      "bytes": 6018
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/backend-fixed.log",
+      "sha256": "f00d80f7c6331a2aa1a38508c1f21fa73482423fa90d254383ee827ff0858463",
+      "bytes": 449
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/backend-preflight.log",
+      "sha256": "6f88f9e7fbffcd9756e96aed77892506261ddef7d4f5b7e7e450046c53b0ed06",
+      "bytes": 3568
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/bind-names.mjs",
+      "sha256": "2f1e269050805457e81c3f91483192212620a219e249ce68e144e52ea39a227a",
+      "bytes": 601
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/bind-renderer-page.mjs",
+      "sha256": "5d20f7079b5644729da9a1fddd901a99d95c2c989989a45e48d8207256bd4202",
+      "bytes": 3703
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/bindgen-version.log",
+      "sha256": "9665b51d243c180bb4c9c723552ddca2ee5a212f1dd5f4d27424266754321d91",
+      "bytes": 21
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/bindgen.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/binding.log",
+      "sha256": "371fd07a16d5b5d2ffd5da1e900d656f58d2040d2a149bbc1b875987a81536cb",
+      "bytes": 193
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/built-page.png",
+      "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42",
+      "bytes": 286889
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/capability-inspection.png",
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+      "bytes": 6260
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/fmadd.elf",
+      "sha256": "cdc10b57f4dc79970036ea0661907f0c5e07c88bc7fcea433925b8804c0ddaee",
+      "bytes": 12384
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/report.json",
+      "sha256": "0e64c06d1f677d1ae487ef1a6943a62ae0953992d659f1085f77ee77af8db1b8",
+      "bytes": 13163
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/suite.png",
+      "sha256": "93f99745d945b7222717996a01b59c25346361e2cc57587129a6090a890c0363",
+      "bytes": 50309
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/check-public.py",
+      "sha256": "4604fad5c7e78e63e0f11f312ab6417104547b6e883ad5b92c430e85d20d48ff",
+      "bytes": 1357
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/ci-commands.json",
+      "sha256": "c996ec23fffe4125e4337e640f5114d5f5685ab916d3c40a7b7b4c9d1fe0e18b",
+      "bytes": 458
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/ci-failures.json",
+      "sha256": "c20c955731fdcb72d688331dcc9422cb283efea5a63801f1c31c307cf01a0fcc",
+      "bytes": 7077
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/ci.log",
+      "sha256": "4b437336df2531a549e9bcfba11594532ac9480285e33797807fa47e4cb5c1da",
+      "bytes": 47018
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/clippy.log",
+      "sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+      "bytes": 72
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cloudflare-deploy.log",
+      "sha256": "82459aad2aa85df5ccea162744f85ed35c4394a0b9c055bd260c048f5b8b2db8",
+      "bytes": 4218
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cloudflare-public.json",
+      "sha256": "20137b8ee37f1b64ddad9026b8f111b81f3fa04f1958c74aabd5697a853e709e",
+      "bytes": 3665
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/acceptance.log",
+      "sha256": "952f723346251e05303ac47c634da3b6723fe8111bc5597a96f1a123a508fee1",
+      "bytes": 17859
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/built-page.png",
+      "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42",
+      "bytes": 286889
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/capability-inspection.png",
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+      "bytes": 6260
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/fmadd.elf",
+      "sha256": "cdc10b57f4dc79970036ea0661907f0c5e07c88bc7fcea433925b8804c0ddaee",
+      "bytes": 12384
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/report.json",
+      "sha256": "5268307b5cc5075d07204ac1fac239278c1666546903bf8c7f0376728125bc1b",
+      "bytes": 13163
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/suite.png",
+      "sha256": "60284ed51c80cfb25b758defb99b3f331e182cf4130d73023e1851fbaf12cbf6",
+      "bytes": 50176
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/build.log",
+      "sha256": "24cf8dbfb72dacf70ad37635f8fff8dc68a4d222833d97eeb12d2960c86a878b",
+      "bytes": 4939
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/checkout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/clone.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/report.json",
+      "sha256": "c59dab7f746d4d8864e58d238b963dc8582bc1c9a44fa7e265d705ac43ed09ba",
+      "bytes": 1816
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold-run.log",
+      "sha256": "8d7c9e5a3e5b02409c32e7c292fb954b720f16cdac75157149608f042e63e010",
+      "bytes": 1512
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/core-handoff.log",
+      "sha256": "53db0c1ca6e9a6e4827e674b550e366f8e457de8f96325a231efe613435f85d3",
+      "bytes": 508
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/core-test-clippy.log",
+      "sha256": "172cf33f7108c7e9bad43331e84b8e6f60e007827fd573ddc442a620133891c0",
+      "bytes": 156
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/derive-goldens.py",
+      "sha256": "dc07894f2d5a1a63a80b6a95d3062bc66369deedb4ee3bd49349569064d6f9a6",
+      "bytes": 5834
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/fmadd-goldens.json",
+      "sha256": "c17fb834d5bbcfed211bb028df050b116b1621bc4882fd8535db3a28ed0a3a6d",
+      "bytes": 15214
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/fp-regression.log",
+      "sha256": "1bfd843560d4ea822c9dabbcb3abc30a2949998dc46d60ef86eb74038039b247",
+      "bytes": 8853
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/freeze.log",
+      "sha256": "d156906478d2c9b1f04263229077be619b31e3e1d2c96e690ebd182b92e7c8a5",
+      "bytes": 13652
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/freeze.py",
+      "sha256": "0fd39c4c3b5738d6116795ddcd16f6a2e5d66cbd66fc18e509cde94ab3aaadee",
+      "bytes": 3838
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/frozen-build.log",
+      "sha256": "c3d7ad4d6c2ab99a0e1f8ef3718d981861d75115c26da93651df323941dab0b7",
+      "bytes": 2828
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/frozen.json",
+      "sha256": "d156906478d2c9b1f04263229077be619b31e3e1d2c96e690ebd182b92e7c8a5",
+      "bytes": 13652
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/name-binding.json",
+      "sha256": "c2f41e2a26cb263bb82273d8f85d6e2a711effa33e0858e346285b38ec9488ac",
+      "bytes": 195843
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/named-companion.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/native-fp-isa.log",
+      "sha256": "abdc8e524b72fe50f436795b59ab765b33ad67255f7b2a457f66662d3ddac6fd",
+      "bytes": 511
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/native-preflight.log",
+      "sha256": "4022f5cc1fd67a0bdea11e2d9d5aabd28657cd826c7cc6180444b89da604c385",
+      "bytes": 850
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/native-test-clippy.log",
+      "sha256": "8885b41e19ef1bbf24e1ddf75b27e008b1e128a1abd3cd3270d8330ab0d9164e",
+      "bytes": 356
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/no-host-float.log",
+      "sha256": "5f2dd5d383f61a940a1066a790ba9d6bc817c0910cc1215ab93bede39ea8d024",
+      "bytes": 67
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/page-binding-initial.log",
+      "sha256": "0a0c97efddcbde8d4a2525022c33260af0e478db1bf83bafb9e295b538f3c25d",
+      "bytes": 451
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/page-binding.log",
+      "sha256": "f2e9ff86fa206e8d228ce602337a6e016e2e19ad7d0291df5c7301a32d87c9bc",
+      "bytes": 217
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "bytes": 10726
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "bytes": 10726
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/latest.png",
+      "sha256": "52f8a846fb2ddc169ba2b99b134832bcefca0454d9c5c3cf05e3e81b7716cd7b",
+      "bytes": 18522
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/prepared-direct.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "bytes": 10726
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/report.json",
+      "sha256": "31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea",
+      "bytes": 583753
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/serial.log",
+      "sha256": "cf8e2282a3dedeaa8b8151cfb5ef1ac5bae4d1419406f4a51b9cee3646465922",
+      "bytes": 1692
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/worker-cpu.json",
+      "sha256": "310309d54f1aedf31144280f0c13fe5180f28b9e37f8023a2c60cf07f6e9728d",
+      "bytes": 1427076
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop.log",
+      "sha256": "1d82beb68d1bdcc66bd5fcdff4aa4f02dffad41486ce03833f62052ff3395ce4",
+      "bytes": 2938
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/run.json",
+      "sha256": "8a959418356189a6755fba33d563a98283684db9ae70922e9870551999e9cee9",
+      "bytes": 12916
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input.log",
+      "sha256": "8a959418356189a6755fba33d563a98283684db9ae70922e9870551999e9cee9",
+      "bytes": 12916
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-summary.json",
+      "sha256": "bea1931dd5b30ddc3bf530598fabbc1fb5d6a599ff159b34c77d3ed3e1b771e1",
+      "bytes": 4233
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-summary.log",
+      "sha256": "bea1931dd5b30ddc3bf530598fabbc1fb5d6a599ff159b34c77d3ed3e1b771e1",
+      "bytes": 4233
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/pre-freeze-build.log",
+      "sha256": "09c6e26a6883435f6c420dab7085971374d91c61954a6147193aa6f5b5430168",
+      "bytes": 3184
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/preflight-clippy.log",
+      "sha256": "edc3c0866ac1fa3d56f2c44c1801bd757dfb1b766a3b823680d09eb8ba49847d",
+      "bytes": 526
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/public-check.log",
+      "sha256": "20137b8ee37f1b64ddad9026b8f111b81f3fa04f1958c74aabd5697a853e709e",
+      "bytes": 3665
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/record-submission.py",
+      "sha256": "37a60e13d9ea1d01b698ec6ab20e007c285a648b56e1a826b09b0311ae46bb70",
+      "bytes": 3425
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/recorder-harness.log",
+      "sha256": "c95943bdfff01cb745929e2d2fccfa101c620ab998530c9b4aa559c6fd0aa2bd",
+      "bytes": 5967
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/run-cold.py",
+      "sha256": "82772992b092e76f1bfbc231319781e4fe99a08bb9dad93e201512af1a12656d",
+      "bytes": 2277
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/saved-fmadd-encodings.json",
+      "sha256": "ecfd387a3a53c2f8bf6b4860f533c2f83bdcd5afce498631bcd1d11b39e3ea88",
+      "bytes": 5784
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/seal.py",
+      "sha256": "eb76859335c0b1975c75e9d466800ad99c4f511d4c8e5bd26dccff165f234893",
+      "bytes": 4220
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/software-fp-regression.log",
+      "sha256": "eec398eacdcbf4106525fede4a0306715f8197485e090fd08efbbebaa101c944",
+      "bytes": 1709
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/submission.json",
+      "sha256": "cc1044d145973a2bf142640df53d67a4bbf20b0f5a5df8f29e815edb07091240",
+      "bytes": 1929
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/summarize-physical.py",
+      "sha256": "4cf034bcb46542acd8eec2d7374f52913c427c334c2bde11ee437d43381847de",
+      "bytes": 2407
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/symbol-build.json",
+      "sha256": "23215780194fcc577b15d2b5998c5cc67d23a932a4036916f140289742b730bd",
+      "bytes": 2291
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/symbolize.log",
+      "sha256": "010e35d97e84e0621f7d0e3915fd9aa8fec4b5e7258871fa3cdabae1aff5d094",
+      "bytes": 93
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/symbolized/cpu-summary.json",
+      "sha256": "2dd73cadde51d17deca96ecce5a13ba62b023cec53479e2a25577994ffbd902c",
+      "bytes": 631054
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/symbols.log",
+      "sha256": "dcf5299d7dd233804771390d6d4a6e9a38a949692a938fb115a5d116ace721ea",
+      "bytes": 58
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/symbols.py",
+      "sha256": "a5ff1e2b110cefbec3f74b5985238457bd6a870477e955b1b7dbf12ee7bb5cd9",
+      "bytes": 1877
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/visual-inspection.json",
+      "sha256": "8b362849de44594a92c5a1d92fc7b09509dd48225aa7bef91614bc23081b2278",
+      "bytes": 2679
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/wasm-native-lib.log",
+      "sha256": "da253c781597bd8cef7e509771783090d07e30d7f1159d4ce9f72b6a47566d05",
+      "bytes": 3507
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/wasm-preflight.log",
+      "sha256": "e1f9aa57deabfdd0af6a88d50d90899b0c314e6cd02fbddac912e2e274fb1c46",
+      "bytes": 5404
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/wasm-test-clippy.log",
+      "sha256": "5e7baaf3ef1f41e348b97f4c60145c7bf37dfe48c639afb65c6c2651a86ef1ae",
+      "bytes": 428
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/wasmopt-version.log",
+      "sha256": "15647c8ddc59943b287606b47782e10b3316bde2afc42d96318ebc4072764639",
+      "bytes": 35
+    }
+  ],
+  "frozenSourceClosureUnchanged": true,
+  "sourceHead": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "artifactAndColdHead": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "runtimeWasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "postColdChangesOnlyEvidenceAndTaskAdministration": [
+    "evidence/omarchy-profile/fmadd-single-r1/README.md",
+    "evidence/omarchy-profile/fmadd-single-r1/acceptance.log",
+    "evidence/omarchy-profile/fmadd-single-r1/affected-commands.json",
+    "evidence/omarchy-profile/fmadd-single-r1/bind-names.mjs",
+    "evidence/omarchy-profile/fmadd-single-r1/bindgen-version.log",
+    "evidence/omarchy-profile/fmadd-single-r1/bindgen.log",
+    "evidence/omarchy-profile/fmadd-single-r1/binding.log",
+    "evidence/omarchy-profile/fmadd-single-r1/browser/built-page.png",
+    "evidence/omarchy-profile/fmadd-single-r1/browser/capability-inspection.png",
+    "evidence/omarchy-profile/fmadd-single-r1/browser/fmadd.elf",
+    "evidence/omarchy-profile/fmadd-single-r1/browser/report.json",
+    "evidence/omarchy-profile/fmadd-single-r1/browser/suite.png",
+    "evidence/omarchy-profile/fmadd-single-r1/ci-commands.json",
+    "evidence/omarchy-profile/fmadd-single-r1/ci-failures.json",
+    "evidence/omarchy-profile/fmadd-single-r1/ci.log",
+    "evidence/omarchy-profile/fmadd-single-r1/clippy.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cloudflare-deploy.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cloudflare-public.json",
+    "evidence/omarchy-profile/fmadd-single-r1/cold-run.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/acceptance.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/browser/built-page.png",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/browser/capability-inspection.png",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/browser/fmadd.elf",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/browser/report.json",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/browser/suite.png",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/build.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/checkout.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/clone.log",
+    "evidence/omarchy-profile/fmadd-single-r1/cold/report.json",
+    "evidence/omarchy-profile/fmadd-single-r1/core-handoff.log",
+    "evidence/omarchy-profile/fmadd-single-r1/core-test-clippy.log",
+    "evidence/omarchy-profile/fmadd-single-r1/fp-regression.log",
+    "evidence/omarchy-profile/fmadd-single-r1/freeze.log",
+    "evidence/omarchy-profile/fmadd-single-r1/frozen.json",
+    "evidence/omarchy-profile/fmadd-single-r1/name-binding.json",
+    "evidence/omarchy-profile/fmadd-single-r1/named-companion.log",
+    "evidence/omarchy-profile/fmadd-single-r1/native-fp-isa.log",
+    "evidence/omarchy-profile/fmadd-single-r1/native-test-clippy.log",
+    "evidence/omarchy-profile/fmadd-single-r1/no-host-float.log",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input.log",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop.log",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/desktop.png",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/failure.png",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/latest.png",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/prepared-direct.png",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/report.json",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/serial.log",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/worker-cpu.json",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-input/run.json",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-summary.json",
+    "evidence/omarchy-profile/fmadd-single-r1/physical-summary.log",
+    "evidence/omarchy-profile/fmadd-single-r1/public-check.log",
+    "evidence/omarchy-profile/fmadd-single-r1/recorder-harness.log",
+    "evidence/omarchy-profile/fmadd-single-r1/seal.py",
+    "evidence/omarchy-profile/fmadd-single-r1/sha256.txt",
+    "evidence/omarchy-profile/fmadd-single-r1/software-fp-regression.log",
+    "evidence/omarchy-profile/fmadd-single-r1/submission.json",
+    "evidence/omarchy-profile/fmadd-single-r1/symbol-build.json",
+    "evidence/omarchy-profile/fmadd-single-r1/symbolize.log",
+    "evidence/omarchy-profile/fmadd-single-r1/symbolized/cpu-summary.json",
+    "evidence/omarchy-profile/fmadd-single-r1/symbols.log",
+    "evidence/omarchy-profile/fmadd-single-r1/symbols.py",
+    "evidence/omarchy-profile/fmadd-single-r1/visual-inspection.json",
+    "evidence/omarchy-profile/fmadd-single-r1/wasm-native-lib.log",
+    "evidence/omarchy-profile/fmadd-single-r1/wasm-test-clippy.log",
+    "evidence/omarchy-profile/fmadd-single-r1/wasmopt-version.log",
+    "tasks/QUEUE.md",
+    "tasks/epic-5.5-omarchy/E5.5-T03an-jit-fmadd-single.md"
+  ],
+  "completedAcceptanceTests": {
+    "targets": 6,
+    "passed": 18,
+    "failed": 0,
+    "ignored": 0
+  },
+  "desktopResponsive": false,
+  "broadCiPassed": false
+}

@@ -1,0 +1,69 @@
+{
+  "head": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "reportSha256": "0e64c06d1f677d1ae487ef1a6943a62ae0953992d659f1085f77ee77af8db1b8",
+  "elfSha256": "cdc10b57f4dc79970036ea0661907f0c5e07c88bc7fcea433925b8804c0ddaee",
+  "literalRegistersChecked": {
+    "10": "2",
+    "13": "ffffffffa8800000",
+    "14": "ffffffff7f7fffff",
+    "15": "ffffffff00800000",
+    "16": "ffffffff40000000",
+    "17": "ffffffff40800000",
+    "18": "ffffffff3f800000",
+    "19": "ffffffffa8800000",
+    "20": "7",
+    "21": "2"
+  },
+  "fmaParcels": [
+    [
+      15,
+      6,
+      0,
+      1,
+      2,
+      7,
+      0
+    ],
+    [
+      16,
+      7,
+      3,
+      4,
+      31,
+      1,
+      0
+    ],
+    [
+      17,
+      8,
+      5,
+      30,
+      31,
+      0,
+      0
+    ],
+    [
+      22,
+      12,
+      6,
+      31,
+      6,
+      0,
+      0
+    ]
+  ],
+  "independentlyReconstructedRamDigest": "3510fa25cda976048c595e95ae16fabadebe668f0170d9615ac68c103430003e",
+  "retiredViaJit": 4570,
+  "retiredTotal": 5000,
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "memoryGrowth": {
+    "before": 10485760,
+    "after": 10551296,
+    "afterRetired": 256
+  },
+  "screenshotsRehashed": true
+}

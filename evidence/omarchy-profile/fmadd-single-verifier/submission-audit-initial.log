@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-submission.py", line 42, in <module>
+    assert 'force-kill' in task and 'negative' in task and 'exit 2' in task
+AssertionError

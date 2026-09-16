@@ -1,0 +1,181 @@
+{
+  "passed": true,
+  "head": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "frozenHead": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "clone": "/private/tmp/wasm-vm-fmadd-single-cold-4h05ewa0/repo",
+  "sourceAndArtifactHashesChecked": [
+    "Makefile",
+    "crates/core/src/jit.rs",
+    "crates/core/src/softfloat.rs",
+    "crates/core/tests/fp_fmadd_flags.rs",
+    "crates/jit-runtime/src/lib.rs",
+    "crates/jit-runtime/tests/fp_division_verifier.rs",
+    "crates/jit-runtime/tests/fp_fmadd.rs",
+    "crates/jit-runtime/tests/fp_fmadd_verifier.rs",
+    "crates/jit-runtime/tests/fp_from_integer_verifier.rs",
+    "crates/jit-runtime/tests/fp_to_word_verifier.rs",
+    "crates/jit-translate/src/lib.rs",
+    "crates/jit-translate/tests/differential.rs",
+    "crates/wasm/src/jit_browser.rs",
+    "crates/wasm/tests/jit_fp_fmadd.rs",
+    "crates/wasm/tests/jit_fp_fmadd_verifier.rs",
+    "docs/jit-fp-policy.md",
+    "evidence/omarchy-profile/fmadd-single-r1/bind-renderer-page.mjs",
+    "evidence/omarchy-profile/fmadd-single-r1/check-public.py",
+    "evidence/omarchy-profile/fmadd-single-r1/derive-goldens.py",
+    "evidence/omarchy-profile/fmadd-single-r1/freeze.py",
+    "evidence/omarchy-profile/fmadd-single-r1/record-submission.py",
+    "evidence/omarchy-profile/fmadd-single-r1/run-cold.py",
+    "evidence/omarchy-profile/fmadd-single-r1/summarize-physical.py",
+    "tests/support/fmadd_goldens.rs",
+    "tests/support/jit_fp_fmadd.rs",
+    "tests/support/jit_fp_fmadd_verifier.rs",
+    "tools/verify/e5-t22c-cpu-profile.mjs",
+    "tools/verify/omarchy-browser-session.mjs",
+    "tools/verify/omarchy-cold-pair.mjs",
+    "tools/verify/omarchy-compositor-command.mjs",
+    "tools/verify/omarchy-desktop-live.mjs",
+    "tools/verify/omarchy-direct-opaque-command.mjs",
+    "tools/verify/omarchy-direct-opaque-preparation.mjs",
+    "tools/verify/omarchy-failure-checkpoint.mjs",
+    "tools/verify/omarchy-fmadd-browser.mjs",
+    "tools/verify/omarchy-fmadd-input.mjs",
+    "tools/verify/omarchy-input-audit.mjs",
+    "tools/verify/omarchy-input-trial.mjs",
+    "tools/verify/omarchy-latency-receipt.mjs",
+    "tools/verify/omarchy-live-recording.mjs",
+    "tools/verify/omarchy-mode-preparation.mjs",
+    "tools/verify/omarchy-opaque-foot-command.mjs",
+    "tools/verify/omarchy-opaque-preparation.mjs",
+    "tools/verify/omarchy-owned-trial.mjs",
+    "tools/verify/omarchy-prepared-direct-state.mjs",
+    "tools/verify/omarchy-process-sample.mjs",
+    "tools/verify/omarchy-render-mode.mjs",
+    "tools/verify/omarchy-renderer-log.mjs",
+    "tools/verify/omarchy-thread-setting.mjs",
+    "tools/verify/omarchy-worker-cost-capture.mjs",
+    "web/guest-rpc.js",
+    "web/omarchy-desktop-readiness.js",
+    "web/roadmap.js",
+    "web/src/input/keymap.js",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "web/dist/pkg/wasm_vm_wasm.js",
+    "web/dist/roadmap.js",
+    "web/dist/app.html",
+    "web/dist/tasks.json",
+    "web/dist/sw.js"
+  ],
+  "pristineBeforeBuildGuardInspected": true,
+  "environmentScrubInspected": true,
+  "rebuiltWasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "manifestOnlyChanges": [
+    {
+      "path": [
+        "web/dist/artifacts-alpine.json",
+        "artifacts",
+        "kernel",
+        "url"
+      ],
+      "before": "releases/kernel/6.6.63/Image",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-alpine.json",
+        "artifacts",
+        "rootfs",
+        "url"
+      ],
+      "before": "releases/rootfs/alpine-rootfs.ext4",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-node-alpine.json",
+        "artifacts",
+        "kernel",
+        "url"
+      ],
+      "before": "releases/kernel/6.6.63/Image",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-node-alpine.json",
+        "artifacts",
+        "rootfs",
+        "url"
+      ],
+      "before": "releases/rootfs/alpine-rootfs.ext4",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-node-alpine.json",
+        "artifacts",
+        "bootSnapshot",
+        "url"
+      ],
+      "before": "releases/boot-snapshot/node-alpine-ready.snap.gz",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-omarchy.json",
+        "artifacts",
+        "kernel",
+        "url"
+      ],
+      "before": "releases/kernel/6.6.63/Image",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "path": [
+        "web/dist/artifacts-omarchy.json",
+        "artifacts",
+        "bootSnapshot",
+        "url"
+      ],
+      "before": "releases/boot-snapshot/omarchy-ready.snap.gz",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5/releases/boot-snapshot/omarchy-ready.snap.gz"
+    },
+    {
+      "path": [
+        "web/dist/artifacts.json",
+        "artifacts",
+        "kernel",
+        "url"
+      ],
+      "before": "releases/kernel/6.6.63/Image",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image"
+    },
+    {
+      "path": [
+        "web/dist/artifacts.json",
+        "artifacts",
+        "initramfs",
+        "url"
+      ],
+      "before": "releases/initramfs/initramfs.cpio.gz",
+      "after": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz"
+    }
+  ],
+  "postBuildChanges": [
+    " M web/dist/artifacts-alpine.json",
+    " M web/dist/artifacts-node-alpine.json",
+    " M web/dist/artifacts-omarchy.json",
+    " M web/dist/artifacts.json"
+  ],
+  "testCounts": [
+    1,
+    1,
+    3,
+    5,
+    2,
+    6
+  ],
+  "hotColdCriticLinesIdentical": 33,
+  "reportSha256": "c59dab7f746d4d8864e58d238b963dc8582bc1c9a44fa7e265d705ac43ed09ba",
+  "acceptanceSha256": "952f723346251e05303ac47c634da3b6723fe8111bc5597a96f1a123a508fee1",
+  "buildSha256": "24cf8dbfb72dacf70ad37635f8fff8dc68a4d222833d97eeb12d2960c86a878b"
+}

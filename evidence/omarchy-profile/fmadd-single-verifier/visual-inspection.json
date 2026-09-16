@@ -1,0 +1,65 @@
+{
+  "images": [
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/suite.png",
+      "sha256": "93f99745d945b7222717996a01b59c25346361e2cc57587129a6090a890c0363",
+      "personallyViewed": true,
+      "observed": "Personally viewed: Total 127, Passed 127, Failed 0, Done 127; all seven ISA groups show green passing pips."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/capability-inspection.png",
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+      "personallyViewed": true,
+      "observed": "Personally viewed: Single-precision fused multiply-add, green pip, 1/1 passing, live in browser."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/browser/built-page.png",
+      "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42",
+      "personallyViewed": true,
+      "observed": "Personally viewed: actual roadmap task E5.5-T03an is in progress, correct bounded FMADD title and dependencies, with recorded verification text; no desktop responsiveness claim."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/suite.png",
+      "sha256": "60284ed51c80cfb25b758defb99b3f331e182cf4130d73023e1851fbaf12cbf6",
+      "personallyViewed": true,
+      "observed": "Personally viewed cold-clone capture: Total 127, Passed 127, Failed 0, Done 127; all seven ISA groups have green passing pips."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/capability-inspection.png",
+      "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+      "personallyViewed": true,
+      "observed": "Personally viewed cold-clone capture: Single-precision fused multiply-add has a green pip and 1/1 passing, live in browser."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/built-page.png",
+      "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42",
+      "personallyViewed": true,
+      "observed": "Personally viewed cold-clone capture: actual E5.5-T03an task is in progress with bounded FMADD title and AM/Z dependencies; the page does not claim desktop responsiveness."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personallyViewed": true,
+      "observed": "Personally viewed actual physical-trial capture: full-size Foot terminal at the original location, only the initial omarchy prompt and block cursor; no typed printf command and no fresh returned prompt. Desktop clock remains Thursday 02:22."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/prepared-direct.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personallyViewed": true,
+      "observed": "Personally viewed actual physical-trial capture: full-size Foot terminal at the original location, only the initial omarchy prompt and block cursor; no typed printf command and no fresh returned prompt. Desktop clock remains Thursday 02:22."
+    },
+    {
+      "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personallyViewed": true,
+      "observed": "Personally viewed actual physical-trial capture: full-size Foot terminal at the original location, only the initial omarchy prompt and block cursor; no typed printf command and no fresh returned prompt. Desktop clock remains Thursday 02:22."
+    }
+  ],
+  "physicalVerdict": {
+    "desktopResponsive": false,
+    "typedCommandVisible": false,
+    "returnedPromptAfterTypedCommandVisible": false,
+    "imagesAreByteIdentical": true,
+    "nonceReadbackSucceeded": false
+  }
+}

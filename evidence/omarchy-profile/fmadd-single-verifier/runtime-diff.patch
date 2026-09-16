@@ -1,0 +1,290 @@
+diff --git a/crates/core/src/jit.rs b/crates/core/src/jit.rs
+index 8ff4e80d..d2f4d737 100644
+--- a/crates/core/src/jit.rs
++++ b/crates/core/src/jit.rs
+@@ -81,6 +81,16 @@ pub fn fp_div_s(a: u32, b: u32, rm: u8) -> u64 {
+     u64::from(bits) | (u64::from(flags.0) << 32)
+ }
+ 
++/// Pure FMADD.S helper. Three independently NaN-box-checked sources and a
++/// validated rounding mode enter one software fused operation. Return raw
++/// result bits and newly raised flags; never touch guest execution context.
++pub fn fp_fmadd_s(a: u32, b: u32, c: u32, rm: u8) -> u64 {
++    use crate::softfloat::{F32, RoundMode, SoftFloat};
++    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
++    let (bits, flags) = F32::fma(a, b, c, round);
++    u64::from(bits) | (u64::from(flags.0) << 32)
++}
++
+ /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
+ /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
+ /// exit protocol back from `EXIT_*`.
+diff --git a/crates/core/src/softfloat.rs b/crates/core/src/softfloat.rs
+index 89ea0a08..a69578a4 100644
+--- a/crates/core/src/softfloat.rs
++++ b/crates/core/src/softfloat.rs
+@@ -196,6 +196,68 @@ fn f32_division_flags(a: u32, b: u32, rm: RoundMode, bits: u32, status: Status)
+     flags
+ }
+ 
++/// Restore the pinned backend's two F32 fused-result flag gaps. Result bits
++/// already match single rounding; only inexact finite saturation and the
++/// smallest normal need an independent boundary check.
++fn f32_fma_flags(a: u32, b: u32, c: u32, rm: RoundMode, bits: u32, status: Status) -> Flags {
++    let mut flags = Flags::from_status(status);
++    let magnitude = bits & 0x7fff_ffff;
++    if status != Status::INEXACT || !matches!(magnitude, 0x7f7f_ffff | 0x0080_0000) {
++        return flags;
++    }
++    // All inputs here are finite. Negate both product and addend if needed,
++    // so the exact widened fused result is positive. Conversion is exact and
++    // binary64's exponent range contains every binary32 product and sum.
++    let negative = bits >> 31 != 0;
++    let flip = if negative { 0x8000_0000 } else { 0 };
++    let mut loses = false;
++    let x: Double = Single::from_bits(u128::from(a ^ flip))
++        .convert(&mut loses)
++        .value;
++    let y: Double = Single::from_bits(u128::from(b)).convert(&mut loses).value;
++    let z: Double = Single::from_bits(u128::from(c ^ flip))
++        .convert(&mut loses)
++        .value;
++    let away =
++        matches!(rm, RoundMode::Rdn) && negative || matches!(rm, RoundMode::Rup) && !negative;
++    // Each comparison threshold is exactly representable in binary64. A
++    // downward-rounded magnitude preserves >= and <; upward preserves <=.
++    // Nearest rounding would lose a tiny addend in 2^128 +/- 2^-149.
++    let wide = x
++        .mul_add_r(
++            y,
++            z,
++            if magnitude == 0x0080_0000 && away {
++                Round::TowardPositive
++            } else {
++                Round::TowardZero
++            },
++        )
++        .value;
++    if magnitude == 0x7f7f_ffff {
++        if wide >= Double::from_bits(0x47f0_0000_0000_0000) {
++            // 2^128
++            flags.0 |= Flags::OF;
++        }
++    } else {
++        // Precision-24 rounding with an unbounded exponent: nearest reaches
++        // normal at 2^-126 - 2^-151; away reaches it strictly above
++        // 2^-126 - 2^-150. Below 2^-126, binary64 spacing is 2^-179.
++        let normal = 0x3810_0000_0000_0000_u128;
++        let tiny = if away {
++            wide <= Double::from_bits(normal - (1 << 29))
++        } else if matches!(rm, RoundMode::Rne | RoundMode::Rmm) {
++            wide < Double::from_bits(normal - (1 << 28))
++        } else {
++            wide < Double::from_bits(normal)
++        };
++        if tiny {
++            flags.0 |= Flags::UF;
++        }
++    }
++    flags
++}
++
+ /// Generate the [`SoftFloat`] impl for one format from its apfloat type + geometry.
+ macro_rules! impl_softfloat {
+     ($marker:ident, $ap:ty, $bits:ty, $mant:expr, $exp:expr, $bias:expr) => {
+@@ -273,7 +335,13 @@ macro_rules! impl_softfloat {
+             }
+             fn fma(a: $bits, b: $bits, c: $bits, rm: RoundMode) -> ($bits, Flags) {
+                 let r = Float::mul_add_r(Self::of(a), Self::of(b), Self::of(c), rm.to_apfloat());
+-                (Self::bits(r.value), Flags::from_status(r.status))
++                let bits = Self::bits(r.value);
++                let flags = if $mant == 23 {
++                    f32_fma_flags(a as u32, b as u32, c as u32, rm, bits as u32, r.status)
++                } else {
++                    Flags::from_status(r.status)
++                };
++                (bits, flags)
+             }
+             fn sqrt(a: $bits, rm: RoundMode) -> ($bits, Flags) {
+                 let (bits, f) = ieee_sqrt(a as u128, $mant, $exp, $bias, rm);
+diff --git a/crates/jit-runtime/src/lib.rs b/crates/jit-runtime/src/lib.rs
+index d4d033d8..f85454c0 100644
+--- a/crates/jit-runtime/src/lib.rs
++++ b/crates/jit-runtime/src/lib.rs
+@@ -432,6 +432,11 @@ impl WasmtimeExecutor {
+                 wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
+             })
+             .expect("register env.fp_div_s");
++        linker
++            .func_wrap("env", "fp_fmadd_s", |a: i32, b: i32, c: i32, rm: i32| {
++                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
++            })
++            .expect("register env.fp_fmadd_s");
+         let registry_hasher = JitBuildHasher::default();
+         WasmtimeExecutor {
+             engine,
+diff --git a/crates/jit-translate/src/lib.rs b/crates/jit-translate/src/lib.rs
+index f2fcb5d7..1a2767c0 100644
+--- a/crates/jit-translate/src/lib.rs
++++ b/crates/jit-translate/src/lib.rs
+@@ -41,7 +41,7 @@ use wasm_emit::{
+     BlockType, ExportKind, FuncBuilder, FuncType, GlobalType, Limits, MemType, ModuleBuilder,
+     Mutability, RefType, TableType, ValType,
+ };
+-use wasm_vm_core::decode::{FpArithOp, FpIntWidth, Instr};
++use wasm_vm_core::decode::{FpArithOp, FpFusedOp, FpIntWidth, Instr};
+ use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
+ 
+ // ── E4-T25 test-only mutation hooks ─────────────────────────────────────────
+@@ -757,6 +757,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
+         from_int: uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m)),
+         to_word: uses_fp_to_word(block).then(|| add_fp_to_word_import(&mut m)),
+         division: uses_fp_division(block).then(|| add_fp_division_import(&mut m)),
++        fmadd: uses_fp_fmadd(block).then(|| add_fp_fmadd_import(&mut m)),
+     };
+ 
+     let (reads, writes) = block_register_masks(block);
+@@ -872,6 +873,7 @@ struct FpHelperImports {
+     from_int: Option<u32>,
+     to_word: Option<u32>,
+     division: Option<u32>,
++    fmadd: Option<u32>,
+ }
+ 
+ fn uses_fp_to_word(block: &DecodedBlock) -> bool {
+@@ -912,6 +914,25 @@ fn add_fp_division_import(m: &mut ModuleBuilder) -> u32 {
+     m.import_func("env", "fp_div_s", ty)
+ }
+ 
++fn uses_fp_fmadd(block: &DecodedBlock) -> bool {
++    block.ops.iter().any(|op| {
++        matches!(
++            op.instr,
++            Instr::FpFusedS {
++                op: FpFusedOp::Madd,
++                ..
++            }
++        )
++    })
++}
++
++/// Append only when FMADD.S occurs. Modules without it retain their previous
++/// import and defined-function indices, including mixed earlier FP helpers.
++fn add_fp_fmadd_import(m: &mut ModuleBuilder) -> u32 {
++    let ty = m.add_type(FuncType::new(&[ValType::I32; 4], &[ValType::I64]));
++    m.import_func("env", "fp_fmadd_s", ty)
++}
++
+ /// The third parameter in the browser direct-chain function signature. Host and cross-module
+ /// entries pass zero here and load the virtual entry PC from the shared handoff; same-module direct
+ /// callers pass their already-computed successor PC and avoid a state-memory round trip.
+@@ -1296,6 +1317,10 @@ pub fn translate_batch_with_static_slots(
+             .iter()
+             .any(uses_fp_division)
+             .then(|| add_fp_division_import(&mut m)),
++        fmadd: blocks
++            .iter()
++            .any(uses_fp_fmadd)
++            .then(|| add_fp_fmadd_import(&mut m)),
+     };
+ 
+     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
+@@ -1525,6 +1550,11 @@ fn emit_body(
+             fp_checked = true;
+         }
+         if let Instr::FpArithS { rm, .. }
++        | Instr::FpFusedS {
++            op: FpFusedOp::Madd,
++            rm,
++            ..
++        }
+         | Instr::FcvtFromIntS { rm, .. }
+         | Instr::FcvtToIntS { rm, .. } = op.instr
+         {
+@@ -2075,6 +2105,7 @@ fn supported(instr: &Instr) -> bool {
+             | FmvXW { .. }
+             | FpCmpS { .. }
+             | FpArithS { op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div, .. }
++            | FpFusedS { op: FpFusedOp::Madd, .. }
+             | FcvtFromIntS { .. }
+             | FcvtToIntS { width: FpIntWidth::W | FpIntWidth::Wu, .. }
+             | Flw { .. }
+@@ -2099,6 +2130,10 @@ fn is_fp(instr: &Instr) -> bool {
+                 op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div,
+                 ..
+             }
++            | Instr::FpFusedS {
++                op: FpFusedOp::Madd,
++                ..
++            }
+             | Instr::FcvtFromIntS { .. }
+             | Instr::FcvtToIntS {
+                 width: FpIntWidth::W | FpIntWidth::Wu,
+@@ -2506,6 +2541,28 @@ fn emit_alu(
+             set_reg(f, regs, rd);
+         }
+         FpCmpS { op, rd, rs1, rs2 } => emit_fp_compare(f, regs, abi, op, rd, rs1, rs2),
++        FpFusedS {
++            op: FpFusedOp::Madd,
++            rd,
++            rs1,
++            rs2,
++            rs3,
++            rm,
++        } => {
++            // Load/canonicalize every source before publishing the destination,
++            // including when rd aliases any of the three operands.
++            for source in [rs1, rs2, rs3] {
++                push_boxed_f32(f, abi, source);
++                f.i32_wrap_i64();
++            }
++            push_rounding_mode(f, abi, rm);
++            f.call(
++                fp_imports
++                    .fmadd
++                    .expect("selected FMADD.S imports its helper"),
++            );
++            emit_fp_packed_result(f, abi, rd);
++        }
+         FpArithS {
+             op,
+             rd,
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+index 74685378..b2b474fa 100644
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -986,6 +986,7 @@ pub struct BrowserExecutor {
+     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
+     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
+     _closures_fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
++    _closures_fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
+     _closures_fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64>,
+     _closures_fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
+     _closures_fp_div_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
+@@ -1181,6 +1182,10 @@ impl BrowserExecutor {
+             Closure::new(|a: i32, b: i32, rm: i32| {
+                 wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
+             });
++        let fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64> =
++            Closure::new(|a: i32, b: i32, c: i32, rm: i32| {
++                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
++            });
+ 
+         let env = Object::new();
+         set_fn(&env, "load", &load);
+@@ -1199,6 +1204,7 @@ impl BrowserExecutor {
+         set_fn(&env, "fp_from_int_s", &fp_from_int_s);
+         set_fn(&env, "fp_to_word_s", &fp_to_word_s);
+         set_fn(&env, "fp_div_s", &fp_div_s);
++        set_fn(&env, "fp_fmadd_s", &fp_fmadd_s);
+         if inline_tlb.is_some() {
+             let memory = wasm_bindgen::memory();
+             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
+@@ -1217,6 +1223,7 @@ impl BrowserExecutor {
+             _closures_lr: lr,
+             _closures_sc: sc,
+             _closures_fp_arith_s: fp_arith_s,
++            _closures_fp_fmadd_s: fp_fmadd_s,
+             _closures_fp_from_int_s: fp_from_int_s,
+             _closures_fp_to_word_s: fp_to_word_s,
+             _closures_fp_div_s: fp_div_s,

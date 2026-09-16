@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-public.py", line 21, in <module>
+    rows=list(pool.map(fetch,[(origin,path) for origin in origins for path in sources]))
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 608, in result_iterator
+    yield fs.pop().result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 445, in result
+    return self.__get_result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 390, in __get_result
+    raise self._exception
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py", line 52, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-public.py", line 15, in fetch
+    with urlopen(Request(url,headers={'Cache-Control':'no-cache'}),timeout=45) as response:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 214, in urlopen
+    return opener.open(url, data, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 523, in open
+    response = meth(req, response)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 632, in http_response
+    response = self.parent.error(
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 561, in error
+    return self._call_chain(*args)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 494, in _call_chain
+    result = func(*args)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 641, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 403: Forbidden

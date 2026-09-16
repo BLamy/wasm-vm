@@ -1,0 +1,72 @@
+{
+  "verdict": "verified",
+  "task": "E5.5-T03an",
+  "critic": "/root/fmadd_single_verifier",
+  "sealedAt": "2026-09-16T08:58:20.345170+00:00",
+  "submissionCommit": "1479a26360eb5ee70144440a25941a8d10ee4493",
+  "sourceHead": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "artifactAndColdHead": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "wasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "workerIndexSha256": "656107deda13733b1d493aa30b9c5d955145d7e1aa257e3fc8702f897c0db0a6",
+  "workerFilesChecked": 83,
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "P9": "HELD",
+    "P10": "HELD"
+  },
+  "scope": "FMADD.S correctness and the required recorded physical trial only",
+  "desktopResponsive": false,
+  "releaseQRemainsGated": true,
+  "broadCiPassed": false,
+  "physicalReportSha256": "31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea",
+  "physicalOutcome": "nonce-readback-failed",
+  "cleanup": {
+    "startedAt": "2026-09-16T08:44:48.006Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true,
+    "closeError": "Error: browser close: deadline exceeded (UNPROVEN)",
+    "forceKilled": true
+  },
+  "cleanupElapsedMs": 10138,
+  "limitations": [
+    "One negative physical trial does not establish a speedup.",
+    "The post-verdict CPU profile is diagnostic only.",
+    "Inherited broad CI failures remain explicitly recorded."
+  ],
+  "receiptDigests": {
+    "predictions.md": "36478d0700a25f2909eccd87e4c146922df8ac3c8fe63fdd3b0182e6fc547f11",
+    "oracle-review.md": "f4115f6094114fd8d612179a92edc7361c9ed1e220dee6e11d26c2211492e55c",
+    "goldens.json": "e57ac94b1091f13650b179ee46615b6c0e5bb3906e1ec2c1e19f4ce980b1bb90",
+    "native-first.json": "74d6a0aae72666c122fee5809e66cbb0f90a9105c7b2219d7d3b4703a8b64506",
+    "sabotage.json": "b6b63161a74cb55d5c98e208ecbe0399a5475376da7d19fccb742d9e1c42e4b4",
+    "frozen-inspection.json": "0c05603a4d63e544e3bdd6ab7f3ed571801f74fcb7b38d5d55892bf5f5a3aff8",
+    "page-inspection.json": "55a5686ab9283a3776eae030a72ad07b7d0066edeb0c516cd93d90017fb4e750",
+    "task-manifest-inspection.json": "35cea9dde302aba120d11a47f40ec64f5b4e7f3ad81303323d36f90f4a58acad",
+    "production-inspection.json": "2ba499aa90c85c7b35e7bd8e71366dd48050ccd6d92b6ef364404bd507ef6929",
+    "cold-production-inspection.json": "1ee26866cff824d62a7728dc04dcf69b1c57fd78ee573e07fb17804ee7f6005c",
+    "cold-inspection.json": "79c5dfa4944b8c56e1d1828877f5fee1f8f235955f23ff14290beee59cd972c4",
+    "public-inspection.json": "8e750ef1a6268db4b5e9acc42d0eb36f33b5aa6c22b6aee2decba1a6cf009d97",
+    "ci-inspection.json": "d7fbe8b15b0a9bd0aeb78bfb034f0ad89e71f00effe5131ed5c4ce8455ffd584",
+    "physical-inspection.json": "0d440cb0e52c9d8f628bca1e77313f2e59104b48bfeae8e140090ffd0ce720c5",
+    "physical-fidelity.json": "341074d368ceb854447216ebed133be06c077008691292b42e48e059b0886d8e",
+    "profile-inspection.json": "efdfee5a9ddb76ceb15083e3a4d0518ddfa457900964f3be7390f97be3165f96",
+    "visual-inspection.json": "e1347c2c316fdeb8f4a12ce98e747a100cc9bc3a0d8d87667c3c327b66648358",
+    "submission-inspection.json": "67de800a9efeb611960ba6b5b1c6bdd3f8d1386a3ec8c3f21618bae372276500",
+    "coverage.md": "6a292cca688654c0a687dcdc76b046b457d1c4e6f9eda63b1522660fe6d0edfb",
+    "final-verdict.md": "c3fe6b2a43442e71bf1e12345058e9ed265659a6266892f652774d8b145022ec",
+    "task-entry.md": "6d665d6ff5ad0450111fb6035083ba28c591ed6b7b0fcbd0aa85cf984b54777c"
+  },
+  "promotedTestDigests": {
+    "tests/support/jit_fp_fmadd_verifier.rs": "9f87b82b5d1838003f81053702431ed9cfb6b42b831046ab26e213cb386f9fe2",
+    "crates/jit-runtime/tests/fp_fmadd_verifier.rs": "85116fac32cdb8c7c9ac4c5ce118c52862c05c9eacd27748a9bc1558e57524de",
+    "crates/wasm/tests/jit_fp_fmadd_verifier.rs": "c7206727d547a22b3f442343496242aebd5388f24e360575220f411243da1307"
+  }
+}

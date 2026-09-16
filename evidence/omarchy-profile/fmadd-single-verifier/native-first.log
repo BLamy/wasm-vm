@@ -1,0 +1,18 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.03s
+     Running tests/fp_fmadd_verifier.rs (target/debug/deps/fp_fmadd_verifier-672e2c0f695e795d)
+
+running 5 tests
+CRITIC_NATIVE_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_native_fmadd_control_and_faults ... ok
+CRITIC_NATIVE_FMADD_LITERALS Receipt { cases: 12110, disabled: 0, digest: 17734161968150730686 }
+test verifier_native_fmadd_literals ... ok
+CRITIC_FMADD_INDICES imports=10 exports=run0:10..run5:15 all_optional_combinations=16 mixed_chain_executed=true integer_imports=5 unsupported_families=15
+test verifier_mixed_optional_indices_and_unrelated_admission ... ok
+CRITIC_NATIVE_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+test verifier_native_fmadd_seeded_aliases_and_illegal ... ok
+CRITIC_FMADD_PURITY cases=20480 legal_helper_calls=10800 illegal_helper_calls=0 import_index=5 exact_masks=true integer_wasm_only=true
+test verifier_generated_fmadd_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.84s
+
