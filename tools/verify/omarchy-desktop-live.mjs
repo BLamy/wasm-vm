@@ -23,6 +23,7 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
 import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoint.mjs";
 import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
 import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
+import { captureWorkerCost } from "./omarchy-worker-cost-capture.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -50,6 +51,7 @@ assert.ok(["capture", "verify", "cold-pair", "input-trial"].includes(mode), `inv
 const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
+const workerCost = process.env.OMARCHY_WORKER_COST === "1";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
 if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
@@ -88,6 +90,10 @@ if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TR
 }
 if (trial?.experiment === "residency") assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
   "residency is isolated from other experiments");
+if (process.env.OMARCHY_WORKER_COST !== undefined) {
+  assert.ok(workerCost && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate",
+    "worker cost requires the fixed residency candidate input trial");
+}
 const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   renderer: expectedRenderer, lp: expectedLpNumThreads, timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
 const out = path.resolve(output);
@@ -401,6 +407,8 @@ if (coldPair) report.progressCaptureErrors = [];
 if (inputTrial) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs", "tools/verify/omarchy-residency-ab.mjs",
+    "tools/verify/omarchy-worker-cost.mjs", "tools/verify/omarchy-worker-cost-capture.mjs",
+    "tools/verify/e5-t22c-cpu-profile.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
     "tools/verify/omarchy-render-mode.mjs", "tools/verify/omarchy-render-budget.mjs",
@@ -1319,6 +1327,7 @@ async function runLive() {
 }
 try {
   await runLive();
+  if (workerCost) report.workerCost = { status: "skipped-input-passed", acceptanceChanged: false };
 } catch (error) {
   coldDeadline = null;
   report.result = "failed"; report.error = error.stack || String(error); process.exitCode = 1;
@@ -1342,6 +1351,10 @@ try {
     if (failureCheckpoint && report.failureCheckpoint?.paused) {
       try { await exportFailedInput(failurePage, browser, out, report); }
       catch (captureError) { report.failureCheckpointError = String(captureError); }
+    }
+    if (workerCost && report.trial.outcome === "nonce-readback-failed") {
+      try { await captureWorkerCost(failurePage, browser, out, report); }
+      catch (captureError) { report.workerCostError = String(captureError); }
     }
   } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
@@ -1375,7 +1388,7 @@ try {
     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
     // Disconnect the recorder's Playwright client as well as closing the owned
     // browser server; debugger sessions must not retain its websocket transport.
-    if (failureCheckpoint) {
+    if (failureCheckpoint || workerCost) {
       try {
         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
         report.cleanup.clientClosed = true;

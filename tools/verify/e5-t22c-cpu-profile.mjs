@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 
 export async function attachWorkerProfiler(browser, url) {
   const root=await browser.newBrowserCDPSession();
-  let sessionId,nextId=0,active=false;
+  let sessionId,target,nextId=0,active=false;
   const pending=new Map();
   const receive=event=>{
     if(event.sessionId!==sessionId)return;
@@ -29,13 +29,14 @@ export async function attachWorkerProfiler(browser, url) {
   try {
     const matches=(await root.send("Target.getTargets")).targetInfos.filter(t=>t.type==="worker"&&t.url===url);
     assert.equal(matches.length,1,"one exact owned worker target");
+    target = { targetId: matches[0].targetId, type: matches[0].type, url: matches[0].url };
     ({sessionId}=await root.send("Target.attachToTarget",{targetId:matches[0].targetId,flatten:false}));
     await send("Profiler.enable");
     await send("Profiler.setSamplingInterval",{interval:1000});
   } catch(error) {root.off("Target.receivedMessageFromTarget",receive);await root.detach();throw error;}
   return {
     async start(){assert.equal(active,false);await send("Profiler.start");active=true;},
-    async stop(){assert.equal(active,true);const result=await send("Profiler.stop");active=false;return {url,intervalUs:1000,browser:browser.version(),...result};},
+    async stop(){assert.equal(active,true);const result=await send("Profiler.stop");active=false;return {url,target,intervalUs:1000,browser:browser.version(),...result};},
     async close(){
       try{if(active)await send("Profiler.stop");await root.send("Target.detachFromTarget",{sessionId});}
       finally{active=false;root.off("Target.receivedMessageFromTarget",receive);
