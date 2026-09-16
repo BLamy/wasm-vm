@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03ar** — Prepare a fresh desktop pair with the larger input buffer
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -487,7 +486,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.026998` [E5.5-T03ao](epic-5.5-omarchy/E5.5-T03ao-direct-fp-imports.md) — Call pure FP helpers directly across WASM modules *(deps: E5.5-T03an)*
 - [x] `525.026999` [E5.5-T03ap](epic-5.5-omarchy/E5.5-T03ap-compositor-input-trace.md) — Locate physical key processing inside the desktop guest *(deps: E5.5-T03ao)*
 - [x] `525.0269991` [E5.5-T03aq](epic-5.5-omarchy/E5.5-T03aq-evdev-burst-buffer.md) — Retain delayed keyboard bursts in the Omarchy kernel *(deps: E5.5-T03ap)*
-- [ ] `525.0269992` [E5.5-T03ar](epic-5.5-omarchy/E5.5-T03ar-input-buffer-desktop-pair.md) — Prepare a fresh desktop pair with the larger input buffer *(deps: E5.5-T03aq)*
+- [~] `525.0269992` [E5.5-T03ar](epic-5.5-omarchy/E5.5-T03ar-input-buffer-desktop-pair.md) — Prepare a fresh desktop pair with the larger input buffer *(deps: E5.5-T03aq)*
 - [ ] `525.0269993` [E5.5-T03as](epic-5.5-omarchy/E5.5-T03as-input-buffer-physical-response.md) — Prove physical and visible desktop response with retained input *(deps: E5.5-T03ar)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03as)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
