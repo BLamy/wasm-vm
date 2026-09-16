@@ -205,7 +205,8 @@ test("harness-only actual cold orchestration inspects storage before app and ret
     setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
   };
   const bindings = {
-    coldPair: true, inputTrial: false, coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
+    coldPair: true, inputTrial: false, modePair: false, ownedRecording: false,
+    coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
     URL, Date, assert, remainingStartupMs, assertColdRestore,
     assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },
     startupCall: op => op(), assertRealOmarchyLayout: async () => {}, recordBuildIdentities: async () => {},
@@ -235,10 +236,10 @@ test("harness-only capture selects exact overlay when both overlay and snapshot 
   const base = "a".repeat(64);
   const startToken = "const count = await page.evaluate(";
   const start = source.indexOf(startToken, source.indexOf("async function capturePair(")) + startToken.length;
-  const end = source.indexOf("}, { base, coldPair });", start) + 1;
+  const end = source.indexOf("}, { base, strictPair, exactOverlayName });", start) + 1;
   assert.ok(start >= startToken.length && end > start);
   const callback = source.slice(start, end);
-  async function run(names, hasBlocks = true) {
+  async function run(names, hasBlocks = true, exactOverlayName = `wvov-${base}`) {
     const opened = [], state = {};
     let closed = false;
     const request = result => {
@@ -263,9 +264,9 @@ test("harness-only capture selects exact overlay when both overlay and snapshot 
         open: name => { opened.push(name); return request(db); } },
     });
     try {
-      const count = await execute({ base, coldPair: true });
+      const count = await execute({ base, strictPair: true, exactOverlayName });
       assert.equal(count, 2);
-      assert.deepEqual(opened, [`wvov-${base}`]);
+      assert.deepEqual(opened, [exactOverlayName]);
       assert.equal(state.__omarchyExportDb, db);
     } catch (error) {
       if (!hasBlocks) assert.equal(closed, true, "invalid overlay must be closed");
@@ -276,6 +277,10 @@ test("harness-only capture selects exact overlay when both overlay and snapshot 
   await run([`wvsn-${base}`, `wvov-${base}`, `wvov-${base}-unrelated`]);
   await assert.rejects(run([`wvsn-${base}`, `wvov-${base}-unrelated`]), /expected one fresh overlay/u);
   await assert.rejects(run([`wvsn-${base}`, `wvov-${base}`], false), /no blocks store/u);
+  const seeded = `wvov-${base}-seed-${"b".repeat(64)}`;
+  const decoys = [`wvsn-${base}`, `wvov-${base}`, `wvov-${base}-seed-${"c".repeat(64)}`];
+  await run([...decoys, seeded], true, seeded);
+  await assert.rejects(run(decoys, true, seeded), /expected one fresh overlay/u);
 });
 
 // Execute the actual readiness-loop source with synthetic page responses and immediate polling sleeps.

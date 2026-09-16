@@ -24,6 +24,7 @@ import { pauseFailedInput, exportFailedInput } from "./omarchy-failure-checkpoin
 import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
 import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
 import { captureWorkerCost, fenceWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
+import { modePreparationOptions, prepareSmallerDesktop } from "./omarchy-mode-preparation.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -46,10 +47,12 @@ if (urlArg === "--selftest-presentation") {
   assert.equal(index, 2, "presentation self-test must consume the post-marker frame");
   process.exit(0);
 }
-assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair|input-trial]");
-assert.ok(["capture", "verify", "cold-pair", "input-trial"].includes(mode), `invalid mode: ${mode}`);
+assert.ok(urlArg && output, "usage: omarchy-desktop-live.mjs URL|local|selftest NEW_OUTPUT_DIR [capture|verify|cold-pair|input-trial|mode-pair]");
+assert.ok(["capture", "verify", "cold-pair", "input-trial", "mode-pair"].includes(mode), `invalid mode: ${mode}`);
 const coldPair = mode === "cold-pair";
 const inputTrial = mode === "input-trial";
+const modePair = mode === "mode-pair";
+const ownedRecording = inputTrial || modePair;
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
 const workerCost = process.env.OMARCHY_WORKER_COST === "1";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
@@ -79,12 +82,12 @@ const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPEC
 if (expectedLpNumThreads !== null) assert.equal(requestedRenderer || "llvmpipe", "llvmpipe",
   "OMARCHY_EXPECT_LP_NUM_THREADS requires llvmpipe renderer expectation");
 const expectedRenderer = requestedRenderer || (expectedLpNumThreads === null ? null : "llvmpipe");
-if (candidateRequested && !inputTrial) assert.ok(expectedRenderer,
+if (candidateRequested && !ownedRecording) assert.ok(expectedRenderer,
   "local-only candidate capture requires OMARCHY_EXPECT_RENDERER for positive renderer proof");
 const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   arm: process.env.OMARCHY_INPUT_TRIAL_ARM, renderer: expectedRenderer, lp: expectedLpNumThreads,
   experiment: process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT,
-  timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
+  timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : modePair ? modePreparationOptions() : null;
 if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
 }
@@ -94,6 +97,15 @@ if (process.env.OMARCHY_WORKER_COST !== undefined) {
   assert.ok(workerCost && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate",
     "worker cost requires the fixed residency candidate input trial");
 }
+let modePairOutput = null;
+if (modePair) {
+  assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
+  assert.ok(!requestedRenderer && expectedLpNumThreads === null);
+  assert.equal(process.env.OMARCHY_BROWSER_TIMEOUT_MS, undefined);
+  assert.equal(process.env.OMARCHY_PREWARM_TIMEOUT_MS, undefined);
+  assert.ok(process.env.OMARCHY_MODE_PAIR_OUTPUT_DIR, "mode-pair needs a new private artifact directory");
+  modePairOutput = path.resolve(process.env.OMARCHY_MODE_PAIR_OUTPUT_DIR);
+} else assert.equal(process.env.OMARCHY_MODE_PAIR_OUTPUT_DIR, undefined, "mode-pair output is preparation-only");
 const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEnv, chunks: candidateChunksEnv,
   renderer: expectedRenderer, lp: expectedLpNumThreads, timeout: process.env.OMARCHY_BROWSER_TIMEOUT_MS }) : null;
 const out = path.resolve(output);
@@ -392,11 +404,13 @@ async function runHttpSelfTest(baseUrl) {
 }
 
 candidate = await prepareLocalCandidate();
-if (inputTrial) assertInputTrialSource(candidate.source);
+if (ownedRecording) assertInputTrialSource(candidate.source);
+if (modePair) await fs.mkdir(modePairOutput, { recursive: false, mode: 0o700 });
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
 ownedServer = local?.server || null;
 const localUrl = local ? (coldPair ? coldPairUrl(local.url)
-  : inputTrial ? inputTrialUrl(local.url, trial) : new URL(local.url)) : null;
+  : ownedRecording ? inputTrialUrl(local.url, trial) : new URL(local.url)) : null;
+if (modePair) localUrl.searchParams.set("persist", "1");
 if (localUrl && candidate) localUrl.searchParams.set("omarchyAssetBase", localUrl.origin);
 const url = localUrl?.href || urlArg;
 const report = { url, mode, startedAt: new Date().toISOString(), errors: [], observations: [],
@@ -404,10 +418,11 @@ const report = { url, mode, startedAt: new Date().toISOString(), errors: [], obs
 if (renderBudget) report.renderBudgetRequested = true;
 if (compositorMode) report.compositorModeRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
-if (inputTrial) {
+if (ownedRecording) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs", "tools/verify/omarchy-residency-ab.mjs",
     "tools/verify/omarchy-worker-cost.mjs", "tools/verify/omarchy-worker-cost-capture.mjs",
+    "tools/verify/omarchy-mode-preparation.mjs", "tools/verify/omarchy-prepare-mode.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
@@ -471,10 +486,10 @@ if (urlArg === "selftest") {
 let browser;
 let browserServer = null;
 try {
-  const launchOptions = { headless: !inputTrial,
+  const launchOptions = { headless: !ownedRecording,
   executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] };
-  if (inputTrial) {
+  if (ownedRecording) {
     browserServer = await chromium.launchServer(launchOptions);
     const ownedBrowserPid = browserServer.process().pid;
     process.send?.({ kind: "input-trial-owned-browser", pid: ownedBrowserPid });
@@ -992,13 +1007,14 @@ async function closeCalendar(targetPage, proof, label, timeoutMs = 300000) {
   }
   throw new Error(`${label}: calendar primary panel did not close after real click`);
 }
-async function capturePair(baseBinding) {
+async function capturePair(baseBinding, pairDirectory = out) {
+  const strictPair = coldPair || modePair;
   await page.evaluate(() => window.__linux.pause());
-  if (coldPair) assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
+  if (strictPair) assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
   await page.evaluate(() => window.__persist());
   const stats = await page.evaluate(() => window.__persistStats());
   assert.equal(stats.pendingBlocks, 0); assert.equal(stats.flushWaiting, false); assert.equal(stats.writeWaiting, false);
-  if (coldPair) {
+  if (strictPair) {
     // pause is an execution flag; require a second idle persistence sample after outstanding pump work.
     await new Promise(resolve => setTimeout(resolve, 50));
     const settled = await page.evaluate(() => window.__persistStats());
@@ -1012,7 +1028,7 @@ async function capturePair(baseBinding) {
   });
   assert.ok(size > 1024 * 1024);
   const gzip = createGzip({ level: 9 });
-  const snapshotFile = path.join(out, "omarchy-ready.snap.gz");
+  const snapshotFile = path.join(pairDirectory, "omarchy-ready.snap.gz");
   const destination = createWriteStream(snapshotFile, { flags: "wx" });
   gzip.pipe(destination);
   for (let offset = 0; offset < size; offset += 262144) {
@@ -1025,20 +1041,28 @@ async function capturePair(baseBinding) {
     if (!gzip.write(Buffer.from(encoded, "base64"))) await once(gzip, "drain");
   }
   gzip.end(); await once(destination, "close");
-  const snapshotHeader = coldPair ? Buffer.from(await page.evaluate(() => Array.from(window.__omarchyExport.subarray(0, 84)))) : null;
+  const snapshotHeader = strictPair ? Buffer.from(await page.evaluate(() => Array.from(window.__omarchyExport.subarray(0, 84)))) : null;
   await page.evaluate(() => { delete window.__omarchyExport; });
   const base = baseBinding;
   assert.match(base, /^[0-9a-f]{64}$/u, "actual loader base binding must be lowercase SHA-256");
   const generation = await page.evaluate(() => window.__snapshotGeneration());
-  if (coldPair) {
+  if (strictPair) {
     assert.equal(snapshotHeader.subarray(0, 8).toString("ascii"), "WVMRESU1");
     assert.equal(snapshotHeader.readUInt32LE(8), 1);
     assert.equal(snapshotHeader.subarray(44, 76).toString("hex"), base);
     assert.equal(snapshotHeader.readBigUInt64LE(76), BigInt(generation));
   }
-  const count = await page.evaluate(async ({ base, coldPair }) => {
+  let exactOverlayName = `wvov-${base}`;
+  if (modePair) {
+    const seed = await page.evaluate(() => window.__linuxCtl.overlaySeedIdentity());
+    const expectedSeed = createHash("sha256").update(`${candidate.source.bootSnapshot.sha256}:${candidate.source.overlayDelta.sha256}`).digest("hex");
+    assert.equal(seed, expectedSeed, "wrong warm overlay namespace");
+    exactOverlayName += `-seed-${seed}`;
+    report.captureOverlayStore = { seed, name: exactOverlayName };
+  }
+  const count = await page.evaluate(async ({ base, strictPair, exactOverlayName }) => {
     const names = (await indexedDB.databases()).filter((db) =>
-      coldPair ? db.name === `wvov-${base}` : db.name.includes(base));
+      strictPair ? db.name === exactOverlayName : db.name.includes(base));
     if (names.length !== 1) throw new Error(`expected one fresh overlay, found ${names.length}`);
     const db = await new Promise((resolve, reject) => { const r = indexedDB.open(names[0].name); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); });
     if (!db.objectStoreNames.contains("blocks")) {
@@ -1049,9 +1073,9 @@ async function capturePair(baseBinding) {
     const store = db.transaction("blocks").objectStore("blocks");
     window.__omarchyExportKeys = await new Promise((resolve, reject) => { const r = store.getAllKeys(); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); });
     return window.__omarchyExportKeys.length;
-  }, { base, coldPair });
+  }, { base, strictPair, exactOverlayName });
   const delta = createGzip({ level: 9 });
-  const deltaFile = path.join(out, "omarchy-overlay-delta.bin.gz");
+  const deltaFile = path.join(pairDirectory, "omarchy-overlay-delta.bin.gz");
   const disk = createWriteStream(deltaFile, { flags: "wx" }); delta.pipe(disk);
   const header = Buffer.alloc(61); header.write("WVOD1"); header.writeUInt32LE(4096, 5);
   header.writeBigUInt64LE(4294967296n, 9); Buffer.from(base, "hex").copy(header, 17);
@@ -1075,7 +1099,7 @@ async function capturePair(baseBinding) {
   delta.end(); await once(disk, "close");
   await page.evaluate(() => { window.__omarchyExportDb.close(); delete window.__omarchyExportDb; delete window.__omarchyExportKeys; });
   report.pair = { snapshotBytes: size, blocks: count, generation, base };
-  if (coldPair) {
+  if (strictPair) {
     assert.equal(await page.evaluate(() => window.__linux.isPaused()), true);
     assert.equal(await page.evaluate(() => window.__snapshotGeneration()), generation);
     report.pair.snapshot = { filename: snapshotFile, ...await hashFile(snapshotFile) };
@@ -1083,16 +1107,26 @@ async function capturePair(baseBinding) {
     report.pair.coreId = snapshotHeader.subarray(12, 44).toString("hex");
     report.pair.capturedAt = new Date().toISOString();
     report.pair.paused = true;
+    if (modePair) {
+      report.pair.restoreDecision = await page.evaluate(() => window.__snapshotDecision());
+      assert.equal(report.pair.restoreDecision, "resume", "prepared pair is not coherent with the live paused machine");
+    }
   }
   console.log(`OMARCHY_PAIR ${JSON.stringify(report.pair)}`);
-  if (!coldPair) await page.evaluate(() => window.__linux.resume());
+  if (!strictPair) await page.evaluate(() => window.__linux.resume());
 }
 async function runLive() {
-  if (inputTrial) {
+  if (ownedRecording) {
     const started = Date.now(); coldDeadline = started + trial.startupMs;
-    process.send?.({ kind: "input-trial-navigation", startedAtMs: started });
+    process.send?.({ kind: modePair ? "mode-pair-navigation" : "input-trial-navigation", startedAtMs: started });
     report.startup = { startedAt: new Date(started).toISOString(), timeoutMs: trial.startupMs,
       deadlineAt: new Date(coldDeadline).toISOString() };
+  }
+  if (modePair) {
+    report.preparationInputFence = { startedAt: new Date().toISOString(), ignore: true };
+    const session = await startupCall(() => context.newCDPSession(page));
+    await startupCall(() => session.send("Input.setIgnoreInputEvents", { ignore: true }));
+    report.preparationInputFence.acknowledgedAt = new Date().toISOString();
   }
   if (coldPair) {
     await page.goto(new URL(COLD_BLANK_PATH, url).href, { waitUntil: "domcontentloaded", timeout: 30000 });
@@ -1136,9 +1170,20 @@ async function runLive() {
   assert.equal(await startupCall(() => page.evaluate(() => window.__omarchyLiveEvidence.ready)), true, "desktop never rendered");
   await startupCall(() => screenshot("desktop.png", page, coldPair ? remainingStartupMs(coldDeadline) : 20000));
   report.restored = await startupCall(() => page.evaluate(() => window.__linux.restoredFromBootSnapshot()));
-  if (mode === "verify" || inputTrial) assert.equal(report.restored, true, "desktop must use the warm snapshot");
-  const loaderIdentity = mode === "capture" || coldPair || inputTrial ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
+  if (mode === "verify" || ownedRecording) assert.equal(report.restored, true, "desktop must use the warm snapshot");
+  const loaderIdentity = mode === "capture" || coldPair || ownedRecording ? await startupCall(() => observeLoaderIdentity("desktop-ready")) : null;
   if (loaderIdentity) report.loaderIdentity = loaderIdentity;
+  if (modePair) {
+    await prepareSmallerDesktop(page, coldDeadline, report, {
+      exec: (command, stage, ms) => exec(command, page, stage, ms),
+      observeRuntime: label => runtimeDiagnostics(page, label),
+      screenshot: name => screenshot(name),
+      capturePair: () => { coldDeadline = null; return capturePair(loaderIdentity.baseBinding, modePairOutput); },
+    });
+    assert.deepEqual(report.errors, []);
+    report.result = "prepared-mode-pair-input-untested";
+    return;
+  }
   if (report.renderBudgetRequested) await requestSmallerScanout(page, coldDeadline, report, {
     configureCompositor: report.compositorModeRequested ? () => requestCompositorMode(
       (command, timeoutMs) => exec(command, page, "render-mode:configure-compositor", timeoutMs), coldDeadline, report) : null,
@@ -1332,6 +1377,10 @@ try {
 } catch (error) {
   coldDeadline = null;
   report.result = "failed"; report.error = error.stack || String(error); process.exitCode = 1;
+  if (modePair && !report.modePreparation) report.modePreparation = {
+    purpose: "offline-only-no-input", status: "preparation-failed-input-untested", keyboardTested: false,
+    phase: "startup", error: String(error), finishedAt: new Date().toISOString(),
+  };
   if (coldPair) report.classification = "UNPROVEN";
   if (inputTrial) {
     const failureDeadline = trialCaptureDeadline ??= Date.now() + trial.captureMs;
@@ -1360,7 +1409,7 @@ try {
   } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
-  if (inputTrial) {
+  if (ownedRecording) {
     // Every browser object here belongs to this single trial. No shared/user browser is killed.
     const cleanupDeadline = Date.now() + trial.cleanupMs;
     report.cleanup = { startedAt: new Date().toISOString(), timeoutMs: trial.cleanupMs, closed: false };
@@ -1389,7 +1438,7 @@ try {
     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
     // Disconnect the recorder's Playwright client as well as closing the owned
     // browser server; debugger sessions must not retain its websocket transport.
-    if (failureCheckpoint || workerCost) {
+    if (failureCheckpoint || workerCost || modePair) {
       try {
         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
         report.cleanup.clientClosed = true;

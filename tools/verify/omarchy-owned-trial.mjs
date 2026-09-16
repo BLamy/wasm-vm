@@ -1,9 +1,11 @@
 // Parent-side safety net for one owned detached recorder and its Playwright browser.
 // Playwright's POSIX process launcher also uses a new process group for Chrome.
-export function watchOwnedTrial(child, { postVerdictCaptureMs = 0, killGroup = pid => process.kill(-pid, "SIGKILL"),
+export function watchOwnedTrial(child, { postVerdictCaptureMs = 0, modePreparation = false, killGroup = pid => process.kill(-pid, "SIGKILL"),
   groupAlive = pid => { try { process.kill(-pid, 0); return true; } catch (error) { if (error.code === "ESRCH") return false; throw error; } },
   now = Date.now, later = setTimeout, cancel = clearTimeout } = {}) {
   if (![0, 180000].includes(postVerdictCaptureMs)) throw Error("invalid fixed post-verdict capture allowance");
+  if (typeof modePreparation !== "boolean" || (modePreparation && postVerdictCaptureMs !== 0))
+    throw Error("invalid isolated mode preparation allowance");
   return new Promise(resolve => {
     let timer, terminationTimer, done = false, navigationSeen = false, browserPid = null, recorderClosed = false;
     let watchdog = null;
@@ -36,13 +38,18 @@ export function watchOwnedTrial(child, { postVerdictCaptureMs = 0, killGroup = p
       if (watchdog || done) return;
       if (value?.kind === "input-trial-owned-browser" && pidValid(value.pid) && browserPid === null) browserPid = value.pid;
       else if (value?.kind === "input-trial-browser-exited" && value.pid === browserPid) browserPid = null;
-      else if (value?.kind === "input-trial-navigation" && !navigationSeen) {
+      else if (["input-trial-navigation", "mode-pair-navigation"].includes(value?.kind) && !navigationSeen) {
         navigationSeen = true;
         cancel(timer);
+        if (value.kind !== (modePreparation ? "mode-pair-navigation" : "input-trial-navigation")) {
+          expire("wrong-recording-phase"); return;
+        }
         const started = value.startedAtMs;
         if (!Number.isSafeInteger(started) || started > now()) { expire("invalid-navigation-receipt"); return; }
-        // 300 startup +60 typing +120 readback +20 capture +30 cleanup. Never rearm.
-        timer = later(() => expire("navigation-through-cleanup"), Math.max(0, started + 530000 + postVerdictCaptureMs - now()));
+        // Offline preparation: 900 preparation +180 export +30 cleanup. Input
+        // acceptance stays 300 startup +60 typing +120 readback +20 capture +30 cleanup.
+        const total = modePreparation ? 1110000 : 530000 + postVerdictCaptureMs;
+        timer = later(() => expire("navigation-through-cleanup"), Math.max(0, started + total - now()));
       }
     };
     child.on("message", message);

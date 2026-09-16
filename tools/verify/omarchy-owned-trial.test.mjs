@@ -3,10 +3,10 @@ import test from "node:test";
 import { EventEmitter } from "node:events";
 import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
 
-function fixture({ groupAlive = () => false, postVerdictCaptureMs = 0 } = {}) {
+function fixture({ groupAlive = () => false, postVerdictCaptureMs = 0, modePreparation = false } = {}) {
   const child = new EventEmitter(); child.pid = 123;
   const timers = [], killed = [];
-  const result = watchOwnedTrial(child, { postVerdictCaptureMs, now: () => 1000, killGroup: pid => killed.push(pid), groupAlive,
+  const result = watchOwnedTrial(child, { postVerdictCaptureMs, modePreparation, now: () => 1000, killGroup: pid => killed.push(pid), groupAlive,
     later: (fn, ms) => { const timer = { fn, ms }; timers.push(timer); return timer; },
     cancel: timer => { if (timer) timer.cancelled = true; } });
   return { child, timers, killed, result };
@@ -20,6 +20,16 @@ test("owned watchdog caps setup and navigation once, and normal close cancels ti
   f.child.emit("close", 1, null);
   assert.deepEqual(await f.result, { code: 1, signal: null, closed: true, watchdog: null });
   assert.equal(f.timers[1].cancelled, true); assert.deepEqual(f.killed, []);
+});
+test("offline preparation is separately bounded and cannot extend a physical-input watchdog", async () => {
+  assert.throws(() => fixture({ modePreparation: true, postVerdictCaptureMs: 180000 }), /isolated/);
+  const p = fixture({ modePreparation: true });
+  p.child.emit("message", { kind: "mode-pair-navigation", startedAtMs: 900 });
+  assert.equal(p.timers[1].ms, 1109900);
+  p.child.emit("message", { kind: "mode-pair-navigation", startedAtMs: 1000 });
+  assert.equal(p.timers.length, 2); p.child.emit("close", 0, null); assert.equal((await p.result).watchdog, null);
+  const i = fixture(); i.child.emit("message", { kind: "mode-pair-navigation", startedAtMs: 900 });
+  i.timers.at(-1).fn(); assert.equal((await i.result).watchdog.phase, "wrong-recording-phase");
 });
 test("post-verdict capture has one fixed extra allowance and messages cannot rearm it", async () => {
   assert.throws(() => fixture({ postVerdictCaptureMs: 180001 }), /invalid fixed/u);
