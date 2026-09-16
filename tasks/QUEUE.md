@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03ai** — Test physical input with direct opaque Foot properties
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -477,7 +476,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.026985` [E5.5-T03af](epic-5.5-omarchy/E5.5-T03af-opaque-foot-input.md) — Test fixed opaque Foot rendering with physical input *(deps: E5.5-T03ad)*
 - [x] `525.026986` [E5.5-T03ag](epic-5.5-omarchy/E5.5-T03ag-prepare-opaque-desktop.md) — Prepare a confirmed opaque desktop checkpoint at original resolution *(deps: E5.5-T03af)*
 - [b] `525.026987` [E5.5-T03ah](epic-5.5-omarchy/E5.5-T03ah-prepared-opaque-input.md) — Verify physical input after restoring the prepared opaque desktop *(deps: E5.5-T03ag)*
-- [ ] `525.026988` [E5.5-T03ai](epic-5.5-omarchy/E5.5-T03ai-direct-opaque-input.md) — Test physical input with direct opaque Foot properties *(deps: E5.5-T03ag)*
+- [~] `525.026988` [E5.5-T03ai](epic-5.5-omarchy/E5.5-T03ai-direct-opaque-input.md) — Test physical input with direct opaque Foot properties *(deps: E5.5-T03ag)*
 - [b] `525.02699` [E5.5-T03ae](epic-5.5-omarchy/E5.5-T03ae-prepared-mode-input.md) — Test physical input after restoring the prepared smaller desktop *(deps: E5.5-T03ad)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03ai)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
