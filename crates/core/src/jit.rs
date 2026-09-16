@@ -81,6 +81,16 @@ pub fn fp_div_s(a: u32, b: u32, rm: u8) -> u64 {
     u64::from(bits) | (u64::from(flags.0) << 32)
 }
 
+/// Pure FMADD.S helper. Three independently NaN-box-checked sources and a
+/// validated rounding mode enter one software fused operation. Return raw
+/// result bits and newly raised flags; never touch guest execution context.
+pub fn fp_fmadd_s(a: u32, b: u32, c: u32, rm: u8) -> u64 {
+    use crate::softfloat::{F32, RoundMode, SoftFloat};
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = F32::fma(a, b, c, round);
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.

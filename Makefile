@@ -1684,3 +1684,12 @@ verify-E5_5-T03z:
 	cargo test -p wasm-vm-jit-runtime --test fp_division --test fp_division_verifier -- --nocapture
 	wasm-pack test --node crates/wasm --test jit_fp_division --test jit_fp_division_verifier -- --nocapture
 	node tools/verify/omarchy-fp-division-browser.mjs $(or $(FP_DIVISION_OUT),evidence/omarchy-profile/fp-division-browser)
+
+.PHONY: verify-E5_5-T03an
+verify-E5_5-T03an:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_fmadd_flags
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_fmadd --test fp_fmadd_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_fmadd --test jit_fp_fmadd_verifier -- --nocapture
+	node tools/verify/omarchy-fmadd-browser.mjs $(or $(FP_FMADD_OUT),evidence/omarchy-profile/fmadd-browser)

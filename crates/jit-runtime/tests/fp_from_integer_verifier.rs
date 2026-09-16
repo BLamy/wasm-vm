@@ -446,7 +446,7 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
         0x0200_0053,
         0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
         0xd200_0053,
-        0x0000_0043,
+        0x0000_0047,
     ] {
         assert!(
             translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),

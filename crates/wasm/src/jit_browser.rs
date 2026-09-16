@@ -986,6 +986,7 @@ pub struct BrowserExecutor {
     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
     _closures_fp_arith_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
+    _closures_fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64>,
     _closures_fp_from_int_s: Closure<dyn FnMut(i64, i32, i32) -> i64>,
     _closures_fp_to_word_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
     _closures_fp_div_s: Closure<dyn FnMut(i32, i32, i32) -> i64>,
@@ -1181,6 +1182,10 @@ impl BrowserExecutor {
             Closure::new(|a: i32, b: i32, rm: i32| {
                 wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
             });
+        let fp_fmadd_s: Closure<dyn FnMut(i32, i32, i32, i32) -> i64> =
+            Closure::new(|a: i32, b: i32, c: i32, rm: i32| {
+                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
+            });
 
         let env = Object::new();
         set_fn(&env, "load", &load);
@@ -1199,6 +1204,7 @@ impl BrowserExecutor {
         set_fn(&env, "fp_from_int_s", &fp_from_int_s);
         set_fn(&env, "fp_to_word_s", &fp_to_word_s);
         set_fn(&env, "fp_div_s", &fp_div_s);
+        set_fn(&env, "fp_fmadd_s", &fp_fmadd_s);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
@@ -1217,6 +1223,7 @@ impl BrowserExecutor {
             _closures_lr: lr,
             _closures_sc: sc,
             _closures_fp_arith_s: fp_arith_s,
+            _closures_fp_fmadd_s: fp_fmadd_s,
             _closures_fp_from_int_s: fp_from_int_s,
             _closures_fp_to_word_s: fp_to_word_s,
             _closures_fp_div_s: fp_div_s,

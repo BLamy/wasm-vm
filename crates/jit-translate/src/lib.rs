@@ -41,7 +41,7 @@ use wasm_emit::{
     BlockType, ExportKind, FuncBuilder, FuncType, GlobalType, Limits, MemType, ModuleBuilder,
     Mutability, RefType, TableType, ValType,
 };
-use wasm_vm_core::decode::{FpArithOp, FpIntWidth, Instr};
+use wasm_vm_core::decode::{FpArithOp, FpFusedOp, FpIntWidth, Instr};
 use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
 
 // ── E4-T25 test-only mutation hooks ─────────────────────────────────────────
@@ -757,6 +757,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         from_int: uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m)),
         to_word: uses_fp_to_word(block).then(|| add_fp_to_word_import(&mut m)),
         division: uses_fp_division(block).then(|| add_fp_division_import(&mut m)),
+        fmadd: uses_fp_fmadd(block).then(|| add_fp_fmadd_import(&mut m)),
     };
 
     let (reads, writes) = block_register_masks(block);
@@ -872,6 +873,7 @@ struct FpHelperImports {
     from_int: Option<u32>,
     to_word: Option<u32>,
     division: Option<u32>,
+    fmadd: Option<u32>,
 }
 
 fn uses_fp_to_word(block: &DecodedBlock) -> bool {
@@ -910,6 +912,25 @@ fn uses_fp_division(block: &DecodedBlock) -> bool {
 fn add_fp_division_import(m: &mut ModuleBuilder) -> u32 {
     let ty = m.add_type(FuncType::new(&[ValType::I32; 3], &[ValType::I64]));
     m.import_func("env", "fp_div_s", ty)
+}
+
+fn uses_fp_fmadd(block: &DecodedBlock) -> bool {
+    block.ops.iter().any(|op| {
+        matches!(
+            op.instr,
+            Instr::FpFusedS {
+                op: FpFusedOp::Madd,
+                ..
+            }
+        )
+    })
+}
+
+/// Append only when FMADD.S occurs. Modules without it retain their previous
+/// import and defined-function indices, including mixed earlier FP helpers.
+fn add_fp_fmadd_import(m: &mut ModuleBuilder) -> u32 {
+    let ty = m.add_type(FuncType::new(&[ValType::I32; 4], &[ValType::I64]));
+    m.import_func("env", "fp_fmadd_s", ty)
 }
 
 /// The third parameter in the browser direct-chain function signature. Host and cross-module
@@ -1296,6 +1317,10 @@ pub fn translate_batch_with_static_slots(
             .iter()
             .any(uses_fp_division)
             .then(|| add_fp_division_import(&mut m)),
+        fmadd: blocks
+            .iter()
+            .any(uses_fp_fmadd)
+            .then(|| add_fp_fmadd_import(&mut m)),
     };
 
     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
@@ -1525,6 +1550,11 @@ fn emit_body(
             fp_checked = true;
         }
         if let Instr::FpArithS { rm, .. }
+        | Instr::FpFusedS {
+            op: FpFusedOp::Madd,
+            rm,
+            ..
+        }
         | Instr::FcvtFromIntS { rm, .. }
         | Instr::FcvtToIntS { rm, .. } = op.instr
         {
@@ -2075,6 +2105,7 @@ fn supported(instr: &Instr) -> bool {
             | FmvXW { .. }
             | FpCmpS { .. }
             | FpArithS { op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div, .. }
+            | FpFusedS { op: FpFusedOp::Madd, .. }
             | FcvtFromIntS { .. }
             | FcvtToIntS { width: FpIntWidth::W | FpIntWidth::Wu, .. }
             | Flw { .. }
@@ -2097,6 +2128,10 @@ fn is_fp(instr: &Instr) -> bool {
             | Instr::FpCmpS { .. }
             | Instr::FpArithS {
                 op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div,
+                ..
+            }
+            | Instr::FpFusedS {
+                op: FpFusedOp::Madd,
                 ..
             }
             | Instr::FcvtFromIntS { .. }
@@ -2506,6 +2541,28 @@ fn emit_alu(
             set_reg(f, regs, rd);
         }
         FpCmpS { op, rd, rs1, rs2 } => emit_fp_compare(f, regs, abi, op, rd, rs1, rs2),
+        FpFusedS {
+            op: FpFusedOp::Madd,
+            rd,
+            rs1,
+            rs2,
+            rs3,
+            rm,
+        } => {
+            // Load/canonicalize every source before publishing the destination,
+            // including when rd aliases any of the three operands.
+            for source in [rs1, rs2, rs3] {
+                push_boxed_f32(f, abi, source);
+                f.i32_wrap_i64();
+            }
+            push_rounding_mode(f, abi, rm);
+            f.call(
+                fp_imports
+                    .fmadd
+                    .expect("selected FMADD.S imports its helper"),
+            );
+            emit_fp_packed_result(f, abi, rd);
+        }
         FpArithS {
             op,
             rd,

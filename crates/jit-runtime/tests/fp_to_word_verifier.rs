@@ -509,7 +509,7 @@ fn verifier_mixed_optional_indices_and_integer_behavior() {
         0x0800_0053,
         0x5800_0053, // FSQRT.S remains unsupported after the division slice.
         0x0200_0053,
-        0x0000_0043,
+        0x0000_0047,
     ] {
         assert!(
             translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),

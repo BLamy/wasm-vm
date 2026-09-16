@@ -196,6 +196,68 @@ fn f32_division_flags(a: u32, b: u32, rm: RoundMode, bits: u32, status: Status) 
     flags
 }
 
+/// Restore the pinned backend's two F32 fused-result flag gaps. Result bits
+/// already match single rounding; only inexact finite saturation and the
+/// smallest normal need an independent boundary check.
+fn f32_fma_flags(a: u32, b: u32, c: u32, rm: RoundMode, bits: u32, status: Status) -> Flags {
+    let mut flags = Flags::from_status(status);
+    let magnitude = bits & 0x7fff_ffff;
+    if status != Status::INEXACT || !matches!(magnitude, 0x7f7f_ffff | 0x0080_0000) {
+        return flags;
+    }
+    // All inputs here are finite. Negate both product and addend if needed,
+    // so the exact widened fused result is positive. Conversion is exact and
+    // binary64's exponent range contains every binary32 product and sum.
+    let negative = bits >> 31 != 0;
+    let flip = if negative { 0x8000_0000 } else { 0 };
+    let mut loses = false;
+    let x: Double = Single::from_bits(u128::from(a ^ flip))
+        .convert(&mut loses)
+        .value;
+    let y: Double = Single::from_bits(u128::from(b)).convert(&mut loses).value;
+    let z: Double = Single::from_bits(u128::from(c ^ flip))
+        .convert(&mut loses)
+        .value;
+    let away =
+        matches!(rm, RoundMode::Rdn) && negative || matches!(rm, RoundMode::Rup) && !negative;
+    // Each comparison threshold is exactly representable in binary64. A
+    // downward-rounded magnitude preserves >= and <; upward preserves <=.
+    // Nearest rounding would lose a tiny addend in 2^128 +/- 2^-149.
+    let wide = x
+        .mul_add_r(
+            y,
+            z,
+            if magnitude == 0x0080_0000 && away {
+                Round::TowardPositive
+            } else {
+                Round::TowardZero
+            },
+        )
+        .value;
+    if magnitude == 0x7f7f_ffff {
+        if wide >= Double::from_bits(0x47f0_0000_0000_0000) {
+            // 2^128
+            flags.0 |= Flags::OF;
+        }
+    } else {
+        // Precision-24 rounding with an unbounded exponent: nearest reaches
+        // normal at 2^-126 - 2^-151; away reaches it strictly above
+        // 2^-126 - 2^-150. Below 2^-126, binary64 spacing is 2^-179.
+        let normal = 0x3810_0000_0000_0000_u128;
+        let tiny = if away {
+            wide <= Double::from_bits(normal - (1 << 29))
+        } else if matches!(rm, RoundMode::Rne | RoundMode::Rmm) {
+            wide < Double::from_bits(normal - (1 << 28))
+        } else {
+            wide < Double::from_bits(normal)
+        };
+        if tiny {
+            flags.0 |= Flags::UF;
+        }
+    }
+    flags
+}
+
 /// Generate the [`SoftFloat`] impl for one format from its apfloat type + geometry.
 macro_rules! impl_softfloat {
     ($marker:ident, $ap:ty, $bits:ty, $mant:expr, $exp:expr, $bias:expr) => {
@@ -273,7 +335,13 @@ macro_rules! impl_softfloat {
             }
             fn fma(a: $bits, b: $bits, c: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let r = Float::mul_add_r(Self::of(a), Self::of(b), Self::of(c), rm.to_apfloat());
-                (Self::bits(r.value), Flags::from_status(r.status))
+                let bits = Self::bits(r.value);
+                let flags = if $mant == 23 {
+                    f32_fma_flags(a as u32, b as u32, c as u32, rm, bits as u32, r.status)
+                } else {
+                    Flags::from_status(r.status)
+                };
+                (bits, flags)
             }
             fn sqrt(a: $bits, rm: RoundMode) -> ($bits, Flags) {
                 let (bits, f) = ieee_sqrt(a as u128, $mant, $exp, $bias, rm);

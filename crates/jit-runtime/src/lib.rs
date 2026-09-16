@@ -432,6 +432,11 @@ impl WasmtimeExecutor {
                 wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
             })
             .expect("register env.fp_div_s");
+        linker
+            .func_wrap("env", "fp_fmadd_s", |a: i32, b: i32, c: i32, rm: i32| {
+                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
+            })
+            .expect("register env.fp_fmadd_s");
         let registry_hasher = JitBuildHasher::default();
         WasmtimeExecutor {
             engine,

@@ -1864,7 +1864,7 @@ fn fp_ops_are_unsupported() {
             rm: 7,
         },
         FpFusedS {
-            op: FpFusedOp::Madd,
+            op: FpFusedOp::Msub,
             rd: 1,
             rs1: 2,
             rs2: 3,

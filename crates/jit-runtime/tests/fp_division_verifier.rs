@@ -579,7 +579,7 @@ fn verifier_mixed_optional_indices_and_integer_behavior() {
         0x0800_0053,
         0x1a00_0053,
         0x0200_0053,
-        0x0000_0043,
+        0x0000_0047,
         0x5800_0053,
     ] {
         assert!(

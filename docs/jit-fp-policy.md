@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–12
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–13
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -305,3 +305,39 @@ regression, alongside native/private/shared generated-module evidence.
 
 Instruction correctness does not establish desktop responsiveness. The actual
 trusted-keyboard, independent nonce and visible-response gate remains 120 seconds.
+
+## 13. Measured single-precision fused multiply-add (E5.5-T03an)
+
+The recorded R3 workload also contains 1,278,792 FMADD-opcode retirements.
+The raw opcode histogram does not separate formats. Independently rebuilding
+its saved renderer address space locates 24 FMADD.S/dynamic-rounding parcels
+in the measured hot regions. This corrects the earlier claim that the selected
+FP subsets exhausted the measured workload. The exact AL post-failure host
+sample still executes F32::fma. Neither observation establishes a speedup.
+
+FMADD.S alone now calls `env.fp_fmadd_s(i32 a, i32 b, i32 c, i32 rm) -> i64`.
+The helper performs one software fused operation. All three NaN boxes and the
+resolved rounding mode are checked before the call, and all sources are read
+before destination publication, preserving every alias position. Result bits,
+sticky flags, FS Dirty and the FPR write mask use the established packed-result
+path. The optional import follows the four earlier FP helpers and keeps its
+allocated index; modules without FMADD retain their previous layout. Other
+fused instructions and double precision retain their admission policy.
+
+Independent exact-rational literals found missing OF for finite saturation and
+missing UF at some tiny results rounded to normal in the existing F32 fused
+backend. A narrow correction preserves its result bits and only checks those
+two inexact boundary outputs. It widens the inputs exactly to software binary64
+and performs a directed fused operation; binary64 has sufficient exponent range
+for every binary32 product and sum. Every comparison threshold is exactly
+representable, so downward magnitude rounding preserves strict-less-than and
+at-least comparisons, and upward rounding preserves at-most comparisons. This
+also distinguishes 2^128 minus a minimum subnormal from 2^128 plus one, which a
+nearest-rounded wider check could conflate. The shared F32 correction applies
+to interpreted fused sign variants; F64 and other arithmetic families remain
+unchanged. No host floating-point operation is introduced.
+
+Semantics follow the [RISC-V fused-operation rules](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/f-st-ext.adoc)
+and the primary [SoftFloat fused operation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_mulAddF32.c)
+and [rounding implementation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c).
+The actual physical nonce and visible returned-prompt gate remains 120 seconds.

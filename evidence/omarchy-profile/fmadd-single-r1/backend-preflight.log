@@ -1,0 +1,45 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.62s
+     Running tests/fp_fmadd_flags.rs (target/debug/deps/fp_fmadd_flags-ab8a50fc0e834026)
+
+running 1 test
+FMA_MISMATCH a=ffffffff7f7fffff b=ffffffff40000000 c=ffffffff00000000 rm=1 actual=7f7fffff/01 expected=7f7fffff/05
+FMA_MISMATCH a=ffffffff7f7fffff b=ffffffff40000000 c=ffffffff00000000 rm=2 actual=7f7fffff/01 expected=7f7fffff/05
+FMA_MISMATCH a=ffffffffff7fffff b=ffffffff40000000 c=ffffffff00000000 rm=1 actual=ff7fffff/01 expected=ff7fffff/05
+FMA_MISMATCH a=ffffffffff7fffff b=ffffffff40000000 c=ffffffff00000000 rm=3 actual=ff7fffff/01 expected=ff7fffff/05
+FMA_MISMATCH a=ffffffff5f800000 b=ffffffff5f800000 c=ffffffff00000001 rm=1 actual=7f7fffff/01 expected=7f7fffff/05
+FMA_MISMATCH a=ffffffff5f800000 b=ffffffff5f800000 c=ffffffff00000001 rm=2 actual=7f7fffff/01 expected=7f7fffff/05
+FMA_MISMATCH a=ffffffffdf800000 b=ffffffff5f800000 c=ffffffff80000001 rm=1 actual=ff7fffff/01 expected=ff7fffff/05
+FMA_MISMATCH a=ffffffffdf800000 b=ffffffff5f800000 c=ffffffff80000001 rm=3 actual=ff7fffff/01 expected=ff7fffff/05
+FMA_MISMATCH a=ffffffff00800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=0 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff00800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=3 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff00800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=4 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=0 actual=80800000/01 expected=80800000/03
+FMA_MISMATCH a=ffffffff80800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=2 actual=80800000/01 expected=80800000/03
+FMA_MISMATCH a=ffffffff80800000 b=ffffffff3f7fffff c=ffffffff00000000 rm=4 actual=80800000/01 expected=80800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3e800001 c=ffffffff00800000 rm=0 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3e800001 c=ffffffff00800000 rm=4 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3f000000 c=ffffffff00800000 rm=0 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3f000000 c=ffffffff00800000 rm=3 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3f000000 c=ffffffff00800000 rm=4 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3effffff c=ffffffff00800000 rm=0 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3effffff c=ffffffff00800000 rm=4 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff80000001 b=ffffffff3f000001 c=ffffffff00800000 rm=3 actual=00800000/01 expected=00800000/03
+FMA_MISMATCH a=ffffffff00000001 b=ffffffff3e800001 c=ffffffff80800000 rm=0 actual=80800000/01 expected=80800000/03
+FMA_MISMATCH a=ffffffff00000001 b=ffffffff3e800001 c=ffffffff80800000 rm=4 actual=80800000/01 expected=80800000/03
+
+thread 'independent_fmadd_literal_bits_and_flags' (27029072) panicked at crates/core/tests/fp_fmadd_flags.rs:25:5:
+assertion `left == right` failed
+  left: 24
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test independent_fmadd_literal_bits_and_flags ... FAILED
+
+failures:
+
+failures:
+    independent_fmadd_literal_bits_and_flags
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test fp_fmadd_flags`
