@@ -1,0 +1,60 @@
+{
+  "head": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "commands": [
+    {
+      "label": "recorder",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-desktop-services.test.mjs",
+        "tools/verify/omarchy-latency-receipt.test.mjs",
+        "web/tests/omarchy-cold-counter-recycling.test.mjs",
+        "web/tests/e5-t26f-jit-residency.test.mjs",
+        "web/tests/omarchy-desktop-readiness.test.mjs",
+        "web/tests/omarchy-desktop-services.test.mjs",
+        "web/tests/omarchy-desktop-agent-session.test.mjs"
+      ],
+      "startedAt": "2026-09-16T01:48:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T01:48:31Z"
+    },
+    {
+      "label": "recycling-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-recycling-ab.mjs"
+      ],
+      "startedAt": "2026-09-16T01:48:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T01:48:31Z"
+    },
+    {
+      "label": "residency-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-residency-ab.mjs"
+      ],
+      "startedAt": "2026-09-16T01:48:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T01:48:31Z"
+    },
+    {
+      "label": "recorder-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-desktop-live.mjs"
+      ],
+      "startedAt": "2026-09-16T01:48:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T01:48:31Z"
+    }
+  ],
+  "allPassed": true
+}

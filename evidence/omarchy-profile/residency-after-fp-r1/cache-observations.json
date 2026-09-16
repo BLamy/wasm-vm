@@ -1,0 +1,115 @@
+{
+  "limits": [
+    "Retranslations count recurring previously evicted physical PCs, not equal code bytes.",
+    "Evictions count whole batches, while installs and retranslations count blocks.",
+    "One pair establishes its absolute input outcomes, not a comparative speedup."
+  ],
+  "arms": [
+    {
+      "arm": "control",
+      "policy": "repack-off",
+      "cap": 24,
+      "before": {
+        "guestRetired": 1637987918,
+        "retiredViaJit": 927520618,
+        "jitCacheInstalls": 21642,
+        "jitCacheRetranslations": 19569,
+        "jitCacheEvictions": 5733,
+        "jitCacheBatches": 23,
+        "jitCacheCodeBytes": 1712024,
+        "compiledBlocks": 49
+      },
+      "after": {
+        "guestRetired": 2824440534,
+        "retiredViaJit": 1316918437,
+        "jitCacheInstalls": 34820,
+        "jitCacheRetranslations": 32338,
+        "jitCacheEvictions": 8148,
+        "jitCacheBatches": 21,
+        "jitCacheCodeBytes": 1792920,
+        "compiledBlocks": 119
+      },
+      "delta": {
+        "guestRetired": 1186452616,
+        "retiredViaJit": 389397819,
+        "jitCacheInstalls": 13178,
+        "jitCacheRetranslations": 12769,
+        "jitCacheEvictions": 2415,
+        "jitCacheBatches": -2,
+        "jitCacheCodeBytes": 80896,
+        "compiledBlocks": 70
+      },
+      "queueBefore": {
+        "admitted": 29672,
+        "droppedBackpressure": 15068,
+        "cancelledStale": 0,
+        "popped": 24468,
+        "queueHighWater": 256,
+        "queueDepth": 0,
+        "capacity": 256
+      },
+      "queueAfter": {
+        "admitted": 71900,
+        "droppedBackpressure": 86338,
+        "cancelledStale": 0,
+        "popped": 43416,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      }
+    },
+    {
+      "arm": "candidate",
+      "policy": "cap-256",
+      "cap": 256,
+      "before": {
+        "guestRetired": 1388488798,
+        "retiredViaJit": 1137572692,
+        "jitCacheInstalls": 3532,
+        "jitCacheRetranslations": 531,
+        "jitCacheEvictions": 650,
+        "jitCacheBatches": 208,
+        "jitCacheCodeBytes": 17088869,
+        "compiledBlocks": 960
+      },
+      "after": {
+        "guestRetired": 3031923059,
+        "retiredViaJit": 2227819514,
+        "jitCacheInstalls": 17278,
+        "jitCacheRetranslations": 13163,
+        "jitCacheEvictions": 3770,
+        "jitCacheBatches": 246,
+        "jitCacheCodeBytes": 19072423,
+        "compiledBlocks": 1176
+      },
+      "delta": {
+        "guestRetired": 1643434261,
+        "retiredViaJit": 1090246822,
+        "jitCacheInstalls": 13746,
+        "jitCacheRetranslations": 12632,
+        "jitCacheEvictions": 3120,
+        "jitCacheBatches": 38,
+        "jitCacheCodeBytes": 1983554,
+        "compiledBlocks": 216
+      },
+      "queueBefore": {
+        "admitted": 8609,
+        "droppedBackpressure": 6369,
+        "cancelledStale": 0,
+        "popped": 5855,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      },
+      "queueAfter": {
+        "admitted": 53487,
+        "droppedBackpressure": 45735,
+        "cancelledStale": 0,
+        "popped": 32151,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "head": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+  "recordingHead": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+  "verifiedRuntimeParent": "53103e762c6c4003a5976bfa90131a03702fd2e7",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "narrowChecksPassed": true,
+  "responsive": {
+    "control": false,
+    "candidate": false
+  },
+  "allFourImagesViewed": true,
+  "runtimeChanges": false,
+  "harnessChanges": true,
+  "sealedAt": "2026-09-16T01:59:26Z"
+}
