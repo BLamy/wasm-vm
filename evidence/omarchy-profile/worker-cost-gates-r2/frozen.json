@@ -1,0 +1,91 @@
+{
+  "head": "8ad5886126ddf062403455e266471d83e0e7feee",
+  "verifiedParent": "53103e762c6c4003a5976bfa90131a03702fd2e7",
+  "frozenAt": "2026-09-16T02:34:20Z",
+  "files": [
+    {
+      "path": "crates/core/src/jit.rs",
+      "sha256": "fb81d1cdd4dddf41583f7b9f1270c82cc9d7098d9d02ad864e0c10f72d9a10ce",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/core/src/dispatch.rs",
+      "sha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "sha256": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/wasm/src/jit_browser.rs",
+      "sha256": "148966dd4910b95ca25444c4c9ce5cc9033ff4a5f59a61273cdffa1b7a008ded",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/main.js",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "sha256": "d255b57b497e35275458d48a63fd064af7fc6083d0b8618a53ed3895c2a74301",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-recycling-ab.mjs",
+      "sha256": "5a8d7b1a9b82b59b2355d22c2fc460681d50ea228f8f21595f6b42afad50175b",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-residency-ab.mjs",
+      "sha256": "20c564cd64500607490a9ea78f787f59ead9cfac942deeb6b382e2945b106180",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "04f16e0a3dce5979e4eba824f818b52e00af6e42af6e36f8c410caa018ecfaa2",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "07be829a35c6453d1af1a231f66c6c38f13e2e51fef619419c8540862a75aaf8",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost.mjs",
+      "sha256": "c42b70a3ddfe7469dca3ae32b786b7c8e275a2c831a2fc3aa60b76187c85c7d7",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost-capture.mjs",
+      "sha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/e5-t22c-cpu-profile.mjs",
+      "sha256": "d80ef3a26e4c40eea023205e10bf0356c55938c1772fd8d502aa7c871e82c88b",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/e5-t22c-symbolize-cpu.mjs",
+      "sha256": "15006e82701a6aa010e1e96638e4d6cf5f07118843c8c4c0d4bb79f1fd9519d5",
+      "unchangedFromVerified": false
+    }
+  ],
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "priorDivisionIndexSha256": "da8b6685880651034ec46f81a030ba2dcb516d8c1eb5fba551bb7158829e902a",
+  "priorDivisionEvidenceFiles": 69,
+  "otherBudgets": {
+    "code_bytes": 33554432,
+    "table_slots": 32768,
+    "metadata_bytes": 8388608
+  },
+  "budgetProof": "Unchanged selector assigns only max_batches; unchanged BrowserExecutor defaults and JitCacheBudget::DEFAULT supply all other budgets. These are source-bound values, not new runtime observations."
+}

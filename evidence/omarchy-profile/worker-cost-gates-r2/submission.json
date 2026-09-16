@@ -1,0 +1,14 @@
+{
+  "recordingHead": "8ad5886126ddf062403455e266471d83e0e7feee",
+  "runtimeParent": "53103e762c6c4003a5976bfa90131a03702fd2e7",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "reportSha256": "41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555",
+  "profileSha256": "a6e8f0c8189b783efc4e293f6001df4d9e559e3ca814bd5097ae394b781146b2",
+  "namedSha256": "106b3345fbf40110f6de4cb1f89e772f8f539ef0c617bec8f6c597da90d1805b",
+  "noPostVerdictIngress": true,
+  "desktopResponsive": false,
+  "r1Protocol": "refuted",
+  "preservedR1Files": 30,
+  "narrowChecksPassed": true,
+  "claim": "Exact post-verdict host cost captured; desktop still fails physical input."
+}

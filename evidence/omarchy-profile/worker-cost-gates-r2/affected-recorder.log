@@ -1,0 +1,21 @@
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.805542ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (4.977917ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.240625ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (12.504459ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (51.674333ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (12.443291ms)
+✔ post-verdict audit rejects every ingress channel, including R1 tablet sends and acknowledgements (2.25825ms)
+✔ profile validates exact worker, span, sample references and an unambiguous tree (2.991375ms)
+✔ capture cannot attach before failed deadline or without the failure image (1.585208ms)
+✔ synthetic capture preserves failed verdict and binds raw bytes; not a guest success fixture (3.063292ms)
+✔ a profiler that mutates the verdict is rejected and closed without a usable profile (1.258458ms)
+✔ cleanup timing annotations do not change the frozen input verdict (0.158875ms)
+✔ an attachment completing after the fixed capture deadline cannot start sampling (0.786458ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.926583

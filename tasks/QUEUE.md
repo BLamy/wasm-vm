@@ -471,7 +471,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02694` [E5.5-T03z](epic-5.5-omarchy/E5.5-T03z-jit-fp-division.md) — Keep measured single-precision divisions in compiled renderer blocks *(deps: E5.5-T03y)*
 - [x] `525.02695` [E5.5-T03aa](epic-5.5-omarchy/E5.5-T03aa-admission-after-fp.md) — Retest bounded admission recycling with measured renderer FP supported *(deps: E5.5-T03z)*
 - [x] `525.02696` [E5.5-T03ab](epic-5.5-omarchy/E5.5-T03ab-residency-after-fp.md) — Test existing compiled-code retention after measured FP support *(deps: E5.5-T03aa)*
-- [~] `525.02697` [E5.5-T03ac](epic-5.5-omarchy/E5.5-T03ac-worker-cost-profile.md) — Profile exact worker cost after the fixed Omarchy input verdict *(deps: E5.5-T03ab)*
+- [?] `525.02697` [E5.5-T03ac](epic-5.5-omarchy/E5.5-T03ac-worker-cost-profile.md) — Profile exact worker cost after the fixed Omarchy input verdict *(deps: E5.5-T03ab)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03ac)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
