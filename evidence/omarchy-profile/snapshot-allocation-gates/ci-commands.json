@@ -1,0 +1,19 @@
+{
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "phase": "ci",
+  "wasmSha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4",
+  "commands": [
+    {
+      "label": "ci",
+      "args": [
+        "make",
+        "-k",
+        "ci"
+      ],
+      "startedAt": "2026-09-16T06:14:57Z",
+      "code": 2,
+      "finishedAt": "2026-09-16T06:21:23Z"
+    }
+  ],
+  "allPassed": false
+}

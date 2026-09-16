@@ -1,0 +1,178 @@
+{
+  "purpose": "full-size snapshot save/restore and durable export; no responsiveness claim",
+  "head": "bb3c13dd6014ca15f29fe897b3ba207d65bc67b8",
+  "startedAt": "2026-09-16T06:18:08.068Z",
+  "inputs": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "bootSnapshot": {
+      "size": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+    },
+    "overlayDelta": {
+      "size": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+    }
+  },
+  "source": {
+    "crates/core/src/resume.rs": {
+      "size": 31136,
+      "sha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3"
+    },
+    "tools/verify/omarchy-snapshot-allocation.mjs": {
+      "size": 12537,
+      "sha256": "0e17c10459b3154bd7475b75d7347284e2936c64712365eb397e3155ad10909c"
+    },
+    "web/dist/pkg/wasm_vm_wasm.js": {
+      "size": 121404,
+      "sha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec"
+    },
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+      "size": 1597586,
+      "sha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4"
+    },
+    "web/dist/roadmap.js": {
+      "size": 51201,
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    }
+  },
+  "logs": [
+    {
+      "name": "constructed",
+      "timestamp": "2026-09-16T06:18:09.888Z",
+      "memory": 1128005632
+    },
+    {
+      "name": "restored",
+      "timestamp": "2026-09-16T06:18:14.381Z",
+      "memory": 3109683200,
+      "originalBytes": 899181735,
+      "digest": "7b4695440b7bb6bfaa07b19e90afb758692627bd571fa2d6dd40d2e68e37616b",
+      "generation": 0
+    },
+    {
+      "name": "expected-restore",
+      "timestamp": "2026-09-16T06:18:14.731Z",
+      "memory": 3109683200,
+      "label": "first",
+      "consoleOffset": 899181383,
+      "queueBefore": 0,
+      "queueAfter": 1,
+      "generationBefore": "1",
+      "generationAfter": "2",
+      "sha256": "18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8"
+    },
+    {
+      "name": "saved",
+      "timestamp": "2026-09-16T06:18:18.893Z",
+      "memory": 3109683200,
+      "bytes": 899181735,
+      "sha256": "18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8"
+    },
+    {
+      "name": "expected-restore",
+      "timestamp": "2026-09-16T06:18:22.068Z",
+      "memory": 4183490560,
+      "label": "second",
+      "consoleOffset": 899181383,
+      "queueBefore": 1,
+      "queueAfter": 1,
+      "generationBefore": "2",
+      "generationAfter": "3",
+      "sha256": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9"
+    },
+    {
+      "name": "roundtrip",
+      "timestamp": "2026-09-16T06:18:23.233Z",
+      "memory": 4183490560,
+      "sha256": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9"
+    },
+    {
+      "name": "persisted",
+      "timestamp": "2026-09-16T06:18:26.802Z",
+      "memory": 4183490560
+    },
+    {
+      "name": "expected-restore",
+      "timestamp": "2026-09-16T06:18:35.139Z",
+      "memory": 4183490560,
+      "label": "durable",
+      "consoleOffset": 899181383,
+      "queueBefore": 1,
+      "queueAfter": 1,
+      "generationBefore": "3",
+      "generationAfter": "4",
+      "sha256": "43976354793566e4fbca8f2935f122f0a857893d1f674aba9c0316ed32fd8dba"
+    },
+    {
+      "name": "durable-restored",
+      "timestamp": "2026-09-16T06:18:36.309Z",
+      "memory": 4183490560,
+      "sha256": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9"
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "browser": "152.0.7977.84",
+  "snapshot": {
+    "ramMiB": 1024,
+    "guestInstructionsExecuted": 0,
+    "originalBytes": 899181735,
+    "snapshotBytes": 899181735,
+    "firstHash": "18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8",
+    "secondHash": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9",
+    "storedHash": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9",
+    "thirdHash": "43976354793566e4fbca8f2935f122f0a857893d1f674aba9c0316ed32fd8dba",
+    "digest": "7b4695440b7bb6bfaa07b19e90afb758692627bd571fa2d6dd40d2e68e37616b",
+    "generation": 0,
+    "expectedFirst": {
+      "label": "first",
+      "consoleOffset": 899181383,
+      "queueBefore": 0,
+      "queueAfter": 1,
+      "generationBefore": "1",
+      "generationAfter": "2",
+      "sha256": "18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8"
+    },
+    "expectedSecond": {
+      "label": "second",
+      "consoleOffset": 899181383,
+      "queueBefore": 1,
+      "queueAfter": 1,
+      "generationBefore": "2",
+      "generationAfter": "3",
+      "sha256": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9"
+    },
+    "expectedThird": {
+      "label": "durable",
+      "consoleOffset": 899181383,
+      "queueBefore": 1,
+      "queueAfter": 1,
+      "generationBefore": "3",
+      "generationAfter": "4",
+      "sha256": "43976354793566e4fbca8f2935f122f0a857893d1f674aba9c0316ed32fd8dba"
+    },
+    "decision": "resume",
+    "stale": "stale",
+    "foreign": "foreign_image",
+    "storedDecision": "resume",
+    "beforeMemory": 3109683200,
+    "afterMemory": 4183490560,
+    "overlayName": "wvov-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44-seed-ef91edbad85c249d8783402f5921da82048a5444ed2e88709b0e2378becadded"
+  },
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "capability": "Desktop snapshot reload + interaction round-tripE5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved.",
+  "capabilityEvidence": "E5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved.",
+  "suiteScreenshot": "cc9b988227b387ef25621cb1c1690fccee5e7ff358eb6d922c87dacd4037d9e0",
+  "finishedAt": "2026-09-16T06:18:43.349Z"
+}

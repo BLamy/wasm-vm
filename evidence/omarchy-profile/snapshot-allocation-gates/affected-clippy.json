@@ -1,0 +1,33 @@
+{
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "args": [
+    "cargo",
+    "clippy",
+    "-p",
+    "wasm-vm-core",
+    "--lib",
+    "--test",
+    "cpu_resume",
+    "--test",
+    "snapshot_coherence",
+    "--test",
+    "virtio_blk_quiesce",
+    "--test",
+    "guest_clock",
+    "--test",
+    "desktop_machine_resume",
+    "--test",
+    "desktop_machine_resume_verifier",
+    "--test",
+    "desktop_machine_audio_resume",
+    "--test",
+    "virtio_console",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "startedAt": "2026-09-16T06:14:58Z",
+  "reason": "The unspecialized all-tests clippy found pre-existing plic_sparse missing trace feature; check every affected native target explicitly.",
+  "code": 0,
+  "finishedAt": "2026-09-16T06:15:03Z"
+}

@@ -1,0 +1,19 @@
+{
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "phase": "browser",
+  "wasmSha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4",
+  "commands": [
+    {
+      "label": "browser",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "tools/verify/omarchy-snapshot-allocation.mjs",
+        "evidence/omarchy-profile/snapshot-allocation-r1"
+      ],
+      "startedAt": "2026-09-16T06:14:13Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:14:59Z"
+    }
+  ],
+  "allPassed": true
+}
