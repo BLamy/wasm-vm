@@ -1,0 +1,154 @@
+{
+  "reportSha256": "abc4f6e07166f2569b6e619e4556844897f53fc432a40571ba683e2432d7a771",
+  "runSha256": "ee23a92b51da6172a888e3e2ed326268cdc91057411597c6050bb31d51ca7727",
+  "exportCalls": [
+    {
+      "workerTrafficIndex": 1925,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.177Z",
+      "ms": 575357.2100000381,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1898,
+      "method": "pause",
+      "args": [],
+      "sent": true
+    },
+    {
+      "workerTrafficIndex": 1926,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.196Z",
+      "ms": 575375.6300001144,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1899,
+      "method": "isPaused",
+      "args": [],
+      "sent": true
+    },
+    {
+      "workerTrafficIndex": 1927,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.196Z",
+      "ms": 575376.3150000572,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1900,
+      "method": "persist",
+      "args": [],
+      "sent": true
+    },
+    {
+      "workerTrafficIndex": 1928,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.197Z",
+      "ms": 575377.245000124,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1901,
+      "method": "persistStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "workerTrafficIndex": 1929,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.249Z",
+      "ms": 575428.6850001812,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1902,
+      "method": "persistStats",
+      "args": [],
+      "sent": true
+    },
+    {
+      "workerTrafficIndex": 1930,
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T05:32:48.250Z",
+      "ms": 575429.5,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1903,
+      "method": "snapshotSave",
+      "args": [],
+      "sent": true
+    }
+  ],
+  "persistence": {
+    "stats": {
+      "pendingBlocks": 0,
+      "pendingBytes": 0,
+      "flushWaiting": false,
+      "writeWaiting": false
+    },
+    "settled": {
+      "pendingBlocks": 0,
+      "pendingBytes": 0,
+      "flushWaiting": false,
+      "writeWaiting": false
+    },
+    "timestamp": "2026-09-16T05:32:48.249Z"
+  },
+  "error": "page.evaluate: Error: Uncaught RuntimeError: unreachable\n    at Worker.<anonymous> (http://127.0.0.1:62440/linux-worker-host.js:82:17)\n    at capturePair (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1048:27)\n    at async withinTrialDeadline (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-input-trial.mjs:92:20)\n    at async prepareDirectOpaqueDesktop (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-direct-opaque-preparation.mjs:47:5)\n    at async runLive (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1201:5)\n    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1414:3",
+  "guestErrorEvents": [
+    {
+      "type": "wvm:guest-error",
+      "detail": {
+        "message": "Uncaught RuntimeError: unreachable"
+      },
+      "ms": 577037.7350001335
+    },
+    {
+      "type": "wvm:guest-error",
+      "detail": {
+        "message": "Uncaught RuntimeError: unreachable"
+      },
+      "ms": 577038.9100000858
+    }
+  ],
+  "preparationGatesCompleted": true,
+  "exportFailureAfterMs": 1684,
+  "pairDirectoryEmpty": true,
+  "usablePair": false,
+  "ownedChildClosed": true,
+  "sourceChain": [
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "line": 1048,
+      "text": "assert.equal(await page.evaluate(() => window.__snapshotSave()), true);",
+      "sha256": "de42ef8250a39861f58c76b005bb1ba4b4b29b18cd1248664ba4e73833369932"
+    },
+    {
+      "path": "web/main.js",
+      "line": 2468,
+      "text": "await linuxCtl.snapshotSave();",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab"
+    },
+    {
+      "path": "web/loader.js",
+      "line": 1375,
+      "text": "return machine.persistSnapshot();",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "line": 4209,
+      "text": "let blob = inner.machine.save_resume().map_err(|e| match e {",
+      "sha256": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0"
+    },
+    {
+      "path": "web/linux-worker-host.js",
+      "line": 82,
+      "text": "client.fail(new Error(event?.message || \"whole-machine worker error\"));",
+      "sha256": "fb6e9b2c0517e463e75c534dc12792ded532ca1050139fc0346cf08e7df52d82"
+    }
+  ],
+  "conclusion": "Snapshot-save invocation failed before snapshot export or exact overlay-store selection. The intended API was called; the recording lacks a Rust panic/allocation stack, so it does not establish a harness-only correction or a specific Rust trap cause."
+}

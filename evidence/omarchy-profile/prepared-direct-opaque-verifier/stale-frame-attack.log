@@ -1,0 +1,345 @@
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T05:23:41.726Z","brightPixels":192,"brightColors":16,"nonblank":true,"frames":5}
+{
+  "synthetic": true,
+  "noGuestOrBrowser": true,
+  "sourceSha256": "7f0b758be12f06353b3053295e6892700bf8d2c984d731723881772a7244332b",
+  "prediction": "Nonblank frame 5 painted during the batch fails after baseline 5; actual callback frame 6 may pass only as synthetic harness coverage.",
+  "stale": {
+    "synthetic": true,
+    "fresh": false,
+    "calls": [
+      "direct-opaque-preparation-before",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "post-response-baseline",
+      "actual-native-pixel-callback"
+    ],
+    "captures": [],
+    "elapsedMs": 151,
+    "configuration": {
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "requestCount": 1,
+      "startedAt": "2026-09-16T05:23:41.723Z",
+      "deadlineAtMs": 1789536221872,
+      "status": "properties-confirmed",
+      "response": {
+        "exit": 0,
+        "stdout": "ok\n\nok\n\nok\n\nok\n\nok\n\nok\n\nok\n\nok\n\ntrue\n\ntrue\n\n1\n\n1.000000\n\n1.0\n\ntrue\n\ntrue\n\ntrue\n\n{\"address\":\"0xcafe123\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[12,38],\"size\":[1256,750]}\n"
+      },
+      "respondedAt": "2026-09-16T05:23:41.723Z",
+      "foot": {
+        "address": "0xcafe123",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "finishedAt": "2026-09-16T05:23:41.723Z"
+    },
+    "preparation": {
+      "purpose": "offline-direct-opaque-preparation-no-input",
+      "startedAt": "2026-09-16T05:23:41.722Z",
+      "deadlineAt": "2026-09-16T05:23:41.872Z",
+      "status": "preparation-failed-input-untested",
+      "keyboardTested": false,
+      "runtimeBefore": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 4,
+          "successfulPresents": 4,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "foot": {
+        "address": "0xcafe123",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "presentationBaseline": {
+        "backend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "latest": {
+          "resourceWidth": 1280,
+          "resourceHeight": 832,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          }
+        }
+      },
+      "baselineAt": "2026-09-16T05:23:41.724Z",
+      "lastPixels": {
+        "state": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 5,
+          "successfulPresents": 5,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        },
+        "pixels": {
+          "brightPixels": 192,
+          "brightColors": 16,
+          "nonblank": true
+        }
+      },
+      "error": "Error: direct opaque preparation: wait for visible Foot: deadline exceeded (UNPROVEN)",
+      "finishedAt": "2026-09-16T05:23:41.873Z"
+    }
+  },
+  "freshControl": {
+    "synthetic": true,
+    "fresh": true,
+    "calls": [
+      "direct-opaque-preparation-before",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "post-response-baseline",
+      "actual-native-pixel-callback",
+      "direct-opaque-preparation-ready"
+    ],
+    "captures": [
+      "prepared-desktop.png",
+      "synthetic-export"
+    ],
+    "elapsedMs": 2,
+    "configuration": {
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "requestCount": 1,
+      "startedAt": "2026-09-16T05:23:41.874Z",
+      "deadlineAtMs": 1789536222024,
+      "status": "properties-confirmed",
+      "response": {
+        "exit": 0,
+        "stdout": "ok\n\nok\n\nok\n\nok\n\nok\n\nok\n\nok\n\nok\n\ntrue\n\ntrue\n\n1\n\n1.000000\n\n1.0\n\ntrue\n\ntrue\n\ntrue\n\n{\"address\":\"0xcafe123\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[12,38],\"size\":[1256,750]}\n"
+      },
+      "respondedAt": "2026-09-16T05:23:41.874Z",
+      "foot": {
+        "address": "0xcafe123",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "finishedAt": "2026-09-16T05:23:41.874Z"
+    },
+    "preparation": {
+      "purpose": "offline-direct-opaque-preparation-no-input",
+      "startedAt": "2026-09-16T05:23:41.874Z",
+      "deadlineAt": "2026-09-16T05:23:42.024Z",
+      "status": "pair-captured-input-untested",
+      "keyboardTested": false,
+      "runtimeBefore": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 4,
+          "successfulPresents": 4,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "foot": {
+        "address": "0xcafe123",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "presentationBaseline": {
+        "backend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "latest": {
+          "resourceWidth": 1280,
+          "resourceHeight": 832,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          }
+        }
+      },
+      "baselineAt": "2026-09-16T05:23:41.874Z",
+      "lastPixels": {
+        "state": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 6,
+          "successfulPresents": 6,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        },
+        "pixels": {
+          "brightPixels": 192,
+          "brightColors": 16,
+          "nonblank": true
+        }
+      },
+      "runtimeAfter": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 6,
+          "successfulPresents": 6,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "visibleAt": "2026-09-16T05:23:41.876Z",
+      "exportStartedAt": "2026-09-16T05:23:41.876Z",
+      "exportDeadlineAt": "2026-09-16T05:26:41.876Z",
+      "exportFinishedAt": "2026-09-16T05:23:41.876Z",
+      "finishedAt": "2026-09-16T05:23:41.876Z"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "sourceHead": "32c412f7ea0fe34d1b2f9f28ace3004a1ed64fad",
+  "zeroGuestInstructions": true,
+  "symbols": {
+    "1821": "alloc[6233274513061a0e]::alloc::handle_alloc_error",
+    "1669": "alloc[6233274513061a0e]::raw_vec::handle_error",
+    "1016": "alloc::raw_vec::RawVecInner<A>::reserve::do_reserve_and_handle::h71644e02895ef486",
+    "945": "wasm_vm_core::resume::SnapshotWriter::section::hc95d8a97c69d6019",
+    "191": "wasm_vm_core::Machine::save_resume::h5dd7f3563ac02635",
+    "1513": "wasmlinux_saveSnapshot multivalue shim"
+  },
+  "namedCompanionEvidence": "evidence/omarchy-profile/worker-cost-r2/symbolized/cpu-summary.json"
+}
