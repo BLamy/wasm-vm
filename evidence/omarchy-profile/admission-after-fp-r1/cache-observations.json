@@ -1,0 +1,63 @@
+{
+  "arms": [
+    {
+      "arm": "control",
+      "reportSha256": "d07c1228c8181a6828bc88a1408bda8036fd0aa2695a342a694c6fa99fa05713",
+      "deltaBlockInstalls": 13079,
+      "deltaPhysicalPcRetranslations": 12630,
+      "deltaBatchEvictions": 2345,
+      "residentBatchesBefore": 21,
+      "residentBatchesAfter": 23,
+      "residentCodeBytesBefore": 1825948,
+      "residentCodeBytesAfter": 2713426,
+      "compileQueueBefore": {
+        "admitted": 28431,
+        "droppedBackpressure": 15068,
+        "cancelledStale": 0,
+        "popped": 23227,
+        "queueHighWater": 256,
+        "queueDepth": 0,
+        "capacity": 256
+      },
+      "compileQueueAfter": {
+        "admitted": 69608,
+        "droppedBackpressure": 82930,
+        "cancelledStale": 0,
+        "popped": 41979,
+        "queueHighWater": 256,
+        "queueDepth": 248,
+        "capacity": 256
+      }
+    },
+    {
+      "arm": "candidate",
+      "reportSha256": "cb8147bcdea6c4bf36481b0a374d6386477e6462a7bbb536b93135f51454c1c0",
+      "deltaBlockInstalls": 13300,
+      "deltaPhysicalPcRetranslations": 13061,
+      "deltaBatchEvictions": 2450,
+      "residentBatchesBefore": 18,
+      "residentBatchesAfter": 24,
+      "residentCodeBytesBefore": 2022667,
+      "residentCodeBytesAfter": 2433293,
+      "compileQueueBefore": {
+        "admitted": 30147,
+        "droppedBackpressure": 13821,
+        "cancelledStale": 0,
+        "popped": 25482,
+        "queueHighWater": 256,
+        "queueDepth": 0,
+        "capacity": 256
+      },
+      "compileQueueAfter": {
+        "admitted": 76871,
+        "droppedBackpressure": 99042,
+        "cancelledStale": 0,
+        "popped": 45596,
+        "queueHighWater": 256,
+        "queueDepth": 245,
+        "capacity": 256
+      }
+    }
+  ],
+  "limitation": "Retranslations bind previously evicted physical PCs, not equal code bytes or lost hot work. Evictions count batches, installs count blocks. No causal/speedup claim."
+}
