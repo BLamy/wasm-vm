@@ -205,7 +205,7 @@ test("harness-only actual cold orchestration inspects storage before app and ret
     setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
   };
   const bindings = {
-    coldPair: true, inputTrial: false, opaqueFoot: false, modePair: false, ownedRecording: false,
+    coldPair: true, inputTrial: false, opaqueFoot: false, directOpaque: false, modePair: false, ownedRecording: false,
     coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
     URL, Date, assert, remainingStartupMs, assertColdRestore,
     assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },

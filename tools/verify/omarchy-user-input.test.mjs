@@ -6,6 +6,7 @@ import vm from "node:vm";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
 import { assertInputTrialRuntime, inputTrialOptions } from "./omarchy-input-trial.mjs";
 import { OPAQUE_FOOT_COMMAND, requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
+import { DIRECT_OPAQUE_COMMAND, requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
 
 const source = readFileSync(new URL("./omarchy-desktop-live.mjs", import.meta.url), "utf8");
 const trialSource = readFileSync(new URL("./omarchy-input-trial.mjs", import.meta.url), "utf8");
@@ -28,11 +29,11 @@ const actualHelpers = [
 function fixture({ mode = "input-trial", missingReady = false, lostFocus = false,
   wrongNonce = false, lateReadback = false, stalePresentation = false,
   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
-  lateTyping = false, opaqueFoot = false, badOpaque = false } = {}) {
+  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false } = {}) {
   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
-    arm: opaqueFoot ? "candidate" : "control", experiment: opaqueFoot ? "residency" : "recycling", renderer: null, lp: null });
+    arm: opaqueFoot || directOpaque ? "candidate" : "control", experiment: opaqueFoot || directOpaque ? "residency" : "recycling", renderer: null, lp: null });
   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
   let randomCall = 0;
   const epoch = now, readyMs = 5;
@@ -94,14 +95,14 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
   const state = { presentation: before, clock: { mode: "icount", clockDiv: 64 },
     jit: { hasExecutor: true, admissionProbe: false,
       coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
-      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot ? 256 : 24, entryCost: { timingEnabled: false } } };
+      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque ? 256 : 24, entryCost: { timingEnabled: false } } };
   const bindings = {
     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
-    coldPair: false, workerCost: false, opaqueFoot, modePair: false, ownedRecording: mode === "input-trial",
+    coldPair: false, workerCost: false, opaqueFoot, directOpaque, modePair: false, ownedRecording: mode === "input-trial",
     coldDeadline: null, trialCaptureDeadline: null, mode,
     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
-    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, assertOriginalPresentation,
+    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, assertOriginalPresentation,
     fenceWorkerCostInput: async () => { trace.push("input-fence"); return { synthetic: true }; },
     randomBytes: () => Buffer.from((randomCall++ ? "b" : "a").repeat(16), "hex"),
     assertRealOmarchyLayout: async () => { trace.push("layout"); },
@@ -115,6 +116,10 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
       commands.push(command);
       if (command === OPAQUE_FOOT_COMMAND) { trace.push("opaque-rule");
         assert.equal(keys.length, 0); return { exit: 0, stdout: badOpaque ? "ok\ntrue\nfalse\n1" : "ok\ntrue\ntrue\n1" }; }
+      if (command === DIRECT_OPAQUE_COMMAND) { trace.push("direct-property");
+        assert.equal(keys.length,0); return { exit:0, stdout: badOpaque ? "ok\nIPC timeout" :
+          [...Array(8).fill("ok"),"true","true","1","1","1","true","true","true",
+            JSON.stringify({class:"foot",mapped:true,hidden:false,address:"0x123",at:[12,38],size:[1256,750]})].join("\n\n\n") }; }
       if (command.endsWith("-j clients")) return { exit: 0, stdout: JSON.stringify(missingFoot ? [] :
         [{ class: "foot", mapped: true, hidden: false, size: [1280, 800], address: "0x123" }]) };
       if (command.endsWith("-j activewindow")) return { exit: 0, stdout: JSON.stringify({ address: wrongActive ? "0x456" : "0x123" }) };
@@ -164,6 +169,16 @@ test("synthetic actual opaque branch verifies properties before keys and fences 
   const bad = fixture({ opaqueFoot: true, badOpaque: true });
   assert.match(String(await bad.run()), /opaque\/RGBX/u);
   assert.equal(bad.keys.length, 0); assert.equal(bad.report.result, undefined);
+});
+
+test("synthetic actual direct-property branch reads all values before keys and fences after Enter", async () => {
+  const f=fixture({directOpaque:true});assert.equal(await f.run(),null);
+  assert.equal(f.report.result,"input-trial-physical-nonce-and-fresh-presentation");
+  assert.equal(f.report.directOpaque.status,"properties-confirmed");
+  const order=["direct-property","direct-opaque.png","key","input-fence","readback","desktop-keyboard.png"];
+  for(let i=1;i<order.length;i++)assert.ok(f.trace.indexOf(order[i-1])<f.trace.indexOf(order[i]));
+  const bad=fixture({directOpaque:true,badOpaque:true});assert.ok(await bad.run());
+  assert.equal(bad.keys.length,0);assert.equal(bad.report.result,undefined);
 });
 
 test("synthetic capture and verify retain actual mapped-Foot and active-window checks before keys", async () => {
