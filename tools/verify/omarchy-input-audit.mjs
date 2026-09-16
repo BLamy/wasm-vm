@@ -11,7 +11,7 @@ const success = "input-trial-physical-nonce-and-fresh-presentation";
 const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
 
 export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false,
-  preparedRecycling = false, inputKernelPrepared = false }) {
+  preparedRecycling = false, inputKernelPrepared = false, inputKernelWasmSha256 = INPUT_BUFFER_RESPONSE_WASM }) {
   assert.equal(typeof preparedDirect, "boolean");
   assert.equal(typeof preparedRecycling, "boolean");
   if (preparedRecycling) assert.equal(preparedDirect, true);
@@ -19,7 +19,7 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
   assert.equal(report.inputKernelPrepared === true, inputKernelPrepared);
   if (inputKernelPrepared) {
     assert.equal(preparedDirect, true); assert.equal(preparedRecycling, true);
-    assert.equal(wasmSha256, INPUT_BUFFER_RESPONSE_WASM);
+    assert.equal(wasmSha256, inputKernelWasmSha256);
   }
   assert.equal(report.preparedDirectRequested === true, preparedDirect);
   assert.equal(report.trial.head, head, "wrong source head");

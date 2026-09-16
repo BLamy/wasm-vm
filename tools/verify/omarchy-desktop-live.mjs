@@ -497,8 +497,10 @@ if (ownedRecording) {
     "tools/verify/omarchy-input-kernel-state.mjs", "tools/verify/omarchy-prepare-input-kernel.mjs",
     "tools/verify/omarchy-input-kernel-response-state.mjs", "tools/verify/omarchy-input-kernel-response.mjs",
     "tools/verify/omarchy-input-kernel-response-audit.mjs",
+    "tools/verify/omarchy-gpu-transfer-runtime.mjs", "tools/verify/omarchy-gpu-transfer-runtime.json",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
+    "crates/core/src/dev/virtio/gpu",
     "web"];
   report.trial = { ...trial, rendererEvidence: "unchanged pinned R3 LP1; no new renderer claim",
     head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repoRoot, encoding: "utf8" }).trim(),

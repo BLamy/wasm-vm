@@ -11,10 +11,14 @@ import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
 import { INPUT_BUFFER_PREPARED_IDENTITIES, INPUT_BUFFER_PREPARED_RECORD_SHA256,
   INPUT_BUFFER_RESPONSE_WASM } from "./omarchy-input-kernel-response-state.mjs";
 import { auditInputKernelResponse } from "./omarchy-input-kernel-response-audit.mjs";
+import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
 
-assert.equal(process.argv.length, 4, "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && process.argv[4] === "--gpu-transfer-offset"),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const [out, pair] = process.argv.slice(2).map(file => path.resolve(file));
+const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
+const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
+const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
   const bytes = await fs.readFile(path.join(pair, file));
@@ -23,11 +27,11 @@ for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlay
 }
 const preparedRecord = path.join(repo, "evidence/omarchy-profile/input-kernel-pair-r1/browser/run.json");
 assert.equal(sha(await fs.readFile(preparedRecord)), INPUT_BUFFER_PREPARED_RECORD_SHA256);
-assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), INPUT_BUFFER_RESPONSE_WASM);
+assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), wasmSha256);
 await fs.mkdir(out, { recursive: false });
 const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: false, visualInspectionRequired: true,
   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
-  wasmSha256: INPUT_BUFFER_RESPONSE_WASM, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
+  wasmSha256, gpuRuntime: gpuRuntime?.record ?? null, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
   startedAt: new Date().toISOString() };
 const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
@@ -51,7 +55,7 @@ if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
 try {
   const bytes = await fs.readFile(path.join(out, "desktop/report.json")), report = JSON.parse(bytes);
   receipt.reportSha256 = sha(bytes);
-  Object.assign(receipt, auditInputKernelResponse(report, receipt.head));
+  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256 }));
   receipt.result = report.result;
   receipt.machineAcceptance = receipt.input.machineAcceptance;
   assert.equal(receipt.exit.code, receipt.machineAcceptance ? 0 : 1);

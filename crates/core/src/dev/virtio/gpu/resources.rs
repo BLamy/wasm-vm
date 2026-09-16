@@ -782,17 +782,9 @@ impl ResourceMap {
         let row_bytes = u64::from(rect.width)
             .checked_mul(core::mem::size_of::<u32>() as u64)
             .ok_or(TransferError::InvalidParameter)?;
-        let first_row = offset
-            .checked_add(
-                u64::from(rect.y)
-                    .checked_mul(stride)
-                    .ok_or(TransferError::InvalidParameter)?,
-            )
-            .and_then(|start| {
-                start
-                    .checked_add(u64::from(rect.x).checked_mul(core::mem::size_of::<u32>() as u64)?)
-            })
-            .ok_or(TransferError::InvalidParameter)?;
+        // `offset` names the first source byte in the backing stream. Linux already
+        // includes x * cpp + y * pitch; the rectangle origin addresses only the shadow.
+        let first_row = offset;
         let last_row_advance = u64::from(rect.height.saturating_sub(1))
             .checked_mul(stride)
             .ok_or(TransferError::InvalidParameter)?;
@@ -1148,7 +1140,7 @@ mod tests {
                 width: 3,
                 height: 2,
             },
-            0,
+            24, // Linux supplies y * pitch + x * cpp, here 1 * 20 + 1 * 4.
             &bus,
         )
         .unwrap();
@@ -1172,6 +1164,109 @@ mod tests {
             before.as_slice(),
             "transfer is guest-read-only"
         );
+    }
+
+    #[test]
+    fn gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source = source_bytes(5, 4);
+        // Discontiguous entries, two page crossings, and a pixel split between entries.
+        let backing = alloc::vec![
+            (DRAM_BASE + 0x10fff, 3),
+            (DRAM_BASE + 0x23008, 17),
+            (DRAM_BASE + 0x35ffe, 9),
+            (DRAM_BASE + 0x48001, 51),
+        ];
+        let mut cursor = 0;
+        for &(addr, length) in &backing {
+            let end = cursor + length as usize;
+            bus.ram_mut()
+                .write_slice(addr, &source[cursor..end])
+                .unwrap();
+            cursor = end;
+        }
+        let before = bus.ram().as_bytes().to_vec();
+        // Literal source and destination indices, independent of production arithmetic.
+        for (offset, rect, assignments) in [
+            (
+                24,
+                protocol::Rect {
+                    x: 1,
+                    y: 1,
+                    width: 3,
+                    height: 2,
+                },
+                alloc::vec![(6, 6), (7, 7), (8, 8), (11, 11), (12, 12), (13, 13)],
+            ),
+            (
+                4,
+                protocol::Rect {
+                    x: 2,
+                    y: 2,
+                    width: 2,
+                    height: 2,
+                },
+                alloc::vec![(12, 1), (13, 2), (17, 6), (18, 7)],
+            ),
+            (
+                48,
+                protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 3,
+                    height: 2,
+                },
+                alloc::vec![(0, 12), (1, 13), (2, 14), (5, 17), (6, 18), (7, 19)],
+            ),
+        ] {
+            let mut map = ResourceMap::new();
+            map.create(1, FORMATS[0], 5, 4).unwrap();
+            map.attach_backing(1, backing.clone()).unwrap();
+            map.transfer_to_host_2d(1, rect, offset, &bus).unwrap();
+            let mut expected = [0u32; 20];
+            for (destination, source_word) in assignments {
+                expected[destination] = 0xA500_0000 | source_word;
+            }
+            assert_eq!(map.get(1).unwrap().host_pixels.as_ref(), &expected);
+            assert_eq!(map.get(1).unwrap().dirty_tile_count(), 1);
+            assert_eq!(map.get_mut(1).unwrap().flush_rect(rect, true), rect);
+            assert_eq!(map.get(1).unwrap().dirty_tile_count(), 0);
+            #[cfg(feature = "std")]
+            std::eprintln!("AT literal offset={offset} rect={rect:?} pixels={expected:08x?}");
+        }
+        assert_eq!(bus.ram().as_bytes(), before);
+    }
+
+    #[test]
+    fn gpu_transfer_short_final_row_rejects_before_any_pixels_or_damage_change() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source_addr = DRAM_BASE + 0x10_000;
+        bus.ram_mut()
+            .write_slice(source_addr, &source_bytes(5, 4))
+            .unwrap();
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], 5, 4).unwrap();
+        map.attach_backing(1, alloc::vec![(source_addr, 80)])
+            .unwrap();
+        let rect = protocol::Rect {
+            x: 1,
+            y: 1,
+            width: 3,
+            height: 2,
+        };
+        map.transfer_to_host_2d(1, rect, 24, &bus).unwrap();
+        let pixels = map.get(1).unwrap().host_pixels.clone();
+        let dirty = map.get(1).unwrap().dirty_tile_count();
+        // Offset49 has an entirely readable first row, but the second overruns by one.
+        for offset in [49, u64::MAX - 19, u64::MAX] {
+            assert_eq!(
+                map.transfer_to_host_2d(1, rect, offset, &bus),
+                Err(TransferError::InvalidParameter)
+            );
+            assert_eq!(map.get(1).unwrap().host_pixels, pixels);
+            assert_eq!(map.get(1).unwrap().dirty_tile_count(), dirty);
+        }
+        assert_eq!(map.get_mut(1).unwrap().flush_rect(rect, true), rect);
     }
 
     #[test]
@@ -1369,8 +1464,6 @@ mod tests {
                     && (rect_width == 0
                         || rect_height == 0
                         || offset
-                            + u64::from(y) * u64::from(width) * 4
-                            + u64::from(x) * 4
                             + u64::from(rect_height.saturating_sub(1)) * u64::from(width) * 4
                             + u64::from(rect_width) * 4
                             <= source.len() as u64);
@@ -1388,7 +1481,7 @@ mod tests {
                 assert_eq!(result, Ok(()));
                 let mut expected = baseline;
                 if rect_width != 0 && rect_height != 0 {
-                    let first = offset + u64::from(y) * u64::from(width) * 4 + u64::from(x) * 4;
+                    let first = offset;
                     for row in 0..rect_height {
                         for column in 0..rect_width {
                             let source_offset = (first
@@ -1583,10 +1676,22 @@ mod tests {
         full_frame.attach_backing(1, backing).unwrap();
 
         for (transfer, expected_tiles) in transfers {
-            tiled.transfer_to_host_2d(1, transfer, 0, &bus).unwrap();
-            full_frame
-                .transfer_to_host_2d(1, transfer, 0, &bus)
+            let offset = u64::from(transfer.y * width + transfer.x) * 4;
+            tiled
+                .transfer_to_host_2d(1, transfer, offset, &bus)
                 .unwrap();
+            full_frame
+                .transfer_to_host_2d(1, transfer, offset, &bus)
+                .unwrap();
+            for row in transfer.y..transfer.y + transfer.height {
+                for column in transfer.x..transfer.x + transfer.width {
+                    let index = (row * width + column) as usize;
+                    assert_eq!(
+                        tiled.get(1).unwrap().host_pixels[index],
+                        0xA500_0000 | index as u32
+                    );
+                }
+            }
             assert_eq!(
                 tiled.get(1).unwrap().host_pixels,
                 full_frame.get(1).unwrap().host_pixels,

@@ -21,6 +21,41 @@ use wasm_vm_core::dev::virtio::gpu::{FlushRecord, FrameSink, TestSink};
 use wasm_vm_core::platform::{Platform, virt};
 
 #[wasm_bindgen_test]
+fn gpu_transfer_source_offset_is_independent_of_destination_on_wasm32() {
+    use wasm_vm_core::dev::virtio::gpu::resources::{ResourceMap, TransferError};
+    use wasm_vm_core::mmio::SystemBus;
+    use wasm_vm_core::ram::Ram;
+
+    let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+    let source = (1u8..=32).collect::<Vec<_>>();
+    let first = virt::DRAM_BASE + 0x10fff;
+    let second = virt::DRAM_BASE + 0x23001;
+    bus.ram_mut().write_slice(first, &source[..7]).unwrap();
+    bus.ram_mut().write_slice(second, &source[7..]).unwrap();
+    let mut map = ResourceMap::new();
+    map.create(1, FORMAT_B8G8R8A8_UNORM, 4, 3).unwrap();
+    map.attach_backing(1, vec![(first, 7), (second, 25)])
+        .unwrap();
+    let rect = Rect {
+        x: 1,
+        y: 1,
+        width: 2,
+        height: 2,
+    };
+    map.transfer_to_host_2d(1, rect, 8, &bus).unwrap();
+    let expected = [
+        0, 0, 0, 0, 0, 0x0c0b0a09, 0x100f0e0d, 0, 0, 0x1c1b1a19, 0x201f1e1d, 0,
+    ];
+    assert_eq!(map.get(1).unwrap().host_pixels.as_ref(), expected);
+    assert_eq!(
+        map.transfer_to_host_2d(1, rect, 9, &bus),
+        Err(TransferError::InvalidParameter)
+    );
+    assert_eq!(map.get(1).unwrap().host_pixels.as_ref(), expected);
+    assert_eq!(map.get_mut(1).unwrap().flush_rect(rect, true), rect);
+}
+
+#[wasm_bindgen_test]
 fn gpu_wire_fixture_is_little_endian_on_wasm32() {
     let header = CtrlHeader {
         ty: RESP_OK_DISPLAY_INFO,

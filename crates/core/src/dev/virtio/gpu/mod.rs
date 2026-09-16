@@ -3896,7 +3896,7 @@ mod tests {
                 width: 2,
                 height: 2,
             },
-            offset: 0,
+            offset: 4, // First source byte: Linux already included rect.x * cpp.
             resource_id: 1,
             padding: 0,
         }
@@ -4435,7 +4435,7 @@ mod tests {
                     ..CtrlHeader::default()
                 },
                 rect: damage,
-                offset: 0,
+                offset: u64::from(damage.y * WIDTH + damage.x) * 4,
                 resource_id: 1,
                 padding: 0,
             }
@@ -4540,6 +4540,11 @@ mod tests {
                 assert_eq!(trace[4].resource_id, Some(1));
                 assert_eq!(trace[4].resource_width, Some(WIDTH));
                 assert_eq!(trace[4].resource_height, Some(HEIGHT));
+                #[cfg(feature = "std")]
+                std::eprintln!(
+                    "AT queued pattern={index} requests={requests:02x?} trace={trace:?} shadow={expected:08x?} sink={:?}",
+                    sink.records()
+                );
             }
 
             // Guest backing is not the sink's pixel view: mutating the source after TRANSFER and

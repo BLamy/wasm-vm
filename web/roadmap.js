@@ -146,6 +146,7 @@ export const ROADMAP = [
       { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
       { name: "virtio-gpu control + resource queues", status: "verified", evidence: "E5-T07a: native Linux fbcon controlq trace with EDID, resource, scanout, and queue-progress evidence" },
       { name: "Scanout transfer + flush", status: "verified", evidence: "E5-T07b: cold Chromium fbcon frame on the production Canvas2D sink with serial DRM/fbdev markers" },
+      { name: "Linux partial GPU updates", status: "partial", evidence: "E5.5-T03at: correct the first source byte for Linux partial transfers; literal SG, queued-command and browser response verification in progress. Desktop responsiveness remains unresolved." },
       { name: "tty0 fbcon damage rectangles", status: "verified", evidence: "E5-T07c: cold Chromium echo hello proof with independent readback reference and partial flush trace" },
       { name: "fbcon native parity and stress", status: "verified", evidence: "E5-T07d: native null-sink fixture parity, one-million-byte tty0 write, 100 VT switches, delayed Chromium readback, and reload cleanup" },
       { name: "Display/serial host chrome + PNG/WebM capture", status: "verified", evidence: "E5-T08: Chromium 131 + Firefox 132 live view toggle, reserved hotkey, readback-checked PNG, bounded WebM, and 50-toggle proof" },

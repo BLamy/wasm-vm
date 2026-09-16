@@ -1,0 +1,9 @@
+{
+  "head": "af253faa",
+  "command": "cargo test -p wasm-vm-core --lib gpu_transfer_ -- --nocapture",
+  "exitCode": 101,
+  "testChanges": "Partial SG test offset0\u219224 and queued SG test offset0\u21924; production code unchanged. Both literal expected values fail.",
+  "logSha256": "fd8df836f0e3ce9383e3a374bc93f8240d3ff032b58d8738f14c542676f672aa",
+  "linuxArchiveSha256": "d1054ab4803413efe2850f50f1a84349c091631ec50a1cf9e891d1b1f9061835",
+  "reference": "https://raw.githubusercontent.com/qemu/qemu/v9.2.0/hw/display/virtio-gpu.c#L430"
+}

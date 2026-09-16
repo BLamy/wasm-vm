@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 335,
-    "total": 513
+    "verified": 340,
+    "total": 518
   },
   "epics": [
     {
@@ -22940,7 +22940,7 @@
       "epicKey": "5.5",
       "title": "Call pure FP helpers directly across WASM modules",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03an"
       ],
@@ -22951,16 +22951,195 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-16 — pending measured follow-up\n\nAN worker submission is `1479a263`; it still requires the fresh critic's final\nverdict before this task enters the lane. Exact AN WASM SHA\n`0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced`.\nIts recorded callback path is visible in\n`evidence/omarchy-profile/fmadd-single-r1/symbolized/cpu-summary.json`.\nThe pinned wasm-bindgen 0.2.126 source exposes the actual instance exports;\nthe existing pure helpers already use the required scalar signatures.\nNo implementation, benchmark or additional guest run has started for this task.\n\n### 2026-09-16 — activation\n\nAN is independently verified at `04ea9fe4`, including its negative physical\ntrial. Activate only the pure browser-helper import boundary. The compiled\ntranslation, numerical backend and previous correctness proofs remain fixed.\nA fresh critic will predict and independently attack this boundary.",
+      "verificationLog": "### 2026-09-16 — pending measured follow-up\n\nAN worker submission is `1479a263`; it still requires the fresh critic's final\nverdict before this task enters the lane. Exact AN WASM SHA\n`0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced`.\nIts recorded callback path is visible in\n`evidence/omarchy-profile/fmadd-single-r1/symbolized/cpu-summary.json`.\nThe pinned wasm-bindgen 0.2.126 source exposes the actual instance exports;\nthe existing pure helpers already use the required scalar signatures.\nNo implementation, benchmark or additional guest run has started for this task.\n\n### 2026-09-16 — activation\n\nAN is independently verified at `04ea9fe4`, including its negative physical\ntrial. Activate only the pure browser-helper import boundary. The compiled\ntranslation, numerical backend and previous correctness proofs remain fixed.\nA fresh critic will predict and independently attack this boundary.\n\n### 2026-09-16 — worker — direct imports proven; physical desktop still negative\n\nFrozen code/harness `8c302e1d6cd084ba1034cfd58c7efb9677dc3e46`;\ndeployed-reference, cold-clone and physical head\n`a3beb0e8dc5da21374a6d59e25658f5db5ce79da`. Release WASM SHA256\n`36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916`.\n\nCommands use `DEVELOPER_DIR=/Library/Developer/CommandLineTools`:\n\n- `python3 evidence/omarchy-profile/direct-fp-imports-r1/freeze.py` pins 52\n  source/harness files, six artifacts, 24 unchanged recorder modules and the\n  AJ R2 pair. All 83 AN worker and 59 critic sealed files carry unchanged.\n- The same directory's `record-submission.py affected` passes the affected\n  warnings-denied checks, 33 native WASM-library tests, 89 recorder tests,\n  integer-only audit and `make verify-E5_5-T03ao`. The latter passes 32\n  private/shared FP verifier tests, actual raw function identity, five correct\n  signatures, 22 wrong-type rejections per memory model, independent i64\n  literals, replacement/drop lifetime and real 64 KiB growth. Both isolated\n  trampoline sabotage controls are rejected and restored identities pass.\n- Final real-browser benchmark warms both arms twice and alternates five\n  pairs. All 14 runs retire 500065 instructions, 499760 compiled, with the same\n  full register state and RAM SHA\n  `c55029e8cbc137ddab4624cc75bfd853a46c1d385f29b173028ac388de31fd94`.\n  Medians are 24.220 ms baseline and 14.235 ms candidate (ratio 0.5877374).\n  Conservative helper-specific compiled lower bounds are positive. These\n  bounded workload numbers are separate from desktop latency.\n- Built Chrome passes 127 ISA tests, zero errors, live capability, the carried\n  boundary ELF digest and actual memory growth; images personally inspected.\n  Full `record-submission.py ci` remains exit 2 in the same five inherited\n  failure categories, recorded in `ci-failures.json`. Native ISA is 128/128\n  and the performance floor passes at 58.8 MIPS. No green workspace claim.\n- `bash tools/deploy-cloudflare.sh` initially times out downloading an unchanged\n  large R2 snapshot. Logs and failed verification remain. `deploy-recovery.py`\n  independently verifies all 49 contiguous byte ranges, full SHA and original\n  length, then resumes the script's identical final Pages command. Deployment\n  `https://5256a6c7.wasm-vm.pages.dev` and canonical origin pass 12 exact public\n  file checks. `run-cold.py` performs one pristine clone with scrubbed Rust/Cargo\n  overrides, reproduces exact WASM, passes 32 tests and 127/0 Chrome, and records\n  median ratio 0.5949657 with the same independently reconstructable guest state.\n- `node tools/verify/omarchy-direct-fp-input.mjs evidence/omarchy-profile/direct-fp-imports-r1/physical-input target/omarchy-direct-opaque-r2`\n  records the sole physical trial. Startup 38108 ms; 128 trusted events and\n  256 acknowledged calls. Enter 09:55:39.631Z; failure 09:57:39.632Z at the\n  original deadline. All 37 completed reads return 75; none remain pending.\n  Frames advance 2→3, but personally inspected fresh images show no typed\n  command or returned prompt. Interval: 3,544,856,799 retirements, 71.6276%\n  compiled. Normal owned cleanup completes with no parent watchdog. Raw SHA\n  `6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af`.\n- The original wrapper also hits an inherited post-run assertion requiring\n  every damage rectangle to be full screen. Its failure is preserved. Existing\n  `Resource::flush_rect` narrows later changed pixels, and JsFrameSink opts in;\n  actual canvas/GPU remain 1280×800, resource 1280×832, final damage\n  (10,36,118,28). `audit-physical.mjs` checks these separately, rejects 16\n  geometry mutations and replays the remaining input-fence/profile audits on\n  the same raw recording. No runtime/harness mutation, guest rerun or positive\n  outcome is substituted. The fresh critic must judge this proof correction.\n- `symbols.py` binds all eleven executable sections before symbolizing the\n  separate post-verdict 30,022.968 ms / 19,977-sample profile. It remains\n  diagnostic; the 8.743% flush_page self share does not establish input cause.\n\nClaim: direct pure FP imports preserve existing numerical behavior and improve\nthis matched compiled workload. Desktop responsiveness is still unsolved;\nT03q stays gated. Recorded evidence is in\n`evidence/omarchy-profile/direct-fp-imports-r1/`, including all failures.\n`seal.py` seals 89 files; relative index `sha256.txt` SHA256\n`e9160dbff703ac19aa5d4fb591fa1cc4651738916f04c0535905b189e53c2bbf`. Fresh adversarial verdict pending.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified\n\nVerified **T03ao only** at worker submission\n`7d648143e92b7fe861fa4ae7b1f34c0a84451f39`; frozen runtime/harness\n`8c302e1d6cd084ba1034cfd58c7efb9677dc3e46`, artifact/cold/physical\n`a3beb0e8dc5da21374a6d59e25658f5db5ce79da`, release WASM\n`36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916`.\nAll 89 worker seal entries match committed bytes; index SHA\n`e9160dbff703ac19aa5d4fb591fa1cc4651738916f04c0535905b189e53c2bbf`.\n\n- P1–P5 HELD: exact scoped diff and carried 83 worker/59 critic AN files;\n  actual same-instance raw import identity, all five signatures and 22 wrong-type\n  rejections per memory mode; 264 independent literal probes including all i64\n  bits; multiple instances/executors, invalidate/reinstall/drop/replacement and\n  real 64 KiB growth. All 32 frozen/cold tests pass with no ignored tests.\n  Raw identity/lifetime/sabotage points: worker `acceptance.log:61` and `:64`.\n- P6 HELD: independent ELF/full-state reconstruction and five alternating pairs\n  match RAM SHA `c55029e8cbc137ddab4624cc75bfd853a46c1d385f29b173028ac388de31fd94`;\n  499760/500065 compiled retirements and positive conservative bounds for all\n  five helper families. Final ratio 0.5877374021 (24.220 vs 14.235 ms), cold\n  0.5949656769. This is a bounded workload result, not desktop latency.\n- P7 HELD: all frozen files and sole pristine clone audited, exact rebuilt\n  WASM, hot/cold 127/0 browser with zero errors and six personally inspected\n  images, 12 independently fetched public file matches. Recovery's pinned\n  ranges/full SHA/final command inspected; original timeouts retained. Broad\n  CI remains exit 2 in the same five inherited categories; no green claim.\n- P8 HELD as preserved negative: exact AJ R2/cap256/recycling trial; 128 trusted\n  events/256 acknowledgments; Enter 09:55:39.631Z, failure at deadline+1 ms;\n  37 reads all exit 75, none pending. Frames 2→3, but fresh personally inspected\n  images show no typed command or returned prompt. Normal cleanup 170 ms.\n  Raw SHA `6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af`.\n- Geometry proof correction accepted: unchanged GPU damage tracking permits\n  (10,36,118,28) while canvas/GPU remain 1280×800 and resource 1280×832.\n  Original wrapper failure preserved; independent offline geometry rejects 15\n  malformed controls and independently completes raw fence/profile/cleanup\n  audits. No runtime change, deadline extension or guest rerun occurred.\n- P9 HELD: the numerically equivalent copied-import JS trampoline fails the\n  named identity assertion in both modes; restoration passes. Promoted test\n  `crates/wasm/tests/jit_fp_direct_imports_verifier.rs` SHA\n  `0ac8b08bf56d981e6a0f80cccf54e2032abbfeacfaba1ddb4535f22564a0fa18`.\n- Separate profile: all 11 non-custom sections/1912 names and every raw sample\n  independently checked; 19977 samples/5211 nodes/30022150 weighted µs match.\n  It remains diagnostic, with no causal claim from overlapping percentages.\n\nPredictions, independent scripts/receipts, full verdict and changed-hunk\ncoverage are in `evidence/omarchy-profile/direct-fp-imports-verifier/`.\nAll P1–P9 are HELD; no AO coverage gap remains. **Desktop responsiveness is\nstill unsolved; T03q must remain gated.** Root applies this fresh critic's\nstatus and queue commit administratively.",
       "adversarial": "A fresh critic predicts actual import identity/type and exact helper output\nbefore reading results. Audit the raw production exports and test every scalar\nsignature, including all 64 integer bits. Attack multiple instances/executors,\nsource aliases, invalid guards and memory growth. Sabotage one new assertion\nin isolation, carry unchanged HELD proofs, independently reconstruct the\nbenchmark state, check pairing/order and inspect raw actual input and images.\nNo speedup claim follows merely from moving a function or removing Closure fields.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03ao-direct-fp-imports.md",
       "activity": [
         {
           "date": "2026-09-16",
-          "commits": 2,
+          "commits": 4,
           "labels": [
+            "Verify direct FP imports and plan guest input tracing",
+            "Record direct FP import proof and negative desktop trial",
             "Start direct WASM imports for pure FP helpers",
             "Verify FMADD and plan direct pure-helper imports"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ap",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Locate physical key processing inside the desktop guest",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ao"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — pending input-path investigation\n\nAO raw report SHA256\n`6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af`\nhas 128 trusted events, 37 missing-file reads, frames 2→3 and no visible command.\nRuntime SHA256\n`36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916`.\nLinux 6.6's [evdev implementation](https://github.com/torvalds/linux/blob/v6.6/drivers/input/evdev.c)\ncan discard unconsumed client events on buffer overflow. That is a hypothesis\nto distinguish from delayed rendering or missing delivery, not an observed\ncause. Await AO's independent verdict before entering the active lane.\n\n### 2026-09-16 — activation\n\nAO is independently verified with its negative physical outcome preserved.\nActivate only the guest input-path diagnostic. A fresh critic recorded\npre-result predictions and an independent Linux fixture before implementation.\nNo timing result under syscall tracing will be treated as responsive release\nacceptance. Preparation is bounded at 300 host seconds, readback remains\nEnter+120 seconds, and diagnostic collection/cleanup have separate finite budgets.\n\n### 2026-09-16 — worker preflight and frozen diagnostic\n\nThe temporary observer uses per-TID GET_SYSCALL_INFO ENTRY/EXIT, records read and\nreadv return bytes with entry/exit fd identities, follows thread clones, and\ndetaches every owned TID. A fresh critic's seven-case Linux fixture, its later\nclone fixture, and the partial-attachment cleanup test pass. The critic refuted\nthe original group-stop handling; the corrected observer preserves the stopping\nsignal, explicitly ends the observation, detaches, and leaves the target stopped\nuntil SIGCONT. Original counterexample and corrected run remain in the critic's\nevidence directory. No original failed run was overwritten.\n\nPreflight `target/omarchy-input-observer/preflight-r4/build.json` binds Zig 0.16.0,\nthe local ARM64 Docker image and both architecture builds. Final RV64 binary:\n53,576 bytes, SHA256\n`10d9e82ce33bb8eafaf55e8aa5e8ee86bd7bdfa4998fd367f374ff70e3ff792d`.\nBoth local fixtures pass; 40 affected recorder/decoder tests pass after adding the\nnew optional binding to the existing synthetic recorder fixture. This remains a\npre-check; no compositor consumption has yet been observed.\n\nThe guest recorder retains 300 s preparation, 60 s physical typing, Enter+120 s\nreadback, and 20 s image capture. A separate 180 s collection/detach window and\n30 s owned-browser cleanup are bounded by the existing parent watchdog. The\nobserver records ready/end guest monotonic time and stop signal/budget/error\nstate, so early observer termination cannot establish a whole-deadline no-read\nclaim. Diagnostic setup writes only its unique `/tmp/wv-input-observer-*` files;\nthe independent nonce path and the physical input contract are unchanged.\n\n### 2026-09-16 — worker — implemented, desktop still unresponsive\n\nFrozen head `9c5e197a65889f5301830b3a2ec4dd836e3980de`. Final claim, exact\ncommands, preserved pre-browser failures and evidence interpretation:\n`evidence/omarchy-profile/compositor-input-r2/RESULT.md`; adjacent `sha256.txt`\nseals the worker recording. The AO runtime and AJ R2 pair are unchanged.\n\nThe actual Hyprland417 fd21/event0 read at trace line136 returned eight events:\nSYN_DROPPED/sync, A-up/sync, Enter-down/sync, Enter-up/sync. Only three of128\nphysical key events reached this read. All256 host key/sync calls were accepted.\nAll36 independent nonce reads returned missing-file; the original Enter+120s\nverdict failed and personally inspected real images retain an empty Foot prompt.\nAll13 identified TIDs detached cleanly with unchanged identity and TracerPid0.\nThe observation extends until post-deadline collection SIGTERM; no precise\nbefore-deadline read timestamp is claimed. Buffer overflow is consistent with\nthe pinned Linux64-event ring, but SYN_DROPPED does not uniquely establish it.\n\nIndependent fixture/clone/partial-attachment proofs and critic group-stop\ncounterexample/correction are retained. All50 affected harness tests pass.\nNext isolate a larger guest evdev buffer, prove burst retention against the\nbaseline, cold-boot a new pair, and require uninstrumented physical plus visible\nresponse at the unchanged deadline. No responsive release is authorized yet.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified\n\nVerified E5.5-T03ap's diagnostic only; desktop responsiveness is still unproven\nand T03q remains gated. Predictions, original counterexample, corrected\nattacks, independent audit and coverage are in\n`evidence/omarchy-profile/compositor-input-verifier/`.\n\n- **P1–P6 HELD:** the exact RV64 observer binds all 13 Hyprland TIDs, executable\n  and start times. Independent parsing pairs all 58 reads and their 8,464\n  bytes, with zero orphan exits, capture gaps or observer errors. At raw\n  `compositor-input-r2/physical-r2/desktop/compositor-input.jsonl:136`, main\n  TID 417 fd 21 reads 192 bytes from stable `/dev/input/event0` (13:64):\n  SYN_DROPPED/sync, A-up/sync, Enter-down/sync, Enter-up/sync. Lines 138/140\n  return EAGAIN. These are the final three of 128 trusted physical key events;\n  all 256 host key/sync acknowledgments are independently matched. Native\n  literal, readv, short/error, per-thread, fd-reuse and post-READY clone\n  fixtures pass with independent identities and detach proof.\n- **P7–P9 HELD:** frozen head `9c5e197a65889f5301830b3a2ec4dd836e3980de`,\n  all 38 recorded helpers, AO runtime and AJ pair are bound. Enter is\n  10:46:13.241Z; failure occurs at 10:48:13.242Z after the unchanged 120 s\n  bound. Independent raw-wire parsing finds 36 empty exit-75 replies and no\n  nonce. Both actual images were personally inspected: empty initial prompt,\n  no command or returned prompt. The observed read interval extends through\n  post-deadline SIGTERM at 10:48:19.159Z; individual read host times are not\n  claimed. Ptrace perturbs scheduling, and SYN_DROPPED alone is not unique\n  evidence of queue overflow.\n- **P10 HELD after correction:** the original observer resumed an external\n  SIGSTOP and was refuted with 13 counterexample progress iterations. Fixed\n  one- and three-thread checks preserve stop and clean detach, then show\n  progress only after SIGCONT. The actual observer reports SIGTERM, no budget\n  exhaustion/error, and detaches all 13 TIDs at trace lines 145–157; independent\n  after-status samples show TracerPid 0 and live states. Collection completes\n  in 64,522 ms within 180 s, and owned browser cleanup closes without watchdog.\n- **SUITE/COVERAGE:** retain the independent fixtures, group-stop regression\n  and `make verify-E5_5-T03ap`. The actual trace and bounded fixtures cover the\n  accepted diagnostic paths; untriggered defensive reporting guards carry no\n  broader correctness claim. AO correctness/artifact proofs carry unchanged.\n  Next: test input retention at the guest-side buffering boundary, then prove\n  any remedy with an uninstrumented physical nonce and visible returned prompt.\n\nGuest report SHA256\n`c272930f9dcf5545aa83fdb97b614cdccdef79c1ecd3aabfa96f1bef1c5c3327`;\ntrace SHA256\n`b5a7263afeead83140f4e5f0cc5f59986aca72d2252fb287b34cf4071f68d9bf`.\nIndependent replay of `audit-guest.py` passes. The critic's repository-relative\n`sha256.txt` seals its records and the exact worker files reviewed.",
+      "adversarial": "A fresh critic predicts attachment, input identity and byte-decoding results\nbefore inspecting the run. Attack one bounded decoder/identity case, audit the\nreal trace against the physical sequence and inspect actual images. Separate\nhost delivery, kernel delivery and compositor consumption. Check observer\neffects and cleanup; never promote a missing observation to evidence of a\nspecific deadlock or queue overflow.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ap-compositor-input-trace.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify compositor input diagnostic and preserve signal regression evidence",
+            "Record actual compositor input loss and clean observer detach",
+            "Record bounded compositor input reads with per-thread syscall evidence",
+            "Start bounded compositor input-path diagnostic"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03aq",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Retain delayed keyboard bursts in the Omarchy kernel",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ap"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — planned from AP's actual input loss\n\nAP trace line136 retains SYN_DROPPED and only the last three physical key events.\nReal uninstrumented physical plus visible response remains the release gate.\n\n### 2026-09-16 — activation\n\nAP is independently verified at13aeb5b7. Begin only the isolated fixed-capacity\nkernel and native guest proof. The deferred measured reader is never queried\nwith EVIOCGKEY because that ioctl flushes its key queue; a separately opened\nclient observes a final B-down sentinel after all injected A make/break frames.\nBoth descriptors open before injection. Preserve original one-key proof behavior.\n\n### 2026-09-16 — worker — implemented\n\nFrozen head97743da727ee51eb7326b112c18653ff02941da1. Exact command, artifact\nidentities, scope and preserved preflight failures are recorded in\n`evidence/omarchy-profile/evdev-buffer-r3/RESULT.md`; adjacent sha256.txt seals\nall worker evidence. The single-line kernel change retains all258 command-sized\nburst events in actual Linux, where the original kernel returns only10 including\nSYN_DROPPED. Both legacy four-event proofs pass. The1026-event candidate attack\nretains the expected four-event overflow tail. Each raw stream, device identity,\nseparate-client sentinel and guest architectural digest is recorded.\n\nCandidate Image SHA2563cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d,\n24208896 bytes; config and baseline artifacts unchanged. Format, configured CLI\nclippy, argument-bound tests and affected native build pass. No browser response\nclaim: await fresh critic, new-kernel desktop preparation and uninstrumented\nphysical plus visible response at the original deadline.\n\n### 2026-09-16 — fresh critic — VERDICT: verified\n\n- P1/P2 identity and isolation — HELD. Independently rehashed the pinned tarball,\n  exact one-line source diff, unchanged config/baseline artifacts, candidate\n  Image3cf8bed0… and actual RV64 init/initrd. Separate fd4 alone uses EVIOCGKEY;\n  measured fd3 remains unread until the sentinel. The full audit and all line\n  citations are in `evidence/omarchy-profile/evdev-buffer-verifier/VERDICT.md`.\n- P3/P4/P5 event boundary — HELD. Independently decoded worker raw bytes:\n  candidate-burst stdout175–432 retains all258; baseline175–184 has the exact\n  ten-event loss tail; candidate-overflow175–178 retains DROP,sync,B-down,sync.\n  All36 worker-sealed files verify under index2beac5de05aefc0d6e5d4ea4b62a332264b41dcb4d03acf2c3cc14a09064f541.\n- Novel near-capacity attack — HELD. Actual candidate255-pair run retains1022\n  literal events with no drop (`boundary-255-r2/stdout.log:15–1036`, EAGAIN1037),\n  stream SHA25606cf3f87e6ddf4b2b746db24e96bb4c4a647a033e2481fd9f2babe09132a4fa2;\n  normal exit and500894093 retired instructions. The first recording's printk\n  split event617; preserve its failed parser result and exact offline recovery.\n  A loglevel3-only confirming run returns the full unambiguous stream.\n- P6/P7 legacy/provenance — HELD. Both original four-event cases pass; separate\n  executable probes reject0,513 and missing opt-in with exit2. Exact AO WASM/core\n  boundary carries unchanged. Coverage is exercised or specifically waived in\n  the report; no runtime bypass or desktop responsiveness claim is accepted.\n- SUITE: keep the Make target, actual guest reader, literal byte checks, bounded\n  CLI argument test and promoted independent near-capacity evidence. AR/AS remain\n  mandatory before Q. No outstanding falsification or coverage finding.\n\nCritic evidence24-file index SHA256\n0427c7686e0189159ec6d92d5ec8d12022af95e79557dd78a96af3f59c29efc3\nat `evidence/omarchy-profile/evdev-buffer-verifier/sha256.txt`.\nCommands: `python3 evidence/omarchy-profile/evdev-buffer-verifier/audit-worker.py`;\n`python3 evidence/omarchy-profile/evdev-buffer-verifier/boundary-attack.py target/release/wasm-vm target/omarchy-input-kernel-r3/Image evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz evidence/omarchy-profile/evdev-buffer-verifier/boundary-255-r2`.",
+      "adversarial": "Fresh critic predicts the literal event order independently, audits the kernel\ndiff and artifact identities, and checks the same actual guest reader ran against\nboth kernels. Attack one boundary at or beyond capacity. Reject a simulated ring\nmodel as a substitute for a real kernel run. Carry AO runtime proofs unchanged.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03aq-evdev-burst-buffer.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 3,
+          "labels": [
+            "Verify bounded evdev retention against actual guest boundary cases",
+            "Record baseline loss and retained input in isolated guest kernel",
+            "Plan input retention remedy and activate bounded kernel slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 3
+    },
+    {
+      "id": "E5.5-T03ar",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Prepare a fresh desktop pair with the larger input buffer",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03aq"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — planned from AP's actual input loss\n\nAP trace line136 retains SYN_DROPPED and only the last three physical key events.\nReal uninstrumented physical plus visible response remains the release gate.\n\n### 2026-09-16 — activation\n\nAQ independently verified at5f5fe608. Start a new cold boot with AQ Image\n3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d.\nBind the running kernel through SHA256 of /sys/kernel/notes in both native boot\nand browser preparation:7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f.\nThat84-byte Image slice differs from the original kernel despite identical uname.\nPreparation keeps existing AJ options; the subsequent AS physical trial uses AO\nrecycling-on, original resolution and unchanged deadlines. Native preparation is\nbounded at7200 host seconds plus finite owned cleanup; browser preparation keeps\nits existing900-second preparation and180-second export budgets.\n\n### 2026-09-16 — worker — prepared pair submitted\n\nNative cold boot at c2cbcfd0d0d8b18ccc0d109363eca370c2dbf847 completes normally\nin3660.416s. Final browser/guards at21b77bb028996ed0a5450e289d4690eb820aab4d;\n41 affected harness tests pass. Exact component commands, preserved preflight\nfailures, raw serial/browser recordings, personal screenshot inspection and all\ninput/output hashes are in evidence/omarchy-profile/input-kernel-pair-r1/RESULT.md,\nNATIVE-RESULT.md and sha256.txt. The native guest recording is carried across\nharness-only cleanup/source-guard fixes, separately exercised by real-process\nand identity-mismatch attacks; actual owned group64485 is absent after the run.\n\nThe browser confirms AQ running notes before properties, records fresh original\nresolution Foot pixels after property acknowledgment (frames2→3), and acknowledges\nsync before exporting paused coherent RAM/delta, matching base/generation48.\nRAM205400326 bytes SHA265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8;\ndelta1285559 bytes SHA1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c.\nBoth are in target/omarchy-input-kernel-prepared-pair-r1. Zero unexpected browser\nerrors; no physical keyboard/nonce writer; normal owned cleanup. Worker inspected\nthe real prepared-desktop.png (SHAa3b201ce2e00db5602df2b55f51b687af5524ce3d5f02dabb47487eb1de2e27b):\nreadable empty shell prompt, full Foot and package bar. This does not establish\nresponsiveness; AS and Q remain gated pending their actual success.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified\n\n- **P1/P2 kernel identity — HELD.** Independently extracted candidate notes from\n  AQ Image/System.map, checked the actual native fenced read at boot.stdout.log:425\n  and restored-browser wire at report.json:4547. Both match7117bfaf…38d55f.\n  Served kernel/new native pair bytes match; old AJ/R3 RAM and identity overrides\n  are rejected by the preserved11 notes and14 source/provenance attacks.\n- **P3/P4 coherent pair/settings — HELD.** Native sync precedes the real capture\n  marker; browser sync completes before paused persistence/export. Independent\n  compressed/raw hashes, headers and2750 ordered blocks agree on R3 base and\n  generation48. AO WASM, ICount64, cap256, LP1, original1280x800 and direct opaque\n  properties are retained; preparation recycling remains off as scoped.\n- **P5/P6 image and no-input boundary — HELD.** Personally viewed the real PNG\n  a3b201ce…2e27b: readable empty Foot prompt and package bar at1280x800, frames2→3.\n  Actual wire contains exactly layers, kernel notes, direct properties and sync,\n  all exit0; zero physical events or nonce writer. This is preparation evidence.\n- **P7 cleanup — HELD.** Native exits0 in3660.416s, owned group absent; browser\n  visible at237.648s, export75.084s, cleanup7.616s, normal owned exit/no watchdog.\n  Fixed cleanup kills a TERM-resistant descendant even after its leader exits;\n  independent real-process fixtures and ordinary/cooperative cases pass.\n- **COVERAGE/SUITE.** Full changed-hunk disposition and resolved findings are in\n  evidence/omarchy-profile/input-kernel-pair-verifier/VERDICT.md. Carry unchanged\n  native proof across harness-only fixes.41 affected tests pass; retain the\n  kernel/source/order regressions, verify target and executable critic fixtures.\n  Worker18-file seal and40 frozen helper hashes were independently checked.\n\nCritic54-file seal: evidence/omarchy-profile/input-kernel-pair-verifier/sha256.txt,\nSHA2d00554de7818fab1c3c514c6aa9d09ec91ff345a404e5aab1ba9d59d9969e1c.\nWorker submissione36e1ebd; browser freeze21b77bb0; reportSHA667d7d1528dab2bfa1198faf6d64a530cdf18ed26ffba79602650105cf0d7809.\nVerified output remains target/omarchy-input-kernel-prepared-pair-r1 with the RAM\nand delta hashes above. AS physical responsiveness and Q publication remain gated.",
+      "adversarial": "Fresh critic follows candidate kernel identity from boot through capture,\nchecks paired disk identity and actual screenshot/properties, and tests one\nbounded identity mismatch. Do not repeat unchanged serialization proofs.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ar-input-buffer-desktop-pair.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify fresh input-kernel desktop pair and advance queue",
+            "evidence: submit new-kernel prepared desktop pair",
+            "Activate fresh desktop preparation with verified input kernel",
+            "Plan input retention remedy and activate bounded kernel slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03as",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Prove physical and visible desktop response with retained input",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ar"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — planned from AP's actual input loss\n\nAP trace line136 retains SYN_DROPPED and only the last three physical key events.\nReal uninstrumented physical plus visible response remains the release gate.\n\n### 2026-09-16 — activation\n\nAR independently verified at6c85e46e. Restore its exact new-kernel pair:\nRAM265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8,\ndelta1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c.\nUse unchanged AO WASM, recycling enabled, cap256, ICount64, original1280x800.\nNo syscall observer, CPU profiler, entry timing, or post-verdict instrumentation.\nRead actual kernel notes and saved properties before physical input; only the\nphysical command may write the nonce. Startup300s, typing60s, Enter+120s,\ncapture20s and cleanup30s remain unchanged. Real screenshot inspection and\nfresh independent verification remain necessary for any successful claim.\n\n### 2026-09-16 — worker — physical success, visual failure preserved\n\nFrozen initial recorder3d9520ba0cdc67e94fc099625b718d261a0bc07d; corrected\npost-nonce frame recorderab7bc0bc. Exact commands and all raw input/serial/runtime\nand image evidence: evidence/omarchy-profile/input-kernel-response-r1 and -r2.\nEach has a SHA256 index; r2/RESULT.md summarizes the submission.38 affected\nharness tests pass; no guest/core/WASM changes were made by AS.\n\nBoth real uninstrumented runs restore exact AR/AO bytes and loaded AQ notes,\nconfirm all saved properties and Foot473, and send128 trusted physical events\nwith256 ordered keyboard/sync acknowledgments. Independent nonce readback passes\nat84.792s and89.104s after Enter, within120s, with zero unexpected errors and\nnormal owned cleanup. R1 compared frames3→4 against a pre-input baseline;\nroot personally viewed its real screenshot and rejected visible acceptance.\nR2 requires a fresh frame after the nonce, preserves the20-second capture\nbudget, and advances4→5 after15.67s. Its real screenshot is still the same empty\nprompt (SHA431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24).\nThe typed command and returned prompt are absent. Thus desktopAcceptance=false\nis retained; no responsiveness or publication claim follows from these runs.\n\nThe permitted negative-result branch is submitted for verification. Next task\nAT isolates a concrete GPU transfer offset mismatch: the Linux driver already\nincludes the rectangle origin in source offset, while our resource copier adds\nit again. Prove the mismatch and corrected literal pixels before another actual\nresponse trial. Q now depends on AT and still requires positive visible proof.\n\n### 2026-09-16 — fresh verifier — VERDICT: verified (negative measurement)\n\nThis verifies the explicitly permitted negative-result branch. Physical command\nexecution is proven; visible response remains FAILED and desktop responsiveness\nis not solved. Q stays gated by pending AT and its positive physical/visual gate.\n\n- **Identity and input — HELD.** Independently checked exact AQ/AR/AO bytes,\n  both43-helper frozen-head closures,96 served rows per run, actual kernel notes\n  before Foot473 properties, and128 trusted keys with256 ordered acknowledgments.\n  All serial commands are allowed read-only probes. No observer/profiler or\n  entry timing; original300/60/120/20/30-second budgets and runtime settings hold.\n- **Physical result — HELD.** Exact nonce readback completes at84.792s in r1;\n  r2's raw fence completes at89.103s and recorder acknowledgment89.104s, within120s.\n  There are26/27 completed reads, zero pending, one matching nonce each,\n  zero unexpected errors and normal owned cleanup in0.165s/0.159s.\n- **Visible result — FAILED, preserved.** I personally viewed both real final\n  PNGs: only the old empty prompt appears. Both SHA431be977…a8195b24 are identical.\n  R2 correctly presents frame4→5 after nonce and captures within15.671s of the\n  original20s budget, yet terminal-region pixels remain stale. Raw report\n  97252137…51afb174:27011 records timing; nonce bytes occur at25936.\n- **Attacks/coverage — HELD for measurement.** Fourteen independent source/Foot\n  mismatches, wrong nonce, deadline+1ms nonce, stale/unpresented frames, early\n  baseline and late image all fail closed. The valid synthetic controls remain\n  distinct from product evidence.38 relevant submission tests pass; preserve\n  both negative images and carry unchanged runtime proof. The next measured\n  AT correction must independently prove pixel semantics and real visible response.\n\nFull verdict and changed-hunk disposition:\nevidence/omarchy-profile/input-kernel-response-verifier/VERDICT.md and coverage.md.\nWorker submissionf451a9a1; both worker seals and all22 members checked. Critic\n20-file sealsha256.txt SHA\nfdd0c7e52b1991af6ad6425e86c14e2d9d551dadeb72069df93b1232a72fced9.",
+      "adversarial": "Fresh critic verifies physical-only nonce provenance, deadlines, raw acknowledgments,\nindependent readback, exact artifacts and real screenshots; attack one bounded\nstale-image or nonce mismatch case. Q starts only after real success.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03as-input-buffer-physical-response.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify retained physical input and preserve failed visible response",
+            "evidence: prove physical command execution and preserve stale display finding",
+            "task: activate retained-input desktop response proof",
+            "Plan input retention remedy and activate bounded kernel slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03at",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Correct GPU 2D transfer source offsets",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03as"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — worker activation\n\nAS critic commit27e31ea3 verifies physical execution and the negative visual\nmeasurement. Activate only the existing transfer source-address boundary. Q\nremains gated on a real physical and visible response with unchanged deadlines.\n\n### 2026-09-16 — planned from AS visual failure and source comparison\n\nASr2 reportSHA97252137eed0cc5a4eae2e477e733a5d3f42dd0ad3e911358d8afd6b51afb174:\nnonce arrives89.104s after Enter; subsequent frame4→5 has terminal damage\nrect10,36,1260,754, yet the real PNG remains an empty prompt. Kernel input loss\nis repaired; visible response is not. Reference implementation:\nhttps://raw.githubusercontent.com/qemu/qemu/v9.2.0/hw/display/virtio-gpu.c\nand the pinned local Linux6.6.63 tarball. No new rendering feature is proposed.",
+      "adversarial": "A fresh critic predicts the literal copied pixels from Linux/QEMU's source\naddressing contract, independently attacks SG boundaries and large offsets,\nsabotage-checks sensitivity to the old extra-origin arithmetic, and audits\nchanged-hunk coverage. Independently review actual physical-only nonce,\noriginal deadlines and real screenshot. Any unbound-scanout issue is a separate\nfollow-up unless evidence makes it necessary; do not broaden this task.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03at-gpu-transfer-offset.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 2,
+          "labels": [
+            "task: activate GPU transfer source-offset correction",
+            "evidence: prove physical command execution and preserve stale display finding"
           ]
         }
       ],
@@ -23574,7 +23753,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03ao"
+        "E5.5-T03at"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23584,7 +23763,7 @@
       "criteriaTotal": 0,
       "criteriaDone": 0,
       "verificationLog": "",
-      "adversarial": "A fresh critic verifies actual guest dimensions rather than advertised mode or\ncanvas size, independent nonce creation and visible response; tests one bounded\nviewport/pointer case; and checks the final served artifact identity. Keep all\nPRs open. No Epic 6 GPU/JIT expansion or GitHub Actions.",
+      "adversarial": "A fresh critic verifies actual guest dimensions rather than advertised mode or\ncanvas size, independent nonce creation and visible response; tests one bounded\nviewport/pointer case; and checks the final served artifact identity. Keep all\nPRs open. No Epic 6 GPU/JIT expansion or GitHub Actions.\n\n### 2026-09-16 — next measured remedy\n\nAP proves actual compositor input synchronization loss, not responsiveness.\nAQ tests a bounded larger guest evdev buffer against the baseline; AR creates a\nfresh new-kernel paired desktop; AS must prove uninstrumented physical nonce and\nvisible returned prompt by the unchanged deadline. Negative results keep this\npublication task pending.\n\nAS proves physical execution at84.792s and89.104s, but both real terminal images\nremain empty. Even the corrected post-nonce frame check produces a stale image.\nAT addresses a concrete existing GPU source-offset mismatch with Linux/QEMU;\nits runtime correction must also prove physical and visible response before Q.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md",
       "activity": [
         {
@@ -23599,18 +23778,18 @@
         },
         {
           "date": "2026-09-16",
-          "commits": 6,
+          "commits": 9,
           "labels": [
-            "Verify FMADD and plan direct pure-helper imports",
-            "Verify negative recycling trial and plan measured FMADD boundary",
-            "Record failed prepared input trial and measured policy follow-up",
-            "Record direct opacity input failure and plan rendered checkpoint"
+            "evidence: prove physical command execution and preserve stale display finding",
+            "Plan input retention remedy and activate bounded kernel slice",
+            "Verify direct FP imports and plan guest input tracing",
+            "Verify FMADD and plan direct pure-helper imports"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-16",
-      "commitCount": 21
+      "commitCount": 24
     },
     {
       "id": "E5.5-T03r",

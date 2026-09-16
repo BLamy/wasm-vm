@@ -1726,3 +1726,17 @@ verify-E5_5-T03ar:
 verify-E5_5-T03as:
 	node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(INPUT_KERNEL_RESPONSE_OUT),evidence/omarchy-profile/input-kernel-response-r1) $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1)
+
+.PHONY: verify-E5_5-T03at-device verify-E5_5-T03at
+verify-E5_5-T03at-device:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-core -p wasm-vm-wasm --all-targets -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib dev::virtio::gpu -- --nocapture --test-threads=1
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+
+verify-E5_5-T03at: verify-E5_5-T03at-device
+	E5_DEMO_TASK=E5.5-T03at E5_DEMO_OUT=$(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --gpu-transfer-offset

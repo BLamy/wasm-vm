@@ -4,6 +4,24 @@ import { INPUT_BUFFER_PREPARED_IDENTITIES, INPUT_BUFFER_PREPARED_FOOT,
   assertInputKernelPreparedSource } from "./omarchy-input-kernel-response-state.mjs";
 import { PREPARED_DIRECT_IDENTITIES, assertPreparedDirectSource,
   assertPreparedDirectProperties, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
+import { GPU_TRANSFER_RUNTIME_FILES, assertGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
+
+test("AT runtime selection binds both corrected sources and the exact built WASM", () => {
+  const files = Object.fromEntries(GPU_TRANSFER_RUNTIME_FILES.map((file, index) =>
+    [file, { size: index + 1, sha256: String(index + 1).repeat(64) }]));
+  const record = { task: "E5.5-T03at", files };
+  assert.equal(assertGpuTransferRuntime(record, structuredClone(files)), "3".repeat(64));
+  for (const file of GPU_TRANSFER_RUNTIME_FILES) for (const field of ["size", "sha256"]) {
+    const bad = structuredClone(files); bad[file][field] = field === "size" ? 0 : "0".repeat(64);
+    assert.throws(() => assertGpuTransferRuntime(record, bad));
+  }
+  assert.throws(() => assertGpuTransferRuntime({ ...record, task: "E5.5-T03as" }, files));
+  assert.throws(() => assertGpuTransferRuntime(record, { ...files, extra: files[GPU_TRANSFER_RUNTIME_FILES[0]] }));
+  for (const field of ["size", "sha256"]) {
+    const bad = structuredClone(record); bad.files[GPU_TRANSFER_RUNTIME_FILES[0]][field] = field === "size" ? -1 : "not-a-digest";
+    assert.throws(() => assertGpuTransferRuntime(bad, bad.files));
+  }
+});
 
 test("AS admits only verified AR bytes and leaves old AJ source guards intact", () => {
   const source = { ...structuredClone(INPUT_BUFFER_PREPARED_IDENTITIES),
