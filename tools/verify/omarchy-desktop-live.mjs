@@ -64,6 +64,7 @@ const workerCost = process.env.OMARCHY_WORKER_COST === "1";
 const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
 const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
 const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
+const preparedRecycling = process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT === "prepared-recycling";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
 if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
@@ -100,10 +101,10 @@ const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, c
 if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
 }
-if (trial?.experiment === "residency") assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+if (["residency", "prepared-recycling"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
   "residency is isolated from other experiments");
 if (process.env.OMARCHY_WORKER_COST !== undefined) {
-  assert.ok(workerCost && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate",
+  assert.ok(workerCost && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate",
     "worker cost requires the fixed residency candidate input trial");
 }
 if (process.env.OMARCHY_OPAQUE_FOOT !== undefined) {
@@ -117,10 +118,11 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
   "direct opaque requires its isolated fixed residency candidate input trial");
 }
 if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
-  assert.ok(preparedDirect && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
-    && !opaqueFoot && !directOpaque && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
+  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate"
+    && !opaqueFoot && !directOpaque && workerCost === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
   "prepared direct input requires its isolated fixed residency candidate trial");
 }
+if (preparedRecycling) assert.ok(preparedDirect && workerCost, "prepared recycling requires the exact prepared trial and post-verdict recorder");
 let modePairOutput = null;
 if (modePair) {
   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
@@ -455,6 +457,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
     "tools/verify/omarchy-input-audit.mjs",
     "tools/verify/omarchy-prepared-direct-state.mjs", "tools/verify/omarchy-prepared-direct-input.mjs",
+    "tools/verify/omarchy-prepared-recycling-input.mjs",
     "tools/verify/omarchy-direct-opaque-preparation.mjs", "tools/verify/omarchy-prepare-direct-opaque.mjs",
     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",
@@ -1317,7 +1320,8 @@ async function runLive() {
     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
     if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
     if (directOpaque) report.directOpaqueInputFence = await fenceWorkerCostInput(page, report.keyboard);
-    if (preparedDirect) report.preparedDirectInputFence = await fenceWorkerCostInput(page, report.keyboard);
+    if (preparedDirect) report.preparedDirectInputFence = workerCost
+      ? report.workerCostInputFence : await fenceWorkerCostInput(page, report.keyboard);
     report.keyboard.stage = "post-enter-focus";
     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");

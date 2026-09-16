@@ -25,9 +25,10 @@ export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, tim
   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
-  assert.ok(["recycling", "residency"].includes(experiment), "unsupported input-trial experiment");
-  return { arm, recycling: experiment === "recycling" && arm === "candidate",
-    ...(experiment === "residency" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+  assert.ok(["recycling", "residency", "prepared-recycling"].includes(experiment), "unsupported input-trial experiment");
+  if (experiment === "prepared-recycling") assert.equal(arm, "candidate", "prepared recycling has one fixed candidate");
+  return { arm, recycling: experiment !== "residency" && arm === "candidate",
+    ...(experiment !== "recycling" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
 }
@@ -40,8 +41,9 @@ export function inputTrialUrl(input, options) {
   url.searchParams.set("omarchyDivider", "64");
   url.searchParams.set("jit", "1");
   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
-  if (options.experiment === "residency") {
-    assert.equal(options.recycling, false, "residency keeps recycling off");
+  if (["residency", "prepared-recycling"].includes(options.experiment)) {
+    assert.equal(options.recycling, options.experiment === "prepared-recycling", "experiment recycling selection disagrees");
+    if (options.experiment === "prepared-recycling") assert.equal(options.arm, "candidate");
     url.searchParams.set("jitResidency", residencyForArm(options.arm).jitResidencyPolicy);
   }
   return url;
@@ -67,9 +69,12 @@ export function assertInputTrialRuntime(state, options) {
     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
   }
   assert.equal(jit.decodedCacheEntries, 4096);
-  const residency = options.experiment === "residency" ? residencyForArm(options.arm)
+  const residency = ["residency", "prepared-recycling"].includes(options.experiment) ? residencyForArm(options.arm)
     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
   if (options.experiment === "residency") assert.equal(options.recycling, false);
+  if (options.experiment === "prepared-recycling") {
+    assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
+  }
   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
   assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
   assert.equal(jit.entryCost?.timingEnabled, false);

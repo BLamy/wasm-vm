@@ -9,16 +9,20 @@ const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n),
 const success = "input-trial-physical-nonce-and-fresh-presentation";
 const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
 
-export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false }) {
+export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false,
+  preparedRecycling = false }) {
   assert.equal(typeof preparedDirect, "boolean");
+  assert.equal(typeof preparedRecycling, "boolean");
+  if (preparedRecycling) assert.equal(preparedDirect, true);
   assert.equal(report.preparedDirectRequested === true, preparedDirect);
   assert.equal(report.trial.head, head, "wrong source head");
   assert.equal(report.trial.scopedStatus, "");
   assert.equal(report.trial.arm, arm);
-  assert.equal(report.trial.experiment, "residency");
-  assert.equal(report.trial.recycling, false);
+  const experiment = preparedRecycling ? "prepared-recycling" : "residency";
+  assert.equal(report.trial.experiment, experiment);
+  assert.equal(report.trial.recycling, preparedRecycling);
   const options = inputTrialOptions({ urlArg: "local", pair: "pinned", chunks: "pinned", arm,
-    renderer: null, lp: null, experiment: "residency" });
+    renderer: null, lp: null, experiment });
   assert.equal(report.trial.jitResidencyPolicy, options.jitResidencyPolicy);
   assert.equal(report.trial.jitResidencyCap, options.jitResidencyCap);
   for (const [key, value] of Object.entries({ startupMs: 300000, typingMs: 60000,

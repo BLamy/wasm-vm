@@ -30,11 +30,14 @@ const actualHelpers = [
 function fixture({ mode = "input-trial", missingReady = false, lostFocus = false,
   wrongNonce = false, lateReadback = false, stalePresentation = false,
   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
-  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false } = {}) {
+  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false,
+  preparedRecycling = false } = {}) {
   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
-    arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control", experiment: opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling", renderer: null, lp: null });
+    arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control",
+    experiment: preparedRecycling ? "prepared-recycling" : opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling",
+    renderer: null, lp: null });
   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
   let randomCall = 0;
   const epoch = now, readyMs = 5;
@@ -95,12 +98,12 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
   };
   const state = { presentation: before, clock: { mode: "icount", clockDiv: 64 },
     jit: { hasExecutor: true, admissionProbe: false,
-      coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
+      coldCounterRecycling: { enabled: trial.recycling, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
       decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque || preparedDirect ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque || preparedDirect ? 256 : 24, entryCost: { timingEnabled: false } } };
   const bindings = {
     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
-    coldPair: false, workerCost: false, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
+    coldPair: false, workerCost: preparedRecycling, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
     coldDeadline: null, trialCaptureDeadline: null, mode,
     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
     physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, requestPreparedDirectProperties, assertOriginalPresentation,
@@ -200,6 +203,22 @@ test("synthetic prepared-pair path reads saved settings once and preserves physi
     const bad=fixture({preparedDirect:true,...mutation}); assert.ok(await bad.run());
     assert.equal(bad.report.result,undefined);
     if(mutation.badOpaque) assert.equal(bad.keys.length,0);
+  }
+});
+
+test("synthetic prepared recycling reuses one post-Enter fence and retains the input deadline", async () => {
+  const f = fixture({ preparedDirect: true, preparedRecycling: true });
+  assert.equal(await f.run(), null);
+  assert.equal(f.report.result, "input-trial-physical-nonce-and-fresh-presentation");
+  assert.equal(f.commands.filter(command => command === PREPARED_DIRECT_COMMAND).length, 1);
+  assert.equal(f.trace.filter(step => step === "input-fence").length, 1);
+  assert.strictEqual(f.report.preparedDirectInputFence, f.report.workerCostInputFence);
+  assert.equal(Date.parse(f.report.keyboard.deadlineAt), f.report.keyboard.enteredAtMs + 120000);
+  assert.equal(f.trial.jitResidencyCap, 256);
+  assert.equal(f.trial.recycling, true);
+  for (const mutation of [{ badOpaque: true }, { lateReadback: true }, { wrongNonce: true }, { stalePresentation: true }]) {
+    const bad = fixture({ preparedDirect: true, preparedRecycling: true, ...mutation });
+    assert.ok(await bad.run()); assert.equal(bad.report.result, undefined);
   }
 });
 

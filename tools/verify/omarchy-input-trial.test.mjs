@@ -7,6 +7,38 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
 const options = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm, renderer: null, lp: null });
 const residencyOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
   renderer: null, lp: null, experiment: "residency" });
+const preparedRecyclingOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+  renderer: null, lp: null, experiment: "prepared-recycling" });
+test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
+  const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
+  assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
+  assert.throws(() => preparedRecyclingOptions("control"));
+  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
+  const candidateUrl = inputTrialUrl(base, trial), controlUrl = inputTrialUrl(base, control);
+  assert.equal(candidateUrl.searchParams.get("jitResidency"), "cap-256");
+  assert.equal(candidateUrl.searchParams.get("jitColdCounterRecycling"), "1");
+  candidateUrl.searchParams.set("jitColdCounterRecycling", "0");
+  assert.equal(candidateUrl.href, controlUrl.href);
+  assert.throws(() => inputTrialUrl(base, { ...trial, recycling: false }));
+  assert.throws(() => inputTrialUrl(base, { ...trial, arm: "control" }));
+});
+test("prepared recycling rejects drift in the actual runtime policy", () => {
+  const trial = preparedRecyclingOptions("candidate");
+  const state = { jit: { hasExecutor: true, admissionProbe: false,
+    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
+    decodedCacheEntries: 4096, jitResidencyPolicy: "cap-256", jitResidencyCap: 256,
+    entryCost: { timingEnabled: false } }, clock: { mode: "icount", clockDiv: 64 } };
+  assertInputTrialRuntime(state, trial);
+  for (const mutate of [
+    s => { s.jit.coldCounterRecycling.enabled = false; },
+    s => { s.jit.coldCounterRecycling.threshold = 1; },
+    s => { s.jit.coldCounterRecycling.capacity = 131072; },
+    s => { s.jit.jitResidencyCap = 24; },
+    s => { s.jit.jitResidencyPolicy = "repack-off"; },
+    s => { s.jit.decodedCacheEntries = 16384; },
+    s => { s.clock.clockDiv = 1; },
+  ]) { const bad = structuredClone(state); mutate(bad); assert.throws(() => assertInputTrialRuntime(bad, trial)); }
+});
 test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
     typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
