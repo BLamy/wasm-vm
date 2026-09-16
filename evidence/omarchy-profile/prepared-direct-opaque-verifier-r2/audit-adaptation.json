@@ -1,0 +1,20 @@
+[
+  {
+    "name": "audit-run.py",
+    "r1SHA": "ab805f7b2e38c24a1aeaf03e4b4c963f7f134040dead2ada550cbac2b110c399",
+    "r2SHA": "eb9e2792cff9f4f8bdd931e7d29e05477fb2efb96bd45310e5003760783bdcd4",
+    "difference": "expected verified AL WASM identity, and chronological screenshot<=visibleAt instead of incorrect exact millisecond equality"
+  },
+  {
+    "name": "audit-image.py",
+    "r1SHA": "a970275ecf08909aadadeec5962f55b41acd25155a2813eec13ce03f73fb1cab",
+    "r2SHA": "a970275ecf08909aadadeec5962f55b41acd25155a2813eec13ce03f73fb1cab",
+    "difference": "byte-identical copied utility; not yet run on R2"
+  },
+  {
+    "name": "audit-pair.py",
+    "r1SHA": "d786c5a7b3a7ffae8c694ba295d2552a453f39ac186363e657fc8929a61be8bf",
+    "r2SHA": "6e155b75c4dafc91716a541eaffc11cded043675efab174db98b062f57bfa482",
+    "difference": "requires all 16 R3 machine sections in unchanged serialization order, derived from sealed AL R3 oracle and source before R2 bytes; streaming parser otherwise unchanged; not yet run"
+  }
+]
