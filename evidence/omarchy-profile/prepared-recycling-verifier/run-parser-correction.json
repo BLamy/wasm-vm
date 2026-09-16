@@ -1,0 +1,8 @@
+{
+  "initialParserSha256": "ce0b9d60a0dbc017b31de15fadd721f3000aa8d89d077edaab470e4632414899",
+  "correctedParserSha256": "7646c35f852f5c423b692de9073c3a7f71a60a3a8b865a00ce916a01dbcdb7a6",
+  "finding": "The independent adapter omitted the existing read-only layers startup RPC. Actual AM and sealed AK both issue one identical layers query before the saved-property batch, so it is not a new command or runtime-option difference.",
+  "correction": "Require exactly layers then exactly saved-property batch; all remaining requests must be nonce-file reads. serialCommands and exec observations omit the layers readiness query.",
+  "preservedFailure": "run-audit-initial.log",
+  "scope": "Verifier-adapter correction only; no source or actual report changes."
+}

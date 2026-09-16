@@ -1,0 +1,36 @@
+{
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "sourceFiles": 26,
+  "runtimeUnchangedFromAKAndAL": true,
+  "workerGates": {
+    "tests": 89,
+    "syntaxChecks": 2,
+    "commandsSha256": "4a3fecd8e4750567e9c9dd8c27a3287472c05b6f9115aa7588697076b77a0916"
+  },
+  "beforeLaunch": true,
+  "actualReportHelpersBoundToFrozenGit": 31,
+  "scopedStatus": "",
+  "exactOptionDifference": {
+    "sameFields": [
+      "arm",
+      "jitResidencyPolicy",
+      "jitResidencyCap",
+      "startupMs",
+      "typingMs",
+      "readbackMs",
+      "captureMs",
+      "cleanupMs",
+      "profilingRequested",
+      "admissionProbeRequested"
+    ],
+    "sameArtifactRoles": [
+      "kernel",
+      "bootSnapshot",
+      "overlayDelta",
+      "chunkManifest",
+      "image"
+    ],
+    "onlyRuntimeChange": "jitColdCounterRecycling 0 -> 1",
+    "harnessChange": "prepared-recycling label and optional post-verdict host sample"
+  }
+}

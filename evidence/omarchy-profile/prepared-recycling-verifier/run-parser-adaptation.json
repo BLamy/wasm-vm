@@ -1,0 +1,17 @@
+{
+  "source": "evidence/omarchy-profile/worker-cost-verifier/audit-run.py",
+  "sourceSha256": "bf68deede90be72830883d56f67f3e5ca32f773d09ddac51ab7e0f9a95019217",
+  "adaptedSha256": "ce0b9d60a0dbc017b31de15fadd721f3000aa8d89d077edaab470e4632414899",
+  "changes": [
+    "AL WASM/AJ pair and exact frozen AM pins; recycling true at cap256 and experiment label.",
+    "Literal independent prepared-property command and exact eight-value/active-Foot readback; no setters.",
+    "Retain response trailing newline for exact property-receipt equality; compare trimmed nonce only.",
+    "Property command is now recorded in serialCommands/exec observations; adjust index and count accordingly.",
+    "Separate enteredAt Date.now and adjacent typedAt sample are ordered, while deadline still exactly enteredAt+120000.",
+    "Optional machine-positive path skips profile and requires personal image check. Negative path carries AC fence/profile invariants.",
+    "Profile deadline sample must be between capture startedAt and sampleStartedAt because those timestamps are adjacent independent calls; no input deadline changes.",
+    "AM aliases the same single acknowledged fence into prepared and worker-cost receipts."
+  ],
+  "scope": "Parser imports no implementation or worker validation code. Not executed against AM before recording closes.",
+  "preparationCorrection": "Initial copy script asserted an incorrectly transcribed old AC SHA string before writing or reading AM evidence; corrected to the sealed parser literal."
+}

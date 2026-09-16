@@ -1,0 +1,11 @@
+{
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "outcome": "nonce-readback-failed",
+  "trustedPhysicalEvents": 128,
+  "matchedKeyboardRPCs": 256,
+  "completedReads": 35,
+  "pendingReads": 0,
+  "nonceVerified": false,
+  "desktopAccepted": false,
+  "reportSha256": "bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4"
+}

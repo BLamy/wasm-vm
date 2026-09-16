@@ -1,0 +1,207 @@
+{
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "sourceFiles": 26,
+  "files": [
+    {
+      "path": "tools/verify/e5-t22c-cpu-profile.mjs",
+      "sha256": "d80ef3a26e4c40eea023205e10bf0356c55938c1772fd8d502aa7c871e82c88b"
+    },
+    {
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+    },
+    {
+      "path": "tools/verify/omarchy-cold-pair.mjs",
+      "sha256": "57efc19279733d5b00629795db2d9313721940fa92317173be7c53d7088633f3"
+    },
+    {
+      "path": "tools/verify/omarchy-compositor-command.mjs",
+      "sha256": "03618e89cca383e0f9d775c35a1587beccbbb8a9556c0f4b7de73d44b88de366"
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "8c43fe909adf8342061b0e85714f5c895e2cf032dd8d1dfa6e2366fb136e7fe5"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque-command.mjs",
+      "sha256": "a2705da081a74c8c41fdba67d7062eb675bd2f0feb846c13c5333e8f6919eb88"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque-preparation.mjs",
+      "sha256": "7f0b758be12f06353b3053295e6892700bf8d2c984d731723881772a7244332b"
+    },
+    {
+      "path": "tools/verify/omarchy-failure-checkpoint.mjs",
+      "sha256": "14f3aeec604386fa15e4748f56986a4104660f046f9c0b323de4004003860a54"
+    },
+    {
+      "path": "tools/verify/omarchy-input-audit.mjs",
+      "sha256": "e1b74d4bfbc2ef971f65e4b972d2aa82cc1f6e157837bae9fcec5afdf7bec817"
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "sha256": "df81c486611439d28979ba7827ce0aa0f30a2dcb7f0de12114bec50d471c9cd7"
+    },
+    {
+      "path": "tools/verify/omarchy-latency-receipt.mjs",
+      "sha256": "79f97639b99c2a9c3b42917ecbdc9bb85b7d6c079abe3791d6bc088655d1b395"
+    },
+    {
+      "path": "tools/verify/omarchy-live-recording.mjs",
+      "sha256": "e69245f453e7ec4ca8ba821075f0c5500ed0e736e102c58010e118de2925d8db"
+    },
+    {
+      "path": "tools/verify/omarchy-mode-preparation.mjs",
+      "sha256": "a9a622f5b7a220334af14bff94b19b770bb2b99207723edbeb0d32b3f6d2bc73"
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot-command.mjs",
+      "sha256": "1bb836ac9706f8d0af041770a997a1ac421632cc65f759a979f77668525c0a67"
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-preparation.mjs",
+      "sha256": "7cbc9f3deaa19517052d813d94eb28f1820a7480e6882b9511f2f78c79e84f83"
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8"
+    },
+    {
+      "path": "tools/verify/omarchy-prepared-direct-state.mjs",
+      "sha256": "786bd9f7c29b5281a2c78ee137060a85916a3412d0c66e1ec8cef79377ca1c98"
+    },
+    {
+      "path": "tools/verify/omarchy-prepared-recycling-input.mjs",
+      "sha256": "1c5751d507df172e0ce8c2feb81221c9964fd2b61aecd39ef34d3fd3a6e00937"
+    },
+    {
+      "path": "tools/verify/omarchy-process-sample.mjs",
+      "sha256": "8743d35e481f21291ce346cbe297a0193f80ff1d9ed84ada892fe23078751a9e"
+    },
+    {
+      "path": "tools/verify/omarchy-render-mode.mjs",
+      "sha256": "2c168dcbc9ca92584e104bec4e65998d43ad844ee0c06654d4695707d1edab80"
+    },
+    {
+      "path": "tools/verify/omarchy-renderer-log.mjs",
+      "sha256": "dff6ff9d534efbb6afa3b0fd549d7b903f38ce999f2e6981673ec7efccad8bbc"
+    },
+    {
+      "path": "tools/verify/omarchy-thread-setting.mjs",
+      "sha256": "a0e82ca953f0fc06cb94475443c28f76cc7c1a4a0e1da83e0e2da8af267667c4"
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost-capture.mjs",
+      "sha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520"
+    },
+    {
+      "path": "web/guest-rpc.js",
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "path": "web/omarchy-desktop-readiness.js",
+      "sha256": "8c534fe9093db5945f5bec0d6fc06ec4a92a4b8342c6d6f47543e9f2355aaa56"
+    },
+    {
+      "path": "web/src/input/keymap.js",
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada"
+    }
+  ],
+  "dynamicImportsInspected": [
+    {
+      "file": "tools/verify/omarchy-browser-session.mjs",
+      "specifier": "/linux-worker-host.js"
+    },
+    {
+      "file": "tools/verify/omarchy-browser-session.mjs",
+      "specifier": "/src/sink/presentation.js"
+    },
+    {
+      "file": "tools/verify/omarchy-browser-session.mjs",
+      "specifier": "/src/input/keymap.js"
+    },
+    {
+      "file": "tools/verify/omarchy-browser-session.mjs",
+      "specifier": "/terminal.js"
+    },
+    {
+      "file": "tools/verify/omarchy-failure-checkpoint.mjs",
+      "specifier": "./pkg/wasm_vm_wasm.js"
+    },
+    {
+      "file": "tools/verify/omarchy-failure-checkpoint.mjs",
+      "specifier": "./pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "runtimeUnchangedFromAKAndAL": true,
+  "unchangedAKHelpers": [
+    {
+      "path": "tools/verify/omarchy-prepared-direct-state.mjs",
+      "sha256": "786bd9f7c29b5281a2c78ee137060a85916a3412d0c66e1ec8cef79377ca1c98"
+    },
+    {
+      "path": "tools/verify/omarchy-latency-receipt.mjs",
+      "sha256": "79f97639b99c2a9c3b42917ecbdc9bb85b7d6c079abe3791d6bc088655d1b395"
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost-capture.mjs",
+      "sha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520"
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8"
+    },
+    {
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+    },
+    {
+      "path": "tools/verify/omarchy-live-recording.mjs",
+      "sha256": "e69245f453e7ec4ca8ba821075f0c5500ed0e736e102c58010e118de2925d8db"
+    },
+    {
+      "path": "tools/verify/e5-t22c-cpu-profile.mjs",
+      "sha256": "d80ef3a26e4c40eea023205e10bf0356c55938c1772fd8d502aa7c871e82c88b"
+    },
+    {
+      "path": "tools/verify/e5-t22c-symbolize-cpu.mjs",
+      "sha256": "15006e82701a6aa010e1e96638e4d6cf5f07118843c8c4c0d4bb79f1fd9519d5"
+    }
+  ],
+  "workerGates": {
+    "tests": 89,
+    "syntaxChecks": 2,
+    "commandsSha256": "4a3fecd8e4750567e9c9dd8c27a3287472c05b6f9115aa7588697076b77a0916"
+  },
+  "frozenAt": "2026-09-16T07:34:38Z",
+  "actualStartedAt": "2026-09-16T07:34:57.060Z",
+  "beforeLaunch": true,
+  "actualReportHelpersBoundToFrozenGit": 31,
+  "scopedStatus": "",
+  "unrelatedGuestModeEditOutsideClosure": true,
+  "exactOptionDifference": {
+    "sameFields": [
+      "arm",
+      "jitResidencyPolicy",
+      "jitResidencyCap",
+      "startupMs",
+      "typingMs",
+      "readbackMs",
+      "captureMs",
+      "cleanupMs",
+      "profilingRequested",
+      "admissionProbeRequested"
+    ],
+    "sameArtifactRoles": [
+      "kernel",
+      "bootSnapshot",
+      "overlayDelta",
+      "chunkManifest",
+      "image"
+    ],
+    "onlyRuntimeChange": "jitColdCounterRecycling 0 -> 1",
+    "harnessChange": "prepared-recycling label and optional post-verdict host sample"
+  },
+  "sourceEnvironment": "Owned ephemeral browser/context; no saved storage state; local pinned artifacts; no runtime/default mutation.",
+  "diffSha256": "b9899c2240418d0bb0ad6450707ca8d9b4428a66ce3345080079a5f9ab3610e9"
+}

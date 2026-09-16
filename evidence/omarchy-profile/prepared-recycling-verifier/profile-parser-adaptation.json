@@ -1,0 +1,10 @@
+{
+  "original": "evidence/omarchy-profile/worker-cost-verifier/audit-profile.py",
+  "originalSha256": "f030a1895a551ba8c9e350b3b6cc4337d8ac29747baf6dbce8a238da6ca2aca5",
+  "adaptedSha256": "7789ce053ab6140bf8d1a4a2cd9facb0d896b8373899139eee1ac46d96d35750",
+  "changes": [
+    "Exact expected release digest changes from AC runtime to independently verified AL runtime; parser and every byte comparison/recount assertion unchanged.",
+    "Copy writes only to its own current verifier directory."
+  ],
+  "execution": "Not run; no AM profile exists or has been inspected yet."
+}

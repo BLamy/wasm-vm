@@ -1,0 +1,11 @@
+{
+  "source": "evidence/omarchy-profile/prepared-direct-input-verifier/wrapper-test.mjs",
+  "sourceSha256": "79195950531c1d3c2a900d747d23ef73838d22a55fcfdd4c85af91550015f8b9",
+  "adaptedSha256": "c68b043944648ce3763777af7c99900f8574e2f2ec3683806c53d4de16bf0637",
+  "changes": [
+    "Execute new frozen AM wrapper with synthetic I/O only.",
+    "Assert prepared-recycling/worker-cost environment and180s watcher allowance.",
+    "Synthetic positive requires skipped-input-passed; synthetic pre-input negative has no profile. Actual negative/profile branch is covered by real AM evidence.",
+    "Retain AK pair/hash/WASM/watchdog/audit/fence failure cases; no additional guest."
+  ]
+}
