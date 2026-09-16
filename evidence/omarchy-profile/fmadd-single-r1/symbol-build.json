@@ -1,0 +1,72 @@
+{
+  "raw": {
+    "path": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "sha256": "55e787f64c8bdcb970397d9ec06ccf4baac17d5b5b6308127a1c800f8b56a33e"
+  },
+  "commands": [
+    {
+      "label": "bindgen-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T08:46:43Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:46:43Z"
+    },
+    {
+      "label": "wasmopt-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T08:46:43Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:46:43Z"
+    },
+    {
+      "label": "bindgen",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--target",
+        "web",
+        "--out-dir",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-fmadd-symbols",
+        "--out-name",
+        "wasm_vm_wasm",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "startedAt": "2026-09-16T08:46:43Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:46:43Z"
+    },
+    {
+      "label": "named-companion",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "-O",
+        "-g",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-fmadd-symbols/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-fmadd-symbols/named.wasm"
+      ],
+      "startedAt": "2026-09-16T08:46:43Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:46:44Z"
+    },
+    {
+      "label": "binding",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-r1/bind-names.mjs"
+      ],
+      "startedAt": "2026-09-16T08:46:44Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:46:44Z"
+    }
+  ],
+  "named": {
+    "path": "target/omarchy-fmadd-symbols/named.wasm",
+    "sha256": "3e98b0182b71c7833b21562a647922fba516beb963a73b5ebbc94adc4f0db587"
+  }
+}

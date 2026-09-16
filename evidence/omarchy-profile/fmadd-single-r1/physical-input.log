@@ -1,0 +1,307 @@
+{
+  "purpose": "prepared-pair-fmadd-single-runtime",
+  "acceptanceClaim": false,
+  "head": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "wasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-opaque-r2",
+  "pairIdentities": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "bootSnapshot": {
+      "size": 207172408,
+      "sha256": "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    },
+    "overlayDelta": {
+      "size": 1232847,
+      "sha256": "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    }
+  },
+  "startedAt": "2026-09-16T08:41:23.808Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T08:44:58.151Z",
+  "reportSha256": "31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea",
+  "input": {
+    "arm": "candidate",
+    "machineAcceptance": false,
+    "visualInspectionRequired": true,
+    "result": "failed",
+    "outcome": "nonce-readback-failed",
+    "startup": {
+      "startedAt": "2026-09-16T08:41:25.496Z",
+      "timeoutMs": 300000,
+      "deadlineAt": "2026-09-16T08:46:25.496Z",
+      "readyProvenAt": "2026-09-16T08:42:15.065Z",
+      "elapsedMs": 49569
+    },
+    "keyboard": {
+      "verified": false,
+      "nonce": "27690f60bc002a73",
+      "guestFile": "/tmp/desktop-keys-b16a8a2588442dd6",
+      "startedAt": "2026-09-16T08:42:15.065Z",
+      "enteredAtMs": 1789548137860,
+      "typedAt": "2026-09-16T08:42:17.860Z",
+      "typingMs": 2795,
+      "readbackStartedAt": "2026-09-16T08:42:17.860Z",
+      "readbackTimeoutMs": 120000,
+      "deadlineMs": 120000,
+      "deadlineAt": "2026-09-16T08:44:17.860Z",
+      "stage": "readback",
+      "failedAt": "2026-09-16T08:44:17.862Z",
+      "error": "Error: physical keyboard: timed out waiting for physical keyboard nonce file",
+      "desktopReadyPageMs": 18599.300000190735,
+      "firstPhysicalKeydownPageMs": 49567.94500017166,
+      "readyToFirstPhysicalKeydownMs": 30968.644999980927
+    },
+    "trustedEvents": 128,
+    "matchedKeyboardCalls": 128,
+    "completedReads": 11,
+    "pendingReads": 0,
+    "readExits": [
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75
+    ],
+    "nonceReplies": 0,
+    "framesBefore": 2,
+    "framesAfter": 2,
+    "intervalRetired": 1061955852,
+    "intervalJitRetired": 801561173,
+    "intervalJitShare": 0.7547970770069262,
+    "discoveryBefore": {
+      "nominated": 21023,
+      "deduped": 7119912,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 109,
+      "queueDepth": 27,
+      "queueHighWater": 478,
+      "candidates": 27483,
+      "generation": 5
+    },
+    "discoveryAfter": {
+      "nominated": 67963,
+      "deduped": 18369165,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 160,
+      "queueDepth": 2,
+      "queueHighWater": 478,
+      "candidates": 59812,
+      "generation": 5
+    },
+    "recyclingBefore": {
+      "enabled": true,
+      "epochs": "3",
+      "discardedCounters": "196608",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "recyclingAfter": {
+      "enabled": true,
+      "epochs": "4",
+      "discardedCounters": "262144",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "residency": {
+      "policy": "cap-256",
+      "cap": 256
+    },
+    "cacheBefore": {
+      "blocks": 1251,
+      "installs": 5851,
+      "evictions": 1105
+    },
+    "cacheAfter": {
+      "blocks": 936,
+      "installs": 13946,
+      "evictions": 3055
+    },
+    "serial": [
+      {
+        "rid": "mu3uq7jf0",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-16T08:41:30.027Z",
+        "completedAt": "2026-09-16T08:41:44.097Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3uqsof1",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+        "sentAt": "2026-09-16T08:41:57.423Z",
+        "completedAt": "2026-09-16T08:42:14.988Z",
+        "response": {
+          "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3ur8gb2",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:17.867Z",
+        "completedAt": "2026-09-16T08:42:21.976Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3urcec3",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:22.981Z",
+        "completedAt": "2026-09-16T08:42:28.448Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3urhe34",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:29.452Z",
+        "completedAt": "2026-09-16T08:42:36.910Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3urnx75",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:37.915Z",
+        "completedAt": "2026-09-16T08:42:43.945Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3urtcm6",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:44.950Z",
+        "completedAt": "2026-09-16T08:42:50.009Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3ury117",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:42:51.013Z",
+        "completedAt": "2026-09-16T08:43:05.644Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3usa3f8",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:43:06.652Z",
+        "completedAt": "2026-09-16T08:43:22.817Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3usneo9",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:43:23.904Z",
+        "completedAt": "2026-09-16T08:43:40.213Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3ut0ru10",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:43:41.226Z",
+        "completedAt": "2026-09-16T08:44:02.326Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3uthtz11",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:44:03.335Z",
+        "completedAt": "2026-09-16T08:44:14.067Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3utqvy12",
+        "command": "if [ -f '/tmp/desktop-keys-b16a8a2588442dd6' ]; then cat '/tmp/desktop-keys-b16a8a2588442dd6'; else (exit 75); fi",
+        "sentAt": "2026-09-16T08:44:15.070Z",
+        "completedAt": "2026-09-16T08:44:17.269Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      }
+    ]
+  },
+  "configuration": {
+    "configuration": "properties-confirmed",
+    "wire": {
+      "rid": "mu3uqsof1",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T08:41:57.423Z",
+      "completedAt": "2026-09-16T08:42:14.988Z",
+      "response": {
+        "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    "physicalInputTested": true
+  },
+  "result": "failed",
+  "profile": {
+    "durationMs": 30012.977,
+    "samples": 19792,
+    "nodes": 6011,
+    "sampledUs": 30011697
+  },
+  "postVerdictInput": {
+    "fenceAcknowledgedAt": "2026-09-16T08:42:17.864Z",
+    "noPostVerdictIngress": true
+  },
+  "desktopAcceptance": false,
+  "visualInspectionRequired": true
+}

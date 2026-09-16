@@ -1,0 +1,59 @@
+{
+  "inspector": "worker /root",
+  "builtImagesInspected": true,
+  "coldImagesInspected": true,
+  "physicalImagesInspected": true,
+  "typedCommandAndReturnedPrompt": false,
+  "observations": [
+    {
+      "inspectedAt": "2026-09-16T08:31:41Z",
+      "images": [
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/browser/suite.png",
+          "sha256": "93f99745d945b7222717996a01b59c25346361e2cc57587129a6090a890c0363"
+        },
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/browser/capability-inspection.png",
+          "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f"
+        },
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/browser/built-page.png",
+          "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42"
+        }
+      ],
+      "result": "Actual built-page captures show all 127 ISA tests passing, zero failures, the FMADD capability live, and the AN task correctly in progress. This is instruction/browser evidence, not desktop response."
+    },
+    {
+      "inspectedAt": "2026-09-16T08:41:42Z",
+      "images": [
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/suite.png",
+          "sha256": "60284ed51c80cfb25b758defb99b3f331e182cf4130d73023e1851fbaf12cbf6"
+        },
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/capability-inspection.png",
+          "sha256": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f"
+        },
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/cold/browser/built-page.png",
+          "sha256": "776c7d16e6c2f52a89a17a46d436460d09f31d15f818fa4d6c3130f4565bad42"
+        }
+      ],
+      "result": "Personally inspected the clean-clone browser images: 127 passing, zero failures, live FMADD capability and current AN task. Same state digest and byte-identical release in the machine-readable receipts."
+    },
+    {
+      "inspectedAt": "2026-09-16T08:48:12Z",
+      "images": [
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/prepared-direct.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        },
+        {
+          "path": "evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/failure.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        }
+      ],
+      "result": "Personally inspected both actual full-resolution images. They show the same empty Foot prompt; no typed command and no returned response. No desktop success is claimed."
+    }
+  ]
+}

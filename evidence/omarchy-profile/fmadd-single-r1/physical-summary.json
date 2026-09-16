@@ -1,0 +1,136 @@
+{
+  "reportSha256": "31b9e015b5f16c70cff14342357c77704e371294bec9a050c52f2e2139ae8fea",
+  "head": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "wasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "nonceAndFrameGatePassed": false,
+  "responsive": false,
+  "workerCost": {
+    "status": "captured",
+    "diagnostic": true,
+    "acceptanceChanged": false,
+    "startedAt": "2026-09-16T08:44:17.904Z",
+    "timeoutMs": 180000,
+    "sampleMs": 30000,
+    "failureImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "inputVerdict": {
+      "result": "failed",
+      "outcome": "nonce-readback-failed",
+      "keyboard": {
+        "verified": false,
+        "nonce": "27690f60bc002a73",
+        "guestFile": "/tmp/desktop-keys-b16a8a2588442dd6",
+        "startedAt": "2026-09-16T08:42:15.065Z",
+        "enteredAtMs": 1789548137860,
+        "typedAt": "2026-09-16T08:42:17.860Z",
+        "typingMs": 2795,
+        "readbackStartedAt": "2026-09-16T08:42:17.860Z",
+        "readbackTimeoutMs": 120000,
+        "deadlineMs": 120000,
+        "deadlineAt": "2026-09-16T08:44:17.860Z",
+        "stage": "readback",
+        "failedAt": "2026-09-16T08:44:17.862Z",
+        "error": "Error: physical keyboard: timed out waiting for physical keyboard nonce file"
+      }
+    },
+    "url": "http://127.0.0.1:65277/linux-worker.js",
+    "deadlineAt": "2026-09-16T08:47:17.904Z",
+    "sampleStartedAt": "2026-09-16T08:44:17.918Z",
+    "sampleStoppedAt": "2026-09-16T08:44:47.987Z",
+    "summary": {
+      "durationMs": 30012.977,
+      "samples": 19792,
+      "nodes": 6011,
+      "sampledUs": 30011697
+    },
+    "file": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-r1/physical-input/desktop/worker-cpu.json",
+    "sha256": "310309d54f1aedf31144280f0c13fe5180f28b9e37f8023a2c60cf07f6e9728d",
+    "bytes": 1427076,
+    "target": {
+      "targetId": "8443411B1F87A6271D676F8EEC221F81",
+      "type": "worker",
+      "url": "http://127.0.0.1:65277/linux-worker.js"
+    },
+    "browser": "152.0.7977.84",
+    "intervalUs": 1000,
+    "finishedAt": "2026-09-16T08:44:48.006Z"
+  },
+  "startup": {
+    "startedAt": "2026-09-16T08:41:25.496Z",
+    "timeoutMs": 300000,
+    "deadlineAt": "2026-09-16T08:46:25.496Z",
+    "readyProvenAt": "2026-09-16T08:42:15.065Z",
+    "elapsedMs": 49569
+  },
+  "keyboard": {
+    "verified": false,
+    "nonce": "27690f60bc002a73",
+    "guestFile": "/tmp/desktop-keys-b16a8a2588442dd6",
+    "startedAt": "2026-09-16T08:42:15.065Z",
+    "enteredAtMs": 1789548137860,
+    "typedAt": "2026-09-16T08:42:17.860Z",
+    "typingMs": 2795,
+    "readbackStartedAt": "2026-09-16T08:42:17.860Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-16T08:44:17.860Z",
+    "stage": "readback",
+    "failedAt": "2026-09-16T08:44:17.862Z",
+    "error": "Error: physical keyboard: timed out waiting for physical keyboard nonce file",
+    "desktopReadyPageMs": 18599.300000190735,
+    "firstPhysicalKeydownPageMs": 49567.94500017166,
+    "readyToFirstPhysicalKeydownMs": 30968.644999980927
+  },
+  "eventCount": 128,
+  "trustedEvents": 128,
+  "inputDeviceFinal": {
+    "pendingEventBudget": 256,
+    "pendingEvents": 0,
+    "pendingFrames": 0,
+    "droppedFrames": 0,
+    "droppedEvents": 0,
+    "statusEventsServed": 1,
+    "rejectedEvents": 0
+  },
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "guestRetiredBefore": 1401981887,
+  "guestRetiredAfter": 2463937739,
+  "jitShareAfter": 0.8185455298146233,
+  "guestClockBefore": {
+    "mode": "icount",
+    "mtime": "1516928786",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "guestClockAfter": {
+    "mode": "icount",
+    "mtime": "1533521846",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "completedReadbackCommands": 11,
+  "pendingReadbackCommands": 0,
+  "readbackExits": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+  ],
+  "errors": [],
+  "cleanup": {
+    "startedAt": "2026-09-16T08:44:48.006Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true,
+    "closeError": "Error: browser close: deadline exceeded (UNPROVEN)",
+    "forceKilled": true
+  },
+  "sameBaselineAndFailureImage": true
+}

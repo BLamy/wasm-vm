@@ -1,0 +1,233 @@
+{
+  "broadCiPassed": false,
+  "exit": 2,
+  "baselineLog": "evidence/omarchy-profile/snapshot-allocation-gates/ci.log",
+  "baselineSha256": "7b14ffacc5864d379fdfc67aaeec2b20f618ad2302230202ca8d4ea9ee5e0456",
+  "currentLog": "evidence/omarchy-profile/fmadd-single-r1/ci.log",
+  "currentSha256": "4b437336df2531a549e9bcfba11594532ac9480285e33797807fa47e4cb5c1da",
+  "categories": [
+    {
+      "label": "macOS Linux-only seccomp",
+      "baseline": [
+        {
+          "line": 5,
+          "text": "error[E0425]: cannot find function `prctl` in crate `libc`"
+        },
+        {
+          "line": 8,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 11,
+          "text": "error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`"
+        },
+        {
+          "line": 14,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 17,
+          "text": "error[E0425]: cannot find value `SYS_seccomp` in crate `libc`"
+        },
+        {
+          "line": 20,
+          "text": "132 |             libc::SYS_seccomp,"
+        },
+        {
+          "line": 74,
+          "text": "error[E0425]: cannot find function `prctl` in crate `libc`"
+        },
+        {
+          "line": 77,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 80,
+          "text": "error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`"
+        },
+        {
+          "line": 83,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 86,
+          "text": "error[E0425]: cannot find value `SYS_seccomp` in crate `libc`"
+        },
+        {
+          "line": 89,
+          "text": "132 |             libc::SYS_seccomp,"
+        }
+      ],
+      "current": [
+        {
+          "line": 5,
+          "text": "error[E0425]: cannot find function `prctl` in crate `libc`"
+        },
+        {
+          "line": 8,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 11,
+          "text": "error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`"
+        },
+        {
+          "line": 14,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 17,
+          "text": "error[E0425]: cannot find value `SYS_seccomp` in crate `libc`"
+        },
+        {
+          "line": 20,
+          "text": "132 |             libc::SYS_seccomp,"
+        },
+        {
+          "line": 73,
+          "text": "error[E0425]: cannot find function `prctl` in crate `libc`"
+        },
+        {
+          "line": 76,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 79,
+          "text": "error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`"
+        },
+        {
+          "line": 82,
+          "text": "121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {"
+        },
+        {
+          "line": 85,
+          "text": "error[E0425]: cannot find value `SYS_seccomp` in crate `libc`"
+        },
+        {
+          "line": 88,
+          "text": "132 |             libc::SYS_seccomp,"
+        }
+      ]
+    },
+    {
+      "label": "all-feature unused methods",
+      "baseline": [
+        {
+          "line": 46,
+          "text": "error: method `live_blocks` is never used"
+        },
+        {
+          "line": 58,
+          "text": "error: method `fetch_phys` is never used"
+        },
+        {
+          "line": 697,
+          "text": "warning: method `live_blocks` is never used"
+        },
+        {
+          "line": 708,
+          "text": "warning: method `fetch_phys` is never used"
+        },
+        {
+          "line": 731,
+          "text": "warning: method `live_blocks` is never used"
+        },
+        {
+          "line": 742,
+          "text": "warning: method `fetch_phys` is never used"
+        }
+      ],
+      "current": [
+        {
+          "line": 46,
+          "text": "error: method `live_blocks` is never used"
+        },
+        {
+          "line": 58,
+          "text": "error: method `fetch_phys` is never used"
+        },
+        {
+          "line": 710,
+          "text": "warning: method `live_blocks` is never used"
+        },
+        {
+          "line": 721,
+          "text": "warning: method `fetch_phys` is never used"
+        },
+        {
+          "line": 744,
+          "text": "warning: method `live_blocks` is never used"
+        },
+        {
+          "line": 755,
+          "text": "warning: method `fetch_phys` is never used"
+        }
+      ]
+    },
+    {
+      "label": "inherited WASM resume RNG assertion",
+      "baseline": [
+        {
+          "line": 631,
+          "text": "        panicked at crates/wasm/tests/resume.rs:93:5:"
+        }
+      ],
+      "current": [
+        {
+          "line": 644,
+          "text": "        panicked at crates/wasm/tests/resume.rs:93:5:"
+        }
+      ]
+    },
+    {
+      "label": "quarantined zicsr-stub helpers",
+      "baseline": [
+        {
+          "line": 755,
+          "text": "error[E0599]: no method named `boot_supervisor` found for struct `wasm_vm_core::Machine` in the current scope"
+        },
+        {
+          "line": 761,
+          "text": "error[E0599]: no method named `enable_builtin_sbi` found for struct `wasm_vm_core::Machine` in the current scope"
+        },
+        {
+          "line": 779,
+          "text": "error[E0599]: no method named `boot_supervisor` found for struct `Machine` in the current scope"
+        }
+      ],
+      "current": [
+        {
+          "line": 768,
+          "text": "error[E0599]: no method named `boot_supervisor` found for struct `wasm_vm_core::Machine` in the current scope"
+        },
+        {
+          "line": 774,
+          "text": "error[E0599]: no method named `enable_builtin_sbi` found for struct `wasm_vm_core::Machine` in the current scope"
+        }
+      ]
+    },
+    {
+      "label": "GPU resource wall-clock lint",
+      "baseline": [
+        {
+          "line": 819,
+          "text": "crates/core/src/dev/virtio/gpu/resources.rs:1225:        let started = std::time::Instant::now();"
+        },
+        {
+          "line": 820,
+          "text": "crates/core/src/dev/virtio/gpu/resources.rs:1242:            elapsed < std::time::Duration::from_millis(5),"
+        }
+      ],
+      "current": [
+        {
+          "line": 824,
+          "text": "crates/core/src/dev/virtio/gpu/resources.rs:1225:        let started = std::time::Instant::now();"
+        },
+        {
+          "line": 825,
+          "text": "crates/core/src/dev/virtio/gpu/resources.rs:1242:            elapsed < std::time::Duration::from_millis(5),"
+        }
+      ]
+    }
+  ]
+}
