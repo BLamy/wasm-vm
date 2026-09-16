@@ -12,7 +12,7 @@ import { INPUT_OBSERVER_COLLECTION_MS } from "./omarchy-compositor-input-capture
 import { auditCompositorInput } from "./omarchy-compositor-input-audit.mjs";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-assert.equal(process.argv.length, 6, "usage: omarchy-compositor-input.mjs NEW_OUTPUT_DIR OBSERVER_RISCV64 VERIFIED_PAIR_DIR");
+assert.equal(process.argv.length, 5, "usage: omarchy-compositor-input.mjs NEW_OUTPUT_DIR OBSERVER_RISCV64 VERIFIED_PAIR_DIR");
 const [out, observer, pair] = process.argv.slice(2).map(file => path.resolve(file));
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 for (const [role, filename] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
