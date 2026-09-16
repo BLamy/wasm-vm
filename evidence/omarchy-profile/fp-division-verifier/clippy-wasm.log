@@ -1,0 +1,15 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+error: manual implementation of `.is_multiple_of()`
+   --> crates/wasm/tests/../../../tests/support/jit_fp_division_verifier.rs:584:40
+    |
+584 |                         let boxed = if v % 5 == 0 {
+    |                                        ^^^^^^^^^^ help: replace with: `v.is_multiple_of(5)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#manual_is_multiple_of
+    = note: `-D clippy::manual-is-multiple-of` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::manual_is_multiple_of)]`
+
+error: could not compile `wasm-vm-wasm` (test "jit_fp_division_verifier") due to 1 previous error

@@ -1,0 +1,36 @@
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+error[E0277]: the trait bound `u64: From<i32>` is not satisfied
+   --> crates/jit-runtime/tests/fp_division_verifier.rs:351:42
+    |
+351 | ...                   proof::BOX | u64::from(results[resolved as usize])
+    |                                    ^^^ the trait `From<i32>` is not implemented for `u64`
+    |
+    = help: `u64` implements trait `From<T>`:
+              From<bool>
+              From<char>
+              From<cranelift_codegen::ir::immediates::Uimm32>
+              From<cranelift_codegen::ir::immediates::Uimm64>
+              From<std::ascii::Char>
+              From<u16>
+              From<u32>
+              From<u8>
+
+error[E0277]: the trait bound `u64: From<i32>` is not satisfied
+   --> crates/jit-runtime/tests/fp_division_verifier.rs:356:35
+    |
+356 | ...                   | u64::from(flags[resolved as usize])
+    |                         ^^^ the trait `From<i32>` is not implemented for `u64`
+    |
+    = help: `u64` implements trait `From<T>`:
+              From<bool>
+              From<char>
+              From<cranelift_codegen::ir::immediates::Uimm32>
+              From<cranelift_codegen::ir::immediates::Uimm64>
+              From<std::ascii::Char>
+              From<u16>
+              From<u32>
+              From<u8>
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `wasm-vm-jit-runtime` (test "fp_division_verifier") due to 2 previous errors
