@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03am** — Test existing counter recycling on the prepared cap256 desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -482,7 +481,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.026989` [E5.5-T03aj](epic-5.5-omarchy/E5.5-T03aj-prepare-direct-opaque.md) — Prepare a freshly rendered direct-opaque desktop checkpoint *(deps: E5.5-T03ai, E5.5-T03al)*
 - [b] `525.02699` [E5.5-T03ae](epic-5.5-omarchy/E5.5-T03ae-prepared-mode-input.md) — Test physical input after restoring the prepared smaller desktop *(deps: E5.5-T03ad)*
 - [x] `525.02699` [E5.5-T03ak](epic-5.5-omarchy/E5.5-T03ak-prepared-direct-input.md) — Test physical input from the rendered direct-opaque checkpoint *(deps: E5.5-T03aj)*
-- [ ] `525.026995` [E5.5-T03am](epic-5.5-omarchy/E5.5-T03am-prepared-recycling-input.md) — Test existing counter recycling on the prepared cap256 desktop *(deps: E5.5-T03ak, E5.5-T03aa)*
+- [~] `525.026995` [E5.5-T03am](epic-5.5-omarchy/E5.5-T03am-prepared-recycling-input.md) — Test existing counter recycling on the prepared cap256 desktop *(deps: E5.5-T03ak, E5.5-T03aa)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03am)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
