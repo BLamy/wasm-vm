@@ -1715,3 +1715,9 @@ verify-E5_5-T03aq:
 	cargo build --release -p wasm-vm-cli --features gpu-trace --bin wasm-vm
 	python3 tools/build-omarchy-input-kernel.py $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
 	python3 tools/verify/omarchy-evdev-burst.py $(or $(EVDEV_PROOF_OUT),evidence/omarchy-profile/evdev-burst-r1) $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
+
+.PHONY: verify-E5_5-T03ar
+verify-E5_5-T03ar:
+	node --test tools/verify/omarchy-input-kernel-state.test.mjs tools/verify/omarchy-direct-opaque-preparation.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	python3 tools/verify/omarchy-input-kernel-native.py $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native $(or $(INPUT_KERNEL_NATIVE_PAIR),target/omarchy-input-kernel-native-pair-r1)
+	node tools/verify/omarchy-prepare-input-kernel.mjs $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/browser $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native/run.json

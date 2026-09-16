@@ -42,13 +42,13 @@ export async function requestDirectOpaque(exec, deadline, report) {
   finally { receipt.finishedAt = new Date().toISOString(); }
 }
 
-export function auditDirectOpaque(report) {
+export function auditDirectOpaque(report, additionalCommands = []) {
   assert.equal(report.directOpaqueRequested, true);
   const receipt = report.directOpaque;
   const read = report.keyboard ? `if [ -f '${report.keyboard.guestFile}' ]; then cat '${report.keyboard.guestFile}'; else (exit 75); fi` : null;
-  const serial = auditSerial(report.workerTraffic, [DIRECT_OPAQUE_COMMAND, ...(read ? [read] : [])]);
+  const serial = auditSerial(report.workerTraffic, [DIRECT_OPAQUE_COMMAND, ...(read ? [read] : []), ...additionalCommands]);
   assert.ok(serial.every(row => [DIRECT_OPAQUE_COMMAND, read,
-    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers"].includes(row.command)), "unexpected serial command");
+    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers", ...additionalCommands].includes(row.command)), "unexpected serial command");
   const commands = serial.filter(row => row.command === DIRECT_OPAQUE_COMMAND);
   if (!receipt) {
     assert.equal(commands.length, 0); assert.equal(report.keyboard, undefined);

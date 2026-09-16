@@ -23,6 +23,37 @@ def identity(path):
     return {"filename": str(path), "size": path.stat().st_size, "sha256": h.hexdigest()}
 
 
+def drain_owned_group(child):
+    """A dead shell leader does not establish that its owned descendants stopped."""
+    def exists():
+        child.poll()  # Reap our own leader without mistaking it for a live descendant.
+        try:
+            os.killpg(child.pid, 0)
+            return True
+        except ProcessLookupError:
+            return False
+
+    record = {"termSent": False, "killSent": False, "groupGone": False}
+    for sig, budget, field in [(signal.SIGTERM, 10, "termSent"), (signal.SIGKILL, 5, "killSent")]:
+        if not exists():
+            record["groupGone"] = True
+            return record
+        try:
+            os.killpg(child.pid, sig)
+            record[field] = True
+        except ProcessLookupError:
+            record["groupGone"] = True
+            return record
+        deadline = time.monotonic() + budget
+        while time.monotonic() < deadline:
+            if not exists():
+                record["groupGone"] = True
+                return record
+            time.sleep(0.05)
+    record["groupGone"] = not exists()
+    return record
+
+
 def main():
     assert len(sys.argv) == 3, "usage: omarchy-input-kernel-native.py NEW_EVIDENCE_DIR NEW_PAIR_DIR"
     out, pair = [Path(p).resolve() for p in sys.argv[1:]]
@@ -60,13 +91,10 @@ def main():
                 receipt["returncode"] = child.wait(timeout=7380)
             except subprocess.TimeoutExpired:
                 receipt["watchdog"] = True
-                os.killpg(child.pid, signal.SIGTERM)
-                try:
-                    child.wait(timeout=10)
-                except subprocess.TimeoutExpired:
-                    os.killpg(child.pid, signal.SIGKILL)
-                    child.wait(timeout=5)
                 raise
+            finally:
+                receipt["cleanup"] = drain_owned_group(child)
+        assert receipt["cleanup"]["groupGone"], "owned native process group did not drain"
         assert receipt["returncode"] == 0, "native capture failed"
         text = (out / "boot.stdout.log").read_text()
         records = re.findall(r"^OMARCHY_KERNEL_IDENTITY (.+)$", text, re.M)

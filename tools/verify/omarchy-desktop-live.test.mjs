@@ -389,3 +389,43 @@ test("actual direct-pair route fences before navigation and never enters physica
   assert.equal(report.result,"prepared-mode-pair-input-untested");assert.equal(report.keyboard,undefined);
   assert.equal(report.startup.timeoutMs,900000);
 });
+
+test("input-kernel preparation rejects old running notes before properties and syncs before export", async () => {
+  const { requestInputKernelNotes, INPUT_BUFFER_NOTES_SHA256 } = await import("./omarchy-input-kernel-state.mjs");
+  const { withinTrialDeadline, remainingTrialMs } = await import("./omarchy-input-trial.mjs");
+  const start = source.indexOf("async function runLive()"), end = source.indexOf("\ntry {\n  await runLive();", start);
+  for (const wrongKernel of [false, true]) {
+    const events = [], report = { errors: [], inputKernel: { synthetic: true } };
+    const bindings = {
+      ownedRecording: true, modePair: true, coldPair: false, opaquePair: false, mode: "direct-opaque-pair",
+      trial: { startupMs: 900000 }, report, coldDeadline: null, process: { send() {} },
+      context: { newCDPSession: async () => ({ send: async () => events.push("fence") }) },
+      page: { goto: async () => events.push("navigate"), waitForFunction: async () => {}, evaluate: async () => true },
+      startupCall: fn => fn(), url: "http://127.0.0.1/app.html?guest=omarchy&desktop=1", assert, Date, URL,
+      assertRealOmarchyLayout: async () => {}, recordBuildIdentities: async () => {}, observeServiceWorker: async () => {},
+      screenshot: async () => {}, observeLoaderIdentity: async () => ({ baseBinding: "synthetic-base" }),
+      requestInputKernelNotes, withinTrialDeadline, remainingTrialMs,
+      exec: async command => {
+        events.push(command);
+        if (command === "sync") return { exit: 0, stdout: "" };
+        assert.equal(command, "sha256sum /sys/kernel/notes");
+        return { exit: 0, stdout: `${wrongKernel ? "a3f7f2a76799a72bbba6af0b4ad7fa6eee9313fa64f3e53f85105f399dfe5e0e" : INPUT_BUFFER_NOTES_SHA256}  /sys/kernel/notes\n` };
+      },
+      prepareDirectOpaqueDesktop: async (page, deadline, r, hooks) => {
+        events.push("properties"); await hooks.capturePair(Date.now() + 180000);
+      },
+      capturePair: async () => events.push("capture"), modePairOutput: "synthetic-only", console: { log() {} },
+    };
+    const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+    const run = () => new AsyncFunction(...Object.keys(bindings), `${source.slice(start, end)}\nreturn runLive();`)(...Object.values(bindings));
+    if (wrongKernel) {
+      await assert.rejects(run(), /running kernel/u);
+      assert.deepEqual(events, ["fence", "navigate", "sha256sum /sys/kernel/notes"]);
+    } else {
+      await run();
+      assert.deepEqual(events, ["fence", "navigate", "sha256sum /sys/kernel/notes", "properties", "sync", "capture"]);
+      assert.equal(report.inputKernelSync.response.exit, 0);
+      assert.equal(report.keyboard, undefined);
+    }
+  }
+});

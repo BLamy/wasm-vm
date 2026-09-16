@@ -31,6 +31,7 @@ import { prepareDirectOpaqueDesktop } from "./omarchy-direct-opaque-preparation.
 import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
 import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
 import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
+import { assertInputKernelProvenance, assertInputKernelSource, requestInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -66,6 +67,9 @@ const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
 const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
 const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
 const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
+const inputKernelRecordPath = process.env.OMARCHY_INPUT_KERNEL_RECORD || null;
+if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaque-pair"
+  && !inputObserver && !workerCost && !failureCheckpoint, "input-kernel provenance is isolated local preparation");
 if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
   "compositor observation requires the isolated prepared physical trial");
 const originalInputPresentation = inputObserver ? assertOriginalInputGeometry : assertOriginalPresentation;
@@ -142,6 +146,8 @@ const coldStartupMs = coldPair ? coldPairOptions({ urlArg, pair: candidatePairEn
 const out = path.resolve(output);
 await fs.mkdir(out, { recursive: false, ...(coldPair ? { mode: 0o700 } : {}) });
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const inputKernelRecordBytes = inputKernelRecordPath ? await fs.readFile(inputKernelRecordPath) : null;
+const inputKernelRecord = inputKernelRecordBytes ? assertInputKernelProvenance(JSON.parse(inputKernelRecordBytes)) : null;
 const distRoot = path.join(repoRoot, "web", "dist");
 const releaseRoot = path.join(repoRoot, "releases");
 let ownedServer = null;
@@ -187,7 +193,9 @@ async function prepareLocalCandidate() {
   const pairSnapshot = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-ready.snap.gz"), "candidate boot snapshot", pairDirectory);
   const pairDelta = coldPair ? null : await candidateRegularFile(path.join(pairDirectory, "omarchy-overlay-delta.bin.gz"), "candidate overlay delta", pairDirectory);
   const template = JSON.parse(await fs.readFile(path.join(repoRoot, "web", "artifacts-omarchy.json"), "utf8"));
-  const kernelPath = await candidateRegularFile(path.resolve(repoRoot, template.artifacts.kernel.url), "candidate kernel", path.join(repoRoot, "releases"));
+  const kernelPath = inputKernelRecord
+    ? await candidateRegularFile(inputKernelRecord.inputs.kernel.filename, "input-buffer kernel", path.join(repoRoot, "target"))
+    : await candidateRegularFile(path.resolve(repoRoot, template.artifacts.kernel.url), "candidate kernel", path.join(repoRoot, "releases"));
   const manifestBytes = await fs.readFile(manifestPath);
   let imageManifest;
   try { imageManifest = JSON.parse(manifestBytes); } catch (error) { throw Error(`invalid candidate chunk manifest: ${error}`); }
@@ -435,7 +443,8 @@ async function runHttpSelfTest(baseUrl) {
 }
 
 candidate = await prepareLocalCandidate();
-if (preparedDirect) assertPreparedDirectSource(candidate.source);
+if (inputKernelRecord) assertInputKernelSource(candidate.source, inputKernelRecord);
+else if (preparedDirect) assertPreparedDirectSource(candidate.source);
 else if (ownedRecording) assertInputTrialSource(candidate.source);
 if (modePair) await fs.mkdir(modePairOutput, { recursive: false, mode: 0o700 });
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
@@ -452,6 +461,8 @@ if (compositorMode) report.compositorModeRequested = true;
 if (opaqueFoot) report.opaqueFootRequested = true;
 if (directOpaque) report.directOpaqueRequested = true;
 if (preparedDirect) report.preparedDirectRequested = true;
+if (inputKernelRecord) report.inputKernel = { provenance: inputKernelRecord,
+  filename: path.resolve(inputKernelRecordPath), sha256: createHash("sha256").update(inputKernelRecordBytes).digest("hex") };
 if (coldPair) report.progressCaptureErrors = [];
 if (ownedRecording) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
@@ -474,6 +485,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-compositor-input-capture.mjs", "tools/verify/omarchy-compositor-input.mjs",
     "tools/verify/omarchy-compositor-input-audit.mjs", "tools/verify/omarchy-process-sample.mjs",
     "tools/verify/omarchy-input-observer.c",
+    "tools/verify/omarchy-input-kernel-state.mjs", "tools/verify/omarchy-prepare-input-kernel.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
     "web"];
@@ -1099,6 +1111,7 @@ async function capturePair(baseBinding, pairDirectory = out) {
   }
   let exactOverlayName = `wvov-${base}`;
   if (modePair) {
+    if (report.inputKernel) await requestInputKernelNotes((command, ms) => exec(command, page, "input-kernel:identity", ms), coldDeadline, report);
     const seed = await page.evaluate(() => window.__linuxCtl.overlaySeedIdentity());
     const expectedSeed = createHash("sha256").update(`${candidate.source.bootSnapshot.sha256}:${candidate.source.overlayDelta.sha256}`).digest("hex");
     assert.equal(seed, expectedSeed, "wrong warm overlay namespace");
@@ -1223,7 +1236,17 @@ async function runLive() {
       exec: (command, stage, ms) => exec(command, page, stage, ms),
       observeRuntime: label => runtimeDiagnostics(page, label),
       screenshot: name => screenshot(name),
-      capturePair: () => { coldDeadline = null; return capturePair(loaderIdentity.baseBinding, modePairOutput); },
+      capturePair: async exportDeadline => {
+        coldDeadline = null;
+        if (report.inputKernel) {
+          const sync = report.inputKernelSync = { command: "sync", startedAt: new Date().toISOString() };
+          sync.response = await withinTrialDeadline(() => exec("sync", page, "input-kernel:sync", remainingTrialMs(exportDeadline)),
+            exportDeadline, "input-kernel guest sync");
+          sync.completedAt = new Date().toISOString();
+          assert.equal(sync.response.exit, 0, "guest sync failed before paired capture");
+        }
+        return capturePair(loaderIdentity.baseBinding, modePairOutput);
+      },
     });
     assert.deepEqual(report.errors, []);
     report.result = "prepared-mode-pair-input-untested";
