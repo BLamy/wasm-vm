@@ -30,6 +30,7 @@ import { prepareOpaqueDesktop } from "./omarchy-opaque-preparation.mjs";
 import { prepareDirectOpaqueDesktop } from "./omarchy-direct-opaque-preparation.mjs";
 import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
 import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
+import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -64,6 +65,10 @@ const workerCost = process.env.OMARCHY_WORKER_COST === "1";
 const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
 const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
 const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
+const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
+if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
+  "compositor observation requires the isolated prepared physical trial");
+const originalInputPresentation = inputObserver ? assertOriginalInputGeometry : assertOriginalPresentation;
 const preparedRecycling = process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT === "prepared-recycling";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
@@ -466,6 +471,9 @@ if (ownedRecording) {
     "tools/verify/omarchy-render-mode.mjs", "tools/verify/omarchy-render-budget.mjs",
     "tools/verify/omarchy-compositor-command.mjs", "tools/verify/omarchy-compositor-mode.mjs",
     "tools/verify/omarchy-owned-trial.mjs",
+    "tools/verify/omarchy-compositor-input-capture.mjs", "tools/verify/omarchy-compositor-input.mjs",
+    "tools/verify/omarchy-compositor-input-audit.mjs", "tools/verify/omarchy-process-sample.mjs",
+    "tools/verify/omarchy-input-observer.c",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
     "web"];
@@ -1240,7 +1248,7 @@ async function runLive() {
   if (preparedDirect) {
     await requestPreparedDirectProperties((command, timeout) => exec(command, page, "prepared-direct:read", timeout), coldDeadline, report);
     report.preparedDirect.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
-    assertOriginalPresentation(report.preparedDirect.presentation);
+    originalInputPresentation(report.preparedDirect.presentation);
     await startupCall(() => screenshot("prepared-direct.png"));
   }
   if (coldPair) {
@@ -1275,6 +1283,8 @@ async function runLive() {
   }
   if (mode === "verify") await assertNoOmarchyPersistentIdb(page, "initial desktop");
   if (expectedRenderer) await proveHyprlandRenderer(page, "initial desktop");
+  if (inputObserver) await prepareInputObserver((command, timeout, stage) => exec(command, page, stage, timeout),
+    coldDeadline, report, inputObserver);
   // The initial full-screen Foot is focused in the packaged desktop. Physical DOM keys, never
   // serial injection, create the nonce file; a separate serial command reads it back.
   const prewarmStartedAt = mode === "capture" ? Date.now() : null;
@@ -1292,7 +1302,7 @@ async function runLive() {
   const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
   if (inputTrial) {
     assertInputTrialRuntime(beforeInput, trial);
-    if (opaqueFoot || directOpaque || preparedDirect) assertOriginalPresentation(beforeInput.presentation);
+    if (opaqueFoot || directOpaque || preparedDirect) originalInputPresentation(beforeInput.presentation);
     remainingTrialMs(coldDeadline);
     report.startup.readyProvenAt = new Date().toISOString();
     report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
@@ -1469,6 +1479,7 @@ try {
   } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
+  if (inputObserver) await collectInputObserver((command, timeout, stage) => exec(command, page, stage, timeout), report, out);
   if (ownedRecording) {
     // Every browser object here belongs to this single trial. No shared/user browser is killed.
     const cleanupDeadline = Date.now() + trial.cleanupMs;

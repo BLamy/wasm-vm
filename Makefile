@@ -1700,3 +1700,9 @@ verify-E5_5-T03ao:
 	wasm-pack test --node crates/wasm --test jit_fp_direct_imports_verifier --test jit_fp_arithmetic_verifier --test jit_fp_from_integer_verifier --test jit_fp_to_word_verifier --test jit_fp_division_verifier --test jit_fp_fmadd_verifier -- --nocapture
 	node tools/verify/omarchy-direct-fp-browser.mjs $(or $(DIRECT_FP_BROWSER_OUT),evidence/omarchy-profile/direct-fp-browser)
 	node tools/verify/omarchy-direct-fp-benchmark.mjs $(or $(DIRECT_FP_BENCH_OUT),evidence/omarchy-profile/direct-fp-benchmark)
+
+.PHONY: verify-E5_5-T03ap
+verify-E5_5-T03ap:
+	node --test tools/verify/omarchy-compositor-input.test.mjs
+	python3 tools/verify/omarchy-input-observer-build.py $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build
+	node tools/verify/omarchy-compositor-input.mjs $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/physical $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build/observer-riscv64 $(or $(COMPOSITOR_INPUT_PAIR),target/omarchy-direct-opaque-r2)
