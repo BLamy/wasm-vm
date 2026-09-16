@@ -1,0 +1,14 @@
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T04:25:52.559Z","brightPixels":100,"brightColors":20,"nonblank":true,"frames":4}
+✔ opaque preparation uses confirmed window, post-query fresh native pixels and separate bounded export (8.029ms)
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T04:25:52.619Z","brightPixels":0,"brightColors":0,"nonblank":false,"frames":5}
+✔ wrong properties/window, stale image, blank terminal and failed export cannot make a prepared pair (128.26575ms)
+✔ native terminal ROI rejects bar-only pixels, wrong geometry and expired startup (7.474166ms)
+✔ preparation supplies a fixed extra read command to the wire audit; report text cannot authorize it (1.107959ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5135.863292

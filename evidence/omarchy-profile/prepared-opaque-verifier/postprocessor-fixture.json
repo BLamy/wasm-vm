@@ -1,0 +1,167 @@
+{
+  "synthetic": true,
+  "noGuestOrBrowser": true,
+  "headerOnlySyntheticSnapshot": true,
+  "sourceSha256": "4d9220bb8ca61380ef8be9937154b2258383abe4a214287ba1e31201d2662bf5",
+  "sourceRange": {
+    "start": 3154,
+    "end": 7138
+  },
+  "positive": {
+    "receipt": {
+      "head": "synthetic-frozen-head",
+      "wasmSha256": "synthetic-wasm",
+      "serial": [
+        {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        {
+          "rid": "v2",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+          "sentAt": "2026-09-16T00:00:00.030Z",
+          "completedAt": "2026-09-16T00:00:00.040Z",
+          "response": {
+            "stdout": "{\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"address\":\"0xsynthetic\",\"at\":[12,38],\"size\":[1256,750]}\n",
+            "exit": 0
+          }
+        }
+      ],
+      "configuration": {
+        "configuration": "properties-confirmed",
+        "wire": {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        "physicalInputTested": false
+      },
+      "pair": {
+        "base": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+        "generation": 7,
+        "blocks": 1,
+        "rawSnapshotSha256": "58aa962d62790b32f755bd6c95e923747c83d9168467bf82dec751257a5a1a07",
+        "rawDeltaSha256": "31a1bce17db77d4429911cc035cb95b950a06002955a6d013f75d24775b38ca3"
+      },
+      "artifacts": {
+        "snapshot": {
+          "filename": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/opaque-verifier-postprocessor-GwbpaN/omarchy-ready.snap.gz",
+          "size": 1127,
+          "sha256": "a848d3868aae2d8cdbd54cce546bfcb6a51071c169ee82db5edebffa7b0b8d62"
+        },
+        "delta": {
+          "filename": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/opaque-verifier-postprocessor-GwbpaN/omarchy-overlay-delta.bin.gz",
+          "size": 101,
+          "sha256": "f9571fbdad9948292eb8b13904b663996cdab48eefa50357d003b43e30ad47b2"
+        }
+      },
+      "result": "prepared-pair-awaiting-personal-image-verification",
+      "usablePair": false
+    },
+    "saves": 1,
+    "error": null
+  },
+  "negative": {
+    "receipt": {
+      "head": "synthetic-frozen-head",
+      "wasmSha256": "synthetic-wasm",
+      "serial": [
+        {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        {
+          "rid": "v2",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+          "sentAt": "2026-09-16T00:00:00.030Z",
+          "completedAt": "2026-09-16T00:00:00.040Z",
+          "response": {
+            "stdout": "{\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"address\":\"0xsynthetic\",\"at\":[12,38],\"size\":[1256,750]}\n",
+            "exit": 0
+          }
+        }
+      ],
+      "configuration": {
+        "configuration": "properties-confirmed",
+        "wire": {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        "physicalInputTested": false
+      },
+      "result": "preparation-failed-input-untested",
+      "usablePair": false
+    },
+    "saves": 1,
+    "error": null
+  },
+  "foreign": {
+    "receipt": {
+      "head": "synthetic-frozen-head",
+      "wasmSha256": "synthetic-wasm",
+      "serial": [
+        {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        {
+          "rid": "v2",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+          "sentAt": "2026-09-16T00:00:00.030Z",
+          "completedAt": "2026-09-16T00:00:00.040Z",
+          "response": {
+            "stdout": "{\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"address\":\"0xsynthetic\",\"at\":[12,38],\"size\":[1256,750]}\n",
+            "exit": 0
+          }
+        }
+      ],
+      "configuration": {
+        "configuration": "properties-confirmed",
+        "wire": {
+          "rid": "v1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+          "sentAt": "2026-09-16T00:00:00.010Z",
+          "completedAt": "2026-09-16T00:00:00.020Z",
+          "response": {
+            "stdout": "ok\ntrue\ntrue\n1\n",
+            "exit": 0
+          }
+        },
+        "physicalInputTested": false
+      },
+      "auditError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n8n !== 7n\n"
+    },
+    "saves": 1,
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n8n !== 7n\n"
+  }
+}
