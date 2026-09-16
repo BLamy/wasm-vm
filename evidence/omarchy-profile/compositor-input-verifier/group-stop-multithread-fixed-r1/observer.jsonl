@@ -1,0 +1,15 @@
+{"kind":"seized","pid":7,"tid":7}
+{"kind":"process-identity","tid":7,"tgid":7,"tracerPid":11,"startTime":"120177215","comm":"python3","exe":"/usr/bin/python3.12"}
+{"kind":"seized","pid":7,"tid":9}
+{"kind":"process-identity","tid":9,"tgid":7,"tracerPid":11,"startTime":"120177216","comm":"python3","exe":"/usr/bin/python3.12"}
+{"kind":"seized","pid":7,"tid":10}
+{"kind":"process-identity","tid":10,"tgid":7,"tracerPid":11,"startTime":"120177216","comm":"python3","exe":"/usr/bin/python3.12"}
+{"kind":"ready","pid":7,"tracerPid":11,"threads":3}
+{"kind":"signal","tid":7,"signal":19}
+{"kind":"error","stage":"external-group-stop","tid":7,"errno":4}
+{"kind":"error","stage":"external-group-stop","tid":10,"errno":4}
+{"kind":"error","stage":"external-group-stop","tid":9,"errno":4}
+{"kind":"detached","tid":7}
+{"kind":"detached","tid":9}
+{"kind":"detached","tid":10}
+{"kind":"finished","failed":true,"stops":8,"reads":0,"orphanExits":0,"capturedBytes":0,"stopBudgetReached":false}
