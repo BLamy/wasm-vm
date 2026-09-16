@@ -25,6 +25,7 @@ import { requestSmallerScanout } from "./omarchy-render-mode.mjs";
 import { requestCompositorMode } from "./omarchy-compositor-command.mjs";
 import { captureWorkerCost, fenceWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
 import { modePreparationOptions, prepareSmallerDesktop } from "./omarchy-mode-preparation.mjs";
+import { requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -55,6 +56,7 @@ const modePair = mode === "mode-pair";
 const ownedRecording = inputTrial || modePair;
 const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
 const workerCost = process.env.OMARCHY_WORKER_COST === "1";
+const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
 if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
@@ -96,6 +98,11 @@ if (trial?.experiment === "residency") assert.ok(!failureCheckpoint && !renderBu
 if (process.env.OMARCHY_WORKER_COST !== undefined) {
   assert.ok(workerCost && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate",
     "worker cost requires the fixed residency candidate input trial");
+}
+if (process.env.OMARCHY_OPAQUE_FOOT !== undefined) {
+  assert.ok(opaqueFoot && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
+    && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
+  "opaque Foot requires its isolated fixed residency candidate input trial");
 }
 let modePairOutput = null;
 if (modePair) {
@@ -417,12 +424,15 @@ const report = { url, mode, startedAt: new Date().toISOString(), errors: [], obs
   resourceIdentities, browserRequests: [], serialCommands: [], inputEvents: [], workerTraffic: [] };
 if (renderBudget) report.renderBudgetRequested = true;
 if (compositorMode) report.compositorModeRequested = true;
+if (opaqueFoot) report.opaqueFootRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
 if (ownedRecording) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
     "tools/verify/omarchy-recycling-ab.mjs", "tools/verify/omarchy-residency-ab.mjs",
     "tools/verify/omarchy-worker-cost.mjs", "tools/verify/omarchy-worker-cost-capture.mjs",
     "tools/verify/omarchy-mode-preparation.mjs", "tools/verify/omarchy-prepare-mode.mjs",
+    "tools/verify/omarchy-opaque-foot.mjs", "tools/verify/omarchy-opaque-foot-command.mjs",
+    "tools/verify/omarchy-input-audit.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",
     "tools/verify/omarchy-desktop-services.mjs",
     "tools/verify/omarchy-failure-checkpoint.mjs", "tools/verify/omarchy-input-wait.mjs",
@@ -1188,6 +1198,12 @@ async function runLive() {
     configureCompositor: report.compositorModeRequested ? () => requestCompositorMode(
       (command, timeoutMs) => exec(command, page, "render-mode:configure-compositor", timeoutMs), coldDeadline, report) : null,
   });
+  if (opaqueFoot) {
+    await requestOpaqueFoot((command, timeout) => exec(command, page, "opaque-foot:configure", timeout), coldDeadline, report);
+    report.opaqueFoot.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
+    assertOriginalPresentation(report.opaqueFoot.presentation);
+    await startupCall(() => screenshot("opaque-foot.png"));
+  }
   if (coldPair) {
     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
       shipped: window.__linux.restoredFromBootSnapshot(),
@@ -1237,6 +1253,7 @@ async function runLive() {
   const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
   if (inputTrial) {
     assertInputTrialRuntime(beforeInput, trial);
+    if (opaqueFoot) assertOriginalPresentation(beforeInput.presentation);
     remainingTrialMs(coldDeadline);
     report.startup.readyProvenAt = new Date().toISOString();
     report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
@@ -1262,6 +1279,7 @@ async function runLive() {
     deadlineAt: new Date(report.keyboard.enteredAtMs + trial.readbackMs).toISOString() });
   try {
     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
+    if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
     report.keyboard.stage = "post-enter-focus";
     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
@@ -1438,7 +1456,7 @@ try {
     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
     // Disconnect the recorder's Playwright client as well as closing the owned
     // browser server; debugger sessions must not retain its websocket transport.
-    if (failureCheckpoint || workerCost || modePair) {
+    if (failureCheckpoint || workerCost || modePair || opaqueFoot) {
       try {
         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
         report.cleanup.clientClosed = true;
