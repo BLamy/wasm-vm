@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03ap** — Locate physical key processing inside the desktop guest
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -485,7 +484,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.026995` [E5.5-T03am](epic-5.5-omarchy/E5.5-T03am-prepared-recycling-input.md) — Test existing counter recycling on the prepared cap256 desktop *(deps: E5.5-T03ak, E5.5-T03aa)*
 - [x] `525.026997` [E5.5-T03an](epic-5.5-omarchy/E5.5-T03an-jit-fmadd-single.md) — Keep measured FMADD.S renderer blocks compiled *(deps: E5.5-T03am, E5.5-T03z)*
 - [x] `525.026998` [E5.5-T03ao](epic-5.5-omarchy/E5.5-T03ao-direct-fp-imports.md) — Call pure FP helpers directly across WASM modules *(deps: E5.5-T03an)*
-- [ ] `525.026999` [E5.5-T03ap](epic-5.5-omarchy/E5.5-T03ap-compositor-input-trace.md) — Locate physical key processing inside the desktop guest *(deps: E5.5-T03ao)*
+- [~] `525.026999` [E5.5-T03ap](epic-5.5-omarchy/E5.5-T03ap-compositor-input-trace.md) — Locate physical key processing inside the desktop guest *(deps: E5.5-T03ao)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03ap)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
