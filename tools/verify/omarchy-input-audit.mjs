@@ -4,11 +4,14 @@ import { inputTrialOptions, assertInputTrialRuntime, assertInputTrialSource } fr
 import { auditSerial } from "./omarchy-latency-receipt.mjs";
 import { evdevForCode } from "../../web/src/input/keymap.js";
 import { physicalStroke } from "./omarchy-browser-session.mjs";
+import { assertPreparedDirectSource } from "./omarchy-prepared-direct-state.mjs";
 const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n), "invalid timestamp"); return n; };
 const success = "input-trial-physical-nonce-and-fresh-presentation";
 const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
 
-export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [] }) {
+export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false }) {
+  assert.equal(typeof preparedDirect, "boolean");
+  assert.equal(report.preparedDirectRequested === true, preparedDirect);
   assert.equal(report.trial.head, head, "wrong source head");
   assert.equal(report.trial.scopedStatus, "");
   assert.equal(report.trial.arm, arm);
@@ -24,7 +27,8 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
   assert.equal(report.startup.timeoutMs, 300000);
   assert.equal(at(report.startup.deadlineAt)-at(report.startup.startedAt), 300000);
   assert.equal(report.restored, true);
-  assertInputTrialSource(report.candidate.source);
+  if (preparedDirect) assertPreparedDirectSource(report.candidate.source);
+  else assertInputTrialSource(report.candidate.source);
   assert.deepEqual(report.errors, []);
   assert.equal(report.cleanup.closed, true);
   const runtimes = report.observations.filter(row => row.runtime).map(row => row.runtime);

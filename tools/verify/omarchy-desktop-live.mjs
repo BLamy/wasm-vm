@@ -29,6 +29,7 @@ import { requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-
 import { prepareOpaqueDesktop } from "./omarchy-opaque-preparation.mjs";
 import { prepareDirectOpaqueDesktop } from "./omarchy-direct-opaque-preparation.mjs";
 import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
+import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -62,6 +63,7 @@ const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
 const workerCost = process.env.OMARCHY_WORKER_COST === "1";
 const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
 const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
+const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
 if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
@@ -113,6 +115,11 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
   assert.ok(directOpaque && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
     && !opaqueFoot && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
   "direct opaque requires its isolated fixed residency candidate input trial");
+}
+if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
+  assert.ok(preparedDirect && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
+    && !opaqueFoot && !directOpaque && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
+  "prepared direct input requires its isolated fixed residency candidate trial");
 }
 let modePairOutput = null;
 if (modePair) {
@@ -421,7 +428,8 @@ async function runHttpSelfTest(baseUrl) {
 }
 
 candidate = await prepareLocalCandidate();
-if (ownedRecording) assertInputTrialSource(candidate.source);
+if (preparedDirect) assertPreparedDirectSource(candidate.source);
+else if (ownedRecording) assertInputTrialSource(candidate.source);
 if (modePair) await fs.mkdir(modePairOutput, { recursive: false, mode: 0o700 });
 const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
 ownedServer = local?.server || null;
@@ -436,6 +444,7 @@ if (renderBudget) report.renderBudgetRequested = true;
 if (compositorMode) report.compositorModeRequested = true;
 if (opaqueFoot) report.opaqueFootRequested = true;
 if (directOpaque) report.directOpaqueRequested = true;
+if (preparedDirect) report.preparedDirectRequested = true;
 if (coldPair) report.progressCaptureErrors = [];
 if (ownedRecording) {
   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
@@ -445,6 +454,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-opaque-foot.mjs", "tools/verify/omarchy-opaque-foot-command.mjs",
     "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
     "tools/verify/omarchy-input-audit.mjs",
+    "tools/verify/omarchy-prepared-direct-state.mjs", "tools/verify/omarchy-prepared-direct-input.mjs",
     "tools/verify/omarchy-direct-opaque-preparation.mjs", "tools/verify/omarchy-prepare-direct-opaque.mjs",
     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
     "tools/verify/e5-t22c-cpu-profile.mjs",
@@ -1224,6 +1234,12 @@ async function runLive() {
     assertOriginalPresentation(report.directOpaque.presentation);
     await startupCall(() => screenshot("direct-opaque.png"));
   }
+  if (preparedDirect) {
+    await requestPreparedDirectProperties((command, timeout) => exec(command, page, "prepared-direct:read", timeout), coldDeadline, report);
+    report.preparedDirect.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
+    assertOriginalPresentation(report.preparedDirect.presentation);
+    await startupCall(() => screenshot("prepared-direct.png"));
+  }
   if (coldPair) {
     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
       shipped: window.__linux.restoredFromBootSnapshot(),
@@ -1273,7 +1289,7 @@ async function runLive() {
   const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
   if (inputTrial) {
     assertInputTrialRuntime(beforeInput, trial);
-    if (opaqueFoot || directOpaque) assertOriginalPresentation(beforeInput.presentation);
+    if (opaqueFoot || directOpaque || preparedDirect) assertOriginalPresentation(beforeInput.presentation);
     remainingTrialMs(coldDeadline);
     report.startup.readyProvenAt = new Date().toISOString();
     report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
@@ -1301,6 +1317,7 @@ async function runLive() {
     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
     if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
     if (directOpaque) report.directOpaqueInputFence = await fenceWorkerCostInput(page, report.keyboard);
+    if (preparedDirect) report.preparedDirectInputFence = await fenceWorkerCostInput(page, report.keyboard);
     report.keyboard.stage = "post-enter-focus";
     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
@@ -1477,7 +1494,7 @@ try {
     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
     // Disconnect the recorder's Playwright client as well as closing the owned
     // browser server; debugger sessions must not retain its websocket transport.
-    if (failureCheckpoint || workerCost || modePair || opaqueFoot || directOpaque) {
+    if (failureCheckpoint || workerCost || modePair || opaqueFoot || directOpaque || preparedDirect) {
       try {
         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
         report.cleanup.clientClosed = true;
