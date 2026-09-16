@@ -1,0 +1,84 @@
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 6aba7c7c..0d035937 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -1387,12 +1387,26 @@ async function runLive() {
+   }
+   if (inputTrial) {
+     const captureDeadline = trialCaptureDeadline = Date.now() + trial.captureMs;
++    let presentationBaseline = beforeInput.presentation;
++    if (report.inputKernelPrepared) {
++      report.trial.captureStartedAt = new Date(captureDeadline - trial.captureMs).toISOString();
++      report.trial.captureDeadlineAt = new Date(captureDeadline).toISOString();
++      // A frame drawn before command execution cannot prove its visible response.
++      presentationBaseline = await withinTrialDeadline(() => page.evaluate(() => window.__presentation.state()),
++        captureDeadline, "post-nonce presentation baseline");
++      report.trial.postNoncePresentationBaseline = presentationBaseline;
++      report.trial.postNoncePresentationBaselineAt = new Date().toISOString();
++    }
++    // Reserve the last two seconds of the same capture budget for a real failure
++    // image if no post-nonce frame arrives. Never extend the product deadline.
++    const freshDeadline = report.inputKernelPrepared ? captureDeadline - 2000 : captureDeadline;
+     const after = await withinTrialDeadline(() => waitForFreshPresentation(
+-      () => page.evaluate(() => window.__presentation?.state?.()), beforeInput.presentation,
+-      remainingTrialMs(captureDeadline), "input-trial fresh presentation"), captureDeadline, "input-trial capture");
++      () => page.evaluate(() => window.__presentation?.state?.()), presentationBaseline,
++      remainingTrialMs(freshDeadline), "input-trial fresh presentation"), freshDeadline, "input-trial capture");
+     report.trial.presentationAfter = after;
+     await withinTrialDeadline(() => screenshot("desktop-keyboard.png", page, remainingTrialMs(captureDeadline)),
+       captureDeadline, "input-trial capture");
++    if (report.inputKernelPrepared) report.trial.responseImageCapturedAt = new Date().toISOString();
+     report.trial.runtimeAfter = await withinTrialDeadline(() => runtimeDiagnostics(page, "physical-keyboard-after-readback"),
+       captureDeadline, "input-trial capture");
+     assertInputTrialRuntime(report.trial.runtimeAfter, trial);
+diff --git a/tools/verify/omarchy-input-kernel-response-audit.mjs b/tools/verify/omarchy-input-kernel-response-audit.mjs
+index 36e9bc37..a772c27e 100644
+--- a/tools/verify/omarchy-input-kernel-response-audit.mjs
++++ b/tools/verify/omarchy-input-kernel-response-audit.mjs
+@@ -34,5 +34,15 @@ export function auditInputKernelResponse(report, head) {
+     assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt));
+     assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(fence.startedAt)));
+   }
++  if (input.machineAcceptance) {
++    const baseline = report.trial.postNoncePresentationBaseline, after = report.trial.presentationAfter;
++    assert.ok(Date.parse(report.trial.postNoncePresentationBaselineAt) >= Date.parse(report.keyboard.completedAt));
++    assert.ok(after.framesReceived > baseline.framesReceived, "response image predates nonce execution");
++    assert.ok(after.successfulPresents > baseline.successfulPresents, "response image was not presented after nonce execution");
++    assert.equal(Date.parse(report.trial.captureDeadlineAt) - Date.parse(report.trial.captureStartedAt), 20000);
++    assert.ok(Date.parse(report.trial.captureStartedAt) >= Date.parse(report.keyboard.completedAt));
++    assert.ok(Date.parse(report.trial.responseImageCapturedAt) >= Date.parse(report.trial.postNoncePresentationBaselineAt));
++    assert.ok(Date.parse(report.trial.responseImageCapturedAt) <= Date.parse(report.trial.captureDeadlineAt));
++  }
+   return { input, configuration, visualInspectionRequired: true };
+ }
+diff --git a/tools/verify/omarchy-user-input.test.mjs b/tools/verify/omarchy-user-input.test.mjs
+index 8cc36453..8f5b478e 100644
+--- a/tools/verify/omarchy-user-input.test.mjs
++++ b/tools/verify/omarchy-user-input.test.mjs
+@@ -43,7 +43,7 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+     experiment: preparedRecycling ? "prepared-recycling" : opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling",
+     renderer: null, lp: null });
+   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
+-  let randomCall = 0;
++  let randomCall = 0, responseFrames = 3;
+   const epoch = now, readyMs = 5;
+   class Clock extends Date {
+     constructor(...args) { super(...(args.length ? args : [now])); }
+@@ -58,7 +58,8 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+     __linux: { restoredFromBootSnapshot: () => true },
+     __presentation: { state() {
+       if (stalePresentation) { now += trial.captureMs + 1; return { ...before }; }
+-      return { ...before, framesReceived: 3, successfulPresents: 3 };
++      const frames = inputKernelPrepared && entered ? responseFrames++ : 3;
++      return { ...before, framesReceived: frames, successfulPresents: frames };
+     } },
+   };
+   const document = { get activeElement() { return { id: focus, tagName: "CANVAS" }; } };
+@@ -241,6 +242,7 @@ test("synthetic AR input checks loaded kernel before properties and keeps uninst
+   const order = ["kernel-notes", "saved-property-read", "key", "input-fence", "readback", "desktop-keyboard.png"];
+   for (let i = 1; i < order.length; i++) assert.ok(f.trace.indexOf(order[i-1]) < f.trace.indexOf(order[i]));
+   assert.equal(f.report.workerCostInputFence, undefined);
++  assert.ok(f.report.trial.presentationAfter.framesReceived > f.report.trial.postNoncePresentationBaseline.framesReceived);
+   assert.equal(f.trace.filter(step => step === "input-fence").length, 1);
+   assert.equal(f.report.startup.timeoutMs, 300000);
+   assert.equal(Date.parse(f.report.keyboard.deadlineAt), f.report.keyboard.enteredAtMs + 120000);

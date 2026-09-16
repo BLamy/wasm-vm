@@ -1,0 +1,25 @@
+{
+  "purpose": "synthetic nonce acceptance attack; no product acceptance",
+  "recordedReport": {
+    "file": "evidence/omarchy-profile/input-kernel-response-r1/desktop/report.json",
+    "sha256": "5a1b0985d5494c36295217a6c0e49510e8ea3bcafda02c07625601c5e963327b",
+    "head": "3d9520ba0cdc67e94fc099625b718d261a0bc07d",
+    "actualMachineAcceptance": true,
+    "actualResult": "input-trial-physical-nonce-and-fresh-presentation"
+  },
+  "syntheticControlAccepted": true,
+  "syntheticTargetRead": "mu4o0hmi3",
+  "cases": [
+    {
+      "name": "raw zero-exit read returns another 16-hex nonce",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+    },
+    {
+      "name": "matching raw nonce arrives one millisecond after Enter+120s",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+    }
+  ],
+  "passed": true
+}

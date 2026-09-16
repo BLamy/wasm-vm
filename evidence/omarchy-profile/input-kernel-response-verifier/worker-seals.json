@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "seals": [
+    {
+      "directory": "evidence/omarchy-profile/input-kernel-response-r1",
+      "indexSha256": "aa5a22326262e65893fa75c11cde4cd5c9205721681c19ba102e6a062baa5c1c",
+      "filesChecked": 10,
+      "members": [
+        "IMAGE-REVIEW.md",
+        "acceptance.log",
+        "desktop/desktop-keyboard.png",
+        "desktop/desktop.png",
+        "desktop/latest.png",
+        "desktop/prepared-direct.png",
+        "desktop/report.json",
+        "desktop/serial.log",
+        "desktop.log",
+        "run.json"
+      ]
+    },
+    {
+      "directory": "evidence/omarchy-profile/input-kernel-response-r2",
+      "indexSha256": "e03efb898c9aeac9b4b995ae4a17d45b871c40902339fc57fff370e08f066d3c",
+      "filesChecked": 12,
+      "members": [
+        "RESULT.md",
+        "acceptance.log",
+        "affected-tests-final.log",
+        "affected-tests-initial-failure.log",
+        "desktop/desktop-keyboard.png",
+        "desktop/desktop.png",
+        "desktop/latest.png",
+        "desktop/prepared-direct.png",
+        "desktop/report.json",
+        "desktop/serial.log",
+        "desktop.log",
+        "run.json"
+      ]
+    }
+  ]
+}
