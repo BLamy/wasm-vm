@@ -1,0 +1,1624 @@
+{
+  "diagnosticOnly": true,
+  "desktopResponsive": false,
+  "input": {
+    "arm": "candidate",
+    "machineAcceptance": false,
+    "visualInspectionRequired": true,
+    "result": "failed",
+    "outcome": "nonce-readback-failed",
+    "startup": {
+      "startedAt": "2026-09-16T10:42:35.127Z",
+      "timeoutMs": 300000,
+      "deadlineAt": "2026-09-16T10:47:35.127Z",
+      "readyProvenAt": "2026-09-16T10:46:10.549Z",
+      "elapsedMs": 215422
+    },
+    "keyboard": {
+      "verified": false,
+      "nonce": "1e80796143bc5e18",
+      "guestFile": "/tmp/desktop-keys-dcc00a02aa1e90da",
+      "startedAt": "2026-09-16T10:46:10.549Z",
+      "enteredAtMs": 1789555573241,
+      "typedAt": "2026-09-16T10:46:13.241Z",
+      "typingMs": 2692,
+      "readbackStartedAt": "2026-09-16T10:46:13.241Z",
+      "readbackTimeoutMs": 120000,
+      "deadlineMs": 120000,
+      "deadlineAt": "2026-09-16T10:48:13.241Z",
+      "stage": "readback",
+      "failedAt": "2026-09-16T10:48:13.242Z",
+      "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+      "desktopReadyPageMs": 14945.97000002861,
+      "firstPhysicalKeydownPageMs": 215420.375,
+      "readyToFirstPhysicalKeydownMs": 200474.4049999714
+    },
+    "trustedEvents": 128,
+    "matchedKeyboardCalls": 128,
+    "completedReads": 36,
+    "pendingReads": 0,
+    "readExits": [
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75
+    ],
+    "nonceReplies": 0,
+    "framesBefore": 4,
+    "framesAfter": 5,
+    "intervalRetired": 3459858658,
+    "intervalJitRetired": 2410135662,
+    "intervalJitShare": 0.6965994568671771,
+    "discoveryBefore": {
+      "nominated": 233876,
+      "deduped": 68783504,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 203,
+      "queueDepth": 51,
+      "queueHighWater": 493,
+      "candidates": 41295,
+      "generation": 5
+    },
+    "discoveryAfter": {
+      "nominated": 419766,
+      "deduped": 112088761,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 0,
+      "excluded": 221,
+      "queueDepth": 97,
+      "queueHighWater": 493,
+      "candidates": 38354,
+      "generation": 5
+    },
+    "recyclingBefore": {
+      "enabled": true,
+      "epochs": "7",
+      "discardedCounters": "458752",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "recyclingAfter": {
+      "enabled": true,
+      "epochs": "9",
+      "discardedCounters": "589824",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "residency": {
+      "policy": "cap-256",
+      "cap": 256
+    },
+    "cacheBefore": {
+      "blocks": 1029,
+      "installs": 51764,
+      "evictions": 10985
+    },
+    "cacheAfter": {
+      "blocks": 1039,
+      "installs": 80014,
+      "evictions": 17290
+    },
+    "serial": [
+      {
+        "rid": "mu3z20t00",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-16T10:42:39.636Z",
+        "completedAt": "2026-09-16T10:42:50.075Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z2m411",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+        "sentAt": "2026-09-16T10:43:07.249Z",
+        "completedAt": "2026-09-16T10:43:10.880Z",
+        "response": {
+          "stdout": "true\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z2oxx2",
+        "command": "(umask 077; mkdir '/tmp/wv-input-observer-b1f92eb6dfee08df' && base64 -d <<'WVIN_OBSERVER_BINARY' | gzip -d > '/tmp/wv-input-observer-b1f92eb6dfee08df/observer'\n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\nWVIN_OBSERVER_BINARY\nchmod 700 '/tmp/wv-input-observer-b1f92eb6dfee08df/observer' && sha256sum '/tmp/wv-input-observer-b1f92eb6dfee08df/observer')",
+        "sentAt": "2026-09-16T10:43:10.918Z",
+        "completedAt": "2026-09-16T10:44:20.377Z",
+        "response": {
+          "stdout": "10d9e82ce33bb8eafaf55e8aa5e8ee86bd7bdfa4998fd367f374ff70e3ff792d  /tmp/wv-input-observer-b1f92eb6dfee08df/observer\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z46jf3",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances",
+        "sentAt": "2026-09-16T10:44:20.379Z",
+        "completedAt": "2026-09-16T10:44:24.502Z",
+        "response": {
+          "stdout": "[\n{\n    \"instance\": \"efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177\",\n    \"time\": 1789006846,\n    \"pid\": 417,\n    \"wl_socket\": \"wayland-1\"\n}\n]\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z49q04",
+        "command": "for t in /proc/417/task/*; do for f in stat status wchan syscall schedstat; do printf 'WVINPROC %s/%s\\n' \"$t\" \"$f\"; cat \"$t/$f\" 2>&1; printf '\\n'; done; done; printf 'WVINEXE\\n'; readlink /proc/417/exe; printf 'WVINFDS\\n'; ls -l /proc/417/fd; printf 'WVINDEVICES\\n'; cat /proc/bus/input/devices",
+        "sentAt": "2026-09-16T10:44:24.504Z",
+        "completedAt": "2026-09-16T10:45:13.794Z",
+        "response": {
+          "stdout": "WVINPROC /proc/417/task/417/stat\n417 (Hyprland) S 367 367 367 0 -1 4194304 54458 5338 1015 0 2237 92 16 5 20 0 13 0 3468 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/417/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t417\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t417\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t270\nnonvoluntary_ctxt_switches:\t3720\n\nWVINPROC /proc/417/task/417/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/417/syscall\n98 0x55555efd9778 0x189 0x0 0x0 0x0 0xffffffff 0x7fffd9c5eaf0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/417/schedstat\ncat: /proc/417/task/417/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/441/stat\n441 (Hyprland) S 367 367 367 0 -1 4194368 9 5338 0 0 0 0 16 5 20 0 13 0 3577 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/441/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t441\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t441\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t24\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/441/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/441/syscall\n98 0x55555ba13c00 0x89 0x0 0x7fff7ceab0b0 0x0 0xffffffff 0x7fff7ceaaf90 0x7fff81815bd8\n\nWVINPROC /proc/417/task/441/schedstat\ncat: /proc/417/task/441/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/462/stat\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 5778 3 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/462/status\nName:\tllvmpipe-0\nUmask:\t0022\nState:\tR (running)\nTgid:\t417\nNgid:\t0\nPid:\t462\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t462\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t60\nnonvoluntary_ctxt_switches:\t5499\n\nWVINPROC /proc/417/task/462/wchan\n0\nWVINPROC /proc/417/task/462/syscall\nrunning\n\nWVINPROC /proc/417/task/462/schedstat\ncat: /proc/417/task/462/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/463/stat\n463 (Hyprland) S 367 367 367 0 -1 4194368 2 5338 0 0 0 0 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/463/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t463\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t463\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/463/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/463/syscall\n98 0x55555bb60b48 0x189 0x0 0x0 0x0 0xffffffff 0x7fff6ed8cfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/463/schedstat\ncat: /proc/417/task/463/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/468/stat\n468 (Hyprlan:disk$0) S 367 367 367 0 -1 4194368 312 5338 4 0 0 1 16 5 39 19 13 0 3702 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/468/status\nName:\tHyprlan:disk$0\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t468\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t468\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t10\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/468/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/468/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6e38af40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/468/schedstat\ncat: /proc/417/task/468/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/469/stat\n469 (Hyprlan:disk$1) S 367 367 367 0 -1 4194368 238 5338 0 0 0 0 16 5 39 19 13 0 3721 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/469/status\nName:\tHyprlan:disk$1\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t469\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t469\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t7\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/469/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/469/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d9bcf40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/469/schedstat\ncat: /proc/417/task/469/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/470/stat\n470 (Hyprlan:disk$2) S 367 367 367 0 -1 4194368 108 5338 0 0 0 0 16 5 39 19 13 0 3735 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/470/status\nName:\tHyprlan:disk$2\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t470\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t470\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t7\nnonvoluntary_ctxt_switches:\t1\n\nWVINPROC /proc/417/task/470/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/470/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d1b7f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/470/schedstat\ncat: /proc/417/task/470/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/481/stat\n481 (Hyprlan:disk$3) S 367 367 367 0 -1 4194368 323 5338 0 0 1 0 16 5 39 19 13 0 3774 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/481/status\nName:\tHyprlan:disk$3\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t481\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t481\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4\nnonvoluntary_ctxt_switches:\t2\n\nWVINPROC /proc/417/task/481/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/481/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6c9b4f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/481/schedstat\ncat: /proc/417/task/481/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/482/stat\n482 (pool-spawner) S 367 367 367 0 -1 4194368 1 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/482/status\nName:\tpool-spawner\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t482\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t482\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/482/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/482/syscall\n98 0x55555d6f18d0 0x80 0x0 0x0 0x1 0x2525252525252525 0x7fff67ffe020 0x7fff8186765a\n\nWVINPROC /proc/417/task/482/schedstat\ncat: /proc/417/task/482/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/483/stat\n483 (gmain) S 367 367 367 0 -1 4194368 2 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 2147221247 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/483/status\nName:\tgmain\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t483\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t483\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe7ffbfeff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/483/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/483/syscall\n73 0x7fff38000880 0x1 0x0 0x0 0x8 0x0 0x7fff677fcfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/483/schedstat\ncat: /proc/417/task/483/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/484/stat\n484 (dconf worker) S 367 367 367 0 -1 4194368 29 5338 0 0 2 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/484/status\nName:\tdconf worker\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t484\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t484\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t30\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/484/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/484/syscall\n73 0x55555d6f4b50 0x1 0x0 0x0 0x8 0x0 0x7fff66ffbfd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/484/schedstat\ncat: /proc/417/task/484/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/485/stat\n485 (gdbus) S 367 367 367 0 -1 4194368 5 5338 0 0 0 0 16 5 20 0 13 0 3793 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/485/status\nName:\tgdbus\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t485\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t485\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t16\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/485/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/485/syscall\n73 0x7fff380008e0 0x2 0x0 0x0 0x8 0x0 0x7fff667fafd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/485/schedstat\ncat: /proc/417/task/485/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/589/stat\n589 ([pango] fontcon) S 367 367 367 0 -1 4194368 236 5338 0 0 7 1 16 5 20 0 13 0 4195 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/589/status\nName:\t[pango] fontcon\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t589\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t589\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t7\nnonvoluntary_ctxt_switches:\t36\n\nWVINPROC /proc/417/task/589/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/589/syscall\n98 0x55555d7cb7c0 0x80 0x3 0x0 0x1 0x55555d308fa8 0x7fff65417ff0 0x7fff8186765a\n\nWVINPROC /proc/417/task/589/schedstat\ncat: /proc/417/task/589/schedstat: No such file or directory\n\nWVINEXE\n/usr/bin/Hyprland\nWVINFDS\ntotal 0\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 0 -> /dev/null\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 1 -> 'socket:[4941]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 10 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 11 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 12 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 13 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 14 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 15 -> 'anon_inode:[pidfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 16 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 17 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 18 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 19 -> 'socket:[5119]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 2 -> 'socket:[4941]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 20 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 21 -> /dev/input/event0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 22 -> /dev/input/event1\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 23 -> /dev/input/event2\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 24 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 25 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 26 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 27 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 28 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 29 -> /run/user/1000/wayland-1.lock\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 3 -> /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 30 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 31 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 32 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 33 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 34 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 35 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 36 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 37 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 38 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 39 -> 'anon_inode:[eventfd]'\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 4 -> 'pipe:[5068]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 40 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 41 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 42 -> 'socket:[5216]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 43 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 44 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 45 -> 'socket:[5244]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 46 -> 'socket:[5245]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 47 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 48 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 49 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 5 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 50 -> /dev/dri/renderD128\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 51 -> '/dev/shm/62ad3a21-390e-4358-96c0-069a126c2963 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 52 -> 'anon_inode:[timerfd]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 53 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 54 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 55 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 56 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 57 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 58 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 59 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 6 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:21 60 -> 'socket:[5828]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 61 -> '/dev/shm/b4aff761-3d80-467e-a905-78d161df98fb (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 62 -> 'socket:[5785]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 63 -> '/dev/shm/bf70b554-8126-403b-a832-dece2bcda095 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 64 -> 'socket:[5786]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 65 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 66 -> 'socket:[5788]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 67 -> 'socket:[5785]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 68 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 69 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 7 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 71 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 72 -> 'socket:[5828]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 73 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 74 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 75 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 76 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 77 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 78 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 79 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 8 -> 'anon_inode:[signalfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 80 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 81 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 82 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 83 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 84 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 85 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 86 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 87 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 88 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 89 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 9 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 90 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 91 -> '/memfd:foot-wayland-shm-buffer-pool (deleted)'\nWVINDEVICES\nI: Bus=0006 Vendor=feed Product=0001 Version=0100\nN: Name=\"wasm-vm virtio keyboard\"\nP: Phys=virtio3/input0\nS: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0\nU: Uniq=\nH: Handlers=kbd event0 \nB: PROP=0\nB: EV=20013\nB: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0006 Vendor=feed Product=0002 Version=0100\nN: Name=\"wasm-vm virtio tablet\"\nP: Phys=virtio4/input0\nS: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1\nU: Uniq=\nH: Handlers=mouse0 event1 \nB: PROP=2\nB: EV=b\nB: KEY=1f0000 0 0 0 0\nB: ABS=3\n\nI: Bus=0006 Vendor=feed Product=0003 Version=0100\nN: Name=\"wasm-vm virtio mouse\"\nP: Phys=virtio5/input0\nS: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2\nU: Uniq=\nH: Handlers=mouse1 event2 \nB: PROP=0\nB: EV=7\nB: KEY=1f0000 0 0 0 0\nB: REL=143\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z5br95",
+        "command": "'/tmp/wv-input-observer-b1f92eb6dfee08df/observer' 417 > '/tmp/wv-input-observer-b1f92eb6dfee08df/trace.jsonl' 2> '/tmp/wv-input-observer-b1f92eb6dfee08df/stderr' < /dev/null & wv_input_observer_pid=$!; printf 'WVINPID %s\\n' \"$wv_input_observer_pid\"",
+        "sentAt": "2026-09-16T10:45:13.797Z",
+        "completedAt": "2026-09-16T10:45:17.253Z",
+        "response": {
+          "stdout": "[1] 1860\nWVINPID 1860\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z5efa6",
+        "command": "cat '/tmp/wv-input-observer-b1f92eb6dfee08df/trace.jsonl'",
+        "sentAt": "2026-09-16T10:45:17.254Z",
+        "completedAt": "2026-09-16T10:45:21.464Z",
+        "response": {
+          "stdout": "{\"kind\":\"started\",\"pid\":417,\"tracerPid\":1860,\"monotonicMs\":157706}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":417}\n{\"kind\":\"process-identity\",\"tid\":417,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3468\",\"comm\":\"Hyprland\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":441}\n{\"kind\":\"process-identity\",\"tid\":441,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3577\",\"comm\":\"Hyprland\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":462}\n{\"kind\":\"process-identity\",\"tid\":462,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3695\",\"comm\":\"llvmpipe-0\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":463}\n{\"kind\":\"process-identity\",\"tid\":463,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3695\",\"comm\":\"Hyprland\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":468}\n{\"kind\":\"process-identity\",\"tid\":468,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3702\",\"comm\":\"Hyprlan:disk$0\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":469}\n{\"kind\":\"process-identity\",\"tid\":469,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3721\",\"comm\":\"Hyprlan:disk$1\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":470}\n{\"kind\":\"process-identity\",\"tid\":470,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3735\",\"comm\":\"Hyprlan:disk$2\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":481}\n{\"kind\":\"process-identity\",\"tid\":481,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3774\",\"comm\":\"Hyprlan:disk$3\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":482}\n{\"kind\":\"process-identity\",\"tid\":482,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3791\",\"comm\":\"pool-spawner\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":483}\n{\"kind\":\"process-identity\",\"tid\":483,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3791\",\"comm\":\"gmain\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":484}\n{\"kind\":\"process-identity\",\"tid\":484,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3791\",\"comm\":\"dconf worker\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":485}\n{\"kind\":\"process-identity\",\"tid\":485,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"3793\",\"comm\":\"gdbus\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"seized\",\"pid\":417,\"tid\":589}\n{\"kind\":\"process-identity\",\"tid\":589,\"tgid\":417,\"tracerPid\":1860,\"startTime\":\"4195\",\"comm\":\"[pango] fontcon\",\"exe\":\"/usr/bin/Hyprland\"}\n{\"kind\":\"ready\",\"pid\":417,\"tracerPid\":1860,\"threads\":13,\"monotonicMs\":157732}\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z5ho97",
+        "command": "for t in /proc/417/task/*; do for f in stat status wchan syscall schedstat; do printf 'WVINPROC %s/%s\\n' \"$t\" \"$f\"; cat \"$t/$f\" 2>&1; printf '\\n'; done; done; printf 'WVINEXE\\n'; readlink /proc/417/exe; printf 'WVINFDS\\n'; ls -l /proc/417/fd; printf 'WVINDEVICES\\n'; cat /proc/bus/input/devices",
+        "sentAt": "2026-09-16T10:45:21.465Z",
+        "completedAt": "2026-09-16T10:46:10.509Z",
+        "response": {
+          "stdout": "WVINPROC /proc/417/task/417/stat\n417 (Hyprland) S 367 367 367 0 -1 4194304 54458 5338 1015 0 2237 92 16 5 20 0 13 0 3468 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/417/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t417\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t417\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t277\nnonvoluntary_ctxt_switches:\t3727\n\nWVINPROC /proc/417/task/417/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/417/syscall\n98 0x55555efd9778 0x189 0x0 0x0 0x0 0xffffffff 0x7fffd9c5eaf0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/417/schedstat\ncat: /proc/417/task/417/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/441/stat\n441 (Hyprland) S 367 367 367 0 -1 4194368 9 5338 0 0 0 0 16 5 20 0 13 0 3577 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/441/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t441\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t441\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t28\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/441/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/441/syscall\n128 0x55555ba13c00 0x89 0x0 0x7fff7ceab0b0 0x0 0xffffffff 0x7fff7ceaaf90 0x7fff81815bd8\n\nWVINPROC /proc/417/task/441/schedstat\ncat: /proc/417/task/441/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/462/stat\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 5932 3 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/462/status\nName:\tllvmpipe-0\nUmask:\t0022\nState:\tR (running)\nTgid:\t417\nNgid:\t0\nPid:\t462\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t462\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t63\nnonvoluntary_ctxt_switches:\t5928\n\nWVINPROC /proc/417/task/462/wchan\n0\nWVINPROC /proc/417/task/462/syscall\nrunning\n\nWVINPROC /proc/417/task/462/schedstat\ncat: /proc/417/task/462/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/463/stat\n463 (Hyprland) S 367 367 367 0 -1 4194368 3 5338 0 0 0 0 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/463/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t463\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t463\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/463/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/463/syscall\n98 0x55555bb60b48 0x189 0x0 0x0 0x0 0xffffffff 0x7fff6ed8cfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/463/schedstat\ncat: /proc/417/task/463/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/468/stat\n468 (Hyprlan:disk$0) S 367 367 367 0 -1 4194368 312 5338 4 0 0 1 16 5 39 19 13 0 3702 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/468/status\nName:\tHyprlan:disk$0\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t468\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t468\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t13\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/468/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/468/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6e38af40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/468/schedstat\ncat: /proc/417/task/468/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/469/stat\n469 (Hyprlan:disk$1) S 367 367 367 0 -1 4194368 238 5338 0 0 0 0 16 5 39 19 13 0 3721 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/469/status\nName:\tHyprlan:disk$1\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t469\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t469\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t10\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/469/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/469/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d9bcf40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/469/schedstat\ncat: /proc/417/task/469/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/470/stat\n470 (Hyprlan:disk$2) S 367 367 367 0 -1 4194368 108 5338 0 0 0 0 16 5 39 19 13 0 3735 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/470/status\nName:\tHyprlan:disk$2\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t470\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t470\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t10\nnonvoluntary_ctxt_switches:\t1\n\nWVINPROC /proc/417/task/470/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/470/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d1b7f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/470/schedstat\ncat: /proc/417/task/470/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/481/stat\n481 (Hyprlan:disk$3) S 367 367 367 0 -1 4194368 323 5338 0 0 1 0 16 5 39 19 13 0 3774 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/481/status\nName:\tHyprlan:disk$3\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t481\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t481\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t7\nnonvoluntary_ctxt_switches:\t2\n\nWVINPROC /proc/417/task/481/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/481/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6c9b4f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/481/schedstat\ncat: /proc/417/task/481/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/482/stat\n482 (pool-spawner) S 367 367 367 0 -1 4194368 2 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/482/status\nName:\tpool-spawner\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t482\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t482\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/482/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/482/syscall\n98 0x55555d6f18d0 0x80 0x0 0x0 0x1 0x2525252525252525 0x7fff67ffe020 0x7fff8186765a\n\nWVINPROC /proc/417/task/482/schedstat\ncat: /proc/417/task/482/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/483/stat\n483 (gmain) S 367 367 367 0 -1 4194368 3 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 2147221247 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/483/status\nName:\tgmain\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t483\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t483\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe7ffbfeff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t4\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/483/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/483/syscall\n73 0x7fff38000880 0x1 0x0 0x0 0x8 0x0 0x7fff677fcfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/483/schedstat\ncat: /proc/417/task/483/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/484/stat\n484 (dconf worker) S 367 367 367 0 -1 4194368 31 5338 0 0 2 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/484/status\nName:\tdconf worker\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t484\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t484\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t33\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/484/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/484/syscall\n73 0x55555d6f4b50 0x1 0x0 0x0 0x8 0x0 0x7fff66ffbfd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/484/schedstat\ncat: /proc/417/task/484/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/485/stat\n485 (gdbus) S 367 367 367 0 -1 4194368 6 5338 0 0 0 0 16 5 20 0 13 0 3793 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/485/status\nName:\tgdbus\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t485\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t485\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t19\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/485/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/485/syscall\n73 0x7fff380008e0 0x2 0x0 0x0 0x8 0x0 0x7fff667fafd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/485/schedstat\ncat: /proc/417/task/485/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/589/stat\n589 ([pango] fontcon) S 367 367 367 0 -1 4194368 237 5338 0 0 7 1 16 5 20 0 13 0 4195 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/589/status\nName:\t[pango] fontcon\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t589\nPPid:\t367\nTracerPid:\t1860\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t589\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t10\nnonvoluntary_ctxt_switches:\t36\n\nWVINPROC /proc/417/task/589/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/589/syscall\n98 0x55555d7cb7c0 0x80 0x3 0x0 0x1 0x55555d308fa8 0x7fff65417ff0 0x7fff8186765a\n\nWVINPROC /proc/417/task/589/schedstat\ncat: /proc/417/task/589/schedstat: No such file or directory\n\nWVINEXE\n/usr/bin/Hyprland\nWVINFDS\ntotal 0\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 0 -> /dev/null\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 1 -> 'socket:[4941]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 10 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 11 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 12 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 13 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 14 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 15 -> 'anon_inode:[pidfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 16 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 17 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 18 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 19 -> 'socket:[5119]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 2 -> 'socket:[4941]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 20 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 21 -> /dev/input/event0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 22 -> /dev/input/event1\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 23 -> /dev/input/event2\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 24 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 25 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 26 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 27 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 28 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 29 -> /run/user/1000/wayland-1.lock\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 3 -> /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 30 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 31 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 32 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 33 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 34 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 35 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 36 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 37 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 38 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 39 -> 'anon_inode:[eventfd]'\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 4 -> 'pipe:[5068]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 40 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 41 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 42 -> 'socket:[5216]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 43 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 44 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 45 -> 'socket:[5244]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 46 -> 'socket:[5245]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 47 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 48 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 49 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 5 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 50 -> /dev/dri/renderD128\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 51 -> '/dev/shm/62ad3a21-390e-4358-96c0-069a126c2963 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 52 -> 'anon_inode:[timerfd]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 53 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 54 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 55 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 56 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 57 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 58 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 59 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 6 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:21 60 -> 'socket:[5828]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 61 -> '/dev/shm/b4aff761-3d80-467e-a905-78d161df98fb (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 62 -> 'socket:[5785]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 63 -> '/dev/shm/bf70b554-8126-403b-a832-dece2bcda095 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 64 -> 'socket:[5786]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 65 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 66 -> 'socket:[5788]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 67 -> 'socket:[5785]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 68 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 69 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 7 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 71 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 72 -> 'socket:[5828]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 73 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 74 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 75 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 76 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 77 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 78 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 79 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 8 -> 'anon_inode:[signalfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 80 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 81 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 82 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 83 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 84 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 85 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 86 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 87 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 88 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 89 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 9 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 90 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 91 -> '/memfd:foot-wayland-shm-buffer-pool (deleted)'\nWVINDEVICES\nI: Bus=0006 Vendor=feed Product=0001 Version=0100\nN: Name=\"wasm-vm virtio keyboard\"\nP: Phys=virtio3/input0\nS: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0\nU: Uniq=\nH: Handlers=kbd event0 \nB: PROP=0\nB: EV=20013\nB: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0006 Vendor=feed Product=0002 Version=0100\nN: Name=\"wasm-vm virtio tablet\"\nP: Phys=virtio4/input0\nS: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1\nU: Uniq=\nH: Handlers=mouse0 event1 \nB: PROP=2\nB: EV=b\nB: KEY=1f0000 0 0 0 0\nB: ABS=3\n\nI: Bus=0006 Vendor=feed Product=0003 Version=0100\nN: Name=\"wasm-vm virtio mouse\"\nP: Phys=virtio5/input0\nS: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2\nU: Uniq=\nH: Handlers=mouse1 event2 \nB: PROP=0\nB: EV=7\nB: KEY=1f0000 0 0 0 0\nB: REL=143\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z6lmk8",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:13.244Z",
+        "completedAt": "2026-09-16T10:46:15.090Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z6ntp9",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:16.093Z",
+        "completedAt": "2026-09-16T10:46:18.574Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z6qii10",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:19.578Z",
+        "completedAt": "2026-09-16T10:46:22.134Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z6t9d11",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:23.137Z",
+        "completedAt": "2026-09-16T10:46:25.488Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z6vuk12",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:26.492Z",
+        "completedAt": "2026-09-16T10:46:28.996Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z6yjz13",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:29.999Z",
+        "completedAt": "2026-09-16T10:46:32.236Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z712014",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:33.240Z",
+        "completedAt": "2026-09-16T10:46:35.638Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z73of15",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:36.639Z",
+        "completedAt": "2026-09-16T10:46:39.053Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z76bb16",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:40.056Z",
+        "completedAt": "2026-09-16T10:46:42.321Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z78u617",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:43.326Z",
+        "completedAt": "2026-09-16T10:46:45.865Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7bkk18",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:46.868Z",
+        "completedAt": "2026-09-16T10:46:49.305Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7e8519",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:50.309Z",
+        "completedAt": "2026-09-16T10:46:52.715Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7guu20",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:53.719Z",
+        "completedAt": "2026-09-16T10:46:56.082Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7jgd21",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:46:57.085Z",
+        "completedAt": "2026-09-16T10:46:59.524Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7m3z22",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:00.527Z",
+        "completedAt": "2026-09-16T10:47:03.011Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7osv23",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:04.015Z",
+        "completedAt": "2026-09-16T10:47:06.633Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7rlh24",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:07.637Z",
+        "completedAt": "2026-09-16T10:47:10.331Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7ug625",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:11.334Z",
+        "completedAt": "2026-09-16T10:47:13.417Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7wtx26",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:14.421Z",
+        "completedAt": "2026-09-16T10:47:16.442Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z7z5x27",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:17.445Z",
+        "completedAt": "2026-09-16T10:47:19.637Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z81mn28",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:20.639Z",
+        "completedAt": "2026-09-16T10:47:22.804Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z842n29",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:23.808Z",
+        "completedAt": "2026-09-16T10:47:26.071Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z86le30",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:27.074Z",
+        "completedAt": "2026-09-16T10:47:29.646Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z89cq31",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:30.650Z",
+        "completedAt": "2026-09-16T10:47:32.711Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8bpv32",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:33.715Z",
+        "completedAt": "2026-09-16T10:47:36.517Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8enl33",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:37.521Z",
+        "completedAt": "2026-09-16T10:47:40.596Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8hsv34",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:41.599Z",
+        "completedAt": "2026-09-16T10:47:44.096Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8ki435",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:45.100Z",
+        "completedAt": "2026-09-16T10:47:47.308Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8mzc36",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:48.312Z",
+        "completedAt": "2026-09-16T10:47:50.543Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8ph637",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:51.546Z",
+        "completedAt": "2026-09-16T10:47:53.922Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8s3238",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:54.926Z",
+        "completedAt": "2026-09-16T10:47:57.276Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8uo739",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:47:58.279Z",
+        "completedAt": "2026-09-16T10:48:00.811Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z8xee40",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:48:01.814Z",
+        "completedAt": "2026-09-16T10:48:04.200Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z900i41",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:48:05.202Z",
+        "completedAt": "2026-09-16T10:48:07.630Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z92nt42",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:48:08.633Z",
+        "completedAt": "2026-09-16T10:48:11.149Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z95dk43",
+        "command": "if [ -f '/tmp/desktop-keys-dcc00a02aa1e90da' ]; then cat '/tmp/desktop-keys-dcc00a02aa1e90da'; else (exit 75); fi",
+        "sentAt": "2026-09-16T10:48:12.152Z",
+        "completedAt": "2026-09-16T10:48:14.535Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu3z968q44",
+        "command": "printf 'WVINTRACER\\n'; cat /proc/1860/stat /proc/1860/status 2>&1; printf 'WVINTRACEEND\\n'; tail -n 1 '/tmp/wv-input-observer-b1f92eb6dfee08df/trace.jsonl'",
+        "sentAt": "2026-09-16T10:48:13.274Z",
+        "completedAt": "2026-09-16T10:48:19.159Z",
+        "response": {
+          "stdout": "WVINTRACER\n1860 (observer) S 174 1860 174 1088 2320 4194304 257 0 0 0 1 3 0 0 20 0 1 0 15769 606208 0 18446744073709551615 16791092 16833436 140736629123696 0 0 0 0 0 24578 1 0 0 17 0 0 0 0 0 0 16837536 16838020 17100800 140736629124380 140736629124433 140736629124433 140736629125063 0\nName:\tobserver\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t1860\nNgid:\t0\nPid:\t1860\nPPid:\t174\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t256\nGroups:\t1000 \nNStgid:\t1860\nNSpid:\t1860\nNSpgid:\t1860\nNSsid:\t174\nKthread:\t0\nVmPeak:\t     652 kB\nVmSize:\t     592 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t       0 kB\nVmRSS:\t       0 kB\nRssAnon:\t       0 kB\nRssFile:\t       0 kB\nRssShmem:\t       0 kB\nVmData:\t     388 kB\nVmStk:\t     132 kB\nVmExe:\t      44 kB\nVmLib:\t       8 kB\nVmPTE:\t      40 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t1\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000000000\nSigCgt:\t0000000000006002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t356\nnonvoluntary_ctxt_switches:\t720\nWVINTRACEEND\n{\"kind\":\"read\",\"op\":\"EXIT\",\"sequence\":116,\"entrySequence\":115,\"tid\":417,\"nr\":63,\"fd\":24,\"requested\":1024,\"returned\":32,\"syscallError\":false,\"entry\":{\"valid\":true,\"input\":false,\"path\":\"/dev/dri/card0\",\"subsystem\":\"../../../../../../class/drm\",\"dev\":\"5\",\"inode\":\"613\",\"rdev\":\"57856\",\"mode\":8624,\"errno\":0},\"exit\":{\"valid\":true,\"input\":false,\"path\":\"/dev/dri/card0\",\"subsystem\":\"../../../../../../class/drm\",\"dev\":\"5\",\"inode\":\"613\",\"rdev\":\"57856\",\"mode\":8624,\"errno\":0},\"identityStable\":true,\"iovStable\":true,\"supported\":true,\"evdev\":false,\"captureComplete\":true,\"hex\":\"020000002000000050aaab5b55550000a3000000eb8404000000000021000000\"}\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z9as845",
+        "command": "if [ -e /proc/1860/exe ]; then [ \"$(readlink /proc/1860/exe)\" = '/tmp/wv-input-observer-b1f92eb6dfee08df/observer' ] && kill -TERM 1860; fi; wait 1860; wv_input_observer_exit=$?; printf 'WVINEXIT %s\\n' \"$wv_input_observer_exit\"",
+        "sentAt": "2026-09-16T10:48:19.160Z",
+        "completedAt": "2026-09-16T10:48:23.382Z",
+        "response": {
+          "stdout": "[1]+  Done                       '/tmp/wv-input-observer-b1f92eb6dfee08df/observer' 417 > '/tmp/wv-input-observer-b1f92eb6dfee08df/trace.jsonl' 2> '/tmp/wv-input-observer-b1f92eb6dfee08df/stderr' < /dev/null\nWVINEXIT 0\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z9e1j46",
+        "command": "gzip -c '/tmp/wv-input-observer-b1f92eb6dfee08df/trace.jsonl' | base64; printf '\\nWVINSTDERR\\n'; cat '/tmp/wv-input-observer-b1f92eb6dfee08df/stderr'",
+        "sentAt": "2026-09-16T10:48:23.383Z",
+        "completedAt": "2026-09-16T10:48:28.471Z",
+        "response": {
+          "stdout": "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\nOxGZ4e8AAA==\n\nWVINSTDERR\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3z9hyx47",
+        "command": "for t in /proc/417/task/*; do for f in stat status wchan syscall schedstat; do printf 'WVINPROC %s/%s\\n' \"$t\" \"$f\"; cat \"$t/$f\" 2>&1; printf '\\n'; done; done; printf 'WVINEXE\\n'; readlink /proc/417/exe; printf 'WVINFDS\\n'; ls -l /proc/417/fd; printf 'WVINDEVICES\\n'; cat /proc/bus/input/devices",
+        "sentAt": "2026-09-16T10:48:28.474Z",
+        "completedAt": "2026-09-16T10:49:17.794Z",
+        "response": {
+          "stdout": "WVINPROC /proc/417/task/417/stat\n417 (Hyprland) S 367 367 367 0 -1 4194304 54514 5338 1016 0 2240 92 16 5 20 0 13 0 3468 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/417/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t417\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t417\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1291\nnonvoluntary_ctxt_switches:\t3729\n\nWVINPROC /proc/417/task/417/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/417/syscall\n98 0x55555efd9778 0x189 0x0 0x0 0x0 0xffffffff 0x7fffd9c5e5e0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/417/schedstat\ncat: /proc/417/task/417/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/441/stat\n441 (Hyprland) S 367 367 367 0 -1 4194368 9 5338 0 0 0 0 16 5 20 0 13 0 3577 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/441/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t441\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t441\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t40\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/441/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/441/syscall\n128 0x55555ba13c00 0x89 0x0 0x7fff7ceab0b0 0x0 0xffffffff 0x7fff7ceaaf90 0x7fff81815bd8\n\nWVINPROC /proc/417/task/441/schedstat\ncat: /proc/417/task/441/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/462/stat\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 6368 3 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/462/status\nName:\tllvmpipe-0\nUmask:\t0022\nState:\tR (running)\nTgid:\t417\nNgid:\t0\nPid:\t462\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t462\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t114\nnonvoluntary_ctxt_switches:\t7241\n\nWVINPROC /proc/417/task/462/wchan\n0\nWVINPROC /proc/417/task/462/syscall\nrunning\n\nWVINPROC /proc/417/task/462/schedstat\ncat: /proc/417/task/462/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/463/stat\n463 (Hyprland) S 367 367 367 0 -1 4194368 3 5338 0 0 0 0 16 5 20 0 13 0 3695 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/463/status\nName:\tHyprland\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t463\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t463\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t6\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/463/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/463/syscall\n98 0x55555bb60b48 0x189 0x0 0x0 0x0 0xffffffff 0x7fff6ed8cfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/463/schedstat\ncat: /proc/417/task/463/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/468/stat\n468 (Hyprlan:disk$0) S 367 367 367 0 -1 4194368 312 5338 4 0 0 1 16 5 39 19 13 0 3702 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/468/status\nName:\tHyprlan:disk$0\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t468\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t468\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t15\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/468/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/468/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6e38af40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/468/schedstat\ncat: /proc/417/task/468/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/469/stat\n469 (Hyprlan:disk$1) S 367 367 367 0 -1 4194368 238 5338 0 0 0 0 16 5 39 19 13 0 3721 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/469/status\nName:\tHyprlan:disk$1\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t469\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t469\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t12\nnonvoluntary_ctxt_switches:\t3\n\nWVINPROC /proc/417/task/469/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/469/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d9bcf40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/469/schedstat\ncat: /proc/417/task/469/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/470/stat\n470 (Hyprlan:disk$2) S 367 367 367 0 -1 4194368 108 5338 0 0 0 0 16 5 39 19 13 0 3735 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/470/status\nName:\tHyprlan:disk$2\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t470\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t470\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t12\nnonvoluntary_ctxt_switches:\t1\n\nWVINPROC /proc/417/task/470/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/470/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6d1b7f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/470/schedstat\ncat: /proc/417/task/470/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/481/stat\n481 (Hyprlan:disk$3) S 367 367 367 0 -1 4194368 323 5338 0 0 1 0 16 5 39 19 13 0 3774 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 1 0 0 -1 0 0 3 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/481/status\nName:\tHyprlan:disk$3\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t481\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t481\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe3ffbfaff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t9\nnonvoluntary_ctxt_switches:\t2\n\nWVINPROC /proc/417/task/481/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/481/syscall\n98 0x55555baa1f40 0x189 0xe 0x0 0x0 0xffffffff 0x7fff6c9b4f40 0x7fff81815bd8\n\nWVINPROC /proc/417/task/481/schedstat\ncat: /proc/417/task/481/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/482/stat\n482 (pool-spawner) S 367 367 367 0 -1 4194368 2 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/482/status\nName:\tpool-spawner\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t482\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t482\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t6\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/482/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/482/syscall\n98 0x55555d6f18d0 0x80 0x0 0x0 0x1 0x2525252525252525 0x7fff67ffe020 0x7fff8186765a\n\nWVINPROC /proc/417/task/482/schedstat\ncat: /proc/417/task/482/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/483/stat\n483 (gmain) S 367 367 367 0 -1 4194368 3 5338 0 0 0 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 2147221247 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/483/status\nName:\tgmain\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t483\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t483\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\tfffffffe7ffbfeff\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t6\nnonvoluntary_ctxt_switches:\t0\n\nWVINPROC /proc/417/task/483/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/483/syscall\n73 0x7fff38000880 0x1 0x0 0x0 0x8 0x0 0x7fff677fcfc0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/483/schedstat\ncat: /proc/417/task/483/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/484/stat\n484 (dconf worker) S 367 367 367 0 -1 4194368 31 5338 0 0 2 0 16 5 20 0 13 0 3791 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/484/status\nName:\tdconf worker\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t484\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t484\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t35\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/484/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/484/syscall\n73 0x55555d6f4b50 0x1 0x0 0x0 0x8 0x0 0x7fff66ffbfd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/484/schedstat\ncat: /proc/417/task/484/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/485/stat\n485 (gdbus) S 367 367 367 0 -1 4194368 6 5338 0 0 0 0 16 5 20 0 13 0 3793 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/485/status\nName:\tgdbus\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t485\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t485\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t21\nnonvoluntary_ctxt_switches:\t22\n\nWVINPROC /proc/417/task/485/wchan\npoll_schedule_timeout.constprop.0\nWVINPROC /proc/417/task/485/syscall\n73 0x7fff380008e0 0x2 0x0 0x0 0x8 0x0 0x7fff667fafd0 0x7fff81815bd8\n\nWVINPROC /proc/417/task/485/schedstat\ncat: /proc/417/task/485/schedstat: No such file or directory\n\nWVINPROC /proc/417/task/589/stat\n589 ([pango] fontcon) S 367 367 367 0 -1 4194368 237 5338 0 0 7 1 16 5 20 0 13 0 4195 1604829184 59319 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\n\nWVINPROC /proc/417/task/589/status\nName:\t[pango] fontcon\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t417\nNgid:\t0\nPid:\t589\nPPid:\t367\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t1000 \nNStgid:\t417\nNSpid:\t589\nNSpgid:\t367\nNSsid:\t367\nKthread:\t0\nVmPeak:\t 2083304 kB\nVmSize:\t 1567216 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  237276 kB\nVmRSS:\t  237276 kB\nRssAnon:\t  130004 kB\nRssFile:\t   99456 kB\nRssShmem:\t    7816 kB\nVmData:\t  243692 kB\nVmStk:\t     164 kB\nVmExe:\t   12916 kB\nVmLib:\t  261896 kB\nVmPTE:\t     884 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t13\nSigQ:\t0/3865\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000004000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100000620\nCapInh:\t0000000800000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tunknown\nSpeculationIndirectBranch:\tunsupported\nCpus_allowed:\t1\nCpus_allowed_list:\t0\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t12\nnonvoluntary_ctxt_switches:\t36\n\nWVINPROC /proc/417/task/589/wchan\nfutex_wait_queue\nWVINPROC /proc/417/task/589/syscall\n98 0x55555d7cb7c0 0x80 0x3 0x0 0x1 0x55555d308fa8 0x7fff65417ff0 0x7fff8186765a\n\nWVINPROC /proc/417/task/589/schedstat\ncat: /proc/417/task/589/schedstat: No such file or directory\n\nWVINEXE\n/usr/bin/Hyprland\nWVINFDS\ntotal 0\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 0 -> /dev/null\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 1 -> 'socket:[4941]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 10 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 11 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 12 -> 'socket:[5081]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 13 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 14 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 15 -> 'anon_inode:[pidfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 16 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 17 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 18 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 19 -> 'socket:[5119]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 2 -> 'socket:[4941]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 20 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 21 -> /dev/input/event0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 22 -> /dev/input/event1\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 23 -> /dev/input/event2\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 24 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 25 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 26 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:20 27 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 28 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 29 -> /run/user/1000/wayland-1.lock\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 3 -> /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 30 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 31 -> 'socket:[5176]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 32 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 33 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 34 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 35 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 36 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 37 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 38 -> 'socket:[5215]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 39 -> 'anon_inode:[eventfd]'\nl-wx------ 1 omarchy omarchy 64 Sep 10 02:22 4 -> 'pipe:[5068]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 40 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 41 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 42 -> 'socket:[5216]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 43 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 44 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 45 -> 'socket:[5244]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 46 -> 'socket:[5245]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 47 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 48 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 49 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 5 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 50 -> /dev/dri/renderD128\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 51 -> '/dev/shm/62ad3a21-390e-4358-96c0-069a126c2963 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 52 -> 'anon_inode:[timerfd]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 53 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 54 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 55 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 56 -> 'socket:[5115]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 57 -> 'socket:[5118]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 58 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 59 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 6 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:21 60 -> 'socket:[5828]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 61 -> '/dev/shm/b4aff761-3d80-467e-a905-78d161df98fb (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 62 -> 'socket:[5785]'\nlr-x------ 1 omarchy omarchy 64 Sep 10 02:22 63 -> '/dev/shm/bf70b554-8126-403b-a832-dece2bcda095 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 64 -> 'socket:[5786]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 65 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 66 -> 'socket:[5788]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 67 -> 'socket:[5785]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 68 -> 'socket:[5787]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 69 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 7 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 71 -> 'socket:[5790]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 72 -> 'socket:[5828]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 73 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 74 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 75 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 76 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 77 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 78 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 79 -> 'socket:[6008]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 8 -> 'anon_inode:[signalfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 80 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 81 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 82 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 83 -> 'socket:[7513]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 84 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 85 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 86 -> 'socket:[6948]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 87 -> 'socket:[7514]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 88 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 89 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 9 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 90 -> 'socket:[7671]'\nlrwx------ 1 omarchy omarchy 64 Sep 10 02:22 91 -> '/memfd:foot-wayland-shm-buffer-pool (deleted)'\nWVINDEVICES\nI: Bus=0006 Vendor=feed Product=0001 Version=0100\nN: Name=\"wasm-vm virtio keyboard\"\nP: Phys=virtio3/input0\nS: Sysfs=/devices/platform/soc/10004000.virtio_mmio/virtio3/input/input0\nU: Uniq=\nH: Handlers=kbd event0 \nB: PROP=0\nB: EV=20013\nB: KEY=1ffffffffffffff ffffffffffffffff ffffffffffffffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0006 Vendor=feed Product=0002 Version=0100\nN: Name=\"wasm-vm virtio tablet\"\nP: Phys=virtio4/input0\nS: Sysfs=/devices/platform/soc/10005000.virtio_mmio/virtio4/input/input1\nU: Uniq=\nH: Handlers=mouse0 event1 \nB: PROP=2\nB: EV=b\nB: KEY=1f0000 0 0 0 0\nB: ABS=3\n\nI: Bus=0006 Vendor=feed Product=0003 Version=0100\nN: Name=\"wasm-vm virtio mouse\"\nP: Phys=virtio5/input0\nS: Sysfs=/devices/platform/soc/10006000.virtio_mmio/virtio5/input/input2\nU: Uniq=\nH: Handlers=mouse1 event2 \nB: PROP=0\nB: EV=7\nB: KEY=1f0000 0 0 0 0\nB: REL=143\n\n\n",
+          "exit": 0
+        }
+      }
+    ]
+  },
+  "observed": {
+    "rows": 158,
+    "errors": [],
+    "ready": {
+      "kind": "ready",
+      "pid": 417,
+      "tracerPid": 1860,
+      "threads": 13,
+      "monotonicMs": 157732
+    },
+    "finished": {
+      "kind": "finished",
+      "failed": false,
+      "stops": 1072,
+      "reads": 58,
+      "orphanExits": 0,
+      "capturedBytes": 8464,
+      "stopBudgetReached": false,
+      "stopSignal": 15,
+      "observationEndMonotonicMs": 166540,
+      "cleanupEndMonotonicMs": 166544
+    },
+    "identities": [
+      {
+        "kind": "process-identity",
+        "tid": 417,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3468",
+        "comm": "Hyprland",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 441,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3577",
+        "comm": "Hyprland",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 462,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3695",
+        "comm": "llvmpipe-0",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 463,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3695",
+        "comm": "Hyprland",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 468,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3702",
+        "comm": "Hyprlan:disk$0",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 469,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3721",
+        "comm": "Hyprlan:disk$1",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 470,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3735",
+        "comm": "Hyprlan:disk$2",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 481,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3774",
+        "comm": "Hyprlan:disk$3",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 482,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3791",
+        "comm": "pool-spawner",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 483,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3791",
+        "comm": "gmain",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 484,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3791",
+        "comm": "dconf worker",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 485,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "3793",
+        "comm": "gdbus",
+        "exe": "/usr/bin/Hyprland"
+      },
+      {
+        "kind": "process-identity",
+        "tid": 589,
+        "tgid": 417,
+        "tracerPid": 1860,
+        "startTime": "4195",
+        "comm": "[pango] fontcon",
+        "exe": "/usr/bin/Hyprland"
+      }
+    ],
+    "reads": 58,
+    "orphanExits": 0,
+    "unreleased": [],
+    "streams": [
+      {
+        "identity": {
+          "valid": true,
+          "input": true,
+          "path": "/dev/input/event1",
+          "subsystem": "../../../../../../../../class/input",
+          "dev": "5",
+          "inode": "630",
+          "rdev": "3393",
+          "mode": 8624,
+          "errno": 0
+        },
+        "reads": [
+          {
+            "sequence": 104,
+            "tid": 417,
+            "requested": 6144,
+            "returned": 168,
+            "complete": true
+          },
+          {
+            "sequence": 106,
+            "tid": 417,
+            "requested": 6144,
+            "returned": -11,
+            "complete": true
+          }
+        ],
+        "events": [
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661080",
+            "type": 3,
+            "code": 0,
+            "value": 7680
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661080",
+            "type": 3,
+            "code": 1,
+            "value": 8192
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661080",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661086",
+            "type": 1,
+            "code": 272,
+            "value": 1
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661086",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661091",
+            "type": 1,
+            "code": 272,
+            "value": 0
+          },
+          {
+            "sequence": 104,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "661091",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          }
+        ],
+        "incomplete": [],
+        "keyEvents": 2,
+        "synReports": 3,
+        "synDropped": 0,
+        "matchesEntirePhysicalSequence": false
+      },
+      {
+        "identity": {
+          "valid": true,
+          "input": true,
+          "path": "/dev/input/event0",
+          "subsystem": "../../../../../../../../class/input",
+          "dev": "5",
+          "inode": "629",
+          "rdev": "3392",
+          "mode": 8624,
+          "errno": 0
+        },
+        "reads": [
+          {
+            "sequence": 108,
+            "tid": 417,
+            "requested": 12144,
+            "returned": 192,
+            "complete": true
+          },
+          {
+            "sequence": 110,
+            "tid": 417,
+            "requested": 12144,
+            "returned": -11,
+            "complete": true
+          },
+          {
+            "sequence": 112,
+            "tid": 417,
+            "requested": 12144,
+            "returned": -11,
+            "complete": true
+          }
+        ],
+        "events": [
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "816556",
+            "type": 0,
+            "code": 3,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "816556",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821236",
+            "type": 1,
+            "code": 30,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821236",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821243",
+            "type": 1,
+            "code": 28,
+            "value": 1
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821243",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821251",
+            "type": 1,
+            "code": 28,
+            "value": 0
+          },
+          {
+            "sequence": 108,
+            "tid": 417,
+            "seconds": "160",
+            "microseconds": "821251",
+            "type": 0,
+            "code": 0,
+            "value": 0
+          }
+        ],
+        "incomplete": [],
+        "keyEvents": 3,
+        "synReports": 4,
+        "synDropped": 1,
+        "matchesEntirePhysicalSequence": false
+      }
+    ],
+    "coveredThroughReadback": true
+  },
+  "expectedKeys": [
+    {
+      "type": 1,
+      "code": 25,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 25,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 19,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 19,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 23,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 23,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 49,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 49,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 33,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 33,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 40,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 40,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 9,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 9,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 8,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 8,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 10,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 10,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 7,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 7,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 5,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 5,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 4,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 4,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 48,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 48,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 6,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 6,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 9,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 9,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 40,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 40,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 42,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 52,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 52,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 42,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 57,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 53,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 53,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 50,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 50,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 25,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 25,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 53,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 53,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 31,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 31,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 37,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 37,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 20,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 24,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 24,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 25,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 25,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 12,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 12,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 37,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 37,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 21,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 21,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 31,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 31,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 12,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 12,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 46,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 3,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 3,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 2,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 18,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 10,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 10,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 11,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 32,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 30,
+      "value": 0
+    },
+    {
+      "type": 1,
+      "code": 28,
+      "value": 1
+    },
+    {
+      "type": 1,
+      "code": 28,
+      "value": 0
+    }
+  ],
+  "limitation": "ptrace changes scheduling. A missing read is a missing observation; SYN_DROPPED alone does not uniquely establish overflow."
+}
