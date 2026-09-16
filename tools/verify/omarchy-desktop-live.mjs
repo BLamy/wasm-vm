@@ -124,10 +124,10 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
 }
 if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
   assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate"
-    && !opaqueFoot && !directOpaque && workerCost === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
+    && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
   "prepared direct input requires its isolated fixed residency candidate trial");
 }
-if (preparedRecycling) assert.ok(preparedDirect && workerCost, "prepared recycling requires the exact prepared trial and post-verdict recorder");
+if (preparedRecycling) assert.ok(preparedDirect && (workerCost || inputObserver), "prepared recycling requires the exact prepared trial and bounded diagnostic recorder");
 let modePairOutput = null;
 if (modePair) {
   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
