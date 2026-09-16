@@ -1,0 +1,44 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.10s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_wasm-7fc2a5cef18649f1)
+
+running 33 tests
+test admission_probe_tests::admission_probe_real_translator_integer_fp_move_arithmetic_and_csr_contrasts ... ok
+test chunked::ro_tests::read_only_backend_serves_reads_refuses_writes ... ok
+test chunked::durable_write_ack_tests::persistent_write_waits_for_exact_barrier_then_acks_or_returns_read_only ... ok
+test chunked::flush_tests::flush_barrier_over_writeback_overlay ... ok
+test chunked::tests::overlay_shadows_base_within_a_spanning_read ... ok
+test chunked::tests::a_read_spanning_present_and_absent_chunks_parks_on_the_absent_one ... ok
+test chunked::reset_scope_tests::overlay_db_name_is_per_image_and_stable ... ok
+test chunked::tests::seeded_delta_blocks_read_without_resident_base_chunks ... ok
+test chunked::tests::absent_chunk_parks_then_resident_read_returns_bytes ... ok
+test chunked::tests::seeded_delta_rejects_duplicate_blocks ... ok
+test chunked::tests::seeded_delta_rejects_foreign_length_and_out_of_bounds_blocks ... ok
+test chunked::critic_e3t10_hostile::continue_read_only_flush_parks_until_backlog_drains_then_acks ... ok
+test chunked::ro_tests::ro_check_precedes_range_validation_and_reads_never_dirty_queue ... ok
+test storage_err::critic_e3t10_hostile::legacy_webkit_quota_spelling_is_missed ... ok
+test storage_err::critic_e3t10_hostile::oversized_value_error_is_not_quota ... ok
+test chunked::tests::bad_requests_are_typed_errors_not_panics ... ok
+test chunked::tests::partial_block_write_parks_until_its_base_chunk_is_resident ... ok
+test chunked::ro_tests::ro_backend_with_forged_dirty_queue_would_park_flush_forever ... ok
+test chunked::tests::flush_commits_the_overlay ... ok
+test chunked::tests::seeded_delta_rejects_block_index_multiplication_overflow ... ok
+test chunked::critic_e3t10_hostile::quota_failure_then_redirty_then_retry_never_loses_the_newest_bytes ... ok
+test cold_counter_recycling_tests::cold_counter_recycling_wrapper_selection_and_lossless_stats_fields ... ok
+test storage_err::tests::other_failures_are_not_quota ... ok
+test storage_err::tests::quota_names_across_engines_classify_as_quota ... ok
+test chunked::tests::seeded_overlay_writes_are_isolated_from_the_base_cache ... ok
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+test ws_transport_state::tests::malformed_and_oversized_inbound_messages_fail_closed ... ok
+test ws_transport_state::tests::inbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test ws_transport_state::tests::outbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test ws_transport_state::tests::drain_resets_accounting_and_close_or_error_marks_failed ... ok
+test critic_flush_reset::stale_flush_barrier_survives_transport_reset_and_acks_early ... ok
+test critic_flush_reset::combined_chunk_and_flush_parks_report_only_the_chunk ... ok
+test critic_flush_reset::two_flushes_no_reset_second_flush_covers_newer_write ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+

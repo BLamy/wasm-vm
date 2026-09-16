@@ -1,0 +1,60 @@
+{
+  "head": "95c250fe56fb15f28ee022a21a3766176adca054",
+  "clone": "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "policy": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG and all CARGO_* unset; trusted PATH; no shell profiles",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh",
+      "startedAt": "2026-09-15T23:53:39Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:53:50Z"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "95c250fe56fb15f28ee022a21a3766176adca054"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh/repo",
+      "startedAt": "2026-09-15T23:53:50Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:53:50Z"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh/repo",
+      "startedAt": "2026-09-15T23:53:51Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:55:55Z"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03y",
+        "FP_TO_WORD_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-to-word-r1/cold/browser"
+      ],
+      "cwd": "/private/tmp/wasm-vm-fp-to-word-cold-ukc9pmrh/repo",
+      "startedAt": "2026-09-15T23:55:55Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T00:03:42Z"
+    }
+  ],
+  "pristineBeforeBuild": true,
+  "committedWasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "rebuiltWasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "passed": true
+}
