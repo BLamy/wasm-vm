@@ -1,0 +1,59 @@
+{
+  "purpose": "offline-opaque-preparation",
+  "keyboardAcceptance": false,
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-opaque-r1",
+  "head": "e841c3a19934ebe4144f6920849b918eb9bcc566",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "startedAt": "2026-09-16T04:24:26.284Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-opaque-r1/desktop",
+    "opaque-pair"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T04:32:46.878Z",
+  "serial": [
+    {
+      "rid": "mu3ljrsu0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-16T04:24:33.150Z",
+      "completedAt": "2026-09-16T04:25:00.528Z",
+      "response": {
+        "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu3lkd271",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+      "sentAt": "2026-09-16T04:25:00.703Z",
+      "completedAt": "2026-09-16T04:32:46.633Z",
+      "response": {
+        "stdout": "ok\nHyprland IPC didn't respond in time\n\nCouldn't read (6)\n\n",
+        "exit": 0
+      }
+    }
+  ],
+  "configuration": {
+    "configuration": "configuration-failed",
+    "wire": {
+      "rid": "mu3lkd271",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+      "sentAt": "2026-09-16T04:25:00.703Z",
+      "completedAt": "2026-09-16T04:32:46.633Z",
+      "response": {
+        "stdout": "ok\nHyprland IPC didn't respond in time\n\nCouldn't read (6)\n\n",
+        "exit": 0
+      }
+    },
+    "physicalInputTested": false
+  },
+  "result": "preparation-failed-input-untested",
+  "usablePair": false
+}
