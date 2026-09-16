@@ -1,0 +1,6 @@
+error: the following required arguments were not provided:
+  --keyboard-proof
+
+Usage: wasm-vm boot --kernel <KERNEL> --keyboard-proof --keyboard-proof-burst-pairs <KEYBOARD_PROOF_BURST_PAIRS>
+
+For more information, try '--help'.

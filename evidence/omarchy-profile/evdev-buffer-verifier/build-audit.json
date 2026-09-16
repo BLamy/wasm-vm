@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "head": "97743da727ee51eb7326b112c18653ff02941da1",
+  "kernel": {
+    "bytes": 24208896,
+    "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+  },
+  "config": {
+    "bytes": 113911,
+    "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+  },
+  "source": {
+    "bytes": 33211,
+    "sha256": "148e37958785cd09a3c5f881a85e567c9a166ff76bc85665d71bf3afd32f5404"
+  },
+  "baseline": {
+    "Image": {
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "System.map": {
+      "bytes": 2416519,
+      "sha256": "902e3241fbf86bad7f1b45b62cdfbaf2777dd1c53097296f5bdbd0124ec03290"
+    },
+    "config": {
+      "bytes": 113911,
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+    }
+  },
+  "compiler": "riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "sourceDiff": "--- a/drivers/input/evdev.c\n+++ b/drivers/input/evdev.c\n@@ -9,7 +9,7 @@\n \n #define EVDEV_MINOR_BASE\t64\n #define EVDEV_MINORS\t\t32\n-#define EVDEV_MIN_BUFFER_SIZE\t64U\n+#define EVDEV_MIN_BUFFER_SIZE\t1024U\n #define EVDEV_BUF_PACKETS\t8\n \n #include <linux/poll.h>\n",
+  "buildReceipt": {
+    "bytes": 2760,
+    "sha256": "9f606ecb67e395dba2505aea67c10cb6ab2d9cfcc49f58a6a0481490d88656c3"
+  },
+  "buildLog": {
+    "bytes": 119440,
+    "sha256": "82dd00327bb8ea464424e04643ee96bbc71cab2609f3ecdb9404839ffc319e03"
+  },
+  "volumeCleanup": {
+    "returncode": 0,
+    "stdout": "wasm-vm-omarchy-input-0102b731c4a44bd6\n",
+    "stderr": ""
+  }
+}

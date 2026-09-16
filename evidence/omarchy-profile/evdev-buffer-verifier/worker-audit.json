@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "workerSeal": {
+    "bytes": 4873,
+    "sha256": "2beac5de05aefc0d6e5d4ea4b62a332264b41dcb4d03acf2c3cc14a09064f541"
+  },
+  "sealedFilesChecked": 36,
+  "receipt": {
+    "bytes": 24288,
+    "sha256": "2bf7b6641fdf47e9c33371a25281d65674c40309269e587251413117f8021e39"
+  },
+  "reader": {
+    "bytes": 26120,
+    "sha256": "dc02be6636bc3e8175d613cb8f5cdfccd9004d13704b9c2c58097b64541c424a"
+  },
+  "initrd": {
+    "bytes": 16883,
+    "sha256": "8697951ed69a16357d09e301e02ba6c9bafa7daf2a9f99fae3fc89514a06c63e"
+  },
+  "runs": [
+    {
+      "name": "baseline-legacy",
+      "prediction": "HELD",
+      "events": 4,
+      "streamFirstLine": 174,
+      "streamLastLine": 177,
+      "stdout": {
+        "bytes": 11569,
+        "sha256": "8c9b8920d2f28fc7e356d5720890dfba3e893f5e06cecc3deac6d6fecc3c4c80"
+      },
+      "eventBytes": {
+        "bytes": 96,
+        "sha256": "f79e8697e722960d9a1deff83935b003a9f4c5a8ab625beb921882cd182c4c0b"
+      },
+      "guestEvidence": {
+        "bytes": 204,
+        "sha256": "29c3c470968fa5d61df77220b6c408dd33ceb3278d8e426a61134b1d93845034"
+      },
+      "retired": 274410675
+    },
+    {
+      "name": "baseline-burst",
+      "prediction": "HELD",
+      "events": 10,
+      "streamFirstLine": 175,
+      "streamLastLine": 184,
+      "stdout": {
+        "bytes": 11980,
+        "sha256": "ec77e11b009b82320734a81ff7cf3729de8ac012d2872fe55a8109b16dc08eee"
+      },
+      "eventBytes": {
+        "bytes": 240,
+        "sha256": "b7e662b972470375a13b9b492a6e42eb2cb4b292b6fa19b13b4ba7631f834c83"
+      },
+      "guestEvidence": {
+        "bytes": 204,
+        "sha256": "3478915e74d551d68398fdd68b081b3a4afeeeb0b49b39229d26bf0c02dc03cc"
+      },
+      "retired": 275308247
+    },
+    {
+      "name": "candidate-legacy",
+      "prediction": "HELD",
+      "events": 4,
+      "streamFirstLine": 174,
+      "streamLastLine": 177,
+      "stdout": {
+        "bytes": 11569,
+        "sha256": "e25300c83570a979adf49d70c14d903b7a2cd48afc0769dda9d347ac41ed0560"
+      },
+      "eventBytes": {
+        "bytes": 96,
+        "sha256": "505cddcadfd0fd6e0b0fd74adf8c63e49049c87b0c111e88e8ad8f372ab06e52"
+      },
+      "guestEvidence": {
+        "bytes": 204,
+        "sha256": "9ec10351f17f3bfc73b8a33d755bb265c69afeb84bac71153da6abf92026f63c"
+      },
+      "retired": 274408444
+    },
+    {
+      "name": "candidate-burst",
+      "prediction": "HELD",
+      "events": 258,
+      "streamFirstLine": 175,
+      "streamLastLine": 432,
+      "stdout": {
+        "bytes": 27763,
+        "sha256": "211c319f15682f33e2a533f9f61d7c56f65d145d6d5d26789b6a75e78f82a365"
+      },
+      "eventBytes": {
+        "bytes": 6192,
+        "sha256": "d215334ed69d1abebd40cefc882d55806006ee6499b788c031ea3a6f4f37ebf7"
+      },
+      "guestEvidence": {
+        "bytes": 204,
+        "sha256": "0616dc80718163eaf366298cb51ce772dc8fac832fbb4043c754aaaf6937271d"
+      },
+      "retired": 328921139
+    },
+    {
+      "name": "candidate-overflow",
+      "prediction": "HELD",
+      "events": 4,
+      "streamFirstLine": 175,
+      "streamLastLine": 178,
+      "stdout": {
+        "bytes": 11607,
+        "sha256": "40998da8837d9dd8cc1dca209286351e7dd62a279650556b4600261bf1a5c85e"
+      },
+      "eventBytes": {
+        "bytes": 96,
+        "sha256": "672500ab77efb2ad12c176d8807593357858344756a982cd7586f0fa06f7a0b7"
+      },
+      "guestEvidence": {
+        "bytes": 204,
+        "sha256": "cbf515c94e869aa34c0d083e3603b8d993abab54e93bc39a5d05a9b4e332d1f7"
+      },
+      "retired": 276220747
+    }
+  ]
+}

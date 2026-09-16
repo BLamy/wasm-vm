@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "originalParserResultRemainsFailed": true,
+  "removal": "[    3.999226] random: crng init done\n",
+  "removals": 1,
+  "affectedInputEvent": 617,
+  "rawLineNumbers": [
+    793,
+    794
+  ],
+  "events": 1022,
+  "sha256": "36901775621204fdead6b5abafadcd47e6ac09f245b3e34d3f887a7a99a118cf",
+  "interpretation": "All1022 raw event bytes retained; one printk interleaved. Rerun with loglevel3 for unambiguous line records."
+}
