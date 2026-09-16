@@ -1,0 +1,33 @@
+{
+  "realEvidenceBaseline": {
+    "latestMatchesCanvas": true,
+    "canvasSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4",
+    "frameCount": 5,
+    "desktopAcceptance": false
+  },
+  "ordinaryAuditRejectsDiagnostic": true,
+  "explicitDiagnosticAuditAccepts": true,
+  "oldAtDefaultStillAccepted": true,
+  "cases": [
+    {
+      "name": "drop latest while preserving apparent frame count",
+      "rejected": true,
+      "failure": "AssertionError [ERR_ASSERTION]: latest frame missing\n\n4 !== 5\n"
+    },
+    {
+      "name": "final clear cannot be called a final frame",
+      "rejected": true,
+      "failure": "AssertionError [ERR_ASSERTION]: final event must be a retained frame\n\n'clear' !== 'frame'\n"
+    },
+    {
+      "name": "pending presentation cannot be called complete",
+      "rejected": true,
+      "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "latest source digest substitution",
+      "rejected": true,
+      "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'c40efc5e5c8d199a4ab1e8c8f7015bc4b64a6a93c35340f13db5ea1ec725495b'\n- '0000000000000000000000000000000000000000000000000000000000000000'\n"
+    }
+  ]
+}

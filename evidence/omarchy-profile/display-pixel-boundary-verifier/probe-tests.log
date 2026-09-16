@@ -1,0 +1,13 @@
+✔ opt-in observer preserves transport, private ownership and disposal (2.111583ms)
+✔ frame and event rings remain bounded; malformed frames cannot interrupt transport (0.954125ms)
+✔ export owns the latest bytes and restores the observer before canvas readback (0.392875ms)
+✔ literal BGRA and BGRX conversion crops the actual top-left viewport (0.1085ms)
+✔ saved-byte audit binds latest frame, nonce, presentation completion and file digest (58.938958ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.503
