@@ -1,0 +1,17 @@
+{
+  "auditedAt": "2026-09-16T06:25:34.986726+00:00",
+  "sourceHead": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "artifactHead": "bb3c13dd6014ca15f29fe897b3ba207d65bc67b8",
+  "workerSubmissionHead": "d6cd685399ed69333b9b3ad738ae190a256bd537",
+  "workerSealSha256": "01786a6b6a15415c7977b4dc23fde07a2e1d82cb1b775340aefe8c888cb42632",
+  "workerSealedFilesRehashed": 33,
+  "allFiveFailureFamiliesMatchHistoricalLog": true,
+  "historicalLogSha256": "f94b29fef6b4884a42ecf51be2c578c2cabae20f4f070a57ca8cf5a74621b6c9",
+  "broadGauntletPassed": false,
+  "affectedBoundaryPassed": true,
+  "nativeRiscvPassed": 128,
+  "perfSmokeMips": 58.4,
+  "runtimeUnchangedSinceArtifactHead": true,
+  "verdict": "verified",
+  "desktopResponsive": false
+}

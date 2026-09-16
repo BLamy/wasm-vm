@@ -1,0 +1,130 @@
+{
+  "auditedAt": "2026-09-16T06:17:37.467168+00:00",
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "wasmSha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4",
+  "counts": {
+    "resume-format": 17,
+    "resume-machines": 49,
+    "wasm-native-lib": 33
+  },
+  "independentExpectedHashesMatch": true,
+  "originalAllocationFailureConfirmed": true,
+  "allAffectedChecksPass": true,
+  "broadClippyKnownFailure": "unchanged plic_sparse VecSink feature import",
+  "suiteVisuallyInspected": true,
+  "pending": [
+    "broad gauntlet classification",
+    "deployment",
+    "final pristine clone"
+  ],
+  "files": {
+    "evidence/omarchy-profile/snapshot-allocation-r1/report.json": {
+      "bytes": 6351,
+      "sha256": "1cf10ece87cdc3ef9ed1443d6d95ee7c402e3d79811781cca8c3e3439ae47d00"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/r3-byte-oracle.json": {
+      "bytes": 2669,
+      "sha256": "a73dad7579a68cbf7bc98ec156a4944de2026773b9b94e7a71ef54f194d9f0ca"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-r1/suite.png": {
+      "bytes": 50238,
+      "sha256": "e7bcc6b3e69056eaedb0ca5e99dea6b2841ce546df6577933311de2260f419ca"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/affected-commands.json": {
+      "bytes": 2672,
+      "sha256": "c2523b1e18bd5f669308730e0cd86ec532b238af8360bd24cb54e341237ee777"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/browser-commands.json": {
+      "bytes": 546,
+      "sha256": "871c1dcf1c670bfc643f0e653d752df9776182dfa91ff1ce91ebef6999db8730"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/fmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/core-clippy.log": {
+      "bytes": 806,
+      "sha256": "7776ee6116d8a1c4c3eb49060d02270a106d4df201ee530abf5e3e4fa6ff8c0a"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/wasm-clippy.log": {
+      "bytes": 428,
+      "sha256": "fe817e806008e23fdfaa01b92291df503885b80595c14fad24157fd2c9eed119"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/resume-format.log": {
+      "bytes": 1621,
+      "sha256": "f61739ff8c71cd5a98da25a9ffed5fb28a2012f9ddb425725d8670486f66088c"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/resume-machines.log": {
+      "bytes": 40636,
+      "sha256": "a48ffecf542439886f98693ef8dd5b5decd4b3b3cb1ca8340a089080527d6b5d"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/wasm-native-lib.log": {
+      "bytes": 3507,
+      "sha256": "52de05d2d8ddc8b0c047f7c6218ea75b73a55da7eedce84c577b2c56ae23be5c"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/harness-syntax.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/browser.log": {
+      "bytes": 3365,
+      "sha256": "813eccee9ebac4ceca6725cc89a1338aec8b7ab5536e2c5de07749f0f27bb887"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/affected-clippy.json": {
+      "bytes": 750,
+      "sha256": "3dbab22519ed525a49b3312cf65c9e7904ac0fd30d102beb49175a7f43daead6"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/affected-clippy.log": {
+      "bytes": 210,
+      "sha256": "a82232d02fee3e1663bda236660624d27a6bdbe6118aa35dab00523c732a7734"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/predictions.md": {
+      "bytes": 6442,
+      "sha256": "8850eb4037b0096f4cd66922f7cf150251f347da952a137d0588ebc7084c58bc"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/serialization_attack.rs": {
+      "bytes": 3648,
+      "sha256": "979a09316ae989fb5e2d5143156151b24ad632d8ebc6ed2e0c4bf266606b2eec"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/run_attack.py": {
+      "bytes": 2031,
+      "sha256": "9e1f0521717cb369266543c86cfbc71455e5733d7211ad53d96a23ab691254ef"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/run_sabotage.py": {
+      "bytes": 2985,
+      "sha256": "ad026196a8b94ba0e3cbc20b36e39cf6698ee3d59fe0dc5fea41fbfd819a79ef"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/derive_r3_oracle.py": {
+      "bytes": 3736,
+      "sha256": "256d2cedefa9c3f70ccf7b9cb12a381990decd84ea5d98e3dbc6edd6819e3479"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/candidate-byte-attack/report.json": {
+      "bytes": 719,
+      "sha256": "705b1f2eb9efe29f21508e932ee9a7e98b3b9ab165c10ca77d18c3aee43016e7"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/candidate-byte-attack/attack.log": {
+      "bytes": 786,
+      "sha256": "d5e97bc77ee340f0655f3a031feff2d120d59f2fe8cacdee5c27f79f2305aa20"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/report.json": {
+      "bytes": 832,
+      "sha256": "e9f79484a1f810e49b150a5c3f66c1c5b584e09b33aea69d341d1837debb7b58"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/attack.log": {
+      "bytes": 229,
+      "sha256": "0fe47054e636798a134bcea94363395da788b1789605ac1579d67c1704eb798b"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/mutation.diff": {
+      "bytes": 753,
+      "sha256": "2ff2b31e299949fc22c27afcfa1c315a37e1937b7608ce061174b18d6745049c"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-baseline/report.json": {
+      "bytes": 2461,
+      "sha256": "7f952756e541e50dfeff038326776e85579564d46c1dcb5e443afef8f1b53545"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-baseline/allocation-stack.json": {
+      "bytes": 724,
+      "sha256": "c921258d9a61374fe055b73bff0828fe7d3d9f5ca68473b58d7604d35eef2c94"
+    }
+  }
+}

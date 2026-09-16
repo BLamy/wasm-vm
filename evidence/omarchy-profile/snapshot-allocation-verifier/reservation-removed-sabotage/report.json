@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-09-16T06:14:43.060616+00:00",
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "originalSha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3",
+  "mutantSha256": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+  "mutation": "Remove only the 8-line exact-reservation change; resulting module is byte-identical to baseline",
+  "commands": [
+    {
+      "name": "compile",
+      "argv": [
+        "rustc",
+        "--edition=2024",
+        "-O",
+        "serialization_attack.rs",
+        "-o",
+        "serialization-attack"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "attack",
+      "argv": [
+        "./serialization-attack"
+      ],
+      "exitCode": 101
+    }
+  ],
+  "sabotageDetected": true,
+  "finishedAt": "2026-09-16T06:14:43.462635+00:00"
+}

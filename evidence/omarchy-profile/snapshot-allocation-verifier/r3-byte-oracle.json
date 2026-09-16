@@ -1,0 +1,111 @@
+{
+  "createdAt": "2026-09-16T06:12:12.423925+00:00",
+  "source": "target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+  "compressedSha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+  "rawBytes": 899181735,
+  "headerHex": "57564d524553553101000000302e302e310000000000000000000000000000000000000000000000000000005f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d440000000000000000",
+  "sections": [
+    {
+      "tag": 1,
+      "payloadOffset": 92,
+      "payloadBytes": 1309
+    },
+    {
+      "tag": 2,
+      "payloadOffset": 1409,
+      "payloadBytes": 899036883
+    },
+    {
+      "tag": 3,
+      "payloadOffset": 899038300,
+      "payloadBytes": 17
+    },
+    {
+      "tag": 4,
+      "payloadOffset": 899038325,
+      "payloadBytes": 156
+    },
+    {
+      "tag": 5,
+      "payloadOffset": 899038489,
+      "payloadBytes": 22
+    },
+    {
+      "tag": 8,
+      "payloadOffset": 899038519,
+      "payloadBytes": 27
+    },
+    {
+      "tag": 6,
+      "payloadOffset": 899038554,
+      "payloadBytes": 290
+    },
+    {
+      "tag": 7,
+      "payloadOffset": 899038852,
+      "payloadBytes": 311
+    },
+    {
+      "tag": 12,
+      "payloadOffset": 899039171,
+      "payloadBytes": 140322
+    },
+    {
+      "tag": 13,
+      "payloadOffset": 899179501,
+      "payloadBytes": 355
+    },
+    {
+      "tag": 14,
+      "payloadOffset": 899179864,
+      "payloadBytes": 355
+    },
+    {
+      "tag": 15,
+      "payloadOffset": 899180227,
+      "payloadBytes": 355
+    },
+    {
+      "tag": 16,
+      "payloadOffset": 899180590,
+      "payloadBytes": 485
+    },
+    {
+      "tag": 10,
+      "payloadOffset": 899181083,
+      "payloadBytes": 292
+    },
+    {
+      "tag": 11,
+      "payloadOffset": 899181383,
+      "payloadBytes": 320
+    },
+    {
+      "tag": 9,
+      "payloadOffset": 899181711,
+      "payloadBytes": 24
+    }
+  ],
+  "consoleTransition": {
+    "tag": 11,
+    "payloadOffset": 899181383,
+    "payloadBytes": 320,
+    "initialAgentTxPresent": 0,
+    "initialAgentTxCursors": [
+      0,
+      0
+    ],
+    "queueSize": 256,
+    "queueReady": 1,
+    "initialGeneration": 1,
+    "presenceByte": 899181685,
+    "generationOffset": 899181695
+  },
+  "expectedFullBlobSha256ByRestoreCount": {
+    "0": "3426e4e69c7a93f8951655ac56d824ee08d597794b5893f846cae4f1949e799d",
+    "1": "18725e19029001670ef5b36773f474f4ca8a0361ffca84e6a4b7c71b4cbad9c8",
+    "2": "82f548679e74688846693d21c9231a43209004ac41a542f245a3e48dcf1e21b9",
+    "3": "43976354793566e4fbca8f2935f122f0a857893d1f674aba9c0316ed32fd8dba"
+  },
+  "note": "Derived before final evidence; exact expected transform only. Persistent save/read adds no restore count."
+}
