@@ -1,0 +1,550 @@
+{
+  "head": "545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e",
+  "reportSha256": "623ce524582b5afe676727a54b0f87879c4273e73a2d76671d486fbd5d5829b2",
+  "result": "failed",
+  "runResult": "preparation-failed-input-untested",
+  "usablePair": false,
+  "keyboardTested": false,
+  "servedReceipts": 94,
+  "helpers": 19,
+  "workerEvents": 3005,
+  "workerCalls": {
+    "setDisplay": 2,
+    "keyboardLedState": 2955,
+    "jitStats": 2,
+    "inputDeviceStats": 1,
+    "schedulerStats": 1,
+    "guestClockState": 1,
+    "displayStats": 2
+  },
+  "serial": [
+    {
+      "id": "mu3j1kau0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-16T03:14:24.390Z",
+      "workerIndex": 11,
+      "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n",
+      "exit": 0,
+      "completedAt": "2026-09-16T03:14:51.845Z",
+      "replyWorkerIndex": 127
+    },
+    {
+      "id": "mu3j2sr31",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.monitor({ output = \"\", mode = \"640x400@60\", position = \"auto\", scale = 1 })'",
+      "sentAt": "2026-09-16T03:15:21.999Z",
+      "workerIndex": 254,
+      "stdout": "ok\n",
+      "exit": 0,
+      "completedAt": "2026-09-16T03:18:38.267Z",
+      "replyWorkerIndex": 950
+    },
+    {
+      "id": "mu3j84la2",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+      "sentAt": "2026-09-16T03:19:30.623Z",
+      "workerIndex": 1126,
+      "stdout": "[{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [616, 350],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}]\n",
+      "exit": 0,
+      "completedAt": "2026-09-16T03:25:24.694Z",
+      "replyWorkerIndex": 2162
+    },
+    {
+      "id": "mu3jfpso3",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+      "sentAt": "2026-09-16T03:25:24.697Z",
+      "workerIndex": 2163
+    }
+  ],
+  "screenshots": [
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r2/desktop/latest.png",
+      "timestamp": "2026-09-16T03:14:51.897Z",
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r2/desktop/desktop.png",
+      "timestamp": "2026-09-16T03:15:21.944Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r2/desktop/failure.png",
+      "timestamp": "2026-09-16T03:29:19.705Z",
+      "sha256": "658bf3e9ddc65742c6a9eb38880568a004a89c9a2b94ce4a5d40d2c1d8ce6587"
+    }
+  ],
+  "startup": {
+    "startedAt": "2026-09-16T03:14:19.640Z",
+    "timeoutMs": 900000,
+    "deadlineAt": "2026-09-16T03:29:19.640Z"
+  },
+  "cleanup": {
+    "startedAt": "2026-09-16T03:29:19.706Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  },
+  "preparation": {
+    "purpose": "offline-only-no-input",
+    "startedAt": "2026-09-16T03:15:21.948Z",
+    "deadlineAt": "2026-09-16T03:29:19.640Z",
+    "status": "preparation-failed-input-untested",
+    "keyboardTested": false,
+    "runtimeBefore": {
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 586,
+        "executedBlocks": 35139022,
+        "retiredViaJit": 2264295820,
+        "directChainEntries": 92937547,
+        "directChainLinks": 57799077,
+        "dynamicLinkAttempts": 3742787,
+        "dynamicLinkHits": 2778427,
+        "dynamicLinkRefusals": 964360,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 1,
+        "dynamicLinkInstalls": 421171,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 35139022,
+          "stateCopyCalls": 70278044,
+          "stateCopyBytes": 7709632368,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 30724502,
+          "authorityChecks": 30708278,
+          "memorySplitExits": 152341,
+          "deviceBoundaries": 50936,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 2835986357,
+        "jitEngineCalls": 35139022,
+        "jitLogicalBlocksPerEngineCall": 2.644852978549033,
+        "jitRetiredShare": 0.7984156251002726,
+        "chainLinksMade": 2895,
+        "chainLinksCut": 2709,
+        "chainDispatchEntries": 16122966,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 25653439,
+        "jitResidencyPolicy": "cap-256",
+        "jitResidencyCap": 256,
+        "jitSubmittedMembers": 6231,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 2241,
+        "jitCacheInstalls": 6133,
+        "jitCacheRetranslations": 2644,
+        "jitCacheEvictions": 1885,
+        "jitCacheBatches": 213,
+        "jitCacheCodeBytes": 16660889,
+        "compileQueue": {
+          "admitted": 12338,
+          "droppedBackpressure": 7139,
+          "cancelledStale": 0,
+          "popped": 9247,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 16386,
+          "deduped": 18898063,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 7875102,
+          "excluded": 111,
+          "queueDepth": 0,
+          "queueHighWater": 424,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 33139996,
+        "blockBuilds": 6740505,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 5672,
+        "totalSliceMs": 58466.855001688,
+        "averageSliceMs": 10.307978667434416,
+        "maxSliceMs": 49.93499994277954,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 2
+          },
+          {
+            "leMs": 8,
+            "count": 732
+          },
+          {
+            "leMs": 16,
+            "count": 4473
+          },
+          {
+            "leMs": 32,
+            "count": 312
+          },
+          {
+            "leMs": 64,
+            "count": 153
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 50.30999994277954,
+        "requestedInstructions": 2836000000,
+        "retiredInstructions": 2835986357,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 14,
+        "outputBytes": 2324,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 5673,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1384773061",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "guestSession": {
+        "key": "omarchy",
+        "generation": 1
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    },
+    "foot": {
+      "address": "0x55555eb73630",
+      "mapped": true,
+      "hidden": false,
+      "visible": true,
+      "acceptsInput": true,
+      "at": [
+        12,
+        38
+      ],
+      "size": [
+        616,
+        350
+      ],
+      "workspace": {
+        "id": 1,
+        "name": "1"
+      },
+      "floating": false,
+      "monitor": 0,
+      "class": "foot",
+      "title": "omarchy@omarchy-demo:~",
+      "initialClass": "foot",
+      "initialTitle": "foot",
+      "pid": 503,
+      "xwayland": false,
+      "pinned": false,
+      "pinFullscreened": false,
+      "fullscreen": 0,
+      "fullscreenClient": 0,
+      "fullscreenHandler": "default",
+      "allowedOverFullscreen": true,
+      "grouped": [],
+      "tags": [
+        "default-opacity*",
+        "terminal*"
+      ],
+      "swallowing": "0x0",
+      "focusHistoryID": 0,
+      "inhibitingIdle": false,
+      "xdgTag": "",
+      "xdgDescription": "",
+      "contentType": "none",
+      "tearingHint": false,
+      "stableId": "18000000"
+    },
+    "error": "Error: mode preparation: focus: deadline exceeded (UNPROVEN)",
+    "finishedAt": "2026-09-16T03:29:19.643Z"
+  },
+  "mode": {
+    "mode": {
+      "width": 640,
+      "height": 400,
+      "maxResourceHeight": 448
+    },
+    "deadlineAtMs": 1789529359640,
+    "startedAt": "2026-09-16T03:15:21.959Z",
+    "status": "guest-mode-observed",
+    "requestCount": 1,
+    "before": {
+      "gpu": {
+        "advertisedWidth": 1280,
+        "advertisedHeight": 800,
+        "refreshHz": 60,
+        "pendingEvents": 0,
+        "resourceCount": 4,
+        "resourceBytes": 16875520,
+        "scanoutResource": 4,
+        "scanoutWidth": 1280,
+        "scanoutHeight": 832
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    },
+    "requestedAt": "2026-09-16T03:15:21.978Z",
+    "acknowledged": true,
+    "acknowledgedAt": "2026-09-16T03:15:21.998Z",
+    "after": {
+      "gpu": {
+        "advertisedWidth": 640,
+        "advertisedHeight": 400,
+        "refreshHz": 60,
+        "pendingEvents": 0,
+        "resourceCount": 7,
+        "resourceBytes": 20316160,
+        "scanoutResource": 7,
+        "scanoutWidth": 640,
+        "scanoutHeight": 448
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 6,
+        "successfulPresents": 6,
+        "drawnPresents": 6,
+        "drawnBytes": 24576000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 6,
+          "coalesced": 0,
+          "presented": 6,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 6,
+          "enqueued": 6,
+          "coalesced": 0,
+          "presented": 6,
+          "successfulPresents": 6,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 24576000,
+          "drawnPresents": 6,
+          "drawnBytes": 24576000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 400
+          },
+          "resourceWidth": 640,
+          "resourceHeight": 448
+        },
+        "errors": []
+      }
+    },
+    "observedAt": "2026-09-16T03:19:30.619Z",
+    "finishedAt": "2026-09-16T03:19:30.619Z"
+  },
+  "compositor": {
+    "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.monitor({ output = \"\", mode = \"640x400@60\", position = \"auto\", scale = 1 })'",
+    "startedAt": "2026-09-16T03:15:21.998Z",
+    "deadlineAtMs": 1789529359640,
+    "requestCount": 1,
+    "status": "command-accepted",
+    "response": {
+      "stdout": "ok\n\n",
+      "exit": 0
+    },
+    "respondedAt": "2026-09-16T03:18:38.270Z",
+    "finishedAt": "2026-09-16T03:18:38.270Z"
+  }
+}

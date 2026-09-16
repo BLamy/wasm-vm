@@ -1,0 +1,93 @@
+{
+  "head": "1cfedb179a63ac274bf36fa42202b6e5eb10e177",
+  "reportSha256": "6679f63554e0ade3b18b0587de7db9fb81e6c54b42c59ac8fd9e86f63ef5b822",
+  "error": "AssertionError [ERR_ASSERTION]: desktop-ready: actual loader chunk manifest response was not observed\n    at observeLoaderIdentity (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:627:10)\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1174:101\n    at async withinStartupDeadline (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cold-pair.mjs:80:20)\n    at async runLive (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1174:77)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:1375:3",
+  "prep": {
+    "purpose": "offline-only-no-input",
+    "status": "preparation-failed-input-untested",
+    "keyboardTested": false,
+    "phase": "startup",
+    "error": "AssertionError [ERR_ASSERTION]: desktop-ready: actual loader chunk manifest response was not observed",
+    "finishedAt": "2026-09-16T03:10:15.913Z"
+  },
+  "startup": {
+    "startedAt": "2026-09-16T03:09:13.659Z",
+    "timeoutMs": 900000,
+    "deadlineAt": "2026-09-16T03:24:13.659Z"
+  },
+  "cleanup": {
+    "startedAt": "2026-09-16T03:10:15.976Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  },
+  "runExit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "runResult": "preparation-failed-input-untested",
+  "usablePair": false,
+  "modeCalls": [
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T03:09:17.279Z",
+      "ms": 3615.7300000190735,
+      "worker": 1,
+      "type": "worker-call",
+      "id": 1,
+      "method": "setDisplay",
+      "args": [
+        1280,
+        800
+      ],
+      "sent": true
+    },
+    {
+      "context": "primary",
+      "epoch": "final",
+      "timestamp": "2026-09-16T03:09:17.329Z",
+      "ms": 3666.4800000190735,
+      "worker": 1,
+      "type": "input-result",
+      "id": 1,
+      "method": "setDisplay",
+      "result": true,
+      "error": null
+    }
+  ],
+  "inputEvents": 0,
+  "inputMethods": [],
+  "manifestRequests": [
+    {
+      "timestamp": "2026-09-16T03:09:14.367Z",
+      "url": "http://127.0.0.1:59851/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    }
+  ],
+  "screenshots": [
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r1/desktop/latest.png",
+      "timestamp": "2026-09-16T03:09:15.696Z",
+      "sha256": "6654646cb1d343ab2358731b4bd2ec3df55fbb4b93fd307c2cbdff65096dd2ed"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r1/desktop/latest.png",
+      "timestamp": "2026-09-16T03:09:45.862Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r1/desktop/desktop.png",
+      "timestamp": "2026-09-16T03:10:15.911Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r1/desktop/failure.png",
+      "timestamp": "2026-09-16T03:10:15.976Z",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ]
+}

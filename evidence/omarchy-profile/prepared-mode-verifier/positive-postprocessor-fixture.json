@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "noGuestLaunched": true,
+  "headerOnlySyntheticSnapshot": true,
+  "prediction": "Even a synthetically valid positive parent postprocessor leaves usablePair false pending actual image verification",
+  "held": true,
+  "sourceSha256": "26f09dae1a2bfacac7725e9b3f229cf80155d7f755b9df49798b4350ebb8cbbc",
+  "positivePostprocessorExecuted": true,
+  "usablePair": false,
+  "result": "prepared-pair-awaiting-personal-image-verification",
+  "syntheticBlocksValidated": 1,
+  "saves": 1
+}
