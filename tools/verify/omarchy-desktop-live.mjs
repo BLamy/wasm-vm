@@ -1387,12 +1387,26 @@ async function runLive() {
   }
   if (inputTrial) {
     const captureDeadline = trialCaptureDeadline = Date.now() + trial.captureMs;
+    let presentationBaseline = beforeInput.presentation;
+    if (report.inputKernelPrepared) {
+      report.trial.captureStartedAt = new Date(captureDeadline - trial.captureMs).toISOString();
+      report.trial.captureDeadlineAt = new Date(captureDeadline).toISOString();
+      // A frame drawn before command execution cannot prove its visible response.
+      presentationBaseline = await withinTrialDeadline(() => page.evaluate(() => window.__presentation.state()),
+        captureDeadline, "post-nonce presentation baseline");
+      report.trial.postNoncePresentationBaseline = presentationBaseline;
+      report.trial.postNoncePresentationBaselineAt = new Date().toISOString();
+    }
+    // Reserve the last two seconds of the same capture budget for a real failure
+    // image if no post-nonce frame arrives. Never extend the product deadline.
+    const freshDeadline = report.inputKernelPrepared ? captureDeadline - 2000 : captureDeadline;
     const after = await withinTrialDeadline(() => waitForFreshPresentation(
-      () => page.evaluate(() => window.__presentation?.state?.()), beforeInput.presentation,
-      remainingTrialMs(captureDeadline), "input-trial fresh presentation"), captureDeadline, "input-trial capture");
+      () => page.evaluate(() => window.__presentation?.state?.()), presentationBaseline,
+      remainingTrialMs(freshDeadline), "input-trial fresh presentation"), freshDeadline, "input-trial capture");
     report.trial.presentationAfter = after;
     await withinTrialDeadline(() => screenshot("desktop-keyboard.png", page, remainingTrialMs(captureDeadline)),
       captureDeadline, "input-trial capture");
+    if (report.inputKernelPrepared) report.trial.responseImageCapturedAt = new Date().toISOString();
     report.trial.runtimeAfter = await withinTrialDeadline(() => runtimeDiagnostics(page, "physical-keyboard-after-readback"),
       captureDeadline, "input-trial capture");
     assertInputTrialRuntime(report.trial.runtimeAfter, trial);

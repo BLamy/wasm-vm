@@ -43,7 +43,7 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
     experiment: preparedRecycling ? "prepared-recycling" : opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling",
     renderer: null, lp: null });
   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
-  let randomCall = 0;
+  let randomCall = 0, responseFrames = 3;
   const epoch = now, readyMs = 5;
   class Clock extends Date {
     constructor(...args) { super(...(args.length ? args : [now])); }
@@ -58,7 +58,8 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
     __linux: { restoredFromBootSnapshot: () => true },
     __presentation: { state() {
       if (stalePresentation) { now += trial.captureMs + 1; return { ...before }; }
-      return { ...before, framesReceived: 3, successfulPresents: 3 };
+      const frames = inputKernelPrepared && entered ? responseFrames++ : 3;
+      return { ...before, framesReceived: frames, successfulPresents: frames };
     } },
   };
   const document = { get activeElement() { return { id: focus, tagName: "CANVAS" }; } };
@@ -241,6 +242,7 @@ test("synthetic AR input checks loaded kernel before properties and keeps uninst
   const order = ["kernel-notes", "saved-property-read", "key", "input-fence", "readback", "desktop-keyboard.png"];
   for (let i = 1; i < order.length; i++) assert.ok(f.trace.indexOf(order[i-1]) < f.trace.indexOf(order[i]));
   assert.equal(f.report.workerCostInputFence, undefined);
+  assert.ok(f.report.trial.presentationAfter.framesReceived > f.report.trial.postNoncePresentationBaseline.framesReceived);
   assert.equal(f.trace.filter(step => step === "input-fence").length, 1);
   assert.equal(f.report.startup.timeoutMs, 300000);
   assert.equal(Date.parse(f.report.keyboard.deadlineAt), f.report.keyboard.enteredAtMs + 120000);

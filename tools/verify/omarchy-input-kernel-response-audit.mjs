@@ -34,5 +34,15 @@ export function auditInputKernelResponse(report, head) {
     assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt));
     assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(fence.startedAt)));
   }
+  if (input.machineAcceptance) {
+    const baseline = report.trial.postNoncePresentationBaseline, after = report.trial.presentationAfter;
+    assert.ok(Date.parse(report.trial.postNoncePresentationBaselineAt) >= Date.parse(report.keyboard.completedAt));
+    assert.ok(after.framesReceived > baseline.framesReceived, "response image predates nonce execution");
+    assert.ok(after.successfulPresents > baseline.successfulPresents, "response image was not presented after nonce execution");
+    assert.equal(Date.parse(report.trial.captureDeadlineAt) - Date.parse(report.trial.captureStartedAt), 20000);
+    assert.ok(Date.parse(report.trial.captureStartedAt) >= Date.parse(report.keyboard.completedAt));
+    assert.ok(Date.parse(report.trial.responseImageCapturedAt) >= Date.parse(report.trial.postNoncePresentationBaselineAt));
+    assert.ok(Date.parse(report.trial.responseImageCapturedAt) <= Date.parse(report.trial.captureDeadlineAt));
+  }
   return { input, configuration, visualInspectionRequired: true };
 }
