@@ -318,6 +318,20 @@ html[data-wvm-desktop="omarchy"] .omarchy-desktop-toolbar[data-state="halted"] {
   padding: 20px; background: rgba(0, 0, 0, .72); color: #d6deeb; pointer-events: auto;
 }
 .omarchy-boot-overlay[hidden] { display: none; }
+.omarchy-boot-overlay[data-interactive="true"] {
+  inset: auto 10px 10px auto; width: min(520px, calc(100% - 20px)); padding: 0;
+  align-items: stretch; justify-content: stretch; background: transparent; pointer-events: none;
+}
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-card {
+  width: 100%; padding: 8px 11px; border-color: rgba(83, 212, 255, .24);
+  background: rgba(10, 13, 19, .86); box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
+  pointer-events: none;
+}
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-card h1,
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-progress,
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-actions,
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-log { display: none; }
+.omarchy-boot-overlay[data-interactive="true"] .omarchy-boot-status { min-height: 0; font-size: 11px; }
 .omarchy-boot-card {
   width: min(520px, 100%); padding: 18px; border: 1px solid rgba(83, 212, 255, .32);
   border-radius: 10px; background: rgba(10, 13, 19, .95); box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
@@ -584,6 +598,11 @@ if (root) {
     const exitButton = q("#omarchy-exit");
     if (desktopToolbar) desktopToolbar.hidden = false;
     if (bootOverlay) bootOverlay.hidden = false;
+    const setOverlayInteractive = (enabled) => {
+      if (!bootOverlay) return;
+      if (enabled) bootOverlay.dataset.interactive = "true";
+      else delete bootOverlay.dataset.interactive;
+    };
     let bootOutput = "";
     let bootErrorLatched = false;
     const startupLifecycle = createOmarchyStartupLifecycle({
@@ -662,6 +681,7 @@ if (root) {
       clearBootProgress();
       if (desktopStatus) desktopStatus.textContent = "desktop · booting Omarchy…";
       if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+      setOverlayInteractive(false);
       setBootStatus("Booting Omarchy…");
       if (bootOverlay) bootOverlay.hidden = false;
     });
@@ -696,6 +716,7 @@ if (root) {
         setBootStatus(label);
       }
       if (state === "done") {
+        setOverlayInteractive(false);
         if (bootOverlay) bootOverlay.hidden = false;
         if (desktopToolbar) desktopToolbar.dataset.state = "halted";
       } else if (desktopToolbar && state !== "error") desktopToolbar.dataset.state = "booting";
@@ -710,6 +731,7 @@ if (root) {
       appendBootOutput(`[boot error] ${message}\n`);
       if (bootOverlay) bootOverlay.hidden = false;
       if (desktopToolbar) desktopToolbar.dataset.state = "error";
+      setOverlayInteractive(false);
     });
     window.addEventListener("wvm:guest-halted", (event) => {
       const message = event.detail?.message || "guest stopped";
@@ -720,17 +742,29 @@ if (root) {
       setBootStatus(`Guest halted: ${message}`, "error");
       if (bootOverlay) bootOverlay.hidden = false;
       if (desktopToolbar) desktopToolbar.dataset.state = "halted";
+      setOverlayInteractive(false);
     });
     window.addEventListener("wvm:guest-ready", () => {
       if (!startupLifecycle.guestReady()) return;
       clearBootProgress();
       if (desktopStatus) desktopStatus.textContent = "desktop · guest ready · waiting for desktop";
-      setBootStatus("Guest shell ready; waiting for desktop readiness…");
+      setBootStatus("Guest shell ready; keyboard and pointer enabled while desktop finishes loading…");
       if (desktopToolbar) desktopToolbar.dataset.state = "booting";
+      setOverlayInteractive(true);
+      // The display surface is the guest's input target. Re-focus it after the startup gate opens
+      // so a click-through overlay cannot leave keyboard events on the browser document.
+      try {
+        const displaySurface = document.getElementById("ide-display-canvas");
+        if (displaySurface) {
+          if (displaySurface.tabIndex < 0) displaySurface.tabIndex = 0;
+          displaySurface.focus({ preventScroll: true });
+        }
+      } catch {}
     });
     window.addEventListener("wvm:desktop-ready", () => {
       if (!startupLifecycle.desktopReady()) return;
       clearBootProgress();
+      setOverlayInteractive(false);
       if (bootOverlay) bootOverlay.hidden = true;
       if (desktopStatus) desktopStatus.textContent = "desktop visible · input is slow";
       if (desktopToolbar) desktopToolbar.dataset.state = "ready";

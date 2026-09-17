@@ -49,6 +49,11 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
     status: document.querySelector("#omarchy-boot-status")?.textContent,
     desktop: document.querySelector("#omarchy-desktop-status")?.textContent,
     overlayHidden: document.querySelector("#omarchy-boot-overlay")?.hidden,
+    overlayInteractive: document.querySelector("#omarchy-boot-overlay")?.dataset.interactive || null,
+    overlayPointerEvents: document.querySelector("#omarchy-boot-overlay")
+      ? getComputedStyle(document.querySelector("#omarchy-boot-overlay")).pointerEvents
+      : null,
+    canvasTabIndex: document.querySelector("#ide-display-canvas")?.tabIndex,
     progressHidden: document.querySelector("#omarchy-boot-progress")?.hidden,
     progressValue: document.querySelector("#omarchy-boot-progress")?.value,
     progressMax: document.querySelector("#omarchy-boot-progress")?.max,
@@ -84,11 +89,19 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
   });
   assert.equal((await state()).progressHidden, true);
   await dispatch("wvm:guest-state", { state: "restored" });
+  await dispatch("wvm:guest-ready");
+  const interactive = await state();
+  assert.equal(interactive.overlayHidden, false);
+  assert.equal(interactive.overlayInteractive, "true");
+  assert.equal(interactive.overlayPointerEvents, "none");
+  assert.equal(interactive.canvasTabIndex, 0);
+  assert.match(interactive.status, /keyboard and pointer enabled/);
   await dispatch("wvm:desktop-ready");
   const ready = await state();
-  assert.equal(ready.status, "Desktop restored; waiting for guest response…");
+  assert.equal(ready.status, interactive.status);
   assert.equal(ready.desktop, "desktop visible · input is slow");
   assert.equal(ready.overlayHidden, true);
+  assert.equal(ready.overlayInteractive, null);
   assert.equal(ready.progressHidden, true);
 
   await dispatch("wvm:guest-progress", { phase: "kernel: downloading", loaded: 100, total: 100 });
