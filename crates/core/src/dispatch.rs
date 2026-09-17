@@ -128,8 +128,13 @@ pub struct BlockCache {
     /// E5.5-T03ba: live decoded-cache slots grouped by physical page. A store (guest OR
     /// device/DMA) whose frame is absent is an O(log n) map miss; a code-page store touches only
     /// the indexed slots instead of scanning the whole open-addressed table. The index is rebuilt
-    /// incrementally on insert and cleared with the generation on a whole-cache flush.
+    /// incrementally on insert. Historical slots are counted separately so a later active-page
+    /// flush preserves the pre-index `blocks_discarded` accounting without a capacity scan.
     code_slots: BTreeMap<u64, Vec<usize>>,
+    /// Slots made stale by a whole-cache generation flush, grouped by physical page. These blocks
+    /// are already invisible to lookup; the counts preserve the old page-flush counter behavior
+    /// when a page is repopulated in a later generation.
+    stale_code_counts: BTreeMap<u64, u64>,
     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
     flushes: u64,
@@ -166,6 +171,7 @@ impl BlockCache {
             mask: cap - 1,
             generation: 1,
             code_slots: BTreeMap::new(),
+            stale_code_counts: BTreeMap::new(),
             flushes: 0,
             blocks_discarded: 0,
             fence_i_noops: 0,
@@ -192,11 +198,19 @@ impl BlockCache {
     }
 
     /// Invalidate the entire cache in O(1) (generation bump). Every block built in an older
-    /// generation becomes invisible. The has-code set is cleared too: every frame's blocks are
-    /// now invisible, so no frame "has code" until the next insert re-populates it.
+    /// generation becomes invisible. Current page-index entries become stale counts: every frame
+    /// remains a map miss until a new current-generation block repopulates it, while a later active
+    /// page flush still preserves the old discarded-block accounting.
     pub fn flush(&mut self) {
         self.generation = self.generation.wrapping_add(1);
-        self.code_slots.clear();
+        let code_slots = core::mem::take(&mut self.code_slots);
+        for (frame, indices) in code_slots {
+            let count = indices.len() as u64;
+            self.stale_code_counts
+                .entry(frame)
+                .and_modify(|existing| *existing = existing.saturating_add(count))
+                .or_insert(count);
+        }
         self.flushes = self.flushes.saturating_add(1);
     }
 
@@ -210,38 +224,45 @@ impl BlockCache {
         let Some(indices) = self.code_slots.remove(&frame) else {
             return false;
         };
+        let stale_count = self.stale_code_counts.remove(&frame).unwrap_or_default();
+        let mut discarded = stale_count;
         for index in indices {
             if self.slots[index]
                 .as_ref()
                 .is_some_and(|b| b.block_gen == self.generation && b.page_frame == frame)
             {
                 self.slots[index] = None;
-                self.blocks_discarded = self.blocks_discarded.saturating_add(1);
+                discarded = discarded.saturating_add(1);
             }
         }
+        self.blocks_discarded = self.blocks_discarded.saturating_add(discarded);
         true
     }
 
-    /// Remove one live slot from the page index before replacing it. Stale-generation slots are
-    /// intentionally absent: a whole-cache flush already clears the index and makes those slots
-    /// invisible until an insertion reclaims them.
+    /// Remove one indexed slot before replacing it. A stale-generation replacement decrements the
+    /// historical page count because the old implementation would no longer count that slot on a
+    /// later page flush either.
     fn unlink_code_slot(&mut self, index: usize) {
-        let Some(frame) = self.slots[index]
-            .as_ref()
-            .filter(|b| b.block_gen == self.generation)
-            .map(|b| b.page_frame)
-        else {
+        let Some(block) = self.slots[index].as_ref() else {
             return;
         };
-        let mut empty = false;
-        if let Some(indices) = self.code_slots.get_mut(&frame) {
-            if let Some(position) = indices.iter().position(|&candidate| candidate == index) {
-                indices.swap_remove(position);
+        let frame = block.page_frame;
+        if block.block_gen == self.generation {
+            let mut empty = false;
+            if let Some(indices) = self.code_slots.get_mut(&frame) {
+                if let Some(position) = indices.iter().position(|&candidate| candidate == index) {
+                    indices.swap_remove(position);
+                }
+                empty = indices.is_empty();
             }
-            empty = indices.is_empty();
-        }
-        if empty {
-            self.code_slots.remove(&frame);
+            if empty {
+                self.code_slots.remove(&frame);
+            }
+        } else if let Some(count) = self.stale_code_counts.get_mut(&frame) {
+            *count = count.saturating_sub(1);
+            if *count == 0 {
+                self.stale_code_counts.remove(&frame);
+            }
         }
     }
 
@@ -1050,6 +1071,16 @@ mod tests {
         cache.insert(DecodedBlock::new(page_b, block().to_vec(), 8));
         assert!(cache.flush_page(page_b >> 12));
         assert_eq!(cache.invalidation_stats(), (1, 4));
+
+        // Preserve the historical counter when an older-generation slot on a page survives a
+        // generation flush and a later insertion activates that same page at another hash slot.
+        let mut parity = BlockCache::with_capacity(64);
+        let first = 0x8000_0000;
+        parity.insert(DecodedBlock::new(first, block().to_vec(), 8));
+        parity.flush();
+        parity.insert(DecodedBlock::new(first + 2, block().to_vec(), 8));
+        assert!(parity.flush_page(first >> 12));
+        assert_eq!(parity.invalidation_stats(), (1, 2));
     }
 
     #[test]
