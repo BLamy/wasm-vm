@@ -1,0 +1,302 @@
+{
+  "head": "3055f67a5d768ab34f93d7de291bed713cbb5e9f",
+  "resources": {
+    "served": 96,
+    "distinct": 73,
+    "gitResources": 67
+  },
+  "physical": {
+    "nonce": "8cba0584ecd1cdbb",
+    "guestFile": "/tmp/desktop-keys-1e16e6e66e53bbb8",
+    "keys": 128,
+    "acknowledgments": 256,
+    "inputLine": "printf '\\n__WVBEGIN_mu4rv5il28\\n'; if [ -f '/tmp/desktop-keys-1e16e6e66e53bbb8' ]; then cat '/tmp/desktop-keys-1e16e6e66e53bbb8'; else (exit 75); fi; printf '\\n__WVEND_mu4rv5il28_%s\\n' \"$?\"",
+    "fence": "mu4rv5il28",
+    "rawCompletion": {
+      "start": 30679,
+      "end": 30765,
+      "index": 1259,
+      "timestamp": "2026-09-17T00:09:11.173Z"
+    },
+    "elapsedMs": 83672,
+    "captureDelayMs": 16363
+  },
+  "timing": {
+    "startedAt": "2026-09-17T00:09:27.541Z",
+    "deadlineAt": "2026-09-17T00:12:27.541Z",
+    "finishedAt": "2026-09-17T00:12:07.788Z",
+    "diagnosticElapsedMs": 160247,
+    "startDelayAfterOriginalMs": 4,
+    "noContinuationStimuli": true,
+    "cleanupMs": 1071
+  },
+  "checkpoints": [
+    {
+      "offsetMs": 0,
+      "measuredOffsetMs": 3,
+      "afterOriginalImageMs": 7,
+      "frameSequence": 5,
+      "frameAt": "2026-09-17T00:09:27.492Z",
+      "frameScanout": 0,
+      "received": 5,
+      "capturedAt": "2026-09-17T00:09:27.544Z",
+      "finishedAt": "2026-09-17T00:09:27.788Z",
+      "raw": {
+        "size": 4259840,
+        "sha256": "c40efc5e5c8d199a4ab1e8c8f7015bc4b64a6a93c35340f13db5ea1ec725495b"
+      },
+      "canvas": {
+        "size": 4096000,
+        "sha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4"
+      },
+      "png": {
+        "size": 10908,
+        "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24"
+      },
+      "workerToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4",
+        "rightSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4"
+      },
+      "pngToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4",
+        "rightSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4"
+      },
+      "changeSincePrevious": null
+    },
+    {
+      "offsetMs": 40000,
+      "measuredOffsetMs": 40002,
+      "afterOriginalImageMs": 40006,
+      "frameSequence": 7,
+      "frameAt": "2026-09-17T00:10:00.352Z",
+      "frameScanout": 0,
+      "received": 7,
+      "capturedAt": "2026-09-17T00:10:07.543Z",
+      "finishedAt": "2026-09-17T00:10:07.787Z",
+      "raw": {
+        "size": 4259840,
+        "sha256": "7c330b9ee04ce462d49215419827e41546aa4add2a355b2c81bdc686fe57daab"
+      },
+      "canvas": {
+        "size": 4096000,
+        "sha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82"
+      },
+      "png": {
+        "size": 10445,
+        "sha256": "d8ed68d5cc23a908ee07ca1b831114f2ce5b237605cb4301b64985934c1dbc62"
+      },
+      "workerToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82",
+        "rightSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82"
+      },
+      "pngToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82",
+        "rightSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82"
+      },
+      "changeSincePrevious": {
+        "equal": false,
+        "changedBytes": 633,
+        "changedPixels": 221,
+        "first": {
+          "byte": 2050560,
+          "left": 84,
+          "right": 26
+        },
+        "bounds": {
+          "minX": 639,
+          "minY": 400,
+          "maxX": 653,
+          "maxY": 422
+        },
+        "leftSha256": "8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4",
+        "rightSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82"
+      }
+    },
+    {
+      "offsetMs": 80000,
+      "measuredOffsetMs": 80003,
+      "afterOriginalImageMs": 80007,
+      "frameSequence": 9,
+      "frameAt": "2026-09-17T00:10:34.079Z",
+      "frameScanout": 0,
+      "received": 9,
+      "capturedAt": "2026-09-17T00:10:47.544Z",
+      "finishedAt": "2026-09-17T00:10:47.787Z",
+      "raw": {
+        "size": 4259840,
+        "sha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+      },
+      "canvas": {
+        "size": 4096000,
+        "sha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "png": {
+        "size": 15214,
+        "sha256": "14b165814f6c1f8ae3baeea1585fa565677bc6c9035bc9abcf16c5b63d33b970"
+      },
+      "workerToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "pngToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "changeSincePrevious": {
+        "equal": false,
+        "changedBytes": 9099,
+        "changedPixels": 3033,
+        "first": {
+          "byte": 267072,
+          "left": 192,
+          "right": 26
+        },
+        "bounds": {
+          "minX": 28,
+          "minY": 52,
+          "maxX": 641,
+          "maxY": 85
+        },
+        "leftSha256": "b9e3e04c277075202927bf013d2ba6b6e8ca8a87ed474fefa9dbf564ce7c8e82",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      }
+    },
+    {
+      "offsetMs": 120000,
+      "measuredOffsetMs": 120003,
+      "afterOriginalImageMs": 120007,
+      "frameSequence": 12,
+      "frameAt": "2026-09-17T00:11:26.204Z",
+      "frameScanout": 0,
+      "received": 12,
+      "capturedAt": "2026-09-17T00:11:27.544Z",
+      "finishedAt": "2026-09-17T00:11:27.788Z",
+      "raw": {
+        "size": 4259840,
+        "sha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+      },
+      "canvas": {
+        "size": 4096000,
+        "sha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "png": {
+        "size": 15214,
+        "sha256": "14b165814f6c1f8ae3baeea1585fa565677bc6c9035bc9abcf16c5b63d33b970"
+      },
+      "workerToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "pngToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "changeSincePrevious": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      }
+    },
+    {
+      "offsetMs": 160000,
+      "measuredOffsetMs": 160003,
+      "afterOriginalImageMs": 160007,
+      "frameSequence": 14,
+      "frameAt": "2026-09-17T00:12:03.260Z",
+      "frameScanout": 0,
+      "received": 14,
+      "capturedAt": "2026-09-17T00:12:07.544Z",
+      "finishedAt": "2026-09-17T00:12:07.788Z",
+      "raw": {
+        "size": 4259840,
+        "sha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+      },
+      "canvas": {
+        "size": 4096000,
+        "sha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "png": {
+        "size": 15214,
+        "sha256": "14b165814f6c1f8ae3baeea1585fa565677bc6c9035bc9abcf16c5b63d33b970"
+      },
+      "workerToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "pngToCanvas": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      },
+      "changeSincePrevious": {
+        "equal": true,
+        "changedBytes": 0,
+        "changedPixels": 0,
+        "first": null,
+        "bounds": null,
+        "leftSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac",
+        "rightSha256": "abaa08c89eada0b340f7ee099cefe9d52d03557996c993ae9845dd36a426b9ac"
+      }
+    }
+  ],
+  "finalProbe": {
+    "disposed": true,
+    "seen": 14,
+    "evicted": 6,
+    "retained": 8,
+    "events": 14
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "head": "3055f67a5d768ab34f93d7de291bed713cbb5e9f",
+  "diagnosticOnly": true,
+  "runtime": {
+    "task": "E5.5-T03at",
+    "files": {
+      "crates/core/src/dev/virtio/gpu/resources.rs": {
+        "size": 63306,
+        "sha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f"
+      },
+      "crates/core/src/dev/virtio/gpu/mod.rs": {
+        "size": 169241,
+        "sha256": "035c9ddce5b9bcaadc96257aa067c12fcea50235096660783728e82f59d971bf"
+      },
+      "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+        "size": 1602266,
+        "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+      }
+    }
+  },
+  "runtimeMatched": true,
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "args": [
+    "make",
+    "verify-E5_5-T03av",
+    "DISPLAY_LATE_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-late-response-r1"
+  ],
+  "startedAt": "2026-09-17T00:06:55.871999+00:00",
+  "code": 0,
+  "finishedAt": "2026-09-17T00:12:09.030016+00:00",
+  "logSha256": "77713f93cf1724fcde3c9166f66403d1263d15fc21944f7df1d50388a0d4460e"
+}

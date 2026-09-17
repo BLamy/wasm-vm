@@ -1,0 +1,67 @@
+node --test tools/verify/omarchy-display-late-probe.test.mjs tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.547041ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.115084ms)
+✔ post-marker presentation helper rejects typing frames (104.146292ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.149834ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.153542ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.116084ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.14125ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.548125ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.709291ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.172833ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.290166ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (185.182875ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (2.814083ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.180458ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.271459ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.249042ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.078667ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.128834ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.5995ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (1.77975ms)
+✔ checkpoint requires completed latest presentation and owns its exported bytes (1.935208ms)
+OMARCHY_LATE_DISPLAY {"offsetMs":0,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":40000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":80000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":120000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":160000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+✔ absolute continuation offsets preserve product evidence and reject late or mismatched receipts (225.946792ms)
+✔ a new frame during the screenshot produces no accepted checkpoint (5.009125ms)
+✔ a slow operation exhausts the one diagnostic deadline without renewal (3.274459ms)
+✔ opt-in observer preserves transport, private ownership and disposal (2.235125ms)
+✔ frame and event rings remain bounded; malformed frames cannot interrupt transport (1.101959ms)
+✔ export owns the latest bytes and restores the observer before canvas readback (0.50375ms)
+✔ literal BGRA and BGRX conversion crops the actual top-left viewport (0.11875ms)
+✔ saved-byte audit binds latest frame, nonce, presentation completion and file digest (57.802584ms)
+✔ AT runtime selection binds both corrected sources and the exact built WASM (3.332792ms)
+✔ AS admits only verified AR bytes and leaves old AJ source guards intact (0.446542ms)
+✔ AR properties must name its exact restored Foot; the AJ default stays unchanged (1.015166ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (0.79525ms)
+✔ offline preparation is separately bounded and cannot extend a physical-input watchdog (1.19325ms)
+✔ post-verdict capture has one fixed extra allowance and messages cannot rearm it (0.116083ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (0.099833ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (0.103042ms)
+✔ future/invalid navigation cannot extend setup (0.063958ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.10075ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.090459ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.812083ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (16.036042ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (18.850917ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (67.5945ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (76.922958ms)
+✔ synthetic AR input checks loaded kernel before properties and keeps uninstrumented original deadlines (54.761708ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (3.471667ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (0.988625ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (9.870834ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (48.599333ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (12.557833ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 406.889542
+node tools/verify/omarchy-input-kernel-response.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-late-response-r1/response target/omarchy-input-kernel-prepared-pair-r1 --display-late-probe
+{"result":"input-trial-physical-nonce-and-fresh-presentation","machineAcceptance":true,"desktopAcceptance":false,"visualInspectionRequired":true}

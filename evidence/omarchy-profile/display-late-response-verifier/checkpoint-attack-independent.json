@@ -1,0 +1,48 @@
+[
+  {
+    "mode": "same-sequence-pending",
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n",
+    "imageTimeouts": [
+      20000
+    ],
+    "screenshots": 1,
+    "checkpointsAttempted": 1,
+    "sequenceUnchanged": 7,
+    "originalPreserved": true,
+    "rawBytesUnchanged": true,
+    "deadlineAt": "2026-09-17T00:03:00.000Z",
+    "finishedAt": "2026-09-17T00:00:00.000Z"
+  },
+  {
+    "mode": "same-sequence-present-count",
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n8 !== 7\n",
+    "imageTimeouts": [
+      20000
+    ],
+    "screenshots": 1,
+    "checkpointsAttempted": 1,
+    "sequenceUnchanged": 7,
+    "originalPreserved": true,
+    "rawBytesUnchanged": true,
+    "deadlineAt": "2026-09-17T00:03:00.000Z",
+    "finishedAt": "2026-09-17T00:00:00.000Z"
+  },
+  {
+    "mode": "later-checkpoint-overrun",
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: late display screenshot: deadline exceeded (UNPROVEN)",
+    "imageTimeouts": [
+      20000,
+      1000
+    ],
+    "screenshots": 2,
+    "checkpointsAttempted": 2,
+    "sequenceUnchanged": 7,
+    "originalPreserved": true,
+    "rawBytesUnchanged": true,
+    "deadlineAt": "2026-09-17T00:03:00.000Z",
+    "finishedAt": "2026-09-17T00:03:00.001Z"
+  }
+]

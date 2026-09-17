@@ -1,0 +1,17 @@
+✔ checkpoint requires completed latest presentation and owns its exported bytes (1.93925ms)
+OMARCHY_LATE_DISPLAY {"offsetMs":0,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":40000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":80000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":120000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+OMARCHY_LATE_DISPLAY {"offsetMs":160000,"sequence":1,"frames":1,"imageSha256":"9f45e0f4f7cd2c39181fdc06d5d6dc697757710959aa431658cd5a4765a9eabe"}
+✔ absolute continuation offsets preserve product evidence and reject late or mismatched receipts (226.843209ms)
+✔ a new frame during the screenshot produces no accepted checkpoint (7.382375ms)
+✔ a slow operation exhausts the one diagnostic deadline without renewal (3.506875ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 275.015917
