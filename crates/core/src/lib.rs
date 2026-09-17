@@ -4437,6 +4437,7 @@ impl Machine {
                         // are published into the source/edge-local slot when the successor arrives;
                         // this removes the hash/key probe and keeps invalidation source-local.
                         if edge.is_none()
+                            && self.executor.as_ref().is_some_and(|e| e.dynamic_chaining())
                             && let Some(e) = self.executor.as_mut()
                         {
                             e.link_dynamic_target(next_virtual, next_phys);
