@@ -15,15 +15,16 @@ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
 import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
 import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
 
-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384"].includes(process.argv[4])),
-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384]");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384"].includes(process.argv[4])),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
 const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
-const displayLateProbe = process.argv[4] === "--display-late-probe";
+const displayLateCache16384 = process.argv[4] === "--display-late-cap-1024-cache16384";
+const displayLateProbe = displayLateCache16384 || process.argv[4] === "--display-late-probe";
 const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
 const preparedCap1024 = process.argv[4] === "--prepared-cap-1024";
-const preparedCap1024Cache16384 = process.argv[4] === "--prepared-cap-1024-cache16384";
+const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384";
 const experiment = preparedCap1024Cache16384 ? "prepared-cap-1024-cache16384"
   : preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling";
 const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
