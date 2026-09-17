@@ -15,26 +15,28 @@ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
 import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
 import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
 
-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr", "--prepared-cap-1024-cache16384-code-page-index"].includes(process.argv[4])),
-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr|--prepared-cap-1024-cache16384-code-page-index]");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr", "--prepared-cap-1024-cache16384-code-page-index", "--prepared-cap-1024-cache16384-no-dynamic-publication"].includes(process.argv[4])),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr|--prepared-cap-1024-cache16384-code-page-index|--prepared-cap-1024-cache16384-no-dynamic-publication]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
 const codePageIndex = process.argv[4] === "--prepared-cap-1024-cache16384-code-page-index";
-const gpuRuntime = process.argv[4] && !codePageIndex ? await loadGpuTransferRuntime(repo) : null;
+const noDynamicPublication = process.argv[4] === "--prepared-cap-1024-cache16384-no-dynamic-publication";
+const gpuRuntime = process.argv[4] && !codePageIndex && !noDynamicPublication ? await loadGpuTransferRuntime(repo) : null;
 const displayLateCache16384 = process.argv[4] === "--display-late-cap-1024-cache16384";
 const displayLateProbe = displayLateCache16384 || process.argv[4] === "--display-late-probe";
 const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
 const preparedCap1024 = process.argv[4] === "--prepared-cap-1024";
 const preparedCap1024Cache16384NoJalr = process.argv[4] === "--prepared-cap-1024-cache16384-no-jalr";
-const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr || codePageIndex;
-const experiment = codePageIndex ? "prepared-cap-1024-cache16384-code-page-index"
+const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr || codePageIndex || noDynamicPublication;
+const experiment = noDynamicPublication ? "prepared-cap-1024-cache16384-no-dynamic-publication"
+  : codePageIndex ? "prepared-cap-1024-cache16384-code-page-index"
   : preparedCap1024Cache16384NoJalr ? "prepared-cap-1024-cache16384-no-jalr"
   : preparedCap1024Cache16384 ? "prepared-cap-1024-cache16384"
   : preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling";
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 const wasmPath = path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm");
 const wasmBytes = await fs.readFile(wasmPath);
-const wasmSha256 = codePageIndex ? sha(wasmBytes) : gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
+const wasmSha256 = codePageIndex || noDynamicPublication ? sha(wasmBytes) : gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
 for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
   const bytes = await fs.readFile(path.join(pair, file));
   assert.equal(bytes.length, INPUT_BUFFER_PREPARED_IDENTITIES[role].size);
@@ -48,7 +50,7 @@ const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: fal
   diagnosticOnly: displayPixelProbe, experiment,
   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   wasmSha256, gpuRuntime: gpuRuntime?.record ?? null,
-  candidateRuntime: codePageIndex ? { task: "E5.5-T03ba", files: { ["web/dist/pkg/wasm_vm_wasm_bg.wasm"]: { size: wasmBytes.length, sha256: wasmSha256 } } } : null,
+  candidateRuntime: codePageIndex || noDynamicPublication ? { task: noDynamicPublication ? "E5.5-T03bb" : "E5.5-T03ba", files: { ["web/dist/pkg/wasm_vm_wasm_bg.wasm"]: { size: wasmBytes.length, sha256: wasmSha256 } } } : null,
   pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
   startedAt: new Date().toISOString() };

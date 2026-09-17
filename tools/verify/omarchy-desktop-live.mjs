@@ -87,7 +87,7 @@ if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaq
 if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
   "compositor observation requires the isolated prepared physical trial");
 const originalInputPresentation = inputObserver || inputKernelPrepared ? assertOriginalInputGeometry : assertOriginalPresentation;
-const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
+const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
 const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
 const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
 if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
@@ -124,7 +124,7 @@ const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, c
 if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
 }
-if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
   "residency is isolated from other experiments");
 if (process.env.OMARCHY_WORKER_COST !== undefined) {
   assert.ok(workerCost && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate",
@@ -141,7 +141,7 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
   "direct opaque requires its isolated fixed residency candidate input trial");
 }
 if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
-  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment) && trial.arm === "candidate"
+  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(trial?.experiment) && trial.arm === "candidate"
     && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver || inputKernelPrepared) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
   "prepared direct input requires its isolated fixed residency candidate trial");
 }

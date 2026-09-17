@@ -17,6 +17,8 @@ const preparedCap1024CacheNoJalrOptions = arm => inputTrialOptions({ urlArg: "lo
   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-jalr" });
 const preparedCodePageIndexOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-code-page-index" });
+const preparedNoDynamicPublicationOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+  renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-dynamic-publication" });
 test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
   const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
   assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
@@ -134,6 +136,25 @@ test("code-page index candidate keeps the exact T03az runtime settings", () => {
     clock: { mode: "icount", clockDiv: 64 } };
   assertInputTrialRuntime(state, trial);
   assert.deepEqual(url.searchParams.toString(), inputTrialUrl(base, preparedCap1024CacheNoJalrOptions("candidate")).searchParams.toString());
+});
+test("disabled dynamic-publication candidate keeps the exact JALR-off runtime settings", () => {
+  const trial = preparedNoDynamicPublicationOptions("candidate");
+  const jalrOff = preparedCap1024CacheNoJalrOptions("candidate");
+  assert.deepEqual(trial, { ...jalrOff, experiment: "prepared-cap-1024-cache16384-no-dynamic-publication" });
+  assert.throws(() => preparedNoDynamicPublicationOptions("control"));
+  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
+  const url = inputTrialUrl(base, trial);
+  assert.equal(url.searchParams.get("jitResidency"), "cap-1024");
+  assert.equal(url.searchParams.get("decodedCacheEntries"), "16384");
+  assert.equal(url.searchParams.get("jitColdCounterRecycling"), "1");
+  assert.equal(url.searchParams.get("jalr"), "0");
+  assert.deepEqual([...url.searchParams.entries()], [...inputTrialUrl(base, jalrOff).searchParams.entries()]);
+  const state = { jit: { hasExecutor: true, admissionProbe: false,
+    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
+    decodedCacheEntries: 16384, jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024,
+    jitDynamicChaining: false, jitRegionChaining: true, entryCost: { timingEnabled: false } },
+    clock: { mode: "icount", clockDiv: 64 } };
+  assertInputTrialRuntime(state, trial);
 });
 test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
