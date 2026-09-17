@@ -492,7 +492,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269995` [E5.5-T03au](epic-5.5-omarchy/E5.5-T03au-display-pixel-boundary.md) — Locate stale desktop pixels at the worker display boundary *(deps: E5.5-T03at)*
 - [x] `525.0269996` [E5.5-T03av](epic-5.5-omarchy/E5.5-T03av-display-late-response.md) — Distinguish late terminal rendering from sustained stale output *(deps: E5.5-T03au)*
 - [x] `525.0269997` [E5.5-T03aw](epic-5.5-omarchy/E5.5-T03aw-residency-cap1024.md) — Test the existing cap-1024 JIT residency on the responsive desktop path *(deps: E5.5-T03av)*
-- [~] `525.0269998` [E5.5-T03ax](epic-5.5-omarchy/E5.5-T03ax-residency-decoded-cache16384.md) — Test cap-1024 residency with the existing 16384-entry decoded cache *(deps: E5.5-T03aw)*
+- [?] `525.0269998` [E5.5-T03ax](epic-5.5-omarchy/E5.5-T03ax-residency-decoded-cache16384.md) — Test cap-1024 residency with the existing 16384-entry decoded cache *(deps: E5.5-T03aw)*
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03ax)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
