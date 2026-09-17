@@ -16,7 +16,7 @@
 //! with a page-level has-code bitmap. See E4-T05 for the phased plan.
 
 use crate::decode::Instr;
-use alloc::collections::{BTreeMap, BTreeSet, VecDeque};
+use alloc::collections::{BTreeMap, VecDeque};
 use alloc::vec::Vec;
 
 /// Guest page granularity used for block boundaries + code-page keying. 4 KiB — the Sv39
@@ -125,13 +125,11 @@ pub struct BlockCache {
     slots: alloc::vec::Vec<Option<DecodedBlock>>,
     mask: usize,
     generation: u64,
-    /// E4-T05 Phase B: the page-level "has-code" set (the E4-T17 SMC precursor). Every physical
-    /// page frame that has ever held ≥1 inserted block in the CURRENT generation. A store (guest
-    /// OR device/DMA) whose frame is NOT in this set cannot have hit cached code, so it needs no
-    /// scan — this is what lets the cache RETAIN blocks across ordinary data stores instead of the
-    /// Phase-A whole-cache flush. Cleared on a full `flush` (all blocks become invisible anyway);
-    /// stale membership is only ever a wasted scan (conservative-safe), never a missed flush.
-    has_code: BTreeSet<u64>,
+    /// E5.5-T03ba: live decoded-cache slots grouped by physical page. A store (guest OR
+    /// device/DMA) whose frame is absent is an O(log n) map miss; a code-page store touches only
+    /// the indexed slots instead of scanning the whole open-addressed table. The index is rebuilt
+    /// incrementally on insert and cleared with the generation on a whole-cache flush.
+    code_slots: BTreeMap<u64, Vec<usize>>,
     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
     flushes: u64,
@@ -167,7 +165,7 @@ impl BlockCache {
             slots,
             mask: cap - 1,
             generation: 1,
-            has_code: BTreeSet::new(),
+            code_slots: BTreeMap::new(),
             flushes: 0,
             blocks_discarded: 0,
             fence_i_noops: 0,
@@ -198,28 +196,53 @@ impl BlockCache {
     /// now invisible, so no frame "has code" until the next insert re-populates it.
     pub fn flush(&mut self) {
         self.generation = self.generation.wrapping_add(1);
-        self.has_code.clear();
+        self.code_slots.clear();
         self.flushes = self.flushes.saturating_add(1);
     }
 
-    /// E4-T05 Phase B: page-granular invalidation. Drop every live block whose `page_frame` ==
-    /// `frame` (self-modifying code / DMA-into-code precursor). Returns `true` iff `frame` was a
-    /// code page (had ≥1 cached block) — the caller uses that to decide whether an in-flight block
-    /// cursor may now be stale. A frame with no cached code is an O(1) set-miss: the common case
-    /// for an ordinary data store, so the cache is retained. When `frame` DID have code, the slot
-    /// table is scanned once (O(capacity)) and matching blocks are dropped — including any stale
-    /// (older-generation) leftovers in that frame, which is harmless cleanup.
+    /// E4-T05 Phase B / E5.5-T03ba: page-granular invalidation. Drop every live block whose
+    /// `page_frame` == `frame` (self-modifying code / DMA-into-code precursor). Returns `true` iff
+    /// `frame` was a code page (had ≥1 indexed cached block) — the caller uses that to decide
+    /// whether an in-flight block cursor may now be stale. A frame with no cached code is a map
+    /// miss: the common case for an ordinary data store, so the cache is retained. A hit removes
+    /// only the slots recorded for that page; it never scans unrelated cache entries.
     pub fn flush_page(&mut self, frame: u64) -> bool {
-        if !self.has_code.remove(&frame) {
+        let Some(indices) = self.code_slots.remove(&frame) else {
             return false;
-        }
-        for slot in self.slots.iter_mut() {
-            if slot.as_ref().is_some_and(|b| b.page_frame == frame) {
-                *slot = None;
+        };
+        for index in indices {
+            if self.slots[index]
+                .as_ref()
+                .is_some_and(|b| b.block_gen == self.generation && b.page_frame == frame)
+            {
+                self.slots[index] = None;
                 self.blocks_discarded = self.blocks_discarded.saturating_add(1);
             }
         }
         true
+    }
+
+    /// Remove one live slot from the page index before replacing it. Stale-generation slots are
+    /// intentionally absent: a whole-cache flush already clears the index and makes those slots
+    /// invisible until an insertion reclaims them.
+    fn unlink_code_slot(&mut self, index: usize) {
+        let Some(frame) = self.slots[index]
+            .as_ref()
+            .filter(|b| b.block_gen == self.generation)
+            .map(|b| b.page_frame)
+        else {
+            return;
+        };
+        let mut empty = false;
+        if let Some(indices) = self.code_slots.get_mut(&frame) {
+            if let Some(position) = indices.iter().position(|&candidate| candidate == index) {
+                indices.swap_remove(position);
+            }
+            empty = indices.is_empty();
+        }
+        if empty {
+            self.code_slots.remove(&frame);
+        }
     }
 
     #[inline]
@@ -265,22 +288,28 @@ impl BlockCache {
     /// replacement; correctness is unaffected).
     pub fn insert(&mut self, mut block: DecodedBlock) {
         block.block_gen = self.generation;
-        // Record the block's physical page as "has code" so a later store into it is caught by
-        // `flush_page` (Phase-B page-granular SMC/DMA invalidation).
-        self.has_code.insert(block.page_frame);
         let start = self.hash(block.phys_start);
-        for i in 0..MAX_PROBE {
-            let idx = (start + i) & self.mask;
-            let free = match &self.slots[idx] {
-                None => true,
-                Some(b) => b.block_gen != self.generation || b.phys_start == block.phys_start,
-            };
-            if free {
-                self.slots[idx] = Some(block);
-                return;
-            }
-        }
-        self.slots[start] = Some(block);
+        let index = (0..MAX_PROBE)
+            .find_map(|i| {
+                let idx = (start + i) & self.mask;
+                let free = match &self.slots[idx] {
+                    None => true,
+                    Some(b) => b.block_gen != self.generation || b.phys_start == block.phys_start,
+                };
+                if free { Some(idx) } else { None }
+            })
+            .unwrap_or(start);
+        self.unlink_code_slot(index);
+        self.slots[index] = Some(block);
+        self.code_slots
+            .entry(
+                self.slots[index]
+                    .as_ref()
+                    .expect("inserted block")
+                    .page_frame,
+            )
+            .or_default()
+            .push(index);
     }
 }
 
@@ -979,6 +1008,49 @@ impl BlockDiscovery {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn block_cache_page_index_invalidates_only_indexed_live_slots() {
+        let mut cache = BlockCache::with_capacity(64);
+        let page_a = 0x8000_0000;
+        let page_b = page_a + PAGE;
+        let page_c = page_b + PAGE;
+        let ops = block().to_vec();
+
+        cache.insert(DecodedBlock::new(page_a, ops.clone(), 8));
+        cache.insert(DecodedBlock::new(page_a + 16, ops.clone(), 8));
+        cache.insert(DecodedBlock::new(page_b, ops.clone(), 8));
+        assert_eq!(cache.code_slots.get(&(page_a >> 12)).unwrap().len(), 2);
+        assert_eq!(cache.code_slots.get(&(page_b >> 12)).unwrap().len(), 1);
+
+        assert!(cache.flush_page(page_a >> 12));
+        assert!(cache.get(page_a).is_none());
+        assert!(cache.get(page_a + 16).is_none());
+        assert!(cache.get(page_b).is_some());
+        assert_eq!(cache.invalidation_stats(), (0, 2));
+        assert!(
+            !cache.flush_page(page_a >> 12),
+            "page index entry was retired"
+        );
+
+        // Replacing a live slot must unlink the old index entry rather than leave a duplicate
+        // that would make a later page flush report a phantom block.
+        cache.insert(DecodedBlock::new(page_c, ops.clone(), 8));
+        cache.insert(DecodedBlock::new(page_c, ops, 8));
+        assert_eq!(cache.code_slots.get(&(page_c >> 12)).unwrap().len(), 1);
+        assert!(cache.flush_page(page_c >> 12));
+        assert_eq!(cache.invalidation_stats(), (0, 3));
+        assert!(!cache.flush_page(page_c >> 12));
+
+        // A whole-cache generation flush drops the index as well; stale slots cannot be flushed
+        // or counted after a later insertion repopulates a different page.
+        cache.flush();
+        assert!(cache.code_slots.is_empty());
+        assert!(!cache.flush_page(page_b >> 12));
+        cache.insert(DecodedBlock::new(page_b, block().to_vec(), 8));
+        assert!(cache.flush_page(page_b >> 12));
+        assert_eq!(cache.invalidation_stats(), (1, 4));
+    }
 
     #[test]
     fn cold_counter_recycling_disabled_parity_including_admission_observer() {
