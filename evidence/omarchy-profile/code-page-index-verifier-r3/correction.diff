@@ -1,0 +1,251 @@
+diff --git a/crates/core/src/dispatch.rs b/crates/core/src/dispatch.rs
+index 9931edb0..72203104 100644
+--- a/crates/core/src/dispatch.rs
++++ b/crates/core/src/dispatch.rs
+@@ -116,6 +116,17 @@ pub const MAX_BLOCK_OPS: usize = 128;
+ /// so a short bounded probe keeps lookup O(1) with a simple replace-on-full policy.
+ const MAX_PROBE: usize = 8;
+ 
++/// Physical cache slots owned by one code page.
++///
++/// The indices remain associated with the page across whole-cache generation bumps. The legacy
++/// page scan counted stale physical slots too, so retaining ownership here preserves the public
++/// discard counter without bringing back an O(capacity) scan.
++#[derive(Debug, Default)]
++struct CodePageSlots {
++    generation: u64,
++    slots: Vec<usize>,
++}
++
+ /// Open-addressed, physically-keyed block cache with O(1) whole-cache flush.
+ ///
+ /// Flush is a generation bump: a stored block whose `gen` differs from `generation` is
+@@ -125,16 +136,12 @@ pub struct BlockCache {
+     slots: alloc::vec::Vec<Option<DecodedBlock>>,
+     mask: usize,
+     generation: u64,
+-    /// E5.5-T03ba: live decoded-cache slots grouped by physical page. A store (guest OR
+-    /// device/DMA) whose frame is absent is an O(log n) map miss; a code-page store touches only
+-    /// the indexed slots instead of scanning the whole open-addressed table. The index is rebuilt
+-    /// incrementally on insert. Historical slots are counted separately so a later active-page
+-    /// flush preserves the pre-index `blocks_discarded` accounting without a capacity scan.
+-    code_slots: BTreeMap<u64, Vec<usize>>,
+-    /// Slots made stale by a whole-cache generation flush, grouped by physical page. These blocks
+-    /// are already invisible to lookup; the counts preserve the old page-flush counter behavior
+-    /// when a page is repopulated in a later generation.
+-    stale_code_counts: BTreeMap<u64, u64>,
++    /// E5.5-T03ba: decoded-cache slots grouped by physical page. A store (guest OR device/DMA)
++    /// whose frame is absent is an O(log n) map miss; a code-page store touches only the indexed
++    /// slots instead of scanning the whole open-addressed table. Slot indices remain associated
++    /// with their page across generation bumps so page-flush accounting stays identical to the
++    /// legacy full-table scan, including stale physical slots.
++    code_slots: BTreeMap<u64, CodePageSlots>,
+     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
+     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
+     flushes: u64,
+@@ -171,7 +178,6 @@ impl BlockCache {
+             mask: cap - 1,
+             generation: 1,
+             code_slots: BTreeMap::new(),
+-            stale_code_counts: BTreeMap::new(),
+             flushes: 0,
+             blocks_discarded: 0,
+             fence_i_noops: 0,
+@@ -198,19 +204,11 @@ impl BlockCache {
+     }
+ 
+     /// Invalidate the entire cache in O(1) (generation bump). Every block built in an older
+-    /// generation becomes invisible. Current page-index entries become stale counts: every frame
+-    /// remains a map miss until a new current-generation block repopulates it, while a later active
+-    /// page flush still preserves the old discarded-block accounting.
++    /// generation becomes invisible. The page index remains in place with its old generation and
++    /// slot ownership; a later insertion can reactivate that page without losing stale slots that
++    /// the legacy page scan would still count.
+     pub fn flush(&mut self) {
+         self.generation = self.generation.wrapping_add(1);
+-        let code_slots = core::mem::take(&mut self.code_slots);
+-        for (frame, indices) in code_slots {
+-            let count = indices.len() as u64;
+-            self.stale_code_counts
+-                .entry(frame)
+-                .and_modify(|existing| *existing = existing.saturating_add(count))
+-                .or_insert(count);
+-        }
+         self.flushes = self.flushes.saturating_add(1);
+     }
+ 
+@@ -221,48 +219,42 @@ impl BlockCache {
+     /// miss: the common case for an ordinary data store, so the cache is retained. A hit removes
+     /// only the slots recorded for that page; it never scans unrelated cache entries.
+     pub fn flush_page(&mut self, frame: u64) -> bool {
+-        let Some(indices) = self.code_slots.remove(&frame) else {
+-            return false;
++        let indices = {
++            let Some(page) = self.code_slots.get_mut(&frame) else {
++                return false;
++            };
++            if page.generation != self.generation {
++                return false;
++            }
++            core::mem::take(&mut page.slots)
+         };
+-        let stale_count = self.stale_code_counts.remove(&frame).unwrap_or_default();
+-        let mut discarded = stale_count;
++        self.code_slots.remove(&frame);
+         for index in indices {
+-            if self.slots[index]
+-                .as_ref()
+-                .is_some_and(|b| b.block_gen == self.generation && b.page_frame == frame)
++            if self
++                .slots
++                .get(index)
++                .and_then(Option::as_ref)
++                .is_some_and(|b| b.page_frame == frame)
+             {
+                 self.slots[index] = None;
+-                discarded = discarded.saturating_add(1);
++                self.blocks_discarded = self.blocks_discarded.saturating_add(1);
+             }
+         }
+-        self.blocks_discarded = self.blocks_discarded.saturating_add(discarded);
+         true
+     }
+ 
+-    /// Remove one indexed slot before replacing it. A stale-generation replacement decrements the
+-    /// historical page count because the old implementation would no longer count that slot on a
+-    /// later page flush either.
++    /// Remove one indexed slot before replacing it. Retain the page entry even when its slot list
++    /// becomes empty: the legacy `has_code` membership stayed live until `flush_page`, and callers
++    /// use that membership to decide whether a page invalidation occurred.
+     fn unlink_code_slot(&mut self, index: usize) {
+         let Some(block) = self.slots[index].as_ref() else {
+             return;
+         };
+         let frame = block.page_frame;
+-        if block.block_gen == self.generation {
+-            let mut empty = false;
+-            if let Some(indices) = self.code_slots.get_mut(&frame) {
+-                if let Some(position) = indices.iter().position(|&candidate| candidate == index) {
+-                    indices.swap_remove(position);
+-                }
+-                empty = indices.is_empty();
+-            }
+-            if empty {
+-                self.code_slots.remove(&frame);
+-            }
+-        } else if let Some(count) = self.stale_code_counts.get_mut(&frame) {
+-            *count = count.saturating_sub(1);
+-            if *count == 0 {
+-                self.stale_code_counts.remove(&frame);
+-            }
++        if let Some(page) = self.code_slots.get_mut(&frame)
++            && let Some(position) = page.slots.iter().position(|&candidate| candidate == index)
++        {
++            page.slots.swap_remove(position);
+         }
+     }
+ 
+@@ -322,15 +314,20 @@ impl BlockCache {
+             .unwrap_or(start);
+         self.unlink_code_slot(index);
+         self.slots[index] = Some(block);
+-        self.code_slots
+-            .entry(
+-                self.slots[index]
+-                    .as_ref()
+-                    .expect("inserted block")
+-                    .page_frame,
+-            )
+-            .or_default()
+-            .push(index);
++        let page_frame = self.slots[index]
++            .as_ref()
++            .expect("inserted block")
++            .page_frame;
++        let generation = self.generation;
++        let page = self
++            .code_slots
++            .entry(page_frame)
++            .or_insert_with(|| CodePageSlots {
++                generation,
++                slots: Vec::new(),
++            });
++        page.generation = generation;
++        page.slots.push(index);
+     }
+ }
+ 
+@@ -1041,8 +1038,14 @@ mod tests {
+         cache.insert(DecodedBlock::new(page_a, ops.clone(), 8));
+         cache.insert(DecodedBlock::new(page_a + 16, ops.clone(), 8));
+         cache.insert(DecodedBlock::new(page_b, ops.clone(), 8));
+-        assert_eq!(cache.code_slots.get(&(page_a >> 12)).unwrap().len(), 2);
+-        assert_eq!(cache.code_slots.get(&(page_b >> 12)).unwrap().len(), 1);
++        assert_eq!(
++            cache.code_slots.get(&(page_a >> 12)).unwrap().slots.len(),
++            2
++        );
++        assert_eq!(
++            cache.code_slots.get(&(page_b >> 12)).unwrap().slots.len(),
++            1
++        );
+ 
+         assert!(cache.flush_page(page_a >> 12));
+         assert!(cache.get(page_a).is_none());
+@@ -1058,15 +1061,21 @@ mod tests {
+         // that would make a later page flush report a phantom block.
+         cache.insert(DecodedBlock::new(page_c, ops.clone(), 8));
+         cache.insert(DecodedBlock::new(page_c, ops, 8));
+-        assert_eq!(cache.code_slots.get(&(page_c >> 12)).unwrap().len(), 1);
++        assert_eq!(
++            cache.code_slots.get(&(page_c >> 12)).unwrap().slots.len(),
++            1
++        );
+         assert!(cache.flush_page(page_c >> 12));
+         assert_eq!(cache.invalidation_stats(), (0, 3));
+         assert!(!cache.flush_page(page_c >> 12));
+ 
+-        // A whole-cache generation flush drops the index as well; stale slots cannot be flushed
+-        // or counted after a later insertion repopulates a different page.
++        // A whole-cache generation flush leaves the stale physical slot ownership in place, but
++        // the old page is a generation miss until a new block reactivates it.
+         cache.flush();
+-        assert!(cache.code_slots.is_empty());
++        assert_ne!(
++            cache.code_slots.get(&(page_b >> 12)).unwrap().generation,
++            cache.generation
++        );
+         assert!(!cache.flush_page(page_b >> 12));
+         cache.insert(DecodedBlock::new(page_b, block().to_vec(), 8));
+         assert!(cache.flush_page(page_b >> 12));
+@@ -1081,6 +1090,30 @@ mod tests {
+         parity.insert(DecodedBlock::new(first + 2, block().to_vec(), 8));
+         assert!(parity.flush_page(first >> 12));
+         assert_eq!(parity.invalidation_stats(), (1, 2));
++
++        // Keep stale physical ownership exact across multiple generations. The first page flush
++        // consumes generation 1's slot, while a later replacement of that physical slot must not
++        // erase generation 2's slot from the next page accounting.
++        let mut generations = BlockCache::with_capacity(8);
++        generations.insert(DecodedBlock::new(0x8000_60e2, block().to_vec(), 8));
++        generations.flush();
++        generations.insert(DecodedBlock::new(0x8000_605e, block().to_vec(), 8));
++        assert!(generations.flush_page(0x80006));
++        assert_eq!(generations.invalidation_stats(), (1, 2));
++        generations.insert(DecodedBlock::new(0x8000_6062, block().to_vec(), 8));
++        generations.flush();
++        generations.insert(DecodedBlock::new(0x8000_608e, block().to_vec(), 8));
++        generations.insert(DecodedBlock::new(0x8000_10ec, block().to_vec(), 8));
++        assert!(generations.flush_page(0x80006));
++        assert_eq!(generations.invalidation_stats(), (2, 4));
++
++        // A page remains a membership hit after its only slot is evicted by replacement, matching
++        // the legacy has-code set; the scan simply finds no block to discard.
++        let mut evicted = BlockCache::with_capacity(1);
++        evicted.insert(DecodedBlock::new(0x8000_0000, block().to_vec(), 8));
++        evicted.insert(DecodedBlock::new(0x8000_1000, block().to_vec(), 8));
++        assert!(evicted.flush_page(0x80000));
++        assert_eq!(evicted.invalidation_stats(), (0, 0));
+     }
+ 
+     #[test]

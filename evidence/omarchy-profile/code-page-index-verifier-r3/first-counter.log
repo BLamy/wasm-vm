@@ -1,0 +1,4 @@
+   Compiling ba-public-counter-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/code-page-index-verifier/public-counter)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/ba-public-counter-verifier`
+actual core public invalidation_stats=(1, 2)

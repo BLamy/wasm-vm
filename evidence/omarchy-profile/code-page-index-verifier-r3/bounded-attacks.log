@@ -1,0 +1,19 @@
+HELD same-page replacement, target retention, reinsertion, stale generation
+HELD forged valid-other-page and out-of-range indices cannot discard or count another block
+HELD missing index has no fallback scan and reinsertion repairs ownership
+HELD evicted current membership stays true until page flush; old generation stays false
+HELD physical index model cap=1 seed=33 operations=10000
+HELD physical index model cap=1 seed=39297 operations=10000
+HELD physical index model cap=1 seed=340413 operations=10000
+HELD physical index model cap=2 seed=33 operations=10000
+HELD physical index model cap=2 seed=39297 operations=10000
+HELD physical index model cap=2 seed=340413 operations=10000
+HELD physical index model cap=8 seed=33 operations=10000
+HELD physical index model cap=8 seed=39297 operations=10000
+HELD physical index model cap=8 seed=340413 operations=10000
+HELD physical index model cap=64 seed=33 operations=10000
+HELD physical index model cap=64 seed=39297 operations=10000
+HELD physical index model cap=64 seed=340413 operations=10000
+HELD physical index model cap=16384 seed=33 operations=10000
+HELD physical index model cap=16384 seed=39297 operations=10000
+HELD physical index model cap=16384 seed=340413 operations=10000

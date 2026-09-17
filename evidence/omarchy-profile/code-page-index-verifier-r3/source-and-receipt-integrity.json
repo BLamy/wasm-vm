@@ -1,0 +1,129 @@
+{
+  "baseline": "b5308fc4",
+  "candidate": "ff39120a385d31efcbb5021fced43b4bede8fa9f",
+  "cacheSourceDigests": {
+    "b5308fc4": "1c4df6f4a9a3f031f365f151159850266a09044b12d0bb6aa5eaf76c09470c43",
+    "ff39120a385d31efcbb5021fced43b4bede8fa9f": "40ca730caf80d3099578efe7c2228b59b9c6d35f7f9309ab5e28d1933a842c37"
+  },
+  "exactExtractedCacheSource": true,
+  "stub": "MicroOp is opaque in cache probes; actual-core tests cover guest execution",
+  "logPoints": {
+    "cold-core.log": {
+      "289": "test dispatch::tests::block_cache_page_index_invalidates_only_indexed_live_slots ... ok",
+      "439": "test result: ok. 357 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.22s"
+    },
+    "cold-capacity.log": {
+      "5": "E5-T26k hostile SMC trace: legacy hash=568b64d33599f3f5 retired=20",
+      "8": "E5-T26k capacity=4096: trace/retirement/snapshot identical to legacy",
+      "13": "E5-T26k capacity=16384: trace/retirement/snapshot identical to legacy",
+      "23": "K critic pending patch: entries=16384 selection=16384 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1",
+      "29": "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 349 filtered out; finished in 0.01s"
+    },
+    "cold-node.log": {
+      "60": "\u2139 pass 57",
+      "61": "\u2139 fail 0"
+    },
+    "first-counter.log": {
+      "4": "actual core public invalidation_stats=(1, 2)"
+    },
+    "multiple-generations-counter.log": {
+      "3": "actual core public invalidation_stats=(2, 4)"
+    },
+    "worker-test.log": {
+      "3": "test block_cache_page_index_invalidates_only_indexed_live_slots ... ok",
+      "5": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    "worker-test-sabotage.log": {
+      "3": "test block_cache_page_index_invalidates_only_indexed_live_slots ... FAILED",
+      "7": "---- block_cache_page_index_invalidates_only_indexed_live_slots stdout ----",
+      "9": "thread 'block_cache_page_index_invalidates_only_indexed_live_slots' (28549734) panicked at evidence/omarchy-profile/code-page-index-verifier-r3/worker-test-sabotage.rs:323:9:",
+      "17": "    block_cache_page_index_invalidates_only_indexed_live_slots",
+      "19": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    "sabotage-attacks.log": {
+      "3": "thread 'main' (28549805) panicked at evidence/omarchy-profile/code-page-index-verifier-r3/sabotage-attacks.rs:268:30:"
+    }
+  },
+  "workerEvidence": [
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/run.json",
+      "size": 19967,
+      "sha256": "ebdb12e8525435f7fa0c996c2e4de129aeddabb1cf1fa5c4fa71a2c706d5cc01"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop.log",
+      "size": 3851,
+      "sha256": "2c7e36db417e4f23b205d567f6ab4a3dcef5b63ec4242a3d4cbeb3765212237d"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/desktop-keyboard.png",
+      "size": 10908,
+      "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/desktop.png",
+      "size": 10912,
+      "sha256": "2b9c0a0815e29d5e5385df5ae68cc08539c6919c559d951b6da658db280be155"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/latest.png",
+      "size": 17364,
+      "sha256": "62a87e066f176327c6d77e2d429cb82cf27a8d20f7cade5bd498a004f7f7b091"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/prepared-direct.png",
+      "size": 11336,
+      "sha256": "6f9aa9ba446807c988dc28e89e62919088b97c6a4be668d5eca88f944b44463d"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/report.json",
+      "size": 650170,
+      "sha256": "ae8f484e39bbe94ab04afb31293d8329102ed97a18b1ae88d53f8db0bf3bdd69"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/desktop/serial.log",
+      "size": 3301,
+      "sha256": "2355d1cb35fe1c939dffd4593b2e8219e5119c2debd00f7b3f0bec9715c29971"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/clippy.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/core-lib.log",
+      "size": 30576,
+      "sha256": "348d247cc25f4be078ebbd1cde279e31e1d04117c55089c305478d8633f4f1f2"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/decoded-capacity.log",
+      "size": 1019,
+      "sha256": "98c6384edcccccbc128ec291273a6e32254a26240f1d84a86c3e1cc66fe89282"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/fmt.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/public-counter.log",
+      "size": 45,
+      "sha256": "9b9d8694933f84af143fc0852aa7a03c635e16801d13f3482f8df9c301c068d9"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/public-counter.rs",
+      "size": 866,
+      "sha256": "6f76ec108840fb80edd0d36c2fa0665756d4a18565d72b86d1654258dabc625e"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/wasm-check.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/code-page-index-r3/worker/wasm.sha256",
+      "size": 100,
+      "sha256": "b8748fc602a00c8b58f46eb6c6f64d705ad8c6557339e00bb34aa1f2bd9c05b3"
+    }
+  ]
+}
