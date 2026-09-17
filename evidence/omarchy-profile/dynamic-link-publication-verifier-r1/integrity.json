@@ -1,0 +1,102 @@
+{
+  "head": "d35217b4655d77fe762dd5ca98b98313e928c3c1",
+  "files": [
+    {
+      "path": "crates/core/src/lib.rs",
+      "size": 275985,
+      "sha256": "7fbc23c2be6fe7b72e58dfd9e66e97622a22b0e3111ec4a16558cc945238811b"
+    },
+    {
+      "path": "crates/core/tests/dynamic_link_publication.rs",
+      "size": 3514,
+      "sha256": "90248224a556afa899b768bac73570da87e0aa5bcdb638f0162f6bc803854b3a"
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "size": 97958,
+      "sha256": "1c8c6a7f6f79f505d4a2cf9d567bfe8b41b0f48765bba22abde88fbf059f8937"
+    },
+    {
+      "path": "tools/verify/omarchy-input-audit.mjs",
+      "size": 10506,
+      "sha256": "d1e1e7ba0bc47b6bec954709c16150547f1034e1c8506144fd1ad21fb249ad78"
+    },
+    {
+      "path": "tools/verify/omarchy-input-kernel-response.mjs",
+      "size": 7903,
+      "sha256": "616eb1c4a2e7922e6a0d09d79ccb9c21004759aecb247f09b819d5be0cc5d0c2"
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "size": 8795,
+      "sha256": "addbdfcb9306e7f2434c6fd1a9bd35c3df595024f848bfee800f77e2b1528654"
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.test.mjs",
+      "size": 18873,
+      "sha256": "c5f418099143d5d05a2eb218ba76d206f676ce2507b077eb980ca4128a1535a3"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "size": 1605093,
+      "sha256": "f09e025172e4a426f45133b57fe3bdb59a4cebb5637396840c3fcbc6c63b9918"
+    },
+    {
+      "path": "web/dist/sw.js",
+      "size": 5053,
+      "sha256": "dbffc96579aed513ff0edfafff8b63471323697698daf7feba8d3db348e823eb"
+    }
+  ],
+  "probeDependencyParity": true,
+  "extraPackage": [
+    [
+      "bb-browser-publication-verifier",
+      "0.0.0",
+      null
+    ]
+  ],
+  "rootLockSha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+  "probeLockSha256": "c132d41358680e009fdff1b839ee86d9241fa65d4cd2d4039a7a2f5b1879a4a6",
+  "workerEvidence": [
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/desktop.png",
+      "size": 10912,
+      "sha256": "2b9c0a0815e29d5e5385df5ae68cc08539c6919c559d951b6da658db280be155"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/failure.png",
+      "size": 10908,
+      "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/latest.png",
+      "size": 17364,
+      "sha256": "62a87e066f176327c6d77e2d429cb82cf27a8d20f7cade5bd498a004f7f7b091"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/prepared-direct.png",
+      "size": 11336,
+      "sha256": "6f9aa9ba446807c988dc28e89e62919088b97c6a4be668d5eca88f944b44463d"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/report.json",
+      "size": 828261,
+      "sha256": "2348e4ff6e975a4ca159d468ae1b320165e185aa8905b93b1f331c952fe48ada"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop/serial.log",
+      "size": 4186,
+      "sha256": "55972c2a933ffd3c6e829b628482cdd29f5ba0aaf81d43c52ef648c26def4b7a"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/desktop.log",
+      "size": 5349,
+      "sha256": "37f4e96e4d0794617912eb1e0aa7b9833b4d3d07327549fcd68a1bbc2a627efc"
+    },
+    {
+      "path": "evidence/omarchy-profile/dynamic-link-publication-physical-r2/run.json",
+      "size": 25003,
+      "sha256": "1eeb6c2e111a0e635bbfa8c1a1e7b6b30a7ec052b5ae94368aaf1648f2984d47"
+    }
+  ]
+}

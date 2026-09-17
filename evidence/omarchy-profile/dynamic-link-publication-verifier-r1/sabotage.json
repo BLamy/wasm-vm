@@ -1,0 +1,20 @@
+{
+  "head": "d35217b4655d77fe762dd5ca98b98313e928c3c1",
+  "clone": "/private/tmp/wasm-vm-bb-sabotage-_n633ujd/repo",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "wasm-vm-core",
+    "--test",
+    "dynamic_link_publication",
+    "--",
+    "--nocapture"
+  ],
+  "exit": 101,
+  "expectedFailure": true,
+  "mutation": "Remove only outer dynamic_chaining guard",
+  "logSha256": "67d091756a135f4fd8c57545a915d86b3de9dccfe564814a019fa853d139426f"
+}

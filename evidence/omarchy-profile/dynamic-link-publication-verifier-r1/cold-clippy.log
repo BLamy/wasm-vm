@@ -1,0 +1,95 @@
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+    Checking cfg-if v1.0.4
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+    Checking bitflags v2.13.0
+   Compiling crossbeam-utils v0.8.21
+    Checking typenum v1.20.1
+   Compiling getrandom v0.4.3
+   Compiling serde v1.0.228
+   Compiling autocfg v1.5.1
+   Compiling rustix v1.1.4
+   Compiling zmij v1.0.21
+   Compiling serde_json v1.0.150
+    Checking either v1.16.0
+    Checking regex-syntax v0.8.11
+   Compiling generic-array v0.14.7
+    Checking once_cell v1.21.4
+   Compiling num-traits v0.2.19
+   Compiling rayon-core v1.13.0
+    Checking anstyle v1.0.14
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking clap_lex v1.1.0
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking ciborium-io v0.2.2
+    Checking fastrand v2.4.1
+    Checking clap_builder v4.6.0
+    Checking crossbeam-epoch v0.9.18
+    Checking regex-automata v0.4.14
+    Checking crossbeam-deque v0.8.6
+    Checking itertools v0.10.5
+    Checking cast v0.3.0
+    Checking fnv v1.0.7
+    Checking same-file v1.0.6
+    Checking smallvec v1.15.2
+    Checking quick-error v1.2.3
+    Checking bit-vec v0.8.0
+    Checking walkdir v2.5.0
+    Checking clap v4.6.1
+    Checking oorandom v11.1.5
+    Checking bit-set v0.8.0
+    Checking anes v0.1.6
+    Checking unarray v0.1.4
+    Checking log v0.4.33
+    Checking regex v1.12.4
+    Checking criterion-plot v0.5.0
+   Compiling syn v2.0.118
+    Checking errno v0.3.14
+    Checking cpufeatures v0.2.17
+    Checking wait-timeout v0.2.1
+    Checking is-terminal v0.4.17
+    Checking rand_core v0.9.5
+    Checking rand_xorshift v0.4.0
+    Checking rand v0.9.4
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+    Checking tempfile v3.27.0
+    Checking rusty-fork v0.3.1
+    Checking wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-bb-cold-_fx08tec/repo/crates/core)
+    Checking rayon v1.12.0
+    Checking tinytemplate v1.2.1
+    Checking half v2.7.1
+    Checking ppv-lite86 v0.2.21
+    Checking rand_chacha v0.9.0
+    Checking ciborium-ll v0.2.2
+    Checking proptest v1.11.0
+    Checking ciborium v0.2.2
+    Checking criterion v0.5.1
+error[E0432]: unresolved import `wasm_vm_core::trace::VecSink`
+   --> crates/core/examples/retirement_capture_baseline.rs:22:5
+    |
+ 22 | use wasm_vm_core::trace::VecSink;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `VecSink` in `trace`
+    |
+note: found an item that was configured out
+   --> crates/core/src/trace.rs:190:12
+    |
+188 | #[cfg(feature = "trace")]
+    |       ----------------- the item is gated behind the `trace` feature
+189 | #[derive(Default)]
+190 | pub struct VecSink {
+    |            ^^^^^^^
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `wasm-vm-core` (example "retirement_capture_baseline") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

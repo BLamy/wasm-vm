@@ -1,0 +1,12 @@
+diff --git a/crates/core/src/lib.rs b/crates/core/src/lib.rs
+index e770a61c..94170dcf 100644
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -4437,7 +4437,6 @@ impl Machine {
+                         // are published into the source/edge-local slot when the successor arrives;
+                         // this removes the hash/key probe and keeps invalidation source-local.
+                         if edge.is_none()
+-                            && self.executor.as_ref().is_some_and(|e| e.dynamic_chaining())
+                             && let Some(e) = self.executor.as_mut()
+                         {
+                             e.link_dynamic_target(next_virtual, next_phys);

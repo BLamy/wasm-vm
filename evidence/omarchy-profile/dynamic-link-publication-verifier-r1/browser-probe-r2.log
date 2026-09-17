@@ -1,0 +1,35 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/storage)
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+   Compiling bb-browser-publication-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/dynamic-link-publication-verifier-r1/browser-probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.58s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running boundary.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/boundary-905ff7208bc6c71e.wasm)
+running 2 tests
+Invoking test: machine_toggle_static_chain_and_architecture_match_interpreter
+HELD seed=13 stage=0 dynamic=false installs=0 hits=0 live=0 static_or_dynamic_links=823 jit_calls=839 state=0a484e574eedf9e3
+HELD seed=13 stage=1 dynamic=true installs=1 hits=859 live=1 static_or_dynamic_links=2507 jit_calls=880 state=df92f14ef6527bb8
+HELD seed=13 stage=2 dynamic=false installs=1 hits=859 live=1 static_or_dynamic_links=3362 jit_calls=1750 state=d17d285624ea12f8
+HELD seed=13 stage=3 dynamic=true installs=3 hits=1718 live=2 static_or_dynamic_links=5044 jit_calls=1793 state=45b177b845522589
+HELD seed=197 stage=0 dynamic=false installs=0 hits=0 live=0 static_or_dynamic_links=831 jit_calls=851 state=aa240a8cabbd3757
+HELD seed=197 stage=1 dynamic=true installs=1 hits=859 live=1 static_or_dynamic_links=2515 jit_calls=887 state=38e3b2af25474baa
+HELD seed=197 stage=2 dynamic=false installs=1 hits=859 live=1 static_or_dynamic_links=3365 jit_calls=1757 state=ac85678826cd30f0
+HELD seed=197 stage=3 dynamic=true installs=3 hits=1718 live=2 static_or_dynamic_links=5047 jit_calls=1795 state=161c67d7379bfd12
+HELD seed=39729 stage=0 dynamic=false installs=0 hits=0 live=0 static_or_dynamic_links=823 jit_calls=839 state=0ef8147282e42a39
+HELD seed=39729 stage=1 dynamic=true installs=1 hits=859 live=1 static_or_dynamic_links=2512 jit_calls=875 state=37ca66bce0f8aaa1
+HELD seed=39729 stage=2 dynamic=false installs=1 hits=859 live=1 static_or_dynamic_links=3367 jit_calls=1745 state=dfa30807de5da11b
+HELD seed=39729 stage=3 dynamic=true installs=3 hits=1718 live=2 static_or_dynamic_links=5054 jit_calls=1783 state=502a5a043a83a380
+test machine_toggle_static_chain_and_architecture_match_interpreter ... ok
+Invoking test: later_enable_cannot_hit_forged_authority_and_can_rearm
+HELD forged authority seed=3 refused=1 target_side_effect=0; reenabled valid hit=1 target_side_effect=7
+HELD forged authority seed=19 refused=1 target_side_effect=0; reenabled valid hit=1 target_side_effect=7
+HELD forged authority seed=101 refused=1 target_side_effect=0; reenabled valid hit=1 target_side_effect=7
+test later_enable_cannot_hit_forged_authority_and_can_rearm ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.41s
+
