@@ -1,0 +1,195 @@
+{
+  "passed": true,
+  "head": "9c63ad84b442d62f15ace9b90475552e6b6c0c92",
+  "workerSubmission": "9e6107927d0ef14690e727bb83380a355a044466",
+  "report": {
+    "size": 613616,
+    "sha256": "baa3b655acdf55180d3a19a079d312e3d2a408b4f3e4182032ec78c5548ff03e"
+  },
+  "receipt": {
+    "size": 19548,
+    "sha256": "3f7fcd751ada65aacc6c4f4abdc32d41d4beeb025a359e0898def4ea95131ddc"
+  },
+  "provenance": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "bootSnapshot": {
+      "size": 205400326,
+      "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+    },
+    "overlayDelta": {
+      "size": 1285559,
+      "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    }
+  },
+  "sources": 47,
+  "resources": {
+    "rows": 96,
+    "unique": 73,
+    "gitResources": 67
+  },
+  "url": "http://127.0.0.1:61663/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&decodedCacheEntries=16384&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61663#ide",
+  "priorUrl": "http://127.0.0.1:60931/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A60931#ide",
+  "onlyUrlPolicyChange": "decodedCacheEntries absent (4096 default) -> 16384",
+  "actualRuntime": [
+    {
+      "at": "2026-09-17T02:19:24.825Z",
+      "cap": 1024,
+      "policy": "cap-1024",
+      "decodedCacheEntries": 16384,
+      "decodedBlockBuilds": 2587625,
+      "recycling": {
+        "enabled": true,
+        "epochs": "1",
+        "discardedCounters": "65536",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "guestRetired": 2623977936,
+      "evictions": 823,
+      "retranslations": 1997,
+      "backpressure": 4046,
+      "frames": 3
+    },
+    {
+      "at": "2026-09-17T02:20:46.470Z",
+      "cap": 1024,
+      "policy": "cap-1024",
+      "decodedCacheEntries": 16384,
+      "decodedBlockBuilds": 9233356,
+      "recycling": {
+        "enabled": true,
+        "epochs": "2",
+        "discardedCounters": "131072",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "guestRetired": 6410377466,
+      "evictions": 6227,
+      "retranslations": 24513,
+      "backpressure": 13667,
+      "frames": 5
+    }
+  ],
+  "physical": {
+    "typed": "printf 'cfbffea436913f37' > /tmp/desktop-keys-84d4e3b0880fb74f",
+    "nonce": "cfbffea436913f37",
+    "guestFile": "/tmp/desktop-keys-84d4e3b0880fb74f",
+    "trustedEvents": 128,
+    "trueAcks": 256,
+    "fence": "mu4wk2yt27",
+    "rawCompletion": {
+      "start": 26444,
+      "end": 26468,
+      "index": 1140,
+      "timestamp": "2026-09-17T02:20:31.869Z"
+    },
+    "rawNonceMsAfterEnter": 64348,
+    "recordedNonceMsAfterEnter": 64349,
+    "serialInputNonceAbsent": true,
+    "successfulReadCommand": "printf '\\n__WVBEGIN_mu4wk2yt27\\n'; if [ -f '/tmp/desktop-keys-84d4e3b0880fb74f' ]; then cat '/tmp/desktop-keys-84d4e3b0880fb74f'; else (exit 75); fi; printf '\\n__WVEND_mu4wk2yt27_%s\\n' \"$?\"",
+    "rawSuccessfulFence": "__WVBEGIN_mu4wk2yt27\r\ncfbffea436913f37\r\n__WVEND_mu4wk2yt27_0\r\n",
+    "oneWorker": true,
+    "noPostEnterInput": true,
+    "visibleSerialLog": {
+      "size": 7321,
+      "sha256": "750c8b548ec910ea0ee32b6f5e59293e493442d44641fda1ba444cfe90a2b4e5",
+      "containsNonce": false,
+      "reason": "Quiet RPC replies are in report.workerTraffic, not the visible guest-output serial.log."
+    }
+  },
+  "timing": {
+    "startupMs": 41602,
+    "typingMs": 2696,
+    "imageAt": "2026-09-17T02:20:46.433Z",
+    "imageMsAfterEnter": 78912,
+    "imageMsAfterNonce": 14563,
+    "cleanupMs": 166,
+    "noDiagnosticContinuation": true
+  },
+  "image": {
+    "size": 10908,
+    "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24",
+    "equalToVerifiedStaleBaseline": true,
+    "personallyInspected": true,
+    "visibleResponse": false
+  },
+  "machineAcceptance": true,
+  "desktopAcceptance": false,
+  "unchangedAw4096Audit": true,
+  "attacks": [
+    {
+      "name": "metadata-cache16384-but-runtime4096",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4096 !== 16384\n"
+    },
+    {
+      "name": "final-decoded-cache-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4096 !== 16384\n"
+    },
+    {
+      "name": "metadata-cap1024-but-runtime-cap256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cap-256'\n- 'cap-1024'\n       ^\n"
+    },
+    {
+      "name": "late-runtime-cap-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n24 !== 1024\n"
+    },
+    {
+      "name": "recycling-disabled",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: actual recycling selection disagrees\n\nfalse !== true\n"
+    },
+    {
+      "name": "clock-divider-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 64\n"
+    },
+    {
+      "name": "untrusted-physical-event",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(keys.every(row => row.trusted && row.target === \"ide-display-canvas\" && row.activeElement === \"ide-display-canvas\"))\n"
+    },
+    {
+      "name": "receipt-nonce-only-forged",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: incomplete physical key sequence\n+ actual - expected\n... Skipped lines\n\n  [\n    [\n      'keydown',\n      'KeyP'\n    ],\n...\n      'keydown',\n+     'KeyC'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyC'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyB'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyB'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyE'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyE'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyA'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyA'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit4'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit4'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit6'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit6'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit1'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit1'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit7'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit7'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n      'Quote'\n    ],\n"
+    },
+    {
+      "name": "raw-success-nonce-replaced",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+    },
+    {
+      "name": "late-nonce-claim",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: late nonce acceptance"
+    },
+    {
+      "name": "late-screenshot-claim",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(report.trial.responseImageCapturedAt) <= Date.parse(report.trial.captureDeadlineAt))\n"
+    },
+    {
+      "name": "readiness-probe-route",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "machine-pass-promoted-to-visible-success",
+      "rejected": true,
+      "gate": "independent visual evidence check; shared audit intentionally proves machine acceptance only",
+      "error": "AssertionError [ERR_ASSERTION]: claimed visible response is exactly the independently inspected empty-prompt baseline"
+    }
+  ],
+  "workerEvidenceFiles": 8
+}
