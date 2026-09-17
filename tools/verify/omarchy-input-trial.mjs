@@ -19,16 +19,24 @@ function residencyForArm(arm) {
     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
 }
 
+function residencyForExperiment(experiment, arm) {
+  if (experiment === "prepared-cap-1024") {
+    assert.equal(arm, "candidate", "prepared cap-1024 has one fixed candidate");
+    return { jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024 };
+  }
+  return residencyForArm(arm);
+}
+
 export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, timeout, experiment = "recycling" }) {
   assert.equal(urlArg, "local", "input-trial requires local (never production)");
   assert.ok(pair && chunks, "input-trial requires the pinned R3 pair and chunks");
   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
-  assert.ok(["recycling", "residency", "prepared-recycling"].includes(experiment), "unsupported input-trial experiment");
-  if (experiment === "prepared-recycling") assert.equal(arm, "candidate", "prepared recycling has one fixed candidate");
+  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024"].includes(experiment), "unsupported input-trial experiment");
+  if (["prepared-recycling", "prepared-cap-1024"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
   return { arm, recycling: experiment !== "residency" && arm === "candidate",
-    ...(experiment !== "recycling" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+    ...(experiment !== "recycling" ? { experiment, ...residencyForExperiment(experiment, arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
 }
@@ -41,10 +49,10 @@ export function inputTrialUrl(input, options) {
   url.searchParams.set("omarchyDivider", "64");
   url.searchParams.set("jit", "1");
   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
-  if (["residency", "prepared-recycling"].includes(options.experiment)) {
-    assert.equal(options.recycling, options.experiment === "prepared-recycling", "experiment recycling selection disagrees");
-    if (options.experiment === "prepared-recycling") assert.equal(options.arm, "candidate");
-    url.searchParams.set("jitResidency", residencyForArm(options.arm).jitResidencyPolicy);
+  if (["residency", "prepared-recycling", "prepared-cap-1024"].includes(options.experiment)) {
+    assert.equal(options.recycling, options.experiment !== "residency", "experiment recycling selection disagrees");
+    if (["prepared-recycling", "prepared-cap-1024"].includes(options.experiment)) assert.equal(options.arm, "candidate");
+    url.searchParams.set("jitResidency", options.jitResidencyPolicy);
   }
   return url;
 }
@@ -69,10 +77,11 @@ export function assertInputTrialRuntime(state, options) {
     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
   }
   assert.equal(jit.decodedCacheEntries, 4096);
-  const residency = ["residency", "prepared-recycling"].includes(options.experiment) ? residencyForArm(options.arm)
+  const residency = ["residency", "prepared-recycling", "prepared-cap-1024"].includes(options.experiment)
+    ? { jitResidencyPolicy: options.jitResidencyPolicy, jitResidencyCap: options.jitResidencyCap }
     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
   if (options.experiment === "residency") assert.equal(options.recycling, false);
-  if (options.experiment === "prepared-recycling") {
+  if (["prepared-recycling", "prepared-cap-1024"].includes(options.experiment)) {
     assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
   }
   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
