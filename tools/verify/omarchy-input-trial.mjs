@@ -20,7 +20,7 @@ function residencyForArm(arm) {
 }
 
 function residencyForExperiment(experiment, arm) {
-  if (["prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(experiment)) {
+  if (["prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment)) {
     assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
     return { jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024 };
   }
@@ -33,11 +33,12 @@ export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, tim
   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
-  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(experiment), "unsupported input-trial experiment");
-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
+  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment), "unsupported input-trial experiment");
+  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
   return { arm, recycling: experiment !== "residency" && arm === "candidate",
     ...(experiment !== "recycling" ? { experiment, ...residencyForExperiment(experiment, arm),
-      ...(experiment === "prepared-cap-1024-cache16384" ? { decodedCacheEntries: 16384 } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+      ...(experiment === "prepared-cap-1024-cache16384" || experiment === "prepared-cap-1024-cache16384-no-jalr" ? { decodedCacheEntries: 16384 } : {}),
+      ...(experiment === "prepared-cap-1024-cache16384-no-jalr" ? { jitDynamicChaining: false, jitRegionChaining: true } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
 }
@@ -50,12 +51,13 @@ export function inputTrialUrl(input, options) {
   url.searchParams.set("omarchyDivider", "64");
   url.searchParams.set("jit", "1");
   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
-  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(options.experiment)) {
+  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) {
     assert.equal(options.recycling, options.experiment !== "residency", "experiment recycling selection disagrees");
-    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(options.experiment)) assert.equal(options.arm, "candidate");
+    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) assert.equal(options.arm, "candidate");
     url.searchParams.set("jitResidency", options.jitResidencyPolicy);
   }
   if (options.decodedCacheEntries !== undefined) url.searchParams.set("decodedCacheEntries", String(options.decodedCacheEntries));
+  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr") url.searchParams.set("jalr", "0");
   return url;
 }
 
@@ -79,15 +81,19 @@ export function assertInputTrialRuntime(state, options) {
     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
   }
   assert.equal(jit.decodedCacheEntries, options.decodedCacheEntries ?? 4096);
-  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(options.experiment)
+  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)
     ? { jitResidencyPolicy: options.jitResidencyPolicy, jitResidencyCap: options.jitResidencyCap }
     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
   if (options.experiment === "residency") assert.equal(options.recycling, false);
-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(options.experiment)) {
+  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) {
     assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
   }
   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
   assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
+  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr") {
+    assert.equal(jit.jitDynamicChaining, false);
+    assert.equal(jit.jitRegionChaining, true);
+  }
   assert.equal(jit.entryCost?.timingEnabled, false);
   assert.equal(state.clock?.mode, "icount");
   assert.equal(state.clock?.clockDiv, 64);

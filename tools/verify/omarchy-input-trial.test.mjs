@@ -13,6 +13,8 @@ const preparedCap1024Options = arm => inputTrialOptions({ urlArg: "local", pair:
   renderer: null, lp: null, experiment: "prepared-cap-1024" });
 const preparedCap1024CacheOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384" });
+const preparedCap1024CacheNoJalrOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+  renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-jalr" });
 test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
   const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
   assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
@@ -80,6 +82,33 @@ test("prepared cap-1024 decoded-cache candidate selects only the existing 16384-
     entryCost: { timingEnabled: false } }, clock: { mode: "icount", clockDiv: 64 } };
   assertInputTrialRuntime(state, trial);
   for (const [key, value] of [["decodedCacheEntries", 4096], ["jitResidencyCap", 256], ["jitResidencyPolicy", "cap-256"]]) {
+    const bad = structuredClone(state); bad.jit[key] = value; assert.throws(() => assertInputTrialRuntime(bad, trial));
+  }
+});
+test("prepared cap-1024 decoded-cache JALR-off candidate changes only jalr", () => {
+  const trial = preparedCap1024CacheNoJalrOptions("candidate");
+  assert.deepEqual(trial, { arm: "candidate", recycling: true, experiment: "prepared-cap-1024-cache16384-no-jalr",
+    jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024, decodedCacheEntries: 16384,
+    jitDynamicChaining: false, jitRegionChaining: true,
+    startupMs: 300000, typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
+  assert.throws(() => preparedCap1024CacheNoJalrOptions("control"));
+  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
+  const url = inputTrialUrl(base, trial);
+  assert.equal(url.searchParams.get("jitResidency"), "cap-1024");
+  assert.equal(url.searchParams.get("decodedCacheEntries"), "16384");
+  assert.equal(url.searchParams.get("jitColdCounterRecycling"), "1");
+  assert.equal(url.searchParams.get("jalr"), "0");
+  const ax = inputTrialUrl(base, preparedCap1024CacheOptions("candidate"));
+  const axParams = [...ax.searchParams.entries()].filter(([key]) => key !== "jalr");
+  assert.deepEqual([...url.searchParams.entries()].filter(([key]) => key !== "jalr"), axParams);
+  const state = { jit: { hasExecutor: true, admissionProbe: false,
+    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
+    decodedCacheEntries: 16384, jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024,
+    jitDynamicChaining: false, jitRegionChaining: true, entryCost: { timingEnabled: false } },
+    clock: { mode: "icount", clockDiv: 64 } };
+  assertInputTrialRuntime(state, trial);
+  for (const [key, value] of [["jitDynamicChaining", true], ["jitRegionChaining", false],
+    ["decodedCacheEntries", 4096], ["jitResidencyCap", 256], ["jitResidencyPolicy", "cap-256"]]) {
     const bad = structuredClone(state); bad.jit[key] = value; assert.throws(() => assertInputTrialRuntime(bad, trial));
   }
 });
