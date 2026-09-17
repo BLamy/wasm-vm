@@ -1,0 +1,10 @@
+Reduced 31885 operations to 9
+0: Insert(2147508450) => baseline=(0, 0) candidate=(0, 0)
+1: Flush => baseline=(1, 0) candidate=(1, 0)
+2: Insert(2147508318) => baseline=(1, 0) candidate=(1, 0)
+3: Page(524294) => baseline=(1, 2) candidate=(1, 2)
+4: Insert(2147508322) => baseline=(1, 2) candidate=(1, 2)
+5: Flush => baseline=(2, 2) candidate=(2, 2)
+6: Insert(2147508366) => baseline=(2, 2) candidate=(2, 2)
+7: Insert(2147487980) => baseline=(2, 2) candidate=(2, 2)
+8: Page(524294) => baseline=(2, 4) candidate=(2, 3)

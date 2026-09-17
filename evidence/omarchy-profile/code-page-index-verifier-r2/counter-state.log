@@ -1,0 +1,19 @@
+Reduced 31885 operations to 9
+0: Insert(2147508450) => baseline=(0, 0) candidate=(0, 0)
+  candidate gen=1 stale={} slots=[(0, "0x800060e2", 1)]
+1: Flush => baseline=(1, 0) candidate=(1, 0)
+  candidate gen=2 stale={524294: 1} slots=[(0, "0x800060e2", 1)]
+2: Insert(2147508318) => baseline=(1, 0) candidate=(1, 0)
+  candidate gen=2 stale={524294: 1} slots=[(0, "0x800060e2", 1), (3, "0x8000605e", 2)]
+3: Page(524294) => baseline=(1, 2) candidate=(1, 2)
+  candidate gen=2 stale={} slots=[(0, "0x800060e2", 1)]
+4: Insert(2147508322) => baseline=(1, 2) candidate=(1, 2)
+  candidate gen=2 stale={} slots=[(0, "0x800060e2", 1), (1, "0x80006062", 2)]
+5: Flush => baseline=(2, 2) candidate=(2, 2)
+  candidate gen=3 stale={524294: 1} slots=[(0, "0x800060e2", 1), (1, "0x80006062", 2)]
+6: Insert(2147508366) => baseline=(2, 2) candidate=(2, 2)
+  candidate gen=3 stale={524294: 1} slots=[(0, "0x800060e2", 1), (1, "0x80006062", 2), (3, "0x8000608e", 3)]
+7: Insert(2147487980) => baseline=(2, 2) candidate=(2, 2)
+  candidate gen=3 stale={} slots=[(0, "0x800010ec", 3), (1, "0x80006062", 2), (3, "0x8000608e", 3)]
+8: Page(524294) => baseline=(2, 4) candidate=(2, 3)
+  candidate gen=3 stale={} slots=[(0, "0x800010ec", 3), (1, "0x80006062", 2)]

@@ -1,0 +1,3 @@
+HELD same-page replacement, target retention, reinsertion, generation flush
+HELD forged index pointing at unrelated page preserves block and count
+HELD missing index is a map miss; no fallback scan

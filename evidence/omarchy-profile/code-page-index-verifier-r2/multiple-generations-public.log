@@ -1,0 +1,11 @@
+     Locking 15 packages to latest Rust 1.96.0 compatible versions
+   Compiling ba-r2-counter-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/code-page-index-verifier-r2/public-counter)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.45s
+     Running `target/debug/ba-r2-counter-verifier`
+actual core public invalidation_stats=(2, 3)
+
+thread 'main' (28505706) panicked at main.rs:19:5:
+assertion `left == right` failed: consumed stale slot must not decrement a later stale generation's count
+  left: (2, 3)
+ right: (2, 4)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

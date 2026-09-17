@@ -1,0 +1,5 @@
+HELD same-page replacement, target retention, reinsertion, generation flush
+
+thread 'main' (28506007) panicked at evidence/omarchy-profile/code-page-index-verifier-r2/sabotage-attacks.rs:280:31:
+forged valid index must not discard other page
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
