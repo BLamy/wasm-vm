@@ -497,7 +497,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03az)*
 - [x] `525.02705` [E5.5-T03ay](epic-5.5-omarchy/E5.5-T03ay-late-cache16384-response.md) — Measure late visible response after the expanded decoded cache *(deps: E5.5-T03ax)*
 - [x] `525.02706` [E5.5-T03az](epic-5.5-omarchy/E5.5-T03az-jalr-off-trial.md) — Test cap-1024 decoded-cache execution without dynamic JALR chaining *(deps: E5.5-T03ay)*
-- [~] `525.02707` [E5.5-T03ba](epic-5.5-omarchy/E5.5-T03ba-code-page-index.md) — Remove decoded-cache page-scan cost from the Omarchy hot path *(deps: E5.5-T03az)*
+- [?] `525.02707` [E5.5-T03ba](epic-5.5-omarchy/E5.5-T03ba-code-page-index.md) — Remove decoded-cache page-scan cost from the Omarchy hot path *(deps: E5.5-T03az)*
 - [b] `525.03` [E5.5-T03a](epic-5.5-omarchy/E5.5-T03a-lean-desktop-profile.md) — Prepare the clean Omarchy browser desktop session *(deps: E5.5-T02a, E5.5-T03q)*
 - [ ] `525.04` [E5.5-T04a](epic-5.5-omarchy/E5.5-T04a-browser-demo.md) — Make the verified Omarchy desktop the browser demo *(deps: E5.5-T03a)*
 - [ ] `525.05` [E5.5-T04b](epic-5.5-omarchy/E5.5-T04b-pages-release.md) — Publish the verified Omarchy demo to existing Cloudflare Pages *(deps: E5.5-T04a)*
