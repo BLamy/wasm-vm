@@ -13,13 +13,15 @@ import { INPUT_BUFFER_PREPARED_IDENTITIES, INPUT_BUFFER_PREPARED_RECORD_SHA256,
 import { auditInputKernelResponse } from "./omarchy-input-kernel-response-audit.mjs";
 import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
 import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
 
-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe"].includes(process.argv[4])),
-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe]");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe"].includes(process.argv[4])),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
 const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
-const displayPixelProbe = process.argv[4] === "--display-pixel-probe";
+const displayLateProbe = process.argv[4] === "--display-late-probe";
+const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
 const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
@@ -45,11 +47,12 @@ Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_E
   OMARCHY_PREPARED_DIRECT: "1", OMARCHY_INPUT_KERNEL_PREPARED: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
   OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
 if (displayPixelProbe) env.OMARCHY_DISPLAY_PIXEL_PROBE = "1";
+if (displayLateProbe) env.OMARCHY_DISPLAY_LATE_PROBE = "1";
 receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
 const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
 const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
 child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
-receipt.exit = await watchOwnedTrial(child);
+receipt.exit = await watchOwnedTrial(child, { postVerdictCaptureMs: displayLateProbe ? DISPLAY_LATE_MS : 0 });
 child.stdout.unpipe(log); child.stderr.unpipe(log); await new Promise(resolve => log.end(resolve));
 receipt.finishedAt = new Date().toISOString(); await save();
 if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
@@ -59,8 +62,9 @@ if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
 try {
   const bytes = await fs.readFile(path.join(out, "desktop/report.json")), report = JSON.parse(bytes);
   receipt.reportSha256 = sha(bytes);
-  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe }));
+  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe, displayLateProbe }));
   if (displayPixelProbe) receipt.displayPixels = await auditDisplayPixelProbe(report, path.join(out, "desktop"));
+  if (displayLateProbe) receipt.lateDisplay = await auditLateDisplay(report, path.join(out, "desktop"));
   receipt.result = report.result;
   receipt.machineAcceptance = receipt.input.machineAcceptance;
   assert.equal(receipt.exit.code, receipt.machineAcceptance ? 0 : 1);

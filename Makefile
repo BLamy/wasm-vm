@@ -1745,3 +1745,8 @@ verify-E5_5-T03at: verify-E5_5-T03at-device
 verify-E5_5-T03au:
 	node --test tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_PIXEL_OUT),evidence/omarchy-profile/display-pixel-boundary-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-pixel-probe
+
+.PHONY: verify-E5_5-T03av
+verify-E5_5-T03av:
+	node --test tools/verify/omarchy-display-late-probe.test.mjs tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_LATE_OUT),evidence/omarchy-profile/display-late-response-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-late-probe

@@ -5,9 +5,12 @@ import { INPUT_BUFFER_PREPARED_FOOT, INPUT_BUFFER_RESPONSE_WASM } from "./omarch
 import { assertInputKernelNotes, INPUT_BUFFER_NOTES_COMMAND } from "./omarchy-input-kernel-state.mjs";
 import { assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
 
-export function auditInputKernelResponse(report, head, { wasmSha256 = INPUT_BUFFER_RESPONSE_WASM, displayPixelProbe = false } = {}) {
+export function auditInputKernelResponse(report, head, { wasmSha256 = INPUT_BUFFER_RESPONSE_WASM,
+  displayPixelProbe = false, displayLateProbe = false } = {}) {
   assert.match(wasmSha256, /^[a-f0-9]{64}$/u);
   assert.equal(report.displayPixelProbeRequested === true, displayPixelProbe);
+  assert.equal(report.displayLateProbeRequested === true, displayLateProbe);
+  if (displayLateProbe) assert.equal(displayPixelProbe, true);
   const input = auditInputReport(report, { head, wasmSha256, inputKernelWasmSha256: wasmSha256, arm: "candidate",
     preparedDirect: true, preparedRecycling: true, inputKernelPrepared: true,
     startupCommands: [INPUT_BUFFER_NOTES_COMMAND, PREPARED_DIRECT_COMMAND] });

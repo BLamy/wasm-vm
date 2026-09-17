@@ -34,6 +34,7 @@ import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry
 import { assertInputKernelProvenance, assertInputKernelSource, requestInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
 import { assertInputKernelPreparedSource, INPUT_BUFFER_PREPARED_FOOT } from "./omarchy-input-kernel-response-state.mjs";
 import { installDisplayPixelProbe, collectDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+import { captureLateDisplay } from "./omarchy-display-late-probe.mjs";
 
 const [urlArg, output, mode = "verify"] = process.argv.slice(2);
 if (urlArg === "--selftest-presentation") {
@@ -72,6 +73,9 @@ const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
 const inputKernelRecordPath = process.env.OMARCHY_INPUT_KERNEL_RECORD || null;
 const inputKernelPrepared = process.env.OMARCHY_INPUT_KERNEL_PREPARED === "1";
 const displayPixelProbe = process.env.OMARCHY_DISPLAY_PIXEL_PROBE === "1";
+const displayLateProbe = process.env.OMARCHY_DISPLAY_LATE_PROBE === "1";
+if (process.env.OMARCHY_DISPLAY_LATE_PROBE !== undefined) assert.ok(displayLateProbe && displayPixelProbe,
+  "late display observation requires the isolated pixel diagnostic");
 if (process.env.OMARCHY_DISPLAY_PIXEL_PROBE !== undefined) assert.ok(displayPixelProbe && inputKernelPrepared
   && urlArg === "local" && inputTrial && preparedDirect && !inputObserver && !workerCost && !failureCheckpoint,
   "display pixel probe is an isolated local AR diagnostic");
@@ -476,6 +480,7 @@ if (directOpaque) report.directOpaqueRequested = true;
 if (preparedDirect) report.preparedDirectRequested = true;
 if (inputKernelPrepared) report.inputKernelPrepared = true;
 if (displayPixelProbe) report.displayPixelProbeRequested = true;
+if (displayLateProbe) report.displayLateProbeRequested = true;
 if (inputKernelRecord) report.inputKernel = { provenance: inputKernelRecord,
   filename: path.resolve(inputKernelRecordPath), sha256: createHash("sha256").update(inputKernelRecordBytes).digest("hex") };
 if (coldPair) report.progressCaptureErrors = [];
@@ -505,6 +510,7 @@ if (ownedRecording) {
     "tools/verify/omarchy-input-kernel-response-audit.mjs",
     "tools/verify/omarchy-gpu-transfer-runtime.mjs", "tools/verify/omarchy-gpu-transfer-runtime.json",
     "tools/verify/omarchy-display-pixel-probe.mjs",
+    "tools/verify/omarchy-display-late-probe.mjs",
     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
     "crates/core/src/dev/virtio/gpu",
@@ -1540,6 +1546,10 @@ try {
   } else try { await screenshot("failure.png", failurePage); } catch {}
   console.error(report.error);
 } finally {
+  if (displayLateProbe) {
+    try { await captureLateDisplay(page, out, report); }
+    catch (error) { report.errors.push(`late display observation: ${error}`); process.exitCode = 1; }
+  }
   if (inputObserver) await collectInputObserver((command, timeout, stage) => exec(command, page, stage, timeout), report, out);
   if (ownedRecording) {
     // Every browser object here belongs to this single trial. No shared/user browser is killed.
