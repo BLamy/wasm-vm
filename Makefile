@@ -1755,3 +1755,8 @@ verify-E5_5-T03av:
 verify-E5_5-T03aw:
 	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(CAP1024_OUT),evidence/omarchy-profile/residency-cap1024-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024
+
+.PHONY: verify-E5_5-T03ax
+verify-E5_5-T03ax:
+	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DECODED_CACHE_OUT),evidence/omarchy-profile/residency-decoded-cache16384-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024-cache16384

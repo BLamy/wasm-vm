@@ -15,14 +15,17 @@ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
 import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
 import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
 
-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024"].includes(process.argv[4])),
-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024]");
+assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384"].includes(process.argv[4])),
+  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384]");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
 const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
 const displayLateProbe = process.argv[4] === "--display-late-probe";
 const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
 const preparedCap1024 = process.argv[4] === "--prepared-cap-1024";
+const preparedCap1024Cache16384 = process.argv[4] === "--prepared-cap-1024-cache16384";
+const experiment = preparedCap1024Cache16384 ? "prepared-cap-1024-cache16384"
+  : preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling";
 const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
@@ -35,7 +38,7 @@ assert.equal(sha(await fs.readFile(preparedRecord)), INPUT_BUFFER_PREPARED_RECOR
 assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), wasmSha256);
 await fs.mkdir(out, { recursive: false });
 const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: false, visualInspectionRequired: true,
-  diagnosticOnly: displayPixelProbe, experiment: preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling",
+  diagnosticOnly: displayPixelProbe, experiment,
   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   wasmSha256, gpuRuntime: gpuRuntime?.record ?? null, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
@@ -44,7 +47,7 @@ const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(recei
 await save();
 const env = { ...process.env };
 for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[key];
-Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling",
+Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: experiment,
   OMARCHY_PREPARED_DIRECT: "1", OMARCHY_INPUT_KERNEL_PREPARED: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
   OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
 if (displayPixelProbe) env.OMARCHY_DISPLAY_PIXEL_PROBE = "1";
@@ -63,8 +66,7 @@ if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
 try {
   const bytes = await fs.readFile(path.join(out, "desktop/report.json")), report = JSON.parse(bytes);
   receipt.reportSha256 = sha(bytes);
-  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe, displayLateProbe,
-    experiment: preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling" }));
+  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe, displayLateProbe, experiment }));
   if (displayPixelProbe) receipt.displayPixels = await auditDisplayPixelProbe(report, path.join(out, "desktop"));
   if (displayLateProbe) receipt.lateDisplay = await auditLateDisplay(report, path.join(out, "desktop"));
   receipt.result = report.result;

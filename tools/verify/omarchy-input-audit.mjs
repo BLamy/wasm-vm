@@ -27,7 +27,7 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
   assert.equal(report.trial.scopedStatus, "");
   assert.equal(report.trial.arm, arm);
   const experiment = requestedExperiment ?? (preparedRecycling ? "prepared-recycling" : "residency");
-  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024"].includes(experiment));
+  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384"].includes(experiment));
   assert.equal(report.trial.experiment, experiment);
   assert.equal(report.trial.recycling, preparedRecycling);
   const options = inputTrialOptions({ urlArg: "local", pair: "pinned", chunks: "pinned", arm,

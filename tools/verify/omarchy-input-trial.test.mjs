@@ -11,6 +11,8 @@ const preparedRecyclingOptions = arm => inputTrialOptions({ urlArg: "local", pai
   renderer: null, lp: null, experiment: "prepared-recycling" });
 const preparedCap1024Options = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
   renderer: null, lp: null, experiment: "prepared-cap-1024" });
+const preparedCap1024CacheOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+  renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384" });
 test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
   const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
   assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
@@ -59,6 +61,26 @@ test("prepared cap-1024 selects only the existing larger residency policy", () =
   for (const bad of [24, 256]) {
     const mutated = structuredClone(state); mutated.jit.jitResidencyCap = bad;
     assert.throws(() => assertInputTrialRuntime(mutated, trial));
+  }
+});
+test("prepared cap-1024 decoded-cache candidate selects only the existing 16384-entry cache", () => {
+  const trial = preparedCap1024CacheOptions("candidate");
+  assert.deepEqual(trial, { arm: "candidate", recycling: true, experiment: "prepared-cap-1024-cache16384",
+    jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024, decodedCacheEntries: 16384,
+    startupMs: 300000, typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
+  assert.throws(() => preparedCap1024CacheOptions("control"));
+  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
+  const url = inputTrialUrl(base, trial);
+  assert.equal(url.searchParams.get("jitResidency"), "cap-1024");
+  assert.equal(url.searchParams.get("decodedCacheEntries"), "16384");
+  assert.equal(url.searchParams.get("jitColdCounterRecycling"), "1");
+  const state = { jit: { hasExecutor: true, admissionProbe: false,
+    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
+    decodedCacheEntries: 16384, jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024,
+    entryCost: { timingEnabled: false } }, clock: { mode: "icount", clockDiv: 64 } };
+  assertInputTrialRuntime(state, trial);
+  for (const [key, value] of [["decodedCacheEntries", 4096], ["jitResidencyCap", 256], ["jitResidencyPolicy", "cap-256"]]) {
+    const bad = structuredClone(state); bad.jit[key] = value; assert.throws(() => assertInputTrialRuntime(bad, trial));
   }
 });
 test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
