@@ -1,0 +1,227 @@
+{
+  "passed": true,
+  "head": "5fe078326662f22ece9451123cb54387b1ff2b05",
+  "workerSubmission": "901f917e28f08420e7d1a2359100dab8a2a252fa",
+  "report": {
+    "size": 649875,
+    "sha256": "4abcfd8abd5537cff214089b77e6bbe81932987edc4d6315f0bea2e7f5b2c2a4"
+  },
+  "receipt": {
+    "size": 20262,
+    "sha256": "6fc27ec7b9e8c066f3d3efc9264326ae673939e7fe9382f3dc8dd8e6a0947531"
+  },
+  "provenance": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "bootSnapshot": {
+      "size": 205400326,
+      "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+    },
+    "overlayDelta": {
+      "size": 1285559,
+      "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    }
+  },
+  "sources": 47,
+  "resources": {
+    "rows": 96,
+    "unique": 73,
+    "gitResources": 67
+  },
+  "url": "http://127.0.0.1:63515/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A63515#ide",
+  "priorUrl": "http://127.0.0.1:61663/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&decodedCacheEntries=16384&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61663#ide",
+  "onlyUrlPolicyChange": "jalr absent (enabled default) -> 0",
+  "actualRuntime": [
+    {
+      "at": "2026-09-17T02:56:13.959Z",
+      "cap": 1024,
+      "policy": "cap-1024",
+      "dynamicChaining": false,
+      "regionChaining": true,
+      "dynamicLinkAttempts": 0,
+      "dynamicLinkHits": 0,
+      "dynamicLinkInstalls": 1868434,
+      "decodedCacheEntries": 16384,
+      "decodedBlockBuilds": 2680393,
+      "recycling": {
+        "enabled": true,
+        "epochs": "1",
+        "discardedCounters": "65536",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "guestRetired": 2622978026,
+      "evictions": 827,
+      "retranslations": 2244,
+      "backpressure": 3925,
+      "frames": 3
+    },
+    {
+      "at": "2026-09-17T02:57:48.517Z",
+      "cap": 1024,
+      "policy": "cap-1024",
+      "dynamicChaining": false,
+      "regionChaining": true,
+      "dynamicLinkAttempts": 0,
+      "dynamicLinkHits": 0,
+      "dynamicLinkInstalls": 15037005,
+      "decodedCacheEntries": 16384,
+      "decodedBlockBuilds": 10175549,
+      "recycling": {
+        "enabled": true,
+        "epochs": "2",
+        "discardedCounters": "131072",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "guestRetired": 6504369872,
+      "evictions": 6630,
+      "retranslations": 26445,
+      "backpressure": 14665,
+      "frames": 5
+    }
+  ],
+  "physical": {
+    "typed": "printf '7dd0ac2ffe349859' > /tmp/desktop-keys-876f07ecae836bde",
+    "nonce": "7dd0ac2ffe349859",
+    "guestFile": "/tmp/desktop-keys-876f07ecae836bde",
+    "trustedEvents": 128,
+    "trueAcks": 256,
+    "fence": "mu4xvow229",
+    "rawCompletion": {
+      "start": 31655,
+      "end": 31695,
+      "index": 1230,
+      "timestamp": "2026-09-17T02:57:33.464Z"
+    },
+    "rawNonceMsAfterEnter": 76840,
+    "recordedNonceMsAfterEnter": 76843,
+    "serialInputNonceAbsent": true,
+    "successfulReadCommand": "printf '\\n__WVBEGIN_mu4xvow229\\n'; if [ -f '/tmp/desktop-keys-876f07ecae836bde' ]; then cat '/tmp/desktop-keys-876f07ecae836bde'; else (exit 75); fi; printf '\\n__WVEND_mu4xvow229_%s\\n' \"$?\"",
+    "rawSuccessfulFence": "__WVBEGIN_mu4xvow229\r\n7dd0ac2ffe349859\r\n__WVEND_mu4xvow229_0\r\n",
+    "oneWorker": true,
+    "noPostEnterInput": true,
+    "visibleSerialLog": {
+      "size": 3624,
+      "sha256": "100569f46b339aeba54134b3e96335b7f77d991a4b36d617549e444a7013f647",
+      "containsNonce": true,
+      "reason": "The independently reconstructed raw worker fence is authoritative; visible-output logging is supplementary."
+    }
+  },
+  "timing": {
+    "startupMs": 44240,
+    "typingMs": 2665,
+    "imageAt": "2026-09-17T02:57:48.501Z",
+    "imageMsAfterEnter": 91877,
+    "imageMsAfterNonce": 15034,
+    "cleanupMs": 195,
+    "noDiagnosticContinuation": true
+  },
+  "image": {
+    "size": 10908,
+    "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24",
+    "equalToVerifiedStaleBaseline": true,
+    "personallyInspected": true,
+    "visibleResponse": false
+  },
+  "machineAcceptance": true,
+  "desktopAcceptance": false,
+  "unchangedAxAudit": true,
+  "attacks": [
+    {
+      "name": "restore-jalr-one",
+      "gate": "independent complete-URL comparison",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: candidate must disable dynamic JALR\n\n'1' !== '0'\n"
+    },
+    {
+      "name": "disable-static-region",
+      "gate": "independent complete-URL comparison",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: other AX URL setting changed\n+ actual - expected\n\n+ 'http://127.0.0.1:1/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&decodedCacheEntries=16384&region=0#ide'\n- 'http://127.0.0.1:1/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitColdCounterRecycling=1&jitResidency=cap-1024&decodedCacheEntries=16384#ide'\n"
+    },
+    {
+      "name": "runtime-dynamic-chaining-restored",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "runtime-region-chaining-disabled",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "name": "metadata-cache16384-but-runtime4096",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4096 !== 16384\n"
+    },
+    {
+      "name": "final-decoded-cache-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4096 !== 16384\n"
+    },
+    {
+      "name": "metadata-cap1024-but-runtime-cap256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cap-256'\n- 'cap-1024'\n       ^\n"
+    },
+    {
+      "name": "late-runtime-cap-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n24 !== 1024\n"
+    },
+    {
+      "name": "recycling-disabled",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: actual recycling selection disagrees\n\nfalse !== true\n"
+    },
+    {
+      "name": "clock-divider-drift",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 64\n"
+    },
+    {
+      "name": "untrusted-physical-event",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(keys.every(row => row.trusted && row.target === \"ide-display-canvas\" && row.activeElement === \"ide-display-canvas\"))\n"
+    },
+    {
+      "name": "receipt-nonce-only-forged",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: incomplete physical key sequence\n+ actual - expected\n... Skipped lines\n\n  [\n    [\n      'keydown',\n      'KeyP'\n    ],\n...\n      'keydown',\n+     'Digit7'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit7'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyD'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyD'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyD'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyD'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n      'Digit0'\n    ],\n...\n      'keydown',\n+     'KeyA'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyA'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyC'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyC'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit2'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit2'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyF'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'KeyE'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'KeyE'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit3'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit4'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit4'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit8'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit8'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit5'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit5'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keyup',\n+     'Digit9'\n-     'Digit0'\n    ],\n    [\n      'keydown',\n      'Quote'\n    ],\n"
+    },
+    {
+      "name": "raw-success-nonce-replaced",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+    },
+    {
+      "name": "late-nonce-claim",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: late nonce acceptance"
+    },
+    {
+      "name": "late-screenshot-claim",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(report.trial.responseImageCapturedAt) <= Date.parse(report.trial.captureDeadlineAt))\n"
+    },
+    {
+      "name": "readiness-probe-route",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "machine-pass-promoted-to-visible-success",
+      "rejected": true,
+      "gate": "independent visual evidence check; shared audit intentionally proves machine acceptance only",
+      "error": "AssertionError [ERR_ASSERTION]: claimed visible response is exactly the independently inspected empty-prompt baseline"
+    }
+  ],
+  "workerEvidenceFiles": 10
+}
