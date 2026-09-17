@@ -1,0 +1,18 @@
+HELD same-page replacement, target retention, reinsertion, generation flush
+HELD forged index pointing at unrelated page preserves block and count
+HELD missing index is a map miss; no fallback scan
+HELD indexed live-slot model cap=1 seed=311 operations=10000
+HELD indexed live-slot model cap=1 seed=912559 operations=10000
+HELD indexed live-slot model cap=1 seed=520205 operations=10000
+HELD indexed live-slot model cap=2 seed=311 operations=10000
+HELD indexed live-slot model cap=2 seed=912559 operations=10000
+HELD indexed live-slot model cap=2 seed=520205 operations=10000
+HELD indexed live-slot model cap=8 seed=311 operations=10000
+HELD indexed live-slot model cap=8 seed=912559 operations=10000
+HELD indexed live-slot model cap=8 seed=520205 operations=10000
+HELD indexed live-slot model cap=64 seed=311 operations=10000
+HELD indexed live-slot model cap=64 seed=912559 operations=10000
+HELD indexed live-slot model cap=64 seed=520205 operations=10000
+HELD indexed live-slot model cap=16384 seed=311 operations=10000
+HELD indexed live-slot model cap=16384 seed=912559 operations=10000
+HELD indexed live-slot model cap=16384 seed=520205 operations=10000

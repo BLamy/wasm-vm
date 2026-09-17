@@ -1,0 +1,19 @@
+     Locking 15 packages to latest Rust 1.96.0 compatible versions
+   Compiling libc v0.2.189
+   Compiling smallvec v1.16.0
+   Compiling bitflags v2.13.1
+   Compiling log v0.4.34
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling ba-public-counter-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/code-page-index-verifier/public-counter)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.02s
+     Running `target/debug/ba-public-counter-verifier`
+actual core public invalidation_stats=(1, 1)
+
+thread 'main' (28470892) panicked at main.rs:14:5:
+assertion `left == right` failed: task requires baseline counter parity
+  left: (1, 1)
+ right: (1, 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

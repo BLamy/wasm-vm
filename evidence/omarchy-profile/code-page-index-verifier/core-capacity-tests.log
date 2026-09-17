@@ -1,0 +1,30 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 8 tests
+E5-T26k hostile SMC trace: legacy hash=568b64d33599f3f5 retired=20
+K critic pending patch: entries=4096 selection=4096 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+E5-T26k capacity=4096: trace/retirement/snapshot identical to legacy
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+K critic pending patch: entries=4096 selection=4096 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+K critic pending patch: entries=4096 selection=4096 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+E5-T26k capacity=16384: trace/retirement/snapshot identical to legacy
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+K critic pending patch: entries=4096 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=4096 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... ok
+K critic pending patch: entries=4096 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+K critic pending patch: entries=16384 selection=16384 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=16384 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+K critic pending patch: entries=16384 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 349 filtered out; finished in 0.01s
+
