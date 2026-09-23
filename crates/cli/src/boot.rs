@@ -733,12 +733,40 @@ pub fn print_jit_stats(m: &Machine) {
         "jit_pause: samples={} sum_ns={} max_ns={} over_target={}",
         pause.count, pause.sum_ns, pause.max_ns, pause.over_target,
     );
+    // JIT coverage: the share of all retired guest instructions that executed in compiled code,
+    // and why the rest did not (translations by outcome + the first-untranslated-op histogram).
+    let retired_total = m.irq_stats().retired;
+    let coverage_pct = if retired_total == 0 {
+        0.0
+    } else {
+        100.0 * retired_via_jit as f64 / retired_total as f64
+    };
+    let tc = m
+        .executor()
+        .map(|e| e.translation_coverage())
+        .unwrap_or_default();
+    eprintln!(
+        "coverage: retired_via_jit={retired_via_jit} retired_total={retired_total} jit_pct={coverage_pct:.2}%  translations: full={} partial={} rejected={} partial_exits={}",
+        tc.full_blocks, tc.partial_blocks, tc.rejected_blocks, tc.partial_exits,
+    );
+    let first: Vec<String> = tc
+        .first_unsupported
+        .iter()
+        .take(16)
+        .map(|(name, count)| format!("{name}={count}"))
+        .collect();
+    eprintln!("first_untranslated_op: {}", first.join(" "));
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
-        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"retired_total\":{},\"blocks_full\":{},\"blocks_partial\":{},\"blocks_rejected\":{},\"partial_exits\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
         compiled,
         executed,
         retired_via_jit,
+        retired_total,
+        tc.full_blocks,
+        tc.partial_blocks,
+        tc.rejected_blocks,
+        tc.partial_exits,
         chain.links_made,
         chain.dispatch_entries,
         cache.installs,
