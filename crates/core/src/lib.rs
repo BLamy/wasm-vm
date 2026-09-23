@@ -3640,14 +3640,13 @@ impl Machine {
         }
         let Some(clint) = &self.clint else { return };
         if self.tick_accum < self.clock_div {
+            // Branch-free: the tick lands on one retirement in `clock_div`, a period the branch
+            // predictor cannot learn through the interpreter's own branches.
             let next = self.tick_accum + 1;
-            if next == self.clock_div {
-                self.tick_accum = 0;
-                let mut s = clint.borrow_mut();
-                s.mtime = s.mtime.wrapping_add(1);
-            } else {
-                self.tick_accum = next;
-            }
+            let tick = next == self.clock_div;
+            self.tick_accum = if tick { 0 } else { next };
+            let mut s = clint.borrow_mut();
+            s.mtime = s.mtime.wrapping_add(u64::from(tick));
         } else {
             self.advance_clock_by(1);
         }
