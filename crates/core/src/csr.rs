@@ -85,6 +85,9 @@ pub const INSTRET: u16 = 0xC02;
 /// until hardware performance monitors exist, so the corresponding hpmcounter reads always trap
 /// from S/U (their counteren bit can never be set).
 const COUNTEREN_WMASK: u64 = 0b111;
+/// [`Csrs`] per-instruction counter-write suppression bits (E1-T14).
+const WROTE_MCYCLE: u8 = 1 << 0;
+const WROTE_MINSTRET: u8 = 1 << 1;
 /// Test-only probe CSR with an observable read/write hook (side-effect suppression tests).
 pub const PROBE: u16 = 0x7C0; // custom M-mode read/write space
 
@@ -395,11 +398,12 @@ pub struct Csrs {
     /// retired instruction; `cycle`/`instret` are read-only shadows of these.
     mcycle: u64,
     minstret: u64,
-    /// Per-instruction suppression: set when THIS instruction wrote mcycle/minstret, so its own
-    /// retirement does not also increment that counter (Spike: the written value stands). Armed
-    /// (cleared) at each step start and consumed by `retire_tick`.
-    wrote_mcycle: bool,
-    wrote_minstret: bool,
+    /// Per-instruction suppression bits ([`WROTE_MCYCLE`] | [`WROTE_MINSTRET`]): set when THIS
+    /// instruction wrote mcycle/minstret, so its own retirement does not also increment that
+    /// counter (Spike: the written value stands). Armed (cleared) at each step start and consumed
+    /// by `retire_tick`. One byte so the per-instruction arm is a single store and the common
+    /// retire is one test; serialized as the two original bools.
+    counter_writes: u8,
     /// Shadow of the CLINT `mtime` for the unprivileged `time` counter — the machine refreshes
     /// it each instruction boundary (there is no `mtime` CSR; `time` is a window onto the CLINT).
     time: u64,
@@ -456,8 +460,7 @@ impl Csrs {
             warl: WarlStore::new(),
             mcycle: 0,
             minstret: 0,
-            wrote_mcycle: false,
-            wrote_minstret: false,
+            counter_writes: 0,
             time: 0,
             pmp: crate::pmp::Pmp::default(),
             sv48: true, // Sv48 supported by default; a Machine/harness may gate it off.
@@ -527,32 +530,36 @@ impl Csrs {
     /// Zicntr (E1-T14): clear the per-instruction counter-write suppression flags. Called at the
     /// START of each step so only writes performed DURING this instruction's execute suppress its
     /// own retirement increment (a stale flag from a direct/host-side write can't leak into a run).
+    #[inline(always)]
     pub fn arm_counters(&mut self) {
-        self.wrote_mcycle = false;
-        self.wrote_minstret = false;
+        self.counter_writes = 0;
     }
 
     /// Zicntr (E1-T14/E4-T31): advance the retired-instruction counters by `retired`. The JIT may
     /// retire a CSR-free block at once, so this is the bulk-equivalent of repeated
     /// [`Self::retire_tick`] calls. If the current instruction wrote a counter, its write stands and
     /// suppresses the corresponding increment exactly as on the one-instruction interpreter path.
+    #[inline(always)]
     pub(crate) fn retire_span(&mut self, retired: u64) {
-        if !self.wrote_mcycle {
+        let w = self.counter_writes;
+        if w & WROTE_MCYCLE == 0 {
             self.mcycle = self.mcycle.wrapping_add(retired);
         }
-        if !self.wrote_minstret {
+        if w & WROTE_MINSTRET == 0 {
             self.minstret = self.minstret.wrapping_add(retired);
         }
     }
 
     /// Zicntr (E1-T14): advance the counters after one successfully retired instruction. A `csrr`
     /// observes the pre-retire count; a `csrw` to a counter suppresses that counter's own tick.
+    #[inline(always)]
     pub fn retire_tick(&mut self) {
         self.retire_span(1);
     }
 
     /// Refresh the `time` counter's window onto the CLINT `mtime` (E1-T14). The machine calls
     /// this each instruction boundary from the CLINT state, so `time` reads track `mtime`.
+    #[inline(always)]
     pub fn set_time(&mut self, mtime: u64) {
         self.time = mtime;
     }
@@ -986,8 +993,8 @@ impl Csrs {
         self.warl.snapshot_bytes(out);
         out.extend_from_slice(&self.mcycle.to_le_bytes());
         out.extend_from_slice(&self.minstret.to_le_bytes());
-        out.push(self.wrote_mcycle as u8);
-        out.push(self.wrote_minstret as u8);
+        out.push(u8::from(self.counter_writes & WROTE_MCYCLE != 0));
+        out.push(u8::from(self.counter_writes & WROTE_MINSTRET != 0));
         out.extend_from_slice(&self.time.to_le_bytes());
         self.pmp.snapshot_bytes(out);
         out.push(self.sv48 as u8);
@@ -1034,8 +1041,12 @@ impl Csrs {
         c.warl = warl;
         c.mcycle = r.u64()?;
         c.minstret = r.u64()?;
-        c.wrote_mcycle = r.bool()?;
-        c.wrote_minstret = r.bool()?;
+        if r.bool()? {
+            c.counter_writes |= WROTE_MCYCLE;
+        }
+        if r.bool()? {
+            c.counter_writes |= WROTE_MINSTRET;
+        }
         c.time = r.u64()?;
         c.pmp.restore_bytes(r)?;
         c.sv48 = r.bool()?;
@@ -1145,11 +1156,11 @@ impl Csrs {
             // Flag the write so this instruction's own retirement does not re-increment it.
             MCYCLE => {
                 self.mcycle = v;
-                self.wrote_mcycle = true;
+                self.counter_writes |= WROTE_MCYCLE;
             }
             MINSTRET => {
                 self.minstret = v;
-                self.wrote_minstret = true;
+                self.counter_writes |= WROTE_MINSTRET;
             }
             // PMP (E1-T15): route to the unit, which applies WARL legalization + lock enforcement.
             PMPCFG0..=PMPCFG14 if (addr - PMPCFG0).is_multiple_of(2) => {
@@ -1350,6 +1361,38 @@ mod tests {
         let mut got = alloc::vec::Vec::new();
         w.snapshot_bytes(&mut got);
         assert_eq!(got, expect);
+    }
+
+    /// The packed counter-write bits serialize as the original two bools (mcycle, then minstret)
+    /// right after the counters, and restore into the same suppression behaviour.
+    #[test]
+    fn counter_write_flags_keep_their_two_bool_encoding() {
+        for (wrote_c, wrote_i) in [(false, false), (true, false), (false, true), (true, true)] {
+            let mut c = Csrs::at_reset();
+            c.arm_counters();
+            if wrote_c {
+                c.access(MCYCLE, CsrOp::Write, 100, false, true, 0).unwrap();
+            }
+            if wrote_i {
+                c.access(MINSTRET, CsrOp::Write, 200, false, true, 0)
+                    .unwrap();
+            }
+            let mut a = alloc::vec::Vec::new();
+            c.snapshot_bytes(&mut a);
+            // mode(1) mstatus(8) mcause(8) fflags(1) frm(1) warl(4 + 10*n) mcycle(8) minstret(8)
+            let flags = 1 + 8 + 8 + 1 + 1 + 4 + 16;
+            assert_eq!(a[flags..flags + 2], [u8::from(wrote_c), u8::from(wrote_i)]);
+            let mut r = crate::resume::Reader::new(&a, crate::resume::section::CPU);
+            let mut back = Csrs::parse(&mut r).unwrap();
+            let mut b = alloc::vec::Vec::new();
+            back.snapshot_bytes(&mut b);
+            assert_eq!(a, b);
+            back.retire_tick();
+            let expect_c = if wrote_c { 100 } else { 1 };
+            let expect_i = if wrote_i { 200 } else { 1 };
+            assert_eq!(back.read(MCYCLE), expect_c);
+            assert_eq!(back.read(MINSTRET), expect_i);
+        }
     }
 
     /// Presence, not value, decides table membership: a device clearing a never-set `mip` bit still
