@@ -1363,6 +1363,60 @@ mod tests {
         assert_eq!(got, expect);
     }
 
+    /// The mask-based takeability in `next_interrupt` picks exactly what the old per-bit priority
+    /// walk picked, exhaustively over every mode, both global enables, and every pending/enable and
+    /// delegation pattern of the six implemented lines plus an unimplemented bit (reachable only
+    /// through a restored snapshot).
+    #[test]
+    fn next_interrupt_matches_per_bit_priority_walk() {
+        fn reference(c: &Csrs) -> Option<(u64, bool)> {
+            let pend = c.warl.slot(W_MIP) & c.warl.slot(W_MIE);
+            let mideleg = c.warl.slot(W_MIDELEG);
+            let mie_glob = c.mstatus & M_MIE != 0;
+            let sie_glob = c.mstatus & M_SIE != 0;
+            for &i in &INT_PRIORITY {
+                if pend & (1 << i) == 0 {
+                    continue;
+                }
+                let to_s = mideleg & (1 << i) != 0;
+                let takeable = if to_s {
+                    match c.mode {
+                        Priv::U => true,
+                        Priv::S => sie_glob,
+                        Priv::M => false,
+                    }
+                } else {
+                    match c.mode {
+                        Priv::M => mie_glob,
+                        _ => true,
+                    }
+                };
+                if takeable {
+                    return Some(((1u64 << 63) | i, to_s));
+                }
+            }
+            None
+        }
+        // The six lines (1,3,5,7,9,11) plus bit 13, packed into 7 bits.
+        let spread =
+            |m: u64| -> u64 { (0..7).fold(0, |acc, k| acc | (((m >> k) & 1) << (2 * k + 1))) };
+        let mut c = Csrs::at_reset();
+        for mode in [Priv::U, Priv::S, Priv::M] {
+            for glob in 0..4u64 {
+                c.mode = mode;
+                c.mstatus = ((glob & 1) * M_MIE) | ((glob >> 1) * M_SIE);
+                for pend in 0..128u64 {
+                    for deleg in 0..128u64 {
+                        c.warl.set_slot(W_MIP, spread(pend));
+                        c.warl.set_slot(W_MIE, spread(pend | deleg));
+                        c.warl.set_slot(W_MIDELEG, spread(deleg));
+                        assert_eq!(c.next_interrupt(), reference(&c));
+                    }
+                }
+            }
+        }
+    }
+
     /// The packed counter-write bits serialize as the original two bools (mcycle, then minstret)
     /// right after the counters, and restore into the same suppression behaviour.
     #[test]
