@@ -12,12 +12,20 @@
 //!   (valid leaf, A=1, permitted). Faults are never cached — no negative caching, so a faulting
 //!   VA re-walks every time — which also guarantees the "an entry can only exist for A=1"
 //!   invariant (Svade faults any A=0 access before the fill).
-//! - **Set-associative, deterministic replacement**: a fixed `[NSETS][WAYS]` array indexed by
-//!   the low VPN bits, with per-set round-robin victim selection. No HashMap — no hashing or
-//!   iteration-order nondeterminism, so replacement is bit-identical native vs wasm32 (T22).
+//! - **Set-associative, deterministic replacement**: a fixed [`TLB_SETS`] x [`TLB_WAYS`] array,
+//!   with per-set round-robin victim selection. No HashMap — no hashing or iteration-order
+//!   nondeterminism, so replacement is bit-identical native vs wasm32 (T22).
 //! - The **level tag** records the leaf level (0/1/2 → 4 KiB/2 MiB/1 GiB) so a superpage entry
-//!   serves its whole range. The **G (global) bit** is honored by SFENCE.VMA scoping: global
-//!   entries survive ASID-targeted fences.
+//!   serves its whole range. A level-`l` entry is indexed by its OWN page number (`vpn >> 9*l`),
+//!   so superpages spread over every set. (They used to be indexed by the superpage-aligned VPN,
+//!   whose low bits are all zero, so every 2 MiB / 1 GiB entry landed in set 0 and a kernel's
+//!   linear-map superpages thrashed 4 ways: ~26 walks per 1k instructions booting Alpine.) The
+//!   **G (global) bit** is honored by SFENCE.VMA scoping: global entries survive ASID-targeted
+//!   fences.
+//! - **Probe cost**: a lookup probes level 0 up (unchanged order), but skips every page size that
+//!   holds no valid entry (per-level live counts) and compares one packed key per way. A
+//!   VA-targeted SFENCE.VMA scans only the sets that VA can occupy (one per live level); only the
+//!   ASID-wide and global forms scan the whole array.
 //!
 //! satp writes do NOT flush the TLB (spec): a stale entry for the old address space may linger
 //! until software issues SFENCE.VMA. OS context-switch code relies on this — it fences (or
@@ -52,35 +60,53 @@
 /// mask never conflates two distinct canonical pages, and the `mode` tag separates the schemes.
 /// (Was `1<<36` for Sv48 — too narrow for Sv57, which aliased VAs differing only in VA[56:48].)
 const VPN_MASK: u64 = (1 << 45) - 1;
-const NSETS: usize = 16;
-const WAYS: usize = 4;
+/// Architectural TLB sets (a power of two). Geometry is microarchitectural: it changes only which
+/// entries are resident (walk counts, and what a guest that skips SFENCE.VMA may still see), never
+/// a correctly-fenced translation. Public so tests can build same-set conflict patterns.
+pub const TLB_SETS: usize = 256;
+/// Architectural TLB ways per set.
+pub const TLB_WAYS: usize = 4;
+const NSETS: usize = TLB_SETS;
+const WAYS: usize = TLB_WAYS;
+/// Page sizes any supported scheme has (Sv57: level 0..=4).
+const LEVEL_COUNT: usize = 5;
 
+/// One architectural entry. Every exact-match field of a lookup is packed into `key` (see
+/// [`probe_key`]); an invalid slot's key is 0, which no probe key equals.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 struct Slot {
-    valid: bool,
-    /// The VPN (page number) this entry maps, masked to [`VPN_MASK`].
-    vpn: u64,
+    /// `probe_key(vpn, level, mode)`: the level-aligned VPN (masked to [`VPN_MASK`]), the leaf
+    /// level (0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB, 3 → 512 GiB, 4 → 256 TiB), the satp MODE the entry
+    /// was walked under (8 = Sv39, 9 = Sv48, 10 = Sv57 — a lookup requires a mode match, so a mode
+    /// switch without SFENCE.VMA (T18) never serves a cross-mode stale hit) and a valid bit.
+    key: u64,
     asid: u64,
     /// The leaf PTE the walk validated (permission + PPN + A/D/G bits).
     pte: u64,
-    /// Leaf level: 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB, 3 → 512 GiB, 4 → 256 TiB (Sv57).
-    level: u8,
     global: bool,
-    /// The satp MODE the entry was walked under (8 = Sv39, 9 = Sv48, 10 = Sv57). A lookup requires a mode
-    /// match, so a mode switch without SFENCE.VMA (T18) never serves a cross-mode stale hit.
-    mode: u8,
+}
+
+/// Packed probe key: level-aligned VPN in bits 0-44, level in 45-47, MODE in 48-51, valid in 63.
+const fn probe_key(aligned_vpn: u64, level: u8, mode: u8) -> u64 {
+    aligned_vpn | (level as u64) << 45 | (mode as u64 & 0xF) << 48 | 1 << 63
 }
 
 impl Slot {
     const EMPTY: Slot = Slot {
-        valid: false,
-        vpn: 0,
+        key: 0,
         asid: 0,
         pte: 0,
-        level: 0,
         global: false,
-        mode: 0,
     };
+    const fn valid(&self) -> bool {
+        self.key != 0
+    }
+    const fn vpn(&self) -> u64 {
+        self.key & VPN_MASK
+    }
+    const fn level(&self) -> u8 {
+        ((self.key >> 45) & 0x7) as u8
+    }
 }
 
 /// A cached leaf translation returned by [`Tlb::lookup`] — the walker's memory result, which
@@ -90,20 +116,20 @@ pub struct Hit {
     pub pte: u64,
     pub level: u8,
     /// The architectural slot (`set * WAYS + way`) that served the hit — the fast TLB's stamp key.
-    pub(crate) slot: u8,
+    pub(crate) slot: u16,
 }
 
 /// Number of architectural slots (`NSETS * WAYS`).
 const ARCH_SLOTS: usize = NSETS * WAYS;
 /// Stamp key for identity translations (Bare satp or an M-mode effective access): no
 /// architectural entry backs them, so only [`Tlb::fast_flush`] re-stamps this slot.
-pub(crate) const IDENTITY_SLOT: u8 = ARCH_SLOTS as u8;
+pub(crate) const IDENTITY_SLOT: u16 = ARCH_SLOTS as u16;
 /// "No slot": the architectural TLB did not retain the translation (the disabled oracle), so no
 /// fast entry may be derived from it.
-pub(crate) const NO_SLOT: u8 = u8::MAX;
+pub(crate) const NO_SLOT: u16 = u16::MAX;
 /// Stamp table size: the architectural slots plus [`IDENTITY_SLOT`], rounded up to a power of two
 /// so a masked index needs no bounds check.
-const STAMP_SLOTS: usize = 128;
+const STAMP_SLOTS: usize = (ARCH_SLOTS + 1).next_power_of_two();
 const STAMP_SLOT_MASK: u64 = STAMP_SLOTS as u64 - 1;
 const STAMP_SHIFT: u32 = STAMP_SLOTS.trailing_zeros();
 
@@ -147,8 +173,8 @@ struct FastTlb {
     entries: alloc::boxed::Box<[FastEntry; FAST_KINDS * FAST_N]>,
     /// Current stamp of every architectural slot (+ the identity slot). A fast entry is live only
     /// while its recorded stamp equals its slot's current stamp.
-    slot_stamp: [u64; STAMP_SLOTS],
-    /// Next stamp generation. 57 bits of generations never wrap in practice, so a stamp is never
+    slot_stamp: alloc::boxed::Box<[u64; STAMP_SLOTS]>,
+    /// Next stamp generation. 53 bits of generations never wrap in practice, so a stamp is never
     /// reused and a stale entry can never be resurrected.
     next_gen: u64,
     /// The PMP revision every live entry was validated under; a hit requires it to be current.
@@ -168,10 +194,10 @@ impl FastTlb {
         let Ok(entries) = entries.try_into() else {
             unreachable!("fast TLB allocation has the exact array length")
         };
-        let mut slot_stamp = [0u64; STAMP_SLOTS];
-        for (i, s) in slot_stamp.iter_mut().enumerate() {
-            *s = i as u64; // generation 0
-        }
+        let slot_stamp: alloc::boxed::Box<[u64]> = (0..STAMP_SLOTS as u64).collect(); // generation 0
+        let Ok(slot_stamp) = slot_stamp.try_into() else {
+            unreachable!("stamp table allocation has the exact length")
+        };
         FastTlb {
             entries,
             slot_stamp,
@@ -206,9 +232,14 @@ impl FastTlb {
 /// (E0-T17 reads only PC/xregs). Deterministic, so two identical runs leave identical TLBs.
 #[derive(Clone)]
 pub struct Tlb {
-    sets: [[Slot; WAYS]; NSETS],
+    /// Boxed: 32 KiB of entries would otherwise make every `Hart` move copy them.
+    sets: alloc::boxed::Box<[[Slot; WAYS]; NSETS]>,
     /// Per-set round-robin next-victim index (deterministic replacement).
-    victim: [u8; NSETS],
+    victim: alloc::boxed::Box<[u8; NSETS]>,
+    /// Valid entries per leaf level, so a lookup (or a VA-targeted fence) skips page sizes that
+    /// hold nothing — on Sv39 Linux that is every level above the kernel's superpages. Derived
+    /// from `sets`, kept in step by [`Tlb::write_slot`].
+    level_live: [u16; LEVEL_COUNT],
     /// When false the TLB never caches — every lookup misses, every fill is dropped, so the
     /// walker runs on every access. The "TLB hard-disabled" oracle for the adversarial diff.
     enabled: bool,
@@ -244,9 +275,19 @@ impl Default for Tlb {
 
 impl Tlb {
     pub fn new() -> Self {
+        let sets: alloc::boxed::Box<[[Slot; WAYS]]> =
+            alloc::vec![[Slot::EMPTY; WAYS]; NSETS].into_boxed_slice();
+        let Ok(sets) = sets.try_into() else {
+            unreachable!("TLB allocation has the exact set count")
+        };
+        let victim: alloc::boxed::Box<[u8]> = alloc::vec![0u8; NSETS].into_boxed_slice();
+        let Ok(victim) = victim.try_into() else {
+            unreachable!("TLB victim allocation has the exact set count")
+        };
         Tlb {
-            sets: [[Slot::EMPTY; WAYS]; NSETS],
-            victim: [0; NSETS],
+            sets,
+            victim,
+            level_live: [0; LEVEL_COUNT],
             enabled: true,
             hits: 0,
             misses: 0,
@@ -262,17 +303,19 @@ impl Tlb {
         t
     }
 
-    const fn index(vpn: u64) -> usize {
-        (vpn as usize) & (NSETS - 1)
+    /// The set a level-`level` entry covering `vpn` lives in: the low bits of its own page number
+    /// (`vpn >> 9*level`), so consecutive superpages of any size spread over every set.
+    const fn index(vpn: u64, level: u8) -> usize {
+        ((vpn >> (9 * level as u32)) as usize) & (NSETS - 1)
     }
 
     /// The most page sizes any supported scheme has (Sv57: level 0..=4). A narrower scheme never
     /// fills the top levels, so probing them there simply misses. (Was 4 for Sv48 — one short of
     /// Sv57's level-4 256 TiB superpage, so those leaves never served a hit and re-walked.)
-    const LEVELS: u8 = 5;
+    const LEVELS: u8 = LEVEL_COUNT as u8;
 
     /// The superpage-aligned page number: `vpn` with its low `9 * level` bits cleared. A leaf at
-    /// `level` is tagged and indexed by this so ANY 4 KiB page inside the superpage finds it.
+    /// `level` is tagged by this so ANY 4 KiB page inside the superpage finds it.
     const fn align(vpn: u64, level: u8) -> u64 {
         let sh = 9 * level as u32;
         (vpn >> sh) << sh
@@ -288,22 +331,21 @@ impl Tlb {
             return None;
         }
         let vpn = vpn & VPN_MASK;
+        // Level 0 up, way 0 up, first match wins. A level holding no valid entry cannot match, so
+        // it is skipped.
         for level in 0..Self::LEVELS {
-            let tag = Self::align(vpn, level);
-            let set = Self::index(tag);
-            for way in 0..WAYS {
-                let s = self.sets[set][way];
-                if s.valid
-                    && s.mode == mode
-                    && s.level == level
-                    && s.vpn == tag
-                    && (s.global || s.asid == asid)
-                {
+            if self.level_live[level as usize] == 0 {
+                continue;
+            }
+            let want = probe_key(Self::align(vpn, level), level, mode);
+            let set = Self::index(vpn, level);
+            for (way, s) in self.sets[set].iter().enumerate() {
+                if s.key == want && (s.global || s.asid == asid) {
                     self.hits += 1;
                     return Some(Hit {
                         pte: s.pte,
-                        level: s.level,
-                        slot: (set * WAYS + way) as u8,
+                        level,
+                        slot: (set * WAYS + way) as u16,
                     });
                 }
             }
@@ -330,50 +372,49 @@ impl Tlb {
         level: u8,
         global: bool,
         mode: u8,
-    ) -> u8 {
+    ) -> u16 {
         if !self.enabled {
             return NO_SLOT;
         }
-        let vpn = Self::align(vpn & VPN_MASK, level);
-        let set = Self::index(vpn);
+        let vpn = vpn & VPN_MASK;
+        let set = Self::index(vpn, level);
         let slot = Slot {
-            valid: true,
-            vpn,
+            key: probe_key(Self::align(vpn, level), level, mode),
             asid,
             pte,
-            level,
             global,
-            mode,
         };
         for way in 0..WAYS {
             let s = self.sets[set][way];
-            if s.valid
-                && s.mode == mode
-                && s.level == level
-                && s.vpn == vpn
-                && s.asid == asid
-                && s.global == global
-            {
-                self.sets[set][way] = slot;
-                return self.restamped(set * WAYS + way);
+            if s.key == slot.key && s.asid == asid && s.global == global {
+                return self.write_slot(set, way, slot);
             }
         }
         for way in 0..WAYS {
-            if !self.sets[set][way].valid {
-                self.sets[set][way] = slot;
-                return self.restamped(set * WAYS + way);
+            if !self.sets[set][way].valid() {
+                return self.write_slot(set, way, slot);
             }
         }
         let v = self.victim[set] as usize;
-        self.sets[set][v] = slot;
         self.victim[set] = ((v + 1) % WAYS) as u8;
-        self.restamped(set * WAYS + v)
+        self.write_slot(set, v, slot)
     }
 
+    /// Write `slot` into `(set, way)`, keeping the per-level live counts in step, and re-stamp it
+    /// so every fast entry mirroring the previous contents dies. Returns the slot number.
     #[inline(always)]
-    fn restamped(&mut self, slot: usize) -> u8 {
-        self.fast.restamp(slot);
-        slot as u8
+    fn write_slot(&mut self, set: usize, way: usize, slot: Slot) -> u16 {
+        let old = self.sets[set][way];
+        if old.valid() {
+            self.level_live[old.level() as usize] -= 1;
+        }
+        if slot.valid() {
+            self.level_live[slot.level() as usize] += 1;
+        }
+        self.sets[set][way] = slot;
+        let n = set * WAYS + way;
+        self.fast.restamp(n);
+        n as u16
     }
 
     /// SFENCE.VMA invalidation (Priv §4.2.1). The four operand forms map to `(va, asid)`:
@@ -387,23 +428,46 @@ impl Tlb {
     /// (superpages included, via the level tag). Always counts one flush.
     pub fn sfence(&mut self, va: Option<u64>, asid: Option<u64>) {
         self.flushes += 1;
-        let qvpn = va.map(|v| (v >> 12) & VPN_MASK);
-        for (set_index, set) in self.sets.iter_mut().enumerate() {
-            for (way, s) in set.iter_mut().enumerate() {
-                if !s.valid {
-                    continue;
-                }
-                let va_match = qvpn.is_none_or(|q| Self::align(q, s.level) == s.vpn);
-                let asid_match = match asid {
-                    None => true,                        // all ASIDs, including global
-                    Some(a) => !s.global && s.asid == a, // targeted ASID; global exempt
-                };
-                if va_match && asid_match {
-                    *s = Slot::EMPTY;
-                    // Fast entries mirroring the removed entry die with it (exactly those).
-                    self.fast.restamp(set_index * WAYS + way);
+        match va {
+            Some(va) => {
+                // An entry covering `va` at level l can only live in `index(vpn, l)`, so scanning
+                // those sets (one per live level) removes exactly what a whole-array scan would.
+                let q = (va >> 12) & VPN_MASK;
+                for level in 0..Self::LEVELS {
+                    if self.level_live[level as usize] == 0 {
+                        continue;
+                    }
+                    let set = Self::index(q, level);
+                    for way in 0..WAYS {
+                        self.sfence_slot(set, way, Some(q), asid);
+                    }
                 }
             }
+            None => {
+                for set in 0..NSETS {
+                    for way in 0..WAYS {
+                        self.sfence_slot(set, way, None, asid);
+                    }
+                }
+            }
+        }
+    }
+
+    /// Apply one SFENCE.VMA scope to one slot, removing it when both the VA and ASID scopes match.
+    #[inline(always)]
+    fn sfence_slot(&mut self, set: usize, way: usize, qvpn: Option<u64>, asid: Option<u64>) {
+        let s = self.sets[set][way];
+        if !s.valid() {
+            return;
+        }
+        let va_match = qvpn.is_none_or(|q| Self::align(q, s.level()) == s.vpn());
+        let asid_match = match asid {
+            None => true,                        // all ASIDs, including global
+            Some(a) => !s.global && s.asid == a, // targeted ASID; global exempt
+        };
+        if va_match && asid_match {
+            // Fast entries mirroring the removed entry die with it (exactly those).
+            self.write_slot(set, way, Slot::EMPTY);
         }
     }
 
@@ -488,7 +552,7 @@ impl Tlb {
         va: u64,
         pa: u64,
         ctx: u64,
-        slot: u8,
+        slot: u16,
         satp: u64,
         pmp_rev: u64,
     ) {
@@ -523,5 +587,134 @@ impl Tlb {
     /// Whether caching is active (false for the [`Tlb::disabled`] oracle).
     pub const fn enabled(&self) -> bool {
         self.enabled
+    }
+}
+
+#[cfg(test)]
+mod probe_tests {
+    use super::*;
+
+    /// The unoptimized lookup: probe EVERY level 0..LEVELS and every way over the authoritative
+    /// `sets` (no live-level skipping), first full-predicate match wins. Read-only.
+    fn reference_lookup(t: &Tlb, vpn: u64, asid: u64, mode: u8) -> Option<(u64, u8, u16)> {
+        let vpn = vpn & VPN_MASK;
+        for level in 0..Tlb::LEVELS {
+            let tag = Tlb::align(vpn, level);
+            for (set, ways) in t.sets.iter().enumerate() {
+                for (way, s) in ways.iter().enumerate() {
+                    if s.valid()
+                        && s.level() == level
+                        && s.vpn() == tag
+                        && ((s.key >> 48) & 0xF) as u8 == mode
+                        && (s.global || s.asid == asid)
+                    {
+                        return Some((s.pte, level, (set * WAYS + way) as u16));
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    /// The unoptimized SFENCE.VMA: scan every slot of the array with the architectural predicate.
+    fn reference_sfence(t: &mut Tlb, va: Option<u64>, asid: Option<u64>) {
+        t.flushes += 1;
+        let qvpn = va.map(|v| (v >> 12) & VPN_MASK);
+        for set in 0..NSETS {
+            for way in 0..WAYS {
+                t.sfence_slot(set, way, qvpn, asid);
+            }
+        }
+    }
+
+    fn recount_levels(t: &Tlb) -> [u16; LEVEL_COUNT] {
+        let mut n = [0u16; LEVEL_COUNT];
+        for s in t.sets.iter().flatten().filter(|s| s.valid()) {
+            n[s.level() as usize] += 1;
+        }
+        n
+    }
+
+    struct Rng(u64);
+    impl Rng {
+        fn next(&mut self) -> u64 {
+            self.0 ^= self.0 << 13;
+            self.0 ^= self.0 >> 7;
+            self.0 ^= self.0 << 17;
+            self.0
+        }
+        fn below(&mut self, n: u64) -> u64 {
+            self.next() % n
+        }
+    }
+
+    /// A small VPN pool that collides heavily: a few superpage numbers congruent mod NSETS, 4 KiB
+    /// pages inside and outside them, and sign-extended (kernel-half) VPNs.
+    fn pool_vpn(r: &mut Rng) -> u64 {
+        let set_stride = NSETS as u64;
+        let base = match r.below(4) {
+            0 => r.below(8) * set_stride,               // 4 KiB pages sharing set 0
+            1 => (r.below(6) * set_stride) << 9,        // 2 MiB superpage numbers sharing a set
+            2 => ((r.below(3) * set_stride) << 18) | 5, // 1 GiB region, odd offset
+            _ => VPN_MASK - r.below(4096),              // kernel-half (sign-extended) pages
+        };
+        (base + r.below(3)) & VPN_MASK
+    }
+
+    /// The optimized lookup (live-level skip + per-level set index + packed key) and the
+    /// VA-targeted SFENCE.VMA are exact: over a colliding random stream, lookups agree with the
+    /// whole-array reference, targeted fences leave exactly the state a whole-array scan leaves,
+    /// and the per-level live counts always equal a recount.
+    #[test]
+    fn optimized_probe_and_targeted_fence_match_whole_array_reference() {
+        for seed in [1u64, 0x5eed, 0xdead_beef, 77] {
+            let mut r = Rng(seed);
+            let mut t = Tlb::new();
+            let mut hits = 0u64;
+            for step in 0..20_000 {
+                match r.below(10) {
+                    0..=3 => {
+                        let vpn = pool_vpn(&mut r);
+                        let level = [0u8, 0, 1, 1, 2, 3, 4][r.below(7) as usize];
+                        let asid = r.below(3);
+                        let mode = [8u8, 9, 10][r.below(3) as usize];
+                        let global = r.below(4) == 0;
+                        let pte = r.next();
+                        t.fill(vpn, asid, pte, level, global, mode);
+                    }
+                    4..=7 => {
+                        let vpn = pool_vpn(&mut r);
+                        let asid = r.below(3);
+                        let mode = [8u8, 9, 10][r.below(3) as usize];
+                        let want = reference_lookup(&t, vpn, asid, mode);
+                        let got = t.lookup(vpn, asid, mode).map(|h| (h.pte, h.level, h.slot));
+                        assert_eq!(got, want, "seed {seed} step {step}: lookup {vpn:#x}");
+                        hits += u64::from(got.is_some());
+                    }
+                    _ => {
+                        let va = (r.below(2) == 0).then(|| pool_vpn(&mut r) << 12 | r.below(4096));
+                        let asid = (r.below(2) == 0).then(|| r.below(3));
+                        let mut reference = t.clone();
+                        reference_sfence(&mut reference, va, asid);
+                        t.sfence(va, asid);
+                        assert!(t.sets == reference.sets, "seed {seed} step {step}: sfence");
+                        assert_eq!(t.flushes, reference.flushes);
+                    }
+                }
+                assert_eq!(t.level_live, recount_levels(&t), "seed {seed} step {step}");
+            }
+            assert!(hits > 500, "the stream must actually hit (got {hits})");
+        }
+    }
+
+    /// Superpages of every level spread over the sets instead of all landing in one set.
+    #[test]
+    fn consecutive_superpages_use_distinct_sets() {
+        for level in 1..Tlb::LEVELS {
+            let sets: alloc::collections::BTreeSet<usize> = (0..NSETS as u64)
+                .map(|n| Tlb::index(n << (9 * level as u32), level))
+                .collect();
+            assert_eq!(sets.len(), NSETS, "level {level}");
+        }
     }
 }

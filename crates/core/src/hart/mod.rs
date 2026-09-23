@@ -435,7 +435,7 @@ fn fast_publish(
     va: u64,
     pa: u64,
     ctx: u64,
-    slot: u8,
+    slot: u16,
     eff: crate::csr::Priv,
     pmp: &[PmpAccess],
 ) {

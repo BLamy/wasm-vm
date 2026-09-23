@@ -7,7 +7,8 @@
 //! access result or trap (cause + tval), the architectural registers, the TLB walk AND hit counters,
 //! device traffic and — periodically — every byte of RAM. The stream deliberately mixes everything
 //! a fast entry must not survive: privilege / SUM / MXR / MPRV / MPP changes, satp switches through
-//! a real `csrw satp`, all four SFENCE.VMA scopes, capacity evictions in one TLB set, page-table
+//! a real `csrw satp`, all four SFENCE.VMA scopes, capacity evictions in one TLB set (4 KiB pages
+//! and 2 MiB superpages sharing it), page-table
 //! edits WITHOUT a fence (stale translations must match exactly), whole-page and sub-page PMP
 //! regions, armed debug triggers, D=0 / A=0 leaves, MMIO pages, misaligned and page-crossing
 //! accesses, non-canonical addresses, and instruction fetches (incl. a page-straddling 32-bit op).
@@ -49,13 +50,19 @@ const STUB_PA: u64 = DRAM_BASE + 0x95_0000; // M-mode `csrw satp, x5`
 // Virtual layout.
 const DATA_VA: u64 = 0x1000_0000; // 24 consecutive pages
 const DATA_PAGES: u64 = 24;
-const THRASH_VA: u64 = 0x2000_0000; // 8 pages, VPNs congruent mod 16 (one TLB set)
+const THRASH_VA: u64 = 0x2000_0000; // 8 pages, VPNs congruent mod TLB_SETS (one TLB set)
 const THRASH_PAGES: u64 = 8;
+const THRASH_STRIDE: u64 = wasm_vm_core::tlb::TLB_SETS as u64 * 0x1000;
 const GLOBAL_VA: u64 = 0x3000_0000;
 const SUPER_VA: u64 = 0x4000_0000;
 const MMIO_VA: u64 = 0x5000_0000;
 const UNMAPPED_VA: u64 = 0x6000_0000;
 const CODE_VA: u64 = 0x7000_0000; // 2 pages: S-exec, then U-exec
+/// 2 MiB superpages whose superpage numbers are congruent mod TLB_SETS, so they share one TLB set
+/// (with each other and with the level-0 THRASH/DATA pages that index there): superpage eviction.
+const SUPER_THRASH_VA: u64 = 0x8000_0000;
+const SUPER_THRASH_PAGES: u64 = 6;
+const SUPER_THRASH_STRIDE: u64 = wasm_vm_core::tlb::TLB_SETS as u64 * 0x20_0000;
 
 fn pte(pa: u64, perms: u64) -> u64 {
     ((pa >> 12) << 10) | perms
@@ -197,7 +204,7 @@ impl Pair {
                     leaves.push((slot, pa, perms));
                 }
                 for k in 0..THRASH_PAGES {
-                    let va = THRASH_VA + k * 0x10000;
+                    let va = THRASH_VA + k * THRASH_STRIDE;
                     let pa = DATA_PA + ((k + variant) % 32) * 0x1000;
                     let slot = pt.leaf_slot(bus, va, 0);
                     bus.store64(slot, pte(pa, V | R | W | A | D)).unwrap();
@@ -211,6 +218,17 @@ impl Pair {
                 bus.store64(slot, pte(SUPER_PA, V | R | W | X | A | D))
                     .unwrap();
                 leaves.push((slot, SUPER_PA, V | R | W | X | A | D));
+                for k in 0..SUPER_THRASH_PAGES {
+                    let va = SUPER_THRASH_VA + k * SUPER_THRASH_STRIDE;
+                    let perms = if (k + variant) % 3 == 0 {
+                        V | R | A
+                    } else {
+                        V | R | W | A | D
+                    };
+                    let slot = pt.leaf_slot(bus, va, 1);
+                    bus.store64(slot, pte(SUPER_PA, perms)).unwrap();
+                    leaves.push((slot, SUPER_PA, perms));
+                }
                 let slot = pt.leaf_slot(bus, MMIO_VA, 0);
                 bus.store64(slot, pte(MMIO_PA, V | R | W | A | D)).unwrap();
                 leaves.push((slot, MMIO_PA, V | R | W | A | D));
@@ -369,9 +387,16 @@ impl Pair {
 fn random_va(rng: &mut Rng) -> u64 {
     let base = match rng.below(12) {
         0..=4 => DATA_VA + rng.below(DATA_PAGES) * 0x1000,
-        5 | 6 => THRASH_VA + rng.below(THRASH_PAGES) * 0x10000,
+        5 | 6 => THRASH_VA + rng.below(THRASH_PAGES) * THRASH_STRIDE,
         7 => GLOBAL_VA,
-        8 => SUPER_VA + rng.below(512) * 0x1000,
+        8 => {
+            let sp = if rng.below(2) == 0 {
+                SUPER_VA
+            } else {
+                SUPER_THRASH_VA + rng.below(SUPER_THRASH_PAGES) * SUPER_THRASH_STRIDE
+            };
+            sp + rng.below(512) * 0x1000
+        }
         9 => MMIO_VA,
         10 => {
             if rng.below(2) == 0 {

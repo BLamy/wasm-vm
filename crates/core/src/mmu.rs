@@ -142,7 +142,7 @@ pub(crate) fn translate_cached_slot(
     va: u64,
     access: Access,
     eff: Priv,
-) -> Result<(u64, u8), Trap> {
+) -> Result<(u64, u16), Trap> {
     let Some((levels, sign_bit, mode)) = mode_params(csr, eff) else {
         return Ok((va, crate::tlb::IDENTITY_SLOT));
     };
