@@ -19,6 +19,7 @@ use crate::decode::Instr;
 use alloc::collections::VecDeque;
 use alloc::rc::Rc;
 use alloc::vec::Vec;
+use core::cell::Cell;
 
 /// A deterministic open-addressed map from `u64` keys (physical PCs / page frames) to `V`.
 ///
@@ -320,6 +321,9 @@ pub struct DecodedBlock {
     block_gen: u64,
     /// Bit `i` set ⇔ op `i` is [`retire_deferrable`] (derived from `ops`, never serialized).
     deferrable: u128,
+    /// The block's cached discovery decision (see [`BlockDiscovery::on_block_entry_memo`]).
+    /// Derived host state, never serialized.
+    pub(crate) disc: Cell<DiscMemo>,
 }
 
 /// `true` for a pure integer register op: it reads and writes only integer registers and the PC,
@@ -402,6 +406,7 @@ impl DecodedBlock {
             page_frame: phys_start >> 12,
             block_gen: 0,
             deferrable,
+            disc: Cell::new(DiscMemo::default()),
         }
     }
 
@@ -741,7 +746,16 @@ impl BlockCache {
     }
 
     /// [`Self::insert`], returning the shared handle of the block just made resident.
-    pub(crate) fn insert_rc(&mut self, mut block: DecodedBlock) -> Rc<DecodedBlock> {
+    pub(crate) fn insert_rc(&mut self, block: DecodedBlock) -> Rc<DecodedBlock> {
+        self.insert_rc_evicting(block).0
+    }
+
+    /// [`Self::insert_rc`], also handing back the block the chosen slot held before (if any), so
+    /// the caller can settle state that block carried (its [`DiscMemo`]).
+    pub(crate) fn insert_rc_evicting(
+        &mut self,
+        mut block: DecodedBlock,
+    ) -> (Rc<DecodedBlock>, Option<Rc<DecodedBlock>>) {
         block.block_gen = self.generation;
         let start = self.hash(block.phys_start);
         let index = (0..MAX_PROBE)
@@ -765,6 +779,7 @@ impl BlockCache {
         let page_frame = block.page_frame;
         let (phys, block_gen) = (block.phys_start, block.block_gen);
         let block = Rc::new(block);
+        let evicted = self.slots[index].block.take();
         self.slots[index] = CacheSlot {
             phys,
             block_gen,
@@ -784,7 +799,7 @@ impl BlockCache {
         page.generation = generation;
         self.slots[index].page_pos = page.slots.len() as u32;
         page.slots.push(index);
-        block
+        (block, evicted)
     }
 }
 
@@ -981,8 +996,10 @@ enum DiscEntry {
     /// Below the threshold: the saturating execution count (always >= 1 while stored).
     Counting(u32),
     /// Nominated: a request is (or was) enqueued; suppresses re-nomination. `hits` are the extra
-    /// entries observed since (E4-T21 priority), 0 until the first one.
-    Queued { hits: u32 },
+    /// entries observed since (E4-T21 priority), 0 until the first one. `serial` is unique to
+    /// this nomination, so hits a block buffered against it (see [`DiscMemo`]) can never be
+    /// folded into a later re-nomination of the same PC.
+    Queued { hits: u32, serial: u64 },
     /// Excluded from translation (CSR/wfi terminator); suppresses counting + nomination.
     Excluded,
 }
@@ -991,6 +1008,27 @@ impl Default for DiscEntry {
     fn default() -> Self {
         DiscEntry::Counting(0)
     }
+}
+
+const MEMO_NONE: u8 = 0;
+const MEMO_QUEUED: u8 = 1;
+const MEMO_EXCLUDED: u8 = 2;
+
+/// A decoded block's cached copy of its discovery decision, so a block entry of an already
+/// decided block (every hot block, in a run without an executor) skips the discovery map.
+///
+/// Valid while `epoch` equals [`BlockDiscovery`]'s `decided_epoch`, which every operation that
+/// can remove or reset a decided entry (renominate, invalidate, reset) bumps. A Queued block
+/// buffers its E4-T21 queued hits here (`pending_hits`); they are folded into the entry — only if
+/// it is still the same nomination (`serial`) — before the block's next slow-path entry, when it
+/// leaves the cache, and whenever the compile queue reads the block's hotness. The dedup counter
+/// itself is always counted immediately.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub(crate) struct DiscMemo {
+    epoch: u64,
+    serial: u64,
+    pending_hits: u32,
+    kind: u8,
 }
 
 /// Diagnostic first-seen refusal sample, never an admission-policy capacity.
@@ -1196,6 +1234,11 @@ pub struct BlockDiscovery {
     entries: U64Map<DiscEntry>,
     /// Number of `Counting` entries (the former counter map's length).
     counting_len: usize,
+    /// Validity epoch of every [`DiscMemo`]: bumped whenever a decided entry may be removed or
+    /// reset (renominate, invalidate, reset).
+    decided_epoch: u64,
+    /// Next [`DiscEntry::Queued`] serial (unique per nomination).
+    next_serial: u64,
     /// Bounded FIFO of pending nominations.
     queue: VecDeque<TranslationRequest>,
     stats: DiscoveryStats,
@@ -1227,6 +1270,8 @@ impl BlockDiscovery {
             generation: 1,
             entries: U64Map::new(),
             counting_len: 0,
+            decided_epoch: 1,
+            next_serial: 1,
             queue: VecDeque::new(),
             stats: DiscoveryStats {
                 generation: 1,
@@ -1315,6 +1360,7 @@ impl BlockDiscovery {
         self.reset_admission_generation();
         self.entries.clear();
         self.counting_len = 0;
+        self.decided_epoch = self.decided_epoch.wrapping_add(1);
         self.queue.clear();
         self.stats = DiscoveryStats {
             generation: self.generation,
@@ -1333,6 +1379,7 @@ impl BlockDiscovery {
         if let Some(DiscEntry::Counting(_)) = self.entries.remove(&phys_pc) {
             self.counting_len -= 1;
         }
+        self.decided_epoch = self.decided_epoch.wrapping_add(1);
     }
 
     /// Record an invalidation (fence.i / SMC page-flush / whole-cache flush): bump the
@@ -1347,6 +1394,7 @@ impl BlockDiscovery {
         self.stats.generation = self.generation;
         self.entries.clear();
         self.counting_len = 0;
+        self.decided_epoch = self.decided_epoch.wrapping_add(1);
     }
 
     /// Note one execution (entry) of the block at physical `phys` whose walked ops are `ops`.
@@ -1370,7 +1418,7 @@ impl BlockDiscovery {
         // One probe answers every case: decided (dedup), counting, or absent.
         let count = match self.entries.get_mut(&phys) {
             // Already decided (nominated or excluded): dedup — never re-enqueue.
-            Some(DiscEntry::Queued { hits }) => {
+            Some(DiscEntry::Queued { hits, .. }) => {
                 self.stats.deduped = self.stats.deduped.saturating_add(1);
                 // E4-T21: a still-hot Queued block keeps accruing priority while it waits to compile.
                 *hits = hits.saturating_add(1);
@@ -1430,7 +1478,10 @@ impl BlockDiscovery {
         }
         // Mark Queued regardless of whether the push succeeds, so an overflow-dropped block does
         // not re-nominate every subsequent execution (no renomination storm).
-        self.entries.insert(phys, DiscEntry::Queued { hits: 0 });
+        let serial = self.next_serial;
+        self.next_serial = self.next_serial.wrapping_add(1);
+        self.entries
+            .insert(phys, DiscEntry::Queued { hits: 0, serial });
         if self.queue.len() >= self.queue_cap {
             self.stats.dropped_overflow = self.stats.dropped_overflow.saturating_add(1);
             return AdmissionReason::FifoOverflow;
@@ -1501,11 +1552,80 @@ impl BlockDiscovery {
     /// the compile queue to order compilation (hotter first). A block that has run only exactly the
     /// threshold count reports `threshold`; one that kept spinning reports more.
     pub fn queued_hotness(&self, phys: u64) -> u32 {
+        self.queued_hotness_with(phys, None)
+    }
+
+    /// [`Self::queued_hotness`] including the queued hits buffered in the memo of the block
+    /// currently cached at `phys` (if any), i.e. the value the unbuffered map would hold.
+    pub(crate) fn queued_hotness_with(&self, phys: u64, memo: Option<DiscMemo>) -> u32 {
         let hits = match self.entries.get(&phys) {
-            Some(DiscEntry::Queued { hits }) => *hits,
+            Some(DiscEntry::Queued { hits, serial }) => {
+                let buffered = memo
+                    .filter(|m| m.kind == MEMO_QUEUED && m.serial == *serial)
+                    .map_or(0, |m| m.pending_hits);
+                hits.saturating_add(buffered)
+            }
             _ => 0,
         };
         self.threshold.saturating_add(hits)
+    }
+
+    /// [`Self::on_block_entry`] for a cached block carrying a [`DiscMemo`] (the run loop's
+    /// path). A still-valid memo of a decided block answers the entry without the map: the dedup
+    /// is counted and a Queued block's hit is buffered in the memo. Anything else settles the
+    /// memo, takes the ordinary decision, and re-caches the resulting decided state. Equivalent to
+    /// `on_block_entry` in every counter, decision, request and (via
+    /// [`Self::queued_hotness_with`]) hotness.
+    #[inline]
+    pub(crate) fn on_block_entry_memo(
+        &mut self,
+        phys: u64,
+        ops: &[MicroOp],
+        memo: &Cell<DiscMemo>,
+    ) {
+        let m = memo.get();
+        if m.kind != MEMO_NONE && m.epoch == self.decided_epoch && self.admission_probe.is_none() {
+            self.stats.deduped = self.stats.deduped.saturating_add(1);
+            if m.kind == MEMO_QUEUED {
+                memo.set(DiscMemo {
+                    pending_hits: m.pending_hits.saturating_add(1),
+                    ..m
+                });
+            }
+            return;
+        }
+        self.on_block_entry_memo_slow(phys, ops, memo);
+    }
+
+    #[inline(never)]
+    fn on_block_entry_memo_slow(&mut self, phys: u64, ops: &[MicroOp], memo: &Cell<DiscMemo>) {
+        self.settle_memo(phys, memo);
+        self.on_block_entry(phys, ops);
+        let (kind, serial) = match self.entries.get(&phys) {
+            Some(DiscEntry::Queued { serial, .. }) => (MEMO_QUEUED, *serial),
+            Some(DiscEntry::Excluded) => (MEMO_EXCLUDED, 0),
+            _ => return,
+        };
+        memo.set(DiscMemo {
+            epoch: self.decided_epoch,
+            serial,
+            pending_hits: 0,
+            kind,
+        });
+    }
+
+    /// Fold the queued hits buffered in a block's memo into its entry — only if that entry is
+    /// still the nomination they were counted against — and clear the memo. Called before the
+    /// block's next slow-path entry and when the block leaves the decoded cache.
+    pub(crate) fn settle_memo(&mut self, phys: u64, memo: &Cell<DiscMemo>) {
+        let m = memo.replace(DiscMemo::default());
+        if m.kind == MEMO_QUEUED
+            && m.pending_hits != 0
+            && let Some(DiscEntry::Queued { hits, serial }) = self.entries.get_mut(&phys)
+            && *serial == m.serial
+        {
+            *hits = hits.saturating_add(m.pending_hits);
+        }
     }
 
     /// Test view: the hotness counters as the former `phys → count` map.
@@ -1544,7 +1664,7 @@ impl BlockDiscovery {
     fn queued_hits(&self) -> U64Map<u32> {
         let mut m = U64Map::new();
         for (k, e) in self.entries.iter() {
-            if let DiscEntry::Queued { hits } = e
+            if let DiscEntry::Queued { hits, .. } = e
                 && *hits > 0
             {
                 m.insert(k, *hits);
@@ -2060,6 +2180,107 @@ mod tests {
     /// A minimal hot block: one body op + a branch terminator.
     fn block() -> [MicroOp; 2] {
         [body(0x0010_8093), term(0x0000_0063)]
+    }
+
+    /// The block-memo entry path must be indistinguishable from the map path: two front ends fed
+    /// the same seeded stream — one through `on_block_entry`, one through `on_block_entry_memo`
+    /// with a memo per resident block — must agree on every stat, every hotness (the memo side
+    /// through `queued_hotness_with` and the resident block's memo), the FIFO and the admission
+    /// observer, across renominations, invalidations, resets, evictions (settle + fresh memo),
+    /// memos that survive an invalidation, admission-probe toggles, queue overflow and small caps.
+    #[test]
+    fn discovery_memo_is_equivalent_to_the_map_path() {
+        let wfi = MicroOp {
+            instr: Instr::Wfi,
+            len: 4,
+            raw: 0x1050_0073,
+        };
+        let hot = block();
+        let excluded = [body(0x0010_8093), wfi];
+        let phys: alloc::vec::Vec<u64> = (0..12).map(|i| 0x8000_0000 + 0x40 * i).collect();
+        let ops = |i: usize| -> &[MicroOp] { if i % 5 == 4 { &excluded } else { &hot } };
+        let mut rng = 0x9e37_79b9_7f4a_7c15u64;
+        let mut next = move || {
+            rng ^= rng << 13;
+            rng ^= rng >> 7;
+            rng ^= rng << 17;
+            rng
+        };
+        for (threshold, queue_cap, counts_cap) in [(1, 64, 64), (3, 4, 64), (7, 64, 5), (2, 2, 3)] {
+            let mut plain = BlockDiscovery::with_bounds(queue_cap, counts_cap);
+            let mut memo = BlockDiscovery::with_bounds(queue_cap, counts_cap);
+            plain.set_threshold(threshold);
+            memo.set_threshold(threshold);
+            let mut cells: alloc::vec::Vec<Cell<DiscMemo>> = (0..phys.len())
+                .map(|_| Cell::new(DiscMemo::default()))
+                .collect();
+            let mut fast_entries = 0u64;
+            for step in 0..40_000u32 {
+                let r = next();
+                let i = (r % phys.len() as u64) as usize;
+                match (r >> 16) % 400 {
+                    0 => {
+                        plain.renominate(phys[i]);
+                        memo.renominate(phys[i]);
+                    }
+                    1 => {
+                        // Blocks on other pages survive an invalidation with their (now stale) memo.
+                        plain.on_invalidate();
+                        memo.on_invalidate();
+                    }
+                    2 => {
+                        plain.reset();
+                        memo.reset();
+                    }
+                    3..=9 => {
+                        // The block leaves the cache; a rebuilt block starts with a fresh memo.
+                        memo.settle_memo(phys[i], &cells[i]);
+                        cells[i] = Cell::new(DiscMemo::default());
+                    }
+                    10 => {
+                        let n = (r >> 32) as usize % 3;
+                        assert_eq!(
+                            plain.take_requests_bounded(n),
+                            memo.take_requests_bounded(n)
+                        );
+                    }
+                    11 => {
+                        let on = (r >> 40) & 1 == 1;
+                        plain.set_admission_probe(on);
+                        memo.set_admission_probe(on);
+                    }
+                    _ => {
+                        let before = cells[i].get();
+                        plain.on_block_entry(phys[i], ops(i));
+                        memo.on_block_entry_memo(phys[i], ops(i), &cells[i]);
+                        if before.kind != MEMO_NONE && before.epoch == cells[i].get().epoch {
+                            fast_entries += 1;
+                        }
+                    }
+                }
+                assert_eq!(plain.stats(), memo.stats(), "step {step}");
+                assert_eq!(plain.admission_probe_stats(), memo.admission_probe_stats());
+                for (j, &p) in phys.iter().enumerate() {
+                    assert_eq!(
+                        plain.queued_hotness(p),
+                        memo.queued_hotness_with(p, Some(cells[j].get())),
+                        "step {step} block {j}"
+                    );
+                }
+            }
+            assert!(
+                fast_entries > 10_000,
+                "the memo path must engage: {fast_entries}"
+            );
+            // Settled, the memo side's maps are exactly the map path's.
+            for (j, &p) in phys.iter().enumerate() {
+                memo.settle_memo(p, &cells[j]);
+            }
+            assert_eq!(plain.counts(), memo.counts());
+            assert_eq!(plain.state(), memo.state());
+            assert_eq!(plain.queued_hits(), memo.queued_hits());
+            assert_eq!(plain.take_requests(), memo.take_requests());
+        }
     }
 
     #[test]

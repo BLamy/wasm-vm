@@ -691,6 +691,17 @@ struct JitProgress {
     work_used: u64,
 }
 
+/// E4-T21 hotness of the pending block at `phys`, including the queued hits the block currently
+/// cached there has buffered in its discovery memo (see [`dispatch::DiscMemo`]).
+#[cfg(not(feature = "zicsr-stub"))]
+fn queued_hotness_of(
+    discovery: &dispatch::BlockDiscovery,
+    block_cache: &dispatch::BlockCache,
+    phys: u64,
+) -> u32 {
+    discovery.queued_hotness_with(phys, block_cache.get(phys).map(|b| b.disc.get()))
+}
+
 /// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
 /// must NOT be statically linked (a dynamic `jalr` target, or a defensive `Reserved` exit). Edge 0
 /// is the taken / sole / fall-through successor; edge 1 is a conditional branch's not-taken side.
@@ -4253,7 +4264,8 @@ impl Machine {
         if let Some(block) = self.block_cache.get_rc_touch(phys)
             && let Some(first) = block.ops.first().copied()
         {
-            self.discovery.on_block_entry(phys, &block.ops);
+            self.discovery
+                .on_block_entry_memo(phys, &block.ops, &block.disc);
             self.block_cursor = Some(BlockCursor {
                 block,
                 idx: 1,
@@ -4316,10 +4328,14 @@ impl Machine {
         // Bump the hotness counter and, on crossing the threshold, nominate a TranslationRequest.
         // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
         // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
-        self.discovery.on_block_entry(phys, &ops);
-        let block = self
-            .block_cache
-            .insert_rc(dispatch::DecodedBlock::new(phys, ops, total_len));
+        let block = dispatch::DecodedBlock::new(phys, ops, total_len);
+        self.discovery
+            .on_block_entry_memo(phys, &block.ops, &block.disc);
+        let (block, evicted) = self.block_cache.insert_rc_evicting(block);
+        // A replaced block leaves the cache: fold any queued hits it buffered into discovery.
+        if let Some(old) = evicted {
+            self.discovery.settle_memo(old.phys_start, &old.disc);
+        }
         // Entry op (index 0) is consumed now; the cursor resumes at index 1.
         self.block_cursor = Some(BlockCursor {
             block,
@@ -4381,7 +4397,7 @@ impl Machine {
             .jit_run_staged_nominations
             .saturating_add(staged.len() as u64);
         for req in staged {
-            let hotness = self.discovery.queued_hotness(req.phys_pc);
+            let hotness = queued_hotness_of(&self.discovery, &self.block_cache, req.phys_pc);
             self.compile_queue
                 .push(compile_queue::CompileJob { req, hotness });
         }
@@ -4397,7 +4413,7 @@ impl Machine {
         // Surviving backlog can accrue interpreted hits across exhausted host budgets, even when
         // this pump staged nothing. Refresh only now; keep admission/cancellation/recount ordering.
         self.compile_queue
-            .refresh_hotness(|phys| self.discovery.queued_hotness(phys));
+            .refresh_hotness(|phys| queued_hotness_of(&self.discovery, &self.block_cache, phys));
         // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
         let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
         let attempt_budget = JIT_INSTALL_BUDGET.min(self.jit_run_attempt_remaining);
