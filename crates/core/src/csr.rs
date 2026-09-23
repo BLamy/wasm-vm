@@ -85,6 +85,9 @@ pub const INSTRET: u16 = 0xC02;
 /// until hardware performance monitors exist, so the corresponding hpmcounter reads always trap
 /// from S/U (their counteren bit can never be set).
 const COUNTEREN_WMASK: u64 = 0b111;
+/// [`Csrs`] per-instruction counter-write suppression bits (E1-T14).
+const WROTE_MCYCLE: u8 = 1 << 0;
+const WROTE_MINSTRET: u8 = 1 << 1;
 /// Test-only probe CSR with an observable read/write hook (side-effect suppression tests).
 pub const PROBE: u16 = 0x7C0; // custom M-mode read/write space
 
@@ -178,6 +181,188 @@ const MEDELEG_WMASK: u64 = 0x3FF | (1 << 12) | (1 << 13) | (1 << 15);
 /// Interrupt priority, highest first: MEI > MSI > MTI > SEI > SSI > STI (Priv §3.1.9).
 const INT_PRIORITY: [u64; 6] = [11, 3, 7, 9, 1, 5];
 
+// ── Dense WARL store (perf overhaul) ────────────────────────────────────────────
+// Every CSR whose value lives in the generic WARL store gets a fixed slot, so a read is one load
+// at a constant offset instead of a linear scan of an insertion-ordered `(addr, value)` list (the
+// old layout — `satp` alone was scanned twice per translated memory access, `mip` twice per
+// `set_mip_bit`, five times per block boundary). The set is exactly the addresses that can reach
+// the store: trap delivery (mepc/mtval, sepc/scause/stval), the `sie`/`sip`/`mip`/`satp` arms of
+// `write_raw`, plus every `meta`-accepted address that `write_raw` does not route to a dedicated
+// field. Slots are numbered in ASCENDING address order, so walking the present slots in index
+// order IS the canonical (address-sorted) snapshot order.
+const W_STVEC: usize = 0;
+const W_SCOUNTEREN: usize = 1;
+const W_SSCRATCH: usize = 2;
+const W_SEPC: usize = 3;
+const W_SCAUSE: usize = 4;
+const W_STVAL: usize = 5;
+const W_SATP: usize = 6;
+const W_MEDELEG: usize = 7;
+const W_MIDELEG: usize = 8;
+const W_MIE: usize = 9;
+const W_MTVEC: usize = 10;
+const W_MCOUNTEREN: usize = 11;
+const W_MSCRATCH: usize = 12;
+const W_MEPC: usize = 13;
+const W_MTVAL: usize = 14;
+const W_MIP: usize = 15;
+const W_MNSTATUS: usize = 16;
+const W_TINFO: usize = 17;
+/// Number of dense WARL slots.
+const WARL_SLOTS: usize = 18;
+/// Slot → CSR address (strictly ascending; checked at compile time below).
+const WARL_ADDRS: [u16; WARL_SLOTS] = [
+    STVEC, SCOUNTEREN, SSCRATCH, SEPC, SCAUSE, STVAL, SATP, MEDELEG, MIDELEG, MIE, MTVEC,
+    MCOUNTEREN, MSCRATCH, MEPC, MTVAL, MIP, MNSTATUS, TINFO,
+];
+
+/// CSR address → dense WARL slot, or `None` for an address with no slot (such an address can only
+/// enter the store through a snapshot table; it is then kept in [`WarlStore::extra`]).
+#[inline]
+const fn warl_slot(addr: u16) -> Option<usize> {
+    Some(match addr {
+        STVEC => W_STVEC,
+        SCOUNTEREN => W_SCOUNTEREN,
+        SSCRATCH => W_SSCRATCH,
+        SEPC => W_SEPC,
+        SCAUSE => W_SCAUSE,
+        STVAL => W_STVAL,
+        SATP => W_SATP,
+        MEDELEG => W_MEDELEG,
+        MIDELEG => W_MIDELEG,
+        MIE => W_MIE,
+        MTVEC => W_MTVEC,
+        MCOUNTEREN => W_MCOUNTEREN,
+        MSCRATCH => W_MSCRATCH,
+        MEPC => W_MEPC,
+        MTVAL => W_MTVAL,
+        MIP => W_MIP,
+        MNSTATUS => W_MNSTATUS,
+        TINFO => W_TINFO,
+        _ => return None,
+    })
+}
+
+// The slot table and the address map must be exact inverses, in ascending address order, and fit
+// the `present` bitmap — otherwise the snapshot order (and the byte layout) would silently change.
+const _: () = {
+    assert!(WARL_SLOTS <= 32);
+    let mut i = 0;
+    while i < WARL_SLOTS {
+        assert!(matches!(warl_slot(WARL_ADDRS[i]), Some(s) if s == i));
+        if i > 0 {
+            assert!(WARL_ADDRS[i - 1] < WARL_ADDRS[i]);
+        }
+        i += 1;
+    }
+};
+
+/// The generic WARL CSR store: a dense value array plus a "was ever written" bitmap.
+///
+/// Snapshot contract (unchanged from the old `Vec<(u16, u64)>` layout): the table holds exactly the
+/// CSRs that were ever written (a write of 0 still creates the entry), emitted sorted by address.
+/// Invariant: `vals[i] == 0` whenever slot `i` is not present, so a read never consults `present`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct WarlStore {
+    vals: [u64; WARL_SLOTS],
+    /// Bit `i` set ⇔ slot `i` was written (it appears in the snapshot table).
+    present: u32,
+    /// Cold overflow, reachable ONLY from a snapshot table: entries whose address has no slot, and
+    /// repeated addresses after the first occurrence (the old list served the FIRST occurrence and
+    /// kept the rest verbatim). Kept in table order so re-serialization stays byte-identical. Empty
+    /// for every table this emulator writes.
+    extra: Vec<(u16, u64)>,
+}
+
+impl WarlStore {
+    const fn new() -> Self {
+        Self {
+            vals: [0; WARL_SLOTS],
+            present: 0,
+            extra: Vec::new(),
+        }
+    }
+
+    #[inline(always)]
+    const fn slot(&self, i: usize) -> u64 {
+        self.vals[i]
+    }
+
+    #[inline(always)]
+    fn set_slot(&mut self, i: usize, v: u64) {
+        self.vals[i] = v;
+        self.present |= 1 << i;
+    }
+
+    /// Read the store for `addr` (0 if never written).
+    #[inline]
+    fn get(&self, addr: u16) -> u64 {
+        match warl_slot(addr) {
+            Some(i) => self.vals[i],
+            None => self
+                .extra
+                .iter()
+                .find(|(a, _)| *a == addr)
+                .map_or(0, |(_, v)| *v),
+        }
+    }
+
+    /// Write the store for `addr`.
+    #[inline]
+    fn set(&mut self, addr: u16, v: u64) {
+        match warl_slot(addr) {
+            Some(i) => self.set_slot(i, v),
+            None => match self.extra.iter_mut().find(|(a, _)| *a == addr) {
+                Some(e) => e.1 = v,
+                None => self.extra.push((addr, v)),
+            },
+        }
+    }
+
+    /// Append one `(addr, value)` entry of a snapshot table, in table order. The first occurrence
+    /// of a slotted address fills the slot (that is the entry reads and writes act on); anything
+    /// else is preserved verbatim in `extra`.
+    fn push_parsed(&mut self, addr: u16, v: u64) {
+        match warl_slot(addr) {
+            Some(i) if self.present & (1 << i) == 0 => self.set_slot(i, v),
+            _ => self.extra.push((addr, v)),
+        }
+    }
+
+    /// Emit the canonical table: count, then `(addr, value)` pairs sorted by address — byte-for-byte
+    /// what the old `clone + stable sort_by_key` of the insertion-ordered list produced.
+    fn snapshot_bytes(&self, out: &mut Vec<u8>) {
+        let count = self.present.count_ones() as usize + self.extra.len();
+        out.extend_from_slice(&(count as u32).to_le_bytes());
+        let mut emit = |a: u16, v: u64| {
+            out.extend_from_slice(&a.to_le_bytes());
+            out.extend_from_slice(&v.to_le_bytes());
+        };
+        if self.extra.is_empty() {
+            for (i, &a) in WARL_ADDRS.iter().enumerate() {
+                if self.present & (1 << i) != 0 {
+                    emit(a, self.vals[i]);
+                }
+            }
+            return;
+        }
+        // Cold (snapshot-restored oddities only): the slotted entry was its address's FIRST
+        // occurrence, so it precedes that address's `extra` duplicates; a stable sort over
+        // `slots ++ extra` reproduces the old stable sort of the original list exactly.
+        let mut all: Vec<(u16, u64)> = WARL_ADDRS
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| self.present & (1 << i) != 0)
+            .map(|(i, &a)| (a, self.vals[i]))
+            .chain(self.extra.iter().copied())
+            .collect();
+        all.sort_by_key(|(a, _)| *a);
+        for (a, v) in all {
+            emit(a, v);
+        }
+    }
+}
+
 /// Legalize a candidate `mstatus` value: keep only writable bits, force `MPP=0b10` (reserved)
 /// to `U`, hardwire `UXL`/`SXL`=0b10 (RV64), and recompute the read-only `SD` from `FS`.
 const fn legalize_mstatus(v: u64) -> u64 {
@@ -193,7 +378,7 @@ const fn legalize_mstatus(v: u64) -> u64 {
 }
 
 /// The reset-defined + Zicsr CSR file. Hardwired identification/`misa` are accessors; the
-/// writable M/S CSRs live in a flat WARL map (`mstatus`/`mcause` kept as fields for the
+/// writable M/S CSRs live in a dense WARL store (`mstatus`/`mcause` kept as fields for the
 /// E1-T01 reset assertions). `PROBE` carries read/write counters so suppression is testable.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Csrs {
@@ -207,17 +392,18 @@ pub struct Csrs {
     pub fflags: u8,
     /// Floating-point dynamic rounding mode `frm` (3 bits).
     pub frm: u8,
-    /// Flat WARL storage for the other writable CSRs (mepc, mtvec, mie, satp, …).
-    warl: Vec<(u16, u64)>,
+    /// WARL storage for the other writable CSRs (mepc, mtvec, mie, satp, …): O(1) dense slots.
+    warl: WarlStore,
     /// Zicntr (E1-T14): `mcycle`/`minstret` — writable 64-bit M-CSRs incremented once per
     /// retired instruction; `cycle`/`instret` are read-only shadows of these.
     mcycle: u64,
     minstret: u64,
-    /// Per-instruction suppression: set when THIS instruction wrote mcycle/minstret, so its own
-    /// retirement does not also increment that counter (Spike: the written value stands). Armed
-    /// (cleared) at each step start and consumed by `retire_tick`.
-    wrote_mcycle: bool,
-    wrote_minstret: bool,
+    /// Per-instruction suppression bits ([`WROTE_MCYCLE`] | [`WROTE_MINSTRET`]): set when THIS
+    /// instruction wrote mcycle/minstret, so its own retirement does not also increment that
+    /// counter (Spike: the written value stands). Armed (cleared) at each step start and consumed
+    /// by `retire_tick`. One byte so the per-instruction arm is a single store and the common
+    /// retire is one test; serialized as the two original bools.
+    counter_writes: u8,
     /// Shadow of the CLINT `mtime` for the unprivileged `time` counter — the machine refreshes
     /// it each instruction boundary (there is no `mtime` CSR; `time` is a window onto the CLINT).
     time: u64,
@@ -271,11 +457,10 @@ impl Csrs {
             mcause: 0,
             fflags: 0,
             frm: 0,
-            warl: Vec::new(),
+            warl: WarlStore::new(),
             mcycle: 0,
             minstret: 0,
-            wrote_mcycle: false,
-            wrote_minstret: false,
+            counter_writes: 0,
             time: 0,
             pmp: crate::pmp::Pmp::default(),
             sv48: true, // Sv48 supported by default; a Machine/harness may gate it off.
@@ -345,32 +530,36 @@ impl Csrs {
     /// Zicntr (E1-T14): clear the per-instruction counter-write suppression flags. Called at the
     /// START of each step so only writes performed DURING this instruction's execute suppress its
     /// own retirement increment (a stale flag from a direct/host-side write can't leak into a run).
+    #[inline(always)]
     pub fn arm_counters(&mut self) {
-        self.wrote_mcycle = false;
-        self.wrote_minstret = false;
+        self.counter_writes = 0;
     }
 
     /// Zicntr (E1-T14/E4-T31): advance the retired-instruction counters by `retired`. The JIT may
     /// retire a CSR-free block at once, so this is the bulk-equivalent of repeated
     /// [`Self::retire_tick`] calls. If the current instruction wrote a counter, its write stands and
     /// suppresses the corresponding increment exactly as on the one-instruction interpreter path.
+    #[inline(always)]
     pub(crate) fn retire_span(&mut self, retired: u64) {
-        if !self.wrote_mcycle {
+        let w = self.counter_writes;
+        if w & WROTE_MCYCLE == 0 {
             self.mcycle = self.mcycle.wrapping_add(retired);
         }
-        if !self.wrote_minstret {
+        if w & WROTE_MINSTRET == 0 {
             self.minstret = self.minstret.wrapping_add(retired);
         }
     }
 
     /// Zicntr (E1-T14): advance the counters after one successfully retired instruction. A `csrr`
     /// observes the pre-retire count; a `csrw` to a counter suppresses that counter's own tick.
+    #[inline(always)]
     pub fn retire_tick(&mut self) {
         self.retire_span(1);
     }
 
     /// Refresh the `time` counter's window onto the CLINT `mtime` (E1-T14). The machine calls
     /// this each instruction boundary from the CLINT state, so `time` reads track `mtime`.
+    #[inline(always)]
     pub fn set_time(&mut self, mtime: u64) {
         self.time = mtime;
     }
@@ -467,9 +656,11 @@ impl Csrs {
     pub const fn mxr(&self) -> bool {
         self.mstatus & M_MXR != 0
     }
-    /// The raw `satp` value (§4.1.11): MODE[63:60], ASID[59:44], PPN[43:0]. Stored WARL.
+    /// The raw `satp` value (§4.1.11): MODE[63:60], ASID[59:44], PPN[43:0]. Stored WARL. Read on
+    /// every translated access, so it is a single load from a fixed slot.
+    #[inline(always)]
     pub fn satp(&self) -> u64 {
-        self.warl_get(SATP)
+        self.warl.slot(W_SATP)
     }
 
     /// Trap delivery into M-mode's mstatus stack: `MPIE←MIE, MIE←0, MPP←prior`, mode←M.
@@ -541,9 +732,9 @@ impl Csrs {
     /// caller reads [`Self::mtvec_base`] for the handler entry PC.
     pub fn deliver_trap_m(&mut self, epc: u64, cause: u64, tval: u64) {
         let prior = self.mode;
-        self.warl_set(MEPC, epc & !1);
+        self.warl.set_slot(W_MEPC, epc & !1);
         self.mcause = cause;
-        self.warl_set(MTVAL, tval);
+        self.warl.set_slot(W_MTVAL, tval);
         self.trap_to_m(prior);
     }
 
@@ -551,7 +742,7 @@ impl Csrs {
     /// of the target address. Synchronous traps ALWAYS enter here regardless of MODE — the
     /// vectored offset (BASE + 4×cause) applies to interrupts only (Priv §3.1.7).
     pub fn mtvec_base(&self) -> u64 {
-        self.warl_get(MTVEC) & !0b11
+        self.warl.slot(W_MTVEC) & !0b11
     }
 
     /// Deliver a trap into S-mode (E1-T11): record sepc/scause/stval and push the S half of the
@@ -560,21 +751,21 @@ impl Csrs {
     /// interrupt). sepc keeps the faulting/next pc with bit 0 masked.
     pub fn deliver_trap_s(&mut self, epc: u64, cause: u64, tval: u64) {
         let prior = self.mode;
-        self.warl_set(SEPC, epc & !1);
-        self.warl_set(SCAUSE, cause);
-        self.warl_set(STVAL, tval);
+        self.warl.set_slot(W_SEPC, epc & !1);
+        self.warl.set_slot(W_SCAUSE, cause);
+        self.warl.set_slot(W_STVAL, tval);
         self.trap_to_s(prior);
     }
 
     /// The stvec BASE address (bits [63:2]); MODE lives in the low two bits.
     pub fn stvec_base(&self) -> u64 {
-        self.warl_get(STVEC) & !0b11
+        self.warl.slot(W_STVEC) & !0b11
     }
 
     /// The M-mode handler entry for a trap: BASE always, plus — for an INTERRUPT when mtvec
     /// MODE == 1 (Vectored) — the `BASE + 4×cause` offset. Synchronous traps ignore MODE.
     pub fn m_handler_entry(&self, cause_num: u64, is_interrupt: bool) -> u64 {
-        let t = self.warl_get(MTVEC);
+        let t = self.warl.slot(W_MTVEC);
         let base = t & !0b11;
         if is_interrupt && (t & 0b11) == 1 {
             base.wrapping_add(4 * cause_num)
@@ -584,7 +775,7 @@ impl Csrs {
     }
     /// The S-mode handler entry, mirroring [`Self::m_handler_entry`] for stvec.
     pub fn s_handler_entry(&self, cause_num: u64, is_interrupt: bool) -> u64 {
-        let t = self.warl_get(STVEC);
+        let t = self.warl.slot(W_STVEC);
         let base = t & !0b11;
         if is_interrupt && (t & 0b11) == 1 {
             base.wrapping_add(4 * cause_num)
@@ -601,9 +792,9 @@ impl Csrs {
             return false;
         }
         let deleg = if is_interrupt {
-            self.warl_get(MIDELEG)
+            self.warl.slot(W_MIDELEG)
         } else {
-            self.warl_get(MEDELEG)
+            self.warl.slot(W_MEDELEG)
         };
         deleg & (1 << cause_num) != 0
     }
@@ -619,45 +810,58 @@ impl Csrs {
     /// E2-T20: is any interrupt pending AND enabled (`mip & mie != 0`)? A wakeup that could
     /// fire the moment global `xIE` opens — used by the WFI-deadlock watchdog. (Ignores the
     /// global `mstatus.xIE` gates: a WFI wakes on a pending+enabled line even with `xIE=0`.)
+    #[inline]
     pub fn mip_and_mie_nonzero(&self) -> bool {
-        (self.warl_get(MIP) & self.warl_get(MIE)) != 0
+        (self.warl.slot(W_MIP) & self.warl.slot(W_MIE)) != 0
     }
 
     /// E2-T20 sweep fix: the raw `mie` bits, for gating WHICH armed wakeup sources are actually
     /// deliverable (an armed timer with MTIE=0 can never end a WFI loop).
+    #[inline]
     pub fn mie_bits(&self) -> u64 {
-        self.warl_get(MIE)
+        self.warl.slot(W_MIE)
     }
 
+    ///
+    /// Sampled at every block boundary, so the common nothing-pending case is two slot loads, an
+    /// AND and a branch; the takeability rules then reduce to one mask so the priority walk only
+    /// runs when some interrupt will actually be taken.
+    #[inline]
     pub fn next_interrupt(&self) -> Option<(u64, bool)> {
-        let pend = self.warl_get(MIP) & self.warl_get(MIE);
+        let pend = self.warl.slot(W_MIP) & self.warl.slot(W_MIE);
         if pend == 0 {
             return None;
         }
-        let mideleg = self.warl_get(MIDELEG);
-        let mie_glob = self.mstatus & M_MIE != 0;
-        let sie_glob = self.mstatus & M_SIE != 0;
+        self.next_pending_interrupt(pend)
+    }
+
+    /// [`Self::next_interrupt`] once `pend = mip & mie` is known to be nonzero. Takeability depends
+    /// only on the line's target mode (`mideleg` bit) and the current mode/global enables, so it is
+    /// a per-bit mask: the first `INT_PRIORITY` entry in `pend & takeable` is exactly the line the
+    /// per-bit priority walk would pick.
+    fn next_pending_interrupt(&self, pend: u64) -> Option<(u64, bool)> {
+        let mideleg = self.warl.slot(W_MIDELEG);
+        // (M-targeted takeable, S-targeted takeable) in the current mode:
+        // - M-targeted: taken in S/U always (can't be masked from below); in M iff mstatus.MIE.
+        // - S-targeted: taken in U always; in S iff mstatus.SIE; never while in M (M > S).
+        let (m_ok, s_ok) = match self.mode {
+            Priv::M => (self.mstatus & M_MIE != 0, false),
+            Priv::S => (true, self.mstatus & M_SIE != 0),
+            Priv::U => (true, true),
+        };
+        let mut takeable = 0;
+        if m_ok {
+            takeable |= pend & !mideleg;
+        }
+        if s_ok {
+            takeable |= pend & mideleg;
+        }
+        if takeable == 0 {
+            return None;
+        }
         for &i in &INT_PRIORITY {
-            if pend & (1 << i) == 0 {
-                continue;
-            }
-            let to_s = mideleg & (1 << i) != 0;
-            let takeable = if to_s {
-                // S-targeted: taken in U always; in S iff SIE; never while in M (M > S).
-                match self.mode {
-                    Priv::U => true,
-                    Priv::S => sie_glob,
-                    Priv::M => false,
-                }
-            } else {
-                // M-targeted: taken in S/U always (can't be masked from below); in M iff MIE.
-                match self.mode {
-                    Priv::M => mie_glob,
-                    _ => true,
-                }
-            };
-            if takeable {
-                return Some(((1u64 << 63) | i, to_s));
+            if takeable & (1 << i) != 0 {
+                return Some(((1u64 << 63) | i, mideleg & (1 << i) != 0));
             }
         }
         None
@@ -666,14 +870,13 @@ impl Csrs {
     /// Device-facing (CLINT/PLIC, and tests until those land): set or clear a `mip` PENDING bit
     /// DIRECTLY, bypassing the software read-only masking. MSIP/MTIP/MEIP are software-read-only
     /// but hardware-driven — this is the hardware path.
+    /// Branch-free: called several times per block boundary by the device-level syncs. Like any
+    /// store write, it marks `mip` as written (it then appears in the snapshot table).
+    #[inline(always)]
     pub fn set_mip_bit(&mut self, bit: u64, on: bool) {
-        let mut v = self.warl_get(MIP);
-        if on {
-            v |= 1 << bit;
-        } else {
-            v &= !(1 << bit);
-        }
-        self.warl_set(MIP, v);
+        let v = self.warl.slot(W_MIP);
+        self.warl
+            .set_slot(W_MIP, (v & !(1 << bit)) | (u64::from(on) << bit));
     }
 
     /// `sstatus` is a masked read view of `mstatus` (S-visible bits only).
@@ -688,7 +891,7 @@ impl Csrs {
     /// The S-interrupt bits (SSIE/STIE/SEIE) currently visible through `sie`/`sip` — those in
     /// the S-subset that are *delegated* to S-mode by `mideleg` (Priv §4.1.3).
     fn s_int_mask(&self) -> u64 {
-        SIE_SIP_SMASK & self.warl_get(MIDELEG)
+        SIE_SIP_SMASK & self.warl.slot(W_MIDELEG)
     }
     /// The `sip` bits that are software-*writable* through the S-view. Per Priv §4.1.3 only
     /// SSIP (bit 1) is writable via `sip`; STIP (bit 5) and SEIP (bit 9) are read-only in the
@@ -697,7 +900,7 @@ impl Csrs {
     /// expose every delegated S-pending bit — that path stays `s_int_mask()`. (`sie` differs:
     /// STIE/SEIE *are* writable there, so `sie` writes keep using `s_int_mask()`.)
     fn sip_write_mask(&self) -> u64 {
-        SIP_SSIP & self.warl_get(MIDELEG)
+        SIP_SSIP & self.warl.slot(W_MIDELEG)
     }
 
     /// Metadata for an implemented CSR address, or `None` if unimplemented (→ illegal).
@@ -769,19 +972,11 @@ impl Csrs {
         self.read_raw(addr)
     }
 
-    /// Read the flat WARL store for `addr` (0 if never written).
-    fn warl_get(&self, addr: u16) -> u64 {
-        self.warl
-            .iter()
-            .find(|(a, _)| *a == addr)
-            .map_or(0, |(_, v)| *v)
-    }
-
     /// E1-T30 diagnostic: current (mcounteren, scounteren, mode) for the illegal-trap logger.
     pub(crate) fn counteren_dbg(&self) -> (u64, u64, Priv) {
         (
-            self.warl_get(MCOUNTEREN),
-            self.warl_get(SCOUNTEREN),
+            self.warl.slot(W_MCOUNTEREN),
+            self.warl.slot(W_SCOUNTEREN),
             self.mode,
         )
     }
@@ -795,17 +990,11 @@ impl Csrs {
         out.extend_from_slice(&self.mcause.to_le_bytes());
         out.push(self.fflags);
         out.push(self.frm);
-        let mut warl = self.warl.clone();
-        warl.sort_by_key(|(a, _)| *a);
-        out.extend_from_slice(&(warl.len() as u32).to_le_bytes());
-        for (a, v) in &warl {
-            out.extend_from_slice(&a.to_le_bytes());
-            out.extend_from_slice(&v.to_le_bytes());
-        }
+        self.warl.snapshot_bytes(out);
         out.extend_from_slice(&self.mcycle.to_le_bytes());
         out.extend_from_slice(&self.minstret.to_le_bytes());
-        out.push(self.wrote_mcycle as u8);
-        out.push(self.wrote_minstret as u8);
+        out.push(u8::from(self.counter_writes & WROTE_MCYCLE != 0));
+        out.push(u8::from(self.counter_writes & WROTE_MINSTRET != 0));
         out.extend_from_slice(&self.time.to_le_bytes());
         self.pmp.snapshot_bytes(out);
         out.push(self.sv48 as u8);
@@ -843,17 +1032,21 @@ impl Csrs {
         let n = r.u32()? as usize;
         // No with_capacity(n): a hostile count grows only as reads succeed (each entry is 10 bytes;
         // the bounds-checked reader errors once the section is exhausted), so it can't over-allocate.
-        let mut warl = Vec::new();
+        let mut warl = WarlStore::new();
         for _ in 0..n {
             let a = r.u16()?;
             let v = r.u64()?;
-            warl.push((a, v));
+            warl.push_parsed(a, v);
         }
         c.warl = warl;
         c.mcycle = r.u64()?;
         c.minstret = r.u64()?;
-        c.wrote_mcycle = r.bool()?;
-        c.wrote_minstret = r.bool()?;
+        if r.bool()? {
+            c.counter_writes |= WROTE_MCYCLE;
+        }
+        if r.bool()? {
+            c.counter_writes |= WROTE_MINSTRET;
+        }
         c.time = r.u64()?;
         c.pmp.restore_bytes(r)?;
         c.sv48 = r.bool()?;
@@ -866,13 +1059,6 @@ impl Csrs {
         c.trig_tcontrol = r.u64()?;
         c.triggers_armed = r.bool()?;
         Ok(c)
-    }
-    /// Write the flat WARL store for `addr`.
-    fn warl_set(&mut self, addr: u16, v: u64) {
-        match self.warl.iter_mut().find(|(a, _)| *a == addr) {
-            Some(e) => e.1 = v,
-            None => self.warl.push((addr, v)),
-        }
     }
 
     /// Raw read of an implemented CSR's current value (no privilege check). PROBE bumps its
@@ -890,8 +1076,8 @@ impl Csrs {
             // Per Priv §4.1.3, an S-interrupt bit is visible/maskable via sie/sip ONLY when it
             // is delegated (mideleg bit set); undelegated bits are read-only zero.
             SSTATUS => self.sstatus_read(),
-            SIE => self.warl_get(MIE) & self.s_int_mask(),
-            SIP => self.warl_get(MIP) & self.s_int_mask(),
+            SIE => self.warl.slot(W_MIE) & self.s_int_mask(),
+            SIP => self.warl.slot(W_MIP) & self.s_int_mask(),
             // FP CSR aliasing: fcsr = frm[7:5] | fflags[4:0].
             FFLAGS => u64::from(self.fflags),
             FRM => u64::from(self.frm),
@@ -918,11 +1104,7 @@ impl Csrs {
             TDATA3 => 0,
             TINFO => 1 << (Self::MCONTROL_TYPE),
             TCONTROL => self.trig_tcontrol,
-            other => self
-                .warl
-                .iter()
-                .find(|(a, _)| *a == other)
-                .map_or(0, |(_, v)| *v),
+            other => self.warl.get(other),
         }
     }
 
@@ -938,20 +1120,20 @@ impl Csrs {
             SSTATUS => self.sstatus_write(v),
             SIE => {
                 let m = self.s_int_mask();
-                let new = (self.warl_get(MIE) & !m) | (v & m);
-                self.warl_set(MIE, new);
+                let new = (self.warl.slot(W_MIE) & !m) | (v & m);
+                self.warl.set_slot(W_MIE, new);
             }
             SIP => {
                 let m = self.sip_write_mask();
-                let new = (self.warl_get(MIP) & !m) | (v & m);
-                self.warl_set(MIP, new);
+                let new = (self.warl.slot(W_MIP) & !m) | (v & m);
+                self.warl.set_slot(W_MIP, new);
             }
             // A raw `csrw mip` from M writes only the S-mode pending bits (SSIP/STIP/SEIP);
             // MSIP/MTIP/MEIP are read-only to software (device-driven via set_mip_bit). RMW so
             // the device-driven bits survive (E1-T11).
             MIP => {
-                let new = (self.warl_get(MIP) & !MIP_SW_WMASK) | (v & MIP_SW_WMASK);
-                self.warl_set(MIP, new);
+                let new = (self.warl.slot(W_MIP) & !MIP_SW_WMASK) | (v & MIP_SW_WMASK);
+                self.warl.set_slot(W_MIP, new);
             }
             // FP CSR writes (value already WARL-masked). Writing any of the three marks FP
             // state Dirty. fcsr splits into {frm, fflags}.
@@ -974,11 +1156,11 @@ impl Csrs {
             // Flag the write so this instruction's own retirement does not re-increment it.
             MCYCLE => {
                 self.mcycle = v;
-                self.wrote_mcycle = true;
+                self.counter_writes |= WROTE_MCYCLE;
             }
             MINSTRET => {
                 self.minstret = v;
-                self.wrote_minstret = true;
+                self.counter_writes |= WROTE_MINSTRET;
             }
             // PMP (E1-T15): route to the unit, which applies WARL legalization + lock enforcement.
             PMPCFG0..=PMPCFG14 if (addr - PMPCFG0).is_multiple_of(2) => {
@@ -996,7 +1178,7 @@ impl Csrs {
                 // Sv57(10, if enabled — E1-T28).
                 let mode = v >> 60;
                 if mode == 0 || mode == 8 || (mode == 9 && self.sv48) || (mode == 10 && self.sv57) {
-                    self.warl_set(SATP, v);
+                    self.warl.set_slot(W_SATP, v);
                 }
             }
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
@@ -1018,10 +1200,7 @@ impl Csrs {
             }
             TDATA3 => {}
             TCONTROL => self.trig_tcontrol = v & ((1 << 3) | (1 << 7)),
-            other => match self.warl.iter_mut().find(|(a, _)| *a == other) {
-                Some(e) => e.1 = v,
-                None => self.warl.push((other, v)),
-            },
+            other => self.warl.set(other, v),
         }
     }
 
@@ -1061,10 +1240,10 @@ impl Csrs {
         // so hpmcounter3..31 always trap from S/U.
         if (CYCLE..=0xC1F).contains(&addr) && !matches!(self.mode, Priv::M) {
             let bit = 1u64 << (addr - CYCLE);
-            let m_ok = self.warl_get(MCOUNTEREN) & bit != 0;
+            let m_ok = self.warl.slot(W_MCOUNTEREN) & bit != 0;
             let permitted = match self.mode {
                 Priv::S => m_ok,
-                _ => m_ok && (self.warl_get(SCOUNTEREN) & bit != 0), // U-mode
+                _ => m_ok && (self.warl.slot(W_SCOUNTEREN) & bit != 0), // U-mode
             };
             if !permitted {
                 return Err(illegal());
@@ -1107,5 +1286,184 @@ impl Csrs {
 impl Default for Csrs {
     fn default() -> Self {
         Self::at_reset()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Every CSR a guest (or the trap/device paths) can write lands in a dense slot: after writing
+    /// all 4096 addresses in M-mode — all-ones and zero, every Zicsr op — plus both trap-delivery
+    /// paths and `set_mip_bit`, the cold `extra` overflow is still empty. `extra` is reserved for
+    /// snapshot-table oddities; a live write reaching it would mean a slot is missing.
+    #[test]
+    fn every_writable_csr_has_a_dense_slot() {
+        for op in [CsrOp::Write, CsrOp::Set, CsrOp::Clear] {
+            for src in [0, !0, 0x5555_5555_5555_5555] {
+                let mut c = Csrs::at_reset();
+                c.mstatus = legalize_mstatus(M_FS); // FS=Dirty so the FP CSRs are accessible
+                for addr in 0..=0xFFFu16 {
+                    let _ = c.access(addr, op, src, src == 0, false, 0);
+                }
+                c.deliver_trap_m(0x1000, 2, 3);
+                c.deliver_trap_s(0x2000, 4, 5);
+                c.set_mip_bit(7, true);
+                assert!(
+                    c.warl.extra.is_empty(),
+                    "live write escaped the dense slots"
+                );
+            }
+        }
+    }
+
+    /// The old store was an insertion-ordered list; its snapshot was a STABLE sort by address, reads
+    /// and writes acted on an address's first occurrence, and a table from a snapshot was kept
+    /// verbatim (duplicates and slot-less addresses included). Check the dense store reproduces all
+    /// of that on a deliberately hostile table.
+    #[test]
+    fn snapshot_table_matches_old_list_semantics() {
+        let table: [(u16, u64); 8] = [
+            (MIP, 1),
+            (0x999, 2),
+            (SATP, 3),
+            (MIP, 4),
+            (0x999, 5),
+            (STVEC, 6),
+            (0x100, 7), // SSTATUS: a view with no store slot
+            (MIP, 8),
+        ];
+        let mut w = WarlStore::new();
+        for (a, v) in table {
+            w.push_parsed(a, v);
+        }
+        // First occurrence wins for reads, including slot-less addresses.
+        assert_eq!(w.get(MIP), 1);
+        assert_eq!(w.get(0x999), 2);
+        assert_eq!(w.get(0x100), 7);
+        assert_eq!(w.get(MEPC), 0, "never written reads 0");
+        // …and for writes.
+        w.set(MIP, 9);
+        w.set(0x999, 10);
+        let mut old: alloc::vec::Vec<(u16, u64)> = table.to_vec();
+        old[0].1 = 9;
+        old[1].1 = 10;
+        // A write to a new address appends (then sorts into place).
+        w.set(MEPC, 11);
+        old.push((MEPC, 11));
+        old.sort_by_key(|(a, _)| *a); // stable, exactly as the old serializer
+        let mut expect = alloc::vec::Vec::new();
+        expect.extend_from_slice(&(old.len() as u32).to_le_bytes());
+        for (a, v) in &old {
+            expect.extend_from_slice(&a.to_le_bytes());
+            expect.extend_from_slice(&v.to_le_bytes());
+        }
+        let mut got = alloc::vec::Vec::new();
+        w.snapshot_bytes(&mut got);
+        assert_eq!(got, expect);
+    }
+
+    /// The mask-based takeability in `next_interrupt` picks exactly what the old per-bit priority
+    /// walk picked, exhaustively over every mode, both global enables, and every pending/enable and
+    /// delegation pattern of the six implemented lines plus an unimplemented bit (reachable only
+    /// through a restored snapshot).
+    #[test]
+    fn next_interrupt_matches_per_bit_priority_walk() {
+        fn reference(c: &Csrs) -> Option<(u64, bool)> {
+            let pend = c.warl.slot(W_MIP) & c.warl.slot(W_MIE);
+            let mideleg = c.warl.slot(W_MIDELEG);
+            let mie_glob = c.mstatus & M_MIE != 0;
+            let sie_glob = c.mstatus & M_SIE != 0;
+            for &i in &INT_PRIORITY {
+                if pend & (1 << i) == 0 {
+                    continue;
+                }
+                let to_s = mideleg & (1 << i) != 0;
+                let takeable = if to_s {
+                    match c.mode {
+                        Priv::U => true,
+                        Priv::S => sie_glob,
+                        Priv::M => false,
+                    }
+                } else {
+                    match c.mode {
+                        Priv::M => mie_glob,
+                        _ => true,
+                    }
+                };
+                if takeable {
+                    return Some(((1u64 << 63) | i, to_s));
+                }
+            }
+            None
+        }
+        // The six lines (1,3,5,7,9,11) plus bit 13, packed into 7 bits.
+        let spread =
+            |m: u64| -> u64 { (0..7).fold(0, |acc, k| acc | (((m >> k) & 1) << (2 * k + 1))) };
+        let mut c = Csrs::at_reset();
+        for mode in [Priv::U, Priv::S, Priv::M] {
+            for glob in 0..4u64 {
+                c.mode = mode;
+                c.mstatus = ((glob & 1) * M_MIE) | ((glob >> 1) * M_SIE);
+                for pend in 0..128u64 {
+                    for deleg in 0..128u64 {
+                        c.warl.set_slot(W_MIP, spread(pend));
+                        c.warl.set_slot(W_MIE, spread(pend | deleg));
+                        c.warl.set_slot(W_MIDELEG, spread(deleg));
+                        assert_eq!(c.next_interrupt(), reference(&c));
+                    }
+                }
+            }
+        }
+    }
+
+    /// The packed counter-write bits serialize as the original two bools (mcycle, then minstret)
+    /// right after the counters, and restore into the same suppression behaviour.
+    #[test]
+    fn counter_write_flags_keep_their_two_bool_encoding() {
+        for (wrote_c, wrote_i) in [(false, false), (true, false), (false, true), (true, true)] {
+            let mut c = Csrs::at_reset();
+            c.arm_counters();
+            if wrote_c {
+                c.access(MCYCLE, CsrOp::Write, 100, false, true, 0).unwrap();
+            }
+            if wrote_i {
+                c.access(MINSTRET, CsrOp::Write, 200, false, true, 0)
+                    .unwrap();
+            }
+            let mut a = alloc::vec::Vec::new();
+            c.snapshot_bytes(&mut a);
+            // mode(1) mstatus(8) mcause(8) fflags(1) frm(1) warl(4 + 10*n) mcycle(8) minstret(8)
+            let flags = 1 + 8 + 8 + 1 + 1 + 4 + 16;
+            assert_eq!(a[flags..flags + 2], [u8::from(wrote_c), u8::from(wrote_i)]);
+            let mut r = crate::resume::Reader::new(&a, crate::resume::section::CPU);
+            let mut back = Csrs::parse(&mut r).unwrap();
+            let mut b = alloc::vec::Vec::new();
+            back.snapshot_bytes(&mut b);
+            assert_eq!(a, b);
+            back.retire_tick();
+            let expect_c = if wrote_c { 100 } else { 1 };
+            let expect_i = if wrote_i { 200 } else { 1 };
+            assert_eq!(back.read(MCYCLE), expect_c);
+            assert_eq!(back.read(MINSTRET), expect_i);
+        }
+    }
+
+    /// Presence, not value, decides table membership: a device clearing a never-set `mip` bit still
+    /// creates the entry (the old `warl_set` pushed `(MIP, 0)`), and an untouched store is empty.
+    #[test]
+    fn set_mip_bit_marks_mip_written_even_when_zero() {
+        let mut c = Csrs::at_reset();
+        let mut out = alloc::vec::Vec::new();
+        c.warl.snapshot_bytes(&mut out);
+        assert_eq!(out, 0u32.to_le_bytes());
+        c.set_mip_bit(7, false);
+        out.clear();
+        c.warl.snapshot_bytes(&mut out);
+        let mut expect = alloc::vec::Vec::new();
+        expect.extend_from_slice(&1u32.to_le_bytes());
+        expect.extend_from_slice(&MIP.to_le_bytes());
+        expect.extend_from_slice(&0u64.to_le_bytes());
+        assert_eq!(out, expect);
     }
 }
