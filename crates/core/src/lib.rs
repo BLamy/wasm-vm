@@ -590,6 +590,13 @@ pub struct Machine {
     /// epoch; cleared at every run entry (the host may have changed device state in between).
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     fabric_idle_epoch: Option<u64>,
+    /// Test-only control: force every boundary through the full device sync (the pre-quiescence
+    /// behaviour) so equivalence tests can compare both paths.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    fabric_fast_path_off: bool,
+    /// Test-only work counter: boundaries served by the quiescent fast path.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    fabric_fast_hits: u64,
 }
 
 /// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
@@ -955,6 +962,10 @@ impl Machine {
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
             fabric_idle_epoch: None,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            fabric_fast_path_off: false,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            fabric_fast_hits: 0,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -4823,7 +4834,16 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     #[inline(never)]
     fn boundary_sync(&mut self) {
-        if self.fabric_idle_epoch == Some(self.fabric_epoch.get()) {
+        #[cfg(test)]
+        let quiescent =
+            !self.fabric_fast_path_off && self.fabric_idle_epoch == Some(self.fabric_epoch.get());
+        #[cfg(not(test))]
+        let quiescent = self.fabric_idle_epoch == Some(self.fabric_epoch.get());
+        if quiescent {
+            #[cfg(test)]
+            {
+                self.fabric_fast_hits += 1;
+            }
             self.sample_wall_clock();
             self.sync_clint();
             self.sync_plic();
@@ -5294,6 +5314,183 @@ mod decoded_cache_capacity_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The quiescent-fabric fast path must be unobservable: an interrupt-driven UART echo plus an
+    /// RTC alarm, whose level changes come from host input between runs (while the guest is
+    /// parked in a device-silent spin), from guest MMIO mid-run (IER/alarm arm/claim/RBR/
+    /// complete), from the UART char-timeout clock, and from an RTC clock that only advances when
+    /// polled, retires the identical instruction stream, output, and machine state with the fast
+    /// path forced off — in legacy, cache-only and batched modes, across slicings that split
+    /// blocks.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn fabric_quiescence_fast_path_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let lui = |rd: u32, imm20: u32| (imm20 << 12) | (rd << 7) | 0x37;
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        let lw = |rd, rs1, imm| i_type(imm, rs1, 2, rd, 0x03);
+        let lb = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x03);
+        let s_type = |imm: i32, rs2: u32, rs1: u32, f3: u32| {
+            let iu = (imm as u32) & 0xFFF;
+            ((iu >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | ((iu & 0x1F) << 7) | 0x23
+        };
+        let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
+        let sb = |rs2, rs1, imm| s_type(imm, rs2, rs1, 0);
+        const JDOT: u32 = 0x0000_006F;
+        const SRET: u32 = 0x1020_0073;
+        // main: stvec, sie.SEIE, sstatus.SIE, PLIC prio/enable/threshold for UART IRQ 10 on the
+        // S context, then a few hundred device-silent instructions before UART IER is enabled
+        // by guest MMIO (input may already be pending), then a counting spin loop.
+        let mut code = alloc::vec![
+            lui(5, 0x80201),
+            addi(5, 5, -0x800),
+            i_type(32, 5, 1, 5, 0x13),
+            i_type(32, 5, 5, 5, 0x13),
+            csrrw(0, 0x105, 5),
+            addi(5, 0, 0x200),
+            csrrs(0, 0x104, 5),
+            addi(5, 0, 0x2),
+            csrrs(0, 0x100, 5),
+            lui(5, 0x0C000),
+            addi(6, 0, 1),
+            sw(6, 5, 0x28),
+            addi(6, 0, 1),
+            sw(6, 5, 0x2C),
+            lui(5, 0x0C002),
+            addi(6, 0, 0x400),
+            addi(6, 6, 0x400),
+            addi(6, 6, 0x400),
+            sw(6, 5, 0x80),
+            lui(5, 0x0C201),
+            sw(0, 5, 0),
+            lui(7, 0x10000),
+            // RTC: IRQ_ENABLED = 1, alarm = 4096 ns of a clock that ticks once per poll.
+            lui(30, 0x00101),
+            addi(6, 0, 1),
+            sw(6, 30, 0x10),
+            sw(0, 30, 0x0c),
+            lui(6, 1),
+            sw(6, 30, 0x08),
+        ];
+        // Device-silent countdown (3000 iterations = 3000 boundaries even when batched) so the
+        // UART char-timeout clock latches and the fabric goes QUIESCENT before the guest's own
+        // IER store must raise the level: only the MMIO epoch bump can wake the full sync here.
+        let bne_back =
+            (1 << 31) | (0x3F << 25) | (9 << 15) | (1 << 12) | (0b1110 << 8) | (1 << 7) | 0x63;
+        code.extend([lui(9, 1), addi(9, 9, -1096), addi(9, 9, -1), bne_back]);
+        // FCR: FIFOs on, RX trigger level 8 — so short input interrupts ONLY via the UART's
+        // char-timeout clock, which must keep ticking at boundaries while the guest spins.
+        // Then IER = ERBFI.
+        code.extend([addi(6, 0, 0x81), sb(6, 7, 2), addi(6, 0, 0x01), sb(6, 7, 1)]);
+        code.extend([addi(8, 8, 1), 0xffdf_f06f]); // spin: addi x8,x8,1 ; j -4
+        // handler: claim, IIR, RBR -> THR echo, complete, sret.
+        let handler = [
+            addi(28, 28, 1),
+            lui(5, 0x0C201),
+            lw(6, 5, 4),
+            lb(29, 7, 2),
+            lb(31, 7, 0),
+            sb(31, 7, 0),
+            sw(0, 30, 0x1c), // RTC CLEAR_INTERRUPT (harmless for a UART claim)
+            sw(6, 5, 4),
+            SRET,
+        ];
+        struct PolledClock(alloc::rc::Rc<core::cell::Cell<u64>>);
+        impl dev::rtc::WallClock for PolledClock {
+            fn now_ns(&self) -> u64 {
+                let now = self.0.get();
+                self.0.set(now + 1);
+                now
+            }
+        }
+        let run = |block_cache: bool, batching: bool, fast_off: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(10);
+            m.enable_plic();
+            let uart = m.enable_uart16550();
+            let clock = alloc::rc::Rc::new(core::cell::Cell::new(0));
+            let rtc = m.enable_rtc(alloc::boxed::Box::new(PolledClock(alloc::rc::Rc::clone(
+                &clock,
+            ))));
+            let _ = m.enable_virtio_slots(None);
+            let _ = m.enable_virtio_keyboard();
+            m.enable_builtin_sbi();
+            m.boot_supervisor(0, 0);
+            m.set_block_cache(block_cache);
+            m.set_interrupt_batching(batching);
+            m.fabric_fast_path_off = fast_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut()
+                    .store32(platform::virt::KERNEL_BASE + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            for (i, insn) in handler.iter().enumerate() {
+                m.bus_mut()
+                    .store32(platform::virt::KERNEL_BASE + 0x800 + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            uart.borrow_mut().push_input(b"a");
+            let mut trace = HashSink::new();
+            let mut out = alloc::vec::Vec::new();
+            let inputs: [&[u8]; 5] = [b"b", b"", b"cd", b"e", b""];
+            for (round, input) in inputs.iter().enumerate() {
+                let mut remaining = 20_000u64;
+                let mut step = round;
+                while remaining > 0 {
+                    let budget = remaining.min(slices[step % slices.len()]);
+                    assert_eq!(m.run_traced(budget, &mut trace), RunOutcome::MaxInstrs);
+                    remaining -= budget;
+                    step += 1;
+                }
+                out.extend(uart.borrow_mut().take_output());
+                uart.borrow_mut().push_input(input);
+            }
+            assert!(
+                !rtc.borrow().alarm_armed(),
+                "the alarm fired inside the run"
+            );
+            let rtc_claims = m.plic.as_ref().unwrap().borrow().claim_counts()[11];
+            out.retain(|&byte| byte != 0); // the RTC claim echoes an empty RBR
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    out,
+                    rtc_claims,
+                    clock.get(),
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.fabric_fast_hits,
+            )
+        };
+        for (block_cache, batching) in [(false, false), (true, false), (true, true)] {
+            for slices in [&[20_000][..], &[1, 7, 333][..], &[4096, 3][..]] {
+                let (control, full_hits) = run(block_cache, batching, true, slices);
+                let (fast, fast_hits) = run(block_cache, batching, false, slices);
+                assert_eq!(full_hits, 0);
+                assert!(fast_hits > 0, "the quiescent path must actually engage");
+                assert_eq!(
+                    fast, control,
+                    "cache={block_cache} batching={batching} {slices:?}"
+                );
+                assert_eq!(
+                    control.2, b"abcde",
+                    "every byte echoed through the IRQ path"
+                );
+                assert_eq!(control.3, 1, "one RTC alarm interrupt");
+            }
+        }
+    }
 
     #[cfg(not(feature = "zicsr-stub"))]
     #[test]
