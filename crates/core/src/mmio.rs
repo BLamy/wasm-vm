@@ -224,6 +224,13 @@ impl SystemBus {
         self.windows.iter().map(|w| (w.start, w.hits)).collect()
     }
 
+    /// Total MMIO accesses that have landed in any device window (the sum of the E2-T25 per-window
+    /// counters, without allocating). Deterministic. The JIT chain loop compares it across one
+    /// compiled block to detect a device access that needs the full boundary service pass.
+    pub fn device_access_count(&self) -> u64 {
+        self.windows.iter().map(|w| w.hits).sum()
+    }
+
     /// True when every byte of `[addr, addr + width)` lies in `[start, last]`.
     /// Plain u64 compares; cannot wrap (width - 1 <= 7, and addr <= last).
     #[inline(always)]

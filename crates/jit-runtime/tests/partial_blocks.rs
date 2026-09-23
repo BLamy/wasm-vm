@@ -233,3 +233,103 @@ fn fp_loop_with_system_csr_prefix_blocks() {
     ];
     sweep("partial fp prefix loop", &body, 3000, 14_000, 9000..9012);
 }
+
+fn sb(rs2: u32, rs1: u32, imm: i32) -> u32 {
+    let i = imm as u32;
+    ((i >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | ((i & 0x1f) << 7) | 0x23
+}
+fn lw(rd: u32, rs1: u32, imm: i32) -> u32 {
+    enc_i(0x03, 2, rd, rs1, imm)
+}
+fn sw(rs2: u32, rs1: u32, imm: i32) -> u32 {
+    let i = imm as u32;
+    ((i >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (2 << 12) | ((i & 0x1f) << 7) | 0x23
+}
+fn jal_fwd(bytes: i32) -> u32 {
+    let o = bytes as u32;
+    (((o >> 20) & 1) << 31)
+        | (((o >> 1) & 0x3ff) << 21)
+        | (((o >> 11) & 1) << 20)
+        | (((o >> 12) & 0xff) << 12)
+        | 0x6f
+}
+
+/// Loop whose first block enables the UART THRE interrupt by MMIO; the UART's level reaches the
+/// PLIC only in the run loop's full boundary pass. The handler disables it again (MMIO), claims
+/// and completes at the PLIC, and accumulates `mepc`, so every interrupt position is recorded.
+fn build_uart_irq_loop(iterations: u64) -> Machine {
+    use wasm_vm_core::bus::mmap::{PLIC_BASE, UART0_BASE};
+    const CLAIM: u64 = PLIC_BASE + 0x0020_0004;
+    let mut m = Machine::new(16 * 1024 * 1024);
+    // B0: addi x1,-1 ; sb x7,1(x6) (IER=ETBEI) ; addi x2,+1 ; jal B1
+    // B1: addi x3,+1 ; jal B2
+    // B2: addi x4,+1 ; bne x1,x0,B0 ; spin
+    poke(
+        &mut m,
+        DRAM_BASE,
+        &[
+            addi(1, 1, -1),
+            sb(7, 6, 1),
+            addi(2, 2, 1),
+            jal_fwd(4),
+            addi(3, 3, 1),
+            jal_fwd(4),
+            addi(4, 4, 1),
+            bne_back(1, 24),
+            JAL_SELF,
+        ],
+    );
+    poke(
+        &mut m,
+        HANDLER,
+        &[
+            sb(0, 6, 1), // IER = 0: drops the THRE level
+            lw(9, 8, 0), // claim
+            sw(9, 8, 0), // complete
+            addi(10, 10, 1),
+            csrrs(11, MEPC, 0),
+            add(12, 12, 11),
+            MRET,
+        ],
+    );
+    let _plic = m.enable_plic();
+    m.enable_uart16550();
+    let uart_irq = u64::from(wasm_vm_core::platform::virt::UART0_IRQ);
+    m.bus_mut().store32(PLIC_BASE + 4 * uart_irq, 1).unwrap(); // priority
+    m.bus_mut()
+        .store32(PLIC_BASE + 0x2000, 1 << uart_irq)
+        .unwrap(); // enable, M context 0
+    m.bus_mut().store32(PLIC_BASE + 0x0020_0000, 0).unwrap(); // threshold
+    let clint = m.enable_clint(1);
+    clint.borrow_mut().mtimecmp = u64::MAX;
+    set_csr(&mut m, MTVEC, HANDLER);
+    set_csr(&mut m, MIE, 1 << 11); // MEIE
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    let h = m.hart_mut();
+    h.regs.write(1, iterations);
+    h.regs.write(6, UART0_BASE);
+    h.regs.write(7, 2);
+    h.regs.write(8, CLAIM);
+    h.regs.pc = DRAM_BASE;
+    m
+}
+
+#[test]
+fn device_access_ends_the_native_chain_like_a_block_boundary() {
+    // Without the chain break after a device access, the compiled B0 -> B1 -> B2 chain skips the
+    // full boundary pass that mirrors the UART level into the PLIC, delaying every interrupt.
+    for budget in [3_000, 6_001, 9_999] {
+        let mut want = reference(build_uart_irq_loop(400), budget);
+        let mut got = jit(build_uart_irq_loop(400), budget);
+        assert!(
+            want.hart().regs.read(10) > 50,
+            "the UART interrupt must fire every iteration"
+        );
+        assert_same(
+            &format!("uart irq loop budget={budget}"),
+            &mut want,
+            &mut got,
+        );
+        assert!(got.executor().unwrap().retired_via_jit() > 0);
+    }
+}

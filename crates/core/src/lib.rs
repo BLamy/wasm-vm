@@ -4326,6 +4326,7 @@ impl Machine {
         let mut pending_link: Option<(u64, u8, u64)> = None;
         let result = loop {
             let block_budget = remaining_work - work_used;
+            let device_accesses = self.bus.device_access_count();
             let Some(step) = self.run_one_jit_block(
                 phys,
                 block_budget,
@@ -4382,6 +4383,17 @@ impl Machine {
                         });
                     }
                     if !chaining {
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        });
+                    }
+                    // A block that touched a device (a virtio kick, a UART IER/IIR access, a PLIC
+                    // claim, ...) must be followed by the FULL boundary pass — device service and
+                    // UART/RTC/virtio IRQ-line mirroring — exactly as the batched interpreter does
+                    // at the next block boundary. The in-chain sync below only mirrors
+                    // CLINT/SBI/PLIC levels, so return to the run loop instead of chaining on.
+                    if self.bus.device_access_count() != device_accesses {
                         break Some(JitProgress {
                             result: Ok(()),
                             work_used,
