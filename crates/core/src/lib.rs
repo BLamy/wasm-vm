@@ -3527,6 +3527,7 @@ impl Machine {
     /// `mtime >= mtimecmp` and MSIP (bit 3) tracks `msip` — device-owned bits software cannot
     /// set. A no-op when no CLINT is attached.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_clint(&mut self) {
         if let Some(clint) = &self.clint {
             let s = *clint.borrow();
@@ -3551,6 +3552,7 @@ impl Machine {
     /// PLIC, which does not occur in this system. (MEIP is not software-writable, so it has no such
     /// interaction.)
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_plic(&mut self) {
         if let Some(plic) = &self.plic {
             let s = plic.borrow();
@@ -3569,6 +3571,7 @@ impl Machine {
     /// pending timer interrupt" clause), and `u64::MAX` never fires. A no-op unless the
     /// built-in SBI is enabled and a CLINT provides `mtime`.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_sbi_timer(&mut self) {
         if self.builtin_sbi
             && let Some(clint) = &self.clint
@@ -3645,7 +3648,18 @@ impl Machine {
     /// policy; a documented suspend/resume jump is stashed in [`Self::last_time_jump`]. A no-op unless
     /// wall-clock mode is armed (default ICount path never enters here).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sample_wall_clock(&mut self) {
+        // ICount mode (the default) never samples: one test, inlined at every boundary.
+        if self.wall_time.is_some() {
+            self.sample_wall_clock_now();
+        }
+    }
+
+    /// The WallClock-mode body of [`Self::sample_wall_clock`].
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn sample_wall_clock_now(&mut self) {
         let (Some(ts), Some(clock), Some(clint)) =
             (&mut self.wall_time, &self.mono_clock, &self.clint)
         else {
@@ -4833,8 +4847,13 @@ impl Machine {
     /// clears the marker), then repeating the device half would take exactly the same no-op paths
     /// and write the same PLIC levels — so only the clock/`mip` mirrors, the DMA drain and the JIT
     /// pump run. The result is identical to the full sync at every boundary.
+    ///
+    /// The quiescent half is inlined into the run loop (it runs at almost every boundary: a few
+    /// loads and `mip` bit updates); the device half stays out of line in
+    /// [`Self::boundary_sync_full`], so the common boundary pays neither a call nor that function's
+    /// large frame.
     #[cfg(not(feature = "zicsr-stub"))]
-    #[inline(never)]
+    #[inline(always)]
     fn boundary_sync(&mut self) {
         #[cfg(test)]
         let quiescent =
@@ -4854,6 +4873,13 @@ impl Machine {
             self.boundary_jit_pump();
             return;
         }
+        self.boundary_sync_full();
+    }
+
+    /// The non-quiescent [`Self::boundary_sync`]: the full device-fabric pass (see there).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn boundary_sync_full(&mut self) {
         let mut idle = true;
         // E5-T04: host-owned virtio devices may have requested a config change through a
         // retained state handle (for example a GPU canvas resize).  Latch those requests
