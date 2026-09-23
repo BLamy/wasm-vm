@@ -1,0 +1,98 @@
+[bench-native 04:41:45] microbench: building perf_baseline in /Users/blamy/Documents/Codex/wasm-vm-base (not timed)
+[bench-native 04:41:45] microbench: building perf_baseline in /Users/blamy/Documents/Codex/wasm-vm-t-bench (not timed)
+[bench-native 04:42:43] busybox-legacy  baseline     rep 0: 57.69 s mips=5.7 ok=True (58s)
+[bench-native 04:43:31] busybox-legacy  candidate    rep 0: 47.38 s mips=6.9 ok=True (47s)
+[bench-native 04:43:49] busybox-fast    baseline     rep 0: 18.56 s mips=17.5 ok=True (19s)
+[bench-native 04:44:03] busybox-fast    candidate    rep 0: 13.53 s mips=24.1 ok=True (14s)
+[bench-native 04:44:16] busybox-jit     baseline     rep 0: 12.90 s mips=25.3 ok=True (13s)
+[bench-native 04:44:28] busybox-jit     candidate    rep 0: 12.28 s mips=26.6 ok=True (12s)
+[bench-native 04:44:52] compute-fast    baseline     rep 0: 9.52 s mips=17.3 ok=True (24s)
+[bench-native 04:45:14] compute-fast    candidate    rep 0: 8.71 s mips=18.9 ok=True (22s)
+[bench-native 04:45:37] compute-jit     baseline     rep 0: 8.47 s mips=19.4 ok=True (23s)
+[bench-native 04:45:58] compute-jit     candidate    rep 0: 7.92 s mips=20.7 ok=True (21s)
+[bench-native 04:46:29] busybox-legacy  candidate    rep 1: 31.21 s mips=10.5 ok=True (31s)
+[bench-native 04:47:08] busybox-legacy  baseline     rep 1: 38.71 s mips=8.4 ok=True (39s)
+[bench-native 04:47:23] busybox-fast    candidate    rep 1: 15.37 s mips=21.2 ok=True (15s)
+[bench-native 04:47:39] busybox-fast    baseline     rep 1: 15.77 s mips=20.6 ok=True (16s)
+[bench-native 04:47:51] busybox-jit     candidate    rep 1: 12.37 s mips=26.4 ok=True (12s)
+[bench-native 04:48:05] busybox-jit     baseline     rep 1: 13.25 s mips=24.6 ok=True (13s)
+[bench-native 04:48:27] compute-fast    candidate    rep 1: 8.58 s mips=19.2 ok=True (22s)
+[bench-native 04:48:51] compute-fast    baseline     rep 1: 9.87 s mips=16.7 ok=True (25s)
+[bench-native 04:49:12] compute-jit     candidate    rep 1: 7.63 s mips=21.6 ok=True (21s)
+[bench-native 04:49:33] compute-jit     baseline     rep 1: 8.02 s mips=20.4 ok=True (22s)
+[bench-native 04:50:09] busybox-legacy  baseline     rep 2: 36.29 s mips=9.0 ok=True (36s)
+[bench-native 04:50:56] busybox-legacy  candidate    rep 2: 46.51 s mips=7.0 ok=True (47s)
+[bench-native 04:51:24] busybox-fast    baseline     rep 2: 28.17 s mips=11.6 ok=True (28s)
+[bench-native 04:51:44] busybox-fast    candidate    rep 2: 19.38 s mips=16.8 ok=True (19s)
+[bench-native 04:51:57] busybox-jit     baseline     rep 2: 13.53 s mips=24.1 ok=True (14s)
+[bench-native 04:52:25] busybox-jit     candidate    rep 2: 27.46 s mips=11.9 ok=True (27s)
+[bench-native 04:53:23] compute-fast    baseline     rep 2: 25.32 s mips=6.5 ok=True (59s)
+[bench-native 04:54:15] compute-fast    candidate    rep 2: 16.29 s mips=10.1 ok=True (52s)
+[bench-native 04:54:50] compute-jit     baseline     rep 2: 13.63 s mips=12.0 ok=True (35s)
+[bench-native 04:55:21] compute-jit     candidate    rep 2: 10.85 s mips=15.1 ok=True (31s)
+[bench-native 04:55:35] microbench      baseline     rep 0: 13.72 s ok=True (14s)
+[bench-native 04:55:49] microbench      candidate    rep 0: 13.94 s ok=True (14s)
+[bench-native 04:56:03] microbench      candidate    rep 1: 13.82 s ok=True (14s)
+[bench-native 04:56:15] microbench      baseline     rep 1: 12.55 s ok=True (13s)
+[bench-native 04:56:28] microbench      baseline     rep 2: 12.52 s ok=True (13s)
+[bench-native 04:56:41] microbench      candidate    rep 2: 13.68 s ok=True (14s)
+[bench-native 04:56:41] slow cases: 8 samples in waves of 4
+[bench-native 04:58:31] coremark-jit    candidate    rep 0: 95.10 s mips=22.9 ok=True (110s)
+[bench-native 04:58:41] coremark-jit    baseline     rep 0: 103.60 s mips=21.0 ok=True (119s)
+[bench-native 04:59:02] coremark-fast   candidate    rep 0: 125.94 s mips=17.3 ok=True (141s)
+[bench-native 04:59:20] coremark-fast   baseline     rep 0: 142.45 s mips=15.3 ok=True (159s)
+[bench-native 05:02:33] alpine-fast     candidate    rep 0: 192.40 s mips=16.0 ok=True (192s)
+[bench-native 05:02:54] alpine-fast     baseline     rep 0: 213.32 s mips=14.4 ok=True (213s)
+[bench-native 05:03:47] alpine-jit      candidate    rep 0: 266.69 s mips=11.5 ok=True (267s)
+[bench-native 05:04:02] alpine-jit      baseline     rep 0: 281.59 s mips=10.9 ok=True (282s)
+# Native benchmark (2026-09-23T08:41:45+00:00)
+
+Host: arm64 · Apple M4 Max · reps=3 (alpine/coremark reps=1, up to 4 concurrent) · medians · interleaved=True
+
+- **baseline**: `/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm` rev `8297850913` (+uncommitted crate changes) sha256 `90a84c60f52a`
+- **candidate**: `/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm` rev `ce356fd482` sha256 `08f309cb9a01`
+
+| case | metric | baseline | candidate | speedup candidate vs baseline | ok |
+|---|---|---:|---:|---:|---:|
+| busybox-legacy | wall s | 38.71 [36.29–57.69] | 46.51 [31.21–47.38] | 0.83x (paired 1.22x) | 3/3 · 3/3 |
+| busybox-legacy | MIPS (profile) | 8.4 [5.7–9.0] | 7.0 [6.9–10.5] | 0.83x (paired 1.22x) | 3/3 · 3/3 |
+| busybox-legacy | cpu s | 38.40 [36.22–40.45] | 33.53 [31.13–35.07] | 1.15x (paired 1.21x) | 3/3 · 3/3 |
+| busybox-fast | wall s | 18.56 [15.77–28.17] | 15.37 [13.53–19.38] | 1.21x (paired 1.37x) | 3/3 · 3/3 |
+| busybox-fast | MIPS (profile) | 17.5 [11.6–20.6] | 21.2 [16.8–24.1] | 1.21x (paired 1.37x) | 3/3 · 3/3 |
+| busybox-fast | cpu s | 15.70 [15.18–17.54] | 14.87 [13.09–15.02] | 1.06x (paired 1.16x) | 3/3 · 3/3 |
+| busybox-jit | wall s | 13.25 [12.90–13.53] | 12.37 [12.28–27.46] | 1.07x (paired 1.05x) | 3/3 · 3/3 |
+| busybox-jit | MIPS (profile) | 24.6 [24.1–25.3] | 26.4 [11.9–26.6] | 1.07x (paired 1.05x) | 3/3 · 3/3 |
+| busybox-jit | cpu s | 13.21 [12.84–13.48] | 12.33 [12.00–16.16] | 1.07x (paired 1.07x) | 3/3 · 3/3 |
+| busybox-jit | JIT-retired fraction | 0.926 | 0.926 | 1.00x | 3/3 · 3/3 |
+| alpine-fast | wall s | 213.32 | 192.40 | 1.11x | 1/1 · 1/1 |
+| alpine-fast | MIPS (profile) | 14.4 | 16.0 | 1.11x | 1/1 · 1/1 |
+| alpine-fast | cpu s | 209.23 | 189.39 | 1.10x | 1/1 · 1/1 |
+| alpine-jit | wall s | 281.59 | 266.69 | 1.06x | 1/1 · 1/1 |
+| alpine-jit | MIPS (profile) | 10.9 | 11.5 | 1.06x | 1/1 · 1/1 |
+| alpine-jit | cpu s | 275.61 | 260.91 | 1.06x | 1/1 · 1/1 |
+| alpine-jit | JIT-retired fraction | 0.825 | 0.825 | 1.00x | 1/1 · 1/1 |
+| compute-fast | region wall s | 9.87 [9.52–25.32] | 8.71 [8.58–16.29] | 1.13x (paired 1.15x) | 3/3 · 3/3 |
+| compute-fast | region cpu s | 9.86 [9.49–13.03] | 8.69 [8.57–11.55] | 1.13x (paired 1.13x) | 3/3 · 3/3 |
+| compute-fast | MIPS (icount est.) | 16.7 [6.5–17.3] | 18.9 [10.1–19.2] | 1.13x (paired 1.15x) | 3/3 · 3/3 |
+| compute-jit | region wall s | 8.47 [8.02–13.63] | 7.92 [7.63–10.85] | 1.07x (paired 1.07x) | 3/3 · 3/3 |
+| compute-jit | region cpu s | 8.45 [8.00–11.34] | 7.91 [7.60–10.21] | 1.07x (paired 1.07x) | 3/3 · 3/3 |
+| compute-jit | MIPS (icount est.) | 19.4 [12.0–20.4] | 20.7 [15.1–21.6] | 1.07x (paired 1.07x) | 3/3 · 3/3 |
+| coremark-fast | region wall s | 142.45 | 125.94 | 1.13x | 1/1 · 1/1 |
+| coremark-fast | region cpu s | 107.80 | 92.56 | 1.16x | 1/1 · 1/1 |
+| coremark-fast | MIPS (icount est.) | 15.3 | 17.3 | 1.13x | 1/1 · 1/1 |
+| coremark-fast | CoreMark iterations/s (host clock) | 42.1 | 47.6 | 1.13x | 1/1 · 1/1 |
+| coremark-jit | region wall s | 103.60 | 95.10 | 1.09x | 1/1 · 1/1 |
+| coremark-jit | region cpu s | 71.67 | 66.58 | 1.08x | 1/1 · 1/1 |
+| coremark-jit | MIPS (icount est.) | 21.0 | 22.9 | 1.09x | 1/1 · 1/1 |
+| coremark-jit | CoreMark iterations/s (host clock) | 57.9 | 63.1 | 1.09x | 1/1 · 1/1 |
+| microbench | alu MIPS (legacy) | 54.2 | 48.4 | 0.89x | 3/3 · 3/3 |
+| microbench | branch MIPS (legacy) | 60.2 | 53.7 | 0.89x | 3/3 · 3/3 |
+| microbench | memory MIPS (legacy) | 51.5 | 47.3 | 0.92x | 3/3 · 3/3 |
+| microbench | fp MIPS (legacy) | 50.2 | 45.7 | 0.91x | 3/3 · 3/3 |
+| microbench | alu MIPS (fast) | 83.7 | 88.8 | 1.06x | 3/3 · 3/3 |
+
+Median 1-minute load average during the runs: busybox-legacy/baseline=11.9, busybox-legacy/candidate=17.1, busybox-fast/baseline=32.2, busybox-fast/candidate=46.3, busybox-jit/baseline=42.4, busybox-jit/candidate=37.1, compute-fast/baseline=33.5, compute-fast/candidate=26.9, compute-jit/baseline=20.9, compute-jit/candidate=17.6, microbench/baseline=30.7, microbench/candidate=34.4, coremark-jit/candidate=19.6, coremark-jit/baseline=19.6, coremark-fast/candidate=19.6, coremark-fast/baseline=19.6, alpine-fast/candidate=76.8, alpine-fast/baseline=76.8, alpine-jit/candidate=76.8, alpine-jit/baseline=76.8
+
+Cells: median [min–max over reps]. Speedup = ratio of medians; 'paired' = median of the per-rep ratios (each A/B pair ran back to back; alpine/coremark pairs ran side by side when concurrent).
+
+wall s = host wall-clock of the whole process; cpu s = its user+sys rusage; MIPS (profile) = retired-at-marker / profiled wall; region wall s = host time from Enter to the done marker; region cpu s = emulator user+sys CPU inside that region; MIPS (icount est.) = guest-uptime delta x 1e8 / region wall (guest time is used only as an instruction counter, never as a clock).

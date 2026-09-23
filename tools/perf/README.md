@@ -60,9 +60,10 @@ so the same harness revision measures both sides. `BUILD=1` makes `bench-all.sh`
 first (it never builds the base checkout). `SKIP_NATIVE=1` / `SKIP_BROWSER=1` run one half.
 
 By default `bench-all.sh` runs the native and browser suites **concurrently** (each suite interleaves
-its own A/B samples, so the other suite's load lands on both sides alike); that keeps a full A/B near
-20-25 minutes at pre-overhaul speed (less as the candidate gets faster). `SEQUENTIAL=1` runs them one
-after the other (roughly twice as long) for a quiet-machine headline.
+its own A/B samples, so the other suite's load lands on both sides alike). A full A/B at
+pre-overhaul speed took 18 minutes at load average ~10 and 22 minutes at ~31 on the reference M4 Max,
+and it shrinks as the candidate gets faster. `SEQUENTIAL=1` runs the suites one after the other
+(roughly twice as long) for a quiet-machine headline.
 
 ## Native suite (`bench_native.py`)
 
