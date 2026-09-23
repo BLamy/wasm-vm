@@ -203,6 +203,19 @@ impl<V: Default> U64Map<V> {
         self.max_key = None;
     }
 
+    /// Keep only the entries for which `keep` returns true (a rare bulk path: collects the doomed
+    /// keys, then removes each through the ordinary backward-shift delete).
+    pub(crate) fn retain(&mut self, mut keep: impl FnMut(u64, &V) -> bool) {
+        let doomed: Vec<u64> = self
+            .iter()
+            .filter(|(k, v)| !keep(*k, v))
+            .map(|(k, _)| k)
+            .collect();
+        for k in doomed {
+            self.remove(&k);
+        }
+    }
+
     /// Iterate `(key, &value)` in unspecified order.
     pub(crate) fn iter(&self) -> impl Iterator<Item = (u64, &V)> {
         self.keys
@@ -780,7 +793,9 @@ impl TranslationRequest {
 /// Per-block nomination state (the dedup state machine): a block is COLD until its counter
 /// crosses the threshold, then it transitions once and never re-nominates within a
 /// generation. Any invalidation clears the state so a re-decoded hot block can be
-/// re-nominated afresh (with new bytes + a new generation).
+/// re-nominated afresh (with new bytes + a new generation). Held as [`DiscEntry`]'s decided
+/// variants; this enum remains the unit tests' view of that state.
+#[cfg(test)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum NomState {
     /// Nominated: a request is (or was) enqueued for this block. Suppresses re-nomination.
@@ -788,6 +803,28 @@ enum NomState {
     Queued,
     /// Excluded from translation (CSR/wfi terminator). Suppresses counting + nomination.
     Excluded,
+}
+
+/// One block's discovery record, keyed by physical entry PC in [`BlockDiscovery::entries`]. It
+/// merges what were three parallel maps -- the hotness counter (`Counting`), the dedup state
+/// (`Queued`/`Excluded`) and the queued-hit priority (`Queued::hits`) -- whose key sets were always
+/// disjoint (a counter is dropped before its block is decided) or nested (hits only ever accrue to
+/// a Queued block), so a block entry costs ONE probe instead of two.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum DiscEntry {
+    /// Below the threshold: the saturating execution count (always >= 1 while stored).
+    Counting(u32),
+    /// Nominated: a request is (or was) enqueued; suppresses re-nomination. `hits` are the extra
+    /// entries observed since (E4-T21 priority), 0 until the first one.
+    Queued { hits: u32 },
+    /// Excluded from translation (CSR/wfi terminator); suppresses counting + nomination.
+    Excluded,
+}
+
+impl Default for DiscEntry {
+    fn default() -> Self {
+        DiscEntry::Counting(0)
+    }
 }
 
 /// Diagnostic first-seen refusal sample, never an admission-policy capacity.
@@ -982,16 +1019,17 @@ pub struct BlockDiscovery {
     /// Invalidation generation. Bumped by fence.i / SMC page-flush / whole-cache flush; the
     /// stamp every fresh request carries and the value install-time validation compares against.
     generation: u64,
-    /// Live per-block execution counters (phys entry PC → saturating count), current generation.
-    /// A block leaves this map the moment it is nominated (or excluded).
-    counts: U64Map<u32>,
-    /// Dedup state for blocks past the threshold (phys entry PC → [`NomState`]).
-    state: U64Map<NomState>,
-    /// E4-T21: extra executions observed for a block AFTER it was nominated (Queued) but BEFORE its
-    /// compile has been installed — the "how hot is this pending job" signal the compile queue orders
-    /// by, so a block still running hot while it waits compiles ahead of a one-shot straggler.
-    /// Cleared by every invalidation / renominate (its priority is meaningless once re-nominated).
-    queued_hits: U64Map<u32>,
+    /// Per-block discovery records (phys entry PC → [`DiscEntry`]), current generation:
+    /// * `Counting` — the live execution counter; a block leaves this state the moment it is
+    ///   nominated (or excluded), and only `counting_len` of these are ever held (`counts_cap`).
+    /// * `Queued`/`Excluded` — the dedup state for blocks past the threshold.
+    /// * `Queued { hits }` — E4-T21: extra executions observed for a block AFTER it was nominated
+    ///   but BEFORE its compile has been installed — the "how hot is this pending job" signal the
+    ///   compile queue orders by, so a block still running hot while it waits compiles ahead of a
+    ///   one-shot straggler. Cleared by every invalidation / renominate.
+    entries: U64Map<DiscEntry>,
+    /// Number of `Counting` entries (the former counter map's length).
+    counting_len: usize,
     /// Bounded FIFO of pending nominations.
     queue: VecDeque<TranslationRequest>,
     stats: DiscoveryStats,
@@ -1021,9 +1059,8 @@ impl BlockDiscovery {
     pub fn with_bounds(queue_cap: usize, counts_cap: usize) -> Self {
         Self {
             generation: 1,
-            counts: U64Map::new(),
-            state: U64Map::new(),
-            queued_hits: U64Map::new(),
+            entries: U64Map::new(),
+            counting_len: 0,
             queue: VecDeque::new(),
             stats: DiscoveryStats {
                 generation: 1,
@@ -1084,7 +1121,7 @@ impl BlockDiscovery {
     pub fn admission_probe_stats(&self) -> AdmissionProbeStats {
         let mut result = self.admission_probe.clone().unwrap_or_default();
         result.generation = self.generation;
-        result.counts_len = self.counts.len();
+        result.counts_len = self.counting_len;
         result.counts_capacity = self.counts_cap;
         result.threshold = self.threshold;
         for row in &mut result.records {
@@ -1110,9 +1147,8 @@ impl BlockDiscovery {
         let hwm = self.stats.queue_hwm;
         self.generation = self.generation.wrapping_add(1);
         self.reset_admission_generation();
-        self.counts.clear();
-        self.state.clear();
-        self.queued_hits.clear();
+        self.entries.clear();
+        self.counting_len = 0;
         self.queue.clear();
         self.stats = DiscoveryStats {
             generation: self.generation,
@@ -1128,9 +1164,9 @@ impl BlockDiscovery {
     /// whole decoded cache). The still-valid decoded bytes stay cached; only the "already nominated"
     /// suppression is cleared so re-translation can happen.
     pub fn renominate(&mut self, phys_pc: u64) {
-        self.counts.remove(&phys_pc);
-        self.state.remove(&phys_pc);
-        self.queued_hits.remove(&phys_pc);
+        if let Some(DiscEntry::Counting(_)) = self.entries.remove(&phys_pc) {
+            self.counting_len -= 1;
+        }
     }
 
     /// Record an invalidation (fence.i / SMC page-flush / whole-cache flush): bump the
@@ -1143,9 +1179,8 @@ impl BlockDiscovery {
         self.generation = self.generation.wrapping_add(1);
         self.reset_admission_generation();
         self.stats.generation = self.generation;
-        self.counts.clear();
-        self.state.clear();
-        self.queued_hits.clear();
+        self.entries.clear();
+        self.counting_len = 0;
     }
 
     /// Note one execution (entry) of the block at physical `phys` whose walked ops are `ops`.
@@ -1158,7 +1193,7 @@ impl BlockDiscovery {
             self.on_block_entry_decision(phys, ops);
             return;
         }
-        let counts_len = self.counts.len();
+        let counts_len = self.counting_len;
         let reason = self.on_block_entry_decision(phys, ops);
         if let Some(probe) = self.admission_probe.as_mut() {
             probe.observe(phys, ops, reason, counts_len);
@@ -1166,28 +1201,25 @@ impl BlockDiscovery {
     }
 
     fn on_block_entry_decision(&mut self, phys: u64, ops: &[MicroOp]) -> AdmissionReason {
-        // Already decided (nominated or excluded): dedup — never re-enqueue.
-        if let Some(st) = self.state.get(&phys) {
-            self.stats.deduped = self.stats.deduped.saturating_add(1);
-            // E4-T21: a still-hot Queued block keeps accruing priority while it waits to compile.
-            let queued = *st == NomState::Queued;
-            if queued {
-                let h = self.queued_hits.get_or_insert_with(phys, || 0);
-                *h = h.saturating_add(1);
+        // One probe answers every case: decided (dedup), counting, or absent.
+        let count = match self.entries.get_mut(&phys) {
+            // Already decided (nominated or excluded): dedup — never re-enqueue.
+            Some(DiscEntry::Queued { hits }) => {
+                self.stats.deduped = self.stats.deduped.saturating_add(1);
+                // E4-T21: a still-hot Queued block keeps accruing priority while it waits to compile.
+                *hits = hits.saturating_add(1);
+                return AdmissionReason::DedupQueued;
             }
-            return if queued {
-                AdmissionReason::DedupQueued
-            } else {
-                AdmissionReason::DedupExcluded
-            };
-        }
-        let count = match self.counts.get_mut(&phys) {
-            Some(c) => {
+            Some(DiscEntry::Excluded) => {
+                self.stats.deduped = self.stats.deduped.saturating_add(1);
+                return AdmissionReason::DedupExcluded;
+            }
+            Some(DiscEntry::Counting(c)) => {
                 *c = c.saturating_add(1);
                 *c
             }
             None => {
-                if self.counts.len() >= self.counts_cap {
+                if self.counting_len >= self.counts_cap {
                     if !self.cold_counter_recycling.enabled {
                         // Unselected control: preserve the existing refusal and observer reason.
                         self.stats.counts_dropped = self.stats.counts_dropped.saturating_add(1);
@@ -1200,10 +1232,13 @@ impl BlockDiscovery {
                     self.cold_counter_recycling.discarded_counters = self
                         .cold_counter_recycling
                         .discarded_counters
-                        .saturating_add(self.counts.len() as u64);
-                    self.counts.clear();
+                        .saturating_add(self.counting_len as u64);
+                    self.entries
+                        .retain(|_, e| !matches!(e, DiscEntry::Counting(_)));
+                    self.counting_len = 0;
                 }
-                self.counts.insert(phys, 1);
+                self.entries.insert(phys, DiscEntry::Counting(1));
+                self.counting_len += 1;
                 1
             }
         };
@@ -1218,16 +1253,18 @@ impl BlockDiscovery {
     /// Excluded so it never re-nominates within this generation (dedup). Fires EXACTLY once per
     /// block per generation because the caller only reaches here on `count == HOT_THRESHOLD`.
     fn nominate(&mut self, phys: u64, ops: &[MicroOp]) -> AdmissionReason {
-        self.counts.remove(&phys);
+        // The caller just counted `phys` to the threshold, so its entry is `Counting`: it leaves
+        // the counter set and becomes decided in place.
+        self.counting_len -= 1;
         let term = TerminatorKind::of_block(ops);
         if term.is_excluded() {
-            self.state.insert(phys, NomState::Excluded);
+            self.entries.insert(phys, DiscEntry::Excluded);
             self.stats.excluded = self.stats.excluded.saturating_add(1);
             return AdmissionReason::Excluded;
         }
         // Mark Queued regardless of whether the push succeeds, so an overflow-dropped block does
         // not re-nominate every subsequent execution (no renomination storm).
-        self.state.insert(phys, NomState::Queued);
+        self.entries.insert(phys, DiscEntry::Queued { hits: 0 });
         if self.queue.len() >= self.queue_cap {
             self.stats.dropped_overflow = self.stats.dropped_overflow.saturating_add(1);
             return AdmissionReason::FifoOverflow;
@@ -1283,7 +1320,7 @@ impl BlockDiscovery {
     pub fn stats(&self) -> DiscoveryStats {
         DiscoveryStats {
             queue_depth: self.queue.len(),
-            candidates: self.counts.len(),
+            candidates: self.counting_len,
             ..self.stats
         }
     }
@@ -1298,8 +1335,56 @@ impl BlockDiscovery {
     /// the compile queue to order compilation (hotter first). A block that has run only exactly the
     /// threshold count reports `threshold`; one that kept spinning reports more.
     pub fn queued_hotness(&self, phys: u64) -> u32 {
-        self.threshold
-            .saturating_add(self.queued_hits.get(&phys).copied().unwrap_or(0))
+        let hits = match self.entries.get(&phys) {
+            Some(DiscEntry::Queued { hits }) => *hits,
+            _ => 0,
+        };
+        self.threshold.saturating_add(hits)
+    }
+
+    /// Test view: the hotness counters as the former `phys → count` map.
+    #[cfg(test)]
+    fn counts(&self) -> U64Map<u32> {
+        let mut m = U64Map::new();
+        for (k, e) in self.entries.iter() {
+            if let DiscEntry::Counting(c) = e {
+                m.insert(k, *c);
+            }
+        }
+        m
+    }
+
+    /// Test view: the dedup states as the former `phys → NomState` map.
+    #[cfg(test)]
+    fn state(&self) -> U64Map<NomState> {
+        let mut m = U64Map::new();
+        for (k, e) in self.entries.iter() {
+            match e {
+                DiscEntry::Queued { .. } => {
+                    m.insert(k, NomState::Queued);
+                }
+                DiscEntry::Excluded => {
+                    m.insert(k, NomState::Excluded);
+                }
+                DiscEntry::Counting(_) => {}
+            }
+        }
+        m
+    }
+
+    /// Test view: the queued-hit priorities as the former `phys → hits` map (an entry exists once
+    /// a Queued block has accrued at least one extra hit).
+    #[cfg(test)]
+    fn queued_hits(&self) -> U64Map<u32> {
+        let mut m = U64Map::new();
+        for (k, e) in self.entries.iter() {
+            if let DiscEntry::Queued { hits } = e
+                && *hits > 0
+            {
+                m.insert(k, *hits);
+            }
+        }
+        m
     }
 }
 
@@ -1411,9 +1496,9 @@ mod tests {
             control.on_block_entry(phys, &ops);
             explicit_off.on_block_entry(phys, &ops);
             assert_eq!(control.stats(), explicit_off.stats());
-            assert_eq!(control.counts, explicit_off.counts);
-            assert_eq!(control.state, explicit_off.state);
-            assert_eq!(control.queued_hits, explicit_off.queued_hits);
+            assert_eq!(control.counts(), explicit_off.counts());
+            assert_eq!(control.state(), explicit_off.state());
+            assert_eq!(control.queued_hits(), explicit_off.queued_hits());
             assert_eq!(control.queue, explicit_off.queue);
             assert_eq!(
                 control.admission_probe_stats(),
@@ -1448,7 +1533,7 @@ mod tests {
                 for phys in 0..MAX_COUNTS as u64 {
                     d.on_block_entry(phys * 16, &ops);
                 }
-                assert_eq!(d.counts.len(), MAX_COUNTS);
+                assert_eq!(d.counting_len, MAX_COUNTS);
                 // An already counted key at capacity must not start a new epoch.
                 d.on_block_entry(0, &ops);
                 assert_eq!(d.cold_counter_recycling_stats().epochs, 0);
@@ -1460,7 +1545,7 @@ mod tests {
                         d.queue.is_empty(),
                         "never nominate before the exact threshold"
                     );
-                    assert!(d.counts.len() <= MAX_COUNTS);
+                    assert!(d.counting_len <= MAX_COUNTS);
                 }
                 d.on_block_entry(hot, &ops);
                 assert_eq!(d.generation(), generation);
@@ -1516,24 +1601,24 @@ mod tests {
             d.on_block_entry(phys, &ops);
         }
         d.on_block_entry(112, &ops); // Retain an actual refusal before selection.
-        let state = d.state.clone();
-        let hits = d.queued_hits.clone();
+        let state = d.state();
+        let hits = d.queued_hits();
         let fifo = d.queue.clone();
         let before = d.stats();
         let probe = d.admission_probe_stats();
-        let counters = d.counts.clone();
+        let counters = d.counts();
         d.set_cold_counter_recycling(true);
         assert_eq!(
-            d.counts, counters,
+            d.counts(), counters,
             "selection itself does not clear history"
         );
         // Revisit an observed identity, then enough new cold keys for four epochs.
         for phys in (112..272).step_by(16) {
             d.on_block_entry(phys, &ops);
-            assert!(d.counts.len() <= 3);
+            assert!(d.counting_len <= 3);
         }
-        assert_eq!(d.state, state); // Includes Queued-on-overflow and policy Excluded.
-        assert_eq!(d.queued_hits, hits);
+        assert_eq!(d.state(), state); // Includes Queued-on-overflow and policy Excluded.
+        assert_eq!(d.queued_hits(), hits);
         assert_eq!(d.queue, fifo);
         assert_eq!(d.queued_hotness(16), 519);
         assert_eq!(d.generation(), before.generation);
@@ -1588,7 +1673,7 @@ mod tests {
         d.on_block_entry(0, &block());
         d.set_cold_counter_recycling(false);
         d.on_block_entry(1, &block());
-        assert_eq!(d.counts.len(), 1);
+        assert_eq!(d.counting_len, 1);
         assert_eq!(d.stats().counts_dropped, 1);
         assert_eq!(
             d.cold_counter_recycling_stats(),
@@ -1742,7 +1827,7 @@ mod tests {
                 }
                 d.take_requests();
                 assert!(!d.admission_probe_stats().records[0].discovery_queued);
-                assert_eq!(d.state.get(&4096), Some(&NomState::Queued));
+                assert_eq!(d.state().get(&4096), Some(&NomState::Queued));
             }
         }
     }
@@ -1762,10 +1847,10 @@ mod tests {
             off.on_block_entry(phys, &ops);
             on.on_block_entry(phys, &ops);
             assert_eq!(off.stats(), on.stats());
-            assert_eq!(off.counts, on.counts);
-            assert_eq!(off.state, on.state);
+            assert_eq!(off.counts(), on.counts());
+            assert_eq!(off.state(), on.state());
             assert_eq!(off.queue, on.queue);
-            assert_eq!(off.queued_hits, on.queued_hits);
+            assert_eq!(off.queued_hits(), on.queued_hits());
             assert!(off.admission_probe.is_none());
         }
         assert!(!off.admission_probe_stats().enabled);
