@@ -65,6 +65,7 @@ if [ $do_native = 1 ] && [ $do_browser = 1 ] && [ "${SEQUENTIAL:-0}" != 1 ]; the
   : >"$OUT/native.log"; : >"$OUT/browser.log"
   tail -n +1 -F "$OUT/native.log" "$OUT/browser.log" >&2 2>/dev/null &
   tailer=$!
+  disown "$tailer"  # no "Terminated" job notice when it is killed below
   run_native >"$OUT/native.log" 2>&1 &
   npid=$!
   run_browser >"$OUT/browser.log" 2>&1 || status=1

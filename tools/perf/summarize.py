@@ -38,6 +38,7 @@ ROWS = [
     ("native", "busybox-legacy", "wall_s", "Native: busybox boot to userland, legacy interpreter (s)", "lower", 2),
     ("native", "busybox-fast", "cpu_s", "Native: busybox boot CPU time, fast (s)", "lower", 2),
     ("native", "busybox-jit", "cpu_s", "Native: busybox boot CPU time, --jit (s)", "lower", 2),
+    ("native", "busybox-legacy", "cpu_s", "Native: busybox boot CPU time, legacy (s)", "lower", 2),
     ("native", "busybox-fast", "mips", "Native: busybox boot MIPS, fast", "higher", 1),
     ("native", "busybox-jit", "mips", "Native: busybox boot MIPS, --jit", "higher", 1),
     ("native", "compute-fast", "region_s", "Native: shell arithmetic loop, fast (s)", "lower", 2),
@@ -72,6 +73,20 @@ ROWS = [
 
 def fmt(v, nd):
     return "–" if v is None else f"{v:.{nd}f}"
+
+
+def paired_ratio(doc, suite, case, key, base, new, better):
+    """Median over reps of the per-rep speedup (A and B of a rep ran back to back, or side by side),
+    which shrugs off a load spike that hits one sample far better than a ratio of medians."""
+    per = doc.get("summary", {}).get(case, {})
+    rk = "by_rep" if suite == "native" else "byRep"
+    ra, rb = per.get(base, {}).get(rk, {}), per.get(new, {}).get(rk, {})
+    rs = sorted((ra[k][key] / rb[k][key]) if better == "lower" else (rb[k][key] / ra[k][key])
+                for k in ra if k in rb and ra[k].get(key) and rb[k].get(key))
+    if not rs:
+        return None
+    m = len(rs) // 2
+    return rs[m] if len(rs) % 2 else (rs[m - 1] + rs[m]) / 2
 
 
 def main():
@@ -118,14 +133,25 @@ def main():
         sp = "–"
         if bv and nv:
             sp = f"**{(bv / nv if better == 'lower' else nv / bv):.2f}x**"
-        body.append(f"| {human} | {fmt(bv, nd)} | {fmt(nv, nd)} | {sp} |")
-    lines.append(f"| metric (median; host clock / host CPU time) | {head_base or 'before'} | {head_new or 'after'} | speedup |")
-    lines.append("|---|---:|---:|---:|")
+        cells = [human, fmt(bv, nd), fmt(nv, nd), sp]
+        if not cross_run:
+            pr = paired_ratio(nd_doc, suite, case, key, bl, nl, better) if bd is nd_doc else None
+            cells.append("–" if pr is None else f"{pr:.2f}x")
+        body.append("| " + " | ".join(cells) + " |")
+    head = f"| metric (median; host clock / host CPU time) | {head_base or 'before'} | {head_new or 'after'} | speedup |"
+    if not cross_run:
+        head += " paired |"
+    lines.append(head)
+    lines.append("|---|---:|---:|---:|" + ("" if cross_run else "---:|"))
     lines += body
     lines.append("")
     if cross_run:
         lines.append("_Before and after columns come from separate runs (not interleaved); treat small "
                      "differences as noise._\n")
+    else:
+        lines.append("_speedup = ratio of the medians; paired = median of the per-rep ratios (each A/B pair ran "
+                     "back to back, or side by side for Alpine/CoreMark). On a loaded machine prefer the paired "
+                     "column and the CPU-time rows._\n")
     for kind in ("native", "browser"):
         d = docs[kind]
         if not d:
