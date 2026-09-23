@@ -243,6 +243,22 @@ struct Batch {
 /// but consistent native estimate; the browser cross-check (performance.memory) is dev debt.
 const INSTANCE_OVERHEAD_BYTES: u64 = 64 * 1024;
 
+/// Native default translation-cache budget. The shared [`JitCacheBudget::DEFAULT`] (256 modules /
+/// 32 MiB estimated) is sized for the browser's per-instance engine cliff. Native wasmtime has no
+/// such cliff, and at that cap real boots thrash the batch LRU: steady-state compilation trickles
+/// in as small modules (~12 blocks each), so ~250 modules hold only ~3-4k hot blocks and evicted
+/// hot blocks are recompiled over and over (busybox boot: 11k retranslations; Alpine: 253k,
+/// ~92% of all installs). The estimate charges each module its full 64 KiB state memory although
+/// only the handoff page is ever touched, so the byte budget is scaled with the module count.
+/// Eviction policy and every eviction obligation are unchanged; this only moves the high-water
+/// marks. The JIT is timing-transparent, so no guest-visible behaviour depends on these numbers.
+pub const NATIVE_JIT_BUDGET: JitCacheBudget = JitCacheBudget {
+    code_bytes: 512 * 1024 * 1024,
+    max_batches: 4096,
+    table_slots: 4096 * 128,
+    metadata_bytes: 64 * 1024 * 1024,
+};
+
 /// E4-T19 default batching K (`docs/jit-architecture.md` §7 D9/D10: ~64 blocks/module). UA-probed in
 /// the browser; the native default and the single override knob ([`WasmtimeExecutor::set_batch_size`])
 /// live here.
@@ -542,7 +558,7 @@ impl WasmtimeExecutor {
             batch_size: DEFAULT_BATCH_SIZE,
             batches: JitMap::with_hasher(registry_hasher),
             next_batch_id: 0,
-            budget: JitCacheBudget::DEFAULT,
+            budget: NATIVE_JIT_BUDGET,
             policy: EvictPolicy::default(),
             clock: 0,
             generation: 0,
