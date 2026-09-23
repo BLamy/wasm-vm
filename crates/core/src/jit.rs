@@ -1178,6 +1178,15 @@ pub trait CompiledBlockExecutor {
         1
     }
 
+    /// Whether [`Self::execute_with_budget`] consumes the in-module direct-chain fuel. The run loop
+    /// trims that fuel to the next timer deadline before EVERY host entry; an executor that never
+    /// chains inside a module (the native one-block-per-call executor) returns `false` so the core
+    /// skips the per-entry deadline computation. Defaults to `true` (always compute), which is
+    /// behaviour-preserving for every executor.
+    fn uses_direct_chain_fuel(&self) -> bool {
+        true
+    }
+
     /// Lazily link `edge` (0 = taken / sole / fall-through successor, 1 = not-taken) of the block at
     /// `from_phys` to the compiled successor at `to_phys`, recording the edge in the incoming-edges
     /// map. A no-op if either block is not live-compiled, `edge` is out of range for the block

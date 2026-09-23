@@ -1157,6 +1157,12 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         self.chain_depth_budget
     }
 
+    /// One block per call: the native executor never chains inside a module, so it ignores the
+    /// direct-chain fuel and the core need not compute it per host entry.
+    fn uses_direct_chain_fuel(&self) -> bool {
+        false
+    }
+
     fn link_edge(&mut self, from_phys: u64, edge: u8, to_phys: u64) {
         if !self.chaining {
             return;
