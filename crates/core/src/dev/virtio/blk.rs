@@ -462,27 +462,44 @@ fn write_status(chain: &DescriptorChain, bus: &mut SystemBus, pos: u64, status: 
 /// Run-loop service: consume a pending kick, (re)build the queue-0 ring view when the
 /// driver has it ready, pop-execute-push until idle, interrupt per suppression flags.
 /// Ring [`Violation`]s degrade the slot via `protocol_violation` and drop the ring view.
+///
+/// Returns `true` exactly when the device was IDLE — no reset, kick, or parked work — so this
+/// call changed nothing. The run loop uses that as its fabric-quiescence signal: an idle device
+/// stays idle until a guest MMIO access or a host call between runs, so later boundaries may skip
+/// the call entirely.
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<BlkState>>,
     bus: &mut SystemBus,
-) {
+) -> bool {
     {
         let mut st = state.borrow_mut();
         // Reset tear-down happens even without a kick: the stale ring view must never
         // survive a Status=0 write (critic round-1 refutation).
-        if st.reset_pending {
+        let reset = st.reset_pending;
+        if reset {
             st.reset_pending = false;
             *vq = None;
         }
         // Proceed on a kick OR when there are parked reads to retry (E3-T02): a chunk may have
         // arrived since the last boundary, so we must re-service even without a fresh kick.
         if !st.kicked && st.parked.is_empty() {
-            return;
+            return !reset;
         }
         st.kicked = false;
     }
+    service_kicked(slot, vq, state, bus);
+    false
+}
+
+/// The kicked/parked body of [`service`] (its gate already consumed the kick).
+fn service_kicked(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<BlkState>>,
+    bus: &mut SystemBus,
+) {
     // (Re)build the ring view from transport state.
     let qs = *slot.borrow().queue(0);
     if !qs.ready {

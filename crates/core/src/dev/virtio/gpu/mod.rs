@@ -1393,26 +1393,41 @@ fn unref_resource(
 ///
 /// A short request is consumed with a zero-length used entry. Unsupported commands receive the
 /// fixed 24-byte `RESP_ERR_UNSPEC` response; both paths preserve ring progress for the next chain.
+///
+/// Returns `true` exactly when the queue was IDLE — no latched config request, reset, or kick —
+/// so this call changed nothing (the run loop's fabric-quiescence signal).
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
-) {
+) -> bool {
     // Host APIs retain only the GPU state handle.  Let the transport turn a pending state change
     // into its latched config interrupt before queue work (or an early no-kick return) is handled.
-    slot.borrow_mut().sync_backend_config_irq();
+    let latched = slot.borrow_mut().sync_backend_config_irq();
     {
         let mut state = state.borrow_mut();
-        if state.reset_pending {
+        let reset = state.reset_pending;
+        if reset {
             state.reset_pending = false;
             *vq = None;
         }
         if !state.kicked {
-            return;
+            return !(latched || reset);
         }
         state.kicked = false;
     }
+    service_kicked(slot, vq, state, bus);
+    false
+}
+
+/// The kicked body of [`service`] (its gate already consumed the kick).
+fn service_kicked(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) {
 
     let queue_state = *slot.borrow().queue(0);
     if !queue_state.ready {
@@ -1663,24 +1678,38 @@ pub fn service(
 /// a zero used length.  For deterministic tests and tolerant embedders, an optional writable tail
 /// receives the normal 24-byte response header (truncated to its checked capacity); no response
 /// buffer is required by the cursor state machine itself.
+///
+/// Returns `true` exactly when the queue was IDLE (no latched config request, reset, or kick).
 pub fn service_cursor(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
-) {
-    slot.borrow_mut().sync_backend_config_irq();
+) -> bool {
+    let latched = slot.borrow_mut().sync_backend_config_irq();
     {
         let mut state = state.borrow_mut();
-        if state.reset_pending {
+        let reset = state.reset_pending;
+        if reset {
             state.reset_pending = false;
             *vq = None;
         }
         if !state.cursor_kicked {
-            return;
+            return !(latched || reset);
         }
         state.cursor_kicked = false;
     }
+    service_cursor_kicked(slot, vq, state, bus);
+    false
+}
+
+/// The kicked body of [`service_cursor`] (its gate already consumed the kick).
+fn service_cursor_kicked(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) {
 
     let queue_state = *slot.borrow().queue(1);
     if !queue_state.ready {
@@ -1768,13 +1797,15 @@ pub fn service_cursor(
 
 /// Service both GPU queues at one machine boundary.  The wrapper invalidates both cached ring
 /// views on reset; the legacy [`service`] entry point remains available for controlq-only tests.
+///
+/// Returns `true` exactly when both queues were IDLE and no reset was pending: nothing changed.
 pub fn service_with_cursor(
     slot: &Rc<RefCell<VirtioMmio>>,
     control_vq: &mut Option<Virtqueue>,
     cursor_vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
-) {
+) -> bool {
     let reset = {
         let mut state_ref = state.borrow_mut();
         if state_ref.reset_pending {
@@ -1788,8 +1819,9 @@ pub fn service_with_cursor(
         *control_vq = None;
         *cursor_vq = None;
     }
-    service(slot, control_vq, state, bus);
-    service_cursor(slot, cursor_vq, state, bus);
+    let control_idle = service(slot, control_vq, state, bus);
+    let cursor_idle = service_cursor(slot, cursor_vq, state, bus);
+    !reset && control_idle && cursor_idle
 }
 
 #[cfg(test)]

@@ -2653,6 +2653,69 @@ pub fn service_with_eventq(
 #[allow(clippy::too_many_arguments)]
 fn service_internal(
     slot: &Rc<RefCell<VirtioMmio>>,
+    controlq: Option<&mut Option<Virtqueue>>,
+    eventq: Option<&mut Option<Virtqueue>>,
+    rx_vq: Option<&mut Option<Virtqueue>>,
+    source: Option<&mut dyn AudioCaptureSource>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> PlaybackReport {
+    service_internal_reporting(
+        slot,
+        controlq,
+        eventq,
+        rx_vq,
+        source,
+        tx_vq,
+        state,
+        clock,
+        sink,
+        bus,
+        &mut false,
+    )
+}
+
+/// [`service_with_control_eventq_and_capture`], additionally returning `true` exactly when the
+/// device was IDLE — no reset, kick, running stream, or pending transfer/event — so the call
+/// changed nothing and read no clock (the run loop's fabric-quiescence signal).
+#[allow(clippy::too_many_arguments)]
+pub fn service_with_control_eventq_and_capture_idle(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    controlq: &mut Option<Virtqueue>,
+    eventq: &mut Option<Virtqueue>,
+    rx_vq: Option<&mut Option<Virtqueue>>,
+    source: Option<&mut dyn AudioCaptureSource>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> (PlaybackReport, bool) {
+    let mut idle = false;
+    let report = service_internal_reporting(
+        slot,
+        Some(controlq),
+        Some(eventq),
+        rx_vq,
+        source,
+        tx_vq,
+        state,
+        clock,
+        sink,
+        bus,
+        &mut idle,
+    );
+    (report, idle)
+}
+
+/// The shared sound service body. `idle` is set to `true` only on the no-work early return when no
+/// reset was pending (every other path leaves it untouched).
+#[allow(clippy::too_many_arguments)]
+fn service_internal_reporting(
+    slot: &Rc<RefCell<VirtioMmio>>,
     mut controlq: Option<&mut Option<Virtqueue>>,
     mut eventq: Option<&mut Option<Virtqueue>>,
     mut rx_vq: Option<&mut Option<Virtqueue>>,
@@ -2662,6 +2725,7 @@ fn service_internal(
     clock: &dyn AudioClock,
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
+    idle: &mut bool,
 ) -> PlaybackReport {
     let (
         reset,
@@ -2724,6 +2788,7 @@ fn service_internal(
         && !active_capture
         && !active_events
     {
+        *idle = !reset;
         return PlaybackReport::default();
     }
 

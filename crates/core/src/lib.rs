@@ -583,6 +583,13 @@ pub struct Machine {
     /// the hottest block compiles first. See [`compile_queue::CompileQueue`].
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     compile_queue: compile_queue::CompileQueue,
+    /// Bumped by every guest MMIO access to a fabric device window ([`FabricTouch`]).
+    /// Microarchitectural: never serialized, never part of any digest.
+    fabric_epoch: alloc::rc::Rc<core::cell::Cell<u64>>,
+    /// `Some(epoch)` when the last full boundary sync found every fabric device idle at that
+    /// epoch; cleared at every run entry (the host may have changed device state in between).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    fabric_idle_epoch: Option<u64>,
 }
 
 /// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
@@ -603,6 +610,28 @@ impl BlockCursor {
     #[cfg(test)]
     fn position(&self) -> (u64, usize, u64) {
         (self.block.phys_start, self.idx, self.next_va)
+    }
+}
+
+/// A fabric device window (UART, RTC, virtio slot) wrapped so every guest MMIO access bumps the
+/// machine's fabric epoch. The run loop's quiescence fast path (see `Machine::boundary_sync`)
+/// relies on this: devices found idle stay idle until the guest touches one of these windows (or
+/// the host calls in between runs), so an unchanged epoch proves the device half of a boundary
+/// sync would be a no-op. Purely observational — reads/writes are forwarded unchanged.
+struct FabricTouch<D> {
+    inner: D,
+    epoch: alloc::rc::Rc<core::cell::Cell<u64>>,
+}
+
+impl<D: mmio::MmioDevice> mmio::MmioDevice for FabricTouch<D> {
+    fn read(&mut self, offset: u64, width: mmio::Width) -> Result<u64, bus::BusFault> {
+        self.epoch.set(self.epoch.get().wrapping_add(1));
+        self.inner.read(offset, width)
+    }
+
+    fn write(&mut self, offset: u64, width: mmio::Width, value: u64) -> Result<(), bus::BusFault> {
+        self.epoch.set(self.epoch.get().wrapping_add(1));
+        self.inner.write(offset, width, value)
     }
 }
 
@@ -924,6 +953,8 @@ impl Machine {
             wall_time: None,
             mono_clock: None,
             last_time_jump: None,
+            fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
+            fabric_idle_epoch: None,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -1452,7 +1483,10 @@ impl Machine {
             .attach(
                 bus::mmap::UART0_BASE,
                 bus::mmap::UART0_LEN,
-                alloc::boxed::Box::new(dev::uart16550::SharedUart(alloc::rc::Rc::clone(&cell))),
+                alloc::boxed::Box::new(FabricTouch {
+                    inner: dev::uart16550::SharedUart(alloc::rc::Rc::clone(&cell)),
+                    epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                }),
             )
             .expect("UART window overlaps RAM or another device");
         self.uart = Some((alloc::rc::Rc::clone(&cell), line));
@@ -1487,9 +1521,10 @@ impl Machine {
                 .attach(
                     platform::Platform::virtio_base(i),
                     platform::virt::VIRTIO_LEN,
-                    alloc::boxed::Box::new(dev::virtio::mmio::SharedVirtioMmio(
-                        alloc::rc::Rc::clone(&cell),
-                    )),
+                    alloc::boxed::Box::new(FabricTouch {
+                        inner: dev::virtio::mmio::SharedVirtioMmio(alloc::rc::Rc::clone(&cell)),
+                        epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                    }),
                 )
                 .expect("virtio window overlaps RAM or another device");
             self.virtio.push((alloc::rc::Rc::clone(&cell), line));
@@ -2270,7 +2305,10 @@ impl Machine {
             .attach(
                 platform::virt::RTC_BASE,
                 platform::virt::RTC_LEN,
-                alloc::boxed::Box::new(dev::rtc::SharedRtc(alloc::rc::Rc::clone(&cell))),
+                alloc::boxed::Box::new(FabricTouch {
+                    inner: dev::rtc::SharedRtc(alloc::rc::Rc::clone(&cell)),
+                    epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                }),
             )
             .expect("RTC window overlaps RAM or another device");
         self.rtc = Some((alloc::rc::Rc::clone(&cell), line));
@@ -4743,6 +4781,218 @@ impl Machine {
         }
     }
 
+    /// The device-fabric re-sync performed at every interrupt-sampling boundary (per retire in
+    /// legacy mode, per decoded block under Phase-C batching): latch host config IRQs, refresh the
+    /// wall/ICount clock levels, service every attached device, mirror the interrupt LEVELS into
+    /// the PLIC and `mip`, drain DMA-into-code, and pump the JIT compile queue. Out of line so the
+    /// per-instruction interpreter loop stays compact; the ORDER of every step is load-bearing.
+    ///
+    /// Quiescence fast path: when the previous full sync found every device IDLE (each service
+    /// took its no-work early return, the UART timeout clock was stopped, no RTC alarm was armed,
+    /// no config request was latched) and no guest MMIO access has reached a fabric device window
+    /// since (the [`FabricTouch`] epoch is unchanged) and no host call intervened (every run entry
+    /// clears the marker), then repeating the device half would take exactly the same no-op paths
+    /// and write the same PLIC levels — so only the clock/`mip` mirrors, the DMA drain and the JIT
+    /// pump run. The result is identical to the full sync at every boundary.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn boundary_sync(&mut self) {
+        if self.fabric_idle_epoch == Some(self.fabric_epoch.get()) {
+            self.sample_wall_clock();
+            self.sync_clint();
+            self.sync_plic();
+            self.sync_sbi_timer();
+            self.drain_code_writes();
+            self.boundary_jit_pump();
+            return;
+        }
+        let mut idle = true;
+        // E5-T04: host-owned virtio devices may have requested a config change through a
+        // retained state handle (for example a GPU canvas resize).  Latch those requests
+        // before mirroring InterruptStatus into the PLIC so the guest sees one precise
+        // config IRQ at this boundary, even when no queue was kicked.
+        for (slot, _) in &self.virtio {
+            idle &= !slot.borrow_mut().sync_backend_config_irq();
+        }
+        // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
+        // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
+        // the default ICount path.
+        self.sample_wall_clock();
+        self.sync_clint();
+        // E2-T07: tick the UART char-timeout clock and mirror its level into the
+        // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
+        if let Some((uart, line)) = &self.uart {
+            let mut u = uart.borrow_mut();
+            idle &= !u.tick();
+            line.set(u.irq_level());
+        }
+        // E2-T16: poll the RTC alarm and mirror its interrupt level into the PLIC,
+        // BEFORE sync_plic samples EIP, so a just-reached alarm fires this boundary.
+        if let Some((rtc, line)) = &self.rtc {
+            let mut r = rtc.borrow_mut();
+            line.set(r.poll());
+            idle &= !r.alarm_armed();
+        }
+        // Device services borrow the slot, their own ring views and the bus disjointly (no
+        // per-boundary `Rc` clone of the slot handle).
+        let Self {
+            virtio,
+            bus,
+            blk,
+            extra_blk,
+            net,
+            rng,
+            keyboard,
+            tablet,
+            mouse,
+            gpu,
+            snd,
+            console,
+            ..
+        } = self;
+        // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
+        // completed request's used-ring interrupt lands this same boundary.
+        if let Some((state, vq)) = blk {
+            idle &= dev::virtio::blk::service(&virtio[0].0, vq, state, bus);
+        }
+        // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
+        // guest read of `/dev/vdb…` completes promptly.
+        for (state, vq, slot_index) in extra_blk.iter_mut() {
+            idle &= dev::virtio::blk::service(&virtio[*slot_index].0, vq, state, bus);
+        }
+        // E3-T13: service virtio-net kicks (and async backend rx frames) the same
+        // boundary, so tx completions + delivered echoes interrupt promptly. The backend is
+        // polled every boundary (it may be event-driven), so an attached net device is never idle.
+        if let Some((state, rx_vq, tx_vq)) = net {
+            dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus);
+            idle = false;
+        }
+        // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
+        // the CRNG seeds without waiting on the run loop.
+        if let Some((state, vq)) = rng {
+            idle &= dev::virtio::rng::service(&virtio[2].0, vq, state, bus);
+        }
+        // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
+        // guest LED changes in the host-owned indicator before the next boundary.
+        if let Some((state, eventq, statusq)) = keyboard {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        // E5-T14a: service the absolute tablet and relative mouse independently. The
+        // browser may select either host route, but both guest-visible devices remain
+        // present and their bounded frames cannot consume one another's queues.
+        if let Some((state, eventq, statusq)) = tablet {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        if let Some((state, eventq, statusq)) = mouse {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
+        // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
+        // after guest backing has been validated and copied into the resource shadow.
+        if let Some((state, control_vq, cursor_vq, slot_index)) = gpu {
+            idle &= dev::virtio::gpu::service_with_cursor(
+                &virtio[*slot_index].0,
+                control_vq,
+                cursor_vq,
+                state,
+                bus,
+            );
+        }
+        // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
+        // receives its QEMU-shaped responses at the same guest-visible boundary that it
+        // kicks the queue. Playback then uses the injected host clock/sink without changing
+        // any of the established blk/net/input slots.
+        if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) = snd {
+            let (_, snd_idle) = dev::virtio::snd::service_with_control_eventq_and_capture_idle(
+                &virtio[*slot_index].0,
+                controlq,
+                eventq,
+                Some(rxq),
+                Some(source.as_mut()),
+                txq,
+                state,
+                clock.as_ref(),
+                sink.as_mut(),
+                bus,
+            );
+            idle &= snd_idle;
+        }
+        // E5-T23b: service the independent virtio-console port-0/control/agent queues.
+        // Control transitions run before agent data so a freshly opened port can carry
+        // bytes at this same device boundary; the UART/SBI path above remains untouched.
+        if let Some(console) = console {
+            idle &= dev::virtio::console::service(
+                &virtio[console.slot_index].0,
+                &mut console.port0_receiveq,
+                &mut console.port0_transmitq,
+                &mut console.control_receiveq,
+                &mut console.control_transmitq,
+                &mut console.agent_receiveq,
+                &mut console.agent_transmitq,
+                &console.state,
+                bus,
+            );
+        }
+        // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
+        for (slot, line) in &self.virtio {
+            line.set(slot.borrow().irq_level());
+        }
+        // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
+        self.sync_plic();
+        // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
+        self.sync_sbi_timer();
+        // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
+        // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
+        // a used-ring publish). Those writes went through the bus and were logged by
+        // physical frame; drain them through page-granular invalidation so a guest that
+        // DMAs code then jumps to it can never execute a stale cached block. (Phase C
+        // does NOT touch this — the device sync above is still per-retire.)
+        self.drain_code_writes();
+        self.boundary_jit_pump();
+        // Idle devices stay idle until a fabric MMIO access (epoch bump) or a new run call.
+        self.fabric_idle_epoch = idle.then(|| self.fabric_epoch.get());
+    }
+
+    /// E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst of
+    /// newly-hot blocks accumulate first, so a connected component compiles as ONE module rather
+    /// than a trickle of one-block modules. Drain when the queue reaches `JIT_BATCH_TRIGGER` (a
+    /// batch's worth is ready) or every `JIT_PUMP_INTERVAL` boundaries (flush stragglers). Cheap
+    /// when the queue is empty.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn boundary_jit_pump(&mut self) {
+        if self.jit_enabled
+            && self.jit_run_attempt_remaining > 0
+            && (!self.compile_queue.is_empty() || self.jit_run_staging_remaining > 0)
+        {
+            self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
+            if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
+                || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
+            {
+                self.jit_pump_ticks = 0;
+                self.pump_jit_translations();
+            }
+        }
+    }
+
     fn run_capture_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -4759,6 +5009,9 @@ impl Machine {
         }
         #[cfg(not(feature = "zicsr-stub"))]
         self.drain_code_writes();
+        // The host may have pushed input, resized a display, restored a snapshot, or otherwise
+        // changed device state since the last run: the first boundary performs a full sync.
+        self.fabric_idle_epoch = None;
 
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
@@ -4792,162 +5045,7 @@ impl Machine {
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
-                // E5-T04: host-owned virtio devices may have requested a config change through a
-                // retained state handle (for example a GPU canvas resize).  Latch those requests
-                // before mirroring InterruptStatus into the PLIC so the guest sees one precise
-                // config IRQ at this boundary, even when no queue was kicked.
-                for (slot, _) in &self.virtio {
-                    slot.borrow_mut().sync_backend_config_irq();
-                }
-                // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
-                // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
-                // the default ICount path.
-                self.sample_wall_clock();
-                self.sync_clint();
-                // E2-T07: tick the UART char-timeout clock and mirror its level into the
-                // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
-                if let Some((uart, line)) = &self.uart {
-                    let mut u = uart.borrow_mut();
-                    u.tick();
-                    line.set(u.irq_level());
-                }
-                // E2-T16: poll the RTC alarm and mirror its interrupt level into the PLIC,
-                // BEFORE sync_plic samples EIP, so a just-reached alarm fires this boundary.
-                if let Some((rtc, line)) = &self.rtc {
-                    line.set(rtc.borrow_mut().poll());
-                }
-                // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
-                // completed request's used-ring interrupt lands this same boundary.
-                if let Some((state, vq)) = &mut self.blk {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
-                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
-                }
-                // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
-                // guest read of `/dev/vdb…` completes promptly. Index-based to keep the `extra_blk`
-                // borrow disjoint from `self.virtio` / `self.bus`.
-                for i in 0..self.extra_blk.len() {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[self.extra_blk[i].2].0);
-                    let (state, vq, _) = &mut self.extra_blk[i];
-                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
-                }
-                // E3-T13: service virtio-net kicks (and async backend rx frames) the same
-                // boundary, so tx completions + delivered echoes interrupt promptly.
-                if let Some((state, rx_vq, tx_vq)) = &mut self.net {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[1].0);
-                    dev::virtio::net::service(&slot, rx_vq, tx_vq, state, &mut self.bus);
-                }
-                // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
-                // the CRNG seeds without waiting on the run loop.
-                if let Some((state, vq)) = &mut self.rng {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
-                    dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
-                }
-                // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
-                // guest LED changes in the host-owned indicator before the next boundary.
-                if let Some((state, eventq, statusq)) = &mut self.keyboard {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                // E5-T14a: service the absolute tablet and relative mouse independently. The
-                // browser may select either host route, but both guest-visible devices remain
-                // present and their bounded frames cannot consume one another's queues.
-                if let Some((state, eventq, statusq)) = &mut self.tablet {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                if let Some((state, eventq, statusq)) = &mut self.mouse {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
-                // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
-                // after guest backing has been validated and copied into the resource shadow.
-                if let Some((state, control_vq, cursor_vq, slot_index)) = &mut self.gpu {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
-                    dev::virtio::gpu::service_with_cursor(
-                        &slot,
-                        control_vq,
-                        cursor_vq,
-                        state,
-                        &mut self.bus,
-                    );
-                }
-                // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
-                // receives its QEMU-shaped responses at the same guest-visible boundary that it
-                // kicks the queue. Playback then uses the injected host clock/sink without changing
-                // any of the established blk/net/input slots.
-                if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) =
-                    &mut self.snd
-                {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
-                    dev::virtio::snd::service_with_control_eventq_and_capture(
-                        &slot,
-                        controlq,
-                        eventq,
-                        Some(rxq),
-                        Some(source.as_mut()),
-                        txq,
-                        state,
-                        clock.as_ref(),
-                        sink.as_mut(),
-                        &mut self.bus,
-                    );
-                }
-                // E5-T23b: service the independent virtio-console port-0/control/agent queues.
-                // Control transitions run before agent data so a freshly opened port can carry
-                // bytes at this same device boundary; the UART/SBI path above remains untouched.
-                if let Some(console) = &mut self.console {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
-                    dev::virtio::console::service(
-                        &slot,
-                        &mut console.port0_receiveq,
-                        &mut console.port0_transmitq,
-                        &mut console.control_receiveq,
-                        &mut console.control_transmitq,
-                        &mut console.agent_receiveq,
-                        &mut console.agent_transmitq,
-                        &console.state,
-                        &mut self.bus,
-                    );
-                }
-                // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
-                for (slot, line) in &self.virtio {
-                    line.set(slot.borrow().irq_level());
-                }
-                // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
-                self.sync_plic();
-                // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
-                self.sync_sbi_timer();
-                // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
-                // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
-                // a used-ring publish). Those writes went through the bus and were logged by
-                // physical frame; drain them through page-granular invalidation so a guest that
-                // DMAs code then jumps to it can never execute a stale cached block. (Phase C
-                // does NOT touch this — the device sync above is still per-retire.)
-                self.drain_code_writes();
-                // E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst
-                // of newly-hot blocks accumulate first, so a connected component compiles as ONE
-                // module rather than a trickle of one-block modules. Drain when the queue reaches
-                // `JIT_BATCH_TRIGGER` (a batch's worth is ready) or every `JIT_PUMP_INTERVAL`
-                // boundaries (flush stragglers). Cheap when the queue is empty.
-                if self.jit_enabled
-                    && self.jit_run_attempt_remaining > 0
-                    && (!self.compile_queue.is_empty() || self.jit_run_staging_remaining > 0)
-                {
-                    self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
-                    if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
-                        || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
-                    {
-                        self.jit_pump_ticks = 0;
-                        self.pump_jit_translations();
-                    }
-                }
+                self.boundary_sync();
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the

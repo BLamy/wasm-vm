@@ -110,24 +110,38 @@ pub fn new(source: Box<dyn EntropySource>) -> (VirtioRngDev, Rc<RefCell<RngState
 /// Run-loop service: consume a pending kick, (re)build the queue-0 ring view when the driver has it
 /// ready, then pop each posted buffer, fill its device-writable bytes with entropy, and publish it.
 /// Ring violations degrade the slot via `protocol_violation` and drop the ring view (blk pattern).
+///
+/// Returns `true` exactly when the device was IDLE (no reset or kick): the call changed nothing.
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<RngState>>,
     bus: &mut SystemBus,
-) {
+) -> bool {
     {
         let mut st = state.borrow_mut();
         // A Status=0 reset must drop the stale ring view even without a kick (blk critic round-1).
-        if st.reset_pending {
+        let reset = st.reset_pending;
+        if reset {
             st.reset_pending = false;
             *vq = None;
         }
         if !st.kicked {
-            return;
+            return !reset;
         }
         st.kicked = false;
     }
+    service_kicked(slot, vq, state, bus);
+    false
+}
+
+/// The kicked body of [`service`] (its gate already consumed the kick).
+fn service_kicked(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<RngState>>,
+    bus: &mut SystemBus,
+) {
     let qs = *slot.borrow().queue(0);
     if !qs.ready {
         *vq = None;

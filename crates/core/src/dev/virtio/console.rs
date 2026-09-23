@@ -1147,6 +1147,9 @@ fn service_agent_rx(
 /// Run-loop service for the six virtio-console queues.  Port 0 and the named agent use separate
 /// ring views and bounded host buffers; control messages are handled before data so a PORT_OPEN
 /// response can make the agent queues live in the same boundary.
+///
+/// Returns `true` exactly when the device was IDLE — no reset, kick, or pending host/agent work —
+/// so this call changed nothing (the run loop's fabric-quiescence signal).
 #[allow(clippy::too_many_arguments)]
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
@@ -1158,8 +1161,8 @@ pub fn service(
     agent_transmitq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<ConsoleState>>,
     bus: &mut SystemBus,
-) {
-    let (kicked, pending) = {
+) -> bool {
+    let (reset, kicked, pending) = {
         let mut state = state.borrow_mut();
         let reset = state.take_reset_pending();
         if reset {
@@ -1170,12 +1173,41 @@ pub fn service(
             *agent_receiveq = None;
             *agent_transmitq = None;
         }
-        state.take_work()
+        let (kicked, pending) = state.take_work();
+        (reset, kicked, pending)
     };
     if !pending && !kicked.iter().any(|kicked| *kicked) {
-        return;
+        return !reset;
     }
+    service_pending(
+        slot,
+        port0_receiveq,
+        port0_transmitq,
+        control_receiveq,
+        control_transmitq,
+        agent_receiveq,
+        agent_transmitq,
+        kicked,
+        state,
+        bus,
+    );
+    false
+}
 
+/// The work body of [`service`] once its gate found a kick or pending host/agent data.
+#[allow(clippy::too_many_arguments)]
+fn service_pending(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    port0_receiveq: &mut Option<Virtqueue>,
+    port0_transmitq: &mut Option<Virtqueue>,
+    control_receiveq: &mut Option<Virtqueue>,
+    control_transmitq: &mut Option<Virtqueue>,
+    agent_receiveq: &mut Option<Virtqueue>,
+    agent_transmitq: &mut Option<Virtqueue>,
+    kicked: [bool; NUM_QUEUES as usize],
+    state: &Rc<RefCell<ConsoleState>>,
+    bus: &mut SystemBus,
+) {
     let fail = |slot: &Rc<RefCell<VirtioMmio>>, queues: &mut [&mut Option<Virtqueue>]| {
         slot.borrow_mut().protocol_violation();
         for queue in queues {
