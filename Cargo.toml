@@ -34,6 +34,14 @@ console_log = "1"
 console_error_panic_hook = "0.1"
 memmap2 = "0.9"
 
+# Perf overhaul (2026-09): whole-program optimisation for the shipped emulator. The interpreter's hot
+# loop spans wasm-vm-core's dispatch, hart, MMU, and device modules; with the default 16 codegen units
+# and no LTO, LLVM cannot inline across those boundaries. `panic` stays `unwind` because
+# jit-runtime's executor guards compiled-block faults with `catch_unwind`.
+[profile.release]
+lto = "fat"
+codegen-units = 1
+
 # E4-T02 flamegraphs: a profiling build that is byte-for-byte the release optimisation pipeline
 # (opt-level 3, same codegen-units / lto) but keeps full DWARF debuginfo so `samply` can attribute
 # host samples to readable Rust frame names. Additive — it does NOT mutate `[profile.release]`, so

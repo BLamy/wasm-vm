@@ -334,6 +334,11 @@ pub struct BootArgs {
     /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors (overhead A/B).
     #[arg(long)]
     pub no_storm_detect: bool,
+    /// Pin the goldfish RTC to this Unix-epoch nanosecond value instead of the host wall clock.
+    /// The RTC is the only host-time input to a headless boot, so pinning it makes `--evidence`
+    /// digests reproducible run-to-run — the equivalence oracle for interpreter/JIT refactors.
+    #[arg(long)]
+    pub fixed_rtc_ns: Option<u64>,
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
@@ -544,6 +549,15 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos() as u64)
             .unwrap_or(0)
+    }
+}
+
+/// A constant RTC for reproducible boots (`--fixed-rtc-ns`).
+struct FixedClock(u64);
+
+impl wasm_vm_core::dev::rtc::WallClock for FixedClock {
+    fn now_ns(&self) -> u64 {
+        self.0
     }
 }
 
@@ -1225,7 +1239,10 @@ fn assemble(
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(a.icount_divider);
     m.enable_plic();
-    m.enable_rtc(Box::new(SystemClock));
+    match a.fixed_rtc_ns {
+        Some(ns) => m.enable_rtc(Box::new(FixedClock(ns))),
+        None => m.enable_rtc(Box::new(SystemClock)),
+    };
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB

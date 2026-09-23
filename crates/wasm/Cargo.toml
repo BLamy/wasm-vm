@@ -72,6 +72,10 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
+# Perf overhaul (2026-09): the shipped bundle runs wasm-opt at -O3 (wasm-pack's default is -O).
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-O3']
+
 # E4-T02 flamegraphs: `wasm-pack build --profiling` runs `wasm-opt`, whose DEFAULT strips the
 # custom `name` section — so a plain `--profiling` build shows anonymous `wasm-function[N]` frames
 # in Chrome/Firefox despite the "profiling" label. Passing `-g` to wasm-opt makes it PRESERVE the
