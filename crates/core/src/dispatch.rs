@@ -16,8 +16,232 @@
 //! with a page-level has-code bitmap. See E4-T05 for the phased plan.
 
 use crate::decode::Instr;
-use alloc::collections::{BTreeMap, VecDeque};
+use alloc::collections::VecDeque;
+use alloc::rc::Rc;
 use alloc::vec::Vec;
+
+/// A deterministic open-addressed map from `u64` keys (physical PCs / page frames) to `V`.
+///
+/// The run loop consults the discovery and code-page maps on EVERY block entry and after EVERY
+/// guest store, where the former `BTreeMap`s cost an O(log n) pointer chase each. This table is
+/// linear-probing with backward-shift deletion (no tombstones), a fixed Fibonacci hash (no
+/// per-process seed, so native and wasm behave identically), and a load factor kept <= 5/8 so a
+/// miss -- the common case for a data-store frame -- is typically one or two key compares. Keys
+/// live in their own array so probing touches only 8 bytes per slot. `u64::MAX` is the empty-slot
+/// sentinel; a genuine `u64::MAX` key is held out of line so the map accepts every key. Nothing in
+/// the emulator iterates these maps to make a decision, so the (unordered) layout is unobservable.
+pub(crate) struct U64Map<V> {
+    keys: Vec<u64>,
+    vals: Vec<V>,
+    len: usize,
+    shift: u32,
+    max_key: Option<V>,
+}
+
+const U64MAP_EMPTY: u64 = u64::MAX;
+
+impl<V: Default> Default for U64Map<V> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<V: Default> U64Map<V> {
+    /// An empty map (no allocation until the first insert).
+    pub(crate) fn new() -> Self {
+        Self {
+            keys: Vec::new(),
+            vals: Vec::new(),
+            len: 0,
+            shift: 64,
+            max_key: None,
+        }
+    }
+
+    #[inline(always)]
+    fn home(&self, key: u64) -> usize {
+        // Fibonacci hashing: the multiply mixes every key bit into the high bits we keep.
+        (key.wrapping_mul(0x9E37_79B9_7F4A_7C15) >> self.shift) as usize
+    }
+
+    #[inline(always)]
+    fn mask(&self) -> usize {
+        self.keys.len().wrapping_sub(1)
+    }
+
+    /// Slot index holding `key`, if present (never called for the sentinel key).
+    #[inline(always)]
+    fn find(&self, key: u64) -> Option<usize> {
+        if self.keys.is_empty() {
+            return None;
+        }
+        let mask = self.mask();
+        let mut i = self.home(key);
+        loop {
+            let k = self.keys[i];
+            if k == key {
+                return Some(i);
+            }
+            if k == U64MAP_EMPTY {
+                return None;
+            }
+            i = (i + 1) & mask;
+        }
+    }
+
+    /// Number of live entries.
+    pub(crate) fn len(&self) -> usize {
+        self.len + usize::from(self.max_key.is_some())
+    }
+
+    #[inline]
+    pub(crate) fn get(&self, key: &u64) -> Option<&V> {
+        if *key == U64MAP_EMPTY {
+            return self.max_key.as_ref();
+        }
+        self.find(*key).map(|i| &self.vals[i])
+    }
+
+    #[inline]
+    pub(crate) fn get_mut(&mut self, key: &u64) -> Option<&mut V> {
+        if *key == U64MAP_EMPTY {
+            return self.max_key.as_mut();
+        }
+        self.find(*key).map(|i| &mut self.vals[i])
+    }
+
+    fn grow(&mut self) {
+        let new_cap = (self.keys.len() * 2).max(16);
+        let old_keys = core::mem::replace(&mut self.keys, alloc::vec![U64MAP_EMPTY; new_cap]);
+        let mut old_vals = core::mem::take(&mut self.vals);
+        self.vals.resize_with(new_cap, V::default);
+        self.shift = 64 - new_cap.trailing_zeros();
+        let mask = new_cap - 1;
+        for (k, v) in old_keys.into_iter().zip(old_vals.drain(..)) {
+            if k == U64MAP_EMPTY {
+                continue;
+            }
+            let mut i = self.home(k);
+            while self.keys[i] != U64MAP_EMPTY {
+                i = (i + 1) & mask;
+            }
+            self.keys[i] = k;
+            self.vals[i] = v;
+        }
+    }
+
+    /// Return the value for `key`, inserting `make()` first when absent.
+    #[inline]
+    pub(crate) fn get_or_insert_with(&mut self, key: u64, make: impl FnOnce() -> V) -> &mut V {
+        if key == U64MAP_EMPTY {
+            return self.max_key.get_or_insert_with(make);
+        }
+        if let Some(i) = self.find(key) {
+            return &mut self.vals[i];
+        }
+        if (self.len + 1) * 8 > self.keys.len() * 5 {
+            self.grow();
+        }
+        let mask = self.mask();
+        let mut i = self.home(key);
+        while self.keys[i] != U64MAP_EMPTY {
+            i = (i + 1) & mask;
+        }
+        self.keys[i] = key;
+        self.vals[i] = make();
+        self.len += 1;
+        &mut self.vals[i]
+    }
+
+    /// Insert or replace `key`'s value, returning the previous value.
+    #[inline]
+    pub(crate) fn insert(&mut self, key: u64, value: V) -> Option<V> {
+        if key == U64MAP_EMPTY {
+            return self.max_key.replace(value);
+        }
+        if let Some(i) = self.find(key) {
+            return Some(core::mem::replace(&mut self.vals[i], value));
+        }
+        *self.get_or_insert_with(key, V::default) = value;
+        None
+    }
+
+    /// Remove `key`, returning its value. Backward-shift deletion keeps every probe chain intact
+    /// without tombstones, so lookups never slow down as entries churn.
+    pub(crate) fn remove(&mut self, key: &u64) -> Option<V> {
+        if *key == U64MAP_EMPTY {
+            return self.max_key.take();
+        }
+        let i = self.find(*key)?;
+        let mask = self.mask();
+        let value = core::mem::take(&mut self.vals[i]);
+        self.keys[i] = U64MAP_EMPTY;
+        self.len -= 1;
+        let mut hole = i;
+        let mut j = (i + 1) & mask;
+        while self.keys[j] != U64MAP_EMPTY {
+            let home = self.home(self.keys[j]);
+            // Move the entry at `j` into the hole iff the hole lies on its probe path [home, j).
+            if (j.wrapping_sub(home) & mask) >= (j.wrapping_sub(hole) & mask) {
+                self.keys[hole] = self.keys[j];
+                self.vals[hole] = core::mem::take(&mut self.vals[j]);
+                self.keys[j] = U64MAP_EMPTY;
+                hole = j;
+            }
+            j = (j + 1) & mask;
+        }
+        Some(value)
+    }
+
+    /// Remove every entry (capacity is retained, like `HashMap::clear`).
+    pub(crate) fn clear(&mut self) {
+        if self.len != 0 {
+            self.keys.fill(U64MAP_EMPTY);
+            self.vals.fill_with(V::default);
+            self.len = 0;
+        }
+        self.max_key = None;
+    }
+
+    /// Iterate `(key, &value)` in unspecified order.
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (u64, &V)> {
+        self.keys
+            .iter()
+            .zip(self.vals.iter())
+            .filter(|(k, _)| **k != U64MAP_EMPTY)
+            .map(|(k, v)| (*k, v))
+            .chain(self.max_key.as_ref().map(|v| (U64MAP_EMPTY, v)))
+    }
+}
+
+impl<V: Default + Clone> Clone for U64Map<V> {
+    fn clone(&self) -> Self {
+        Self {
+            keys: self.keys.clone(),
+            vals: self.vals.clone(),
+            len: self.len,
+            shift: self.shift,
+            max_key: self.max_key.clone(),
+        }
+    }
+}
+
+/// Map equality is set equality of `(key, value)` pairs, independent of table layout.
+impl<V: Default + PartialEq> PartialEq for U64Map<V> {
+    fn eq(&self, other: &Self) -> bool {
+        self.len() == other.len() && self.iter().all(|(k, v)| other.get(&k) == Some(v))
+    }
+}
+
+impl<V: Default + Eq> Eq for U64Map<V> {}
+
+impl<V: Default + core::fmt::Debug> core::fmt::Debug for U64Map<V> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let mut entries: Vec<(u64, &V)> = self.iter().collect();
+        entries.sort_unstable_by_key(|(k, _)| *k);
+        f.debug_map().entries(entries).finish()
+    }
+}
 
 /// Guest page granularity used for block boundaries + code-page keying. 4 KiB — the Sv39
 /// base page. Using the base page (rather than a superpage) only makes blocks stop *more*
@@ -133,7 +357,11 @@ struct CodePageSlots {
 /// invisible (treated as an empty slot for probing) and will be overwritten on the next
 /// insert. Correctness never depends on a hit — any lookup may miss and rebuild.
 pub struct BlockCache {
-    slots: alloc::vec::Vec<Option<DecodedBlock>>,
+    /// Blocks are reference-counted so the run loop's in-flight cursor can hold the block it is
+    /// replaying and step through it with no hash probe per instruction. The cache stays the sole
+    /// authority for LIVENESS: every path that drops a live block (generation flush, page flush)
+    /// also clears the cursor, so a cursor never outlives its block's cache residency.
+    slots: alloc::vec::Vec<Option<Rc<DecodedBlock>>>,
     mask: usize,
     generation: u64,
     /// E5.5-T03ba: decoded-cache slots grouped by physical page. A store (guest OR device/DMA)
@@ -141,7 +369,7 @@ pub struct BlockCache {
     /// slots instead of scanning the whole open-addressed table. Slot indices remain associated
     /// with their page across generation bumps so page-flush accounting stays identical to the
     /// legacy full-table scan, including stale physical slots.
-    code_slots: BTreeMap<u64, CodePageSlots>,
+    code_slots: U64Map<CodePageSlots>,
     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
     flushes: u64,
@@ -177,7 +405,7 @@ impl BlockCache {
             slots,
             mask: cap - 1,
             generation: 1,
-            code_slots: BTreeMap::new(),
+            code_slots: U64Map::new(),
             flushes: 0,
             blocks_discarded: 0,
             fence_i_noops: 0,
@@ -268,7 +496,15 @@ impl BlockCache {
 
     /// Look up a live block whose entry is `phys_start`. Returns `None` on a miss (including
     /// a stale-generation slot), so the caller rebuilds.
+    #[inline]
     pub fn get(&self, phys_start: u64) -> Option<&DecodedBlock> {
+        self.get_rc(phys_start).map(|b| &**b)
+    }
+
+    /// [`Self::get`], returning the shared handle so a caller can retain the block it is about to
+    /// replay (the run loop's block cursor).
+    #[inline]
+    pub(crate) fn get_rc(&self, phys_start: u64) -> Option<&Rc<DecodedBlock>> {
         let start = self.hash(phys_start);
         for i in 0..MAX_PROBE {
             let idx = (start + i) & self.mask;
@@ -291,7 +527,7 @@ impl BlockCache {
     /// legal rebuild.
     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
         self.slots.iter().filter_map(|slot| match slot {
-            Some(block) if block.block_gen == self.generation => Some(block),
+            Some(block) if block.block_gen == self.generation => Some(&**block),
             _ => None,
         })
     }
@@ -299,7 +535,12 @@ impl BlockCache {
     /// Insert `block` (stamped with the current generation), replacing a stale/empty slot on
     /// its probe chain, or — if the chain is full of live entries — the head slot (simple
     /// replacement; correctness is unaffected).
-    pub fn insert(&mut self, mut block: DecodedBlock) {
+    pub fn insert(&mut self, block: DecodedBlock) {
+        self.insert_rc(block);
+    }
+
+    /// [`Self::insert`], returning the shared handle of the block just made resident.
+    pub(crate) fn insert_rc(&mut self, mut block: DecodedBlock) -> Rc<DecodedBlock> {
         block.block_gen = self.generation;
         let start = self.hash(block.phys_start);
         let index = (0..MAX_PROBE)
@@ -313,21 +554,19 @@ impl BlockCache {
             })
             .unwrap_or(start);
         self.unlink_code_slot(index);
-        self.slots[index] = Some(block);
-        let page_frame = self.slots[index]
-            .as_ref()
-            .expect("inserted block")
-            .page_frame;
+        let page_frame = block.page_frame;
+        let block = Rc::new(block);
+        self.slots[index] = Some(Rc::clone(&block));
         let generation = self.generation;
         let page = self
             .code_slots
-            .entry(page_frame)
-            .or_insert_with(|| CodePageSlots {
+            .get_or_insert_with(page_frame, || CodePageSlots {
                 generation,
                 slots: Vec::new(),
             });
         page.generation = generation;
         page.slots.push(index);
+        block
     }
 }
 
@@ -503,9 +742,10 @@ impl TranslationRequest {
 /// crosses the threshold, then it transitions once and never re-nominates within a
 /// generation. Any invalidation clears the state so a re-decoded hot block can be
 /// re-nominated afresh (with new bytes + a new generation).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum NomState {
     /// Nominated: a request is (or was) enqueued for this block. Suppresses re-nomination.
+    #[default]
     Queued,
     /// Excluded from translation (CSR/wfi terminator). Suppresses counting + nomination.
     Excluded,
@@ -705,14 +945,14 @@ pub struct BlockDiscovery {
     generation: u64,
     /// Live per-block execution counters (phys entry PC → saturating count), current generation.
     /// A block leaves this map the moment it is nominated (or excluded).
-    counts: BTreeMap<u64, u32>,
+    counts: U64Map<u32>,
     /// Dedup state for blocks past the threshold (phys entry PC → [`NomState`]).
-    state: BTreeMap<u64, NomState>,
+    state: U64Map<NomState>,
     /// E4-T21: extra executions observed for a block AFTER it was nominated (Queued) but BEFORE its
     /// compile has been installed — the "how hot is this pending job" signal the compile queue orders
     /// by, so a block still running hot while it waits compiles ahead of a one-shot straggler.
     /// Cleared by every invalidation / renominate (its priority is meaningless once re-nominated).
-    queued_hits: BTreeMap<u64, u32>,
+    queued_hits: U64Map<u32>,
     /// Bounded FIFO of pending nominations.
     queue: VecDeque<TranslationRequest>,
     stats: DiscoveryStats,
@@ -742,9 +982,9 @@ impl BlockDiscovery {
     pub fn with_bounds(queue_cap: usize, counts_cap: usize) -> Self {
         Self {
             generation: 1,
-            counts: BTreeMap::new(),
-            state: BTreeMap::new(),
-            queued_hits: BTreeMap::new(),
+            counts: U64Map::new(),
+            state: U64Map::new(),
+            queued_hits: U64Map::new(),
             queue: VecDeque::new(),
             stats: DiscoveryStats {
                 generation: 1,
@@ -891,11 +1131,12 @@ impl BlockDiscovery {
         if let Some(st) = self.state.get(&phys) {
             self.stats.deduped = self.stats.deduped.saturating_add(1);
             // E4-T21: a still-hot Queued block keeps accruing priority while it waits to compile.
-            if *st == NomState::Queued {
-                let h = self.queued_hits.entry(phys).or_insert(0);
+            let queued = *st == NomState::Queued;
+            if queued {
+                let h = self.queued_hits.get_or_insert_with(phys, || 0);
                 *h = h.saturating_add(1);
             }
-            return if *st == NomState::Queued {
+            return if queued {
                 AdmissionReason::DedupQueued
             } else {
                 AdmissionReason::DedupExcluded

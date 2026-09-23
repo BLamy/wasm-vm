@@ -490,10 +490,12 @@ pub struct Machine {
     /// The physically-keyed decoded-block store (Phase A: conservatively flushed on `fence.i`
     /// and on any guest store — correct but slow; Phase B adds the page-level has-code bitmap).
     block_cache: dispatch::BlockCache,
-    /// Cursor into the block currently being replayed: `(entry phys key, next op index,
-    /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
-    /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
-    block_cursor: Option<(u64, usize, u64)>,
+    /// Cursor into the block currently being replayed. A branch/jump/interrupt/trap moves the PC
+    /// off its expected next VA, invalidating the cursor so the next step re-keys by physical PC
+    /// (handling branches into mid-block). It holds the block itself, so a mid-block continuation
+    /// and the batching boundary test are O(1) with no cache probe; every path that drops a live
+    /// block from the cache (generation flush, page flush) clears it. Never serialized.
+    block_cursor: Option<BlockCursor>,
     /// E4-T30: production-visible proof that entry PCs reuse the predecoded cache instead of
     /// rebuilding it. `(hits, builds)` is deliberately separate from `BlockDiscovery`: discovery
     /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
@@ -581,6 +583,27 @@ pub struct Machine {
     /// the hottest block compiles first. See [`compile_queue::CompileQueue`].
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     compile_queue: compile_queue::CompileQueue,
+}
+
+/// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
+/// Microarchitectural only: rebuilt on demand, never serialized, never part of any digest.
+#[derive(Clone, Debug)]
+struct BlockCursor {
+    /// The block being replayed (shared with its cache slot while resident).
+    block: alloc::rc::Rc<dispatch::DecodedBlock>,
+    /// Index of the next op to replay.
+    idx: usize,
+    /// Guest VA that op must be fetched from; any other PC ends the continuation.
+    next_va: u64,
+}
+
+impl BlockCursor {
+    /// `(entry phys key, next op index, expected next VA)` — the identity the pre-Rc cursor tuple
+    /// carried. Test-only: equality of cursor positions across operations that must not move it.
+    #[cfg(test)]
+    fn position(&self) -> (u64, usize, u64) {
+        (self.block.phys_start, self.idx, self.next_va)
+    }
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -4029,15 +4052,15 @@ impl Machine {
     /// fetch/decode fault the precise trap is returned (identical to the legacy path).
     #[cfg(not(feature = "zicsr-stub"))]
     fn next_micro_op(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
-        // Fast path: continue the block we are mid-replay of.
-        if let Some((key, idx, next_va)) = self.block_cursor
-            && next_va == pc
-            && let Some(op) = self
-                .block_cache
-                .get(key)
-                .and_then(|b| b.ops.get(idx).copied())
+        // Fast path: continue the block we are mid-replay of. The cursor holds the block, which
+        // is still cache-resident (every live-block drop clears the cursor), so this is exactly
+        // the former `block_cache.get(key)` hit with no probe.
+        if let Some(cursor) = &mut self.block_cursor
+            && cursor.next_va == pc
+            && let Some(op) = cursor.block.ops.get(cursor.idx).copied()
         {
-            self.block_cursor = Some((key, idx + 1, pc.wrapping_add(u64::from(op.len))));
+            cursor.idx += 1;
+            cursor.next_va = pc.wrapping_add(u64::from(op.len));
             return Ok(op);
         }
         self.block_cursor = None;
@@ -4057,11 +4080,16 @@ impl Machine {
         // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
         // every entry — otherwise a cache hit would prevent the JIT hotness counter reaching its
         // threshold. SMC/DMA writes already remove the whole physical page before this lookup.
-        if let Some(block) = self.block_cache.get(phys)
+        if let Some(block) = self.block_cache.get_rc(phys)
             && let Some(first) = block.ops.first().copied()
         {
+            let block = alloc::rc::Rc::clone(block);
             self.discovery.on_block_entry(phys, &block.ops);
-            self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+            self.block_cursor = Some(BlockCursor {
+                block,
+                idx: 1,
+                next_va: pc.wrapping_add(u64::from(first.len)),
+            });
             self.block_entry_hits = self.block_entry_hits.saturating_add(1);
             return Ok(first);
         }
@@ -4120,10 +4148,15 @@ impl Machine {
         // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
         // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
         self.discovery.on_block_entry(phys, &ops);
-        self.block_cache
-            .insert(dispatch::DecodedBlock::new(phys, ops, total_len));
+        let block = self
+            .block_cache
+            .insert_rc(dispatch::DecodedBlock::new(phys, ops, total_len));
         // Entry op (index 0) is consumed now; the cursor resumes at index 1.
-        self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+        self.block_cursor = Some(BlockCursor {
+            block,
+            idx: 1,
+            next_va: pc.wrapping_add(u64::from(first.len)),
+        });
         Ok(first)
     }
 
@@ -4138,14 +4171,11 @@ impl Machine {
     /// never evicted mid-replay by its own straight-line execution), the boundaries — and thus the
     /// interrupt-sampling points — are deterministic across cache sizes.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline]
     fn at_block_boundary(&self) -> bool {
         let pc = self.hart.regs.pc;
-        match self.block_cursor {
-            Some((key, idx, next_va)) if next_va == pc => self
-                .block_cache
-                .get(key)
-                .and_then(|b| b.ops.get(idx))
-                .is_none(),
+        match &self.block_cursor {
+            Some(cursor) if cursor.next_va == pc => cursor.idx >= cursor.block.ops.len(),
             _ => true,
         }
     }
