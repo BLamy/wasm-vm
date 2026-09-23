@@ -85,6 +85,32 @@ pub extern "C" fn jit_fp_fmadd_s(a: i32, b: i32, c: i32, rm: i32) -> i64 {
     wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
 }
 
+/// Flag mailbox between `__jit_fp_op64` and the immediately following `__jit_fp_flags` call.
+/// Generated code always issues the two calls back to back; a browser JIT runs on one thread per
+/// wasm instance, so a relaxed atomic is an exact single-slot handoff.
+static FP_OP64_FLAGS: core::sync::atomic::AtomicU32 = core::sync::atomic::AtomicU32::new(0);
+
+/// Generic F/D helper with a packed `result | flags << 32` return (full F/D coverage).
+#[unsafe(export_name = "__jit_fp_op32")]
+pub extern "C" fn jit_fp_op32(op: i32, a: i64, b: i64, c: i64, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_op32(op as u32, a as u64, b as u64, c as u64, rm as u8) as i64
+}
+
+/// Generic F/D helper with a 64-bit result; its flags go through the mailbox.
+#[unsafe(export_name = "__jit_fp_op64")]
+pub extern "C" fn jit_fp_op64(op: i32, a: i64, b: i64, c: i64, rm: i32) -> i64 {
+    let (bits, flags) =
+        wasm_vm_core::jit::fp_op64(op as u32, a as u64, b as u64, c as u64, rm as u8);
+    FP_OP64_FLAGS.store(u32::from(flags), core::sync::atomic::Ordering::Relaxed);
+    bits as i64
+}
+
+/// Flags raised by the immediately preceding `__jit_fp_op64` call.
+#[unsafe(export_name = "__jit_fp_flags")]
+pub extern "C" fn jit_fp_flags() -> i32 {
+    FP_OP64_FLAGS.load(core::sync::atomic::Ordering::Relaxed) as i32
+}
+
 fn set_fp_helper_imports(env: &Object) {
     let exports = wasm_bindgen::exports();
     for (import, export) in [
@@ -93,6 +119,9 @@ fn set_fp_helper_imports(env: &Object) {
         ("fp_to_word_s", "__jit_fp_to_word_s"),
         ("fp_div_s", "__jit_fp_div_s"),
         ("fp_fmadd_s", "__jit_fp_fmadd_s"),
+        ("fp_op32", "__jit_fp_op32"),
+        ("fp_op64", "__jit_fp_op64"),
+        ("fp_flags", "__jit_fp_flags"),
     ] {
         let function: Function = Reflect::get(&exports, &JsValue::from_str(export))
             .unwrap_throw()

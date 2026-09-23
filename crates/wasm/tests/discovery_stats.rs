@@ -139,14 +139,16 @@ fn real_candidates_nomination_dedup_and_compiled_progress_are_observed_without_m
 }
 
 #[wasm_bindgen_test]
-fn real_csr_terminator_is_excluded_while_supported_jump_is_nominated() {
-    // csrrs x5, sstatus, x0; jal x0, -4. Linux starts in S mode; neither op traps.
+fn real_csr_terminator_is_nominated_like_the_supported_jump() {
+    // csrrs x5, sstatus, x0; jal x0, -4. Linux starts in S mode; neither op traps. CSR-terminated
+    // blocks are nominated (the translator compiles their prefix; this one has none, so it stays
+    // interpreted after one rejected translation attempt).
     let m = linux(&[0x1000_22f3, 0xffdf_f06f]);
     m.enable_jit(1).unwrap();
     run(&m, 20);
     let d = discovery(&m.jit_stats().unwrap());
-    assert_eq!(number(&d, "excluded"), 1.0);
-    assert_eq!(number(&d, "nominated"), 1.0);
+    assert_eq!(number(&d, "excluded"), 0.0);
+    assert_eq!(number(&d, "nominated"), 2.0);
     assert_eq!(number(&d, "deduped"), 18.0);
     assert_eq!(number(&d, "candidates"), 0.0);
     assert_eq!(number(&d, "droppedStale"), 0.0);

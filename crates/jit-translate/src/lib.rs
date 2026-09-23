@@ -42,7 +42,9 @@ use wasm_emit::{
     Mutability, RefType, TableType, ValType,
 };
 use wasm_vm_core::decode::{FpArithOp, FpFusedOp, FpIntWidth, Instr};
-use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
+use wasm_vm_core::dispatch::{DecodedBlock, MicroOp, is_terminator};
+
+mod fp_ext;
 
 // ── E4-T25 test-only mutation hooks ─────────────────────────────────────────
 //
@@ -753,11 +755,19 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     if uses_fp_arithmetic(block) {
         add_fp_arithmetic_import(&mut m);
     }
+    let from_int = uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m));
+    let to_word = uses_fp_to_word(block).then(|| add_fp_to_word_import(&mut m));
+    let division = uses_fp_division(block).then(|| add_fp_division_import(&mut m));
+    let fmadd = uses_fp_fmadd(block).then(|| add_fp_fmadd_import(&mut m));
+    let [op32, op64, flags] = add_generic_fp_imports(&mut m, core::slice::from_ref(block));
     let fp_imports = FpHelperImports {
-        from_int: uses_fp_from_int(block).then(|| add_fp_from_int_import(&mut m)),
-        to_word: uses_fp_to_word(block).then(|| add_fp_to_word_import(&mut m)),
-        division: uses_fp_division(block).then(|| add_fp_division_import(&mut m)),
-        fmadd: uses_fp_fmadd(block).then(|| add_fp_fmadd_import(&mut m)),
+        from_int,
+        to_word,
+        division,
+        fmadd,
+        op32,
+        op64,
+        flags,
     };
 
     let (reads, writes) = block_register_masks(block);
@@ -832,7 +842,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
 }
 
 fn uses_fp_arithmetic(block: &DecodedBlock) -> bool {
-    block.ops.iter().any(|op| {
+    translated_ops(block).iter().any(|op| {
         matches!(
             op.instr,
             Instr::FpArithS {
@@ -852,8 +862,7 @@ fn add_fp_arithmetic_import(m: &mut ModuleBuilder) {
 }
 
 fn uses_fp_from_int(block: &DecodedBlock) -> bool {
-    block
-        .ops
+    translated_ops(block)
         .iter()
         .any(|op| matches!(op.instr, Instr::FcvtFromIntS { .. }))
 }
@@ -874,10 +883,59 @@ struct FpHelperImports {
     to_word: Option<u32>,
     division: Option<u32>,
     fmadd: Option<u32>,
+    /// Generic packed-result helper (`env.fp_op32`) for the remaining F/D families.
+    op32: Option<u32>,
+    /// Generic 64-bit-result helper (`env.fp_op64`) and its flag mailbox (`env.fp_flags`).
+    op64: Option<u32>,
+    flags: Option<u32>,
+}
+
+/// Declare the generic F/D helpers a module needs. They are appended after every established
+/// single-precision helper, and only when used, so modules without these ops keep their exact
+/// previous import and function indices.
+fn add_generic_fp_imports(m: &mut ModuleBuilder, blocks: &[DecodedBlock]) -> [Option<u32>; 3] {
+    let uses = |kind: fp_ext::Helper| {
+        blocks.iter().any(|b| {
+            translated_ops(b)
+                .iter()
+                .any(|op| fp_ext::helper_for(&op.instr) == Some(kind))
+        })
+    };
+    let op32 = uses(fp_ext::Helper::Op32).then(|| {
+        let ty = m.add_type(FuncType::new(
+            &[
+                ValType::I32,
+                ValType::I64,
+                ValType::I64,
+                ValType::I64,
+                ValType::I32,
+            ],
+            &[ValType::I64],
+        ));
+        m.import_func("env", "fp_op32", ty)
+    });
+    let (op64, flags) = if uses(fp_ext::Helper::Op64) {
+        let ty = m.add_type(FuncType::new(
+            &[
+                ValType::I32,
+                ValType::I64,
+                ValType::I64,
+                ValType::I64,
+                ValType::I32,
+            ],
+            &[ValType::I64],
+        ));
+        let op64 = m.import_func("env", "fp_op64", ty);
+        let flags_ty = m.add_type(FuncType::new(&[], &[ValType::I32]));
+        (Some(op64), Some(m.import_func("env", "fp_flags", flags_ty)))
+    } else {
+        (None, None)
+    };
+    [op32, op64, flags]
 }
 
 fn uses_fp_to_word(block: &DecodedBlock) -> bool {
-    block.ops.iter().any(|op| {
+    translated_ops(block).iter().any(|op| {
         matches!(
             op.instr,
             Instr::FcvtToIntS {
@@ -896,7 +954,7 @@ fn add_fp_to_word_import(m: &mut ModuleBuilder) -> u32 {
 }
 
 fn uses_fp_division(block: &DecodedBlock) -> bool {
-    block.ops.iter().any(|op| {
+    translated_ops(block).iter().any(|op| {
         matches!(
             op.instr,
             Instr::FpArithS {
@@ -915,7 +973,7 @@ fn add_fp_division_import(m: &mut ModuleBuilder) -> u32 {
 }
 
 fn uses_fp_fmadd(block: &DecodedBlock) -> bool {
-    block.ops.iter().any(|op| {
+    translated_ops(block).iter().any(|op| {
         matches!(
             op.instr,
             Instr::FpFusedS {
@@ -951,17 +1009,35 @@ fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
     use Instr::*;
     let mut reads = 0;
     let mut writes = 0;
-    for op in &block.ops {
+    // Only the translated prefix executes; a partial block's untranslated op runs in the
+    // interpreter after the compiled function has returned.
+    for op in translated_ops(block) {
         match op.instr {
             Flw { rs1, .. } | Fld { rs1, .. } | Fsw { rs1, .. } | Fsd { rs1, .. } => {
                 // The address is an X register; neither the FP destination nor
                 // the FP store source belongs in the integer batch globals.
                 add_register_mask(&mut reads, rs1);
             }
-            FmvXW { rd, .. } | FpCmpS { rd, .. } | FcvtToIntS { rd, .. } => {
+            FmvXW { rd, .. }
+            | FpCmpS { rd, .. }
+            | FcvtToIntS { rd, .. }
+            | FclassS { rd, .. }
+            | FmvXD { rd, .. }
+            | FpCmpD { rd, .. }
+            | FclassD { rd, .. }
+            | FcvtToIntD { rd, .. } => add_register_mask(&mut writes, rd),
+            FmvWX { rs1, .. }
+            | FcvtFromIntS { rs1, .. }
+            | FmvDX { rs1, .. }
+            | FcvtFromIntD { rs1, .. } => add_register_mask(&mut reads, rs1),
+            // Inline fflags/frm/fcsr accesses (the only translated Zicsr ops).
+            Csrrw { rd, rs1, .. } | Csrrs { rd, rs1, .. } | Csrrc { rd, rs1, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut writes, rd);
+            }
+            Csrrwi { rd, .. } | Csrrsi { rd, .. } | Csrrci { rd, .. } => {
                 add_register_mask(&mut writes, rd)
             }
-            FmvWX { rs1, .. } | FcvtFromIntS { rs1, .. } => add_register_mask(&mut reads, rs1),
             Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
                 add_register_mask(&mut writes, rd);
             }
@@ -1321,6 +1397,16 @@ pub fn translate_batch_with_static_slots(
             .iter()
             .any(uses_fp_fmadd)
             .then(|| add_fp_fmadd_import(&mut m)),
+        op32: None,
+        op64: None,
+        flags: None,
+    };
+    let [op32, op64, flags] = add_generic_fp_imports(&mut m, blocks);
+    let fp_imports = FpHelperImports {
+        op32,
+        op64,
+        flags,
+        ..fp_imports
     };
 
     let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
@@ -1436,10 +1522,10 @@ pub fn translate_batch_with_static_slots(
             [
                 intra[i][0]
                     .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
-                    .map(|l| blocks[l].ops.len() as u64),
+                    .map(|l| translated_len(&blocks[l]) as u64),
                 intra[i][1]
                     .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
-                    .map(|l| blocks[l].ops.len() as u64),
+                    .map(|l| translated_len(&blocks[l]) as u64),
             ],
             static_links,
             static_dynamic,
@@ -1462,7 +1548,77 @@ pub fn translate_batch_with_static_slots(
 /// amortization; the unsupported block remains on the interpreter path and is never published as
 /// a compiled target.
 pub fn is_translatable(block: &DecodedBlock) -> bool {
-    block.ops.iter().all(|op| supported(&op.instr))
+    translated_len(block) != 0
+}
+
+/// Number of leading ops of `block` the translator compiles: the whole block, or the prefix before
+/// its first untranslatable op. A partial block's compiled function ends with a precise
+/// [`ExitCode::CallInterp`] exit at that op, which the run loop interprets as the continuation of
+/// the same decoded block. Today every untranslatable op is a block-ending system instruction
+/// (`mret`/`sret`/`wfi`/`sfence.vma` or a non-FP CSR access), so the prefix is everything before
+/// the block's terminator.
+pub fn translated_len(block: &DecodedBlock) -> usize {
+    block
+        .ops
+        .iter()
+        .position(|op| !supported(&op.instr))
+        .unwrap_or(block.ops.len())
+}
+
+fn translated_ops(block: &DecodedBlock) -> &[MicroOp] {
+    &block.ops[..translated_len(block)]
+}
+
+/// The first untranslatable op of `block` as `(index, mnemonic)`, or `None` when the whole block
+/// translates. Diagnostic only (the JIT coverage ledger).
+pub fn first_untranslated(block: &DecodedBlock) -> Option<(usize, &'static str)> {
+    let index = translated_len(block);
+    block
+        .ops
+        .get(index)
+        .map(|op| (index, untranslated_mnemonic(&op.instr)))
+}
+
+/// Human-readable name of an untranslatable op for the coverage histogram. CSR accesses are named
+/// by CSR because the per-register mix is what decides the next coverage investment.
+pub fn untranslated_mnemonic(instr: &Instr) -> &'static str {
+    use Instr::*;
+    match *instr {
+        Mret => "mret",
+        Sret => "sret",
+        Wfi => "wfi",
+        SfenceVma { .. } => "sfence.vma",
+        Csrrw { csr, .. }
+        | Csrrs { csr, .. }
+        | Csrrc { csr, .. }
+        | Csrrwi { csr, .. }
+        | Csrrsi { csr, .. }
+        | Csrrci { csr, .. } => match csr {
+            0x100 => "csr:sstatus",
+            0x104 => "csr:sie",
+            0x105 => "csr:stvec",
+            0x106 => "csr:scounteren",
+            0x140 => "csr:sscratch",
+            0x141 => "csr:sepc",
+            0x142 => "csr:scause",
+            0x143 => "csr:stval",
+            0x144 => "csr:sip",
+            0x180 => "csr:satp",
+            0x300 => "csr:mstatus",
+            0x304 => "csr:mie",
+            0x305 => "csr:mtvec",
+            0x340 => "csr:mscratch",
+            0x341 => "csr:mepc",
+            0x342 => "csr:mcause",
+            0x343 => "csr:mtval",
+            0x344 => "csr:mip",
+            0xc00 => "csr:cycle",
+            0xc01 => "csr:time",
+            0xc02 => "csr:instret",
+            _ => "csr:other",
+        },
+        _ => "other",
+    }
 }
 
 fn ends_with_fence_i(block: &DecodedBlock) -> bool {
@@ -1534,30 +1690,27 @@ fn emit_body(
     emit_load_globals_if_root(f, &regs, abi);
     let mut pc = base_pc;
     let n = block.ops.len();
-    if block.ops.iter().any(|op| is_atomic(&op.instr)) {
+    // Compiled prefix length: the whole block, or the ops before the first untranslatable one.
+    let translated = translated_len(block);
+    let ops = &block.ops[..translated];
+    if ops.iter().any(|op| is_atomic(&op.instr)) {
         emit_pending_store_entry_barrier(f, &regs, abi);
     }
     if abi.direct_chain {
-        emit_chain_prologue_for_entry(f, &regs, abi, n as u64, root_local);
+        emit_chain_prologue_for_entry(f, &regs, abi, translated as u64, root_local);
         emit_mark_block_writes(f, &regs, block_write_mask);
     }
     let mut terminated = false;
     let mut fp_checked = false;
 
-    for (i, op) in block.ops.iter().enumerate() {
+    for (i, op) in ops.iter().enumerate() {
         if is_fp(&op.instr) && !fp_checked {
             emit_fp_guard(f, &regs, abi, pc, op.raw, i as u64);
             fp_checked = true;
         }
-        if let Instr::FpArithS { rm, .. }
-        | Instr::FpFusedS {
-            op: FpFusedOp::Madd,
-            rm,
-            ..
-        }
-        | Instr::FcvtFromIntS { rm, .. }
-        | Instr::FcvtToIntS { rm, .. } = op.instr
-        {
+        if let Some(rm) = fp_ext::checked_rm(&op.instr) {
+            // `Hart::execute` resolves rm (static reserved 5/6, or dynamic frm >= 5) before
+            // reading any source; trap precisely at this PC with only the prefix retired.
             push_rounding_mode(f, abi, rm);
             f.i32_const(4);
             f.i32_gt_u();
@@ -1592,6 +1745,20 @@ fn emit_body(
             emit_alu(f, &mut regs, abi, op.instr, pc, fp_imports, i as u64);
         }
         pc = pc_next;
+    }
+
+    if translated < n {
+        // Partial block: hand the first untranslated op to the interpreter precisely at its PC,
+        // naming this decoded block and op index so the run loop resumes the block cursor there.
+        let info = ((translated as u64) << 56) | (block.phys_start & ((1_u64 << 56) - 1));
+        writeback(f, &regs, abi);
+        write_pc_const(f, &regs, abi, pc);
+        record_chain_retired(f, &regs, abi, translated as u64);
+        write_info_const(f, abi, info as i64);
+        write_reason(f, abi, ExitCode::CallInterp);
+        f.i32_const(ExitCode::CallInterp as i32);
+        f.return_();
+        return Ok(());
     }
 
     // Fall-through block (128-op cap / page edge with no architectural terminator): resume at the
@@ -2099,51 +2266,17 @@ fn supported(instr: &Instr) -> bool {
             | ScD { .. }
             | AmoW { .. }
             | AmoD { .. }
-            // Measured non-arithmetic single-precision subset (E5.5-T03t).
-            | FsgnjS { .. }
-            | FmvWX { .. }
-            | FmvXW { .. }
-            | FpCmpS { .. }
-            | FpArithS { op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div, .. }
-            | FpFusedS { op: FpFusedOp::Madd, .. }
-            | FcvtFromIntS { .. }
-            | FcvtToIntS { width: FpIntWidth::W | FpIntWidth::Wu, .. }
-            | Flw { .. }
-            | Fld { .. }
-            | Fsw { .. }
-            | Fsd { .. }
             | Ecall
             | Ebreak
             | Fence { .. }
             | FenceI
-    )
+    ) || fp_ext::is_fp_family(instr)
 }
 
+/// Every translated op that requires `mstatus.FS != Off`: all of F/D plus the inline
+/// `fflags`/`frm`/`fcsr` accesses.
 fn is_fp(instr: &Instr) -> bool {
-    matches!(
-        instr,
-        Instr::FsgnjS { .. }
-            | Instr::FmvWX { .. }
-            | Instr::FmvXW { .. }
-            | Instr::FpCmpS { .. }
-            | Instr::FpArithS {
-                op: FpArithOp::Add | FpArithOp::Mul | FpArithOp::Div,
-                ..
-            }
-            | Instr::FpFusedS {
-                op: FpFusedOp::Madd,
-                ..
-            }
-            | Instr::FcvtFromIntS { .. }
-            | Instr::FcvtToIntS {
-                width: FpIntWidth::W | FpIntWidth::Wu,
-                ..
-            }
-            | Instr::Flw { .. }
-            | Instr::Fld { .. }
-            | Instr::Fsw { .. }
-            | Instr::Fsd { .. }
-    )
+    fp_ext::is_fp_family(instr)
 }
 
 /// FS cannot change inside a translated block (CSR writes terminate interpretation),
@@ -2502,6 +2635,10 @@ fn emit_alu(
     retired_before: u64,
 ) {
     use Instr::*;
+    if fp_ext::handles(&instr) {
+        fp_ext::emit(f, regs, abi, instr, fp_imports);
+        return;
+    }
     match instr {
         FsgnjS { op, rd, rs1, rs2 } => {
             use wasm_vm_core::decode::FpSgnjOp;
@@ -4003,6 +4140,30 @@ fn emit_terminator(
         }
         Ecall => emit_trap(f, regs, abi, pc, 11, retired - 1),
         Ebreak => emit_trap(f, regs, abi, pc, 3, retired - 1),
+        // Inline fflags/frm/fcsr access. As a Zicsr op it ends the block; its successor is a
+        // fresh block entry, so it takes the plain host exit (no static/dynamic chaining).
+        Csrrw { .. }
+        | Csrrs { .. }
+        | Csrrc { .. }
+        | Csrrwi { .. }
+        | Csrrsi { .. }
+        | Csrrci { .. } => {
+            fp_ext::emit_fp_csr(f, regs, abi, instr);
+            emit_exit(
+                f,
+                regs,
+                abi,
+                ExitCode::Fallthrough,
+                PcSrc::Const(pc_next),
+                None,
+                None,
+                None,
+                false,
+                source_host_page,
+                retired,
+                run_ty,
+            );
+        }
         // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC (edge 0).
         Fence { .. } | FenceI => {
             emit_exit(

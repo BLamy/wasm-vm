@@ -784,8 +784,8 @@ mod admission_probe_tests {
         let integer = [op(0x0010_8093), op(0x0000_006f)];
         let fp_move = [op(0xf000_0053), op(0x0000_006f)]; // FMV.W.X, not a guessed FP bucket.
         let fp_arithmetic = [op(0x0020_80d3), op(0x0000_006f)]; // FADD.S uses the pure helper.
-        let fp_subtract = [op(0x0820_80d3), op(0x0000_006f)]; // FSUB.S remains interpreted.
-        let csr = [op(0x3000_1073)]; // CSRRW mstatus: discovery-policy exclusion.
+        let fp_subtract = [op(0x0820_80d3), op(0x0000_006f)]; // FSUB.S: generic FP helper.
+        let csr = [op(0x3000_1073)]; // CSRRW mstatus: nominated, but no translatable prefix.
         let mut discovery = BlockDiscovery::with_bounds(4, 1);
         discovery.set_admission_probe(true);
         discovery.on_block_entry(0, &integer);
@@ -807,10 +807,10 @@ mod admission_probe_tests {
         assert!(!records[1].request.terminator.is_excluded());
         assert!(admission_translator_supported(&records[2]));
         assert!(!records[2].request.terminator.is_excluded());
-        assert!(!admission_translator_supported(&records[3]));
+        assert!(admission_translator_supported(&records[3]));
         assert!(!records[3].request.terminator.is_excluded());
         assert!(!admission_translator_supported(&records[4]));
-        assert!(records[4].request.terminator.is_excluded());
+        assert!(!records[4].request.terminator.is_excluded());
         assert!(records.iter().all(|row| row.reasons.counts_full == 3));
         assert_eq!(
             records[1].request.code_bytes[..4],

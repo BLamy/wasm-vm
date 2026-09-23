@@ -440,20 +440,22 @@ fn verifier_mixed_conversion_arithmetic_function_indices() {
         assert_eq!(function_imports(&single), want);
         assert_eq!(function_imports(&batch), want);
     }
+    // Full F/D coverage: these once-unselected families now translate through the generic
+    // helpers (exact semantics: `fp_full_lockstep.rs`) without disturbing the indices above.
     for raw in [
         0x0800_0053,
-        0x5800_0053, // FSQRT.S remains unsupported after the division slice.
+        0x5800_0053,
         0x0200_0053,
-        0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
+        0xc020_0053,
         0xd200_0053,
         0x0000_0047,
     ] {
         assert!(
-            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),
-            "unselected FP parcel {raw:08x} admitted"
+            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_ok(),
+            "full-coverage FP parcel {raw:08x} rejected"
         );
     }
     eprintln!(
-        "CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 unsupported_families=6"
+        "CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 generic_families=6"
     );
 }

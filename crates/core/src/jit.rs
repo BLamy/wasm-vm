@@ -91,6 +91,124 @@ pub fn fp_fmadd_s(a: u32, b: u32, c: u32, rm: u8) -> u64 {
     u64::from(bits) | (u64::from(flags.0) << 32)
 }
 
+/// Operation selectors for the generic generated-code FP helpers [`fp_op64`] / [`fp_op32`].
+///
+/// These cover every F/D operation whose exact RISC-V result cannot be produced by a few inline
+/// integer wasm instructions (rounding, flag computation, NaN canonicalization). The generated
+/// caller has already checked FS, NaN-box-checked every single-precision source (passing the
+/// canonical NaN for an improperly boxed operand, exactly like `FRegs::read_f32`) and resolved +
+/// validated the rounding mode, so each helper is a pure function of its operands. Every selector
+/// calls the same `softfloat` routine `Hart::execute` uses, so results and flags are bit-identical
+/// to the interpreter by construction.
+pub mod fp_op {
+    // ── fp_op64: 64-bit result, flags returned separately ──
+    pub const ADD_D: u32 = 0;
+    pub const SUB_D: u32 = 1;
+    pub const MUL_D: u32 = 2;
+    pub const DIV_D: u32 = 3;
+    pub const SQRT_D: u32 = 4;
+    pub const FMADD_D: u32 = 5;
+    pub const FMSUB_D: u32 = 6;
+    pub const FNMSUB_D: u32 = 7;
+    pub const FNMADD_D: u32 = 8;
+    pub const MIN_D: u32 = 9;
+    pub const MAX_D: u32 = 10;
+    /// FCVT.D.S: `a` holds the (NaN-box-checked) single-precision bits.
+    pub const CVT_D_S: u32 = 11;
+    pub const CVT_D_L: u32 = 12;
+    pub const CVT_D_LU: u32 = 13;
+    pub const CVT_L_D: u32 = 14;
+    pub const CVT_LU_D: u32 = 15;
+    /// FCVT.L[U].S: `a` holds the (NaN-box-checked) single-precision bits.
+    pub const CVT_L_S: u32 = 16;
+    pub const CVT_LU_S: u32 = 17;
+    // ── fp_op32: packed `result[31:0] | flags << 32` ──
+    pub const SUB_S: u32 = 32;
+    pub const SQRT_S: u32 = 33;
+    pub const FMSUB_S: u32 = 34;
+    pub const FNMSUB_S: u32 = 35;
+    pub const FNMADD_S: u32 = 36;
+    pub const MIN_S: u32 = 37;
+    pub const MAX_S: u32 = 38;
+    /// FCLASS.S (no flags; the 10-bit class mask in the low word).
+    pub const CLASS_S: u32 = 39;
+    /// FCVT.S.D: the rounded single-precision bits (the caller NaN-boxes them).
+    pub const CVT_S_D: u32 = 40;
+    /// FCVT.W[U].D: the low result word (the caller sign-extends it, as for FCVT.W[U].S).
+    pub const CVT_W_D: u32 = 41;
+    pub const CVT_WU_D: u32 = 42;
+    /// FCLASS.D (no flags).
+    pub const CLASS_D: u32 = 43;
+}
+
+/// Pure generic helper for F/D operations with a 64-bit result. Returns `(result, flags)`; the
+/// executor publishes `flags` through its per-thread flag mailbox (`fp_flags` import) because a
+/// 64-bit result plus five flag bits do not fit one wasm `i64` return. `rm` is validated 0..=4.
+pub fn fp_op64(op: u32, a: u64, b: u64, c: u64, rm: u8) -> (u64, u8) {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{F64, RoundMode, SoftFloat};
+    let round =
+        || RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    const NEG: u64 = 0x8000_0000_0000_0000;
+    let (bits, flags) = match op {
+        fp_op::ADD_D => F64::add(a, b, round()),
+        fp_op::SUB_D => F64::sub(a, b, round()),
+        fp_op::MUL_D => F64::mul(a, b, round()),
+        fp_op::DIV_D => F64::div(a, b, round()),
+        fp_op::SQRT_D => F64::sqrt(a, round()),
+        // Negation by sign flip before the single fused rounding, exactly as `Hart::execute`.
+        fp_op::FMADD_D => F64::fma(a, b, c, round()),
+        fp_op::FMSUB_D => F64::fma(a, b, c ^ NEG, round()),
+        fp_op::FNMSUB_D => F64::fma(a ^ NEG, b, c, round()),
+        fp_op::FNMADD_D => F64::fma(a ^ NEG, b, c ^ NEG, round()),
+        fp_op::MIN_D => crate::softfloat::f64_minmax(a, b, false),
+        fp_op::MAX_D => crate::softfloat::f64_minmax(a, b, true),
+        fp_op::CVT_D_S => crate::softfloat::f32_to_f64(a as u32),
+        fp_op::CVT_D_L => crate::softfloat::f64_from_int(a, FpIntWidth::L, round()),
+        fp_op::CVT_D_LU => crate::softfloat::f64_from_int(a, FpIntWidth::Lu, round()),
+        fp_op::CVT_L_D => crate::softfloat::f64_to_int(a, FpIntWidth::L, round()),
+        fp_op::CVT_LU_D => crate::softfloat::f64_to_int(a, FpIntWidth::Lu, round()),
+        fp_op::CVT_L_S => crate::softfloat::f32_to_int(a as u32, FpIntWidth::L, round()),
+        fp_op::CVT_LU_S => crate::softfloat::f32_to_int(a as u32, FpIntWidth::Lu, round()),
+        _ => panic!("generated FP helper requires a known 64-bit operation"),
+    };
+    (bits, flags.0)
+}
+
+/// Pure generic helper for F/D operations with a result of at most 32 bits. Returns the raw
+/// result bits in 0..31 and the newly raised flags in 32..36, like [`fp_arith_s`].
+/// Single-precision operands arrive in the low 32 bits of `a`/`b`/`c`.
+pub fn fp_op32(op: u32, a: u64, b: u64, c: u64, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{F32, Flags, RoundMode, SoftFloat};
+    let round =
+        || RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    const NEG: u32 = 0x8000_0000;
+    let (a32, b32, c32) = (a as u32, b as u32, c as u32);
+    let (bits, flags): (u32, Flags) = match op {
+        fp_op::SUB_S => F32::sub(a32, b32, round()),
+        fp_op::SQRT_S => F32::sqrt(a32, round()),
+        fp_op::FMSUB_S => F32::fma(a32, b32, c32 ^ NEG, round()),
+        fp_op::FNMSUB_S => F32::fma(a32 ^ NEG, b32, c32, round()),
+        fp_op::FNMADD_S => F32::fma(a32 ^ NEG, b32, c32 ^ NEG, round()),
+        fp_op::MIN_S => crate::softfloat::f32_minmax(a32, b32, false),
+        fp_op::MAX_S => crate::softfloat::f32_minmax(a32, b32, true),
+        fp_op::CLASS_S => (crate::softfloat::fclass_f32(a32) as u32, Flags::NONE),
+        fp_op::CVT_S_D => crate::softfloat::f64_to_f32(a, round()),
+        fp_op::CVT_W_D => {
+            let (word, flags) = crate::softfloat::f64_to_int(a, FpIntWidth::W, round());
+            (word as u32, flags)
+        }
+        fp_op::CVT_WU_D => {
+            let (word, flags) = crate::softfloat::f64_to_int(a, FpIntWidth::Wu, round());
+            (word as u32, flags)
+        }
+        fp_op::CLASS_D => (crate::softfloat::fclass_f64(a) as u32, Flags::NONE),
+        _ => panic!("generated FP helper requires a known 32-bit operation"),
+    };
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.
@@ -106,6 +224,9 @@ pub mod abi {
     pub const FP_STATE: u32 = 0x208;
     pub const FP_ENABLED: u64 = 1 << 8;
     pub const FP_DIRTY: u64 = 1 << 9;
+    /// A generated `fflags`/`frm`/`fcsr` CSR write executed: the low byte is then the
+    /// authoritative `{frm, fflags}` pair (overwritten, not accrued) at commit.
+    pub const FP_CSR_WRITTEN: u64 = 1 << 10;
     /// `exit_reason` — the [`super::ExitCode`] the block wrote before returning.
     pub const EXIT_REASON: u32 = 0x218;
     /// `exit_pc` — the guest PC to resume at.
@@ -249,8 +370,10 @@ impl CpuStateHandoff {
         );
     }
 
-    /// Commit only executed FPR writes and accrued comparison flags. FP-to-integer
-    /// moves leave FS unchanged; no generated instruction changes rounding mode.
+    /// Commit only executed FPR writes and accrued flags. FP-to-integer moves leave FS
+    /// unchanged. Arithmetic only ORs new flags into the low byte, so accruing it is exact; a
+    /// generated `fflags`/`frm`/`fcsr` write (which may clear flags or change the rounding
+    /// mode) marks [`abi::FP_CSR_WRITTEN`], making the low byte the authoritative new pair.
     pub fn commit_fp_registers(&mut self, hart: &mut Hart) -> u64 {
         let state = self.get_u64(abi::FP_STATE);
         let mut mask = (state >> 32) as u32;
@@ -264,7 +387,12 @@ impl CpuStateHandoff {
             mask &= mask - 1;
         }
         if state & abi::FP_DIRTY != 0 {
-            hart.csr.accrue_fflags(state as u8 & 0x1f);
+            if state & abi::FP_CSR_WRITTEN != 0 {
+                hart.csr.fflags = state as u8 & 0x1f;
+                hart.csr.frm = (state >> 5) as u8 & 0x07;
+            } else {
+                hart.csr.accrue_fflags(state as u8 & 0x1f);
+            }
             hart.csr.mark_fp_dirty();
         }
         self.fp_register_version = Some(hart.fregs.jit_version());
@@ -495,7 +623,13 @@ pub enum ExitCode {
     /// FS=Off at an FP instruction. `exit_info` holds its original instruction
     /// bits and `next_pc` its precise virtual PC; only the preceding prefix retired.
     IllegalInstruction,
-    /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/INTERRUPT_POLL) — not produced
+    /// Partial-block exit (`CALL_INTERP`, code 6): the compiled prefix of a block retired and the
+    /// block's first untranslated instruction must now be INTERPRETED at `next_pc`, as the
+    /// continuation of the same decoded block (no block boundary / interrupt sample in between).
+    /// `exit_info` = `(op_index << 56) | block_phys_start` names that decoded block and the index
+    /// of the untranslated op; for a one-block call `op_index` is also the retired prefix length.
+    CallInterp,
+    /// Any reserved variant (MMIO/MMU_MISS/NOT_COMPILED/INTERRUPT_POLL) — not produced
     /// by the current translator; treated as a benign unlinked fall-through because the module
     /// register image has already been committed.
     Reserved(i32),
@@ -511,6 +645,7 @@ impl ExitCode {
             0 => ExitCode::Fallthrough,
             1 => ExitCode::BranchTaken,
             2 => ExitCode::Trap,
+            6 => ExitCode::CallInterp,
             9 => ExitCode::IllegalInstruction,
             8 => ExitCode::Budget,
             other => ExitCode::Reserved(other),
@@ -689,6 +824,22 @@ pub struct JitEntryCostStats {
     pub device_boundary_ns: u64,
 }
 
+/// JIT translation-coverage counters (diagnostic only; never architectural state).
+///
+/// A block is *full* when every op translated, *partial* when a translated prefix ends in a
+/// [`ExitCode::CallInterp`] exit at the first untranslated op, and *rejected* when not even its
+/// first op translates. `first_unsupported` histograms the first untranslated op of every partial
+/// or rejected translation by mnemonic, most frequent first.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct TranslationCoverage {
+    pub full_blocks: u64,
+    pub partial_blocks: u64,
+    pub rejected_blocks: u64,
+    /// Runtime partial-block exits that handed the untranslated op to the interpreter.
+    pub partial_exits: u64,
+    pub first_unsupported: alloc::vec::Vec<(&'static str, u64)>,
+}
+
 impl JitCacheStats {
     /// Re-translation rate = retranslations / installs (the thrash signal). `0.0` before any install.
     pub fn retranslation_rate(&self) -> f64 {
@@ -849,6 +1000,12 @@ pub trait CompiledBlockExecutor {
     /// the zero default; the browser executor reports bounded counters and optional timer samples.
     fn entry_cost_stats(&self) -> JitEntryCostStats {
         JitEntryCostStats::default()
+    }
+
+    /// Translation-coverage diagnostics (full / partial / rejected blocks and the first
+    /// untranslated op histogram). Executors without the ledger return the zero default.
+    fn translation_coverage(&self) -> TranslationCoverage {
+        TranslationCoverage::default()
     }
 
     /// Arm or disarm optional host-clock sampling in the compiled entry path. Structural counters

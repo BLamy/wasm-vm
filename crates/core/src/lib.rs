@@ -4280,8 +4280,9 @@ impl Machine {
     }
 
     /// E4-T31: commit one compiled exit's exact retirement span into every counter that the
-    /// interpreter advances per successful instruction. The block translator excludes CSR ops, so
-    /// one bulk addition is architecturally equivalent to `retire_tick()` after every op.
+    /// interpreter advances per successful instruction. The block translator's only CSR ops are
+    /// `fflags`/`frm`/`fcsr` accesses, which never write a counter, so one bulk addition is
+    /// architecturally equivalent to `retire_tick()` after every op.
     #[cfg(not(feature = "zicsr-stub"))]
     fn account_jit_retired(&mut self, retired: u64) {
         self.hart.csr.retire_span(retired);
@@ -4528,7 +4529,8 @@ impl Machine {
             return None;
         }
         // A host-side direct CSR write may leave the one-instruction suppression flags armed. JIT
-        // candidates contain no CSR ops, so clear stale flags once at block entry before bulk-retire.
+        // candidates contain no counter-writing CSR ops, so clear stale flags once at block entry
+        // before bulk-retire.
         self.hart.csr.arm_counters();
         let entry_pc = self.hart.regs.pc;
         // Take the executor out so it can borrow hart + bus for the duration of the call.
@@ -4575,6 +4577,39 @@ impl Machine {
                         .flatten(),
                     retired,
                 })
+            }
+            jit::ExitCode::CallInterp => {
+                // Partial-block exit: the compiled prefix retired and the block's first
+                // untranslated op (always a block-ending system/CSR op today) must now execute in
+                // the interpreter as the CONTINUATION of the same decoded block. Resuming the block
+                // cursor keeps `at_block_boundary()` false for that op, so no device sync or
+                // interrupt sample happens in between — exactly the batched interpreter's replay.
+                let key = exit.exit_info & ((1_u64 << 56) - 1);
+                let index = (exit.exit_info >> 56) as usize;
+                let retired = if exit.retired != 0 {
+                    exit.retired
+                } else {
+                    index as u64
+                };
+                debug_assert!(retired > 0 && retired <= remaining_work);
+                self.hart.regs.pc = exit.next_pc;
+                self.account_jit_retired(retired);
+                // Only resume a cursor that provably names the op at `next_pc` (same page offset
+                // in a still-cached decoded block); otherwise the next step rebuilds a block.
+                let page_mask = dispatch::PAGE - 1;
+                let resumes = self.block_cache.get(key).is_some_and(|b| {
+                    index < b.ops.len() && {
+                        let offset: u64 = b.ops[..index].iter().map(|op| u64::from(op.len)).sum();
+                        key.wrapping_add(offset) & page_mask == exit.next_pc & page_mask
+                    }
+                });
+                if resumes {
+                    self.block_cursor = Some((key, index, exit.next_pc));
+                }
+                // A prefix store into a code page drops the cursor here, exactly as the
+                // interpreter's per-store drain would before the next op.
+                self.drain_code_writes();
+                Some(BlockStep::Budget { retired })
             }
             jit::ExitCode::Budget => {
                 let retired = exit.retired;

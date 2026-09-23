@@ -448,13 +448,15 @@ impl TerminatorKind {
         }
     }
 
-    /// E4-T06 "what is never JITted": a block whose terminator is a CSR read-write (can
-    /// change `mstatus`/`satp`/`mie` mid-stream) or `wfi` (the idle path is runtime-owned)
-    /// is EXCLUDED from nomination — it stays in the interpreter (T0/T1). This is the one
-    /// config point for the exclusion policy; the other terminators (branch/jal/jalr/ecall/
-    /// ebreak/xret/fence) side-exit and are translatable up to the terminator.
+    /// E4-T06 "what is never JITted": a block whose terminator is `wfi` (the idle path is
+    /// runtime-owned) is EXCLUDED from nomination — it stays in the interpreter (T0/T1). This is
+    /// the one config point for the exclusion policy. CSR-terminated blocks are nominated: the
+    /// translator inlines `fflags`/`frm`/`fcsr` accesses and compiles every other block up to its
+    /// CSR op, which then executes in the INTERPRETER as the continuation of the same block (a
+    /// precise partial-block exit), so a CSR that changes `mstatus`/`satp`/`mie` is still applied
+    /// by the one CSR authority at the identical instruction boundary.
     pub fn is_excluded(&self) -> bool {
-        matches!(self, TerminatorKind::Csr | TerminatorKind::Wfi)
+        matches!(self, TerminatorKind::Wfi)
     }
 }
 
@@ -1604,7 +1606,7 @@ mod tests {
     }
 
     #[test]
-    fn csr_and_wfi_blocks_are_excluded() {
+    fn wfi_blocks_are_excluded_but_csr_blocks_are_nominated() {
         let mut d = BlockDiscovery::new();
         let csr = [MicroOp {
             instr: Instr::Csrrw {
@@ -1624,10 +1626,14 @@ mod tests {
             d.on_block_entry(0x8000_0000, &csr);
             d.on_block_entry(0x9000_0000, &wfi);
         }
+        // CSR-terminated blocks are nominated: the translator compiles their prefix (or inlines an
+        // FP CSR) and hands any other CSR op to the interpreter at its exact boundary. WFI blocks
+        // stay excluded (the idle path is runtime-owned).
         let s = d.stats();
-        assert_eq!(s.nominated, 0, "excluded blocks never enqueue");
-        assert_eq!(s.excluded, 2);
-        assert_eq!(s.queue_depth, 0);
+        assert_eq!(s.nominated, 1, "only the CSR block enqueues");
+        assert_eq!(s.excluded, 1);
+        assert_eq!(s.queue_depth, 1);
+        assert_eq!(d.take_requests()[0].phys_pc, 0x8000_0000);
     }
 
     #[test]

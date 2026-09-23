@@ -32,19 +32,21 @@
 //! The browser executor mirrors this contract with `WebAssembly.Module`; both executors expose the
 //! same bounded host-side chaining and cache-lifecycle interface.
 
+use std::cell::Cell;
 use std::collections::hash_map::RandomState;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::hash::{BuildHasher, Hasher};
 
 use anyhow::anyhow;
-use jit_translate::{Abi, translate_batch};
+use jit_translate::{Abi, first_untranslated, is_translatable, translate_batch};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
 
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
-    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
+    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit,
+    TranslationCoverage, abi,
 };
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
@@ -128,6 +130,56 @@ impl BuildHasher for JitBuildHasher {
 }
 
 type JitMap<K, V> = HashMap<K, V, JitBuildHasher>;
+
+thread_local! {
+    /// Flag mailbox between `env.fp_op64` and the immediately following `env.fp_flags` call. A
+    /// 64-bit FP result and its five flag bits do not fit one wasm `i64` return; the generated code
+    /// always issues the two calls back to back on the calling thread, so a per-thread cell is
+    /// exact (and parallel test threads cannot observe one another's flags).
+    static FP_OP64_FLAGS: Cell<u8> = const { Cell::new(0) };
+}
+
+/// Diagnostic translation-coverage ledger (never architectural).
+#[derive(Default)]
+struct CoverageLedger {
+    full_blocks: u64,
+    partial_blocks: u64,
+    rejected_blocks: u64,
+    partial_exits: u64,
+    first_unsupported: BTreeMap<&'static str, u64>,
+}
+
+impl CoverageLedger {
+    fn note_translation(&mut self, block: &DecodedBlock) {
+        match first_untranslated(block) {
+            None => self.full_blocks += 1,
+            Some((index, name)) => {
+                if index == 0 {
+                    self.rejected_blocks += 1;
+                } else {
+                    self.partial_blocks += 1;
+                }
+                *self.first_unsupported.entry(name).or_default() += 1;
+            }
+        }
+    }
+
+    fn snapshot(&self) -> TranslationCoverage {
+        let mut first_unsupported: Vec<_> = self
+            .first_unsupported
+            .iter()
+            .map(|(&name, &count)| (name, count))
+            .collect();
+        first_unsupported.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(b.0)));
+        TranslationCoverage {
+            full_blocks: self.full_blocks,
+            partial_blocks: self.partial_blocks,
+            rejected_blocks: self.rejected_blocks,
+            partial_exits: self.partial_exits,
+            first_unsupported,
+        }
+    }
+}
 
 /// Store data: raw pointers to the live guest state, valid only for the duration of one `run` call
 /// (set immediately before, cleared immediately after — the module never escapes the call, so the
@@ -262,6 +314,8 @@ pub struct WasmtimeExecutor {
     /// Physical entry PCs evicted since the last [`Self::take_evicted`] drain — fed back to block
     /// discovery so an evicted-but-hot block is re-nominated (E4-T20 AC3).
     newly_evicted: Vec<u64>,
+    /// Translation-coverage diagnostics (`--jit` stats).
+    coverage: CoverageLedger,
 }
 
 impl Default for WasmtimeExecutor {
@@ -437,6 +491,36 @@ impl WasmtimeExecutor {
                 wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
             })
             .expect("register env.fp_fmadd_s");
+        // Generic F/D helpers (full F/D coverage). Pure functions of their operands; the 64-bit
+        // form parks its flags in the per-thread mailbox read by `env.fp_flags`.
+        linker
+            .func_wrap(
+                "env",
+                "fp_op32",
+                |op: i32, a: i64, b: i64, c: i64, rm: i32| -> i64 {
+                    wasm_vm_core::jit::fp_op32(op as u32, a as u64, b as u64, c as u64, rm as u8)
+                        as i64
+                },
+            )
+            .expect("register env.fp_op32");
+        linker
+            .func_wrap(
+                "env",
+                "fp_op64",
+                |op: i32, a: i64, b: i64, c: i64, rm: i32| -> i64 {
+                    let (bits, flags) = wasm_vm_core::jit::fp_op64(
+                        op as u32, a as u64, b as u64, c as u64, rm as u8,
+                    );
+                    FP_OP64_FLAGS.with(|mailbox| mailbox.set(flags));
+                    bits as i64
+                },
+            )
+            .expect("register env.fp_op64");
+        linker
+            .func_wrap("env", "fp_flags", || -> i32 {
+                i32::from(FP_OP64_FLAGS.with(Cell::get))
+            })
+            .expect("register env.fp_flags");
         let registry_hasher = JitBuildHasher::default();
         WasmtimeExecutor {
             engine,
@@ -468,6 +552,7 @@ impl WasmtimeExecutor {
             retranslations: 0,
             installs: 0,
             newly_evicted: Vec::new(),
+            coverage: CoverageLedger::default(),
         }
     }
 
@@ -710,9 +795,19 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn install_batch(&mut self, blocks: &[DecodedBlock], intra: &[[Option<usize>; 2]]) {
         debug_assert_eq!(blocks.len(), intra.len());
-        // Drop already-compiled members (dedup) and re-index the intra edges onto the kept set.
+        // Drop already-compiled members (dedup) and blocks whose first op cannot be translated,
+        // then re-index the intra edges onto the kept set. Filtering the untranslatable members
+        // up front keeps the rest of the group in ONE module instead of failing the whole batch
+        // into one-block modules (the batch registry is the eviction unit).
         let keep: Vec<usize> = (0..blocks.len())
             .filter(|&i| !self.blocks.contains_key(&blocks[i].phys_start))
+            .filter(|&i| {
+                let translatable = is_translatable(&blocks[i]);
+                if !translatable {
+                    self.coverage.note_translation(&blocks[i]);
+                }
+                translatable
+            })
             .collect();
         if keep.is_empty() {
             return;
@@ -783,6 +878,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 self.retranslations += 1;
             }
             self.installs += 1;
+            self.coverage.note_translation(b);
             let nslots = Self::nslots_for(b);
             let (table_index, slot_base) = self.alloc_block(b.phys_start, nslots);
             self.blocks.insert(
@@ -913,6 +1009,9 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         // The return value is the authoritative exit code; `exit_reason` in memory mirrors it.
         debug_assert_eq!(code, self.handoff.exit_reason());
         self.executed_blocks += 1;
+        if ExitCode::from_i32(code) == ExitCode::CallInterp {
+            self.coverage.partial_exits += 1;
+        }
         Some(JitExit {
             code: ExitCode::from_i32(code),
             next_pc,
@@ -999,6 +1098,10 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    fn translation_coverage(&self) -> TranslationCoverage {
+        self.coverage.snapshot()
     }
 
     fn note_jit_retired(&mut self, retired: u64) {

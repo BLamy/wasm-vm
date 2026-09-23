@@ -571,6 +571,8 @@ fn verifier_mixed_optional_indices_and_integer_behavior() {
             && store.data().arithmetic.is_empty()
             && store.data().conversions.is_empty()
     );
+    // Full F/D coverage: these once-unselected families now translate through the generic
+    // helpers (exact semantics: `fp_full_lockstep.rs`) without disturbing the indices above.
     for raw in [
         0xc020_0053,
         0xc030_0053,
@@ -583,11 +585,11 @@ fn verifier_mixed_optional_indices_and_integer_behavior() {
         0x5800_0053,
     ] {
         assert!(
-            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),
-            "unselected FP parcel {raw:08x} admitted"
+            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_ok(),
+            "full-coverage FP parcel {raw:08x} rejected"
         );
     }
     eprintln!(
-        "CRITIC_DIVISION_INDICES imports=9 exports=run0:9,run1:10,run2:11,run3:12,run4:13 all_optional_combinations=8 mixed_chain_executed=true integer_imports=5 unsupported_families=9"
+        "CRITIC_DIVISION_INDICES imports=9 exports=run0:9,run1:10,run2:11,run3:12,run4:13 all_optional_combinations=8 mixed_chain_executed=true integer_imports=5 generic_families=9"
     );
 }
