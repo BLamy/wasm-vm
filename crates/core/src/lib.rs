@@ -1005,12 +1005,21 @@ impl Machine {
     /// per-instruction audit while the PMP revision is unchanged. This does not skip MMU/PTE
     /// permission checks, which still use the actual current privilege at instruction fetch.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_pmp_code_permissions(&mut self) {
+        // Every boundary: unchanged PMP revision and privilege is the overwhelmingly common case.
+        if self.hart.csr.pmp.revision() != self.pmp_revision_seen
+            || self.hart.csr.mode != self.pmp_mode_seen
+        {
+            self.sync_pmp_code_permissions_changed();
+        }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn sync_pmp_code_permissions_changed(&mut self) {
         let revision = self.hart.csr.pmp.revision();
         let mode = self.hart.csr.mode;
-        if revision == self.pmp_revision_seen && mode == self.pmp_mode_seen {
-            return;
-        }
         if revision == self.pmp_revision_seen
             && matches!(
                 (self.pmp_mode_seen, mode),
@@ -4117,10 +4126,12 @@ impl Machine {
     /// by walking [`Hart::decode_at`] to the first terminator / page boundary / 128-op cap. On a
     /// fetch/decode fault the precise trap is returned (identical to the legacy path).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn next_micro_op(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
         // Fast path: continue the block we are mid-replay of. The cursor holds the block, which
         // is still cache-resident (every live-block drop clears the cursor), so this is exactly
-        // the former `block_cache.get(key)` hit with no probe.
+        // the former `block_cache.get(key)` hit with no probe. Inlined into the interpreter loop;
+        // block entry (translate + cache lookup / build) stays out of line.
         if let Some(cursor) = &mut self.block_cursor
             && cursor.next_va == pc
             && let Some(op) = cursor.block.ops.get(cursor.idx).copied()
@@ -4129,6 +4140,14 @@ impl Machine {
             cursor.next_va = pc.wrapping_add(u64::from(op.len));
             return Ok(op);
         }
+        self.enter_block(pc)
+    }
+
+    /// The block-ENTRY half of [`Self::next_micro_op`]: the cursor missed, so re-key by physical
+    /// PC — reuse the cached block at `pc`'s physical address or walk and insert a fresh one.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn enter_block(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
         self.block_cursor = None;
 
         // A device/DMA write can land between host run chunks, before any guest instruction gets
