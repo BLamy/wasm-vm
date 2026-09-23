@@ -367,6 +367,10 @@ pub struct BlockCache {
     /// choice of victim within a full probe window depends on them — never whether a lookup hits
     /// a resident block — so they shape hit rate, not behaviour.
     referenced: alloc::vec::Vec<bool>,
+    /// `(phys_start, block_gen)` of each occupied slot's block, parallel to `slots`, so a probe
+    /// compares keys in one dense array and dereferences a block only on a hit. Meaningful only
+    /// while the slot is `Some`; always equal to that block's own fields.
+    tags: alloc::vec::Vec<(u64, u64)>,
     mask: usize,
     generation: u64,
     /// E5.5-T03ba: decoded-cache slots grouped by physical page. A store (guest OR device/DMA)
@@ -409,6 +413,7 @@ impl BlockCache {
         Self {
             slots,
             referenced: alloc::vec![false; cap],
+            tags: alloc::vec![(0, 0); cap],
             mask: cap - 1,
             generation: 1,
             code_slots: U64Map::new(),
@@ -511,37 +516,36 @@ impl BlockCache {
     /// replay (the run loop's block cursor).
     #[inline]
     pub(crate) fn get_rc(&self, phys_start: u64) -> Option<&Rc<DecodedBlock>> {
-        let start = self.hash(phys_start);
-        for i in 0..MAX_PROBE {
-            let idx = (start + i) & self.mask;
-            match &self.slots[idx] {
-                Some(b) if b.block_gen == self.generation && b.phys_start == phys_start => {
-                    return Some(b);
-                }
-                // A live block for a different key: keep probing. A `None` or stale-gen slot
-                // is a genuine empty — the key was never inserted on this chain, so stop.
-                Some(b) if b.block_gen == self.generation => continue,
-                _ => return None,
-            }
-        }
-        None
+        self.probe(phys_start)
+            .and_then(|idx| self.slots[idx].as_ref())
     }
 
     /// [`Self::get_rc`] for a block ENTRY: a hit also marks the slot referenced, giving the
     /// block a second chance when a full probe window must evict.
     #[inline]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn get_rc_touch(&mut self, phys_start: u64) -> Option<Rc<DecodedBlock>> {
+        let idx = self.probe(phys_start)?;
+        self.referenced[idx] = true;
+        self.slots[idx].clone()
+    }
+
+    /// The slot holding the live block keyed `phys_start`, if any.
+    #[inline]
+    fn probe(&self, phys_start: u64) -> Option<usize> {
         let start = self.hash(phys_start);
         for i in 0..MAX_PROBE {
             let idx = (start + i) & self.mask;
-            match &self.slots[idx] {
-                Some(b) if b.block_gen == self.generation && b.phys_start == phys_start => {
-                    self.referenced[idx] = true;
-                    return Some(Rc::clone(b));
-                }
-                Some(b) if b.block_gen == self.generation => continue,
-                _ => return None,
+            let (phys, block_gen) = self.tags[idx];
+            if self.slots[idx].is_none() || block_gen != self.generation {
+                // A `None` or stale-gen slot is a genuine empty — the key was never inserted on
+                // this chain, so stop.
+                return None;
             }
+            if phys == phys_start {
+                return Some(idx);
+            }
+            // A live block for a different key: keep probing.
         }
         None
     }
@@ -550,6 +554,7 @@ impl BlockCache {
     /// read-only view for boundary audits such as the PMP privilege-transition check; callers must
     /// not infer that a missing block is an architectural failure because a cache miss is always a
     /// legal rebuild.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
         self.slots.iter().filter_map(|slot| match slot {
             Some(block) if block.block_gen == self.generation => Some(&**block),
@@ -571,10 +576,10 @@ impl BlockCache {
         let index = (0..MAX_PROBE)
             .find_map(|i| {
                 let idx = (start + i) & self.mask;
-                let free = match &self.slots[idx] {
-                    None => true,
-                    Some(b) => b.block_gen != self.generation || b.phys_start == block.phys_start,
-                };
+                let (phys, block_gen) = self.tags[idx];
+                let free = self.slots[idx].is_none()
+                    || block_gen != self.generation
+                    || phys == block.phys_start;
                 if free { Some(idx) } else { None }
             })
             .unwrap_or_else(|| {
@@ -588,6 +593,7 @@ impl BlockCache {
         self.referenced[index] = false;
         self.unlink_code_slot(index);
         let page_frame = block.page_frame;
+        self.tags[index] = (block.phys_start, block.block_gen);
         let block = Rc::new(block);
         self.slots[index] = Some(Rc::clone(&block));
         let generation = self.generation;
