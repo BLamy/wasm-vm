@@ -501,6 +501,9 @@ struct CacheSlot {
     /// choice of victim within a full probe window depends on it — never whether a lookup hits a
     /// resident block — so it shapes hit rate, not behaviour.
     referenced: bool,
+    /// Position of this slot's index in its page's [`CodePageSlots::slots`] list while `block` is
+    /// `Some`, so replacing the block unlinks it in O(1) instead of scanning the page's list.
+    page_pos: u32,
 }
 
 /// Open-addressed, physically-keyed block cache with O(1) whole-cache flush.
@@ -638,14 +641,28 @@ impl BlockCache {
     /// becomes empty: the legacy `has_code` membership stayed live until `flush_page`, and callers
     /// use that membership to decide whether a page invalidation occurred.
     fn unlink_code_slot(&mut self, index: usize) {
-        let Some(block) = self.slots[index].block.as_ref() else {
+        let slot = &self.slots[index];
+        let Some(block) = slot.block.as_ref() else {
             return;
         };
         let frame = block.page_frame;
-        if let Some(page) = self.code_slots.get_mut(&frame)
-            && let Some(position) = page.slots.iter().position(|&candidate| candidate == index)
-        {
+        let hint = slot.page_pos as usize;
+        let Some(page) = self.code_slots.get_mut(&frame) else {
+            return;
+        };
+        // The back-index names the position directly; the scan is a defensive fallback for a
+        // list the index does not describe (never expected: every list edit maintains it).
+        let position = if page.slots.get(hint) == Some(&index) {
+            Some(hint)
+        } else {
+            page.slots.iter().position(|&candidate| candidate == index)
+        };
+        if let Some(position) = position {
             page.slots.swap_remove(position);
+            // swap_remove moved the list's last index into `position`: re-point its back-index.
+            if let Some(&moved) = page.slots.get(position) {
+                self.slots[moved].page_pos = position as u32;
+            }
         }
     }
 
@@ -759,6 +776,7 @@ impl BlockCache {
             block_gen,
             block: Some(Rc::clone(&block)),
             referenced: false,
+            page_pos: 0,
         };
         let generation = self.generation;
         let code_filter = &mut self.code_filter;
@@ -770,6 +788,7 @@ impl BlockCache {
             }
         });
         page.generation = generation;
+        self.slots[index].page_pos = page.slots.len() as u32;
         page.slots.push(index);
         block
     }
