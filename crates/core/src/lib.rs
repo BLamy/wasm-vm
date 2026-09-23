@@ -4165,10 +4165,9 @@ impl Machine {
         // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
         // every entry — otherwise a cache hit would prevent the JIT hotness counter reaching its
         // threshold. SMC/DMA writes already remove the whole physical page before this lookup.
-        if let Some(block) = self.block_cache.get_rc(phys)
+        if let Some(block) = self.block_cache.get_rc_touch(phys)
             && let Some(first) = block.ops.first().copied()
         {
-            let block = alloc::rc::Rc::clone(block);
             self.discovery.on_block_entry(phys, &block.ops);
             self.block_cursor = Some(BlockCursor {
                 block,

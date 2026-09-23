@@ -362,6 +362,11 @@ pub struct BlockCache {
     /// authority for LIVENESS: every path that drops a live block (generation flush, page flush)
     /// also clears the cursor, so a cursor never outlives its block's cache residency.
     slots: alloc::vec::Vec<Option<Rc<DecodedBlock>>>,
+    /// Second-chance reference bits, parallel to `slots`: set when an ENTRY re-uses the slot's
+    /// block ([`Self::get_rc_touch`]), cleared as the replacement scan passes over it. Only the
+    /// choice of victim within a full probe window depends on them — never whether a lookup hits
+    /// a resident block — so they shape hit rate, not behaviour.
+    referenced: alloc::vec::Vec<bool>,
     mask: usize,
     generation: u64,
     /// E5.5-T03ba: decoded-cache slots grouped by physical page. A store (guest OR device/DMA)
@@ -403,6 +408,7 @@ impl BlockCache {
         slots.resize_with(cap, || None);
         Self {
             slots,
+            referenced: alloc::vec![false; cap],
             mask: cap - 1,
             generation: 1,
             code_slots: U64Map::new(),
@@ -521,6 +527,25 @@ impl BlockCache {
         None
     }
 
+    /// [`Self::get_rc`] for a block ENTRY: a hit also marks the slot referenced, giving the
+    /// block a second chance when a full probe window must evict.
+    #[inline]
+    pub(crate) fn get_rc_touch(&mut self, phys_start: u64) -> Option<Rc<DecodedBlock>> {
+        let start = self.hash(phys_start);
+        for i in 0..MAX_PROBE {
+            let idx = (start + i) & self.mask;
+            match &self.slots[idx] {
+                Some(b) if b.block_gen == self.generation && b.phys_start == phys_start => {
+                    self.referenced[idx] = true;
+                    return Some(Rc::clone(b));
+                }
+                Some(b) if b.block_gen == self.generation => continue,
+                _ => return None,
+            }
+        }
+        None
+    }
+
     /// Iterate the blocks that belong to the current cache generation. This is intentionally a
     /// read-only view for boundary audits such as the PMP privilege-transition check; callers must
     /// not infer that a missing block is an architectural failure because a cache miss is always a
@@ -552,7 +577,15 @@ impl BlockCache {
                 };
                 if free { Some(idx) } else { None }
             })
-            .unwrap_or(start);
+            .unwrap_or_else(|| {
+                // The whole probe window holds live blocks: evict the first one not re-entered
+                // since the scan last passed it (second chance), else the window head.
+                (0..MAX_PROBE)
+                    .map(|i| (start + i) & self.mask)
+                    .find(|&idx| !core::mem::replace(&mut self.referenced[idx], false))
+                    .unwrap_or(start)
+            });
+        self.referenced[index] = false;
         self.unlink_code_slot(index);
         let page_frame = block.page_frame;
         let block = Rc::new(block);
