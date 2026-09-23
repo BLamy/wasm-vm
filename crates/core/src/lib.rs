@@ -597,6 +597,13 @@ pub struct Machine {
     /// Test-only work counter: boundaries served by the quiescent fast path.
     #[cfg(all(test, not(feature = "zicsr-stub")))]
     fabric_fast_hits: u64,
+    /// Test-only control: route every mid-block op through the general loop body instead of the
+    /// replay loop, so equivalence tests can compare both paths.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_tail_off: bool,
+    /// Test-only work counter: ops retired by the mid-block replay loop.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_tail_ops: u64,
 }
 
 /// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
@@ -968,6 +975,10 @@ impl Machine {
             fabric_fast_path_off: false,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
             fabric_fast_hits: 0,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_tail_off: false,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_tail_ops: 0,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -4074,6 +4085,21 @@ impl Machine {
         // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
         // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
+        self.retire_cached_op(op, pc, capture)
+    }
+
+    /// The execute-and-retire half of [`Self::step_cached_with_capture`] for an op already taken
+    /// from the block cursor: execute, tick the counters, record the retirement, then keep the
+    /// fetch stream coherent (`fence.i` note + page-granular drain of any code-page store). Shared
+    /// verbatim by the one-op step and the mid-block replay loop ([`Self::replay_block_tail`]).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn retire_cached_op<C: hart::RetirementCapture>(
+        &mut self,
+        op: dispatch::MicroOp,
+        pc: u64,
+        mut capture: C,
+    ) -> Result<(), Trap> {
         let output = self.hart.execute(
             &mut self.bus,
             op.instr,
@@ -5067,6 +5093,95 @@ impl Machine {
         }
     }
 
+    /// The post-retire bookkeeping of a retired `wfi` (shared by the one-op loop body and
+    /// [`Self::replay_block_tail`]).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn after_wfi_retire(&mut self) {
+        self.irqstats.on_wfi();
+        self.hart.last_was_wfi = false;
+        self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+        // E2-T23b: no interrupt was pending this boundary (next_interrupt returned None before
+        // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
+        // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
+        // `sleep` into near-real-time. No-op if no timer armed.
+        if !self.external_net_io_pending() {
+            self.wfi_fast_forward();
+        }
+    }
+
+    /// Phase-C mid-block replay: run the rest of the decoded block the cursor is inside, one op at
+    /// a time, with exactly the per-instruction work of the run loop's non-boundary interpreted
+    /// iteration and none of its per-iteration mode dispatch.
+    ///
+    /// The caller (the run loop) establishes, for the current iteration: interrupt batching and
+    /// the block cache are on, this is NOT a sampling boundary (so the cursor continues at `pc`
+    /// with an op left), no profiler or HTIF is armed, no debug trigger is armed, and
+    /// `remaining_work > 0`. Within one block those conditions can only change at the block's
+    /// terminator (triggers/CSRs), which is its last op, so after each op the loop re-evaluates
+    /// exactly the run loop's next loop-top tests in the same order — work budget, syscon
+    /// finisher, [`Self::at_block_boundary`] — and returns to the run loop the moment any of them
+    /// would take it off the non-boundary path. Per op, in order: counter arm, cursor advance (the
+    /// [`Self::next_micro_op`] continuation), [`Self::retire_cached_op`], work slot, then on
+    /// success the retire clock, the progress counter and the WFI hook — the loop body's order.
+    ///
+    /// Returns `Some(trap)` when an op trapped: that op has NOT consumed its work slot, so the run
+    /// loop charges it and delivers the trap through its one trap path. `None` otherwise.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn replay_block_tail<T: trace::TraceSink>(
+        &mut self,
+        remaining_work: &mut u64,
+        capture: &mut RunCapture<'_, T>,
+    ) -> Option<Trap> {
+        // Hold the block for the whole tail: the ops are read from this handle while `self` is
+        // mutated. The cursor (which owns the same block) stays the authority for liveness — a
+        // drain/fence.i that clears it ends the tail at the boundary test below.
+        let block = alloc::rc::Rc::clone(&self.block_cursor.as_ref()?.block);
+        let ops: &[dispatch::MicroOp] = &block.ops;
+        loop {
+            // step_cached_with_capture, minus the execute-trigger test (no trigger is armed).
+            self.hart.csr.arm_counters();
+            let pc = self.hart.regs.pc;
+            // The next_micro_op continuation: the caller / the previous iteration's boundary test
+            // established `cursor.next_va == pc` and an op at `cursor.idx`.
+            let cursor = self.block_cursor.as_mut()?;
+            let op = *ops.get(cursor.idx)?;
+            cursor.idx += 1;
+            cursor.next_va = pc.wrapping_add(u64::from(op.len));
+            let result = match capture {
+                RunCapture::Unit => self.retire_cached_op(op, pc, hart::UnitCapture),
+                RunCapture::Traced(sink) => {
+                    self.retire_cached_op(op, pc, hart::RecordingCapture::new(&mut **sink))
+                }
+            };
+            if let Err(trap) = result {
+                return Some(trap);
+            }
+            *remaining_work -= 1;
+            #[cfg(test)]
+            {
+                self.replay_tail_ops += 1;
+            }
+            // The loop body's successful-retire accounting (profiling is off here).
+            self.advance_clock();
+            self.irqstats.on_retire(); // E2-T20 progress denominator
+            if self.hart.last_was_wfi {
+                self.after_wfi_retire();
+            }
+            // The run loop's next loop-top tests, in its order.
+            if *remaining_work == 0 {
+                return None;
+            }
+            if self.syscon.as_ref().is_some_and(|c| c.borrow().is_some()) {
+                return None;
+            }
+            if self.at_block_boundary() {
+                return None;
+            }
+        }
+    }
+
     fn run_capture_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -5094,6 +5209,13 @@ impl Machine {
         let jit_on = self.jit_active();
         #[cfg(not(feature = "zicsr-stub"))]
         let cache_on = self.block_cache_enabled;
+        // Mid-block ops may take the tight replay loop when no per-op hook needs the general loop
+        // body: batching (hence the cache) on, no hot-PC profiler, no HTIF mailbox. (Debug
+        // triggers are re-checked per block below: a CSR write can arm them.)
+        #[cfg(not(feature = "zicsr-stub"))]
+        let tail_ok = batching && !self.profiling && self.htif.is_none();
+        #[cfg(all(test, not(feature = "zicsr-stub")))]
+        let tail_ok = tail_ok && !self.replay_tail_off;
 
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
@@ -5169,6 +5291,16 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             let (step_result, ran_via_jit, work_used) = match jit_attempt {
                 Some(progress) => (progress.result, true, progress.work_used),
+                // Mid-block: replay the rest of the block in the tight loop. It retires ops (with
+                // all their per-op accounting) until the next loop-top test would leave the
+                // non-boundary path; a trapping op comes back here unaccounted, exactly like a
+                // trapping one-op step.
+                None if tail_ok && !sample_boundary && self.hart.csr.triggers_idle() => {
+                    match self.replay_block_tail(&mut remaining_work, capture) {
+                        None => continue,
+                        Some(trap) => (Err(trap), false, 1),
+                    }
+                }
                 None => (capture.step(self, cache_on), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
@@ -5195,16 +5327,7 @@ impl Machine {
                     }
                 }
                 if self.hart.last_was_wfi {
-                    self.irqstats.on_wfi();
-                    self.hart.last_was_wfi = false;
-                    self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
-                    // E2-T23b: no interrupt was pending this boundary (next_interrupt returned
-                    // None above), so this WFI is a real idle wait. Skip the idle spin by jumping
-                    // mtime to the nearest armed timer deadline — deterministic, so native and
-                    // wasm agree. Turns a ~20× `sleep` into near-real-time. No-op if no timer armed.
-                    if !self.external_net_io_pending() {
-                        self.wfi_fast_forward();
-                    }
+                    self.after_wfi_retire();
                 }
             }
             if let Err(trap) = step_result {
@@ -5524,6 +5647,222 @@ mod tests {
                     "every byte echoed through the IRQ path"
                 );
                 assert_eq!(control.3, 1, "one RTC alarm interrupt");
+            }
+        }
+    }
+
+    /// The mid-block replay loop retires the identical instruction stream and leaves the identical
+    /// machine state as the general loop body, under trace capture and unit capture and across run
+    /// slicings that split blocks. The workload puts, INSIDE straight-line blocks: RAM stores and
+    /// loads, a load access fault (a trapping mid-block op, delivered to an S handler), a store
+    /// that rewrites a later op of the same block (self-modifying code: the drain drops the cursor
+    /// mid-block and the rest re-decodes), an execute-address debug trigger on a mid-block op
+    /// (which must keep that block on the general path), and a syscon poweroff store followed by
+    /// more ops (the run must stop before the next op).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn replay_block_tail_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::csr::{CsrOp, Priv, TDATA1, TDATA2, TSELECT};
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        fn s_type(imm: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let iu = (imm as u32) & 0xFFF;
+            ((iu >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | ((iu & 0x1F) << 7) | 0x23
+        }
+        fn b_type(off: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let o = off as u32;
+            (((o >> 12) & 1) << 31)
+                | (((o >> 5) & 0x3F) << 25)
+                | (rs2 << 20)
+                | (rs1 << 15)
+                | (f3 << 12)
+                | (((o >> 1) & 0xF) << 8)
+                | (((o >> 11) & 1) << 7)
+                | 0x63
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let xor =
+            |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (4 << 12) | (rd << 7) | 0x33;
+        let add = |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (rd << 7) | 0x33;
+        let lui = |rd: u32, imm20: u32| ((imm20 & 0xF_FFFF) << 12) | (rd << 7) | 0x37;
+        let li32 = |rd: u32, v: u32| {
+            let lo = ((v & 0xFFF) as i32) << 20 >> 20;
+            let hi = v.wrapping_sub(lo as u32) >> 12;
+            [lui(rd, hi), addi(rd, rd, lo)]
+        };
+        // A zero-extended 32-bit address (RV64 `lui` sign-extends bit 31): li32 + slli/srli 32.
+        let la = |rd: u32, v: u32| {
+            let [hi, lo] = li32(rd, v);
+            [
+                hi,
+                lo,
+                i_type(32, rd, 1, rd, 0x13),
+                i_type(32, rd, 5, rd, 0x13),
+            ]
+        };
+        let lw = |rd, rs1, imm| i_type(imm, rs1, 2, rd, 0x03);
+        let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        const SRET: u32 = 0x1020_0073;
+        const JDOT: u32 = 0x0000_006F;
+        let base = platform::virt::KERNEL_BASE;
+        // The self-modified op (index `PATCHED`) alternates between these two encodings.
+        let enc_a = addi(22, 22, 7);
+        let enc_b = addi(22, 22, 1);
+        let mut code = alloc::vec::Vec::new();
+        code.extend(la(6, (base + 0x800) as u32)); // x6 = handler
+        code.push(csrrw(0, 0x105, 6)); // stvec = handler
+        code.extend(la(10, (base + 0x3000) as u32)); // x10 = data page
+        code.push(addi(11, 0, 150)); // loop count
+        code.extend(la(12, base as u32)); // x12 = code base (SMC target)
+        code.extend(li32(19, enc_a)); // x19 = first patch value
+        code.extend(li32(23, enc_a ^ enc_b)); // x23 = toggle mask
+        let lp = code.len();
+        let (patched, triggered) = (lp + 12, lp + 3);
+        code.extend([
+            addi(13, 13, 3),                  // +0
+            sw(13, 10, 0),                    // +1 RAM store
+            lw(14, 10, 0),                    // +2 RAM load
+            xor(15, 14, 13),                  // +3 (execute trigger here in one variant)
+            add(16, 16, 14),                  // +4
+            lw(17, 0, 0),                     // +5 load access fault -> handler skips it
+            addi(18, 18, 1),                  // +6
+            sw(19, 12, (4 * patched) as i32), // +7 rewrite op +12 (same block, ahead)
+            addi(20, 20, 1),                  // +8
+            addi(21, 21, 1),                  // +9
+            xor(19, 19, 23),                  // +10 toggle the next patch value
+            add(24, 24, 22),                  // +11
+            enc_b,                            // +12 (overwritten before it runs)
+            add(25, 25, 22),                  // +13
+            addi(11, 11, -1),                 // +14
+            b_type(-(4 * 15), 0, 11, 1),      // +15 bne x11, x0, loop
+        ]);
+        // Poweroff through the syscon finisher mid-block, then ops that must never run.
+        code.extend(la(26, platform::virt::TEST_BASE as u32));
+        code.extend(li32(27, 0x5555));
+        code.push(sw(27, 26, 0));
+        code.extend([addi(28, 28, 1), addi(28, 28, 1), JDOT]);
+        let handler = [
+            csrrs(5, 0x141, 0), // sepc
+            addi(5, 5, 4),
+            csrrw(0, 0x141, 5),
+            addi(29, 29, 1),
+            SRET,
+        ];
+        let run = |tail_off: bool, traced: bool, trigger: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(10);
+            m.enable_plic();
+            m.enable_syscon();
+            m.enable_builtin_sbi();
+            m.boot_supervisor(0, 0);
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.replay_tail_off = tail_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
+            }
+            for (i, insn) in handler.iter().enumerate() {
+                m.bus_mut()
+                    .store32(base + 0x800 + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            if trigger {
+                let mode = m.hart.csr.mode;
+                m.hart.csr.mode = Priv::M;
+                for (csr, v) in [
+                    (TSELECT, 0),
+                    (TDATA2, base + 4 * triggered as u64),
+                    (TDATA1, (2u64 << 60) | (1 << 4) | (1 << 2)),
+                ] {
+                    m.hart
+                        .csr
+                        .access(csr, CsrOp::Write, v, false, false, 0)
+                        .unwrap();
+                }
+                m.hart.csr.mode = mode;
+                assert!(!m.hart.csr.triggers_idle());
+            }
+            let mut trace = HashSink::new();
+            let mut outcomes = alloc::vec::Vec::new();
+            let mut step = 0;
+            let mut total = 0u64;
+            while total < 200_000 {
+                let budget = slices[step % slices.len()];
+                step += 1;
+                total += budget;
+                let outcome = if traced {
+                    m.run_traced(budget, &mut trace)
+                } else {
+                    m.run(budget)
+                };
+                outcomes.push(outcome);
+                if outcome != RunOutcome::MaxInstrs {
+                    break;
+                }
+            }
+            let regs: alloc::vec::Vec<u64> = (0..32).map(|r| m.hart.regs.read(r)).collect();
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    outcomes,
+                    regs,
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.replay_tail_ops,
+            )
+        };
+        for trigger in [false, true] {
+            for traced in [true, false] {
+                for slices in [
+                    &[1_000_000][..],
+                    &[1, 7, 333][..],
+                    &[4096, 3][..],
+                    &[2, 5][..],
+                ] {
+                    let (control, off_ops) = run(true, traced, trigger, slices);
+                    let (fast, tail_ops) = run(false, traced, trigger, slices);
+                    assert_eq!(off_ops, 0);
+                    if trigger {
+                        // An armed execute trigger keeps every block on the general path.
+                        assert_eq!(tail_ops, 0, "an armed trigger must disable the replay loop");
+                    } else {
+                        assert!(tail_ops > 1000, "the replay loop must actually engage");
+                    }
+                    assert_eq!(
+                        fast, control,
+                        "trigger={trigger} traced={traced} {slices:?}"
+                    );
+                    let (_, _, outcomes, regs, _, _) = &control;
+                    assert_eq!(
+                        outcomes.last(),
+                        Some(&RunOutcome::Reset(ExitReason::PowerOff)),
+                        "the guest reached the poweroff store"
+                    );
+                    assert_eq!(regs[28], 0, "no op after the poweroff store ran");
+                    assert_eq!(regs[11], 0, "the loop ran to completion");
+                    // 150 iterations; the patched op alternates +7 / +1 starting with +7.
+                    assert_eq!(
+                        regs[22],
+                        75 * 7 + 75,
+                        "every rewrite executed its new bytes"
+                    );
+                    let traps = regs[29];
+                    let expected = if trigger { 300 } else { 150 };
+                    assert_eq!(
+                        traps, expected,
+                        "each fault (and trigger) trapped once per pass"
+                    );
+                }
             }
         }
     }
