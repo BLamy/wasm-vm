@@ -4961,10 +4961,9 @@ impl Machine {
         }
         // E3-T13: service virtio-net kicks (and async backend rx frames) the same
         // boundary, so tx completions + delivered echoes interrupt promptly. The backend is
-        // polled every boundary (it may be event-driven), so an attached net device is never idle.
+        // polled every boundary (it may be event-driven) unless it reports `NetBackend::idle`.
         if let Some((state, rx_vq, tx_vq)) = net {
-            dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus);
-            idle = false;
+            idle &= dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus);
         }
         // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
         // the CRNG seeds without waiting on the run loop.
@@ -5581,6 +5580,11 @@ mod tests {
             ))));
             let _ = m.enable_virtio_slots(None);
             let _ = m.enable_virtio_keyboard();
+            // A loopback virtio-net (behind the switchable adapter, as the hosts attach it): an
+            // idle synchronous backend must not keep the fabric out of the fast path.
+            let _ = m.enable_virtio_net(alloc::boxed::Box::new(
+                dev::virtio::net::LoopbackBackend::new(),
+            ));
             m.enable_builtin_sbi();
             m.boot_supervisor(0, 0);
             m.set_block_cache(block_cache);
