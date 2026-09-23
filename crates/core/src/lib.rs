@@ -5502,7 +5502,6 @@ mod tests {
         };
         let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
         let sb = |rs2, rs1, imm| s_type(imm, rs2, rs1, 0);
-        const JDOT: u32 = 0x0000_006F;
         const SRET: u32 = 0x1020_0073;
         // main: stvec, sie.SEIE, sstatus.SIE, PLIC prio/enable/threshold for UART IRQ 10 on the
         // S context, then a few hundred device-silent instructions before UART IER is enabled
