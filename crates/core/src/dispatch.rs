@@ -1690,7 +1690,8 @@ mod tests {
         let counters = d.counts();
         d.set_cold_counter_recycling(true);
         assert_eq!(
-            d.counts(), counters,
+            d.counts(),
+            counters,
             "selection itself does not clear history"
         );
         // Revisit an observed identity, then enough new cold keys for four epochs.
