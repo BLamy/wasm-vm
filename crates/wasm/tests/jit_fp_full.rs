@@ -16,6 +16,7 @@ fn fp_full_browser_private() {
     fixture::single_ops(private);
     fixture::random_blocks(private);
     fixture::fcsr_sequence(private);
+    fixture::fp_image_elision(private);
     fixture::partial_prefix(private);
 }
 #[wasm_bindgen_test]
@@ -23,5 +24,6 @@ fn fp_full_browser_inline() {
     fixture::single_ops(inline);
     fixture::random_blocks(inline);
     fixture::fcsr_sequence(inline);
+    fixture::fp_image_elision(inline);
     fixture::partial_prefix(inline);
 }

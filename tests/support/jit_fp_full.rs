@@ -500,6 +500,55 @@ pub fn fcsr_sequence(make: Factory) {
     }
 }
 
+/// Two FP blocks and one integer-only block compiled into ONE module (so, natively, one private
+/// state memory), plus an FP block in a second module. An executor may skip re-copying the FPR
+/// image into a module whose image already mirrors the hart, and may skip the FP transfer entirely
+/// for blocks without FP ops, but every FPR change made outside the module — an interpreter write,
+/// or another module's commit — must be observed on the next entry.
+pub fn fp_image_elision(make: Factory) {
+    let mut m = Machine::new(64 * 1024);
+    let mut e = make(&m);
+    let add = block(DRAM_BASE, &[fr(0x01, 2, 1, 0, 3)]); // fadd.d f3, f1, f2 (rne)
+    let mul = block(DRAM_BASE + 0x40, &[fr(0x09, 1, 3, 7, 4)]); // fmul.d f4, f3, f1 (dyn)
+    let int = block(DRAM_BASE + 0x80, &[ADDI_X9]); // no FP op at all
+    let other = block(DRAM_BASE + 0x1000, &[fr(0x05, 2, 1, 0, 1)]); // fsub.d f1, f1, f2
+    e.install_batch(
+        &[add.clone(), mul.clone(), int.clone()],
+        &[[None, None], [None, None], [None, None]],
+    );
+    e.install(&other);
+    for b in [&add, &mul, &int, &other] {
+        assert!(e.is_compiled(b.phys_start));
+    }
+    let mut rng = Rng(0x5eed_f00d);
+    for round in 0..96 {
+        seed(&mut m, &mut rng);
+        let run = |e: &mut Box<dyn CompiledBlockExecutor>, m: &mut Machine, b, what: &str| {
+            compare(e.as_mut(), m, b, &format!("round {round}: {what}"));
+        };
+        run(&mut e, &mut m, &add, "add (image copied)");
+        run(
+            &mut e,
+            &mut m,
+            &mul,
+            "mul after add, same module, hart unchanged",
+        );
+        run(&mut e, &mut m, &int, "integer block in the FP module");
+        run(&mut e, &mut m, &mul, "mul again after the integer block");
+        // An interpreter-side FPR write between two entries into the same module.
+        m.hart_mut().fregs.write_raw(1, rng.freg());
+        run(&mut e, &mut m, &mul, "mul after an interpreter write to f1");
+        // Another module rewrites f1; the first module must not reuse its stale image.
+        run(&mut e, &mut m, &other, "fsub.d in another module");
+        run(&mut e, &mut m, &add, "add after the other module wrote f1");
+        run(&mut e, &mut m, &mul, "mul after that");
+        // fflags/frm changed outside the module must be seen by the dynamic-rm op too.
+        m.hart_mut().csr.fflags = 0;
+        m.hart_mut().csr.frm = rng.below(5) as u8;
+        run(&mut e, &mut m, &mul, "mul after an frm change");
+    }
+}
+
 /// Returns the executor so a caller with a coverage ledger can check it.
 pub fn partial_prefix(make: Factory) -> Box<dyn CompiledBlockExecutor> {
     // A block ending in an untranslatable system CSR access compiles its prefix and hands the

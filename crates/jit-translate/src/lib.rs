@@ -1569,6 +1569,14 @@ fn translated_ops(block: &DecodedBlock) -> &[MicroOp] {
     &block.ops[..translated_len(block)]
 }
 
+/// Whether the compiled code for `block` can touch FP state at all: some translated op is an F/D
+/// instruction or an inline `fflags`/`frm`/`fcsr` access. Generated code for any other block never
+/// reads or writes the FPR image or the FP state word, so a private-memory executor may skip
+/// transferring them (see `wasm_vm_core::jit::prepare_module_state`).
+pub fn block_uses_fp(block: &DecodedBlock) -> bool {
+    translated_ops(block).iter().any(|op| is_fp(&op.instr))
+}
+
 /// The first untranslatable op of `block` as `(index, mnemonic)`, or `None` when the whole block
 /// translates. Diagnostic only (the JIT coverage ledger).
 pub fn first_untranslated(block: &DecodedBlock) -> Option<(usize, &'static str)> {

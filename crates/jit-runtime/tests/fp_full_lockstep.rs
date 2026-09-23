@@ -18,6 +18,10 @@ fn fcsr_write_then_read_in_one_chainless_sequence() {
     fixture::fcsr_sequence(executor);
 }
 #[test]
+fn fp_image_elision_observes_every_outside_fpr_change() {
+    fixture::fp_image_elision(executor);
+}
+#[test]
 fn partial_blocks_compile_their_prefix_and_exit_precisely() {
     let e = fixture::partial_prefix(executor);
     let coverage = e.translation_coverage();

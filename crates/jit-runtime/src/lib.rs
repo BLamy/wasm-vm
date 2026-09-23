@@ -38,15 +38,15 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::hash::{BuildHasher, Hasher};
 
 use anyhow::anyhow;
-use jit_translate::{Abi, first_untranslated, is_translatable, translate_batch};
+use jit_translate::{Abi, block_uses_fp, first_untranslated, is_translatable, translate_batch};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
 
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
-    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit,
-    TranslationCoverage, abi,
+    EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, TranslationCoverage,
+    commit_module_state, prepare_module_state,
 };
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
@@ -220,6 +220,9 @@ struct Compiled {
     /// invalidation touching ANY member, the WHOLE batch is retired (the documented option — no stale
     /// intra-batch direct call can survive because the module is dropped atomically).
     batch_id: u32,
+    /// Whether this block's generated code can touch FP state (`jit_translate::block_uses_fp`).
+    /// Blocks that cannot skip the FPR-image / FP-control transfer entirely.
+    uses_fp: bool,
 }
 
 /// E4-T19 instance-registry entry: one live WASM Module/Instance holding `members.len()` compiled
@@ -236,6 +239,10 @@ struct Batch {
     /// batch makes the registry's eviction unit real on native: dropping a batch releases its
     /// instances instead of leaving every evicted module resident in one process-long store.
     store: Store<HostCtx>,
+    /// The `FRegs` mutation stamp the FPR image in this batch's (shared, private) state memory
+    /// currently mirrors, so an FP block re-entering the batch skips the 256-byte FPR copy while
+    /// the hart's FP registers are unchanged. Host-only cache; `None` forces a full copy.
+    fp_image: Option<(u64, u64)>,
 }
 
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond the emitted code bytes — dominated by
@@ -273,9 +280,6 @@ const STUB: u32 = u32::MAX;
 pub struct WasmtimeExecutor {
     engine: Engine,
     linker: Linker<HostCtx>,
-    /// Reused transport buffer spanning `[abi::XREG_BASE, abi::HANDOFF_END)`, transferred with one
-    /// direct fixed-memory slice copy in each direction per committed compiled exit.
-    handoff: CpuStateHandoff,
     blocks: JitMap<u64, Compiled>,
     executed_blocks: u64,
     retired_via_jit: u64,
@@ -541,7 +545,6 @@ impl WasmtimeExecutor {
         WasmtimeExecutor {
             engine,
             linker,
-            handoff: CpuStateHandoff::default(),
             blocks: JitMap::with_hasher(registry_hasher.clone()),
             executed_blocks: 0,
             retired_via_jit: 0,
@@ -907,6 +910,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     slot_base,
                     nslots,
                     batch_id,
+                    uses_fp: block_uses_fp(b),
                 },
             );
             members.push(b.phys_start);
@@ -922,6 +926,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 est_bytes,
                 last_tick: self.clock,
                 store,
+                fp_image: None,
             },
         );
     }
@@ -947,23 +952,34 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let compiled = self.blocks.get(&phys_pc)?;
-        let run = compiled.run.clone();
-        let mem = compiled.mem;
-        let batch_id = compiled.batch_id;
+        // Borrow the registries field-by-field so the compiled entry is called in place (no
+        // per-dispatch `TypedFunc` clone, whose type-registration refcount churn showed up in
+        // profiles) while its batch's store is borrowed mutably.
+        let Self {
+            blocks,
+            batches,
+            clock,
+            executed_blocks,
+            coverage,
+            ..
+        } = self;
+        let compiled = blocks.get(&phys_pc)?;
+        let batch = batches.get_mut(&compiled.batch_id)?;
         // E4-T20: stamp the batch-LRU clock at this dispatch entry (chained execution updates the
         // owning batch's tick lazily, on each re-entry through `execute`).
-        self.clock = self.clock.wrapping_add(1);
-        if let Some(b) = self.batches.get_mut(&batch_id) {
-            b.last_tick = self.clock;
-        }
-        // One direct fixed-memory slice copy transfers all integer registers plus the guest VIRTUAL
-        // entry PC. Under paging `phys_pc` differs from this virtual PC; generated code derives every
-        // guest-visible address from the value in the handoff.
-        self.handoff.prepare(hart);
-        let batch = self.batches.get_mut(&batch_id)?;
-        mem.data_mut(&mut batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize]
-            .copy_from_slice(self.handoff.as_bytes());
+        *clock = clock.wrapping_add(1);
+        batch.last_tick = *clock;
+        let mem = compiled.mem;
+        let uses_fp = compiled.uses_fp;
+        // Marshal the integer registers and the guest VIRTUAL entry PC (plus, for FP blocks, the
+        // FP control word and — only when changed — the FPR image) straight into the batch's
+        // private state memory. Under paging `phys_pc` differs from this virtual PC; generated
+        // code derives every guest-visible address from the value in the state memory.
+        prepare_module_state(
+            mem.data_mut(&mut batch.store),
+            hart,
+            uses_fp.then_some(&mut batch.fp_image),
+        );
         // Present the live guest to the load/store imports for the duration of the call.
         {
             let ctx = batch.store.data_mut();
@@ -971,7 +987,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             ctx.bus = bus as *mut SystemBus;
             ctx.trap = None;
         }
-        let call = run.call(&mut batch.store, 0);
+        let call = compiled.run.call(&mut batch.store, 0);
         // Clear the pointers before doing anything else (they must never outlive the borrows), and
         // take the precise trap (if a load/store faulted) out of the context.
         let fault = {
@@ -998,40 +1014,39 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     // closed without committing the module's register image.
                     panic!("unexpected compiled-block engine trap after dispatch: {error}");
                 };
-                self.handoff.as_mut_bytes().copy_from_slice(
-                    &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+                let exit = commit_module_state(
+                    mem.data(&batch.store),
+                    hart,
+                    uses_fp.then_some(&mut batch.fp_image),
                 );
-                self.handoff.commit_registers(hart);
-                self.handoff.commit_fp_registers(hart);
-                let faulting_pc = self.handoff.exit_pc();
-                self.executed_blocks += 1;
+                *executed_blocks += 1;
                 return Some(JitExit {
                     code: ExitCode::Trap,
-                    next_pc: faulting_pc,
+                    next_pc: exit.next_pc,
                     exit_info: trap.cause as u64,
                     trap: Some(trap),
                     retired: 0,
                 });
             }
         };
-        // One direct fixed-memory slice copy returns dirty registers and the frozen exit header.
-        self.handoff.as_mut_bytes().copy_from_slice(
-            &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+        // Commit the returned registers (and, for FP blocks, the executed FPR writes and flags)
+        // straight from the state memory and read the frozen exit header.
+        let exit = commit_module_state(
+            mem.data(&batch.store),
+            hart,
+            uses_fp.then_some(&mut batch.fp_image),
         );
-        self.handoff.commit_registers(hart);
-        self.handoff.commit_fp_registers(hart);
-        let next_pc = self.handoff.exit_pc();
-        let exit_info = self.handoff.exit_info();
         // The return value is the authoritative exit code; `exit_reason` in memory mirrors it.
-        debug_assert_eq!(code, self.handoff.exit_reason());
-        self.executed_blocks += 1;
-        if ExitCode::from_i32(code) == ExitCode::CallInterp {
-            self.coverage.partial_exits += 1;
+        debug_assert_eq!(code, exit.reason);
+        *executed_blocks += 1;
+        let code = ExitCode::from_i32(code);
+        if code == ExitCode::CallInterp {
+            coverage.partial_exits += 1;
         }
         Some(JitExit {
-            code: ExitCode::from_i32(code),
-            next_pc,
-            exit_info,
+            code,
+            next_pc: exit.next_pc,
+            exit_info: exit.exit_info,
             trap: None,
             retired: 0,
         })
@@ -1546,6 +1561,7 @@ mod tests {
                 slot_base,
                 nslots: 1,
                 batch_id,
+                uses_fp: true,
             },
         );
         executor.batches.insert(
@@ -1555,6 +1571,7 @@ mod tests {
                 est_bytes: bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES,
                 last_tick: executor.clock,
                 store,
+                fp_image: None,
             },
         );
     }
