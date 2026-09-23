@@ -44,6 +44,7 @@ ROWS = [
     ("native", "compute-jit", "region_s", "Native: shell arithmetic loop, --jit (s)", "lower", 2),
     ("native", "compute-fast", "region_cpu_s", "Native: shell arithmetic loop CPU time, fast (s)", "lower", 2),
     ("native", "compute-jit", "region_cpu_s", "Native: shell arithmetic loop CPU time, --jit (s)", "lower", 2),
+    ("native", "compute-fast", "mips_est", "Native: shell loop MIPS, fast", "higher", 1),
     ("native", "compute-jit", "mips_est", "Native: shell loop MIPS, --jit", "higher", 1),
     ("native", "alpine-fast", "wall_s", "Native: Alpine ext4 boot to login, fast (s)", "lower", 1),
     ("native", "alpine-jit", "wall_s", "Native: Alpine ext4 boot to login, --jit (s)", "lower", 1),
@@ -51,6 +52,9 @@ ROWS = [
     ("native", "alpine-jit", "mips", "Native: Alpine boot MIPS, --jit", "higher", 1),
     ("native", "coremark-fast", "region_s", "Native: CoreMark (6000 it) host time, fast (s)", "lower", 1),
     ("native", "coremark-jit", "region_s", "Native: CoreMark (6000 it) host time, --jit (s)", "lower", 1),
+    ("native", "coremark-fast", "host_iter_per_s", "Native: CoreMark iterations/s on the host clock, fast", "higher", 1),
+    ("native", "coremark-jit", "host_iter_per_s", "Native: CoreMark iterations/s on the host clock, --jit", "higher", 1),
+    ("native", "coremark-jit", "mips_est", "Native: CoreMark MIPS, --jit", "higher", 1),
     ("native", "microbench", "legacy_alu_mips", "Native: ALU microbench MIPS (legacy)", "higher", 1),
     ("native", "microbench", "alu_fast_mips", "Native: ALU microbench MIPS (fast)", "higher", 1),
     ("browser", "busybox-jit", "readyS", "Browser: busybox cold boot to prompt, JIT (s)", "lower", 2),
@@ -131,7 +135,7 @@ def main():
                        if r.get("loadavg_1m", r.get("loadavg1m")) is not None)
         load_note = f", median 1-min load avg {loads[len(loads) // 2]:.1f} on {m['host'].get('ncpu')} CPUs" if loads else ""
         if kind == "native":
-            lines.append(f"Native: {m['host']['cpu']}, reps={m['reps']} (Alpine {m['alpine_reps']}), "
+            lines.append(f"Native: {m['host']['cpu']}, reps={m['reps']} (Alpine/CoreMark {m.get('slow_reps', m.get('alpine_reps'))}), "
                          f"run {m['date']}, suite wall {m.get('suite_wall_s', 0) / 60:.1f} min{load_note}.")
         else:
             lines.append(f"Browser: headless Chromium {m['browserVersion']}, samples={m['samples']}, "

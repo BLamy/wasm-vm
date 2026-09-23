@@ -131,11 +131,14 @@ const TYPES = {
  * tracked boot snapshots), then RELEASES (gitignored chunked images). `/artifacts.json` is served
  * without its bootSnapshot entry so the busybox boot is a real cold boot, not a snapshot restore. */
 async function startServer(root, releasesDir) {
-  const requests = { count: 0, bytes: 0, notFound: [] };
+  // `log` is every served path in order; runSample slices it per sample (samples on one server are
+  // sequential) to prove a busybox "cold boot" never fetched a snapshot and a node restore did.
+  const requests = { count: 0, bytes: 0, notFound: [], log: [] };
   const server = createServer((req, res) => {
     let pathname;
     try { pathname = decodeURIComponent(new URL(req.url, "http://x").pathname); } catch { res.writeHead(400).end(); return; }
     if (pathname === "/") pathname = "/index.html";
+    requests.log.push(pathname);
     const headers = {
       "Cross-Origin-Opener-Policy": "same-origin",
       "Cross-Origin-Embedder-Policy": "require-corp",
@@ -308,6 +311,7 @@ async function runSample(browser, root, server, kase, rep, opts) {
   page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text().slice(0, 300)); });
   page.on("pageerror", (e) => consoleErrors.push(`pageerror: ${String(e).slice(0, 300)}`));
   await page.addInitScript(initScript);
+  const log0 = server.requests.log.length;
   const region = (r) => {
     rec.regionMs = r.regionMs;
     rec.retired = r.retired;
@@ -341,6 +345,13 @@ async function runSample(browser, root, server, kase, rep, opts) {
       }
     }
     rec.jitAtReady = summarizeJit(st.jit);
+    // Which boot path actually ran: a withheld bootSnapshot must mean a real cold boot (the page
+    // could learn a new way to find one), and the node case must really be a snapshot restore.
+    rec.snapshotRequests = [...new Set(server.requests.log.slice(log0).filter((p) => /\.snap(\.gz)?$|boot-snapshot\//.test(p)))];
+    if (kind === "busybox" && rec.snapshotRequests.length) {
+      throw new Error(`busybox cold-boot sample fetched a snapshot: ${rec.snapshotRequests.join(", ")}`);
+    }
+    if (kind === "node" && !rec.snapshotRequests.length) throw new Error("node sample did not restore a snapshot");
     if (kind === "busybox" && typeof st.jit?.retiredViaJit === "number" && st.sched?.retiredInstructions) {
       rec.bootJitFraction = st.jit.retiredViaJit / st.sched.retiredInstructions;
     }

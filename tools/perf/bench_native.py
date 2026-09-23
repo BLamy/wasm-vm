@@ -19,7 +19,12 @@ Cases (all use the pinned RTC so the guest work is identical between binaries):
   alpine-fast|jit          Alpine ext4 disk boot to getty "login:" (fresh clone of the rootfs/run)
   microbench               crates/core perf_baseline (ALU/branch/memory/fp MIPS) built from the
                            checkout that owns each binary (skipped if that is not derivable)
-  coremark-fast|jit        opt-in: CoreMark from bench/guest/bench.ext4 on the busybox guest
+  coremark-fast|jit        CoreMark (6000 iterations) from bench/guest/bench.ext4 on the busybox
+                           guest (skipped when the overlay is missing)
+
+The slow cases (alpine-*, coremark-*) run up to --slow-parallel samples at once (default 4: the A
+and B samples of a case start side by side, so both see the same machine load). Pass
+--slow-parallel 1 for strictly sequential samples on a quiet machine.
 
 Stdlib only.
 """
@@ -38,7 +43,9 @@ import statistics
 import subprocess
 import sys
 import tempfile
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
@@ -57,9 +64,10 @@ ALL_CASES = [
     "busybox-legacy", "busybox-fast", "busybox-jit",
     "compute-fast", "compute-jit",
     "alpine-fast", "alpine-jit",
+    "coremark-fast", "coremark-jit",
     "microbench",
 ]
-OPTIONAL_CASES = ["coremark-fast", "coremark-jit", "compute-legacy"]
+OPTIONAL_CASES = ["compute-legacy"]
 
 
 def log(msg):
@@ -230,6 +238,16 @@ def drain_to_file(proc, stdout_path, stderr_path, timeout, t0):
     return wall_ns, code, ut, st
 
 
+def boot_flags(binp):
+    """The `boot` flags this binary understands (so the harness also runs against checkouts that
+    predate a flag — e.g. --fixed-rtc-ns, added with the perf-overhaul oracle)."""
+    try:
+        text = subprocess.run([binp, "boot", "--help"], capture_output=True, text=True, timeout=60).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return set()
+    return set(re.findall(r"--[a-z][a-z0-9-]+", text))
+
+
 def parse_profile(err_text):
     m = re.search(r"PROFILE_JSON\s+(\{.*\})", err_text)
     if not m:
@@ -258,12 +276,18 @@ class Runner:
         self.logs = os.path.join(outdir, "logs")
         os.makedirs(self.logs, exist_ok=True)
         self.tmp = tempfile.mkdtemp(prefix="bench-native-", dir=args.tmpdir)
+        # Pin the goldfish RTC when the binary supports it: the RTC is the only host-time input to a
+        # headless boot, so both binaries then do byte-identical guest work (cross-checked below).
+        self.rtc = {p: (["--fixed-rtc-ns", RTC_NS] if "--fixed-rtc-ns" in boot_flags(p) else []) for _, p in bins}
+        for lab, p in bins:
+            if not self.rtc[p]:
+                log(f"{lab}: {p} has no --fixed-rtc-ns — running with the host RTC (guest work may differ slightly)")
 
     # ---- one-shot boot cases (--profile-boot, --no-input) ------------------------------------
     def boot_case(self, case, label, binp, rep):
         kind, mode = case.split("-", 1)
         tag = f"{case}.{label}.{rep}"
-        cmd = [binp, "boot", "--kernel", self.rel["kernel"], "--no-input", "--fixed-rtc-ns", RTC_NS]
+        cmd = [binp, "boot", "--kernel", self.rel["kernel"], "--no-input"] + self.rtc[binp]
         clone = None
         if kind == "busybox":
             cmd += ["--initrd", self.rel["initrd"]]
@@ -303,7 +327,7 @@ class Runner:
         mode = case.split("-", 1)[1]
         tag = f"{case}.{label}.{rep}"
         cmd = [binp, "boot", "--kernel", self.rel["kernel"], "--initrd", self.rel["initrd"],
-               "--fixed-rtc-ns", RTC_NS, "--max-instrs", "200000000000"] + MODE_FLAGS[mode]
+               "--max-instrs", "200000000000"] + self.rtc[binp] + MODE_FLAGS[mode]
         if drive:
             cmd += ["--drive", drive]
         la0 = os.getloadavg()[0]
@@ -446,6 +470,10 @@ class Runner:
                 rec["guest_total_s"] = g
                 rec["guest_iter_per_s"] = float(its.group(1)) if its else None
                 rec["mips_est"] = g * ICOUNT_INSTR_PER_GUEST_S / 1e6 / rec["region_s"]
+            itn = re.search(r"^Iterations\s*:\s*(\d+)", text, re.M)
+            if itn and rec["region_s"]:
+                # CoreMark score on the HOST clock (whole command: mount + exec + the timed loop).
+                rec["host_iter_per_s"] = int(itn.group(1)) / rec["region_s"]
         return rec
 
     # ---- microbench (cargo test in the owning checkout) --------------------------------------
@@ -532,13 +560,16 @@ def summarize(records, labels):
             s["boot_to_prompt_s"] = median(col("boot_to_prompt_s"))
             s["region_s_all"] = col("region_s")
             s["retired_est"] = median(col("retired_est"))
+            if case.startswith("coremark-"):
+                s["host_iter_per_s"] = median(col("host_iter_per_s"))
         elif case == "microbench":
             for w in ("alu", "branch", "memory", "fp"):
                 s[f"legacy_{w}_mips"] = median([r["legacy_mips"].get(w) for r in good if r.get("legacy_mips")])
             s["alu_fast_mips"] = median(col("alu_fast_mips"))
         s["loadavg_1m"] = median(col("loadavg_1m")) if good else median([r.get("loadavg_1m") for r in rs])
         # Per-rep values of the headline metrics, for paired (same-rep, adjacent-in-time) ratios.
-        s["by_rep"] = {str(r["rep"]): {k: r.get(k) for k in ("wall_s", "cpu_s", "mips", "region_s", "region_cpu_s", "mips_est")
+        s["by_rep"] = {str(r["rep"]): {k: r.get(k) for k in ("wall_s", "cpu_s", "mips", "region_s", "region_cpu_s", "mips_est",
+                                                              "host_iter_per_s")
                                        if r.get(k) is not None} for r in good}
         summary.setdefault(case, {})[label] = s
     return summary
@@ -558,11 +589,13 @@ def markdown(summary, labels, meta):
     lines = []
     lines.append(f"# Native benchmark ({meta['date']})\n")
     lines.append(f"Host: {meta['host']['machine']} · {meta['host']['cpu']} · reps={meta['reps']} "
-                 f"(alpine reps={meta['alpine_reps']}) · medians · interleaved={len(labels) > 1}\n")
+                 f"(alpine/coremark reps={meta['slow_reps']}, up to {meta['slow_parallel']} concurrent) · medians · "
+                 f"interleaved={len(labels) > 1}\n")
     for lab in labels:
         b = meta["bins"][lab]
         lines.append(f"- **{lab}**: `{b['path']}` rev `{(b['git'].get('rev') or '?')[:10]}`"
-                     f"{' (+uncommitted crate changes)' if b['git'].get('crates_dirty') else ''} sha256 `{b['sha256'][:12]}`")
+                     f"{' (+uncommitted crate changes)' if b['git'].get('crates_dirty') else ''} sha256 `{b['sha256'][:12]}`"
+                     f"{'' if b.get('rtc_pinned', True) else ' (no --fixed-rtc-ns: host RTC)'}")
     lines.append("")
 
     def row(name, metric, key, better, nd=2):
@@ -606,6 +639,8 @@ def markdown(summary, labels, meta):
             lines.append(row(name, "region wall s", "region_s", "lower"))
             lines.append(row(name, "region cpu s", "region_cpu_s", "lower"))
             lines.append(row(name, "MIPS (icount est.)", "mips_est", "higher", 1))
+            if name.startswith("coremark-"):
+                lines.append(row(name, "CoreMark iterations/s (host clock)", "host_iter_per_s", "higher", 1))
     if "microbench" in summary:
         for w in ("alu", "branch", "memory", "fp"):
             lines.append(row("microbench", f"{w} MIPS (legacy)", f"legacy_{w}_mips", "higher", 1))
@@ -628,7 +663,8 @@ def markdown(summary, labels, meta):
     lines.append("Median 1-minute load average during the runs: " + ", ".join(
         f"{c}/{lab}={fmt(per[lab].get('loadavg_1m'), 1)}" for c, per in summary.items() for lab in per) + "\n")
     lines.append("Cells: median [min–max over reps]. Speedup = ratio of medians; 'paired' = median of the "
-                 "per-rep ratios (each A/B pair ran back to back).\n")
+                 "per-rep ratios (each A/B pair ran back to back; alpine/coremark pairs ran side by side when "
+                 "concurrent).\n")
     lines.append("wall s = host wall-clock of the whole process; cpu s = its user+sys rusage; MIPS (profile) = "
                  "retired-at-marker / profiled wall; region wall s = host time from Enter to the done marker; "
                  "region cpu s = emulator user+sys CPU inside that region; "
@@ -643,11 +679,15 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--releases", default=os.environ.get("RELEASES"))
     ap.add_argument("--reps", type=int, default=int(os.environ.get("REPS", "3")))
-    ap.add_argument("--alpine-reps", type=int, default=int(os.environ.get("ALPINE_REPS", "1")))
+    ap.add_argument("--slow-reps", "--alpine-reps", dest="slow_reps", type=int,
+                    default=int(os.environ.get("SLOW_REPS", os.environ.get("ALPINE_REPS", "1"))),
+                    help="samples per binary of the slow cases (alpine-*, coremark-*)")
+    ap.add_argument("--slow-parallel", type=int, default=int(os.environ.get("SLOW_PARALLEL", "4")),
+                    help="run up to N slow-case samples concurrently (A and B side by side); 1 = sequential")
     ap.add_argument("--micro-reps", type=int, default=int(os.environ.get("MICRO_REPS", "3")),
                     help="perf_baseline runs per binary (each run is already a 5-sample median)")
     ap.add_argument("--cases", default=os.environ.get("CASES", ",".join(ALL_CASES)),
-                    help="comma list; add coremark-fast,coremark-jit,compute-legacy to opt in")
+                    help="comma list; add compute-legacy to opt in")
     ap.add_argument("--compute-iters", type=int, default=int(os.environ.get("COMPUTE_ITERS", "10000")))
     ap.add_argument("--coremark-image", default=os.path.join(REPO, "bench", "guest", "bench.ext4"))
     ap.add_argument("--tmpdir", default=os.environ.get("TMPDIR"))
@@ -694,14 +734,17 @@ def main():
                  "cpu": subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True,
                                        text=True).stdout.strip() or platform.processor(),
                  "ncpu": os.cpu_count()},
-        "reps": args.reps, "alpine_reps": args.alpine_reps, "micro_reps": args.micro_reps, "cases": cases, "rtc_ns": RTC_NS,
+        "reps": args.reps, "alpine_reps": args.slow_reps, "slow_reps": args.slow_reps,
+        "slow_parallel": args.slow_parallel, "micro_reps": args.micro_reps, "cases": cases, "rtc_ns": RTC_NS,
         "compute_iters": args.compute_iters,
         "releases": {k: v for k, v in rel.items() if k != "search"},
-        "bins": {lab: {"path": p, "sha256": sha256_file(p), "git": git_info(p)} for lab, p in bins},
+        "bins": {lab: {"path": p, "sha256": sha256_file(p), "git": git_info(p), "rtc_pinned": bool(runner.rtc[p])}
+                 for lab, p in bins},
         "harness_rev": git_info(HERE).get("rev"),
     }
     records = []
     results_path = os.path.join(args.out, "native.json")
+    lock = threading.Lock()
 
     def save():
         summary = summarize(records, labels)
@@ -729,7 +772,7 @@ def main():
             return runner.coremark_case(case, lab, p, rep)
         return runner.microbench_case(lab, micro[lab], rep)
 
-    def run(case, lab, p, rep):
+    def run(case, lab, p, rep, concurrency=1):
         t = time.monotonic()
         rec = run_once(case, lab, p, rep)
         # A sample whose emulator died from a signal (e.g. a stray `pkill wasm-vm` from another job
@@ -738,18 +781,22 @@ def main():
         if not rec.get("ok") and isinstance(rec.get("exit"), int) and rec["exit"] < 0:
             log(f"{case} {lab} rep {rep}: emulator killed by signal {-rec['exit']} — retrying once")
             rec["discarded"] = "killed by signal; retried"
-            records.append(rec)
+            rec["concurrency"] = concurrency
+            with lock:
+                records.append(rec)
             rec = run_once(case, lab, p, rep)
             rec["retry"] = True
-        records.append(rec)
+        rec["concurrency"] = concurrency
         headline = rec.get("wall_s") if "wall_s" in rec else rec.get("region_s")
-        log(f"{case:<15} {lab:<12} rep {rep}: {fmt(headline)} s"
-            f"{' mips=' + fmt(rec.get('mips') or rec.get('mips_est'), 1) if (rec.get('mips') or rec.get('mips_est')) else ''}"
-            f" ok={rec.get('ok')} ({time.monotonic() - t:.0f}s)")
-        save()
+        with lock:
+            records.append(rec)
+            log(f"{case:<15} {lab:<12} rep {rep}: {fmt(headline)} s"
+                f"{' mips=' + fmt(rec.get('mips') or rec.get('mips_est'), 1) if (rec.get('mips') or rec.get('mips_est')) else ''}"
+                f" ok={rec.get('ok')} ({time.monotonic() - t:.0f}s)")
+            save()
 
     quick = [c for c in cases if not c.startswith(("alpine-", "coremark-")) and c != "microbench"]
-    slow = [c for c in cases if c.startswith(("alpine-", "coremark-"))]
+    slow = [c for c in cases if c.startswith("coremark-")] + [c for c in cases if c.startswith("alpine-")]
     for rep in range(args.reps):
         for case in quick:
             for lab, p in order(rep):
@@ -758,10 +805,23 @@ def main():
         for rep in range(args.micro_reps):
             for lab, p in order(rep):
                 run("microbench", lab, p, rep)
-    for rep in range(args.alpine_reps):
-        for case in slow:
-            for lab, p in order(rep):
-                run(case, lab, p, rep)
+    slow_jobs = [(case, lab, p, rep) for rep in range(args.slow_reps) for case in slow for lab, p in order(rep)]
+    width = max(1, min(args.slow_parallel, len(slow_jobs)))
+    if width > 1 and len(bins) > 1:
+        width = max(len(bins), width - width % len(bins))  # whole A/B groups per wave
+    if width == 1:
+        for job in slow_jobs:
+            run(*job)
+    else:
+        # Waves of `width` samples that start together and are all awaited before the next wave:
+        # the A and B samples of a case are adjacent in slow_jobs, so they always run side by side
+        # and share the machine's load for their whole (multi-minute) run.
+        log(f"slow cases: {len(slow_jobs)} samples in waves of {width}")
+        with ThreadPoolExecutor(max_workers=width) as ex:
+            for i in range(0, len(slow_jobs), width):
+                wave = slow_jobs[i:i + width]
+                for f in [ex.submit(run, *job, len(wave)) for job in wave]:
+                    f.result()
     meta["suite_wall_s"] = time.monotonic() - t_suite
     save()
     shutil.rmtree(runner.tmp, ignore_errors=True)
