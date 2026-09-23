@@ -67,6 +67,23 @@ impl Ram {
         Ok(off as usize)
     }
 
+    /// Softmmu fast path: the `W` bytes at `addr`, which the caller already proved aligned and
+    /// inside RAM. Still range-checked — by the slice lookup itself, the only bounds check on this
+    /// path — so a broken caller faults instead of misbehaving; the alignment test is left to the
+    /// caller's proof. `None` = outside RAM.
+    #[inline(always)]
+    fn fast_bytes<const W: usize>(&self, addr: u64) -> Option<&[u8; W]> {
+        let off = usize::try_from(addr.wrapping_sub(self.base)).ok()?;
+        self.data.get(off..off.checked_add(W)?)?.try_into().ok()
+    }
+
+    /// [`Self::fast_bytes`], mutable.
+    #[inline(always)]
+    fn fast_bytes_mut<const W: usize>(&mut self, addr: u64) -> Option<&mut [u8; W]> {
+        let off = usize::try_from(addr.wrapping_sub(self.base)).ok()?;
+        self.data.get_mut(off..off.checked_add(W)?)?.try_into().ok()
+    }
+
     /// Range-check (no alignment requirement) for byte-granular slice access.
     #[inline]
     fn range(&self, addr: u64, len: u64) -> Result<usize, BusFault> {
@@ -126,7 +143,53 @@ macro_rules! impl_store {
     };
 }
 
+macro_rules! impl_fast_load {
+    ($name:ident, $ty:ty) => {
+        #[inline(always)]
+        fn $name(&mut self, addr: u64) -> Result<$ty, BusFault> {
+            const W: usize = size_of::<$ty>();
+            debug_assert!(
+                addr.is_multiple_of(W as u64),
+                "fast-path access must be aligned"
+            );
+            match self.fast_bytes::<W>(addr) {
+                Some(bytes) => Ok(<$ty>::from_le_bytes(*bytes)),
+                None => Err(BusFault::Access),
+            }
+        }
+    };
+}
+
+macro_rules! impl_fast_store {
+    ($name:ident, $ty:ty) => {
+        #[inline(always)]
+        fn $name(&mut self, addr: u64, val: $ty) -> Result<(), BusFault> {
+            const W: usize = size_of::<$ty>();
+            debug_assert!(
+                addr.is_multiple_of(W as u64),
+                "fast-path access must be aligned"
+            );
+            match self.fast_bytes_mut::<W>(addr) {
+                Some(bytes) => {
+                    *bytes = val.to_le_bytes();
+                    Ok(())
+                }
+                None => Err(BusFault::Access),
+            }
+        }
+    };
+}
+
 impl Bus for Ram {
+    impl_fast_load!(ram_load8, u8);
+    impl_fast_load!(ram_load16, u16);
+    impl_fast_load!(ram_load32, u32);
+    impl_fast_load!(ram_load64, u64);
+    impl_fast_store!(ram_store8, u8);
+    impl_fast_store!(ram_store16, u16);
+    impl_fast_store!(ram_store32, u32);
+    impl_fast_store!(ram_store64, u64);
+
     impl_load!(load8, u8);
     impl_load!(load16, u16);
     impl_load!(load32, u32);
@@ -280,6 +343,39 @@ mod tests {
         assert_eq!(z.store8(DRAM_BASE, 1), Err(BusFault::Access));
         // capacity overflow is an Err, not an abort
         assert_eq!(Ram::new(usize::MAX).err(), Some(OutOfMemory));
+    }
+
+    #[test]
+    fn fast_path_accessors_match_the_checked_ones_and_still_range_check() {
+        let mut r = ram();
+        // Same bytes, same values, every width, at both ends of RAM.
+        for addr in [DRAM_BASE, END - 8] {
+            r.ram_store64(addr, 0x0123_4567_89AB_CDEF).unwrap();
+            assert_eq!(r.load64(addr), Ok(0x0123_4567_89AB_CDEF));
+            assert_eq!(r.ram_load64(addr), Ok(0x0123_4567_89AB_CDEF));
+            assert_eq!(r.ram_load32(addr + 4), r.load32(addr + 4));
+            assert_eq!(r.ram_load16(addr + 6), r.load16(addr + 6));
+            assert_eq!(r.ram_load8(addr + 7), r.load8(addr + 7));
+            r.ram_store32(addr, 0xDEAD_BEEF).unwrap();
+            r.ram_store16(addr + 4, 0xCAFE).unwrap();
+            r.ram_store8(addr + 6, 0x5A).unwrap();
+            assert_eq!(r.load64(addr), Ok(0x015A_CAFE_DEAD_BEEF));
+        }
+        // A broken caller outside RAM faults instead of touching memory (no wrap-around alias).
+        let before = r.as_bytes().to_vec();
+        for addr in [
+            END,
+            DRAM_BASE - 8,
+            0,
+            u64::MAX - 7,
+            DRAM_BASE + (1u64 << 40),
+        ] {
+            assert_eq!(r.ram_load64(addr), Err(BusFault::Access), "{addr:#x}");
+            assert_eq!(r.ram_store64(addr, 0), Err(BusFault::Access), "{addr:#x}");
+        }
+        assert_eq!(r.as_bytes(), &before[..]);
+        let mut z = Ram::new(0).unwrap();
+        assert_eq!(z.ram_load8(DRAM_BASE), Err(BusFault::Access));
     }
 }
 

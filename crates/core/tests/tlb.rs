@@ -373,20 +373,15 @@ fn disabled_tlb_walks_every_access() {
 
 #[test]
 fn replacement_is_deterministic() {
-    // Map more distinct pages than a single set holds (WAYS=4) that all collide on set index 0,
+    // Map more distinct pages than a single set holds (TLB_WAYS=4) that all collide on one set,
     // then translate them in a fixed order twice from fresh TLBs — the resulting hit/miss pattern
     // (a proxy for the eviction order) must be identical, as required for native == wasm32 (T22).
     let mut bus = ram();
     let mut pt = Pt::new();
-    // VPNs congruent mod NSETS(16): step by 16 pages = 0x10000 bytes so index() collides.
-    let vas: [u64; 6] = [
-        0x2000_0000,
-        0x2001_0000,
-        0x2002_0000,
-        0x2003_0000,
-        0x2004_0000,
-        0x2005_0000,
-    ];
+    // VPNs congruent mod the set count: step by TLB_SETS pages so index() collides. (Derived from
+    // the geometry constant so the test keeps forcing one-set thrash if the geometry changes.)
+    let stride = wasm_vm_core::tlb::TLB_SETS as u64 * 0x1000;
+    let vas: [u64; 6] = core::array::from_fn(|k| 0x2000_0000 + k as u64 * stride);
     for (i, &va) in vas.iter().enumerate() {
         pt.map4k(
             &mut bus,

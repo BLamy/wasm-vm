@@ -2622,6 +2622,9 @@ impl Machine {
     /// Borrow the hart / bus for test rigs and the CLI (seeding instructions,
     /// inspecting the register file).
     pub fn hart_mut(&mut self) -> &mut Hart {
+        // The caller may rewrite any hart state (satp, the whole CSR file, …) behind the fast
+        // TLB's back; drop its entries. Semantically invisible (the architectural TLB is untouched).
+        self.hart.tlb.fast_flush();
         &mut self.hart
     }
     pub fn bus_mut(&mut self) -> &mut SystemBus {
