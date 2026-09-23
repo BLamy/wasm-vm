@@ -4063,7 +4063,7 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn step_cached_with_capture<C: hart::RetirementCapture>(
         &mut self,
-        mut capture: C,
+        capture: C,
     ) -> Result<(), Trap> {
         // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
         // BEFORE obtaining the instruction.
