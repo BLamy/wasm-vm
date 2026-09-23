@@ -1428,7 +1428,6 @@ fn service_kicked(
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
 ) {
-
     let queue_state = *slot.borrow().queue(0);
     if !queue_state.ready {
         *vq = None;
@@ -1710,7 +1709,6 @@ fn service_cursor_kicked(
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
 ) {
-
     let queue_state = *slot.borrow().queue(1);
     if !queue_state.ready {
         *vq = None;

@@ -2664,17 +2664,7 @@ fn service_internal(
     bus: &mut SystemBus,
 ) -> PlaybackReport {
     service_internal_reporting(
-        slot,
-        controlq,
-        eventq,
-        rx_vq,
-        source,
-        tx_vq,
-        state,
-        clock,
-        sink,
-        bus,
-        &mut false,
+        slot, controlq, eventq, rx_vq, source, tx_vq, state, clock, sink, bus, &mut false,
     )
 }
 
