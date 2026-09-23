@@ -324,6 +324,65 @@ pub struct DecodedBlock {
     /// Generation this block was built in; a mismatch with the cache generation means the
     /// block was logically flushed and must be ignored (an O(1) whole-cache invalidation).
     block_gen: u64,
+    /// Bit `i` set ⇔ op `i` is [`retire_deferrable`] (derived from `ops`, never serialized).
+    deferrable: u128,
+}
+
+/// `true` for a pure integer register op: it reads and writes only integer registers and the PC,
+/// never touches the bus (no RAM/MMIO/page-table access), never reads or writes a CSR, cannot
+/// trap, and is never a block terminator. Such an op cannot observe the per-retire accounting
+/// (the Zicntr `mcycle`/`minstret` counters, the ICount `mtime` clock, the progress counter), so
+/// the interpreter may settle that accounting for a run of them in one bulk step before the next
+/// op that can observe it. Deliberately an allow-list: any other instruction — memory, AMO, FP,
+/// CSR, system, control transfer, or one added later — is settled per retire.
+pub(crate) fn retire_deferrable(instr: &Instr) -> bool {
+    use Instr::*;
+    matches!(
+        instr,
+        Lui { .. }
+            | Auipc { .. }
+            | Addi { .. }
+            | Slti { .. }
+            | Sltiu { .. }
+            | Xori { .. }
+            | Ori { .. }
+            | Andi { .. }
+            | Slli { .. }
+            | Srli { .. }
+            | Srai { .. }
+            | Add { .. }
+            | Sub { .. }
+            | Sll { .. }
+            | Slt { .. }
+            | Sltu { .. }
+            | Xor { .. }
+            | Srl { .. }
+            | Sra { .. }
+            | Or { .. }
+            | And { .. }
+            | Addiw { .. }
+            | Slliw { .. }
+            | Srliw { .. }
+            | Sraiw { .. }
+            | Addw { .. }
+            | Subw { .. }
+            | Sllw { .. }
+            | Srlw { .. }
+            | Sraw { .. }
+            | Mul { .. }
+            | Mulh { .. }
+            | Mulhsu { .. }
+            | Mulhu { .. }
+            | Div { .. }
+            | Divu { .. }
+            | Rem { .. }
+            | Remu { .. }
+            | Mulw { .. }
+            | Divw { .. }
+            | Divuw { .. }
+            | Remw { .. }
+            | Remuw { .. }
+    )
 }
 
 impl DecodedBlock {
@@ -336,13 +395,26 @@ impl DecodedBlock {
             total_len <= PAGE,
             "a single-page block cannot cover more than one page of bytes"
         );
+        let deferrable = ops
+            .iter()
+            .take(128)
+            .enumerate()
+            .filter(|(_, op)| retire_deferrable(&op.instr))
+            .fold(0u128, |mask, (i, _)| mask | (1 << i));
         Self {
             phys_start,
             ops,
             total_len,
             page_frame: phys_start >> 12,
             block_gen: 0,
+            deferrable,
         }
+    }
+
+    /// Whether op `idx` is [`retire_deferrable`] (always `false` past the 128-op mask).
+    #[inline(always)]
+    pub(crate) fn op_deferrable(&self, idx: usize) -> bool {
+        idx < 128 && (self.deferrable >> idx) & 1 != 0
     }
 }
 

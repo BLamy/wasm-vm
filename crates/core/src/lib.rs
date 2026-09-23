@@ -604,6 +604,10 @@ pub struct Machine {
     /// Test-only work counter: ops retired by the mid-block replay loop.
     #[cfg(all(test, not(feature = "zicsr-stub")))]
     replay_tail_ops: u64,
+    /// Test-only work counter: replay-loop ops whose retire accounting was deferred and settled
+    /// in bulk.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_deferred_ops: u64,
 }
 
 /// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
@@ -979,6 +983,8 @@ impl Machine {
             replay_tail_off: false,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
             replay_tail_ops: 0,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_deferred_ops: 0,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -4084,20 +4090,26 @@ impl Machine {
         // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
         // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
-        self.retire_cached_op(op, pc, capture)
+        self.retire_cached_op(&op, pc, capture, false)
     }
 
     /// The execute-and-retire half of [`Self::step_cached_with_capture`] for an op already taken
     /// from the block cursor: execute, tick the counters, record the retirement, then keep the
     /// fetch stream coherent (`fence.i` note + page-granular drain of any code-page store). Shared
     /// verbatim by the one-op step and the mid-block replay loop ([`Self::replay_block_tail`]).
+    ///
+    /// `defer` (only for a [`dispatch::retire_deferrable`] op, only from the replay loop) leaves
+    /// the counter tick to the caller's bulk settle and skips the fetch-coherence tail: such an op
+    /// is not `fence.i` and never reaches the bus, so the write log it would drain is still the
+    /// empty log the previous op's drain left.
     #[cfg(not(feature = "zicsr-stub"))]
     #[inline(always)]
     fn retire_cached_op<C: hart::RetirementCapture>(
         &mut self,
-        op: dispatch::MicroOp,
+        op: &dispatch::MicroOp,
         pc: u64,
         mut capture: C,
+        defer: bool,
     ) -> Result<(), Trap> {
         let output = self.hart.execute(
             &mut self.bus,
@@ -4106,6 +4118,12 @@ impl Machine {
             u64::from(op.raw),
             &mut capture,
         )?;
+        if defer {
+            debug_assert!(dispatch::retire_deferrable(&op.instr));
+            debug_assert!(self.bus.code_write_log_mut().is_empty());
+            capture.retire(output, pc, op.raw);
+            return Ok(());
+        }
         self.hart.csr.retire_tick();
         capture.retire(output, pc, op.raw);
         // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
@@ -5130,6 +5148,15 @@ impl Machine {
     /// [`Self::next_micro_op`] continuation), [`Self::retire_cached_op`], work slot, then on
     /// success the retire clock, the progress counter and the WFI hook — the loop body's order.
     ///
+    /// Deferred accounting: a [`dispatch::retire_deferrable`] op (pure integer register op) cannot
+    /// observe the per-retire accounting — the Zicntr counters (`retire_tick`), the ICount clock
+    /// (`advance_clock`) and the progress counter (`on_retire`) — so for a run of them the loop
+    /// only counts, and [`Self::settle_retired`] applies the bulk-equivalent spans before the next
+    /// op that could observe them (any memory, CSR, system or control op: e.g. a CLINT `mtime`
+    /// load, a `csrr cycle`, a `wfi`) and before returning. Each is an exact bulk form: counter
+    /// spans with the one-instruction write flags clear, `advance_clock_by(n)` ≡ `n` ×
+    /// `advance_clock`, `on_retire_n(n)` ≡ `n` × `on_retire`.
+    ///
     /// Returns `Some(trap)` when an op trapped: that op has NOT consumed its work slot, so the run
     /// loop charges it and delivers the trap through its one trap path. `None` otherwise.
     #[cfg(not(feature = "zicsr-stub"))]
@@ -5139,34 +5166,79 @@ impl Machine {
         remaining_work: &mut u64,
         capture: &mut RunCapture<'_, T>,
     ) -> Option<Trap> {
+        // One loop per capture kind, so the per-op body carries no capture dispatch.
+        match capture {
+            RunCapture::Unit => self.replay_block_tail_with(remaining_work, |m, op, pc, defer| {
+                m.retire_cached_op(op, pc, hart::UnitCapture, defer)
+            }),
+            RunCapture::Traced(sink) => {
+                self.replay_block_tail_with(remaining_work, |m, op, pc, defer| {
+                    m.retire_cached_op(op, pc, hart::RecordingCapture::new(&mut **sink), defer)
+                })
+            }
+        }
+    }
+
+    /// The body of [`Self::replay_block_tail`] for one capture kind (`retire` is
+    /// [`Self::retire_cached_op`] with that capture).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn replay_block_tail_with(
+        &mut self,
+        remaining_work: &mut u64,
+        mut retire: impl FnMut(&mut Self, &dispatch::MicroOp, u64, bool) -> Result<(), Trap>,
+    ) -> Option<Trap> {
         // Hold the block for the whole tail: the ops are read from this handle while `self` is
         // mutated. The cursor (which owns the same block) stays the authority for liveness — a
         // drain/fence.i that clears it ends the tail at the boundary test below.
         let block = alloc::rc::Rc::clone(&self.block_cursor.as_ref()?.block);
         let ops: &[dispatch::MicroOp] = &block.ops;
-        loop {
+        // Successfully retired deferrable ops whose accounting is not yet applied.
+        let mut pending: u64 = 0;
+        let result = loop {
             // step_cached_with_capture, minus the execute-trigger test (no trigger is armed).
             self.hart.csr.arm_counters();
             let pc = self.hart.regs.pc;
             // The next_micro_op continuation: the caller / the previous iteration's boundary test
             // established `cursor.next_va == pc` and an op at `cursor.idx`.
-            let cursor = self.block_cursor.as_mut()?;
-            let op = *ops.get(cursor.idx)?;
-            cursor.idx += 1;
-            cursor.next_va = pc.wrapping_add(u64::from(op.len));
-            let result = match capture {
-                RunCapture::Unit => self.retire_cached_op(op, pc, hart::UnitCapture),
-                RunCapture::Traced(sink) => {
-                    self.retire_cached_op(op, pc, hart::RecordingCapture::new(&mut **sink))
-                }
+            let Some(cursor) = self.block_cursor.as_mut() else {
+                break None;
             };
-            if let Err(trap) = result {
-                return Some(trap);
+            let idx = cursor.idx;
+            let Some(op) = ops.get(idx) else {
+                break None;
+            };
+            cursor.idx = idx + 1;
+            cursor.next_va = pc.wrapping_add(u64::from(op.len));
+            let defer = block.op_deferrable(idx);
+            if !defer && pending != 0 {
+                // This op may observe the accounting: bring it up to date first (the counter
+                // write flags were just cleared by `arm_counters`).
+                self.settle_retired(pending);
+                pending = 0;
+            }
+            if let Err(trap) = retire(self, op, pc, defer) {
+                break Some(trap);
             }
             *remaining_work -= 1;
             #[cfg(test)]
             {
                 self.replay_tail_ops += 1;
+            }
+            if defer {
+                pending += 1;
+                #[cfg(test)]
+                {
+                    self.replay_deferred_ops += 1;
+                }
+                // The run loop's next loop-top tests, in its order. A deferrable op cannot write
+                // the syscon finisher (no bus access; it was clear when this op began) or clear
+                // the cursor (no drain, not `fence.i`), and it falls through to `pc + len` — the
+                // cursor's `next_va` — so `at_block_boundary` reduces to the block-end test.
+                if *remaining_work == 0 || idx + 1 >= ops.len() {
+                    break None;
+                }
+                continue;
             }
             // The loop body's successful-retire accounting (profiling is off here).
             self.advance_clock();
@@ -5176,15 +5248,30 @@ impl Machine {
             }
             // The run loop's next loop-top tests, in its order.
             if *remaining_work == 0 {
-                return None;
+                break None;
             }
             if self.syscon.as_ref().is_some_and(|c| c.borrow().is_some()) {
-                return None;
+                break None;
             }
             if self.at_block_boundary() {
-                return None;
+                break None;
             }
+        };
+        if pending != 0 {
+            self.settle_retired(pending);
         }
+        result
+    }
+
+    /// Apply the per-retire accounting of `n` retired deferrable ops in one step (see
+    /// [`Self::replay_block_tail`]): the Zicntr counter span (write flags are clear: no deferred
+    /// op writes a CSR), the ICount clock span and the progress counter.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn settle_retired(&mut self, n: u64) {
+        self.hart.csr.retire_span(n);
+        self.advance_clock_by(n);
+        self.irqstats.on_retire_n(n);
     }
 
     fn run_capture_inner<T: trace::TraceSink>(
@@ -5668,6 +5755,139 @@ mod tests {
     /// mid-block and the rest re-decodes), an execute-address debug trigger on a mid-block op
     /// (which must keep that block on the general path), and a syscon poweroff store followed by
     /// more ops (the run must stop before the next op).
+    /// The replay loop's deferred retire accounting must be unobservable: runs of pure integer ops
+    /// settle `mcycle`/`minstret`, the ICount `mtime` clock and the progress counter in bulk, so
+    /// every op that can observe them — a CLINT `mtime` MMIO load mid-block, `csrr minstret` /
+    /// `csrr mcycle` / `csrr time` terminators, a `csrw minstret` whose own tick is suppressed —
+    /// must see exactly the per-retire values. M-mode, compared against the general per-op loop
+    /// (replay loop forced off) with traced and unit capture across slicings that split blocks.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn deferred_retire_accounting_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        fn r_type(f7: u32, rs2: u32, rs1: u32, f3: u32, rd: u32) -> u32 {
+            (f7 << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | 0x33
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let add = |rd, rs1, rs2| r_type(0, rs2, rs1, 0, rd);
+        let sub = |rd, rs1, rs2| r_type(0x20, rs2, rs1, 0, rd);
+        let xor = |rd, rs1, rs2| r_type(0, rs2, rs1, 4, rd);
+        let mul = |rd, rs1, rs2| r_type(1, rs2, rs1, 0, rd);
+        let ld = |rd, rs1, imm| i_type(imm, rs1, 3, rd, 0x03);
+        let lui = |rd: u32, imm20: u32| ((imm20 & 0xF_FFFF) << 12) | (rd << 7) | 0x37;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let bne_back = |ops: i32| {
+            let o = (-(4 * ops)) as u32;
+            (((o >> 12) & 1) << 31)
+                | (((o >> 5) & 0x3F) << 25)
+                | (11 << 15)
+                | (1 << 12)
+                | (((o >> 1) & 0xF) << 8)
+                | (((o >> 11) & 1) << 7)
+                | 0x63
+        };
+        const JDOT: u32 = 0x0000_006F;
+        const MCYCLE: u32 = 0xB00;
+        const MINSTRET: u32 = 0xB02;
+        const TIME: u32 = 0xC01;
+        let base = platform::virt::KERNEL_BASE;
+        let mtime = bus::mmap::CLINT_BASE + 0xBFF8;
+        assert!(mtime < 0x8000_0000 && mtime & 0xFFF == 0xFF8);
+        let mut code = alloc::vec![
+            lui(10, ((mtime + 0x1000) >> 12) as u32), // x10 = mtime (lo12 = -8)
+            addi(11, 0, 300),                         // loop count
+        ];
+        let lp = code.len();
+        code.extend([
+            addi(5, 5, 1),
+            addi(6, 6, 3),
+            xor(7, 5, 6),
+            add(8, 8, 7),
+            ld(9, 10, -8), // CLINT mtime after four deferrable ops
+            addi(5, 5, 1),
+            mul(12, 5, 6),
+            add(13, 13, 9),
+            csrrs(14, MINSTRET, 0), // counters after three deferrable ops
+            addi(15, 15, 1),
+            add(16, 16, 14),
+            csrrs(17, MCYCLE, 0),
+            addi(18, 18, 5),
+            csrrw(0, MINSTRET, 18), // suppresses its own minstret tick
+            addi(19, 19, 1),
+            sub(20, 20, 19),
+            csrrs(21, TIME, 0),
+            addi(22, 22, 7),
+            add(23, 23, 21),
+            addi(11, 11, -1),
+        ]);
+        let back = (code.len() - lp) as i32;
+        code.push(bne_back(back));
+        code.push(JDOT);
+        let run = |tail_off: bool, traced: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(3);
+            m.hart.csr.pmp.allow_all();
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.replay_tail_off = tail_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
+            }
+            m.hart.regs.pc = base;
+            let mut trace = HashSink::new();
+            let mut total = 0u64;
+            let mut step = 0;
+            while total < 12_000 {
+                let budget = slices[step % slices.len()];
+                step += 1;
+                total += budget;
+                let outcome = if traced {
+                    m.run_traced(budget, &mut trace)
+                } else {
+                    m.run(budget)
+                };
+                assert_eq!(outcome, RunOutcome::MaxInstrs);
+            }
+            let regs: alloc::vec::Vec<u64> = (0..32).map(|r| m.hart.regs.read(r)).collect();
+            assert!(
+                regs[9] > 100,
+                "the loop must observe an advancing mtime: {}",
+                regs[9]
+            );
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    regs,
+                    m.clint_mtime(),
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.replay_deferred_ops,
+            )
+        };
+        for traced in [true, false] {
+            for slices in [&[1_000_000][..], &[1, 7, 333][..], &[5, 3][..], &[2][..]] {
+                let (control, off_deferred) = run(true, traced, slices);
+                let (fast, deferred) = run(false, traced, slices);
+                assert_eq!(off_deferred, 0);
+                assert!(
+                    deferred > 1000,
+                    "deferred accounting must engage: {deferred}"
+                );
+                assert_eq!(control, fast, "traced={traced} slices={slices:?}");
+            }
+        }
+    }
+
     #[cfg(not(feature = "zicsr-stub"))]
     #[test]
     fn replay_block_tail_is_unobservable() {
