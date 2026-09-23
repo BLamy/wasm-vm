@@ -172,8 +172,9 @@ impl FastEntry {
 struct FastTlb {
     entries: alloc::boxed::Box<[FastEntry; FAST_KINDS * FAST_N]>,
     /// Current stamp of every architectural slot (+ the identity slot). A fast entry is live only
-    /// while its recorded stamp equals its slot's current stamp.
-    slot_stamp: alloc::boxed::Box<[u64; STAMP_SLOTS]>,
+    /// while its recorded stamp equals its slot's current stamp. Inline (16 KiB), so a hit reaches
+    /// it at a fixed offset from the TLB without another pointer load.
+    slot_stamp: [u64; STAMP_SLOTS],
     /// Next stamp generation. 53 bits of generations never wrap in practice, so a stamp is never
     /// reused and a stale entry can never be resurrected.
     next_gen: u64,
@@ -194,10 +195,7 @@ impl FastTlb {
         let Ok(entries) = entries.try_into() else {
             unreachable!("fast TLB allocation has the exact array length")
         };
-        let slot_stamp: alloc::boxed::Box<[u64]> = (0..STAMP_SLOTS as u64).collect(); // generation 0
-        let Ok(slot_stamp) = slot_stamp.try_into() else {
-            unreachable!("stamp table allocation has the exact length")
-        };
+        let slot_stamp: [u64; STAMP_SLOTS] = core::array::from_fn(|i| i as u64); // generation 0
         FastTlb {
             entries,
             slot_stamp,

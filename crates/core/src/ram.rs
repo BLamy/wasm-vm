@@ -67,16 +67,21 @@ impl Ram {
         Ok(off as usize)
     }
 
-    /// Softmmu fast path: the offset of an access the caller already proved aligned and inside
-    /// RAM. Still range-checked (one compare) so a broken caller faults instead of misbehaving;
-    /// the alignment test is left to the caller's proof.
+    /// Softmmu fast path: the `W` bytes at `addr`, which the caller already proved aligned and
+    /// inside RAM. Still range-checked — by the slice lookup itself, the only bounds check on this
+    /// path — so a broken caller faults instead of misbehaving; the alignment test is left to the
+    /// caller's proof. `None` = outside RAM.
     #[inline(always)]
-    fn fast_offset(&self, addr: u64, width: u64) -> Result<usize, BusFault> {
-        let off = addr.wrapping_sub(self.base);
-        if off >= self.data.len() as u64 || self.data.len() as u64 - off < width {
-            return Err(BusFault::Access);
-        }
-        Ok(off as usize)
+    fn fast_bytes<const W: usize>(&self, addr: u64) -> Option<&[u8; W]> {
+        let off = usize::try_from(addr.wrapping_sub(self.base)).ok()?;
+        self.data.get(off..off.checked_add(W)?)?.try_into().ok()
+    }
+
+    /// [`Self::fast_bytes`], mutable.
+    #[inline(always)]
+    fn fast_bytes_mut<const W: usize>(&mut self, addr: u64) -> Option<&mut [u8; W]> {
+        let off = usize::try_from(addr.wrapping_sub(self.base)).ok()?;
+        self.data.get_mut(off..off.checked_add(W)?)?.try_into().ok()
     }
 
     /// Range-check (no alignment requirement) for byte-granular slice access.
@@ -147,9 +152,10 @@ macro_rules! impl_fast_load {
                 addr.is_multiple_of(W as u64),
                 "fast-path access must be aligned"
             );
-            let i = self.fast_offset(addr, W as u64)?;
-            let bytes: [u8; W] = self.data[i..i + W].try_into().unwrap();
-            Ok(<$ty>::from_le_bytes(bytes))
+            match self.fast_bytes::<W>(addr) {
+                Some(bytes) => Ok(<$ty>::from_le_bytes(*bytes)),
+                None => Err(BusFault::Access),
+            }
         }
     };
 }
@@ -163,9 +169,13 @@ macro_rules! impl_fast_store {
                 addr.is_multiple_of(W as u64),
                 "fast-path access must be aligned"
             );
-            let i = self.fast_offset(addr, W as u64)?;
-            self.data[i..i + W].copy_from_slice(&val.to_le_bytes());
-            Ok(())
+            match self.fast_bytes_mut::<W>(addr) {
+                Some(bytes) => {
+                    *bytes = val.to_le_bytes();
+                    Ok(())
+                }
+                None => Err(BusFault::Access),
+            }
         }
     };
 }
