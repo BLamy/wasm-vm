@@ -26,13 +26,13 @@ use alloc::vec::Vec;
 /// guest store, where the former `BTreeMap`s cost an O(log n) pointer chase each. This table is
 /// linear-probing with backward-shift deletion (no tombstones), a fixed Fibonacci hash (no
 /// per-process seed, so native and wasm behave identically), and a load factor kept <= 5/8 so a
-/// miss -- the common case for a data-store frame -- is typically one or two key compares. Keys
-/// live in their own array so probing touches only 8 bytes per slot. `u64::MAX` is the empty-slot
-/// sentinel; a genuine `u64::MAX` key is held out of line so the map accepts every key. Nothing in
-/// the emulator iterates these maps to make a decision, so the (unordered) layout is unobservable.
+/// lookup is typically one or two key compares. Each key is stored next to its value, so a hit —
+/// the common case for the per-entry discovery lookup — reads one record. `u64::MAX` is the
+/// empty-slot sentinel; a genuine `u64::MAX` key is held out of line so the map accepts every key.
+/// Nothing in the emulator iterates these maps to make a decision, so the (unordered) layout is
+/// unobservable.
 pub(crate) struct U64Map<V> {
-    keys: Vec<u64>,
-    vals: Vec<V>,
+    slots: Vec<(u64, V)>,
     len: usize,
     shift: u32,
     max_key: Option<V>,
@@ -50,8 +50,7 @@ impl<V: Default> U64Map<V> {
     /// An empty map (no allocation until the first insert).
     pub(crate) fn new() -> Self {
         Self {
-            keys: Vec::new(),
-            vals: Vec::new(),
+            slots: Vec::new(),
             len: 0,
             shift: 64,
             max_key: None,
@@ -66,19 +65,19 @@ impl<V: Default> U64Map<V> {
 
     #[inline(always)]
     fn mask(&self) -> usize {
-        self.keys.len().wrapping_sub(1)
+        self.slots.len().wrapping_sub(1)
     }
 
     /// Slot index holding `key`, if present (never called for the sentinel key).
     #[inline(always)]
     fn find(&self, key: u64) -> Option<usize> {
-        if self.keys.is_empty() {
+        if self.slots.is_empty() {
             return None;
         }
         let mask = self.mask();
         let mut i = self.home(key);
         loop {
-            let k = self.keys[i];
+            let k = self.slots[i].0;
             if k == key {
                 return Some(i);
             }
@@ -99,7 +98,7 @@ impl<V: Default> U64Map<V> {
         if *key == U64MAP_EMPTY {
             return self.max_key.as_ref();
         }
-        self.find(*key).map(|i| &self.vals[i])
+        self.find(*key).map(|i| &self.slots[i].1)
     }
 
     #[inline]
@@ -107,26 +106,25 @@ impl<V: Default> U64Map<V> {
         if *key == U64MAP_EMPTY {
             return self.max_key.as_mut();
         }
-        self.find(*key).map(|i| &mut self.vals[i])
+        self.find(*key).map(|i| &mut self.slots[i].1)
     }
 
     fn grow(&mut self) {
-        let new_cap = (self.keys.len() * 2).max(16);
-        let old_keys = core::mem::replace(&mut self.keys, alloc::vec![U64MAP_EMPTY; new_cap]);
-        let mut old_vals = core::mem::take(&mut self.vals);
-        self.vals.resize_with(new_cap, V::default);
+        let new_cap = (self.slots.len() * 2).max(16);
+        let mut fresh = Vec::with_capacity(new_cap);
+        fresh.resize_with(new_cap, || (U64MAP_EMPTY, V::default()));
+        let old = core::mem::replace(&mut self.slots, fresh);
         self.shift = 64 - new_cap.trailing_zeros();
         let mask = new_cap - 1;
-        for (k, v) in old_keys.into_iter().zip(old_vals.drain(..)) {
+        for (k, v) in old {
             if k == U64MAP_EMPTY {
                 continue;
             }
             let mut i = self.home(k);
-            while self.keys[i] != U64MAP_EMPTY {
+            while self.slots[i].0 != U64MAP_EMPTY {
                 i = (i + 1) & mask;
             }
-            self.keys[i] = k;
-            self.vals[i] = v;
+            self.slots[i] = (k, v);
         }
     }
 
@@ -137,20 +135,19 @@ impl<V: Default> U64Map<V> {
             return self.max_key.get_or_insert_with(make);
         }
         if let Some(i) = self.find(key) {
-            return &mut self.vals[i];
+            return &mut self.slots[i].1;
         }
-        if (self.len + 1) * 8 > self.keys.len() * 5 {
+        if (self.len + 1) * 8 > self.slots.len() * 5 {
             self.grow();
         }
         let mask = self.mask();
         let mut i = self.home(key);
-        while self.keys[i] != U64MAP_EMPTY {
+        while self.slots[i].0 != U64MAP_EMPTY {
             i = (i + 1) & mask;
         }
-        self.keys[i] = key;
-        self.vals[i] = make();
+        self.slots[i] = (key, make());
         self.len += 1;
-        &mut self.vals[i]
+        &mut self.slots[i].1
     }
 
     /// Insert or replace `key`'s value, returning the previous value.
@@ -160,7 +157,7 @@ impl<V: Default> U64Map<V> {
             return self.max_key.replace(value);
         }
         if let Some(i) = self.find(key) {
-            return Some(core::mem::replace(&mut self.vals[i], value));
+            return Some(core::mem::replace(&mut self.slots[i].1, value));
         }
         *self.get_or_insert_with(key, V::default) = value;
         None
@@ -174,18 +171,16 @@ impl<V: Default> U64Map<V> {
         }
         let i = self.find(*key)?;
         let mask = self.mask();
-        let value = core::mem::take(&mut self.vals[i]);
-        self.keys[i] = U64MAP_EMPTY;
+        let (_, value) = core::mem::replace(&mut self.slots[i], (U64MAP_EMPTY, V::default()));
         self.len -= 1;
         let mut hole = i;
         let mut j = (i + 1) & mask;
-        while self.keys[j] != U64MAP_EMPTY {
-            let home = self.home(self.keys[j]);
+        while self.slots[j].0 != U64MAP_EMPTY {
+            let home = self.home(self.slots[j].0);
             // Move the entry at `j` into the hole iff the hole lies on its probe path [home, j).
             if (j.wrapping_sub(home) & mask) >= (j.wrapping_sub(hole) & mask) {
-                self.keys[hole] = self.keys[j];
-                self.vals[hole] = core::mem::take(&mut self.vals[j]);
-                self.keys[j] = U64MAP_EMPTY;
+                self.slots[hole] =
+                    core::mem::replace(&mut self.slots[j], (U64MAP_EMPTY, V::default()));
                 hole = j;
             }
             j = (j + 1) & mask;
@@ -196,8 +191,9 @@ impl<V: Default> U64Map<V> {
     /// Remove every entry (capacity is retained, like `HashMap::clear`).
     pub(crate) fn clear(&mut self) {
         if self.len != 0 {
-            self.keys.fill(U64MAP_EMPTY);
-            self.vals.fill_with(V::default);
+            for slot in &mut self.slots {
+                *slot = (U64MAP_EMPTY, V::default());
+            }
             self.len = 0;
         }
         self.max_key = None;
@@ -218,10 +214,9 @@ impl<V: Default> U64Map<V> {
 
     /// Iterate `(key, &value)` in unspecified order.
     pub(crate) fn iter(&self) -> impl Iterator<Item = (u64, &V)> {
-        self.keys
+        self.slots
             .iter()
-            .zip(self.vals.iter())
-            .filter(|(k, _)| **k != U64MAP_EMPTY)
+            .filter(|(k, _)| *k != U64MAP_EMPTY)
             .map(|(k, v)| (*k, v))
             .chain(self.max_key.as_ref().map(|v| (U64MAP_EMPTY, v)))
     }
@@ -230,8 +225,7 @@ impl<V: Default> U64Map<V> {
 impl<V: Default + Clone> Clone for U64Map<V> {
     fn clone(&self) -> Self {
         Self {
-            keys: self.keys.clone(),
-            vals: self.vals.clone(),
+            slots: self.slots.clone(),
             len: self.len,
             shift: self.shift,
             max_key: self.max_key.clone(),
