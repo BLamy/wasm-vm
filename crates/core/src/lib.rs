@@ -602,6 +602,7 @@ pub struct Machine {
 /// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
 /// Microarchitectural only: rebuilt on demand, never serialized, never part of any digest.
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
 struct BlockCursor {
     /// The block being replayed (shared with its cache slot while resident).
     block: alloc::rc::Rc<dispatch::DecodedBlock>,
@@ -615,6 +616,7 @@ impl BlockCursor {
     /// `(entry phys key, next op index, expected next VA)` — the identity the pre-Rc cursor tuple
     /// carried. Test-only: equality of cursor positions across operations that must not move it.
     #[cfg(test)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     fn position(&self) -> (u64, usize, u64) {
         (self.block.phys_start, self.idx, self.next_va)
     }
@@ -5058,6 +5060,14 @@ impl Machine {
         // The host may have pushed input, resized a display, restored a snapshot, or otherwise
         // changed device state since the last run: the first boundary performs a full sync.
         self.fabric_idle_epoch = None;
+        // Run-invariant dispatch configuration: only host calls between runs change these, so
+        // read them once instead of per retired instruction.
+        #[cfg(not(feature = "zicsr-stub"))]
+        let batching = self.interrupt_batching();
+        #[cfg(not(feature = "zicsr-stub"))]
+        let jit_on = self.jit_active();
+        #[cfg(not(feature = "zicsr-stub"))]
+        let cache_on = self.block_cache_enabled;
 
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
@@ -5078,12 +5088,12 @@ impl Machine {
             // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
             // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
             #[cfg(not(feature = "zicsr-stub"))]
-            let sample_boundary = !self.interrupt_batching() || self.at_block_boundary();
+            let sample_boundary = !batching || self.at_block_boundary();
             // CSR writes that change PMP are block terminators. Invalidate decoded/compiled code
             // at that next boundary before the JIT or cursor can reuse permissions from the old
             // configuration. Direct host mutations between run calls are caught by the entry sync.
             #[cfg(not(feature = "zicsr-stub"))]
-            if self.block_cache_enabled && sample_boundary {
+            if cache_on && sample_boundary {
                 self.sync_pmp_code_permissions();
             }
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
@@ -5125,7 +5135,7 @@ impl Machine {
             // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let jit_attempt = if self.jit_active() && sample_boundary && !capture.wants_records() {
+            let jit_attempt = if jit_on && sample_boundary && !capture.wants_records() {
                 self.try_jit_block(remaining_work)
             } else {
                 None
@@ -5133,7 +5143,7 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             let (step_result, ran_via_jit, work_used) = match jit_attempt {
                 Some(progress) => (progress.result, true, progress.work_used),
-                None => (capture.step(self, self.block_cache_enabled), false, 1),
+                None => (capture.step(self, cache_on), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
             let (step_result, work_used) = (capture.step(self, false), 1u64);
