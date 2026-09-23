@@ -22,3 +22,8 @@ fn fp_loop_with_system_csr_prefix_blocks() {
 fn device_access_ends_the_native_chain_like_a_block_boundary() {
     fixture::device_access_chain(executor);
 }
+#[test]
+fn partial_block_after_decoded_eviction_matches_the_batched_interpreter() {
+    // One block per host call: the entry block is always resident, so no re-decode is needed.
+    fixture::evicted_partial_chain(executor, false);
+}

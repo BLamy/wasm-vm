@@ -499,6 +499,12 @@ pub struct Machine {
     /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
     block_entry_hits: u64,
     block_builds: u64,
+    /// Partial-block continuations whose decoded block had been evicted from `block_cache` while
+    /// its compiled code was still reachable (a browser in-module direct chain enters a compiled
+    /// successor without the entry lookup that keeps its decoded block resident), so the core
+    /// re-decoded the block from physical memory to resume the cursor at the untranslated op.
+    /// Observation-only; never serialized.
+    jit_partial_resume_rebuilds: u64,
     /// Last PMP state whose execute permissions the decoded/compiled caches reflect. Effective
     /// permissions depend on both the PMP registers and the current privilege: unlocked entries
     /// are bypassed in M-mode but enforced in S/U-mode.
@@ -617,6 +623,27 @@ enum BlockStep {
 struct JitProgress {
     result: Result<(), Trap>,
     work_used: u64,
+}
+
+/// Decode the instruction at PHYSICAL address `pa` exactly as [`hart::Hart::decode_at`] decodes
+/// it once translated (C-expansion, raw trace bits, length), with no MMU/TLB/PMP involvement.
+/// `None` on a bus fault, a 32-bit op whose upper parcel leaves the page, or an illegal encoding —
+/// each of which also ends a block walk there.
+#[cfg(not(feature = "zicsr-stub"))]
+fn decode_phys(bus: &mut impl crate::bus::Bus, pa: u64) -> Option<dispatch::MicroOp> {
+    let lo = bus.load16(pa).ok()?;
+    let (insn, len, raw) = if lo & 0b11 != 0b11 {
+        (crate::decode_c::expand_c(lo).ok()?, 2, u32::from(lo))
+    } else {
+        if (pa & (dispatch::PAGE - 1)) + 4 > dispatch::PAGE {
+            return None;
+        }
+        let hi = bus.load16(pa.wrapping_add(2)).ok()?;
+        let word = (u32::from(hi) << 16) | u32::from(lo);
+        (word, 4, word)
+    };
+    let instr = crate::decode::decode(insn).ok()?;
+    Some(dispatch::MicroOp { instr, len, raw })
 }
 
 /// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
@@ -877,6 +904,7 @@ impl Machine {
             block_cursor: None,
             block_entry_hits: 0,
             block_builds: 0,
+            jit_partial_resume_rebuilds: 0,
             pmp_revision_seen: 0,
             pmp_mode_seen: csr::Priv::M,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -940,6 +968,14 @@ impl Machine {
     /// observation-only and never participates in architectural state or snapshots.
     pub fn block_cache_entry_stats(&self) -> (u64, u64) {
         (self.block_entry_hits, self.block_builds)
+    }
+
+    /// Partial-block continuations that had to re-decode their evicted decoded block from
+    /// physical memory before resuming the block cursor at the untranslated op (see
+    /// `run_one_jit_block`'s `CallInterp` arm). Always zero on an executor that runs one block per
+    /// host call; the browser's in-module direct chaining can reach it. Observation-only.
+    pub fn jit_partial_resume_rebuilds(&self) -> u64 {
+        self.jit_partial_resume_rebuilds
     }
 
     /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. An effective
@@ -3983,10 +4019,11 @@ impl Machine {
     /// page-granular invalidation. If any drained frame held cached code, the in-flight block
     /// cursor may point into a just-dropped block, so it is reset (conservative-safe — a
     /// spurious reset only costs a rebuild). Cheap when the log is empty (the common case).
+    /// Returns whether a code page was flushed (and so the cursor was reset).
     #[cfg(not(feature = "zicsr-stub"))]
-    fn drain_code_writes(&mut self) {
+    fn drain_code_writes(&mut self) -> bool {
         if !self.block_cache_enabled {
-            return;
+            return false;
         }
         // Disjoint borrows: drain the bus log while page-invalidating the cache.
         let Self {
@@ -3999,7 +4036,7 @@ impl Machine {
         } = self;
         let log = bus.code_write_log_mut();
         if log.is_empty() {
-            return;
+            return false;
         }
         let mut flushed = false;
         for &frame in log.iter() {
@@ -4020,6 +4057,7 @@ impl Machine {
             // is dropped at install time and the re-decoded block re-nominates fresh.
             discovery.on_invalidate();
         }
+        flushed
     }
 
     /// E4-T05: return the [`MicroOp`](dispatch::MicroOp) to execute at virtual address `pc`,
@@ -4483,6 +4521,78 @@ impl Machine {
         result
     }
 
+    /// Resume the block cursor at op `index` of the decoded block keyed `key`, whose virtual
+    /// address is `pc`: the continuation of a partial block's compiled prefix
+    /// ([`jit::ExitCode::CallInterp`]). The batched interpreter replays that op from the cursor of
+    /// the block it entered, so it must never become a block boundary (no device sync, no
+    /// interrupt sample) here either.
+    ///
+    /// The native executor runs one block per host call and [`Self::run_one_jit_block`] only
+    /// starts a block whose decoded form is cached, so `key` is resident. A browser in-module
+    /// direct chain, however, enters a compiled successor without any host lookup, and the bounded
+    /// decoded-block cache may have evicted that successor's decoded block since it was compiled.
+    /// Its bytes cannot have changed meanwhile: a store into a code page invalidates the compiled
+    /// module together with the decoded blocks, and a page stays tracked as code after its blocks
+    /// are evicted. So the block is re-decoded from physical memory — with no MMU, TLB or PMP
+    /// side effect, as the continuation op is never fetched by the interpreter either — and the
+    /// cursor resumes in it.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn resume_partial_block(&mut self, key: u64, index: usize, pc: u64) {
+        if self.block_cache.get(key).is_none() && self.rebuild_decoded_block_phys(key) {
+            self.jit_partial_resume_rebuilds = self.jit_partial_resume_rebuilds.saturating_add(1);
+        }
+        // Only resume a cursor that provably names the op at `pc` (same page offset).
+        let page_mask = dispatch::PAGE - 1;
+        let resumes = self.block_cache.get(key).is_some_and(|b| {
+            index < b.ops.len() && {
+                let offset: u64 = b.ops[..index].iter().map(|op| u64::from(op.len)).sum();
+                key.wrapping_add(offset) & page_mask == pc & page_mask
+            }
+        });
+        debug_assert!(
+            resumes,
+            "partial block {key:#x} op {index} at {pc:#x}: the decoded block must resume"
+        );
+        if resumes {
+            self.block_cursor = Some((key, index, pc));
+        }
+    }
+
+    /// Re-decode the block whose physical entry is `key` from physical memory and insert it in the
+    /// decoded-block cache, walking exactly as [`Self::next_micro_op`] does (to the first
+    /// terminator, the page edge, a page-straddling op, an undecodable op or the op cap). Returns
+    /// `false` when not even the entry op decodes, which a compiled block's entry always does.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn rebuild_decoded_block_phys(&mut self, key: u64) -> bool {
+        let page_mask = dispatch::PAGE - 1;
+        let page_base = key & !page_mask;
+        let mut ops = alloc::vec::Vec::with_capacity(8);
+        let mut total_len = 0_u64;
+        let mut pa = key;
+        while ops.len() < dispatch::MAX_BLOCK_OPS && pa & !page_mask == page_base {
+            let Some(op) = decode_phys(&mut self.bus, pa) else {
+                break;
+            };
+            // An op straddling the page edge belongs to the next block (an entry op that straddles
+            // is never cached, so never compiled).
+            if (pa & page_mask) + u64::from(op.len) > dispatch::PAGE {
+                break;
+            }
+            total_len += u64::from(op.len);
+            ops.push(op);
+            if dispatch::is_terminator(&op.instr) {
+                break;
+            }
+            pa = pa.wrapping_add(u64::from(op.len));
+        }
+        if ops.is_empty() {
+            return false;
+        }
+        self.block_cache
+            .insert(dispatch::DecodedBlock::new(key, ops, total_len));
+        true
+    }
+
     /// Compute the fuel for one browser in-module chain. Direct chaining is only enabled with the
     /// existing Phase-C interrupt batching contract: that contract already permits observation to
     /// lag by one bounded block, while the fuel keeps a chain from spanning an arbitrary outer run
@@ -4614,21 +4724,12 @@ impl Machine {
                 debug_assert!(retired > 0 && retired <= remaining_work);
                 self.hart.regs.pc = exit.next_pc;
                 self.account_jit_retired(retired);
-                // Only resume a cursor that provably names the op at `next_pc` (same page offset
-                // in a still-cached decoded block); otherwise the next step rebuilds a block.
-                let page_mask = dispatch::PAGE - 1;
-                let resumes = self.block_cache.get(key).is_some_and(|b| {
-                    index < b.ops.len() && {
-                        let offset: u64 = b.ops[..index].iter().map(|op| u64::from(op.len)).sum();
-                        key.wrapping_add(offset) & page_mask == exit.next_pc & page_mask
-                    }
-                });
-                if resumes {
-                    self.block_cursor = Some((key, index, exit.next_pc));
+                // A prefix store into a code page drops the cursor, exactly as the interpreter's
+                // per-store drain would before the next op: that op is then a block boundary in
+                // the batched interpreter too, so do not resume.
+                if !self.drain_code_writes() {
+                    self.resume_partial_block(key, index, exit.next_pc);
                 }
-                // A prefix store into a code page drops the cursor here, exactly as the
-                // interpreter's per-store drain would before the next op.
-                self.drain_code_writes();
                 Some(BlockStep::Budget { retired })
             }
             jit::ExitCode::Budget => {
@@ -5163,6 +5264,9 @@ mod pmp_audit_tests;
 
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod decoded_cache_capacity_tests;
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod partial_resume_tests;
 
 #[cfg(test)]
 mod tests {

@@ -366,3 +366,143 @@ pub fn device_access_chain(make: Factory) {
         assert!(got.executor().unwrap().retired_via_jit() > 0);
     }
 }
+
+fn branch(funct3: u32, rs1: u32, rs2: u32, bytes: i32) -> u32 {
+    let o = bytes as u32;
+    (((o >> 12) & 1) << 31)
+        | (((o >> 5) & 0x3f) << 25)
+        | (rs2 << 20)
+        | (rs1 << 15)
+        | (funct3 << 12)
+        | (((o >> 1) & 0xf) << 8)
+        | (((o >> 11) & 1) << 7)
+        | 0x63
+}
+
+/// A two-phase loop that makes a compiled block direct-chain (in module, with no host lookup)
+/// into a PARTIAL block whose decoded block the small decoded-block cache has meanwhile evicted.
+///
+/// ```text
+///   P: addi x1,-1 ; add x2,x1 ; csrr x3,mscratch   partial: prefix compiled, CSR interpreted
+///   B: bltu x1,x5,T                                 early phase falls through to Q
+///   Q: addi x4,+1 ; bne x1,x0,P                     compiled; its taken edge links to P
+///      spin
+///   T: `thrash` x [csrw mscratch,x4]                lone CSR blocks: never compiled, always
+///   J: jal Q                                        (re)inserted, so they evict P's decoded block
+/// ```
+///
+/// The early phase keeps every block resident, so the Q->P edge is linked; the late phase runs
+/// the thrash blocks each iteration, so Q (entered compiled from J) chains into a P whose decoded
+/// block is gone. The partial exit must still resume P's cursor at the CSR op (no block boundary)
+/// exactly like the batched interpreter, which entered P and replays that op from its cursor.
+fn build_evicted_partial_chain(lead: u32, thrash: u32, mtimecmp: u64) -> Machine {
+    let mut m = Machine::new(16 * 1024 * 1024);
+    // `lead` spin slots shift every block's physical address (and so its decoded-cache slot).
+    let mut words = vec![jal_fwd(4 * (lead as i32 + 1))];
+    words.extend(std::iter::repeat_n(JAL_SELF, lead as usize));
+    let p = words.len();
+    words.extend([addi(1, 1, -1), add(2, 2, 1), csrrs(3, MSCRATCH, 0)]);
+    let b = words.len();
+    words.push(0); // patched below
+    let q = words.len();
+    words.push(addi(4, 4, 1));
+    words.push(bne_back(1, 4 * (words.len() - p) as i32));
+    words.push(JAL_SELF);
+    let t = words.len();
+    words.extend(std::iter::repeat_n(csrrw(0, MSCRATCH, 4), thrash as usize));
+    let j = words.len();
+    let back = -(4 * (j - q) as i32) as u32;
+    words.push(
+        (((back >> 20) & 1) << 31)
+            | (((back >> 1) & 0x3ff) << 21)
+            | (((back >> 11) & 1) << 20)
+            | (((back >> 12) & 0xff) << 12)
+            | 0x6f,
+    );
+    words[b] = branch(6, 1, 5, 4 * (t - b) as i32); // bltu x1, x5, T
+    poke(&mut m, DRAM_BASE, &words);
+    poke(
+        &mut m,
+        HANDLER,
+        &[
+            0x0200_4E37, // lui  x28, 0x2004 (mtimecmp)
+            0xFFF0_0E93, // addi x29, x0, -1
+            0x01DE_3023, // sd   x29, 0(x28): disarm
+            csrrs(11, MSCRATCH, 0),
+            csrrs(12, MEPC, 0),
+            add(13, 13, 12),
+            addi(10, 10, 1),
+            MRET,
+        ],
+    );
+    let clint = m.enable_clint(1); // mtime == retired
+    clint.borrow_mut().mtimecmp = mtimecmp;
+    set_csr(&mut m, MTVEC, HANDLER);
+    set_csr(&mut m, MIE, 1 << 7);
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    m.hart_mut().regs.write(1, 3000);
+    m.hart_mut().regs.write(5, 2000); // late phase once x1 < 2000
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m
+}
+
+/// `expect_rebuilds`: the executor direct-chains in module (the inline browser executor), so the
+/// evicted-partial continuation MUST be reached; an executor that runs one block per host call
+/// (native wasmtime, the private browser form) must never need it.
+pub fn evicted_partial_chain(make: Factory, expect_rebuilds: bool) {
+    // (decoded-cache capacity, lead, thrash blocks): layouts whose slot collisions evict P while
+    // Q stays resident.
+    for (cap, lead, thrash) in [(4usize, 0u32, 1u32), (4, 2, 3), (8, 1, 5)] {
+        let iteration = 3 + 1 + u64::from(thrash) + 1 + 2;
+        let budget = 16_000;
+        let mut rebuilds = 0;
+        let mut jit_retired = 0;
+        // Deep in the late phase: every instruction position of three consecutive iterations.
+        let first = 12_000;
+        for mtimecmp in first..first + 3 * iteration {
+            let label = format!("evicted partial chain cap={cap} lead={lead} thrash={thrash}");
+            let mut want = build_evicted_partial_chain(lead, thrash, mtimecmp);
+            want.set_block_cache(true);
+            want.set_block_cache_capacity(cap);
+            want.set_interrupt_batching(true);
+            want.run(budget);
+            let mut got = build_evicted_partial_chain(lead, thrash, mtimecmp);
+            let executor = make(&got);
+            got.set_executor(executor);
+            got.set_block_cache(true);
+            got.set_block_cache_capacity(cap);
+            got.set_interrupt_batching(true);
+            got.set_hotness_threshold(1);
+            got.set_jit(true);
+            got.run(budget);
+            assert_eq!(
+                want.irq_stats().int[7],
+                1,
+                "{label}: the timer must fire once"
+            );
+            assert_same(&format!("{label} mtimecmp={mtimecmp}"), &mut want, &mut got);
+            // The handler's accumulated `mepc`: the exact interrupted instruction.
+            assert_eq!(
+                want.hart().regs.read(13),
+                got.hart().regs.read(13),
+                "{label} mtimecmp={mtimecmp}: mepc"
+            );
+            rebuilds += got.jit_partial_resume_rebuilds();
+            jit_retired += got.executor().unwrap().retired_via_jit();
+        }
+        eprintln!("cap={cap} lead={lead} thrash={thrash}: rebuilds={rebuilds} jit={jit_retired}");
+        assert!(jit_retired > 0, "the JIT must execute compiled code");
+        if expect_rebuilds {
+            assert!(
+                rebuilds > 0,
+                "cap={cap} lead={lead} thrash={thrash}: the layout must chain into an evicted \
+                 partial block (adjust the layout if the decoded-cache hash changed)"
+            );
+        } else {
+            assert_eq!(
+                rebuilds, 0,
+                "one block per host call never loses its entry block"
+            );
+        }
+    }
+}

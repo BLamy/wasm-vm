@@ -26,3 +26,12 @@ fn partial_blocks_browser_inline() {
     fixture::fp_prefix_loop(inline, false);
     fixture::device_access_chain(inline);
 }
+/// Verifier jitcov r1 finding: an in-module direct chain into a partial block whose decoded block
+/// the bounded decoded cache has evicted must still resume the block cursor at the untranslated
+/// op (re-decoding the block from physical memory), matching the batched interpreter across a
+/// timer-deadline sweep. The private form runs one block per host call and never needs it.
+#[wasm_bindgen_test]
+fn partial_block_reached_by_direct_chain_after_decoded_eviction() {
+    fixture::evicted_partial_chain(inline, true);
+    fixture::evicted_partial_chain(private, false);
+}
