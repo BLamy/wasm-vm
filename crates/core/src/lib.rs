@@ -4318,7 +4318,6 @@ impl Machine {
         }
         let chaining = self.executor.as_ref()?.chaining();
         let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
-        let (direct_chain_budget, allow_direct_chaining) = self.direct_chain_budget(remaining_work);
         let mut depth: u32 = 0;
         let mut work_used = 0u64;
         let mut ran_any = false;
@@ -4327,6 +4326,11 @@ impl Machine {
         let result = loop {
             let block_budget = remaining_work - work_used;
             let device_accesses = self.bus.device_access_count();
+            // Trim the in-module chain fuel to the next timer deadline for EVERY host entry: `mtime`
+            // advanced by the blocks this host-level chain already retired, so fuel computed once
+            // at chain start would let a later host entry's direct chain run past the deadline.
+            let (direct_chain_budget, allow_direct_chaining) =
+                self.direct_chain_budget(block_budget);
             let Some(step) = self.run_one_jit_block(
                 phys,
                 block_budget,
