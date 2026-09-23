@@ -3545,10 +3545,30 @@ impl Machine {
         }
     }
 
-    /// The one-instruction interpreter wrapper around [`Self::advance_clock_by`].
+    /// The one-instruction interpreter wrapper around [`Self::advance_clock_by`], run after every
+    /// interpreted retirement. With the sub-tick residue below the divider (the invariant every
+    /// setter maintains) one retirement yields exactly `(tick_accum + 1 == clock_div)` ticks, so
+    /// the hot path is an add and a compare — the identical `mtime`/`tick_accum` sequence as the
+    /// `u128` division, which remains the fallback for any out-of-invariant restored residue.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn advance_clock(&mut self) {
-        self.advance_clock_by(1);
+        if self.wall_time.is_some() {
+            return;
+        }
+        let Some(clint) = &self.clint else { return };
+        if self.tick_accum < self.clock_div {
+            let next = self.tick_accum + 1;
+            if next == self.clock_div {
+                self.tick_accum = 0;
+                let mut s = clint.borrow_mut();
+                s.mtime = s.mtime.wrapping_add(1);
+            } else {
+                self.tick_accum = next;
+            }
+        } else {
+            self.advance_clock_by(1);
+        }
     }
 
     /// E4-T24: recompute `mtime` from the injected host wall clock at a block boundary — the ONE place
@@ -4007,10 +4027,18 @@ impl Machine {
     /// cursor may point into a just-dropped block, so it is reset (conservative-safe — a
     /// spurious reset only costs a rebuild). Cheap when the log is empty (the common case).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn drain_code_writes(&mut self) {
-        if !self.block_cache_enabled {
-            return;
+        // Hot path (after every retire): an empty log — no store since the last drain — is one
+        // length test. Only a logged frame takes the out-of-line page-invalidation walk.
+        if self.block_cache_enabled && !self.bus.code_write_log_mut().is_empty() {
+            self.drain_code_writes_slow();
         }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn drain_code_writes_slow(&mut self) {
         // Disjoint borrows: drain the bus log while page-invalidating the cache.
         let Self {
             bus,
