@@ -460,6 +460,28 @@ impl TerminatorKind {
     }
 }
 
+/// A block that is nothing but one block-ending system instruction the JIT does not translate (a
+/// CSR access other than `fflags`/`frm`/`fcsr`, or `mret`/`sret`/`sfence.vma`) has no compilable
+/// prefix. Nominating it would only spend one of the run's bounded translation attempts on a
+/// guaranteed rejection, so it is excluded like a `wfi` block. Longer CSR-terminated blocks are
+/// nominated: the translator compiles their prefix and the interpreter runs the CSR op.
+fn lone_untranslatable_system_op(ops: &[MicroOp]) -> bool {
+    use crate::decode::Instr::*;
+    let [op] = ops else {
+        return false;
+    };
+    match op.instr {
+        Mret | Sret | Wfi | SfenceVma { .. } => true,
+        Csrrw { csr, .. }
+        | Csrrs { csr, .. }
+        | Csrrc { csr, .. }
+        | Csrrwi { csr, .. }
+        | Csrrsi { csr, .. }
+        | Csrrci { csr, .. } => !(0x001..=0x003).contains(&csr),
+        _ => false,
+    }
+}
+
 /// A nominated translation candidate: everything the (future) translator needs to compile
 /// a block WITHOUT re-reading guest memory, plus the coherence stamp that makes installing
 /// stale bytes impossible.
@@ -942,7 +964,7 @@ impl BlockDiscovery {
     fn nominate(&mut self, phys: u64, ops: &[MicroOp]) -> AdmissionReason {
         self.counts.remove(&phys);
         let term = TerminatorKind::of_block(ops);
-        if term.is_excluded() {
+        if term.is_excluded() || lone_untranslatable_system_op(ops) {
             self.state.insert(phys, NomState::Excluded);
             self.stats.excluded = self.stats.excluded.saturating_add(1);
             return AdmissionReason::Excluded;
@@ -1606,9 +1628,9 @@ mod tests {
     }
 
     #[test]
-    fn wfi_blocks_are_excluded_but_csr_blocks_are_nominated() {
+    fn wfi_and_lone_system_blocks_are_excluded_but_csr_prefix_blocks_are_nominated() {
         let mut d = BlockDiscovery::new();
-        let csr = [MicroOp {
+        let csrw = MicroOp {
             instr: Instr::Csrrw {
                 rd: 0,
                 rs1: 1,
@@ -1616,7 +1638,28 @@ mod tests {
             },
             len: 4,
             raw: 0x3000_9073,
-        }];
+        };
+        let addi = MicroOp {
+            instr: Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0x0010_8093,
+        };
+        let frflags = MicroOp {
+            instr: Instr::Csrrs {
+                rd: 5,
+                rs1: 0,
+                csr: 0x001,
+            },
+            len: 4,
+            raw: 0x0010_22f3,
+        };
+        let lone_csr = [csrw];
+        let fp_csr = [frflags];
+        let csr = [addi, csrw];
         let wfi = [MicroOp {
             instr: Instr::Wfi,
             len: 4,
@@ -1625,15 +1668,21 @@ mod tests {
         for _ in 0..HOT_THRESHOLD {
             d.on_block_entry(0x8000_0000, &csr);
             d.on_block_entry(0x9000_0000, &wfi);
+            d.on_block_entry(0xa000_0000, &lone_csr);
+            d.on_block_entry(0xb000_0000, &fp_csr);
         }
-        // CSR-terminated blocks are nominated: the translator compiles their prefix (or inlines an
-        // FP CSR) and hands any other CSR op to the interpreter at its exact boundary. WFI blocks
-        // stay excluded (the idle path is runtime-owned).
+        // CSR-terminated blocks with a prefix are nominated: the translator compiles the prefix and
+        // hands the CSR op to the interpreter at its exact boundary; a lone FP CSR access is
+        // inlined. WFI blocks and a lone non-FP CSR op (no compilable prefix) stay excluded.
         let s = d.stats();
-        assert_eq!(s.nominated, 1, "only the CSR block enqueues");
-        assert_eq!(s.excluded, 1);
-        assert_eq!(s.queue_depth, 1);
-        assert_eq!(d.take_requests()[0].phys_pc, 0x8000_0000);
+        assert_eq!(
+            s.nominated, 2,
+            "the CSR-prefix and lone-FP-CSR blocks enqueue"
+        );
+        assert_eq!(s.excluded, 2);
+        assert_eq!(s.queue_depth, 2);
+        let queued: alloc::vec::Vec<u64> = d.take_requests().iter().map(|r| r.phys_pc).collect();
+        assert_eq!(queued, [0x8000_0000, 0xb000_0000]);
     }
 
     #[test]
