@@ -313,6 +313,9 @@ impl crate::resume::ComponentSnapshot for Hart {
         }
         self.resv = resv;
         self.csr = csr;
+        // The fast TLB's entries were validated against the replaced CSR file (satp, PMP), so drop
+        // them. Semantically invisible: the architectural TLB is untouched.
+        self.tlb.fast_flush();
         Ok(())
     }
 }
@@ -382,8 +385,72 @@ use crate::mmu::{self, Access};
 use crate::pmp::PmpAccess;
 use crate::tlb::Tlb;
 
+// ── Softmmu fast path (perf overhaul) ─────────────────────────────────────────────────
+// Every aligned access first probes the hart's fast TLB (see `crate::tlb`): a hit returns the
+// physical address the full slow path below would compute — translation, `finish_leaf`
+// permission/Svade decision, and PMP check included — without running any of it. Only successful
+// slow-path outcomes are recorded, only for pages that are entirely RAM and entirely PMP-permitted,
+// so every fault (and every MMIO access) still takes the exact slow path and raises the exact trap.
+// Debug triggers bypass the fast path altogether.
+
+/// Fast-TLB context of a DATA access: the effective privilege (MPRV-aware) in bits 0-1, plus
+/// mstatus.SUM (bit 18 → ctx bit 2) and mstatus.MXR (bit 19 → ctx bit 3) — every CSR input
+/// `finish_leaf` reads besides satp. Stores ignore MXR (see [`STORE_CTX_MASK`]).
+#[inline(always)]
+fn data_ctx(csr: &Csrs) -> (crate::csr::Priv, u64) {
+    let eff = csr.data_priv();
+    (eff, eff as u64 | ((csr.mstatus >> 16) & 0b1100))
+}
+
+/// A store's permission never depends on MXR, so its fast context drops that bit.
+const STORE_CTX_MASK: u64 = 0b0111;
+
+/// Probe the fast TLB. Returns the physical address on a live hit, `None` otherwise (including
+/// whenever a debug trigger is armed).
+#[inline(always)]
+fn fast_hit(csr: &Csrs, tlb: &mut Tlb, kind: usize, va: u64, ctx: u64) -> Option<u64> {
+    if !csr.triggers_idle() {
+        return None;
+    }
+    let pa = tlb.fast_lookup(kind, va, ctx, csr.pmp.revision())?;
+    debug_assert_eq!(
+        csr.satp(),
+        tlb.fast_satp(),
+        "satp changed without Tlb::fast_flush (a stale fast entry just hit)"
+    );
+    Some(pa)
+}
+
+/// After a successful slow-path access, publish its outcome for the whole 4 KiB page when that is
+/// sound: the physical page is entirely RAM (so the access never needs device dispatch) and every
+/// PMP permission in `pmp` holds for the entire page at `eff` (so no sub-page PMP region can make a
+/// later access in the page behave differently).
+#[inline(never)]
+#[allow(clippy::too_many_arguments)]
+fn fast_publish(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &impl Bus,
+    kind: usize,
+    va: u64,
+    pa: u64,
+    ctx: u64,
+    slot: u8,
+    eff: crate::csr::Priv,
+    pmp: &[PmpAccess],
+) {
+    let page = pa & !0xFFF;
+    if slot != crate::tlb::NO_SLOT
+        && csr.triggers_idle()
+        && bus.ram_contains(page, 4096)
+        && pmp.iter().all(|&k| csr.pmp_ok(page, 4096, k, eff))
+    {
+        tlb.fast_fill(kind, va, pa, ctx, slot, csr.satp(), csr.pmp.revision());
+    }
+}
+
 /// Translate a data VA and PMP-check the final PA for a LOAD; returns the physical address.
-#[inline]
+#[inline(always)]
 fn xlate_load(
     csr: &Csrs,
     tlb: &mut Tlb,
@@ -403,18 +470,48 @@ fn xlate_load(
             tval: va,
         });
     }
-    let eff = csr.data_priv();
-    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Load, eff)?;
+    let (eff, ctx) = data_ctx(csr);
+    if let Some(pa) = fast_hit(csr, tlb, crate::tlb::FAST_LOAD, va, ctx) {
+        return Ok(pa);
+    }
+    xlate_load_slow(csr, tlb, bus, va, len, eff, ctx)
+}
+
+/// The full load translation (fast-TLB miss): translate, PMP-check, then publish the outcome.
+#[inline(never)]
+fn xlate_load_slow(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    len: u64,
+    eff: crate::csr::Priv,
+    ctx: u64,
+) -> Result<u64, Trap> {
+    let (pa, slot) = mmu::translate_cached_slot(csr, tlb, bus, va, Access::Load, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Read, eff) {
         return Err(Trap {
             cause: Exception::LoadAccessFault,
             tval: va,
         });
     }
+    fast_publish(
+        csr,
+        tlb,
+        bus,
+        crate::tlb::FAST_LOAD,
+        va,
+        pa,
+        ctx,
+        slot,
+        eff,
+        &[PmpAccess::Read],
+    );
     Ok(pa)
 }
+
 /// Translate a data VA and PMP-check the final PA for a STORE (incl. SC / AMO write half).
-#[inline]
+#[inline(always)]
 fn xlate_store(
     csr: &Csrs,
     tlb: &mut Tlb,
@@ -430,18 +527,60 @@ fn xlate_store(
             tval: va,
         });
     }
-    let eff = csr.data_priv();
-    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
-    if !csr.pmp_ok(pa, len, PmpAccess::Write, eff) {
+    let (eff, ctx) = data_ctx(csr);
+    let ctx = ctx & STORE_CTX_MASK;
+    if let Some(pa) = fast_hit(csr, tlb, crate::tlb::FAST_STORE, va, ctx) {
+        return Ok(pa);
+    }
+    xlate_store_slow(csr, tlb, bus, va, len, eff, ctx, false)
+}
+
+/// The full store/AMO translation (fast-TLB miss). `amo` additionally requires PMP read access,
+/// as [`xlate_amo`] does. Store fast entries are published only when the whole page is PMP
+/// readable AND writable, so the AMO read half can share them.
+#[inline(never)]
+#[allow(clippy::too_many_arguments)]
+fn xlate_store_slow(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    len: u64,
+    eff: crate::csr::Priv,
+    ctx: u64,
+    amo: bool,
+) -> Result<u64, Trap> {
+    // A store is translated as Store, which requires W and D=1 in the leaf (Svade), so a store
+    // fast entry can only ever mirror a dirty, writable translation.
+    let (pa, slot) = mmu::translate_cached_slot(csr, tlb, bus, va, Access::Store, eff)?;
+    let pmp_ok = if amo {
+        csr.pmp_ok(pa, len, PmpAccess::Read, eff) && csr.pmp_ok(pa, len, PmpAccess::Write, eff)
+    } else {
+        csr.pmp_ok(pa, len, PmpAccess::Write, eff)
+    };
+    if !pmp_ok {
         return Err(Trap {
             cause: Exception::StoreAccessFault,
             tval: va,
         });
     }
+    fast_publish(
+        csr,
+        tlb,
+        bus,
+        crate::tlb::FAST_STORE,
+        va,
+        pa,
+        ctx,
+        slot,
+        eff,
+        &[PmpAccess::Write, PmpAccess::Read],
+    );
     Ok(pa)
 }
+
 /// The read half of an AMO: translated as a STORE (needs W + D), PMP-checked for BOTH R and W.
-#[inline]
+#[inline(always)]
 fn xlate_amo(
     csr: &Csrs,
     tlb: &mut Tlb,
@@ -458,15 +597,14 @@ fn xlate_amo(
             tval: va,
         });
     }
-    let eff = csr.data_priv();
-    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
-    if !(csr.pmp_ok(pa, len, PmpAccess::Read, eff) && csr.pmp_ok(pa, len, PmpAccess::Write, eff)) {
-        return Err(Trap {
-            cause: Exception::StoreAccessFault,
-            tval: va,
-        });
+    let (eff, ctx) = data_ctx(csr);
+    let ctx = ctx & STORE_CTX_MASK;
+    // A store fast entry certifies exactly what an AMO needs: Store translation in this context
+    // plus whole-page PMP read AND write.
+    if let Some(pa) = fast_hit(csr, tlb, crate::tlb::FAST_STORE, va, ctx) {
+        return Ok(pa);
     }
-    Ok(pa)
+    xlate_store_slow(csr, tlb, bus, va, len, eff, ctx, true)
 }
 
 // ── Misaligned data-access support (E1-T26) ──────────────────────────────────────────
@@ -598,10 +736,38 @@ fn misaligned_store(
     Ok((plan.first_len == len).then_some(plan.first))
 }
 
+/// The whole aligned-data fast path: a live fast-TLB hit for an aligned `len`-byte access of
+/// `kind` at `va`, or `None` (misaligned, trigger armed, or a miss). Always inlined so the width and
+/// kind fold into the caller's constants.
+#[inline(always)]
+fn fast_data(csr: &Csrs, tlb: &mut Tlb, kind: usize, va: u64, len: u64) -> Option<u64> {
+    if va & (len - 1) != 0 {
+        return None;
+    }
+    let (_, ctx) = data_ctx(csr);
+    let ctx = if kind == crate::tlb::FAST_STORE {
+        ctx & STORE_CTX_MASK
+    } else {
+        ctx
+    };
+    fast_hit(csr, tlb, kind, va, ctx)
+}
+
 macro_rules! checked_load {
-    ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
-        #[inline]
+    ($name:ident, $slow:ident, $busfn:ident, $ty:ty, $len:expr) => {
+        /// Checked, translated load. The fast-TLB hit path is inlined into the caller; everything
+        /// else (triggers, misalignment, translation, PMP, faults) lives in the out-of-line slow
+        /// half, which is the original checked path.
+        #[inline(always)]
         fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
+            if let Some(pa) = fast_data(csr, tlb, crate::tlb::FAST_LOAD, a, $len) {
+                return bus.$busfn(pa).map_err(|f| load_fault(f, a));
+            }
+            $slow(csr, tlb, bus, a)
+        }
+
+        #[inline(never)]
+        fn $slow(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
             // E1-T29: a load (data-address) trigger set on `a` fires a Breakpoint before the load.
             if !csr.triggers_idle() && csr.trigger_fires(a, crate::csr::TrigKind::Load) {
                 return Err(Trap {
@@ -617,14 +783,17 @@ macro_rules! checked_load {
                 // sign/zero-extends.
                 return misaligned_load(csr, tlb, bus, a, $len).map(|v| v as $ty);
             }
-            let pa = xlate_load(csr, tlb, bus, a, $len)?;
+            // Aligned (checked above) and the fast TLB already missed: go straight to the full
+            // translation, which also publishes the outcome for the next access.
+            let (eff, ctx) = data_ctx(csr);
+            let pa = xlate_load_slow(csr, tlb, bus, a, $len, eff, ctx)?;
             bus.$busfn(pa).map_err(|f| load_fault(f, a))
         }
     };
 }
 macro_rules! checked_store {
-    ($name:ident, $with_phys:ident, $busfn:ident, $ty:ty, $len:expr) => {
-        #[inline]
+    ($name:ident, $with_phys:ident, $slow:ident, $busfn:ident, $ty:ty, $len:expr) => {
+        #[inline(always)]
         fn $name(
             csr: &Csrs,
             tlb: &mut Tlb,
@@ -635,8 +804,26 @@ macro_rules! checked_store {
             $with_phys(csr, tlb, bus, a, v).map(|_| ())
         }
 
-        #[inline]
+        /// Checked, translated store returning the physical address when it reached RAM. The
+        /// fast-TLB hit path is inlined; a fast entry exists only for an all-RAM page, so a hit
+        /// always reports `Some(pa)`, exactly what the slow path's `ram_contains` would.
+        #[inline(always)]
         fn $with_phys(
+            csr: &Csrs,
+            tlb: &mut Tlb,
+            bus: &mut impl Bus,
+            a: u64,
+            v: $ty,
+        ) -> Result<Option<u64>, Trap> {
+            if let Some(pa) = fast_data(csr, tlb, crate::tlb::FAST_STORE, a, $len) {
+                bus.$busfn(pa, v).map_err(|f| store_fault(f, a))?;
+                return Ok(Some(pa));
+            }
+            $slow(csr, tlb, bus, a, v)
+        }
+
+        #[inline(never)]
+        fn $slow(
             csr: &Csrs,
             tlb: &mut Tlb,
             bus: &mut impl Bus,
@@ -654,7 +841,8 @@ macro_rules! checked_store {
             if !a.is_multiple_of($len) {
                 return misaligned_store(csr, tlb, bus, a, $len, v as u64);
             }
-            let pa = xlate_store(csr, tlb, bus, a, $len)?;
+            let (eff, ctx) = data_ctx(csr);
+            let pa = xlate_store_slow(csr, tlb, bus, a, $len, eff, ctx & STORE_CTX_MASK, false)?;
             bus.$busfn(pa, v).map_err(|f| store_fault(f, a))?;
             Ok(bus.ram_contains(pa, $len).then_some(pa))
         }
@@ -662,10 +850,10 @@ macro_rules! checked_store {
 }
 
 // Ordinary loads (incl. LR): translated as Load.
-checked_load!(cload8, load8, u8, 1);
-checked_load!(cload16, load16, u16, 2);
-checked_load!(cload32, load32, u32, 4);
-checked_load!(cload64, load64, u64, 8);
+checked_load!(cload8, cload8_slow, load8, u8, 1);
+checked_load!(cload16, cload16_slow, load16, u16, 2);
+checked_load!(cload32, cload32_slow, load32, u32, 4);
+checked_load!(cload64, cload64_slow, load64, u64, 8);
 // The read half of an AMO (its store half re-translates via cstoreN).
 #[inline]
 fn camoload32(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
@@ -678,24 +866,64 @@ fn camoload64(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u
     bus.load64(pa).map_err(|f| store_fault(f, a))
 }
 // Stores (incl. SC and the write half of an AMO): translated as Store.
-checked_store!(cstore8, cstore8_with_phys, store8, u8, 1);
-checked_store!(cstore16, cstore16_with_phys, store16, u16, 2);
-checked_store!(cstore32, cstore32_with_phys, store32, u32, 4);
-checked_store!(cstore64, cstore64_with_phys, store64, u64, 8);
+checked_store!(cstore8, cstore8_with_phys, cstore8_slow, store8, u8, 1);
+checked_store!(cstore16, cstore16_with_phys, cstore16_slow, store16, u16, 2);
+checked_store!(cstore32, cstore32_with_phys, cstore32_slow, store32, u32, 4);
+checked_store!(cstore64, cstore64_with_phys, cstore64_slow, store64, u64, 8);
+
+/// A CSR instruction accessed `addr` without trapping. satp is the one CSR the fast TLB relies on
+/// without re-reading it per access (its entries are valid only for the ASID/MODE they were filled
+/// under), so any satp access drops the fast entries. Semantically invisible: the architectural
+/// TLB — which satp writes do NOT flush — is untouched.
+#[inline(always)]
+fn note_csr_access(tlb: &mut Tlb, addr: u16) {
+    if addr == crate::csr::SATP {
+        tlb.fast_flush();
+    }
+}
 
 /// Translate + PMP-check a 2-byte instruction FETCH at virtual address `va` (TRUE current mode —
 /// MPRV never affects fetches). Returns the physical address; a translation-rule violation is an
 /// instruction page fault (12), a PMP-denied fetch/PTE-read is an instruction access fault (1),
-/// both with `tval = va`.
-#[inline]
+/// both with `tval = va`. Probes the fast TLB first (context = the current privilege, the only CSR
+/// input a fetch permission reads besides satp).
+#[inline(always)]
 fn fetch_xlate(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
-    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Fetch, csr.mode)?;
+    let ctx = csr.mode as u64;
+    if let Some(pa) = fast_hit(csr, tlb, crate::tlb::FAST_FETCH, va, ctx) {
+        return Ok(pa);
+    }
+    fetch_xlate_slow(csr, tlb, bus, va, ctx)
+}
+
+/// The full fetch translation (fast-TLB miss): translate, PMP-check, then publish the outcome.
+#[inline(never)]
+fn fetch_xlate_slow(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    ctx: u64,
+) -> Result<u64, Trap> {
+    let (pa, slot) = mmu::translate_cached_slot(csr, tlb, bus, va, Access::Fetch, csr.mode)?;
     if !csr.pmp_ok(pa, 2, PmpAccess::Exec, csr.mode) {
         return Err(Trap {
             cause: Exception::InstrAccessFault,
             tval: va,
         });
     }
+    fast_publish(
+        csr,
+        tlb,
+        bus,
+        crate::tlb::FAST_FETCH,
+        va,
+        pa,
+        ctx,
+        slot,
+        csr.mode,
+        &[PmpAccess::Exec],
+    );
     Ok(pa)
 }
 
@@ -803,8 +1031,13 @@ impl Hart {
         self.csr.sv57 = sv57;
         self.resv = None;
         self.fregs = fregs::FRegs::default();
-        // Reset flushes the TLB — the walker will re-fill it from the reset page tables.
+        // Reset flushes the TLB — the walker will re-fill it from the reset page tables. The
+        // fast-path-disabled differential oracle is host configuration, so it survives a reset.
+        let fast = self.tlb.fast_path_enabled();
         self.tlb = crate::tlb::Tlb::new();
+        if !fast {
+            self.tlb.disable_fast_path();
+        }
         #[cfg(feature = "zicsr-stub")]
         {
             self.csrs = crate::zicsr_stub::CsrFile::default();
@@ -992,7 +1225,11 @@ impl Hart {
 
     /// E4-T05: translate + PMP-check an instruction fetch at `va`, returning the physical
     /// address — the block cache's key. A thin wrapper over the fetch translation used by
-    /// [`decode_at`] so the cache can key a block by physical PC without re-deriving it.
+    /// [`decode_at`] so the cache can key a block by physical PC without re-deriving it. Served
+    /// by the softmmu fast path on a hit (this runs at every block entry). Only the block
+    /// cache / JIT use it, which the quarantined `zicsr-stub` build compiles out.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline]
     pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
         fetch_xlate(&self.csr, &mut self.tlb, bus, va)
     }
@@ -1898,6 +2135,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
             Csrrs { rd, rs1, csr } => {
@@ -1910,6 +2148,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
             Csrrc { rd, rs1, csr } => {
@@ -1922,6 +2161,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
             Csrrwi { rd, uimm, csr } => {
@@ -1933,6 +2173,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
             Csrrsi { rd, uimm, csr } => {
@@ -1944,6 +2185,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
             Csrrci { rd, uimm, csr } => {
@@ -1955,6 +2197,7 @@ impl Hart {
                     rd == 0,
                     raw_insn,
                 )?;
+                note_csr_access(&mut self.tlb, csr);
                 (rd, old, pc_next)
             }
 
