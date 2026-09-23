@@ -364,6 +364,73 @@ struct CodePageSlots {
     slots: Vec<usize>,
 }
 
+/// log2 of the [`CodePageFilter`] bucket count: 2^18 buckets alias frames 1 GiB apart.
+const CODE_FILTER_BITS: u32 = 18;
+const CODE_FILTER_MASK: usize = (1 << CODE_FILTER_BITS) - 1;
+
+/// A counting presence filter over page frames: bucket `frame & CODE_FILTER_MASK` counts the
+/// [`BlockCache::code_slots`] entries whose frame lands in it, and its bit is set while that count
+/// is non-zero. A clear bit therefore PROVES the frame has no `code_slots` entry (the map lookup
+/// would miss); a set bit only means "maybe" (another frame may alias the bucket). A count that
+/// would overflow sticks at the maximum and keeps its bit set forever -- still conservative.
+struct CodePageFilter {
+    bits: Vec<u64>,
+    counts: Vec<u16>,
+}
+
+impl CodePageFilter {
+    fn new() -> Self {
+        Self {
+            bits: alloc::vec![0; (CODE_FILTER_MASK + 1) / 64],
+            counts: alloc::vec![0; CODE_FILTER_MASK + 1],
+        }
+    }
+
+    #[inline(always)]
+    fn may_contain(&self, frame: u64) -> bool {
+        let b = (frame as usize) & CODE_FILTER_MASK;
+        self.bits[b >> 6] & (1 << (b & 63)) != 0
+    }
+
+    /// A `code_slots` entry for `frame` was created.
+    fn add(&mut self, frame: u64) {
+        let b = (frame as usize) & CODE_FILTER_MASK;
+        let c = &mut self.counts[b];
+        *c = c.saturating_add(1);
+        self.bits[b >> 6] |= 1 << (b & 63);
+    }
+
+    /// The `code_slots` entry for `frame` was removed.
+    fn remove(&mut self, frame: u64) {
+        let b = (frame as usize) & CODE_FILTER_MASK;
+        let c = &mut self.counts[b];
+        if *c == u16::MAX {
+            return; // saturated: stays (conservatively) present
+        }
+        *c -= 1;
+        if *c == 0 {
+            self.bits[b >> 6] &= !(1 << (b & 63));
+        }
+    }
+}
+
+/// One [`BlockCache`] slot, packed so a probe step reads the key, generation and block handle from
+/// one 32-byte record (a probe used to touch three parallel arrays).
+#[derive(Default)]
+struct CacheSlot {
+    /// `phys_start` of the resident block; meaningful only while `block` is `Some` (always equal
+    /// to that block's own field), so a probe compares keys without dereferencing the block.
+    phys: u64,
+    /// `block_gen` of the resident block, under the same rule as `phys`.
+    block_gen: u64,
+    block: Option<Rc<DecodedBlock>>,
+    /// Second-chance reference bit: set when an ENTRY re-uses the slot's block
+    /// ([`BlockCache::get_rc_touch`]), cleared as the replacement scan passes over it. Only the
+    /// choice of victim within a full probe window depends on it — never whether a lookup hits a
+    /// resident block — so it shapes hit rate, not behaviour.
+    referenced: bool,
+}
+
 /// Open-addressed, physically-keyed block cache with O(1) whole-cache flush.
 ///
 /// Flush is a generation bump: a stored block whose `gen` differs from `generation` is
@@ -374,16 +441,7 @@ pub struct BlockCache {
     /// replaying and step through it with no hash probe per instruction. The cache stays the sole
     /// authority for LIVENESS: every path that drops a live block (generation flush, page flush)
     /// also clears the cursor, so a cursor never outlives its block's cache residency.
-    slots: alloc::vec::Vec<Option<Rc<DecodedBlock>>>,
-    /// Second-chance reference bits, parallel to `slots`: set when an ENTRY re-uses the slot's
-    /// block ([`Self::get_rc_touch`]), cleared as the replacement scan passes over it. Only the
-    /// choice of victim within a full probe window depends on them — never whether a lookup hits
-    /// a resident block — so they shape hit rate, not behaviour.
-    referenced: alloc::vec::Vec<bool>,
-    /// `(phys_start, block_gen)` of each occupied slot's block, parallel to `slots`, so a probe
-    /// compares keys in one dense array and dereferences a block only on a hit. Meaningful only
-    /// while the slot is `Some`; always equal to that block's own fields.
-    tags: alloc::vec::Vec<(u64, u64)>,
+    slots: alloc::vec::Vec<CacheSlot>,
     mask: usize,
     generation: u64,
     /// E5.5-T03ba: decoded-cache slots grouped by physical page. A store (guest OR device/DMA)
@@ -392,6 +450,10 @@ pub struct BlockCache {
     /// with their page across generation bumps so page-flush accounting stays identical to the
     /// legacy full-table scan, including stale physical slots.
     code_slots: U64Map<CodePageSlots>,
+    /// Conservative presence filter over `code_slots` keys, so the store-drain path answers "this
+    /// frame holds no cached code" -- the common case, after every guest store -- with one bit test
+    /// instead of a map probe. Derived state only (never serialized).
+    code_filter: CodePageFilter,
     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
     flushes: u64,
@@ -422,14 +484,13 @@ impl BlockCache {
     pub fn with_capacity(capacity: usize) -> Self {
         let cap = capacity.max(1).next_power_of_two();
         let mut slots = alloc::vec::Vec::with_capacity(cap);
-        slots.resize_with(cap, || None);
+        slots.resize_with(cap, CacheSlot::default);
         Self {
             slots,
-            referenced: alloc::vec![false; cap],
-            tags: alloc::vec![(0, 0); cap],
             mask: cap - 1,
             generation: 1,
             code_slots: U64Map::new(),
+            code_filter: CodePageFilter::new(),
             flushes: 0,
             blocks_discarded: 0,
             fence_i_noops: 0,
@@ -471,6 +532,11 @@ impl BlockCache {
     /// miss: the common case for an ordinary data store, so the cache is retained. A hit removes
     /// only the slots recorded for that page; it never scans unrelated cache entries.
     pub fn flush_page(&mut self, frame: u64) -> bool {
+        // A clear filter bit proves `code_slots` has no entry for `frame` (the lookup below would
+        // miss): the common data-store case, answered without a probe.
+        if !self.code_filter.may_contain(frame) {
+            return false;
+        }
         let indices = {
             let Some(page) = self.code_slots.get_mut(&frame) else {
                 return false;
@@ -481,14 +547,15 @@ impl BlockCache {
             core::mem::take(&mut page.slots)
         };
         self.code_slots.remove(&frame);
+        self.code_filter.remove(frame);
         for index in indices {
             if self
                 .slots
                 .get(index)
-                .and_then(Option::as_ref)
+                .and_then(|slot| slot.block.as_ref())
                 .is_some_and(|b| b.page_frame == frame)
             {
-                self.slots[index] = None;
+                self.slots[index].block = None;
                 self.blocks_discarded = self.blocks_discarded.saturating_add(1);
             }
         }
@@ -499,7 +566,7 @@ impl BlockCache {
     /// becomes empty: the legacy `has_code` membership stayed live until `flush_page`, and callers
     /// use that membership to decide whether a page invalidation occurred.
     fn unlink_code_slot(&mut self, index: usize) {
-        let Some(block) = self.slots[index].as_ref() else {
+        let Some(block) = self.slots[index].block.as_ref() else {
             return;
         };
         let frame = block.page_frame;
@@ -508,6 +575,13 @@ impl BlockCache {
         {
             page.slots.swap_remove(position);
         }
+    }
+
+    /// Whether `frame` may hold cached code: `false` proves [`Self::flush_page`] would be a no-op
+    /// returning `false`, so the run loop's store drain can skip it with one bit test.
+    #[inline(always)]
+    pub(crate) fn may_hold_code(&self, frame: u64) -> bool {
+        self.code_filter.may_contain(frame)
     }
 
     #[inline]
@@ -530,7 +604,7 @@ impl BlockCache {
     #[inline]
     pub(crate) fn get_rc(&self, phys_start: u64) -> Option<&Rc<DecodedBlock>> {
         self.probe(phys_start)
-            .and_then(|idx| self.slots[idx].as_ref())
+            .and_then(|idx| self.slots[idx].block.as_ref())
     }
 
     /// [`Self::get_rc`] for a block ENTRY: a hit also marks the slot referenced, giving the
@@ -539,8 +613,9 @@ impl BlockCache {
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn get_rc_touch(&mut self, phys_start: u64) -> Option<Rc<DecodedBlock>> {
         let idx = self.probe(phys_start)?;
-        self.referenced[idx] = true;
-        self.slots[idx].clone()
+        let slot = &mut self.slots[idx];
+        slot.referenced = true;
+        slot.block.clone()
     }
 
     /// The slot holding the live block keyed `phys_start`, if any.
@@ -549,13 +624,13 @@ impl BlockCache {
         let start = self.hash(phys_start);
         for i in 0..MAX_PROBE {
             let idx = (start + i) & self.mask;
-            let (phys, block_gen) = self.tags[idx];
-            if self.slots[idx].is_none() || block_gen != self.generation {
+            let slot = &self.slots[idx];
+            if slot.block.is_none() || slot.block_gen != self.generation {
                 // A `None` or stale-gen slot is a genuine empty — the key was never inserted on
                 // this chain, so stop.
                 return None;
             }
-            if phys == phys_start {
+            if slot.phys == phys_start {
                 return Some(idx);
             }
             // A live block for a different key: keep probing.
@@ -569,7 +644,7 @@ impl BlockCache {
     /// legal rebuild.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn live_blocks(&self) -> impl Iterator<Item = &DecodedBlock> {
-        self.slots.iter().filter_map(|slot| match slot {
+        self.slots.iter().filter_map(|slot| match &slot.block {
             Some(block) if block.block_gen == self.generation => Some(&**block),
             _ => None,
         })
@@ -589,10 +664,10 @@ impl BlockCache {
         let index = (0..MAX_PROBE)
             .find_map(|i| {
                 let idx = (start + i) & self.mask;
-                let (phys, block_gen) = self.tags[idx];
-                let free = self.slots[idx].is_none()
-                    || block_gen != self.generation
-                    || phys == block.phys_start;
+                let slot = &self.slots[idx];
+                let free = slot.block.is_none()
+                    || slot.block_gen != self.generation
+                    || slot.phys == block.phys_start;
                 if free { Some(idx) } else { None }
             })
             .unwrap_or_else(|| {
@@ -600,22 +675,28 @@ impl BlockCache {
                 // since the scan last passed it (second chance), else the window head.
                 (0..MAX_PROBE)
                     .map(|i| (start + i) & self.mask)
-                    .find(|&idx| !core::mem::replace(&mut self.referenced[idx], false))
+                    .find(|&idx| !core::mem::replace(&mut self.slots[idx].referenced, false))
                     .unwrap_or(start)
             });
-        self.referenced[index] = false;
         self.unlink_code_slot(index);
         let page_frame = block.page_frame;
-        self.tags[index] = (block.phys_start, block.block_gen);
+        let (phys, block_gen) = (block.phys_start, block.block_gen);
         let block = Rc::new(block);
-        self.slots[index] = Some(Rc::clone(&block));
+        self.slots[index] = CacheSlot {
+            phys,
+            block_gen,
+            block: Some(Rc::clone(&block)),
+            referenced: false,
+        };
         let generation = self.generation;
-        let page = self
-            .code_slots
-            .get_or_insert_with(page_frame, || CodePageSlots {
+        let code_filter = &mut self.code_filter;
+        let page = self.code_slots.get_or_insert_with(page_frame, || {
+            code_filter.add(page_frame);
+            CodePageSlots {
                 generation,
                 slots: Vec::new(),
-            });
+            }
+        });
         page.generation = generation;
         page.slots.push(index);
         block

@@ -4137,9 +4137,16 @@ impl Machine {
     #[inline(always)]
     fn drain_code_writes(&mut self) {
         // Hot path (after every retire): an empty log — no store since the last drain — is one
-        // length test. Only a logged frame takes the out-of-line page-invalidation walk.
-        if self.block_cache_enabled && !self.bus.code_write_log_mut().is_empty() {
-            self.drain_code_writes_slow();
+        // length test, and a single logged frame that provably holds no cached code (the block
+        // cache's presence filter; `flush_page` would miss) is dropped inline. Anything else takes
+        // the out-of-line page-invalidation walk.
+        if self.block_cache_enabled {
+            let log = self.bus.code_write_log_mut();
+            match log.len() {
+                0 => {}
+                1 if !self.block_cache.may_hold_code(log[0]) => log.clear(),
+                _ => self.drain_code_writes_slow(),
+            }
         }
     }
 
