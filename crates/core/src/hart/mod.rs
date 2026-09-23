@@ -754,14 +754,14 @@ fn fast_data(csr: &Csrs, tlb: &mut Tlb, kind: usize, va: u64, len: u64) -> Optio
 }
 
 macro_rules! checked_load {
-    ($name:ident, $slow:ident, $busfn:ident, $ty:ty, $len:expr) => {
+    ($name:ident, $slow:ident, $busfn:ident, $ramfn:ident, $ty:ty, $len:expr) => {
         /// Checked, translated load. The fast-TLB hit path is inlined into the caller; everything
         /// else (triggers, misalignment, translation, PMP, faults) lives in the out-of-line slow
         /// half, which is the original checked path.
         #[inline(always)]
         fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
             if let Some(pa) = fast_data(csr, tlb, crate::tlb::FAST_LOAD, a, $len) {
-                return bus.$busfn(pa).map_err(|f| load_fault(f, a));
+                return bus.$ramfn(pa).map_err(|f| load_fault(f, a));
             }
             $slow(csr, tlb, bus, a)
         }
@@ -792,7 +792,7 @@ macro_rules! checked_load {
     };
 }
 macro_rules! checked_store {
-    ($name:ident, $with_phys:ident, $slow:ident, $busfn:ident, $ty:ty, $len:expr) => {
+    ($name:ident, $with_phys:ident, $slow:ident, $busfn:ident, $ramfn:ident, $ty:ty, $len:expr) => {
         #[inline(always)]
         fn $name(
             csr: &Csrs,
@@ -816,7 +816,7 @@ macro_rules! checked_store {
             v: $ty,
         ) -> Result<Option<u64>, Trap> {
             if let Some(pa) = fast_data(csr, tlb, crate::tlb::FAST_STORE, a, $len) {
-                bus.$busfn(pa, v).map_err(|f| store_fault(f, a))?;
+                bus.$ramfn(pa, v).map_err(|f| store_fault(f, a))?;
                 return Ok(Some(pa));
             }
             $slow(csr, tlb, bus, a, v)
@@ -850,10 +850,10 @@ macro_rules! checked_store {
 }
 
 // Ordinary loads (incl. LR): translated as Load.
-checked_load!(cload8, cload8_slow, load8, u8, 1);
-checked_load!(cload16, cload16_slow, load16, u16, 2);
-checked_load!(cload32, cload32_slow, load32, u32, 4);
-checked_load!(cload64, cload64_slow, load64, u64, 8);
+checked_load!(cload8, cload8_slow, load8, ram_load8, u8, 1);
+checked_load!(cload16, cload16_slow, load16, ram_load16, u16, 2);
+checked_load!(cload32, cload32_slow, load32, ram_load32, u32, 4);
+checked_load!(cload64, cload64_slow, load64, ram_load64, u64, 8);
 // The read half of an AMO (its store half re-translates via cstoreN).
 #[inline]
 fn camoload32(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
@@ -866,10 +866,42 @@ fn camoload64(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u
     bus.load64(pa).map_err(|f| store_fault(f, a))
 }
 // Stores (incl. SC and the write half of an AMO): translated as Store.
-checked_store!(cstore8, cstore8_with_phys, cstore8_slow, store8, u8, 1);
-checked_store!(cstore16, cstore16_with_phys, cstore16_slow, store16, u16, 2);
-checked_store!(cstore32, cstore32_with_phys, cstore32_slow, store32, u32, 4);
-checked_store!(cstore64, cstore64_with_phys, cstore64_slow, store64, u64, 8);
+checked_store!(
+    cstore8,
+    cstore8_with_phys,
+    cstore8_slow,
+    store8,
+    ram_store8,
+    u8,
+    1
+);
+checked_store!(
+    cstore16,
+    cstore16_with_phys,
+    cstore16_slow,
+    store16,
+    ram_store16,
+    u16,
+    2
+);
+checked_store!(
+    cstore32,
+    cstore32_with_phys,
+    cstore32_slow,
+    store32,
+    ram_store32,
+    u32,
+    4
+);
+checked_store!(
+    cstore64,
+    cstore64_with_phys,
+    cstore64_slow,
+    store64,
+    ram_store64,
+    u64,
+    8
+);
 
 /// A CSR instruction accessed `addr` without trapping. satp is the one CSR the fast TLB relies on
 /// without re-reading it per access (its entries are valid only for the ASID/MODE they were filled
