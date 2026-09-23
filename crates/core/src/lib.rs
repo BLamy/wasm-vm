@@ -3579,15 +3579,23 @@ impl Machine {
             return;
         }
         if let Some(clint) = &self.clint {
-            let divisor = u128::from(self.clock_div.max(1));
-            let total = u128::from(self.tick_accum) + u128::from(retired);
-            let ticks = total / divisor;
-            self.tick_accum = (total % divisor) as u64;
+            let divisor = self.clock_div.max(1);
+            // A span whose residue sum fits in u64 (every realistic one) divides in hardware; the
+            // quotient/remainder are identical to the u128 form kept for the overflow edge.
+            let (ticks, residue) = match self.tick_accum.checked_add(retired) {
+                Some(total) => (total / divisor, total % divisor),
+                None => {
+                    let total = u128::from(self.tick_accum) + u128::from(retired);
+                    let divisor = u128::from(divisor);
+                    // Casting truncates modulo 2^64, which is exactly the value a wrapping u64
+                    // mtime addition observes even for the theoretical `u64::MAX` run-budget edge.
+                    ((total / divisor) as u64, (total % divisor) as u64)
+                }
+            };
+            self.tick_accum = residue;
             if ticks != 0 {
                 let mut s = clint.borrow_mut();
-                // Casting truncates modulo 2^64, which is exactly the value a wrapping u64 mtime
-                // addition observes even for the theoretical `u64::MAX` run-budget edge.
-                s.mtime = s.mtime.wrapping_add(ticks as u64);
+                s.mtime = s.mtime.wrapping_add(ticks);
             }
         }
     }
