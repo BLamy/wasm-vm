@@ -129,7 +129,7 @@ def main():
         nv = nd_doc.get("summary", {}).get(case, {}).get(nl, {}).get(key)
         if bv is None and nv is None:
             continue
-        head_base, head_new = head_base or bl, head_new or nl
+        head_base, head_new = head_base or (bl if bd else "no baseline"), head_new or nl
         sp = "–"
         if bv and nv:
             sp = f"**{(bv / nv if better == 'lower' else nv / bv):.2f}x**"
