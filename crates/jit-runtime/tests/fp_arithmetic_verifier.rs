@@ -349,19 +349,23 @@ fn verifier_mixed_batch_function_indices_and_unselected_fallbacks() {
     assert_eq!(function_imports(&integer).len(), 5);
     let unchanged_integer = translate_batch(&[root], &Abi::FROZEN, &[[None, None]]).unwrap();
     assert_eq!(function_imports(&unchanged_integer).len(), 5);
+    // Full F/D coverage: the families this verifier once pinned as unselected (FSUB.S, FSQRT.S,
+    // FADD.D, FMUL.D, FCVT.L.S) now translate through the generic helpers; their exact semantics
+    // are proven against the interpreter in `fp_full_lockstep.rs`. Selecting them must not change
+    // the established indices checked above for modules that do not use them.
     for raw in [
         0x0800_0053,
-        0x5800_0053, // FSQRT.S remains unsupported after the division slice.
+        0x5800_0053,
         0x0200_0053,
         0x1200_0053,
-        0xc020_0053, // FCVT.L.S remains unsupported after the W/WU slice.
+        0xc020_0053,
     ] {
         assert!(
-            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),
-            "unselected FP parcel {raw:08x} admitted"
+            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_ok(),
+            "full-coverage FP parcel {raw:08x} rejected"
         );
     }
     eprintln!(
-        "CRITIC_ARITHMETIC_INDICES imports=6 exports=run0:6,run1:7,run2:8 actual_chain=true integer_imports=5 unsupported_families=5"
+        "CRITIC_ARITHMETIC_INDICES imports=6 exports=run0:6,run1:7,run2:8 actual_chain=true integer_imports=5 generic_families=5"
     );
 }

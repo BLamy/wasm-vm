@@ -139,8 +139,10 @@ fn real_candidates_nomination_dedup_and_compiled_progress_are_observed_without_m
 }
 
 #[wasm_bindgen_test]
-fn real_csr_terminator_is_excluded_while_supported_jump_is_nominated() {
-    // csrrs x5, sstatus, x0; jal x0, -4. Linux starts in S mode; neither op traps.
+fn real_lone_csr_block_is_excluded_while_supported_jump_is_nominated() {
+    // csrrs x5, sstatus, x0; jal x0, -4. Linux starts in S mode; neither op traps. The CSR block is
+    // just the CSR op (no compilable prefix), so it is excluded rather than spending a translation
+    // attempt; CSR-terminated blocks WITH a prefix are nominated and compile up to the CSR op.
     let m = linux(&[0x1000_22f3, 0xffdf_f06f]);
     m.enable_jit(1).unwrap();
     run(&m, 20);
