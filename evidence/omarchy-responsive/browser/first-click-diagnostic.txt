@@ -1,0 +1,28 @@
+# Browser (real built page, same web/dist wasm f09e0251), guest per-thread CPU ticks (100 Hz,
+# utime+stime) over ~60 s of host time after ONE action, read over the serial console before and
+# after. "uptime a -> b" are /proc/uptime (total, idle) guest seconds. Script: scratch
+# click-diag.mjs (not committed); numbers transcribed from its output.
+#
+# r3 = responsive pair, LP_NUM_THREADS=1, profile applied to a restored (browser-lineage) session.
+# r5 = responsive pair, LP_NUM_THREADS=0, fresh cold-booted session, compositor warps only
+#      (hl.dsp.cursor.move), never a real pointer device event.
+# r6 = r4 (same fresh session as r5) + one CLI-injected virtio-tablet click before capture.
+
+action            pair  uptime a -> b                      top threads (ticks)
+click (640,420)   r3    354.09/200.93 -> 630.12/475.24     llvmpipe-0 34, Hyprland 9
+click (640,420)   r3    (second run)  -> 587.10/431.53     llvmpipe-0 27, Hyprland 7
+click (640,420)   r5    454.67/358.23 -> 480.41/381.15     Hyprland 255
+click (640,420)   r5    (repeat)      -> 480.53/381.15     Hyprland 268
+click (640,420)   r5    (repeat)      -> 480.28/380.64     Hyprland 242
+focus + 1 key     r5    454.67/358.23 -> 675.09/576.96     Hyprland 49  (no click: cheap)
+click after an
+earlier click     r5    495.13/395.00 -> 675.11/573.27     Hyprland 34  (second click: cheap)
+cursor:invisible  r5    click                              Hyprland 229 (cursor settings do not
+no_hw_cursors=0   r5    click                              Hyprland 226  change the first-click
+no_hw_cursors=1   r5    click                              Hyprland 245  cost)
+
+# At icount divider 64 one busy guest second is ~6.4e8 instructions, so the first real pointer
+# device event in a never-clicked session costs ~1.5-1.7e9 instructions on Hyprland's main thread
+# (~80 s at browser speed: r4/r5 first echo 79.6-81.6 s). A compositor warp does not pay it; one
+# injected device click during preparation does (prepare-receipt-r6.json: the tablet-click serial
+# command took 49.6 s of host time), after which r6 echoes in ~10 s.

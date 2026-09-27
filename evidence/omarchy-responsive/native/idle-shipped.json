@@ -1,0 +1,58 @@
+{
+ "pair": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot",
+ "kernel": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+ "bin": "target/release/wasm-vm",
+ "args": [
+  "boot",
+  "--kernel",
+  "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+  "--drive",
+  "file=/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/82b98b86-28d3-4ec1-befc-ad7a8472a962/scratchpad/idle-shipped/disk.ext4",
+  "--ram-mib",
+  "1024",
+  "--net",
+  "--virtio-rng",
+  "--browser-topology",
+  "--icount-divider",
+  "64",
+  "--jit",
+  "--block-cache",
+  "--interrupt-batching",
+  "--quantum",
+  "500000",
+  "--append",
+  "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+  "--max-instrs",
+  "40000000000000",
+  "--no-reboot",
+  "--stats",
+  "--resume-from",
+  "/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/82b98b86-28d3-4ec1-befc-ad7a8472a962/scratchpad/idle-shipped/restore.snap"
+ ],
+ "results": [
+  {
+   "sample": 0,
+   "hostMs": 41554434,
+   "guestSeconds": null,
+   "idleShare": null,
+   "top": []
+  },
+  {
+   "sample": 1,
+   "hostMs": 410241,
+   "guestSeconds": 10.11,
+   "idleShare": 0,
+   "top": [
+    "1015 462 llvmpipe-0",
+    "3 417 Hyprland",
+    "2 114 NetworkManager",
+    "1 503 foot",
+    "1 1743 awk",
+    "1 1742 bash",
+    "1 139 gdbus",
+    "1 113 dbus-broker",
+    "1 1 systemd"
+   ]
+  }
+ ]
+}

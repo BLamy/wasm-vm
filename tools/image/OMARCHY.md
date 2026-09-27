@@ -81,6 +81,64 @@ starts the initial Foot window only after its local setup succeeds. Its exact
 script digest is included in the frozen input receipt. A fresh guest boot is
 still required before this profile can be described as ready.
 
+### Responsive browser profile (`responsive-v2`)
+
+On one emulated hart, Hyprland composites through llvmpipe, so every damaged pixel
+costs guest instructions. Measured in `evidence/omarchy-responsive/README.md`, the
+shipped desktop never idled and typed text never appeared within 15 minutes in the
+browser; the responsive pair echoes a typed command about 5.6 s after the last key
+and shows its output about 5.9 s after Enter at today's ~17 guest MIPS. The profile
+changes four things and keeps the package's bar, tiling, Tokyo Night theme,
+Hyprland configuration and Foot:
+
+- Quickshell's `omarchy.background` layer re-commits every frame and Hyprland
+  damages a layer's whole geometry per commit: a 1280x800 recomposite back to back,
+  100% of the hart, while idle. Its `.webp` wallpaper is not decodable in this
+  image, so the layer drew nothing. The plugin is disabled (user `shell.json`).
+- Foot 1.28 always binds `ext-background-effect`, and Hyprland 0.56 damages the
+  whole window on every commit of such a surface. The profile's Foot has that one
+  interface-name string renamed (same length), so it only damages glyph cells.
+- Omarchy's own stay-awake indicator is on: idle guest time fast-forwards under the
+  icount clock, so the 150 s screensaver / 300 s lock would fire within seconds.
+- `LP_NUM_THREADS=0`: Hyprland on virtio-gpu has no explicit sync and only
+  `glFlush()`es before its atomic commit, so an llvmpipe rasterizer thread can
+  still be drawing when the commit copies the buffer (torn 64-pixel tile rows and
+  stale frames that stay on screen). Rasterizing inside the flush fixes it; one
+  hart gains nothing from the thread.
+
+`configure-omarchy-demo.py` bakes all four into fresh images (`/usr/local/bin/foot`).
+`omarchy-responsive-profile.sh` applies them to a prepared session's home
+directory; the LP setting takes effect only in the next graphical session.
+
+To refresh the published pair without rebuilding the 4 GiB image, cold-boot a
+profiled copy of an existing pair's disk and capture a new pair bound to the same
+chunk manifest:
+
+```sh
+node tools/image/prepare-omarchy-responsive-cold.mjs --bin target/release/wasm-vm \
+  --kernel <kernel of the source pair> --pair <dir with omarchy-ready.snap.gz + omarchy-overlay-delta.bin.gz> \
+  --base-image <ext4 matching the chunk manifest> --chunks <chunked-omarchy dir> --out <new dir>
+node tools/verify/omarchy-responsive-latency.mjs <out> --pair <new dir> \
+  --kernel <kernel> --chunks <chunked-omarchy dir>
+```
+
+The preparer applies the profile in the restored session, syncs, cold-boots the
+same disk, checks that the compositor process really runs with `LP_NUM_THREADS=0`
+and no `llvmpipe-N` thread, applies the shipped opaque Foot window properties, and
+has the CLI inject one virtio-tablet click (`WASM_VM_PREP_TABLET_CLICK`) before
+capture: the first real pointer event in a fresh session costs Hyprland ~1.5e9
+guest instructions (about 80 s in the browser), and a compositor warp does not
+pay it. `--warm-only` does only that click on an already prepared pair.
+`prepare-omarchy-responsive.mjs` (profile applied to a restored session without a
+cold boot) remains for comparison; its pairs keep the rasterizer thread.
+
+Use the T03aq input kernel (evdev client buffer 1024 events) and a pair made with
+it: with the stock 64-event buffer, typing faster than the compositor drains input
+loses keystrokes (SYN_DROPPED), natively and in the browser. That kernel is a
+different file from the stock `releases/kernel/6.6.63/Image` that the other guests
+use, so it is published at its own path (`evidence/omarchy-responsive/README.md`,
+"Artifacts to publish").
+
 ## Chunk integrity and tests
 
 ```sh

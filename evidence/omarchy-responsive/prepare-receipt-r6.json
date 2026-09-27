@@ -1,0 +1,238 @@
+{
+ "kind": "omarchy-responsive-cold-pair",
+ "startedAt": "2026-09-27T15:52:49.538Z",
+ "passed": true,
+ "head": "3d3f68afe6f99618920f0819639f26eec787f7e5",
+ "profile": {
+  "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/tools/image/omarchy-responsive-profile.sh",
+  "size": 5300,
+  "sha256": "60f743d4bf079d9135fc3183c1bed5cd859b0ba243cada794a2084f284817b66"
+ },
+ "phases": {
+  "warm": {
+   "command": [
+    "target/prep-cli/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-XVPWsh/omarchy.ext4",
+    "--ram-mib",
+    "1024",
+    "--net",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--jit",
+    "--block-cache",
+    "--interrupt-batching",
+    "--append",
+    "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "4000000000000",
+    "--resume-from",
+    "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-XVPWsh/restore.snap",
+    "--snapshot-trigger",
+    "WVM_OMARCHY_RESPONSIVE_READY",
+    "--snapshot-out",
+    "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-XVPWsh/omarchy-ready.snap",
+    "--snapshot-core-id",
+    "302e302e31000000000000000000000000000000000000000000000000000000",
+    "--snapshot-base-id",
+    "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+   ],
+   "serial": [
+    {
+     "label": "identity",
+     "command": "id -u",
+     "status": 0,
+     "output": "1000",
+     "hostMs": 6433
+    },
+    {
+     "label": "hyprland-pid",
+     "command": "pgrep -x Hyprland",
+     "status": 0,
+     "output": "474",
+     "hostMs": 10022
+    },
+    {
+     "label": "hyprland-environment",
+     "command": "tr '\\000' '\\n' < /proc/474/environ | sed -n '/^GALLIUM_DRIVER=/p;/^LIBGL_ALWAYS_SOFTWARE=/p;/^LP_NUM_THREADS=/p'",
+     "status": 0,
+     "output": "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=0",
+     "hostMs": 10363
+    },
+    {
+     "label": "hyprland-threads",
+     "command": "ps -T -p 474 -o comm=",
+     "status": 0,
+     "output": "Hyprland\nHyprland\nHyprlan:disk$0\npool-spawner\ngmain\ndconf worker\ngdbus\n[pango] fontcon",
+     "hostMs": 8525
+    },
+    {
+     "label": "tablet-click",
+     "command": "printf '%s%s\\n' 'WVM_PREP_' 'TABLET_CLICK'; sleep 5",
+     "status": 0,
+     "output": "WVM_PREP_TABLET_CLICK",
+     "hostMs": 49629
+    },
+    {
+     "label": "clock-flush",
+     "command": "sleep 150",
+     "status": 0,
+     "output": "",
+     "hostMs": 58083
+    },
+    {
+     "label": "final-clients",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+     "status": 0,
+     "output": "[{\n    \"address\": \"0x555593b9f290\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\"...[869 chars]",
+     "hostMs": 3679
+    }
+   ],
+   "settleProbes": [
+    {
+     "label": "pointer-warm",
+     "status": 0,
+     "uptime": 252.76,
+     "idleShare": 0.990099009900999,
+     "hostMs": 8628
+    },
+    {
+     "label": "post-flush",
+     "status": 0,
+     "uptime": 404.98,
+     "idleShare": 0.9900990099009711,
+     "hostMs": 7014
+    },
+    {
+     "label": "pre-capture",
+     "status": 0,
+     "uptime": 407.11,
+     "idleShare": 0.9900990099009711,
+     "hostMs": 5326
+    }
+   ],
+   "promptHostMs": 5064,
+   "lp": {
+    "GALLIUM_DRIVER": "llvmpipe",
+    "LIBGL_ALWAYS_SOFTWARE": "1",
+    "LP_NUM_THREADS": "0",
+    "activeRendererValidated": false,
+    "configurationObserved": "lp0-configuration-observed"
+   },
+   "finalClients": [
+    {
+     "address": "0x555593b9f290",
+     "mapped": true,
+     "hidden": false,
+     "visible": true,
+     "acceptsInput": true,
+     "at": [
+      12,
+      38
+     ],
+     "size": [
+      1256,
+      750
+     ],
+     "workspace": {
+      "id": 1,
+      "name": "1"
+     },
+     "floating": false,
+     "monitor": 0,
+     "class": "foot",
+     "title": "omarchy@omarchy-demo:~",
+     "initialClass": "foot",
+     "initialTitle": "foot",
+     "pid": 560,
+     "xwayland": false,
+     "pinned": false,
+     "pinFullscreened": false,
+     "fullscreen": 0,
+     "fullscreenClient": 0,
+     "fullscreenHandler": "default",
+     "allowedOverFullscreen": true,
+     "grouped": [],
+     "tags": [
+      "default-opacity*",
+      "terminal*"
+     ],
+     "swallowing": "0x0",
+     "focusHistoryID": 0,
+     "inhibitingIdle": false,
+     "xdgTag": "",
+     "xdgDescription": "",
+     "contentType": "none",
+     "tearingHint": false,
+     "stableId": "18000000"
+    }
+   ],
+   "exit": {
+    "code": 0,
+    "signal": null
+   },
+   "hostMs": 176897
+  }
+ },
+ "inputs": {
+  "bin": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/prep-cli/release/wasm-vm",
+   "size": 17169208,
+   "sha256": "9ae946e3cf941f45fba9925ff633f258d8023f0858305d44665bf34d3fe300d8"
+  },
+  "kernel": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+   "size": 24208896,
+   "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+  },
+  "chunkManifest": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+   "size": 1097812,
+   "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+  },
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r4/omarchy-ready.snap.gz",
+   "size": 198183409,
+   "sha256": "f2edc77daf6c14b9a6afbaade8a23bce0f92f25227e0baadd1dfa6fbda69aeef"
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r4/omarchy-overlay-delta.bin.gz",
+   "size": 2039925,
+   "sha256": "67acc0adcd1b99fe5dd1b94dc492d3d1c5ec55b6cd77bd8cec6ec16684d08c36"
+  },
+  "baseImage": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-perf/base.ext4",
+   "size": 4294967296,
+   "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+  }
+ },
+ "binding": {
+  "baseId": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+  "version": "0.0.1"
+ },
+ "restoredDeltaBlocks": 3583,
+ "outputs": {
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r6/omarchy-ready.snap.gz",
+   "size": 198186826,
+   "sha256": "a604fc368125e329cdccb3b06d381b03b340d235c0dafc47319dcc7f37cd712f",
+   "rawSize": 861169578
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r6/omarchy-overlay-delta.bin.gz",
+   "size": 2040210,
+   "sha256": "4e9226913efd831997a0a85d3ad387f771614b957932f4f245d09902784e969c",
+   "rawSize": 14729317,
+   "blocks": 3589
+  }
+ },
+ "finishedAt": "2026-09-27T15:56:39.607Z"
+}
