@@ -1,0 +1,28 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2902 bytes @ 0x8fffb4a8, 256 MiB RAM
+
+=== E2-T25 boot profile ===
+phase              wall_ms   d_wall_ms   d_retired      phase_MIPS
+console-up            9017        9017   234589883           26.02
+rootfs-mounted       11216        2199    39599734           18.01
+init-handoff         11243          27      599996           22.22
+getty-login         175932      164689  2798975749           17.00
+total: 175932 ms, 3073765362 retired, overall 17.47 MIPS
+
+per-device MMIO accesses:
+  clint                     0  (@ 0x2000000)
+  plic                   1867  (@ 0xc000000)
+  goldfish-rtc             19  (@ 0x101000)
+  other                     0  (@ 0x100000)
+  uart16550              7790  (@ 0x10000000)
+  virtio-mmio            1196  (@ 0x10001000)
+  virtio-mmio               3  (@ 0x10002000)
+  virtio-mmio               3  (@ 0x10003000)
+  virtio-mmio             153  (@ 0x10004000)
+  virtio-mmio               3  (@ 0x10005000)
+  virtio-mmio               3  (@ 0x10006000)
+  virtio-mmio              79  (@ 0x10007000)
+  virtio-mmio               3  (@ 0x10008000)
+  other                     3  (@ 0x10009000)
+
+PROFILE_JSON {"total_ms":175932,"total_retired":3073765362,"overall_mips":17.47,"phases":[{"phase":"console-up","wall_ms":9017,"retired":234589883,"phase_mips":26.02},{"phase":"rootfs-mounted","wall_ms":11216,"retired":274189617,"phase_mips":18.01},{"phase":"init-handoff","wall_ms":11243,"retired":274789613,"phase_mips":22.22},{"phase":"getty-login","wall_ms":175932,"retired":3073765362,"phase_mips":17.00}],"devices":[{"device":"clint","base":"0x2000000","accesses":0},{"device":"plic","base":"0xc000000","accesses":1867},{"device":"goldfish-rtc","base":"0x101000","accesses":19},{"device":"other","base":"0x100000","accesses":0},{"device":"uart16550","base":"0x10000000","accesses":7790},{"device":"virtio-mmio","base":"0x10001000","accesses":1196},{"device":"virtio-mmio","base":"0x10002000","accesses":3},{"device":"virtio-mmio","base":"0x10003000","accesses":3},{"device":"virtio-mmio","base":"0x10004000","accesses":153},{"device":"virtio-mmio","base":"0x10005000","accesses":3},{"device":"virtio-mmio","base":"0x10006000","accesses":3},{"device":"virtio-mmio","base":"0x10007000","accesses":79},{"device":"virtio-mmio","base":"0x10008000","accesses":3},{"device":"other","base":"0x10009000","accesses":3}]}
+wasm-vm: profile complete (stopped at userland marker)
