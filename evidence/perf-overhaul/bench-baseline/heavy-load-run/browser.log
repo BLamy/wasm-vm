@@ -1,0 +1,58 @@
+[bench-browser 08:42:11] busybox-jit   baseline   rep 0: ready 13.51 s (boot mips 27.4) region 10.81 s mips 15.4 ok=true (25s)
+[bench-browser 08:42:39] busybox-jit   candidate  rep 0: ready 15.05 s (boot mips 24.4) region 12.56 s mips 13.2 ok=true (29s)
+[bench-browser 08:43:20] busybox-nojit baseline   rep 0: ready 23.77 s (boot mips 15.2) region 16.55 s mips 10.0 ok=true (41s)
+[bench-browser 08:44:03] busybox-nojit candidate  rep 0: ready 25.19 s (boot mips 14.3) region 16.37 s mips 10.1 ok=true (43s)
+[bench-browser 08:44:41] node-jit      baseline   rep 0: ready 1.25 s region 35.45 s mips 13.1 ok=true (38s)
+[bench-browser 08:45:23] node-jit      candidate  rep 0: ready 1.26 s region 38.93 s mips 11.9 ok=true (42s)
+[bench-browser 08:46:22] node-nojit    baseline   rep 0: ready 1.28 s region 55.02 s mips 8.4 ok=true (59s)
+[bench-browser 08:47:22] node-nojit    candidate  rep 0: ready 1.31 s region 57.08 s mips 8.1 ok=true (61s)
+[bench-browser 08:47:49] busybox-jit   candidate  rep 1: ready 14.83 s (boot mips 24.7) region 10.99 s mips 15.1 ok=true (27s)
+[bench-browser 08:48:15] busybox-jit   baseline   rep 1: ready 13.38 s (boot mips 27.5) region 11.26 s mips 14.7 ok=true (25s)
+[bench-browser 08:48:55] busybox-nojit candidate  rep 1: ready 23.27 s (boot mips 15.5) region 15.52 s mips 10.7 ok=true (40s)
+[bench-browser 08:49:32] busybox-nojit baseline   rep 1: ready 22.26 s (boot mips 16.2) region 14.59 s mips 11.4 ok=true (38s)
+[bench-browser 08:50:10] node-jit      candidate  rep 1: ready 1.25 s region 35.29 s mips 13.2 ok=true (38s)
+[bench-browser 08:50:51] node-jit      baseline   rep 1: ready 1.25 s region 37.73 s mips 12.3 ok=true (40s)
+[bench-browser 08:51:53] node-nojit    candidate  rep 1: ready 1.52 s region 58.37 s mips 8.0 ok=true (62s)
+[bench-browser 08:52:55] node-nojit    baseline   rep 1: ready 1.28 s region 58.41 s mips 7.9 ok=true (62s)
+[bench-browser 08:53:23] busybox-jit   baseline   rep 2: ready 14.84 s (boot mips 24.8) region 12.09 s mips 13.7 ok=true (28s)
+[bench-browser 08:53:52] busybox-jit   candidate  rep 2: ready 15.38 s (boot mips 23.9) region 12.70 s mips 13.1 ok=true (29s)
+[bench-browser 08:54:37] busybox-nojit baseline   rep 2: ready 26.15 s (boot mips 13.8) region 17.30 s mips 9.6 ok=true (45s)
+[bench-browser 08:55:23] busybox-nojit candidate  rep 2: ready 26.97 s (boot mips 13.4) region 17.81 s mips 9.3 ok=true (46s)
+[bench-browser 08:56:02] node-jit      baseline   rep 2: ready 1.49 s region 36.19 s mips 12.9 ok=true (39s)
+[bench-browser 08:56:42] node-jit      candidate  rep 2: ready 1.33 s region 36.99 s mips 12.5 ok=true (40s)
+[bench-browser 08:57:45] node-nojit    baseline   rep 2: ready 1.47 s region 59.70 s mips 7.8 ok=true (64s)
+[bench-browser 08:58:54] node-nojit    candidate  rep 2: ready 1.51 s region 63.97 s mips 7.3 ok=true (68s)
+# Browser benchmark (2026-09-23T08:41:45.607Z)
+
+Chromium 131.0.6778.33 (headless=true) · Apple M4 Max · samples=3 · medians · interleaved=true
+
+- **baseline**: `/Users/blamy/Documents/Codex/wasm-vm-base/web` rev `8297850913` (+uncommitted changes) wasm sha256 `f09e025172e4` (1.61 MB)
+- **candidate**: `/Users/blamy/Documents/Codex/wasm-vm-t-bench/web` rev `ce356fd482` wasm sha256 `97a93031f137` (1.53 MB)
+
+| case | metric | baseline | candidate | speedup candidate vs baseline | ok |
+|---|---|---:|---:|---:|---:|
+| busybox-jit | (a) cold boot: navigation -> shell prompt s | 13.51 [13.38–14.84] | 15.05 [14.83–15.38] | 0.90x (paired 0.90x) | 3/3 · 3/3 |
+| busybox-jit | (a) boot MIPS (boot span, wall) | 27.4 [24.8–27.5] | 24.4 [23.9–24.7] | 0.89x (paired 0.90x) | 3/3 · 3/3 |
+| busybox-jit | (a) boot MIPS (inside runChunk) | 27.5 [24.7–27.5] | 24.4 [23.9–24.8] | 0.89x (paired 0.90x) | 3/3 · 3/3 |
+| busybox-jit | (a) boot JIT-retired fraction | 0.705 | 0.705 | 1.00x | 3/3 · 3/3 |
+| busybox-jit | (b) shell loop x10000: Enter -> done s | 11.26 [10.81–12.09] | 12.56 [10.99–12.70] | 0.90x (paired 0.95x) | 3/3 · 3/3 |
+| busybox-jit | (b) shell loop MIPS (wall) | 14.7 [13.7–15.4] | 13.2 [13.1–15.1] | 0.90x (paired 0.95x) | 3/3 · 3/3 |
+| busybox-jit | (b) shell loop JIT-retired fraction | 0.532 | 0.537 | 1.01x | 3/3 · 3/3 |
+| busybox-nojit | (a) cold boot: navigation -> shell prompt s | 23.77 [22.26–26.15] | 25.19 [23.27–26.97] | 0.94x (paired 0.96x) | 3/3 · 3/3 |
+| busybox-nojit | (a) boot MIPS (boot span, wall) | 15.2 [13.8–16.2] | 14.3 [13.4–15.5] | 0.94x (paired 0.95x) | 3/3 · 3/3 |
+| busybox-nojit | (a) boot MIPS (inside runChunk) | 15.2 [13.8–16.3] | 14.4 [13.4–15.5] | 0.95x (paired 0.95x) | 3/3 · 3/3 |
+| busybox-nojit | (b) shell loop x10000: Enter -> done s | 16.55 [14.59–17.30] | 16.37 [15.52–17.81] | 1.01x (paired 0.97x) | 3/3 · 3/3 |
+| busybox-nojit | (b) shell loop MIPS (wall) | 10.0 [9.6–11.4] | 10.1 [9.3–10.7] | 1.01x (paired 0.97x) | 3/3 · 3/3 |
+| node-jit | (c) snapshot restore: navigation -> prompt s | 1.25 [1.25–1.49] | 1.26 [1.25–1.33] | 0.99x (paired 1.00x) | 3/3 · 3/3 |
+| node-jit | (c) node -e script: Enter -> done s | 36.19 [35.45–37.73] | 36.99 [35.29–38.93] | 0.98x (paired 0.98x) | 3/3 · 3/3 |
+| node-jit | (c) node -e MIPS (wall) | 12.9 [12.3–13.1] | 12.5 [11.9–13.2] | 0.98x (paired 0.98x) | 3/3 · 3/3 |
+| node-jit | (c) node -e JIT-retired fraction | 0.484 | 0.477 | 0.99x | 3/3 · 3/3 |
+| node-nojit | (c) snapshot restore: navigation -> prompt s | 1.28 [1.28–1.47] | 1.51 [1.31–1.52] | 0.85x (paired 0.98x) | 3/3 · 3/3 |
+| node-nojit | (c) node -e script: Enter -> done s | 58.41 [55.02–59.70] | 58.37 [57.08–63.97] | 1.00x (paired 0.96x) | 3/3 · 3/3 |
+| node-nojit | (c) node -e MIPS (wall) | 7.9 [7.8–8.4] | 8.0 [7.3–8.1] | 1.00x (paired 0.96x) | 3/3 · 3/3 |
+
+Cells: median [min–max over samples]. Speedup = ratio of medians; 'paired' = median of the per-rep ratios (each A/B pair ran back to back).
+
+All times are host clock (page performance.now()); MIPS = worker retired-instruction counter delta / host time. 'boot span' runs from the page's guest-booting event (includes kernel fetch + worker/wasm start) to the prompt; 'inside runChunk' divides by the worker's summed slice time (excludes scheduler yields and idle).
+
+Median 1-minute load average: busybox-jit/baseline=14.5, busybox-jit/candidate=14.1, busybox-nojit/baseline=37.3, busybox-nojit/candidate=47.2, node-jit/baseline=42.4, node-jit/candidate=30.6, node-nojit/baseline=19.6, node-nojit/candidate=19.6

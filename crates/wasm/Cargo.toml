@@ -72,7 +72,9 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
-# Perf overhaul (2026-09): the shipped bundle runs wasm-opt at -O3 (wasm-pack's default is -O).
+# Perf overhaul (2026-09): wasm-opt -O3 (wasm-pack's default is -O) for direct `wasm-pack build crates/wasm`
+# (`make wasm`). The SHIPPED bundle is built from crates/wasm-web (cdylib-only, so fat LTO applies;
+# this crate is also an rlib, which makes cargo skip LTO) — see its Cargo.toml and `make web-build`.
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-O3']
 

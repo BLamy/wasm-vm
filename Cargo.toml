@@ -10,6 +10,7 @@ members = [
     "crates/file-agent",
     "crates/wvseccomp",
     "crates/wasm",
+    "crates/wasm-web",
     "crates/wasm-emit",
     "crates/jit-translate",
     "crates/jit-runtime",
@@ -41,6 +42,15 @@ memmap2 = "0.9"
 [profile.release]
 lto = "fat"
 codegen-units = 1
+
+# The shipped browser module (`make web-build`: `wasm-pack build crates/wasm-web --profile
+# wasm-release`). Measured separately from native because wasm behaves differently (A/B table in
+# evidence/perf-overhaul/webbuild/README.md): fat LTO helps the wasm module too, but only with the
+# default 16 codegen units — codegen-units = 1 cost 2-3% host cycles in V8 with or without LTO.
+# The LTO only takes effect through the cdylib-only crates/wasm-web (cargo skips LTO for rlib units).
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 16
 
 # E4-T02 flamegraphs: a profiling build that is byte-for-byte the release optimisation pipeline
 # (opt-level 3, same codegen-units / lto) but keeps full DWARF debuginfo so `samply` can attribute
