@@ -198,7 +198,13 @@ export async function main(argv) {
       record.lp = validateExpectedLpEnvironment({ environment: environment.output, threads: threads.output, lpNumThreads: "0" });
       const exe = await run(`readlink /proc/${record.foot.pid}/exe; test -f ~/.local/state/omarchy/indicators/stay-awake && echo stay-awake`, "foot-exe");
       assert.deepEqual(exe.output.split("\n").map((s) => s.trim()).filter(Boolean), ["/home/omarchy/.local/bin/foot", "stay-awake"]);
-      const opaque = await run(DIRECT_OPAQUE_COMMAND, "direct-opaque", 1_800_000);
+      // A freshly started session is still busy (shell, portals); hyprctl's IPC can time out.
+      await settled(guest, record, "desktop-started", timeoutMs);
+      let opaque;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        opaque = await run(DIRECT_OPAQUE_COMMAND, "direct-opaque", 1_800_000);
+        if (!/didn't respond in time|Couldn't read/u.test(opaque.output)) break;
+      }
       record.opaqueFoot = assertDirectOpaqueProperties({ exit: opaque.status, stdout: opaque.output });
       await settled(guest, record, "desktop-ready", timeoutMs);
       await warmPointer(run, guest, record, timeoutMs);

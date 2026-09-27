@@ -20,11 +20,12 @@ from the worker) so emulator-core speedups can be attributed separately.
 | shipped today (`2231a21e`, stock kernel) | 3 | never (900 s deadline) | never; the command never ran (nonce file absent) | n/a | 22.6 / 11.5 |
 | T03ar input-kernel pair (`265551f8`, evdev 1024) | 2 | 291 s, 377 s | 291 s, 376 s | not checked (v2) | 26.0 / 25.1 |
 | responsive r3, LP_NUM_THREADS=1 (`ce0aa733`) | 3 (v3) | 20.7-21.8 s | 21.7-40.8 s (median 40.1) | 0 in v3 runs; 4 of 7 v2 runs showed torn milestone frames, 2 left a torn final screen | 18.2 / 16.0 |
-| **responsive r6, LP_NUM_THREADS=0 (`a604fc36`)** | **5** | **5.0-7.5 s (median 5.6)** | **5.6-7.4 s (median 5.9)** | **0 of 24 frames** | 17.8 / 17.4 |
+| **responsive r6, LP_NUM_THREADS=0 (`a604fc36`)** | **6** | **4.8-7.5 s (median 5.4)** | **4.7-7.4 s (median 5.9)** | **0 of 28 frames** | 18.2 / 18.2 |
+| **responsive r7, same recipe in one step (`0c34dc93`, publish candidate)** | **2** | **4.3, 4.6 s** | **4.2, 4.5 s** | **0 of 8 frames** | 19.0 / 19.9 |
 
 "Echoed" is the first frame whose whole command row is glyph-verified (v3 harness, below). Typing
 itself takes ~5.2 s; for r6 the first coherent frame showing typed text arrives 6.2-10.2 s after
-the first key (median 7.4 s), i.e. while typing is still in progress or just after. Screenshots of
+the first key (median 7.9 s over 6 runs), i.e. while typing is still in progress or just after. Screenshots of
 one r6 run's milestones: `browser/r6-a1-03-before-typing.png` → `-04-first-echo` →
 `-05-full-echo` → `-06-output` → `-08-page` (page screenshot after the nonce readback). The shipped
 pair after 815 s of waiting: `browser/shipped-v3-b1-page-after-815s.png` (empty prompt).
@@ -107,14 +108,19 @@ an explicit decision on the code-memory budget.
 
 The responsive pair keeps the published 4 GiB image and chunk manifest
 (`chunked-omarchy/manifest-5f6a0809….json`, base id `5f6a0809…`, unchanged); only three files
-change. They are built in the worktree's gitignored `target/omarchy-responsive-pair-r6/` (not in
-the main checkout):
+change. The candidate is r7, built in one step by the committed preparer with this branch's release
+CLI (`prepare-receipt-r7.json`), in the worktree's gitignored `target/omarchy-responsive-pair-r7/`
+(not in the main checkout). r6 (`target/omarchy-responsive-pair-r6/`, same configuration, built in
+two steps) is an equivalent fallback with more browser runs:
 
 | role | publish at | size (bytes) | sha256 |
 |---|---|---|---|
 | kernel (T03aq Image: EVDEV_MIN_BUFFER_SIZE 1024; the pair's RAM contains this kernel) | `releases/kernel/6.6.63-omarchy-evdev1024/Image` (new path: `releases/kernel/6.6.63/Image` stays the stock kernel that the Alpine/busybox manifests use) | 24208896 | `3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d` |
-| RAM snapshot | `releases/boot-snapshot/omarchy-ready.snap.gz` (gitignored) | 198186826 | `a604fc368125e329cdccb3b06d381b03b340d235c0dafc47319dcc7f37cd712f` |
-| overlay delta | `releases/boot-snapshot/omarchy-overlay-delta.bin.gz` (tracked in git) | 2040210 | `4e9226913efd831997a0a85d3ad387f771614b957932f4f245d09902784e969c` |
+| RAM snapshot | `releases/boot-snapshot/omarchy-ready.snap.gz` (gitignored) | 198380324 | `0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256` |
+| overlay delta | `releases/boot-snapshot/omarchy-overlay-delta.bin.gz` (tracked in git) | 2037489 | `b54280f45f5ca91aa01a4dcdc12e14b837b8d7918345067359707c955093c565` |
+
+(r6 instead: RAM snapshot 198186826 bytes `a604fc368125e329cdccb3b06d381b03b340d235c0dafc47319dcc7f37cd712f`,
+delta 2040210 bytes `4e9226913efd831997a0a85d3ad387f771614b957932f4f245d09902784e969c`.)
 
 Source of the kernel: `target/omarchy-input-kernel-r3/Image` in the main checkout (built by T03aq).
 `artifacts-omarchy.responsive.json` here is the manifest `tools/gen-omarchy-manifest.sh` generates
@@ -122,7 +128,7 @@ for exactly these files (`OMARCHY_KERNEL=releases/kernel/6.6.63-omarchy-evdev102
 passes `tools/validate-deploy-artifacts.py --reject-remote` against a staged copy. To publish:
 
 ```sh
-cp <r6>/omarchy-ready.snap.gz <r6>/omarchy-overlay-delta.bin.gz releases/boot-snapshot/
+cp <r7>/omarchy-ready.snap.gz <r7>/omarchy-overlay-delta.bin.gz releases/boot-snapshot/
 mkdir -p releases/kernel/6.6.63-omarchy-evdev1024
 cp target/omarchy-input-kernel-r3/Image releases/kernel/6.6.63-omarchy-evdev1024/Image
 OMARCHY_KERNEL=releases/kernel/6.6.63-omarchy-evdev1024/Image bash tools/gen-omarchy-manifest.sh
@@ -134,7 +140,7 @@ bash tools/deploy-cloudflare.sh
 manifest's size and sha256, and then: the kernel (`releases/kernel/*`) goes to R2 under the
 content-addressed key `sha256/3cf8bed0…/releases/kernel/6.6.63-omarchy-evdev1024/Image`; the RAM
 snapshot is larger than the 25 MiB Pages limit, so it goes to R2 as
-`sha256/a604fc36…/releases/boot-snapshot/omarchy-ready.snap.gz`; the 2.0 MB delta ships on Pages
+`sha256/0c34dc93…/releases/boot-snapshot/omarchy-ready.snap.gz`; the 2.0 MB delta ships on Pages
 at `releases/boot-snapshot/omarchy-overlay-delta.bin.gz`. The manifest URLs are rewritten to the R2
 public base. Nothing else (web code, chunks, other flavours) needs republishing; the web readiness
 gate already accepts the bar-only shell (commit b94d11d5).
@@ -151,6 +157,8 @@ node tools/verify/omarchy-responsive-latency.mjs <out> --pair <pair dir> \
   --kernel target/omarchy-input-kernel-r3/Image --chunks target/omarchy-profile-chunks-sdr-r3-256k
 ```
 
-r6 itself was made in two steps: r4 = the cold preparer before the tablet-click warm-up existed
-(receipt `prepare-receipt-r4.json`), then `--warm-only` on r4 (`prepare-receipt-r6.json`). The
-one-step run is recorded in `prepare-receipt-r7.json` if present.
+r7 is exactly that command (`prepare-receipt-r7.json`, 49 min of host time: restore + profile
+0.6 min, cold boot to the serial prompt 11.1 min, whole cold phase 47.9 min). r6 was made in two steps: r4 = the cold
+preparer before the tablet-click warm-up existed (`prepare-receipt-r4.json`), then `--warm-only`
+on r4 (`prepare-receipt-r6.json`). A first one-step attempt failed closed when `hyprctl` timed out
+on the still-busy fresh session; the preparer now waits for the session to settle and retries.

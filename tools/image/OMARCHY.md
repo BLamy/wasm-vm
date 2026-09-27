@@ -86,8 +86,8 @@ still required before this profile can be described as ready.
 On one emulated hart, Hyprland composites through llvmpipe, so every damaged pixel
 costs guest instructions. Measured in `evidence/omarchy-responsive/README.md`, the
 shipped desktop never idled and typed text never appeared within 15 minutes in the
-browser; the responsive pair echoes a typed command about 5.6 s after the last key
-and shows its output about 5.9 s after Enter at today's ~17 guest MIPS. The profile
+browser; the responsive pair echoes a typed command 4.3-7.5 s after the last key
+and shows its output 4.2-7.4 s after Enter (8 runs) at today's ~18 guest MIPS. The profile
 changes four things and keeps the package's bar, tiling, Tokyo Night theme,
 Hyprland configuration and Foot:
 

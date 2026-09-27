@@ -1032,6 +1032,108 @@
   "error": null
  },
  {
+  "run": "r6-e1",
+  "harness": "v3",
+  "startedAt": "2026-09-27T17:56:35.483Z",
+  "hostLoad1m": 2.5,
+  "wasmSha256": "f09e025172e4a426",
+  "kernelSha256": "3cf8bed0d9a9",
+  "bootSnapshotSha256": "a604fc368125",
+  "query": "",
+  "firstEchoS": 8.83,
+  "fullEchoS": 9.87,
+  "fullEchoAfterLastKeyS": 4.79,
+  "outputAfterEnterS": 4.68,
+  "pixelMilestonesS": {
+   "firstEchoMs": 8.83,
+   "fullEchoMs": 9.87,
+   "outputMs": 4.68
+  },
+  "incoherentFrames": 0,
+  "responseFrames": 4,
+  "finalFrameComplete": true,
+  "nonceReadback": true,
+  "passed": true,
+  "guestMips": {
+   "idle": 18.7,
+   "response": 21.0
+  },
+  "idleFramesPer20s": 2,
+  "idleFramePixels": 126,
+  "jitRetiredShare": 0.242,
+  "jitCodeMiB": 1.6,
+  "pageErrors": 0,
+  "error": null
+ },
+ {
+  "run": "r7-a1",
+  "harness": "v3",
+  "startedAt": "2026-09-27T17:55:47.011Z",
+  "hostLoad1m": 2.3,
+  "wasmSha256": "f09e025172e4a426",
+  "kernelSha256": "3cf8bed0d9a9",
+  "bootSnapshotSha256": "0c34dc9389c5",
+  "query": "",
+  "firstEchoS": 8.54,
+  "fullEchoS": 9.34,
+  "fullEchoAfterLastKeyS": 4.26,
+  "outputAfterEnterS": 4.16,
+  "pixelMilestonesS": {
+   "firstEchoMs": 8.54,
+   "fullEchoMs": 9.34,
+   "outputMs": 4.16
+  },
+  "incoherentFrames": 0,
+  "responseFrames": 4,
+  "finalFrameComplete": true,
+  "nonceReadback": true,
+  "passed": true,
+  "guestMips": {
+   "idle": 18.9,
+   "response": 20.7
+  },
+  "idleFramesPer20s": 2,
+  "idleFramePixels": 189,
+  "jitRetiredShare": 0.248,
+  "jitCodeMiB": 1.5,
+  "pageErrors": 0,
+  "error": null
+ },
+ {
+  "run": "r7-a2",
+  "harness": "v3",
+  "startedAt": "2026-09-27T17:57:24.322Z",
+  "hostLoad1m": 3.3,
+  "wasmSha256": "f09e025172e4a426",
+  "kernelSha256": "3cf8bed0d9a9",
+  "bootSnapshotSha256": "0c34dc9389c5",
+  "query": "",
+  "firstEchoS": 8.68,
+  "fullEchoS": 9.71,
+  "fullEchoAfterLastKeyS": 4.63,
+  "outputAfterEnterS": 4.53,
+  "pixelMilestonesS": {
+   "firstEchoMs": 8.68,
+   "fullEchoMs": 9.71,
+   "outputMs": 4.53
+  },
+  "incoherentFrames": 0,
+  "responseFrames": 4,
+  "finalFrameComplete": true,
+  "nonceReadback": true,
+  "passed": true,
+  "guestMips": {
+   "idle": 19.1,
+   "response": 19.1
+  },
+  "idleFramesPer20s": 2,
+  "idleFramePixels": 189,
+  "jitRetiredShare": 0.247,
+  "jitCodeMiB": 1.6,
+  "pageErrors": 0,
+  "error": null
+ },
+ {
   "run": "shipped-v3-b1",
   "harness": "v3",
   "startedAt": "2026-09-27T16:06:20.598Z",
