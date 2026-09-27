@@ -756,6 +756,11 @@ pub fn print_jit_stats(m: &Machine) {
         .map(|(name, count)| format!("{name}={count}"))
         .collect();
     eprintln!("first_untranslated_op: {}", first.join(" "));
+    eprintln!(
+        "partial_resume: rebuilds={} failures={}",
+        m.jit_partial_resume_rebuilds(),
+        m.jit_partial_resume_failures(),
+    );
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
         "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"retired_total\":{},\"blocks_full\":{},\"blocks_partial\":{},\"blocks_rejected\":{},\"partial_exits\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",

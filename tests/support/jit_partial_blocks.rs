@@ -488,6 +488,11 @@ pub fn evicted_partial_chain(make: Factory, expect_rebuilds: bool) {
                 "{label} mtimecmp={mtimecmp}: mepc"
             );
             rebuilds += got.jit_partial_resume_rebuilds();
+            assert_eq!(
+                got.jit_partial_resume_failures(),
+                0,
+                "{label} mtimecmp={mtimecmp}: every partial continuation must resume its cursor"
+            );
             jit_retired += got.executor().unwrap().retired_via_jit();
         }
         eprintln!("cap={cap} lead={lead} thrash={thrash}: rebuilds={rebuilds} jit={jit_retired}");

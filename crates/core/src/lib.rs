@@ -505,6 +505,11 @@ pub struct Machine {
     /// re-decoded the block from physical memory to resume the cursor at the untranslated op.
     /// Observation-only; never serialized.
     jit_partial_resume_rebuilds: u64,
+    /// Partial-block continuations that could NOT resume the cursor even after the physical
+    /// re-decode (a `debug_assert` in debug builds). Expected to stay zero; surfaced by the CLI's
+    /// `--jit` coverage summary so any release run that ever reaches the non-transparent fallback
+    /// is visible rather than silent. Observation-only; never serialized.
+    jit_partial_resume_failures: u64,
     /// Last PMP state whose execute permissions the decoded/compiled caches reflect. Effective
     /// permissions depend on both the PMP registers and the current privilege: unlocked entries
     /// are bypassed in M-mode but enforced in S/U-mode.
@@ -905,6 +910,7 @@ impl Machine {
             block_entry_hits: 0,
             block_builds: 0,
             jit_partial_resume_rebuilds: 0,
+            jit_partial_resume_failures: 0,
             pmp_revision_seen: 0,
             pmp_mode_seen: csr::Priv::M,
             #[cfg(all(test, not(feature = "zicsr-stub")))]
@@ -976,6 +982,13 @@ impl Machine {
     /// host call; the browser's in-module direct chaining can reach it. Observation-only.
     pub fn jit_partial_resume_rebuilds(&self) -> u64 {
         self.jit_partial_resume_rebuilds
+    }
+
+    /// Partial-block continuations that could not resume the block cursor at all (the untranslated
+    /// op then ran as a fresh block entry, which is not timing-transparent). Must stay zero; a
+    /// nonzero value in a release run is a bug report. Observation-only.
+    pub fn jit_partial_resume_failures(&self) -> u64 {
+        self.jit_partial_resume_failures
     }
 
     /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. An effective
@@ -4555,6 +4568,8 @@ impl Machine {
         );
         if resumes {
             self.block_cursor = Some((key, index, pc));
+        } else {
+            self.jit_partial_resume_failures = self.jit_partial_resume_failures.saturating_add(1);
         }
     }
 
