@@ -38,7 +38,70 @@ export const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chr
 
 // Foot's window sits at (12,38) with 14 px padding; JetBrains Mono rows are 17 px tall and cells
 // 7 px wide at the demo's 1280x800 output. Row 0 holds the prompt, row 1 the command's output.
-export const GEOMETRY = Object.freeze({ x0: 20, x1: 1260, rowTop: 52, rowHeight: 17, cell: 7, bgX: 640, bgY: 500 });
+export const GEOMETRY = Object.freeze({ x0: 20, x1: 1260, rowTop: 52, rowHeight: 17, cell: 7, bgX: 640, bgY: 500, textX0: 26 });
+// Bash's prompt on row 0. Its glyphs, drawn by an earlier complete frame, are the reference for
+// every typed or echoed character they share (Foot renders a monospace glyph identically in any cell).
+export const PROMPT = "[omarchy@omarchy-demo ~]$ ";
+
+// Per-cell verdicts for `text` on `row` from cell `start`: the expected character when its pixels
+// equal the prompt's reference glyph, "?" for inked cells with no reference glyph, "X" for an inked
+// cell that differs from its reference (a torn or stale glyph), "_" for a blank non-space cell,
+// " " for a blank space, "!" for an inked space. Must stay self-contained: it is also run in the page.
+export function classifyCells(px, w, bg, ref, text, row, start, g) {
+  let out = "";
+  for (let j = 0; j < text.length; j++) {
+    const c = text[j], r = ref[c], x0 = g.textX0 + g.cell * (start + j), y0 = g.rowTop + g.rowHeight * row;
+    let blank = true, same = true, k = 0;
+    for (let dy = 0; dy < g.rowHeight; dy++) {
+      for (let dx = 0; dx < g.cell; dx++, k++) {
+        const v = px[(y0 + dy) * w + x0 + dx] & 0xffffff;
+        if (v !== bg) blank = false;
+        if (r && v !== r[k]) same = false;
+      }
+    }
+    out += c === " " ? (blank ? " " : "!") : blank ? "_" : r ? (same ? c : "X") : "?";
+  }
+  return out;
+}
+
+// Reference glyph pixels for each distinct non-space prompt character.
+export function promptGlyphs(px, w, g, prompt = PROMPT) {
+  const ref = {};
+  for (let i = 0; i < prompt.length; i++) {
+    const c = prompt[i];
+    if (c === " " || ref[c]) continue;
+    const cell = [], x0 = g.textX0 + g.cell * i;
+    for (let dy = 0; dy < g.rowHeight; dy++) {
+      for (let dx = 0; dx < g.cell; dx++) cell.push(px[(g.rowTop + dy) * w + x0 + dx] & 0xffffff);
+    }
+    ref[c] = cell;
+  }
+  return ref;
+}
+
+// A row is coherent when it is a correct prefix of its text, then at most one other cell (the
+// cursor), then blank cells. Anything else is a torn/stale frame (see README: llvmpipe race).
+export function assessRow(verdicts, text) {
+  const good = (j) => verdicts[j] === text[j] || (verdicts[j] === "?" && text[j] !== " ");
+  let prefix = 0;
+  while (prefix < text.length && good(prefix)) prefix++;
+  let j = prefix;
+  if (j < text.length && verdicts[j] !== "_" && verdicts[j] !== " ") j++; // cursor cell
+  const rest = [...verdicts.slice(j)].every((v) => v === "_" || v === " ");
+  return { prefix, coherent: rest, complete: prefix === text.length };
+}
+
+// Verified milestones for one frame given the row-0 command and row-1 expected output.
+export function assessFrame(v0, v1, command, output) {
+  const r0 = assessRow(v0, command), r1 = assessRow(v1, output);
+  const coherent = r0.coherent && r1.coherent;
+  return {
+    coherent, prefix: r0.prefix, outputPrefix: r1.prefix,
+    firstEcho: coherent && r0.prefix >= 1 && v0[0] === command[0],
+    fullEcho: coherent && r0.complete,
+    output: coherent && r0.complete && r1.complete,
+  };
+}
 
 export function parseArgs(argv) {
   const [out, ...rest] = argv;
@@ -171,13 +234,20 @@ export function installFrameHook(g) {
         const cfg = st.cfg;
         if (cfg && rec.t >= cfg.armedAt) {
           const [r0, r1] = rec.rows;
+          // Pixel-extent milestones (v2 harness): they also accept torn/stale frames.
           const hits = {
-            firstEcho: r0.right >= cfg.base0Right + g.cell,
-            // The cursor cell leaves the prompt row once Enter is processed, so the complete
-            // command is visible when the text alone reaches the last typed cell.
-            fullEcho: r0.right >= cfg.base0Right + g.cell * (cfg.cells - 1) - 1,
-            output: r1.count >= cfg.base1Count + 30,
+            firstPixels: r0.right >= cfg.base0Right + g.cell,
+            fullPixels: r0.right >= cfg.base0Right + g.cell * (cfg.cells - 1) - 1,
+            outputPixels: r1.count >= cfg.base1Count + 30,
           };
+          if (cfg.command && st.classify) {
+            const bg = px[g.bgY * w + g.bgX] & 0xffffff;
+            const v0 = st.classify(px, w, bg, cfg.ref, cfg.command, 0, cfg.promptCells, g);
+            const v1 = st.classify(px, w, bg, cfg.ref, cfg.output, 1, 0, g);
+            const verdict = st.assess(v0, v1, cfg.command, cfg.output);
+            rec.cells = [v0, v1]; rec.coherent = verdict.coherent;
+            Object.assign(hits, { firstEcho: verdict.firstEcho, fullEcho: verdict.fullEcho, output: verdict.output });
+          }
           for (const [name, ok] of Object.entries(hits)) {
             if (ok && !st.shots[name]) st.shots[name] = { t: rec.t, rect: rec.rect, rows: rec.rows, w, h, px: px.slice(0, w * h) };
           }
@@ -229,7 +299,7 @@ export function summarize(values) {
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
   await fs.mkdir(opts.out, { recursive: false });
-  const report = { kind: "omarchy-responsive-latency", version: 2, label: opts.label, startedAt: new Date().toISOString(),
+  const report = { kind: "omarchy-responsive-latency", version: 3, label: opts.label, startedAt: new Date().toISOString(),
     inputs: { pair: path.resolve(opts.pair), kernel: path.resolve(opts.kernel), chunks: path.resolve(opts.chunks), query: opts.query },
     host: { loadavg: (await import("node:os")).loadavg() }, errors: [], mipsSamples: [], timeline: [], images: {} };
   const save = () => fs.writeFile(path.join(opts.out, "report.json"), JSON.stringify(report, null, 2) + "\n");
@@ -294,6 +364,12 @@ async function main() {
     try { await waitEvent("wvm:desktop-ready"); mark("desktop-ready"); } catch (error) { mark("desktop-ready-timeout", { error: String(error) }); }
     await shot("02-desktop.png");
     while (!(await page.evaluate(installFrameHook, GEOMETRY))) await new Promise((r) => setTimeout(r, 250));
+    await page.evaluate(({ classify, row, frame, glyphs }) => {
+      const st = window.__wv;
+      st.classify = new Function(`return (${classify});`)();
+      st.assess = new Function(`${row}\n${frame}\nreturn assessFrame;`)();
+      st.glyphs = new Function(`return (${glyphs});`)();
+    }, { classify: classifyCells.toString(), row: assessRow.toString(), frame: assessFrame.toString(), glyphs: promptGlyphs.toString() });
 
     // Idle window: received frames and guest instructions while nothing is typed.
     report.phase = "idle";
@@ -318,10 +394,21 @@ async function main() {
     const guestFile = `/tmp/wvm-resp-${randomBytes(6).toString("hex")}`;
     const command = `echo ${nonce} | tee ${guestFile}`;
     report.command = command;
-    await page.evaluate(({ base0Right, base1Count, cells }) => {
+    // Reference glyphs come from the prompt of the complete pre-typing frame; the command area
+    // must be blank there (only the cursor), or nothing typed later can be verified.
+    report.beforeCells = await page.evaluate(({ base0Right, base1Count, cells, command, output, g, prompt }) => {
+      const st = window.__wv, latest = window.__presentation.controller()._latest;
+      const w = latest.resourceWidth, px = latest.pixels, bg = px[g.bgY * w + g.bgX] & 0xffffff;
+      const ref = st.glyphs(px, w, g, prompt);
+      const cells0 = [st.classify(px, w, bg, ref, command, 0, prompt.length, g), st.classify(px, w, bg, ref, output, 1, 0, g),
+        st.classify(px, w, bg, {}, prompt, 0, 0, g)];
       window.__resp.keys.length = 0;
-      window.__wv.cfg = { base0Right, base1Count, cells, armedAt: performance.now() };
-    }, { base0Right: before.rows[0].right, base1Count: before.rows[1].count, cells: command.length });
+      st.cfg = { base0Right, base1Count, cells, command, output, ref, promptCells: prompt.length, armedAt: performance.now() };
+      return cells0;
+    }, { base0Right: before.rows[0].right, base1Count: before.rows[1].count, cells: command.length, command, output: nonce, g: GEOMETRY, prompt: PROMPT });
+    const blankStart = assessFrame(report.beforeCells[0], report.beforeCells[1], command, nonce);
+    assert.ok(blankStart.coherent && blankStart.prefix === 0, `command area is not blank before typing: ${JSON.stringify(report.beforeCells)}`);
+    assert.doesNotMatch(report.beforeCells[2], /_/u, "the reference prompt is not fully drawn");
 
     // Type at a steady human-like pace with trusted key events; Enter last.
     report.phase = "response";
@@ -342,18 +429,30 @@ async function main() {
     report.keys = { count: keys.length, firstKey, enterKey, lastTyped: keys.filter((k) => k.code !== "Enter").at(-1) };
 
     // Pixel-only wait: no serial traffic until every milestone is on screen or the deadline passes.
-    const milestones = ["firstEcho", "fullEcho", "output"];
+    // Milestones count only glyph-verified, coherent frames. A run whose pixel milestones all
+    // fired but whose screen then stays incoherent with no new frame for STALL_MS ends early.
+    const milestones = ["firstEcho", "fullEcho", "output"], STALL_MS = 90_000;
     let shots = {};
     while (Date.now() < deadline) {
-      shots = await page.evaluate(() => Object.fromEntries(Object.entries(window.__wv.shots).map(([k, v]) => [k, { t: v.t, rect: v.rect, rows: v.rows }])));
+      const view = await page.evaluate(() => ({ n: window.__wv.frames.length, last: window.__wv.frames.at(-1)?.t,
+        shots: Object.fromEntries(Object.entries(window.__wv.shots).map(([k, v]) => [k, { t: v.t, rect: v.rect, rows: v.rows }])), now: performance.now() }));
+      shots = view.shots;
       if (milestones.every((m) => shots[m])) break;
+      if (["firstPixels", "fullPixels", "outputPixels"].every((m) => shots[m]) && view.now - view.last > STALL_MS) {
+        mark("stalled-incoherent", { framesSinceArm: view.n });
+        break;
+      }
       await new Promise((r) => setTimeout(r, 500));
     }
+    const since = (shot, key) => (shot ? shot.t - key.t : null);
     const result = {
-      firstEchoMs: shots.firstEcho ? shots.firstEcho.t - firstKey.t : null,
-      fullEchoMs: shots.fullEcho ? shots.fullEcho.t - firstKey.t : null,
-      fullEchoAfterLastKeyMs: shots.fullEcho ? shots.fullEcho.t - report.keys.lastTyped.t : null,
-      outputMs: shots.output ? shots.output.t - enterKey.t : null,
+      firstEchoMs: since(shots.firstEcho, firstKey),
+      fullEchoMs: since(shots.fullEcho, firstKey),
+      fullEchoAfterLastKeyMs: since(shots.fullEcho, report.keys.lastTyped),
+      outputMs: since(shots.output, enterKey),
+      // v2 pixel-extent milestones, for comparison with earlier runs (they accept torn frames).
+      pixels: { firstEchoMs: since(shots.firstPixels, firstKey), fullEchoMs: since(shots.fullPixels, firstKey),
+        outputMs: since(shots.outputPixels, enterKey) },
     };
     report.result = result; report.shots = shots;
     mark("milestones", result);
@@ -361,7 +460,14 @@ async function main() {
       if (shots[name]) report.images[name] = await dumpFrame(page, name, path.join(opts.out, file));
     }
     const responseFrames = await page.evaluate((t) => window.__wv.frames.filter((f) => f.t >= t), firstKey.t);
-    report.responseFrames = responseFrames.map((f) => ({ t: Math.round(f.t - firstKey.t), rect: f.rect, row0: f.rows[0], row1: f.rows[1] }));
+    report.responseFrames = responseFrames.map((f) => ({ t: Math.round(f.t - firstKey.t), rect: f.rect, row0: f.rows[0], row1: f.rows[1],
+      cells: f.cells, coherent: f.coherent }));
+    const armed = responseFrames.filter((f) => f.cells);
+    const last = armed.at(-1);
+    report.integrity = { frames: armed.length, incoherentFrames: armed.filter((f) => !f.coherent).length,
+      finalCells: last?.cells ?? null,
+      finalComplete: last ? assessFrame(last.cells[0], last.cells[1], command, nonce).output : false };
+    mark("integrity", report.integrity);
     report.phase = "readback";
     report.images.final = await dumpFrame(page, "latest", path.join(opts.out, "07-final-frame.png"));
     await save();
@@ -381,7 +487,7 @@ async function main() {
     report.hook = await page.evaluate(() => ({ hooks: window.__wv.hooks, errors: window.__wv.errors, frames: window.__wv.frames.length }));
     report.mips = Object.fromEntries(["startup", "idle", "focus", "response", "readback"].map((phase) =>
       [phase, summarize(report.mipsSamples.filter((s) => s.phase === phase).map((s) => s.mips))]));
-    report.passed = milestones.every((m) => shots[m]) && report.nonce.ok === true;
+    report.passed = milestones.every((m) => shots[m]) && report.nonce.ok === true && report.integrity.finalComplete;
   } catch (error) {
     report.error = String(error.stack || error);
     process.exitCode = 1;
@@ -394,7 +500,7 @@ async function main() {
     server.close();
   }
   console.log(JSON.stringify({ label: report.label, passed: report.passed, result: report.result, nonce: report.nonce?.ok,
-    idle: report.idle, mips: report.mips, errors: report.errors.length }));
+    integrity: report.integrity, idle: report.idle, mips: report.mips, errors: report.errors.length }));
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await main();
