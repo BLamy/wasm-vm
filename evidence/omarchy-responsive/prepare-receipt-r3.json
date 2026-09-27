@@ -1,0 +1,358 @@
+{
+ "kind": "omarchy-responsive-pair",
+ "startedAt": "2026-09-23T14:31:58.852Z",
+ "passed": true,
+ "head": "2bfc6f50d382dc69448c516d436147667298df83",
+ "profile": {
+  "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/tools/image/omarchy-responsive-profile.sh",
+  "size": 3721,
+  "sha256": "6e07875a0443377035c1d71f438c4f7608e55294bbce71d7e516578e30c6cbed"
+ },
+ "settleProbes": [
+  {
+   "label": "background-disabled",
+   "status": 0,
+   "uptime": 132.42,
+   "idleShare": 0,
+   "hostMs": 165093
+  },
+  {
+   "label": "background-disabled",
+   "status": 0,
+   "uptime": 136.25,
+   "idleShare": 0.6274509803921593,
+   "hostMs": 51866
+  },
+  {
+   "label": "background-disabled",
+   "status": 0,
+   "uptime": 138.38,
+   "idleShare": 0.990099009900999,
+   "hostMs": 7658
+  },
+  {
+   "label": "old-foot-closed",
+   "status": 0,
+   "uptime": 147.73,
+   "idleShare": 0.7990196078431403,
+   "hostMs": 14224
+  },
+  {
+   "label": "old-foot-closed",
+   "status": 0,
+   "uptime": 149.86,
+   "idleShare": 0.9900990099009851,
+   "hostMs": 6972
+  },
+  {
+   "label": "terminal-ready",
+   "status": 0,
+   "uptime": 154.24,
+   "idleShare": 0,
+   "hostMs": 49427
+  },
+  {
+   "label": "terminal-ready",
+   "status": 0,
+   "uptime": 157.35,
+   "idleShare": 0.7156862745098067,
+   "hostMs": 31079
+  },
+  {
+   "label": "terminal-ready",
+   "status": 0,
+   "uptime": 159.48,
+   "idleShare": 0.9702970297029795,
+   "hostMs": 6192
+  },
+  {
+   "label": "post-flush",
+   "status": 0,
+   "uptime": 311.95,
+   "idleShare": 0.990099009900999,
+   "hostMs": 4778
+  },
+  {
+   "label": "pre-capture",
+   "status": 0,
+   "uptime": 314.08,
+   "idleShare": 0.9852216748768605,
+   "hostMs": 4507
+  }
+ ],
+ "serial": [
+  {
+   "label": "identity",
+   "command": "id -u",
+   "status": 0,
+   "output": "1000",
+   "hostMs": 4335
+  },
+  {
+   "label": "profile",
+   "command": "echo IyEvdXNyL2Jpbi9lbnYgYmFzaAojIEFwcGx5IHRoZSByZXNwb25zaXZlIGJyb3dzZXItZGVza3RvcCBwcm9maWxlIHRvIGEgKnJ1bm5pbmcqIE9tYXJjaHkgZGVtbyBzZXNzaW9uLgojCiMgUnVucyBhcyB0aGUgZGVtbyB1c2VyICh1aWQgMTAwMCkgb24gdGh...[5061 chars]",
+   "status": 0,
+   "output": "omarchy-responsive-profile: files applied",
+   "hostMs": 27889
+  },
+  {
+   "label": "shell-reload",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 OMARCHY_PATH=/usr/share/omarchy OMARCHY_SHELL_IPC_TIMEOUT=600s omarchy-shell shell reloadConfig",
+   "status": 0,
+   "output": "ok",
+   "hostMs": 25050
+  },
+  {
+   "label": "layers",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+   "status": 0,
+   "output": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x5555851adf40\",\n                    \"x\": 0,\n                    ...[434 chars]",
+   "hostMs": 6096
+  },
+  {
+   "label": "old-foot",
+   "command": "pgrep -u 1000 -x foot",
+   "status": 0,
+   "output": "473",
+   "hostMs": 5792
+  },
+  {
+   "label": "stop-old-foot",
+   "command": "kill 473; while kill -0 473 2>/dev/null; do sleep 0.2; done",
+   "status": 0,
+   "output": "",
+   "hostMs": 289879
+  },
+  {
+   "label": "launch-foot",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 dispatch 'hl.dsp.exec_cmd(\"/home/omarchy/.local/bin/foot\")'",
+   "status": 0,
+   "output": "ok",
+   "hostMs": 6702
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[]",
+   "hostMs": 12166
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[]",
+   "hostMs": 10765
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[]",
+   "hostMs": 9718
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[]",
+   "hostMs": 7889
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[]",
+   "hostMs": 7480
+  },
+  {
+   "label": "clients",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+   "status": 0,
+   "output": "[{\n    \"address\": \"0x555584c52390\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": false,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id...[871 chars]",
+   "hostMs": 8486
+  },
+  {
+   "label": "verify",
+   "command": "readlink /proc/1807/exe; pgrep -u 1000 -f omarchy-launch-screensaver || true; test -f ~/.local/state/omarchy/indicators/stay-awake && echo stay-awake",
+   "status": 0,
+   "output": "/home/omarchy/.local/bin/foot\nstay-awake",
+   "hostMs": 5501
+  },
+  {
+   "label": "final-layers",
+   "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+   "status": 0,
+   "output": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x5555851adf40\",\n                    \"x\": 0,\n                    ...[434 chars]",
+   "hostMs": 3784
+  },
+  {
+   "label": "clock-flush",
+   "command": "sleep 150",
+   "status": 0,
+   "output": "",
+   "hostMs": 87252
+  }
+ ],
+ "inputs": {
+  "bin": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/release/wasm-vm",
+   "size": 12813608,
+   "sha256": "e9e4732dc46b64543b45a6abe019547da7a200b130b2aa2f848a9d0091e2a14a"
+  },
+  "kernel": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+   "size": 24208896,
+   "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+  },
+  "chunkManifest": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+   "size": 1097812,
+   "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+  },
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+   "size": 205400326,
+   "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+   "size": 1285559,
+   "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+  },
+  "baseImage": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-perf/base.ext4",
+   "size": 4294967296,
+   "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+  }
+ },
+ "binding": {
+  "baseId": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+  "version": "0.0.1"
+ },
+ "sourceGeneration": 48,
+ "restoredDeltaBlocks": 2750,
+ "command": [
+  "target/release/wasm-vm",
+  "boot",
+  "--kernel",
+  "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+  "--drive",
+  "file=/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-work-SznuEm/omarchy.ext4",
+  "--ram-mib",
+  "1024",
+  "--net",
+  "--virtio-rng",
+  "--browser-topology",
+  "--icount-divider",
+  "64",
+  "--jit",
+  "--block-cache",
+  "--interrupt-batching",
+  "--append",
+  "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+  "--quantum",
+  "500000",
+  "--max-instrs",
+  "4000000000000",
+  "--resume-from",
+  "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-work-SznuEm/restore.snap",
+  "--snapshot-trigger",
+  "WVM_OMARCHY_RESPONSIVE_READY",
+  "--snapshot-out",
+  "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-work-SznuEm/omarchy-ready.snap",
+  "--snapshot-core-id",
+  "302e302e31000000000000000000000000000000000000000000000000000000",
+  "--snapshot-base-id",
+  "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+ ],
+ "foot": {
+  "address": "0x555584c52390",
+  "mapped": true,
+  "hidden": false,
+  "visible": false,
+  "acceptsInput": true,
+  "at": [
+   12,
+   38
+  ],
+  "size": [
+   1256,
+   750
+  ],
+  "workspace": {
+   "id": 1,
+   "name": "1"
+  },
+  "floating": false,
+  "monitor": 0,
+  "class": "foot",
+  "title": "omarchy@omarchy-demo:~",
+  "initialClass": "foot",
+  "initialTitle": "foot",
+  "pid": 1807,
+  "xwayland": false,
+  "pinned": false,
+  "pinFullscreened": false,
+  "fullscreen": 0,
+  "fullscreenClient": 0,
+  "fullscreenHandler": "default",
+  "allowedOverFullscreen": true,
+  "grouped": [],
+  "tags": [
+   "default-opacity*",
+   "terminal*"
+  ],
+  "swallowing": "0x0",
+  "focusHistoryID": 0,
+  "inhibitingIdle": false,
+  "xdgTag": "",
+  "xdgDescription": "",
+  "contentType": "none",
+  "tearingHint": false,
+  "stableId": "18000003"
+ },
+ "finalLayers": {
+  "Virtual-1": {
+   "levels": {
+    "0": [],
+    "1": [],
+    "2": [
+     {
+      "address": "0x5555851adf40",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 26,
+      "alpha": 1,
+      "namespace": "omarchy-bar",
+      "pid": 484
+     }
+    ],
+    "3": []
+   }
+  }
+ },
+ "exit": {
+  "code": 0,
+  "signal": null
+ },
+ "outputs": {
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r3/omarchy-ready.snap.gz",
+   "size": 205018907,
+   "sha256": "ce0aa733933b0f8630cc1135c98dabc0ec562eed0ecd19368bc856af4122dffe",
+   "rawSize": 887368556,
+   "rawSha256": "b7b45200939d145371d13b894da25c2e97320766f50d2523f31ebc02ed4731a4"
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r3/omarchy-overlay-delta.bin.gz",
+   "size": 1602157,
+   "sha256": "9e31756d1b10d37af61f399cfa70929abaf3796aba16746d29cb7aa5afa5c878",
+   "rawSize": 12188941,
+   "blocks": 2970
+  }
+ },
+ "finishedAt": "2026-09-23T14:47:24.637Z"
+}

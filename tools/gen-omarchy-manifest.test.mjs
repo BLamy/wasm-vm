@@ -120,3 +120,17 @@ test("generator rejects a mixed RAM/delta pair before rewriting output", async (
     await rm(f.root, { recursive: true, force: true });
   }
 });
+
+test("generator names the kernel it hashed (default path unchanged)", async () => {
+  const f = await fixture();
+  try {
+    await runGenerator(f.env);
+    const output = JSON.parse(await readFile(f.paths.outputPath, "utf8"));
+    assert.equal(output.artifacts.kernel.url, f.paths.kernelPath);
+    assert.equal(output.artifacts.kernel.sha256, sha256(Buffer.from("kernel")));
+    const source = await readFile(generator, "utf8");
+    assert.match(source, /kernel="\$\{OMARCHY_KERNEL:-releases\/kernel\/6\.6\.63\/Image\}"/u);
+  } finally {
+    await rm(f.root, { recursive: true, force: true });
+  }
+});

@@ -626,16 +626,76 @@ struct SnapshotOnMarker {
     tail: String,
     fired: bool,
     refused: Option<String>,
+    /// Snapshot preparation only: `WASM_VM_PREP_TABLET_CLICK=MARKER@X,Y` injects one virtio-tablet
+    /// left click at output pixel (X,Y) of a 1280x800 display each time MARKER is printed, so a
+    /// prepared desktop has already handled a real pointer device event (see
+    /// tools/image/prepare-omarchy-responsive-cold.mjs). Unset: no behaviour change.
+    tablet_click: Option<(String, i32, i32)>,
+    click_tail: String,
+}
+
+/// Parse `MARKER@X,Y` (pixels on the 1280x800 Omarchy output) into the marker and absolute axes.
+fn parse_tablet_click(spec: &str) -> Option<(String, i32, i32)> {
+    let (marker, at) = spec.rsplit_once('@')?;
+    let (x, y) = at.split_once(',')?;
+    let (x, y): (u32, u32) = (x.parse().ok()?, y.parse().ok()?);
+    if marker.is_empty() || x >= 1280 || y >= 800 {
+        return None;
+    }
+    let axis = |pixels: u32, extent: u32| {
+        ((u64::from(pixels) * 32_767 + u64::from(extent / 2)) / u64::from(extent)) as i32
+    };
+    Some((marker.to_string(), axis(x, 1280), axis(y, 800)))
 }
 
 impl SnapshotOnMarker {
     fn new(trigger: String, out: PathBuf) -> Self {
+        let tablet_click = std::env::var("WASM_VM_PREP_TABLET_CLICK").ok().map(|spec| {
+            parse_tablet_click(&spec).unwrap_or_else(|| {
+                panic!("WASM_VM_PREP_TABLET_CLICK must be MARKER@X,Y, got {spec:?}")
+            })
+        });
         Self {
             trigger,
             out,
             tail: String::new(),
             fired: false,
             refused: None,
+            tablet_click,
+            click_tail: String::new(),
+        }
+    }
+
+    fn feed_tablet_click(&mut self, out: &[u8], m: &mut Machine) {
+        use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, pointer};
+        let Some((marker, x, y)) = self.tablet_click.clone() else {
+            return;
+        };
+        self.click_tail.push_str(&String::from_utf8_lossy(out));
+        while let Some(at) = self.click_tail.find(&marker) {
+            self.click_tail.drain(..at + marker.len());
+            let Some(tablet) = m.tablet_input() else {
+                eprintln!(
+                    "wasm-vm: WASM_VM_PREP_TABLET_CLICK needs --browser-topology (no virtio tablet)"
+                );
+                return;
+            };
+            let mut input = tablet.borrow_mut();
+            let mut accepted = input.inject_event(EV_ABS, pointer::ABS_X, x);
+            accepted &= input.inject_event(EV_ABS, pointer::ABS_Y, y);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 1);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 0);
+            input.sync();
+            eprintln!("wasm-vm: prep tablet click at ({x},{y}) accepted={accepted}");
+        }
+        if self.click_tail.len() > 512 {
+            let mut cut = self.click_tail.len() - 256;
+            while cut < self.click_tail.len() && !self.click_tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.click_tail = self.click_tail.split_off(cut);
         }
     }
 
@@ -646,6 +706,7 @@ impl SnapshotOnMarker {
         if self.fired || self.refused.is_some() {
             return false;
         }
+        self.feed_tablet_click(out, m);
         self.tail.push_str(&String::from_utf8_lossy(out));
         if self.tail.contains(&self.trigger) {
             match m.save_resume() {
@@ -2691,5 +2752,26 @@ mod display_workload_tests {
             ))
         );
         assert!(DisplayWorkload::profile("unknown").is_err());
+    }
+}
+
+#[cfg(test)]
+mod prep_tablet_click_tests {
+    use super::parse_tablet_click;
+
+    #[test]
+    fn marker_and_pixels_map_to_the_tablet_axes() {
+        assert_eq!(
+            parse_tablet_click("WVM_PREP_TABLET_CLICK@640,420"),
+            Some(("WVM_PREP_TABLET_CLICK".to_string(), 16_384, 17_203))
+        );
+        assert_eq!(parse_tablet_click("M@0,0"), Some(("M".to_string(), 0, 0)));
+    }
+
+    #[test]
+    fn malformed_or_off_screen_specs_are_rejected() {
+        for spec in ["@1,2", "M", "M@1", "M@x,2", "M@1280,0", "M@0,800", "M@-1,0"] {
+            assert_eq!(parse_tablet_click(spec), None, "{spec}");
+        }
     }
 }
