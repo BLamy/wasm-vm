@@ -46,7 +46,7 @@ fn invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_sna
         assert!(m.discovery_stats().nominated > 0);
         m.bus.store32(DRAM_BASE + 0x2000, 0x1234_5678).unwrap();
         let blob = m.save_resume().unwrap();
-        let cursor = m.block_cursor;
+        let cursor = m.block_cursor.as_ref().map(|c| c.position());
         let block = m.block_cache.get(DRAM_BASE).unwrap() as *const dispatch::DecodedBlock;
         let discovery = m.discovery_stats();
         let counters = m.block_cache_entry_stats();
@@ -59,7 +59,7 @@ fn invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_sna
             assert_eq!(m.set_decoded_cache_entries(value).is_ok(), value == entries);
             assert_eq!(m.decoded_cache_entries(), entries);
             assert_eq!(m.save_resume().unwrap(), blob);
-            assert_eq!(m.block_cursor, cursor);
+            assert_eq!(m.block_cursor.as_ref().map(|c| c.position()), cursor);
             assert_eq!(m.block_cache.get(DRAM_BASE).unwrap() as *const _, block);
             assert_eq!(m.discovery_stats(), discovery);
             assert_eq!(m.block_cache_entry_stats(), counters);
@@ -255,7 +255,7 @@ fn verifier_pending_code_patch_survives_same_size_and_rejected_selection() {
                 assert_eq!(m.run(7), RunOutcome::MaxInstrs);
                 assert_eq!(m.hart.regs.pc, DRAM_BASE + 4);
                 assert!(m.block_cursor.is_some());
-                let cursor = m.block_cursor;
+                let cursor = m.block_cursor.as_ref().map(|c| c.position());
                 let counters = m.block_cache_entry_stats();
                 let discovery = m.discovery_stats();
                 let x1 = m.hart.regs.read(1);
@@ -271,7 +271,7 @@ fn verifier_pending_code_patch_survives_same_size_and_rejected_selection() {
                     m.set_decoded_cache_entries(selection).is_ok(),
                     selection == entries
                 );
-                assert_eq!(m.block_cursor, cursor);
+                assert_eq!(m.block_cursor.as_ref().map(|c| c.position()), cursor);
                 assert_eq!(m.block_cache_entry_stats(), counters);
                 assert_eq!(m.discovery_stats(), discovery);
                 assert_eq!(m.bus.code_write_log_mut(), &pending);

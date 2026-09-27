@@ -490,10 +490,12 @@ pub struct Machine {
     /// The physically-keyed decoded-block store (Phase A: conservatively flushed on `fence.i`
     /// and on any guest store — correct but slow; Phase B adds the page-level has-code bitmap).
     block_cache: dispatch::BlockCache,
-    /// Cursor into the block currently being replayed: `(entry phys key, next op index,
-    /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
-    /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
-    block_cursor: Option<(u64, usize, u64)>,
+    /// Cursor into the block currently being replayed. A branch/jump/interrupt/trap moves the PC
+    /// off its expected next VA, invalidating the cursor so the next step re-keys by physical PC
+    /// (handling branches into mid-block). It holds the block itself, so a mid-block continuation
+    /// and the batching boundary test are O(1) with no cache probe; every path that drops a live
+    /// block from the cache (generation flush, page flush) clears it. Never serialized.
+    block_cursor: Option<BlockCursor>,
     /// E4-T30: production-visible proof that entry PCs reuse the predecoded cache instead of
     /// rebuilding it. `(hits, builds)` is deliberately separate from `BlockDiscovery`: discovery
     /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
@@ -581,6 +583,76 @@ pub struct Machine {
     /// the hottest block compiles first. See [`compile_queue::CompileQueue`].
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     compile_queue: compile_queue::CompileQueue,
+    /// Bumped by every guest MMIO access to a fabric device window ([`FabricTouch`]).
+    /// Microarchitectural: never serialized, never part of any digest.
+    fabric_epoch: alloc::rc::Rc<core::cell::Cell<u64>>,
+    /// `Some(epoch)` when the last full boundary sync found every fabric device idle at that
+    /// epoch; cleared at every run entry (the host may have changed device state in between).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    fabric_idle_epoch: Option<u64>,
+    /// Test-only control: force every boundary through the full device sync (the pre-quiescence
+    /// behaviour) so equivalence tests can compare both paths.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    fabric_fast_path_off: bool,
+    /// Test-only work counter: boundaries served by the quiescent fast path.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    fabric_fast_hits: u64,
+    /// Test-only control: route every mid-block op through the general loop body instead of the
+    /// replay loop, so equivalence tests can compare both paths.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_tail_off: bool,
+    /// Test-only work counter: ops retired by the mid-block replay loop.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_tail_ops: u64,
+    /// Test-only work counter: replay-loop ops whose retire accounting was deferred and settled
+    /// in bulk.
+    #[cfg(all(test, not(feature = "zicsr-stub")))]
+    replay_deferred_ops: u64,
+}
+
+/// The run loop's position inside the decoded block it is replaying (see `Machine::block_cursor`).
+/// Microarchitectural only: rebuilt on demand, never serialized, never part of any digest.
+#[derive(Clone, Debug)]
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+struct BlockCursor {
+    /// The block being replayed (shared with its cache slot while resident).
+    block: alloc::rc::Rc<dispatch::DecodedBlock>,
+    /// Index of the next op to replay.
+    idx: usize,
+    /// Guest VA that op must be fetched from; any other PC ends the continuation.
+    next_va: u64,
+}
+
+impl BlockCursor {
+    /// `(entry phys key, next op index, expected next VA)` — the identity the pre-Rc cursor tuple
+    /// carried. Test-only: equality of cursor positions across operations that must not move it.
+    #[cfg(test)]
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    fn position(&self) -> (u64, usize, u64) {
+        (self.block.phys_start, self.idx, self.next_va)
+    }
+}
+
+/// A fabric device window (UART, RTC, virtio slot) wrapped so every guest MMIO access bumps the
+/// machine's fabric epoch. The run loop's quiescence fast path (see `Machine::boundary_sync`)
+/// relies on this: devices found idle stay idle until the guest touches one of these windows (or
+/// the host calls in between runs), so an unchanged epoch proves the device half of a boundary
+/// sync would be a no-op. Purely observational — reads/writes are forwarded unchanged.
+struct FabricTouch<D> {
+    inner: D,
+    epoch: alloc::rc::Rc<core::cell::Cell<u64>>,
+}
+
+impl<D: mmio::MmioDevice> mmio::MmioDevice for FabricTouch<D> {
+    fn read(&mut self, offset: u64, width: mmio::Width) -> Result<u64, bus::BusFault> {
+        self.epoch.set(self.epoch.get().wrapping_add(1));
+        self.inner.read(offset, width)
+    }
+
+    fn write(&mut self, offset: u64, width: mmio::Width, value: u64) -> Result<(), bus::BusFault> {
+        self.epoch.set(self.epoch.get().wrapping_add(1));
+        self.inner.write(offset, width, value)
+    }
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -617,6 +689,17 @@ enum BlockStep {
 struct JitProgress {
     result: Result<(), Trap>,
     work_used: u64,
+}
+
+/// E4-T21 hotness of the pending block at `phys`, including the queued hits the block currently
+/// cached there has buffered in its discovery memo (see [`dispatch::DiscMemo`]).
+#[cfg(not(feature = "zicsr-stub"))]
+fn queued_hotness_of(
+    discovery: &dispatch::BlockDiscovery,
+    block_cache: &dispatch::BlockCache,
+    phys: u64,
+) -> u32 {
+    discovery.queued_hotness_with(phys, block_cache.get(phys).map(|b| b.disc.get()))
 }
 
 /// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
@@ -901,6 +984,18 @@ impl Machine {
             wall_time: None,
             mono_clock: None,
             last_time_jump: None,
+            fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
+            fabric_idle_epoch: None,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            fabric_fast_path_off: false,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            fabric_fast_hits: 0,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_tail_off: false,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_tail_ops: 0,
+            #[cfg(all(test, not(feature = "zicsr-stub")))]
+            replay_deferred_ops: 0,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -951,12 +1046,21 @@ impl Machine {
     /// per-instruction audit while the PMP revision is unchanged. This does not skip MMU/PTE
     /// permission checks, which still use the actual current privilege at instruction fetch.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_pmp_code_permissions(&mut self) {
+        // Every boundary: unchanged PMP revision and privilege is the overwhelmingly common case.
+        if self.hart.csr.pmp.revision() != self.pmp_revision_seen
+            || self.hart.csr.mode != self.pmp_mode_seen
+        {
+            self.sync_pmp_code_permissions_changed();
+        }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn sync_pmp_code_permissions_changed(&mut self) {
         let revision = self.hart.csr.pmp.revision();
         let mode = self.hart.csr.mode;
-        if revision == self.pmp_revision_seen && mode == self.pmp_mode_seen {
-            return;
-        }
         if revision == self.pmp_revision_seen
             && matches!(
                 (self.pmp_mode_seen, mode),
@@ -1429,7 +1533,10 @@ impl Machine {
             .attach(
                 bus::mmap::UART0_BASE,
                 bus::mmap::UART0_LEN,
-                alloc::boxed::Box::new(dev::uart16550::SharedUart(alloc::rc::Rc::clone(&cell))),
+                alloc::boxed::Box::new(FabricTouch {
+                    inner: dev::uart16550::SharedUart(alloc::rc::Rc::clone(&cell)),
+                    epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                }),
             )
             .expect("UART window overlaps RAM or another device");
         self.uart = Some((alloc::rc::Rc::clone(&cell), line));
@@ -1464,9 +1571,10 @@ impl Machine {
                 .attach(
                     platform::Platform::virtio_base(i),
                     platform::virt::VIRTIO_LEN,
-                    alloc::boxed::Box::new(dev::virtio::mmio::SharedVirtioMmio(
-                        alloc::rc::Rc::clone(&cell),
-                    )),
+                    alloc::boxed::Box::new(FabricTouch {
+                        inner: dev::virtio::mmio::SharedVirtioMmio(alloc::rc::Rc::clone(&cell)),
+                        epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                    }),
                 )
                 .expect("virtio window overlaps RAM or another device");
             self.virtio.push((alloc::rc::Rc::clone(&cell), line));
@@ -2247,7 +2355,10 @@ impl Machine {
             .attach(
                 platform::virt::RTC_BASE,
                 platform::virt::RTC_LEN,
-                alloc::boxed::Box::new(dev::rtc::SharedRtc(alloc::rc::Rc::clone(&cell))),
+                alloc::boxed::Box::new(FabricTouch {
+                    inner: dev::rtc::SharedRtc(alloc::rc::Rc::clone(&cell)),
+                    epoch: alloc::rc::Rc::clone(&self.fabric_epoch),
+                }),
             )
             .expect("RTC window overlaps RAM or another device");
         self.rtc = Some((alloc::rc::Rc::clone(&cell), line));
@@ -3447,6 +3558,7 @@ impl Machine {
     /// `mtime >= mtimecmp` and MSIP (bit 3) tracks `msip` — device-owned bits software cannot
     /// set. A no-op when no CLINT is attached.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_clint(&mut self) {
         if let Some(clint) = &self.clint {
             let s = *clint.borrow();
@@ -3471,6 +3583,7 @@ impl Machine {
     /// PLIC, which does not occur in this system. (MEIP is not software-writable, so it has no such
     /// interaction.)
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_plic(&mut self) {
         if let Some(plic) = &self.plic {
             let s = plic.borrow();
@@ -3489,6 +3602,7 @@ impl Machine {
     /// pending timer interrupt" clause), and `u64::MAX` never fires. A no-op unless the
     /// built-in SBI is enabled and a CLINT provides `mtime`.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sync_sbi_timer(&mut self) {
         if self.builtin_sbi
             && let Some(clint) = &self.clint
@@ -3512,23 +3626,50 @@ impl Machine {
             return;
         }
         if let Some(clint) = &self.clint {
-            let divisor = u128::from(self.clock_div.max(1));
-            let total = u128::from(self.tick_accum) + u128::from(retired);
-            let ticks = total / divisor;
-            self.tick_accum = (total % divisor) as u64;
+            let divisor = self.clock_div.max(1);
+            // A span whose residue sum fits in u64 (every realistic one) divides in hardware; the
+            // quotient/remainder are identical to the u128 form kept for the overflow edge.
+            let (ticks, residue) = match self.tick_accum.checked_add(retired) {
+                Some(total) => (total / divisor, total % divisor),
+                None => {
+                    let total = u128::from(self.tick_accum) + u128::from(retired);
+                    let divisor = u128::from(divisor);
+                    // Casting truncates modulo 2^64, which is exactly the value a wrapping u64
+                    // mtime addition observes even for the theoretical `u64::MAX` run-budget edge.
+                    ((total / divisor) as u64, (total % divisor) as u64)
+                }
+            };
+            self.tick_accum = residue;
             if ticks != 0 {
                 let mut s = clint.borrow_mut();
-                // Casting truncates modulo 2^64, which is exactly the value a wrapping u64 mtime
-                // addition observes even for the theoretical `u64::MAX` run-budget edge.
-                s.mtime = s.mtime.wrapping_add(ticks as u64);
+                s.mtime = s.mtime.wrapping_add(ticks);
             }
         }
     }
 
-    /// The one-instruction interpreter wrapper around [`Self::advance_clock_by`].
+    /// The one-instruction interpreter wrapper around [`Self::advance_clock_by`], run after every
+    /// interpreted retirement. With the sub-tick residue below the divider (the invariant every
+    /// setter maintains) one retirement yields exactly `(tick_accum + 1 == clock_div)` ticks, so
+    /// the hot path is an add and a compare — the identical `mtime`/`tick_accum` sequence as the
+    /// `u128` division, which remains the fallback for any out-of-invariant restored residue.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn advance_clock(&mut self) {
-        self.advance_clock_by(1);
+        if self.wall_time.is_some() {
+            return;
+        }
+        let Some(clint) = &self.clint else { return };
+        if self.tick_accum < self.clock_div {
+            // Branch-free: the tick lands on one retirement in `clock_div`, a period the branch
+            // predictor cannot learn through the interpreter's own branches.
+            let next = self.tick_accum + 1;
+            let tick = next == self.clock_div;
+            self.tick_accum = if tick { 0 } else { next };
+            let mut s = clint.borrow_mut();
+            s.mtime = s.mtime.wrapping_add(u64::from(tick));
+        } else {
+            self.advance_clock_by(1);
+        }
     }
 
     /// E4-T24: recompute `mtime` from the injected host wall clock at a block boundary — the ONE place
@@ -3537,7 +3678,18 @@ impl Machine {
     /// policy; a documented suspend/resume jump is stashed in [`Self::last_time_jump`]. A no-op unless
     /// wall-clock mode is armed (default ICount path never enters here).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn sample_wall_clock(&mut self) {
+        // ICount mode (the default) never samples: one test, inlined at every boundary.
+        if self.wall_time.is_some() {
+            self.sample_wall_clock_now();
+        }
+    }
+
+    /// The WallClock-mode body of [`Self::sample_wall_clock`].
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn sample_wall_clock_now(&mut self) {
         let (Some(ts), Some(clock), Some(clint)) =
             (&mut self.wall_time, &self.mono_clock, &self.clint)
         else {
@@ -3930,7 +4082,7 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn step_cached_with_capture<C: hart::RetirementCapture>(
         &mut self,
-        mut capture: C,
+        capture: C,
     ) -> Result<(), Trap> {
         // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
         // BEFORE obtaining the instruction.
@@ -3952,6 +4104,27 @@ impl Machine {
         // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
         // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
+        self.retire_cached_op(&op, pc, capture, false)
+    }
+
+    /// The execute-and-retire half of [`Self::step_cached_with_capture`] for an op already taken
+    /// from the block cursor: execute, tick the counters, record the retirement, then keep the
+    /// fetch stream coherent (`fence.i` note + page-granular drain of any code-page store). Shared
+    /// verbatim by the one-op step and the mid-block replay loop ([`Self::replay_block_tail`]).
+    ///
+    /// `defer` (only for a [`dispatch::retire_deferrable`] op, only from the replay loop) leaves
+    /// the counter tick to the caller's bulk settle and skips the fetch-coherence tail: such an op
+    /// is not `fence.i` and never reaches the bus, so the write log it would drain is still the
+    /// empty log the previous op's drain left.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn retire_cached_op<C: hart::RetirementCapture>(
+        &mut self,
+        op: &dispatch::MicroOp,
+        pc: u64,
+        mut capture: C,
+        defer: bool,
+    ) -> Result<(), Trap> {
         let output = self.hart.execute(
             &mut self.bus,
             op.instr,
@@ -3959,6 +4132,12 @@ impl Machine {
             u64::from(op.raw),
             &mut capture,
         )?;
+        if defer {
+            debug_assert!(dispatch::retire_deferrable(&op.instr));
+            debug_assert!(self.bus.code_write_log_mut().is_empty());
+            capture.retire(output, pc, op.raw);
+            return Ok(());
+        }
         self.hart.csr.retire_tick();
         capture.retire(output, pc, op.raw);
         // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
@@ -3987,10 +4166,25 @@ impl Machine {
     /// cursor may point into a just-dropped block, so it is reset (conservative-safe — a
     /// spurious reset only costs a rebuild). Cheap when the log is empty (the common case).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn drain_code_writes(&mut self) {
-        if !self.block_cache_enabled {
-            return;
+        // Hot path (after every retire): an empty log — no store since the last drain — is one
+        // length test, and a single logged frame that provably holds no cached code (the block
+        // cache's presence filter; `flush_page` would miss) is dropped inline. Anything else takes
+        // the out-of-line page-invalidation walk.
+        if self.block_cache_enabled {
+            let log = self.bus.code_write_log_mut();
+            match log.len() {
+                0 => {}
+                1 if !self.block_cache.may_hold_code(log[0]) => log.clear(),
+                _ => self.drain_code_writes_slow(),
+            }
         }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn drain_code_writes_slow(&mut self) {
         // Disjoint borrows: drain the bus log while page-invalidating the cache.
         let Self {
             bus,
@@ -4031,18 +4225,28 @@ impl Machine {
     /// by walking [`Hart::decode_at`] to the first terminator / page boundary / 128-op cap. On a
     /// fetch/decode fault the precise trap is returned (identical to the legacy path).
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
     fn next_micro_op(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
-        // Fast path: continue the block we are mid-replay of.
-        if let Some((key, idx, next_va)) = self.block_cursor
-            && next_va == pc
-            && let Some(op) = self
-                .block_cache
-                .get(key)
-                .and_then(|b| b.ops.get(idx).copied())
+        // Fast path: continue the block we are mid-replay of. The cursor holds the block, which
+        // is still cache-resident (every live-block drop clears the cursor), so this is exactly
+        // the former `block_cache.get(key)` hit with no probe. Inlined into the interpreter loop;
+        // block entry (translate + cache lookup / build) stays out of line.
+        if let Some(cursor) = &mut self.block_cursor
+            && cursor.next_va == pc
+            && let Some(op) = cursor.block.ops.get(cursor.idx).copied()
         {
-            self.block_cursor = Some((key, idx + 1, pc.wrapping_add(u64::from(op.len))));
+            cursor.idx += 1;
+            cursor.next_va = pc.wrapping_add(u64::from(op.len));
             return Ok(op);
         }
+        self.enter_block(pc)
+    }
+
+    /// The block-ENTRY half of [`Self::next_micro_op`]: the cursor missed, so re-key by physical
+    /// PC — reuse the cached block at `pc`'s physical address or walk and insert a fresh one.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn enter_block(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
         self.block_cursor = None;
 
         // A device/DMA write can land between host run chunks, before any guest instruction gets
@@ -4060,11 +4264,16 @@ impl Machine {
         // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
         // every entry — otherwise a cache hit would prevent the JIT hotness counter reaching its
         // threshold. SMC/DMA writes already remove the whole physical page before this lookup.
-        if let Some(block) = self.block_cache.get(phys)
+        if let Some(block) = self.block_cache.get_rc_touch(phys)
             && let Some(first) = block.ops.first().copied()
         {
-            self.discovery.on_block_entry(phys, &block.ops);
-            self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+            self.discovery
+                .on_block_entry_memo(phys, &block.ops, &block.disc);
+            self.block_cursor = Some(BlockCursor {
+                block,
+                idx: 1,
+                next_va: pc.wrapping_add(u64::from(first.len)),
+            });
             self.block_entry_hits = self.block_entry_hits.saturating_add(1);
             return Ok(first);
         }
@@ -4122,11 +4331,20 @@ impl Machine {
         // Bump the hotness counter and, on crossing the threshold, nominate a TranslationRequest.
         // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
         // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
-        self.discovery.on_block_entry(phys, &ops);
-        self.block_cache
-            .insert(dispatch::DecodedBlock::new(phys, ops, total_len));
+        let block = dispatch::DecodedBlock::new(phys, ops, total_len);
+        self.discovery
+            .on_block_entry_memo(phys, &block.ops, &block.disc);
+        let (block, evicted) = self.block_cache.insert_rc_evicting(block);
+        // A replaced block leaves the cache: fold any queued hits it buffered into discovery.
+        if let Some(old) = evicted {
+            self.discovery.settle_memo(old.phys_start, &old.disc);
+        }
         // Entry op (index 0) is consumed now; the cursor resumes at index 1.
-        self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+        self.block_cursor = Some(BlockCursor {
+            block,
+            idx: 1,
+            next_va: pc.wrapping_add(u64::from(first.len)),
+        });
         Ok(first)
     }
 
@@ -4141,14 +4359,11 @@ impl Machine {
     /// never evicted mid-replay by its own straight-line execution), the boundaries — and thus the
     /// interrupt-sampling points — are deterministic across cache sizes.
     #[cfg(not(feature = "zicsr-stub"))]
+    #[inline]
     fn at_block_boundary(&self) -> bool {
         let pc = self.hart.regs.pc;
-        match self.block_cursor {
-            Some((key, idx, next_va)) if next_va == pc => self
-                .block_cache
-                .get(key)
-                .and_then(|b| b.ops.get(idx))
-                .is_none(),
+        match &self.block_cursor {
+            Some(cursor) if cursor.next_va == pc => cursor.idx >= cursor.block.ops.len(),
             _ => true,
         }
     }
@@ -4185,7 +4400,7 @@ impl Machine {
             .jit_run_staged_nominations
             .saturating_add(staged.len() as u64);
         for req in staged {
-            let hotness = self.discovery.queued_hotness(req.phys_pc);
+            let hotness = queued_hotness_of(&self.discovery, &self.block_cache, req.phys_pc);
             self.compile_queue
                 .push(compile_queue::CompileJob { req, hotness });
         }
@@ -4201,7 +4416,7 @@ impl Machine {
         // Surviving backlog can accrue interpreted hits across exhausted host budgets, even when
         // this pump staged nothing. Refresh only now; keep admission/cancellation/recount ordering.
         self.compile_queue
-            .refresh_hotness(|phys| self.discovery.queued_hotness(phys));
+            .refresh_hotness(|phys| queued_hotness_of(&self.discovery, &self.block_cache, phys));
         // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
         let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
         let attempt_budget = JIT_INSTALL_BUDGET.min(self.jit_run_attempt_remaining);
@@ -4688,6 +4903,396 @@ impl Machine {
         }
     }
 
+    /// The device-fabric re-sync performed at every interrupt-sampling boundary (per retire in
+    /// legacy mode, per decoded block under Phase-C batching): latch host config IRQs, refresh the
+    /// wall/ICount clock levels, service every attached device, mirror the interrupt LEVELS into
+    /// the PLIC and `mip`, drain DMA-into-code, and pump the JIT compile queue. Out of line so the
+    /// per-instruction interpreter loop stays compact; the ORDER of every step is load-bearing.
+    ///
+    /// Quiescence fast path: when the previous full sync found every device IDLE (each service
+    /// took its no-work early return, the UART timeout clock was stopped, no RTC alarm was armed,
+    /// no config request was latched) and no guest MMIO access has reached a fabric device window
+    /// since (the [`FabricTouch`] epoch is unchanged) and no host call intervened (every run entry
+    /// clears the marker), then repeating the device half would take exactly the same no-op paths
+    /// and write the same PLIC levels — so only the clock/`mip` mirrors, the DMA drain and the JIT
+    /// pump run. The result is identical to the full sync at every boundary.
+    ///
+    /// The quiescent half is inlined into the run loop (it runs at almost every boundary: a few
+    /// loads and `mip` bit updates); the device half stays out of line in
+    /// [`Self::boundary_sync_full`], so the common boundary pays neither a call nor that function's
+    /// large frame.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn boundary_sync(&mut self) {
+        #[cfg(test)]
+        let quiescent =
+            !self.fabric_fast_path_off && self.fabric_idle_epoch == Some(self.fabric_epoch.get());
+        #[cfg(not(test))]
+        let quiescent = self.fabric_idle_epoch == Some(self.fabric_epoch.get());
+        if quiescent {
+            #[cfg(test)]
+            {
+                self.fabric_fast_hits += 1;
+            }
+            self.sample_wall_clock();
+            self.sync_clint();
+            self.sync_plic();
+            self.sync_sbi_timer();
+            self.drain_code_writes();
+            self.boundary_jit_pump();
+            return;
+        }
+        self.boundary_sync_full();
+    }
+
+    /// The non-quiescent [`Self::boundary_sync`]: the full device-fabric pass (see there).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn boundary_sync_full(&mut self) {
+        let mut idle = true;
+        // E5-T04: host-owned virtio devices may have requested a config change through a
+        // retained state handle (for example a GPU canvas resize).  Latch those requests
+        // before mirroring InterruptStatus into the PLIC so the guest sees one precise
+        // config IRQ at this boundary, even when no queue was kicked.
+        for (slot, _) in &self.virtio {
+            idle &= !slot.borrow_mut().sync_backend_config_irq();
+        }
+        // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
+        // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
+        // the default ICount path.
+        self.sample_wall_clock();
+        self.sync_clint();
+        // E2-T07: tick the UART char-timeout clock and mirror its level into the
+        // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
+        if let Some((uart, line)) = &self.uart {
+            let mut u = uart.borrow_mut();
+            idle &= !u.tick();
+            line.set(u.irq_level());
+        }
+        // E2-T16: poll the RTC alarm and mirror its interrupt level into the PLIC,
+        // BEFORE sync_plic samples EIP, so a just-reached alarm fires this boundary.
+        if let Some((rtc, line)) = &self.rtc {
+            let mut r = rtc.borrow_mut();
+            line.set(r.poll());
+            idle &= !r.alarm_armed();
+        }
+        // Device services borrow the slot, their own ring views and the bus disjointly (no
+        // per-boundary `Rc` clone of the slot handle).
+        let Self {
+            virtio,
+            bus,
+            blk,
+            extra_blk,
+            net,
+            rng,
+            keyboard,
+            tablet,
+            mouse,
+            gpu,
+            snd,
+            console,
+            ..
+        } = self;
+        // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
+        // completed request's used-ring interrupt lands this same boundary.
+        if let Some((state, vq)) = blk {
+            idle &= dev::virtio::blk::service(&virtio[0].0, vq, state, bus);
+        }
+        // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
+        // guest read of `/dev/vdb…` completes promptly.
+        for (state, vq, slot_index) in extra_blk.iter_mut() {
+            idle &= dev::virtio::blk::service(&virtio[*slot_index].0, vq, state, bus);
+        }
+        // E3-T13: service virtio-net kicks (and async backend rx frames) the same
+        // boundary, so tx completions + delivered echoes interrupt promptly. The backend is
+        // polled every boundary (it may be event-driven) unless it reports `NetBackend::idle`.
+        if let Some((state, rx_vq, tx_vq)) = net {
+            idle &= dev::virtio::net::service(&virtio[1].0, rx_vq, tx_vq, state, bus);
+        }
+        // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
+        // the CRNG seeds without waiting on the run loop.
+        if let Some((state, vq)) = rng {
+            idle &= dev::virtio::rng::service(&virtio[2].0, vq, state, bus);
+        }
+        // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
+        // guest LED changes in the host-owned indicator before the next boundary.
+        if let Some((state, eventq, statusq)) = keyboard {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        // E5-T14a: service the absolute tablet and relative mouse independently. The
+        // browser may select either host route, but both guest-visible devices remain
+        // present and their bounded frames cannot consume one another's queues.
+        if let Some((state, eventq, statusq)) = tablet {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        if let Some((state, eventq, statusq)) = mouse {
+            idle &= dev::virtio::input::service(
+                &virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
+                eventq,
+                statusq,
+                state,
+                bus,
+            );
+        }
+        // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
+        // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
+        // after guest backing has been validated and copied into the resource shadow.
+        if let Some((state, control_vq, cursor_vq, slot_index)) = gpu {
+            idle &= dev::virtio::gpu::service_with_cursor(
+                &virtio[*slot_index].0,
+                control_vq,
+                cursor_vq,
+                state,
+                bus,
+            );
+        }
+        // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
+        // receives its QEMU-shaped responses at the same guest-visible boundary that it
+        // kicks the queue. Playback then uses the injected host clock/sink without changing
+        // any of the established blk/net/input slots.
+        if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) = snd {
+            let (_, snd_idle) = dev::virtio::snd::service_with_control_eventq_and_capture_idle(
+                &virtio[*slot_index].0,
+                controlq,
+                eventq,
+                Some(rxq),
+                Some(source.as_mut()),
+                txq,
+                state,
+                clock.as_ref(),
+                sink.as_mut(),
+                bus,
+            );
+            idle &= snd_idle;
+        }
+        // E5-T23b: service the independent virtio-console port-0/control/agent queues.
+        // Control transitions run before agent data so a freshly opened port can carry
+        // bytes at this same device boundary; the UART/SBI path above remains untouched.
+        if let Some(console) = console {
+            idle &= dev::virtio::console::service(
+                &virtio[console.slot_index].0,
+                &mut console.port0_receiveq,
+                &mut console.port0_transmitq,
+                &mut console.control_receiveq,
+                &mut console.control_transmitq,
+                &mut console.agent_receiveq,
+                &mut console.agent_transmitq,
+                &console.state,
+                bus,
+            );
+        }
+        // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
+        for (slot, line) in &self.virtio {
+            line.set(slot.borrow().irq_level());
+        }
+        // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
+        self.sync_plic();
+        // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
+        self.sync_sbi_timer();
+        // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
+        // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
+        // a used-ring publish). Those writes went through the bus and were logged by
+        // physical frame; drain them through page-granular invalidation so a guest that
+        // DMAs code then jumps to it can never execute a stale cached block. (Phase C
+        // does NOT touch this — the device sync above is still per-retire.)
+        self.drain_code_writes();
+        self.boundary_jit_pump();
+        // Idle devices stay idle until a fabric MMIO access (epoch bump) or a new run call.
+        self.fabric_idle_epoch = idle.then(|| self.fabric_epoch.get());
+    }
+
+    /// E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst of
+    /// newly-hot blocks accumulate first, so a connected component compiles as ONE module rather
+    /// than a trickle of one-block modules. Drain when the queue reaches `JIT_BATCH_TRIGGER` (a
+    /// batch's worth is ready) or every `JIT_PUMP_INTERVAL` boundaries (flush stragglers). Cheap
+    /// when the queue is empty.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn boundary_jit_pump(&mut self) {
+        if self.jit_enabled
+            && self.jit_run_attempt_remaining > 0
+            && (!self.compile_queue.is_empty() || self.jit_run_staging_remaining > 0)
+        {
+            self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
+            if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
+                || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
+            {
+                self.jit_pump_ticks = 0;
+                self.pump_jit_translations();
+            }
+        }
+    }
+
+    /// The post-retire bookkeeping of a retired `wfi` (shared by the one-op loop body and
+    /// [`Self::replay_block_tail`]).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn after_wfi_retire(&mut self) {
+        self.irqstats.on_wfi();
+        self.hart.last_was_wfi = false;
+        self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+        // E2-T23b: no interrupt was pending this boundary (next_interrupt returned None before
+        // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
+        // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
+        // `sleep` into near-real-time. No-op if no timer armed.
+        if !self.external_net_io_pending() {
+            self.wfi_fast_forward();
+        }
+    }
+
+    /// Phase-C mid-block replay: run the rest of the decoded block the cursor is inside, one op at
+    /// a time, with exactly the per-instruction work of the run loop's non-boundary interpreted
+    /// iteration and none of its per-iteration mode dispatch.
+    ///
+    /// The caller (the run loop) establishes, for the current iteration: interrupt batching and
+    /// the block cache are on, this is NOT a sampling boundary (so the cursor continues at `pc`
+    /// with an op left), no profiler or HTIF is armed, no debug trigger is armed, and
+    /// `remaining_work > 0`. Within one block those conditions can only change at the block's
+    /// terminator (triggers/CSRs), which is its last op, so after each op the loop re-evaluates
+    /// exactly the run loop's next loop-top tests in the same order — work budget, syscon
+    /// finisher, [`Self::at_block_boundary`] — and returns to the run loop the moment any of them
+    /// would take it off the non-boundary path. Per op, in order: counter arm, cursor advance (the
+    /// [`Self::next_micro_op`] continuation), [`Self::retire_cached_op`], work slot, then on
+    /// success the retire clock, the progress counter and the WFI hook — the loop body's order.
+    ///
+    /// Deferred accounting: a [`dispatch::retire_deferrable`] op (pure integer register op) cannot
+    /// observe the per-retire accounting — the Zicntr counters (`retire_tick`), the ICount clock
+    /// (`advance_clock`) and the progress counter (`on_retire`) — so for a run of them the loop
+    /// only counts, and [`Self::settle_retired`] applies the bulk-equivalent spans before the next
+    /// op that could observe them (any memory, CSR, system or control op: e.g. a CLINT `mtime`
+    /// load, a `csrr cycle`, a `wfi`) and before returning. Each is an exact bulk form: counter
+    /// spans with the one-instruction write flags clear, `advance_clock_by(n)` ≡ `n` ×
+    /// `advance_clock`, `on_retire_n(n)` ≡ `n` × `on_retire`.
+    ///
+    /// Returns `Some(trap)` when an op trapped: that op has NOT consumed its work slot, so the run
+    /// loop charges it and delivers the trap through its one trap path. `None` otherwise.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(never)]
+    fn replay_block_tail<T: trace::TraceSink>(
+        &mut self,
+        remaining_work: &mut u64,
+        capture: &mut RunCapture<'_, T>,
+    ) -> Option<Trap> {
+        // One loop per capture kind, so the per-op body carries no capture dispatch.
+        match capture {
+            RunCapture::Unit => self.replay_block_tail_with(remaining_work, |m, op, pc, defer| {
+                m.retire_cached_op(op, pc, hart::UnitCapture, defer)
+            }),
+            RunCapture::Traced(sink) => {
+                self.replay_block_tail_with(remaining_work, |m, op, pc, defer| {
+                    m.retire_cached_op(op, pc, hart::RecordingCapture::new(&mut **sink), defer)
+                })
+            }
+        }
+    }
+
+    /// The body of [`Self::replay_block_tail`] for one capture kind (`retire` is
+    /// [`Self::retire_cached_op`] with that capture).
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn replay_block_tail_with(
+        &mut self,
+        remaining_work: &mut u64,
+        mut retire: impl FnMut(&mut Self, &dispatch::MicroOp, u64, bool) -> Result<(), Trap>,
+    ) -> Option<Trap> {
+        // Hold the block for the whole tail: the ops are read from this handle while `self` is
+        // mutated. The cursor (which owns the same block) stays the authority for liveness — a
+        // drain/fence.i that clears it ends the tail at the boundary test below.
+        let block = alloc::rc::Rc::clone(&self.block_cursor.as_ref()?.block);
+        let ops: &[dispatch::MicroOp] = &block.ops;
+        // Successfully retired deferrable ops whose accounting is not yet applied.
+        let mut pending: u64 = 0;
+        let result = loop {
+            // step_cached_with_capture, minus the execute-trigger test (no trigger is armed).
+            self.hart.csr.arm_counters();
+            let pc = self.hart.regs.pc;
+            // The next_micro_op continuation: the caller / the previous iteration's boundary test
+            // established `cursor.next_va == pc` and an op at `cursor.idx`.
+            let Some(cursor) = self.block_cursor.as_mut() else {
+                break None;
+            };
+            let idx = cursor.idx;
+            let Some(op) = ops.get(idx) else {
+                break None;
+            };
+            cursor.idx = idx + 1;
+            cursor.next_va = pc.wrapping_add(u64::from(op.len));
+            let defer = block.op_deferrable(idx);
+            if !defer && pending != 0 {
+                // This op may observe the accounting: bring it up to date first (the counter
+                // write flags were just cleared by `arm_counters`).
+                self.settle_retired(pending);
+                pending = 0;
+            }
+            if let Err(trap) = retire(self, op, pc, defer) {
+                break Some(trap);
+            }
+            *remaining_work -= 1;
+            #[cfg(test)]
+            {
+                self.replay_tail_ops += 1;
+            }
+            if defer {
+                pending += 1;
+                #[cfg(test)]
+                {
+                    self.replay_deferred_ops += 1;
+                }
+                // The run loop's next loop-top tests, in its order. A deferrable op cannot write
+                // the syscon finisher (no bus access; it was clear when this op began) or clear
+                // the cursor (no drain, not `fence.i`), and it falls through to `pc + len` — the
+                // cursor's `next_va` — so `at_block_boundary` reduces to the block-end test.
+                if *remaining_work == 0 || idx + 1 >= ops.len() {
+                    break None;
+                }
+                continue;
+            }
+            // The loop body's successful-retire accounting (profiling is off here).
+            self.advance_clock();
+            self.irqstats.on_retire(); // E2-T20 progress denominator
+            if self.hart.last_was_wfi {
+                self.after_wfi_retire();
+            }
+            // The run loop's next loop-top tests, in its order.
+            if *remaining_work == 0 {
+                break None;
+            }
+            if self.syscon.as_ref().is_some_and(|c| c.borrow().is_some()) {
+                break None;
+            }
+            if self.at_block_boundary() {
+                break None;
+            }
+        };
+        if pending != 0 {
+            self.settle_retired(pending);
+        }
+        result
+    }
+
+    /// Apply the per-retire accounting of `n` retired deferrable ops in one step (see
+    /// [`Self::replay_block_tail`]): the Zicntr counter span (write flags are clear: no deferred
+    /// op writes a CSR), the ICount clock span and the progress counter.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline(always)]
+    fn settle_retired(&mut self, n: u64) {
+        self.hart.csr.retire_span(n);
+        self.advance_clock_by(n);
+        self.irqstats.on_retire_n(n);
+    }
+
     fn run_capture_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -4704,6 +5309,24 @@ impl Machine {
         }
         #[cfg(not(feature = "zicsr-stub"))]
         self.drain_code_writes();
+        // The host may have pushed input, resized a display, restored a snapshot, or otherwise
+        // changed device state since the last run: the first boundary performs a full sync.
+        self.fabric_idle_epoch = None;
+        // Run-invariant dispatch configuration: only host calls between runs change these, so
+        // read them once instead of per retired instruction.
+        #[cfg(not(feature = "zicsr-stub"))]
+        let batching = self.interrupt_batching();
+        #[cfg(not(feature = "zicsr-stub"))]
+        let jit_on = self.jit_active();
+        #[cfg(not(feature = "zicsr-stub"))]
+        let cache_on = self.block_cache_enabled;
+        // Mid-block ops may take the tight replay loop when no per-op hook needs the general loop
+        // body: batching (hence the cache) on, no hot-PC profiler, no HTIF mailbox. (Debug
+        // triggers are re-checked per block below: a CSR write can arm them.)
+        #[cfg(not(feature = "zicsr-stub"))]
+        let tail_ok = batching && !self.profiling && self.htif.is_none();
+        #[cfg(all(test, not(feature = "zicsr-stub")))]
+        let tail_ok = tail_ok && !self.replay_tail_off;
 
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
@@ -4724,12 +5347,12 @@ impl Machine {
             // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
             // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
             #[cfg(not(feature = "zicsr-stub"))]
-            let sample_boundary = !self.interrupt_batching() || self.at_block_boundary();
+            let sample_boundary = !batching || self.at_block_boundary();
             // CSR writes that change PMP are block terminators. Invalidate decoded/compiled code
             // at that next boundary before the JIT or cursor can reuse permissions from the old
             // configuration. Direct host mutations between run calls are caught by the entry sync.
             #[cfg(not(feature = "zicsr-stub"))]
-            if self.block_cache_enabled && sample_boundary {
+            if cache_on && sample_boundary {
                 self.sync_pmp_code_permissions();
             }
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
@@ -4737,162 +5360,7 @@ impl Machine {
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
-                // E5-T04: host-owned virtio devices may have requested a config change through a
-                // retained state handle (for example a GPU canvas resize).  Latch those requests
-                // before mirroring InterruptStatus into the PLIC so the guest sees one precise
-                // config IRQ at this boundary, even when no queue was kicked.
-                for (slot, _) in &self.virtio {
-                    slot.borrow_mut().sync_backend_config_irq();
-                }
-                // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
-                // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
-                // the default ICount path.
-                self.sample_wall_clock();
-                self.sync_clint();
-                // E2-T07: tick the UART char-timeout clock and mirror its level into the
-                // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
-                if let Some((uart, line)) = &self.uart {
-                    let mut u = uart.borrow_mut();
-                    u.tick();
-                    line.set(u.irq_level());
-                }
-                // E2-T16: poll the RTC alarm and mirror its interrupt level into the PLIC,
-                // BEFORE sync_plic samples EIP, so a just-reached alarm fires this boundary.
-                if let Some((rtc, line)) = &self.rtc {
-                    line.set(rtc.borrow_mut().poll());
-                }
-                // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
-                // completed request's used-ring interrupt lands this same boundary.
-                if let Some((state, vq)) = &mut self.blk {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
-                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
-                }
-                // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
-                // guest read of `/dev/vdb…` completes promptly. Index-based to keep the `extra_blk`
-                // borrow disjoint from `self.virtio` / `self.bus`.
-                for i in 0..self.extra_blk.len() {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[self.extra_blk[i].2].0);
-                    let (state, vq, _) = &mut self.extra_blk[i];
-                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
-                }
-                // E3-T13: service virtio-net kicks (and async backend rx frames) the same
-                // boundary, so tx completions + delivered echoes interrupt promptly.
-                if let Some((state, rx_vq, tx_vq)) = &mut self.net {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[1].0);
-                    dev::virtio::net::service(&slot, rx_vq, tx_vq, state, &mut self.bus);
-                }
-                // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
-                // the CRNG seeds without waiting on the run loop.
-                if let Some((state, vq)) = &mut self.rng {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
-                    dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
-                }
-                // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
-                // guest LED changes in the host-owned indicator before the next boundary.
-                if let Some((state, eventq, statusq)) = &mut self.keyboard {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                // E5-T14a: service the absolute tablet and relative mouse independently. The
-                // browser may select either host route, but both guest-visible devices remain
-                // present and their bounded frames cannot consume one another's queues.
-                if let Some((state, eventq, statusq)) = &mut self.tablet {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                if let Some((state, eventq, statusq)) = &mut self.mouse {
-                    let slot = alloc::rc::Rc::clone(
-                        &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
-                    );
-                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
-                }
-                // E5-T06d: service the deferred virtio-gpu control queue at the same boundary as
-                // the other guest devices. RESOURCE_FLUSH invokes the retained host sink only
-                // after guest backing has been validated and copied into the resource shadow.
-                if let Some((state, control_vq, cursor_vq, slot_index)) = &mut self.gpu {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
-                    dev::virtio::gpu::service_with_cursor(
-                        &slot,
-                        control_vq,
-                        cursor_vq,
-                        state,
-                        &mut self.bus,
-                    );
-                }
-                // E5-T19d: service sound controlq before eventq/txq so a Linux snd_virtio probe
-                // receives its QEMU-shaped responses at the same guest-visible boundary that it
-                // kicks the queue. Playback then uses the injected host clock/sink without changing
-                // any of the established blk/net/input slots.
-                if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) =
-                    &mut self.snd
-                {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
-                    dev::virtio::snd::service_with_control_eventq_and_capture(
-                        &slot,
-                        controlq,
-                        eventq,
-                        Some(rxq),
-                        Some(source.as_mut()),
-                        txq,
-                        state,
-                        clock.as_ref(),
-                        sink.as_mut(),
-                        &mut self.bus,
-                    );
-                }
-                // E5-T23b: service the independent virtio-console port-0/control/agent queues.
-                // Control transitions run before agent data so a freshly opened port can carry
-                // bytes at this same device boundary; the UART/SBI path above remains untouched.
-                if let Some(console) = &mut self.console {
-                    let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
-                    dev::virtio::console::service(
-                        &slot,
-                        &mut console.port0_receiveq,
-                        &mut console.port0_transmitq,
-                        &mut console.control_receiveq,
-                        &mut console.control_transmitq,
-                        &mut console.agent_receiveq,
-                        &mut console.agent_transmitq,
-                        &console.state,
-                        &mut self.bus,
-                    );
-                }
-                // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
-                for (slot, line) in &self.virtio {
-                    line.set(slot.borrow().irq_level());
-                }
-                // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
-                self.sync_plic();
-                // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
-                self.sync_sbi_timer();
-                // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
-                // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
-                // a used-ring publish). Those writes went through the bus and were logged by
-                // physical frame; drain them through page-granular invalidation so a guest that
-                // DMAs code then jumps to it can never execute a stale cached block. (Phase C
-                // does NOT touch this — the device sync above is still per-retire.)
-                self.drain_code_writes();
-                // E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst
-                // of newly-hot blocks accumulate first, so a connected component compiles as ONE
-                // module rather than a trickle of one-block modules. Drain when the queue reaches
-                // `JIT_BATCH_TRIGGER` (a batch's worth is ready) or every `JIT_PUMP_INTERVAL`
-                // boundaries (flush stragglers). Cheap when the queue is empty.
-                if self.jit_enabled
-                    && self.jit_run_attempt_remaining > 0
-                    && (!self.compile_queue.is_empty() || self.jit_run_staging_remaining > 0)
-                {
-                    self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
-                    if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
-                        || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
-                    {
-                        self.jit_pump_ticks = 0;
-                        self.pump_jit_translations();
-                    }
-                }
+                self.boundary_sync();
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
@@ -4926,7 +5394,7 @@ impl Machine {
             // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let jit_attempt = if self.jit_active() && sample_boundary && !capture.wants_records() {
+            let jit_attempt = if jit_on && sample_boundary && !capture.wants_records() {
                 self.try_jit_block(remaining_work)
             } else {
                 None
@@ -4934,7 +5402,17 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             let (step_result, ran_via_jit, work_used) = match jit_attempt {
                 Some(progress) => (progress.result, true, progress.work_used),
-                None => (capture.step(self, self.block_cache_enabled), false, 1),
+                // Mid-block: replay the rest of the block in the tight loop. It retires ops (with
+                // all their per-op accounting) until the next loop-top test would leave the
+                // non-boundary path; a trapping op comes back here unaccounted, exactly like a
+                // trapping one-op step.
+                None if tail_ok && !sample_boundary && self.hart.csr.triggers_idle() => {
+                    match self.replay_block_tail(&mut remaining_work, capture) {
+                        None => continue,
+                        Some(trap) => (Err(trap), false, 1),
+                    }
+                }
+                None => (capture.step(self, cache_on), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
             let (step_result, work_used) = (capture.step(self, false), 1u64);
@@ -4960,16 +5438,7 @@ impl Machine {
                     }
                 }
                 if self.hart.last_was_wfi {
-                    self.irqstats.on_wfi();
-                    self.hart.last_was_wfi = false;
-                    self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
-                    // E2-T23b: no interrupt was pending this boundary (next_interrupt returned
-                    // None above), so this WFI is a real idle wait. Skip the idle spin by jumping
-                    // mtime to the nearest armed timer deadline — deterministic, so native and
-                    // wasm agree. Turns a ~20× `sleep` into near-real-time. No-op if no timer armed.
-                    if !self.external_net_io_pending() {
-                        self.wfi_fast_forward();
-                    }
+                    self.after_wfi_retire();
                 }
             }
             if let Err(trap) = step_result {
@@ -5115,6 +5584,536 @@ mod decoded_cache_capacity_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The quiescent-fabric fast path must be unobservable: an interrupt-driven UART echo plus an
+    /// RTC alarm, whose level changes come from host input between runs (while the guest is
+    /// parked in a device-silent spin), from guest MMIO mid-run (IER/alarm arm/claim/RBR/
+    /// complete), from the UART char-timeout clock, and from an RTC clock that only advances when
+    /// polled, retires the identical instruction stream, output, and machine state with the fast
+    /// path forced off — in legacy, cache-only and batched modes, across slicings that split
+    /// blocks.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn fabric_quiescence_fast_path_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let lui = |rd: u32, imm20: u32| (imm20 << 12) | (rd << 7) | 0x37;
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        let lw = |rd, rs1, imm| i_type(imm, rs1, 2, rd, 0x03);
+        let lb = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x03);
+        let s_type = |imm: i32, rs2: u32, rs1: u32, f3: u32| {
+            let iu = (imm as u32) & 0xFFF;
+            ((iu >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | ((iu & 0x1F) << 7) | 0x23
+        };
+        let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
+        let sb = |rs2, rs1, imm| s_type(imm, rs2, rs1, 0);
+        const SRET: u32 = 0x1020_0073;
+        // main: stvec, sie.SEIE, sstatus.SIE, PLIC prio/enable/threshold for UART IRQ 10 on the
+        // S context, then a few hundred device-silent instructions before UART IER is enabled
+        // by guest MMIO (input may already be pending), then a counting spin loop.
+        let mut code = alloc::vec![
+            lui(5, 0x80201),
+            addi(5, 5, -0x800),
+            i_type(32, 5, 1, 5, 0x13),
+            i_type(32, 5, 5, 5, 0x13),
+            csrrw(0, 0x105, 5),
+            addi(5, 0, 0x200),
+            csrrs(0, 0x104, 5),
+            addi(5, 0, 0x2),
+            csrrs(0, 0x100, 5),
+            lui(5, 0x0C000),
+            addi(6, 0, 1),
+            sw(6, 5, 0x28),
+            addi(6, 0, 1),
+            sw(6, 5, 0x2C),
+            lui(5, 0x0C002),
+            addi(6, 0, 0x400),
+            addi(6, 6, 0x400),
+            addi(6, 6, 0x400),
+            sw(6, 5, 0x80),
+            lui(5, 0x0C201),
+            sw(0, 5, 0),
+            lui(7, 0x10000),
+            // RTC: IRQ_ENABLED = 1, alarm = 4096 ns of a clock that ticks once per poll.
+            lui(30, 0x00101),
+            addi(6, 0, 1),
+            sw(6, 30, 0x10),
+            sw(0, 30, 0x0c),
+            lui(6, 1),
+            sw(6, 30, 0x08),
+        ];
+        // Device-silent countdown (3000 iterations = 3000 boundaries even when batched) so the
+        // UART char-timeout clock latches and the fabric goes QUIESCENT before the guest's own
+        // IER store must raise the level: only the MMIO epoch bump can wake the full sync here.
+        let bne_back =
+            (1 << 31) | (0x3F << 25) | (9 << 15) | (1 << 12) | (0b1110 << 8) | (1 << 7) | 0x63;
+        code.extend([lui(9, 1), addi(9, 9, -1096), addi(9, 9, -1), bne_back]);
+        // FCR: FIFOs on, RX trigger level 8 — so short input interrupts ONLY via the UART's
+        // char-timeout clock, which must keep ticking at boundaries while the guest spins.
+        // Then IER = ERBFI.
+        code.extend([addi(6, 0, 0x81), sb(6, 7, 2), addi(6, 0, 0x01), sb(6, 7, 1)]);
+        code.extend([addi(8, 8, 1), 0xffdf_f06f]); // spin: addi x8,x8,1 ; j -4
+        // handler: claim, IIR, RBR -> THR echo, complete, sret.
+        let handler = [
+            addi(28, 28, 1),
+            lui(5, 0x0C201),
+            lw(6, 5, 4),
+            lb(29, 7, 2),
+            lb(31, 7, 0),
+            sb(31, 7, 0),
+            sw(0, 30, 0x1c), // RTC CLEAR_INTERRUPT (harmless for a UART claim)
+            sw(6, 5, 4),
+            SRET,
+        ];
+        struct PolledClock(alloc::rc::Rc<core::cell::Cell<u64>>);
+        impl dev::rtc::WallClock for PolledClock {
+            fn now_ns(&self) -> u64 {
+                let now = self.0.get();
+                self.0.set(now + 1);
+                now
+            }
+        }
+        let run = |block_cache: bool, batching: bool, fast_off: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(10);
+            m.enable_plic();
+            let uart = m.enable_uart16550();
+            let clock = alloc::rc::Rc::new(core::cell::Cell::new(0));
+            let rtc = m.enable_rtc(alloc::boxed::Box::new(PolledClock(alloc::rc::Rc::clone(
+                &clock,
+            ))));
+            let _ = m.enable_virtio_slots(None);
+            let _ = m.enable_virtio_keyboard();
+            // A loopback virtio-net (behind the switchable adapter, as the hosts attach it): an
+            // idle synchronous backend must not keep the fabric out of the fast path.
+            let _ = m.enable_virtio_net(alloc::boxed::Box::new(
+                dev::virtio::net::LoopbackBackend::new(),
+            ));
+            m.enable_builtin_sbi();
+            m.boot_supervisor(0, 0);
+            m.set_block_cache(block_cache);
+            m.set_interrupt_batching(batching);
+            m.fabric_fast_path_off = fast_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut()
+                    .store32(platform::virt::KERNEL_BASE + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            for (i, insn) in handler.iter().enumerate() {
+                m.bus_mut()
+                    .store32(platform::virt::KERNEL_BASE + 0x800 + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            uart.borrow_mut().push_input(b"a");
+            let mut trace = HashSink::new();
+            let mut out = alloc::vec::Vec::new();
+            let inputs: [&[u8]; 5] = [b"b", b"", b"cd", b"e", b""];
+            for (round, input) in inputs.iter().enumerate() {
+                let mut remaining = 20_000u64;
+                let mut step = round;
+                while remaining > 0 {
+                    let budget = remaining.min(slices[step % slices.len()]);
+                    assert_eq!(m.run_traced(budget, &mut trace), RunOutcome::MaxInstrs);
+                    remaining -= budget;
+                    step += 1;
+                }
+                out.extend(uart.borrow_mut().take_output());
+                uart.borrow_mut().push_input(input);
+            }
+            assert!(
+                !rtc.borrow().alarm_armed(),
+                "the alarm fired inside the run"
+            );
+            let rtc_claims = m.plic.as_ref().unwrap().borrow().claim_counts()[11];
+            out.retain(|&byte| byte != 0); // the RTC claim echoes an empty RBR
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    out,
+                    rtc_claims,
+                    clock.get(),
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.fabric_fast_hits,
+            )
+        };
+        for (block_cache, batching) in [(false, false), (true, false), (true, true)] {
+            for slices in [&[20_000][..], &[1, 7, 333][..], &[4096, 3][..]] {
+                let (control, full_hits) = run(block_cache, batching, true, slices);
+                let (fast, fast_hits) = run(block_cache, batching, false, slices);
+                assert_eq!(full_hits, 0);
+                assert!(fast_hits > 0, "the quiescent path must actually engage");
+                assert_eq!(
+                    fast, control,
+                    "cache={block_cache} batching={batching} {slices:?}"
+                );
+                assert_eq!(
+                    control.2, b"abcde",
+                    "every byte echoed through the IRQ path"
+                );
+                assert_eq!(control.3, 1, "one RTC alarm interrupt");
+            }
+        }
+    }
+
+    /// The mid-block replay loop retires the identical instruction stream and leaves the identical
+    /// machine state as the general loop body, under trace capture and unit capture and across run
+    /// slicings that split blocks. The workload puts, INSIDE straight-line blocks: RAM stores and
+    /// loads, a load access fault (a trapping mid-block op, delivered to an S handler), a store
+    /// that rewrites a later op of the same block (self-modifying code: the drain drops the cursor
+    /// mid-block and the rest re-decodes), an execute-address debug trigger on a mid-block op
+    /// (which must keep that block on the general path), and a syscon poweroff store followed by
+    /// more ops (the run must stop before the next op).
+    /// The replay loop's deferred retire accounting must be unobservable: runs of pure integer ops
+    /// settle `mcycle`/`minstret`, the ICount `mtime` clock and the progress counter in bulk, so
+    /// every op that can observe them — a CLINT `mtime` MMIO load mid-block, `csrr minstret` /
+    /// `csrr mcycle` / `csrr time` terminators, a `csrw minstret` whose own tick is suppressed —
+    /// must see exactly the per-retire values. M-mode, compared against the general per-op loop
+    /// (replay loop forced off) with traced and unit capture across slicings that split blocks.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn deferred_retire_accounting_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        fn r_type(f7: u32, rs2: u32, rs1: u32, f3: u32, rd: u32) -> u32 {
+            (f7 << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | 0x33
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let add = |rd, rs1, rs2| r_type(0, rs2, rs1, 0, rd);
+        let sub = |rd, rs1, rs2| r_type(0x20, rs2, rs1, 0, rd);
+        let xor = |rd, rs1, rs2| r_type(0, rs2, rs1, 4, rd);
+        let mul = |rd, rs1, rs2| r_type(1, rs2, rs1, 0, rd);
+        let ld = |rd, rs1, imm| i_type(imm, rs1, 3, rd, 0x03);
+        let lui = |rd: u32, imm20: u32| ((imm20 & 0xF_FFFF) << 12) | (rd << 7) | 0x37;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let bne_back = |ops: i32| {
+            let o = (-(4 * ops)) as u32;
+            (((o >> 12) & 1) << 31)
+                | (((o >> 5) & 0x3F) << 25)
+                | (11 << 15)
+                | (1 << 12)
+                | (((o >> 1) & 0xF) << 8)
+                | (((o >> 11) & 1) << 7)
+                | 0x63
+        };
+        const JDOT: u32 = 0x0000_006F;
+        const MCYCLE: u32 = 0xB00;
+        const MINSTRET: u32 = 0xB02;
+        const TIME: u32 = 0xC01;
+        let base = platform::virt::KERNEL_BASE;
+        let mtime = bus::mmap::CLINT_BASE + 0xBFF8;
+        assert!(mtime < 0x8000_0000 && mtime & 0xFFF == 0xFF8);
+        let mut code = alloc::vec![
+            lui(10, ((mtime + 0x1000) >> 12) as u32), // x10 = mtime (lo12 = -8)
+            addi(11, 0, 300),                         // loop count
+        ];
+        let lp = code.len();
+        code.extend([
+            addi(5, 5, 1),
+            addi(6, 6, 3),
+            xor(7, 5, 6),
+            add(8, 8, 7),
+            ld(9, 10, -8), // CLINT mtime after four deferrable ops
+            addi(5, 5, 1),
+            mul(12, 5, 6),
+            add(13, 13, 9),
+            csrrs(14, MINSTRET, 0), // counters after three deferrable ops
+            addi(15, 15, 1),
+            add(16, 16, 14),
+            csrrs(17, MCYCLE, 0),
+            addi(18, 18, 5),
+            csrrw(0, MINSTRET, 18), // suppresses its own minstret tick
+            addi(19, 19, 1),
+            sub(20, 20, 19),
+            csrrs(21, TIME, 0),
+            addi(22, 22, 7),
+            add(23, 23, 21),
+            addi(11, 11, -1),
+        ]);
+        let back = (code.len() - lp) as i32;
+        code.push(bne_back(back));
+        code.push(JDOT);
+        let run = |tail_off: bool, traced: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(3);
+            m.hart.csr.pmp.allow_all();
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.replay_tail_off = tail_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
+            }
+            m.hart.regs.pc = base;
+            let mut trace = HashSink::new();
+            let mut total = 0u64;
+            let mut step = 0;
+            while total < 12_000 {
+                let budget = slices[step % slices.len()];
+                step += 1;
+                total += budget;
+                let outcome = if traced {
+                    m.run_traced(budget, &mut trace)
+                } else {
+                    m.run(budget)
+                };
+                assert_eq!(outcome, RunOutcome::MaxInstrs);
+            }
+            let regs: alloc::vec::Vec<u64> = (0..32).map(|r| m.hart.regs.read(r)).collect();
+            assert!(
+                regs[9] > 100,
+                "the loop must observe an advancing mtime: {}",
+                regs[9]
+            );
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    regs,
+                    m.clint_mtime(),
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.replay_deferred_ops,
+            )
+        };
+        for traced in [true, false] {
+            for slices in [&[1_000_000][..], &[1, 7, 333][..], &[5, 3][..], &[2][..]] {
+                let (control, off_deferred) = run(true, traced, slices);
+                let (fast, deferred) = run(false, traced, slices);
+                assert_eq!(off_deferred, 0);
+                assert!(
+                    deferred > 1000,
+                    "deferred accounting must engage: {deferred}"
+                );
+                assert_eq!(control, fast, "traced={traced} slices={slices:?}");
+            }
+        }
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn replay_block_tail_is_unobservable() {
+        use crate::bus::Bus;
+        use crate::csr::{CsrOp, Priv, TDATA1, TDATA2, TSELECT};
+        use crate::resume::ComponentSnapshot;
+        use crate::trace::HashSink;
+        fn i_type(imm: i32, rs1: u32, f3: u32, rd: u32, op: u32) -> u32 {
+            (((imm as u32) & 0xFFF) << 20) | (rs1 << 15) | (f3 << 12) | (rd << 7) | op
+        }
+        fn s_type(imm: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let iu = (imm as u32) & 0xFFF;
+            ((iu >> 5) << 25) | (rs2 << 20) | (rs1 << 15) | (f3 << 12) | ((iu & 0x1F) << 7) | 0x23
+        }
+        fn b_type(off: i32, rs2: u32, rs1: u32, f3: u32) -> u32 {
+            let o = off as u32;
+            (((o >> 12) & 1) << 31)
+                | (((o >> 5) & 0x3F) << 25)
+                | (rs2 << 20)
+                | (rs1 << 15)
+                | (f3 << 12)
+                | (((o >> 1) & 0xF) << 8)
+                | (((o >> 11) & 1) << 7)
+                | 0x63
+        }
+        let addi = |rd, rs1, imm| i_type(imm, rs1, 0, rd, 0x13);
+        let xor =
+            |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (4 << 12) | (rd << 7) | 0x33;
+        let add = |rd: u32, rs1: u32, rs2: u32| (rs2 << 20) | (rs1 << 15) | (rd << 7) | 0x33;
+        let lui = |rd: u32, imm20: u32| ((imm20 & 0xF_FFFF) << 12) | (rd << 7) | 0x37;
+        let li32 = |rd: u32, v: u32| {
+            let lo = ((v & 0xFFF) as i32) << 20 >> 20;
+            let hi = v.wrapping_sub(lo as u32) >> 12;
+            [lui(rd, hi), addi(rd, rd, lo)]
+        };
+        // A zero-extended 32-bit address (RV64 `lui` sign-extends bit 31): li32 + slli/srli 32.
+        let la = |rd: u32, v: u32| {
+            let [hi, lo] = li32(rd, v);
+            [
+                hi,
+                lo,
+                i_type(32, rd, 1, rd, 0x13),
+                i_type(32, rd, 5, rd, 0x13),
+            ]
+        };
+        let lw = |rd, rs1, imm| i_type(imm, rs1, 2, rd, 0x03);
+        let sw = |rs2, rs1, imm| s_type(imm, rs2, rs1, 2);
+        let csrrw =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (1 << 12) | (rd << 7) | 0x73;
+        let csrrs =
+            |rd: u32, csr: u32, rs1: u32| (csr << 20) | (rs1 << 15) | (2 << 12) | (rd << 7) | 0x73;
+        const SRET: u32 = 0x1020_0073;
+        const JDOT: u32 = 0x0000_006F;
+        let base = platform::virt::KERNEL_BASE;
+        // The self-modified op (index `PATCHED`) alternates between these two encodings.
+        let enc_a = addi(22, 22, 7);
+        let enc_b = addi(22, 22, 1);
+        let mut code = alloc::vec::Vec::new();
+        code.extend(la(6, (base + 0x800) as u32)); // x6 = handler
+        code.push(csrrw(0, 0x105, 6)); // stvec = handler
+        code.extend(la(10, (base + 0x3000) as u32)); // x10 = data page
+        code.push(addi(11, 0, 150)); // loop count
+        code.extend(la(12, base as u32)); // x12 = code base (SMC target)
+        code.extend(li32(19, enc_a)); // x19 = first patch value
+        code.extend(li32(23, enc_a ^ enc_b)); // x23 = toggle mask
+        let lp = code.len();
+        let (patched, triggered) = (lp + 12, lp + 3);
+        code.extend([
+            addi(13, 13, 3),                  // +0
+            sw(13, 10, 0),                    // +1 RAM store
+            lw(14, 10, 0),                    // +2 RAM load
+            xor(15, 14, 13),                  // +3 (execute trigger here in one variant)
+            add(16, 16, 14),                  // +4
+            lw(17, 0, 0),                     // +5 load access fault -> handler skips it
+            addi(18, 18, 1),                  // +6
+            sw(19, 12, (4 * patched) as i32), // +7 rewrite op +12 (same block, ahead)
+            addi(20, 20, 1),                  // +8
+            addi(21, 21, 1),                  // +9
+            xor(19, 19, 23),                  // +10 toggle the next patch value
+            add(24, 24, 22),                  // +11
+            enc_b,                            // +12 (overwritten before it runs)
+            add(25, 25, 22),                  // +13
+            addi(11, 11, -1),                 // +14
+            b_type(-(4 * 15), 0, 11, 1),      // +15 bne x11, x0, loop
+        ]);
+        // Poweroff through the syscon finisher mid-block, then ops that must never run.
+        code.extend(la(26, platform::virt::TEST_BASE as u32));
+        code.extend(li32(27, 0x5555));
+        code.push(sw(27, 26, 0));
+        code.extend([addi(28, 28, 1), addi(28, 28, 1), JDOT]);
+        let handler = [
+            csrrs(5, 0x141, 0), // sepc
+            addi(5, 5, 4),
+            csrrw(0, 0x141, 5),
+            addi(29, 29, 1),
+            SRET,
+        ];
+        let run = |tail_off: bool, traced: bool, trigger: bool, slices: &[u64]| {
+            let mut m = Machine::new(8 * 1024 * 1024);
+            m.enable_clint(10);
+            m.enable_plic();
+            m.enable_syscon();
+            m.enable_builtin_sbi();
+            m.boot_supervisor(0, 0);
+            m.set_block_cache(true);
+            m.set_interrupt_batching(true);
+            m.replay_tail_off = tail_off;
+            for (i, insn) in code.iter().enumerate() {
+                m.bus_mut().store32(base + 4 * i as u64, *insn).unwrap();
+            }
+            for (i, insn) in handler.iter().enumerate() {
+                m.bus_mut()
+                    .store32(base + 0x800 + 4 * i as u64, *insn)
+                    .unwrap();
+            }
+            if trigger {
+                let mode = m.hart.csr.mode;
+                m.hart.csr.mode = Priv::M;
+                for (csr, v) in [
+                    (TSELECT, 0),
+                    (TDATA2, base + 4 * triggered as u64),
+                    (TDATA1, (2u64 << 60) | (1 << 4) | (1 << 2)),
+                ] {
+                    m.hart
+                        .csr
+                        .access(csr, CsrOp::Write, v, false, false, 0)
+                        .unwrap();
+                }
+                m.hart.csr.mode = mode;
+                assert!(!m.hart.csr.triggers_idle());
+            }
+            let mut trace = HashSink::new();
+            let mut outcomes = alloc::vec::Vec::new();
+            let mut step = 0;
+            let mut total = 0u64;
+            while total < 200_000 {
+                let budget = slices[step % slices.len()];
+                step += 1;
+                total += budget;
+                let outcome = if traced {
+                    m.run_traced(budget, &mut trace)
+                } else {
+                    m.run(budget)
+                };
+                outcomes.push(outcome);
+                if outcome != RunOutcome::MaxInstrs {
+                    break;
+                }
+            }
+            let regs: alloc::vec::Vec<u64> = (0..32).map(|r| m.hart.regs.read(r)).collect();
+            (
+                (
+                    trace.hash(),
+                    trace.retired(),
+                    outcomes,
+                    regs,
+                    m.snapshot(),
+                    m.hart.to_snapshot(),
+                ),
+                m.replay_tail_ops,
+            )
+        };
+        for trigger in [false, true] {
+            for traced in [true, false] {
+                for slices in [
+                    &[1_000_000][..],
+                    &[1, 7, 333][..],
+                    &[4096, 3][..],
+                    &[2, 5][..],
+                ] {
+                    let (control, off_ops) = run(true, traced, trigger, slices);
+                    let (fast, tail_ops) = run(false, traced, trigger, slices);
+                    assert_eq!(off_ops, 0);
+                    if trigger {
+                        // An armed execute trigger keeps every block on the general path.
+                        assert_eq!(tail_ops, 0, "an armed trigger must disable the replay loop");
+                    } else {
+                        assert!(tail_ops > 1000, "the replay loop must actually engage");
+                    }
+                    assert_eq!(
+                        fast, control,
+                        "trigger={trigger} traced={traced} {slices:?}"
+                    );
+                    let (_, _, outcomes, regs, _, _) = &control;
+                    assert_eq!(
+                        outcomes.last(),
+                        Some(&RunOutcome::Reset(ExitReason::PowerOff)),
+                        "the guest reached the poweroff store"
+                    );
+                    assert_eq!(regs[28], 0, "no op after the poweroff store ran");
+                    assert_eq!(regs[11], 0, "the loop ran to completion");
+                    // 150 iterations; the patched op alternates +7 / +1 starting with +7.
+                    assert_eq!(
+                        regs[22],
+                        75 * 7 + 75,
+                        "every rewrite executed its new bytes"
+                    );
+                    let traps = regs[29];
+                    let expected = if trigger { 300 } else { 150 };
+                    assert_eq!(
+                        traps, expected,
+                        "each fault (and trigger) trapped once per pass"
+                    );
+                }
+            }
+        }
+    }
 
     #[cfg(not(feature = "zicsr-stub"))]
     #[test]

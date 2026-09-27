@@ -160,6 +160,12 @@ impl GoldfishRtc {
         self.irq_level()
     }
 
+    /// Whether an alarm is armed, i.e. whether [`Self::poll`] still consults the clock. A disarmed
+    /// RTC cannot change its interrupt level until the guest touches its registers.
+    pub fn alarm_armed(&self) -> bool {
+        self.alarm_armed
+    }
+
     /// The interrupt LEVEL the PLIC line should track: a fired alarm, gated by the enable.
     pub fn irq_level(&self) -> bool {
         self.alarm_fired && self.irq_enabled

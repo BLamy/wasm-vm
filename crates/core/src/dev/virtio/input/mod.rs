@@ -1070,16 +1070,20 @@ fn service_statusq(
 /// chains, and maps queue violations to the existing virtio-mmio NEEDS_RESET path.  Eventq
 /// buffers that are too short are completed with `used.len = 0` and left pending; they are never
 /// partially written or allowed to invoke the status callback.
+///
+/// Returns `true` exactly when the device was IDLE — no reset, kick, or pending host event — so
+/// this call changed nothing (the run loop's fabric-quiescence signal).
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     eventq: &mut Option<Virtqueue>,
     statusq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<InputState>>,
     bus: &mut SystemBus,
-) {
-    let (event_work, status_work) = {
+) -> bool {
+    let (reset, event_work, status_work) = {
         let mut state = state.borrow_mut();
-        if state.reset_pending {
+        let reset = state.reset_pending;
+        if reset {
             state.reset_pending = false;
             *eventq = None;
             *statusq = None;
@@ -1092,7 +1096,7 @@ pub fn service(
         if status_work {
             state.clear_queue_kick(STATUS_QUEUE);
         }
-        (event_work, status_work)
+        (reset, event_work, status_work)
     };
 
     // Handle status first so a guest LED update can be observed before a host-generated event is
@@ -1103,6 +1107,7 @@ pub fn service(
     if event_work {
         service_eventq(slot, eventq, state, bus);
     }
+    !(reset || event_work || status_work)
 }
 
 #[cfg(test)]
