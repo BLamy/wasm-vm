@@ -320,9 +320,11 @@ pub struct DecodedBlock {
     /// block was logically flushed and must be ignored (an O(1) whole-cache invalidation).
     block_gen: u64,
     /// Bit `i` set ⇔ op `i` is [`retire_deferrable`] (derived from `ops`, never serialized).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     deferrable: u128,
     /// The block's cached discovery decision (see [`BlockDiscovery::on_block_entry_memo`]).
     /// Derived host state, never serialized.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) disc: Cell<DiscMemo>,
 }
 
@@ -411,6 +413,7 @@ impl DecodedBlock {
     }
 
     /// Whether op `idx` is [`retire_deferrable`] (always `false` past the 128-op mask).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     #[inline(always)]
     pub(crate) fn op_deferrable(&self, idx: usize) -> bool {
         idx < 128 && (self.deferrable >> idx) & 1 != 0
@@ -667,6 +670,7 @@ impl BlockCache {
 
     /// Whether `frame` may hold cached code: `false` proves [`Self::flush_page`] would be a no-op
     /// returning `false`, so the run loop's store drain can skip it with one bit test.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     #[inline(always)]
     pub(crate) fn may_hold_code(&self, frame: u64) -> bool {
         self.code_filter.may_contain(frame)
@@ -1010,8 +1014,10 @@ impl Default for DiscEntry {
     }
 }
 
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
 const MEMO_NONE: u8 = 0;
 const MEMO_QUEUED: u8 = 1;
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
 const MEMO_EXCLUDED: u8 = 2;
 
 /// A decoded block's cached copy of its discovery decision, so a block entry of an already
@@ -1576,6 +1582,7 @@ impl BlockDiscovery {
     /// memo, takes the ordinary decision, and re-caches the resulting decided state. Equivalent to
     /// `on_block_entry` in every counter, decision, request and (via
     /// [`Self::queued_hotness_with`]) hotness.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     #[inline]
     pub(crate) fn on_block_entry_memo(
         &mut self,
@@ -1597,6 +1604,7 @@ impl BlockDiscovery {
         self.on_block_entry_memo_slow(phys, ops, memo);
     }
 
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     #[inline(never)]
     fn on_block_entry_memo_slow(&mut self, phys: u64, ops: &[MicroOp], memo: &Cell<DiscMemo>) {
         self.settle_memo(phys, memo);
@@ -1617,6 +1625,7 @@ impl BlockDiscovery {
     /// Fold the queued hits buffered in a block's memo into its entry — only if that entry is
     /// still the nomination they were counted against — and clear the memo. Called before the
     /// block's next slow-path entry and when the block leaves the decoded cache.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     pub(crate) fn settle_memo(&mut self, phys: u64, memo: &Cell<DiscMemo>) {
         let m = memo.replace(DiscMemo::default());
         if m.kind == MEMO_QUEUED
