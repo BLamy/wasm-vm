@@ -1,0 +1,27 @@
+[package]
+name = "wasm-vm-wasm-web"
+description = "cdylib-only shell around wasm-vm-wasm so the shipped browser module actually gets LTO"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+# Why this crate exists (perf overhaul, 2026-09 — see evidence/perf-overhaul/webbuild/README.md):
+# `crates/wasm` must stay `crate-type = ["cdylib", "rlib"]` because its wasm-bindgen integration
+# tests link the rlib. Cargo never runs LTO for a unit whose crate types include `rlib`, so every
+# `lto` setting was silently ignored for the shipped wasm module. This crate is cdylib-only, so
+# `[profile.wasm-release]`'s fat LTO applies. It adds no code: it re-exports wasm-vm-wasm, whose
+# `#[wasm_bindgen]` exports and JS snippets reach the final module through the link.
+[lib]
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+wasm-vm-wasm = { path = "../wasm" }
+
+# `make web-build` runs `wasm-pack build crates/wasm-web --profile wasm-release`; wasm-pack reads a
+# custom profile's wasm-opt flags from the `custom` table. -O3 measured best with fat LTO.
+[package.metadata.wasm-pack.profile.custom]
+wasm-opt = ['-O3']
