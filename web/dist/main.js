@@ -54,7 +54,7 @@ import { CursorController } from "./src/sink/cursor-controller.js";
 import { createDesktopAgentSession } from "./desktop-agent-session.js";
 import { restoreDesktopThroughHost } from "./desktop-restore.js";
 import { isLoopbackOrigin } from "./cold-counter-recycling.js";
-import { hasOmarchyDesktopLayers, hasDesktopPixels } from "./omarchy-desktop-readiness.js";
+import { hasOmarchyShellBar, hasDesktopPixels } from "./omarchy-desktop-readiness.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -1955,7 +1955,7 @@ function watchOmarchyDesktop() {
       // A boot/restoration event alone must never hide the loading/error surface.
       const result = await guestExec("XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers", 300000, null, { quiet: true });
       if (generation !== desktopReadinessGeneration || !guestReady) return;
-      if (result.exit === 0 && hasOmarchyDesktopLayers(JSON.parse(result.stdout))
+      if (result.exit === 0 && hasOmarchyShellBar(JSON.parse(result.stdout))
         && presentation?.snapshot().successfulPresents > 0 && hasDesktopPixels(presentation.readPixels())) {
         emitGuestLifecycleEvent("wvm:desktop-ready");
         return;

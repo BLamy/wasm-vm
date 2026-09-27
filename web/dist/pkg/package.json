@@ -1,7 +1,7 @@
 {
-  "name": "wasm-vm-wasm",
+  "name": "wasm-vm-wasm-web",
   "type": "module",
-  "description": "The wasm-bindgen boundary: everything browser-specific, nothing emulator-specific",
+  "description": "cdylib-only shell around wasm-vm-wasm so the shipped browser module actually gets LTO",
   "version": "0.0.1",
   "license": "MIT OR Apache-2.0",
   "repository": {
