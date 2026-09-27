@@ -40,12 +40,12 @@ export function parseArgs(argv) {
 }
 
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
-async function hashFile(file) {
+export async function hashFile(file) {
   const hash = createHash("sha256");
   for await (const bytes of createReadStream(file)) hash.update(bytes);
   return hash.digest("hex");
 }
-async function identity(file) {
+export async function identity(file) {
   return { path: path.resolve(file), size: (await fs.stat(file)).size, sha256: await hashFile(file) };
 }
 
@@ -107,7 +107,7 @@ export function encodeDelta(blocks, imageLen, baseHex) {
 }
 
 // Every 4 KiB block of the working image that differs from the published chunk it came from.
-async function computeDelta(workImage, chunkRoot, manifest) {
+export async function computeDelta(workImage, chunkRoot, manifest) {
   const handle = await fs.open(workImage, "r");
   const blocks = [];
   try {
@@ -129,10 +129,10 @@ async function computeDelta(workImage, chunkRoot, manifest) {
   return blocks;
 }
 
-const plain = (text) => text.replace(/\x1b\][\s\S]*?(?:\x07|\x1b\\)/gu, "").replace(/\x1bP[\s\S]*?\x1b\\/gu, "")
+export const plain = (text) => text.replace(/\x1b\][\s\S]*?(?:\x07|\x1b\\)/gu, "").replace(/\x1bP[\s\S]*?\x1b\\/gu, "")
   .replace(/\x1b\[[0-?]*[ -/]*[@-~]/gu, "").replaceAll("\r", "");
 
-class SerialGuest {
+export class SerialGuest {
   constructor(child, log) {
     this.child = child; this.serial = ""; this.waiters = new Set(); this.exited = null; this.seq = 0; this.log = log;
     child.stdout.on("data", (bytes) => {
@@ -179,10 +179,10 @@ class SerialGuest {
   }
 }
 
-const HYPR = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0";
+export const HYPR = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0";
 
 // A desktop is settled when the compositor answers promptly and the single hart idles.
-async function settled(guest, receipt, label, timeoutMs) {
+export async function settled(guest, receipt, label, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
     const probe = await guest.run(`${HYPR} version >/dev/null && read -r u0 i0 < /proc/uptime && sleep 2 && read -r u1 i1 < /proc/uptime && echo "$u0 $i0 $u1 $i1"`);

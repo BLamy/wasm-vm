@@ -139,6 +139,13 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
                          [self.foot.index(b"_v1\0") + 2])
         self.assertEqual((self.root / "usr/bin/foot").read_bytes(), self.foot)
         self.assertIn("usr/local/bin/foot", changes)
+        # The compositor rasterizes synchronously: no llvmpipe worker thread races the KMS commit.
+        environment = (self.root / "etc/environment.d/60-omarchy-browser.conf").read_text().split("\n")
+        self.assertIn("LP_NUM_THREADS=0", environment)
+        self.assertNotIn("LP_NUM_THREADS=1", environment)
+        uwsm = (self.root / "home/omarchy/.config/uwsm/env").read_text()
+        self.assertIn(" LP_NUM_THREADS=0 ", uwsm)
+        self.assertNotIn("LP_NUM_THREADS=1", uwsm)
 
     def test_foot_patch_requires_exactly_one_interface_name(self) -> None:
         for binary in (b"no-interface", b"ext_background_effect_manager_v1\0" * 2):

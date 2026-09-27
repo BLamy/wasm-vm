@@ -86,7 +86,11 @@ def configure(root):
     write("etc/pacman.d/mirrorlist", "Server = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n")
     write("etc/machine-id", "")
     write("etc/pacman.conf", "[options]\nArchitecture = riscv64\nCheckSpace\nSigLevel = Required DatabaseOptional\nLocalFileSigLevel = Required\n\n[core]\nServer = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n\n[extra]\nServer = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n")
-    write("etc/environment.d/60-omarchy-browser.conf", "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=1\nAQ_NO_MODIFIERS=1\nQT_QUICK_BACKEND=software\nOMARCHY_PATH=/usr/share/omarchy\n")
+    # LP_NUM_THREADS=0: llvmpipe rasterizes inside the flush on the compositor's own thread. With a
+    # rasterizer thread, Hyprland on virtio-gpu (no explicit sync; its software check reads the DRM
+    # driver name) commits after a bare glFlush, and the commit can copy a half-rasterized frame
+    # that then stays on screen (evidence/omarchy-responsive/README.md). One hart gains nothing.
+    write("etc/environment.d/60-omarchy-browser.conf", "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=0\nAQ_NO_MODIFIERS=1\nQT_QUICK_BACKEND=software\nOMARCHY_PATH=/usr/share/omarchy\n")
     write("etc/sddm.conf.d/10-omarchy-demo.conf", "[Autologin]\nUser=omarchy\nSession=hyprland-uwsm.desktop\nRelogin=false\n\n[General]\nDisplayServer=wayland\n\n[Wayland]\nCompositorCommand=Hyprland\n")
     write("etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf", "[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin omarchy --noclear --keep-baud 115200,38400,9600 - $TERM\n")
     write("home/omarchy/.config/hypr/monitors.lua", 'hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })\nhl.env("GDK_SCALE", "1")\n')
@@ -100,7 +104,7 @@ hl.config({
 })
 """)
     write("home/omarchy/.config/xdg-terminals.list", "foot.desktop\n")
-    write("home/omarchy/.config/uwsm/env", "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=1 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n")
+    write("home/omarchy/.config/uwsm/env", "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=0 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n")
     # Omarchy's bootstrap searches ~/.config before package defaults. Replace
     # only the startup module; keep the package's shell, tiling and theme code.
     # The full upstream first-run installs/configures omitted developer apps.
@@ -159,7 +163,7 @@ require("default.hypr.toggles")
         os.lchown(entry, 1000, 1000)
     # Keep an explicit overlay identity separate from upstream package identity.
     write("etc/wasm-vm/demo-overlay.json", json.dumps({"schema": 1, "files": changes,
-        "profile": "lean-browser-session-v1+responsive-v1",
+        "profile": "lean-browser-session-v1+responsive-v2",
         "upstreamFullUserProvisioning": False,
         "configurationSource": "package-verified usr/share/omarchy/config",
         "desktopVerified": False}, indent=2, sort_keys=True) + "\n")

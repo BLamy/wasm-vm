@@ -16,6 +16,10 @@
 #  3. Once the desktop can idle, the icount guest clock fast-forwards through idle time, so the
 #     150 s screensaver / 300 s lock would fire within seconds of wall time. The demo user has
 #     no password, so a lock would strand the session.
+#  4. With an llvmpipe rasterizer thread, a KMS commit can copy a half-rasterized frame (torn
+#     64x64 tile rows, stale buffers) that stays on screen. LP_NUM_THREADS=0 in the user's uwsm
+#     env fixes this for the NEXT graphical session only; prepare-omarchy-responsive-cold.mjs
+#     cold-boots the profiled disk so the captured pair's compositor actually runs with it.
 set -euo pipefail
 
 fail() { printf 'omarchy-responsive-profile: %s\n' "$*" >&2; exit 1; }
@@ -66,5 +70,23 @@ patched = "\n".join(
     if line.startswith("Exec=foot") else line
     for line in entry.split("\n"))
 atomic_write(os.path.join(home, ".local/share/applications/foot.desktop"), patched.encode(), 0o644)
+
+# (4) Next graphical session only (uwsm reads this file when it starts the compositor):
+#  - LP_NUM_THREADS=0 makes llvmpipe rasterize inside the flush, on the compositor's own thread.
+#    Hyprland on virtio-gpu has no explicit sync here and only glFlush()es before its atomic
+#    commit (its software-renderer check looks at the DRM driver name, virtio_gpu), so with a
+#    rasterizer thread the commit's TRANSFER_TO_HOST_2D can copy a half-rasterized frame: torn
+#    64x64 tile rows and stale buffers stay on screen until that region is damaged again. One
+#    emulated hart gains nothing from the extra thread.
+#  - ~/.local/bin first on PATH, so the session's initial terminal is the profile Foot above.
+uwsm_env = os.path.join(home, ".config/uwsm/env")
+lines = [l for l in (open(uwsm_env).read().split("\n") if os.path.exists(uwsm_env) else []) if l]
+lines = [l.replace("LP_NUM_THREADS=1", "LP_NUM_THREADS=0") for l in lines]
+if not any("LP_NUM_THREADS=0" in l for l in lines):
+    lines.append("export LP_NUM_THREADS=0")
+path_line = 'export PATH="$HOME/.local/bin:$PATH"'
+if path_line not in lines:
+    lines.append(path_line)
+atomic_write(uwsm_env, ("\n".join(lines) + "\n").encode(), 0o644)
 PY
 echo "omarchy-responsive-profile: files applied"
