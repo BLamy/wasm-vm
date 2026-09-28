@@ -1,0 +1,2468 @@
+{
+  "meta": {
+    "date": "2026-09-23T08:41:45+00:00",
+    "host": {
+      "machine": "arm64",
+      "node": "Bretts-MacBook-Pro.local",
+      "system": "macOS-26.6.2-arm64-arm-64bit",
+      "cpu": "Apple M4 Max",
+      "ncpu": 16
+    },
+    "reps": 3,
+    "alpine_reps": 1,
+    "slow_reps": 1,
+    "slow_parallel": 4,
+    "micro_reps": 3,
+    "cases": [
+      "busybox-legacy",
+      "busybox-fast",
+      "busybox-jit",
+      "compute-fast",
+      "compute-jit",
+      "alpine-fast",
+      "alpine-jit",
+      "coremark-fast",
+      "coremark-jit",
+      "microbench"
+    ],
+    "rtc_ns": "1790000000000000000",
+    "compute_iters": 10000,
+    "releases": {
+      "kernel": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+      "initrd": "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+      "alpine": "/Users/blamy/Documents/Codex/wasm-vm/releases/rootfs/alpine-rootfs.ext4"
+    },
+    "bins": {
+      "baseline": {
+        "path": "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "sha256": "90a84c60f52a41fe9f4bd75095980339fe219d57902ad060a6a8c475368fa984",
+        "git": {
+          "checkout": "/Users/blamy/Documents/Codex/wasm-vm-base",
+          "rev": "82978509130946ea316c98a15298a7b01cdd7c05",
+          "branch": "HEAD",
+          "crates_dirty": true
+        },
+        "rtc_pinned": true
+      },
+      "candidate": {
+        "path": "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "sha256": "08f309cb9a011ae7ec8864b22dca6f5629c590c595f206853512b82539b9d7df",
+        "git": {
+          "checkout": "/Users/blamy/Documents/Codex/wasm-vm-t-bench",
+          "rev": "ce356fd4828adc0a0d67b6d156a1033d86d26e56",
+          "branch": "claude/perf-bench",
+          "crates_dirty": false
+        },
+        "rtc_pinned": true
+      }
+    },
+    "harness_rev": "ce356fd4828adc0a0d67b6d156a1033d86d26e56",
+    "suite_wall_s": 1336.76195825
+  },
+  "summary": {
+    "busybox-legacy": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 38.711741125,
+        "cpu_s": 38.401581,
+        "mips": 8.44,
+        "retired": [
+          326588165
+        ],
+        "wall_s_all": [
+          57.691928334,
+          38.711741125,
+          36.29412475
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 11.87548828125,
+        "by_rep": {
+          "0": {
+            "wall_s": 57.691928334,
+            "cpu_s": 40.450466,
+            "mips": 5.66
+          },
+          "1": {
+            "wall_s": 38.711741125,
+            "cpu_s": 38.401581,
+            "mips": 8.44
+          },
+          "2": {
+            "wall_s": 36.29412475,
+            "cpu_s": 36.218263,
+            "mips": 9.0
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 46.508979417,
+        "cpu_s": 33.526405000000004,
+        "mips": 7.02,
+        "retired": [
+          326588165
+        ],
+        "wall_s_all": [
+          47.378909792,
+          31.210174292,
+          46.508979417
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 17.12548828125,
+        "by_rep": {
+          "0": {
+            "wall_s": 47.378909792,
+            "cpu_s": 33.526405000000004,
+            "mips": 6.89
+          },
+          "1": {
+            "wall_s": 31.210174292,
+            "cpu_s": 31.131016,
+            "mips": 10.47
+          },
+          "2": {
+            "wall_s": 46.508979417,
+            "cpu_s": 35.07399899999999,
+            "mips": 7.02
+          }
+        }
+      }
+    },
+    "busybox-fast": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 18.560657834,
+        "cpu_s": 15.695200999999999,
+        "mips": 17.54,
+        "retired": [
+          325388171
+        ],
+        "wall_s_all": [
+          18.560657834,
+          15.769590459,
+          28.169573958
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 32.15185546875,
+        "by_rep": {
+          "0": {
+            "wall_s": 18.560657834,
+            "cpu_s": 15.176252,
+            "mips": 17.54
+          },
+          "1": {
+            "wall_s": 15.769590459,
+            "cpu_s": 15.695200999999999,
+            "mips": 20.65
+          },
+          "2": {
+            "wall_s": 28.169573958,
+            "cpu_s": 17.538823999999998,
+            "mips": 11.56
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 15.367595584,
+        "cpu_s": 14.871734,
+        "mips": 21.19,
+        "retired": [
+          325388171
+        ],
+        "wall_s_all": [
+          13.533775042,
+          15.367595584,
+          19.380315583
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 46.3466796875,
+        "by_rep": {
+          "0": {
+            "wall_s": 13.533775042,
+            "cpu_s": 13.086887,
+            "mips": 24.06
+          },
+          "1": {
+            "wall_s": 15.367595584,
+            "cpu_s": 14.871734,
+            "mips": 21.19
+          },
+          "2": {
+            "wall_s": 19.380315583,
+            "cpu_s": 15.018424,
+            "mips": 16.8
+          }
+        }
+      }
+    },
+    "busybox-jit": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 13.253121625,
+        "cpu_s": 13.213386,
+        "mips": 24.6,
+        "retired": [
+          325388171
+        ],
+        "wall_s_all": [
+          12.897817084,
+          13.253121625,
+          13.526510125
+        ],
+        "jit_retired_fraction": 0.9261057925796571,
+        "loadavg_1m": 42.427734375,
+        "by_rep": {
+          "0": {
+            "wall_s": 12.897817084,
+            "cpu_s": 12.843765,
+            "mips": 25.28
+          },
+          "1": {
+            "wall_s": 13.253121625,
+            "cpu_s": 13.213386,
+            "mips": 24.6
+          },
+          "2": {
+            "wall_s": 13.526510125,
+            "cpu_s": 13.476287000000001,
+            "mips": 24.1
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "wall_s": 12.365987542,
+        "cpu_s": 12.330387,
+        "mips": 26.37,
+        "retired": [
+          325388171
+        ],
+        "wall_s_all": [
+          12.277758625,
+          12.365987542,
+          27.459085417
+        ],
+        "jit_retired_fraction": 0.9261057925796571,
+        "loadavg_1m": 37.060546875,
+        "by_rep": {
+          "0": {
+            "wall_s": 12.277758625,
+            "cpu_s": 12.004821,
+            "mips": 26.56
+          },
+          "1": {
+            "wall_s": 12.365987542,
+            "cpu_s": 12.330387,
+            "mips": 26.37
+          },
+          "2": {
+            "wall_s": 27.459085417,
+            "cpu_s": 16.157543,
+            "mips": 11.86
+          }
+        }
+      }
+    },
+    "compute-fast": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "region_s": 9.869633917,
+        "region_cpu_s": 9.856159749999998,
+        "mips_est": 16.71794530451571,
+        "boot_to_prompt_s": 14.242551708,
+        "region_s_all": [
+          9.519927375,
+          9.869633917,
+          25.319491958
+        ],
+        "retired_est": 164999999,
+        "loadavg_1m": 33.51171875,
+        "by_rep": {
+          "0": {
+            "region_s": 9.519927375,
+            "region_cpu_s": 9.489320083333332,
+            "mips_est": 17.332064993825558
+          },
+          "1": {
+            "region_s": 9.869633917,
+            "region_cpu_s": 9.856159749999998,
+            "mips_est": 16.71794530451571
+          },
+          "2": {
+            "region_s": 25.319491958,
+            "region_cpu_s": 13.030859791666664,
+            "mips_est": 6.477223171461869
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "region_s": 8.71291225,
+        "region_cpu_s": 8.692493708333332,
+        "mips_est": 18.937410967268786,
+        "boot_to_prompt_s": 12.828284416,
+        "region_s_all": [
+          8.71291225,
+          8.582022792,
+          16.294472917
+        ],
+        "retired_est": 165000000,
+        "loadavg_1m": 26.9423828125,
+        "by_rep": {
+          "0": {
+            "region_s": 8.71291225,
+            "region_cpu_s": 8.692493708333332,
+            "mips_est": 18.937410967268786
+          },
+          "1": {
+            "region_s": 8.582022792,
+            "region_cpu_s": 8.567752416666666,
+            "mips_est": 19.226236517783484
+          },
+          "2": {
+            "region_s": 16.294472917,
+            "region_cpu_s": 11.545759958333331,
+            "mips_est": 10.06476250170075
+          }
+        }
+      }
+    },
+    "compute-jit": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "region_s": 8.465788709,
+        "region_cpu_s": 8.447628999999997,
+        "mips_est": 19.37208754402898,
+        "boot_to_prompt_s": 13.388634208,
+        "region_s_all": [
+          8.465788709,
+          8.021459583,
+          13.628659791
+        ],
+        "retired_est": 164000000,
+        "loadavg_1m": 20.86328125,
+        "by_rep": {
+          "0": {
+            "region_s": 8.465788709,
+            "region_cpu_s": 8.447628999999997,
+            "mips_est": 19.37208754402898
+          },
+          "1": {
+            "region_s": 8.021459583,
+            "region_cpu_s": 8.003009874999998,
+            "mips_est": 20.44515693223292
+          },
+          "2": {
+            "region_s": 13.628659791,
+            "region_cpu_s": 11.342106125,
+            "mips_est": 12.033464956569041
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "region_s": 7.924089458,
+        "region_cpu_s": 7.905232541666667,
+        "mips_est": 20.6963842179279,
+        "boot_to_prompt_s": 12.484692,
+        "region_s_all": [
+          7.924089458,
+          7.6308355,
+          10.845089584
+        ],
+        "retired_est": 164000000,
+        "loadavg_1m": 17.611328125,
+        "by_rep": {
+          "0": {
+            "region_s": 7.924089458,
+            "region_cpu_s": 7.905232541666667,
+            "mips_est": 20.6963842179279
+          },
+          "1": {
+            "region_s": 7.6308355,
+            "region_cpu_s": 7.599250125000001,
+            "mips_est": 21.62279608831832
+          },
+          "2": {
+            "region_s": 10.845089584,
+            "region_cpu_s": 10.206683083333335,
+            "mips_est": 15.122051203887967
+          }
+        }
+      }
+    },
+    "microbench": {
+      "baseline": {
+        "samples": 3,
+        "ok": 3,
+        "legacy_alu_mips": 54.2,
+        "legacy_branch_mips": 60.2,
+        "legacy_memory_mips": 51.5,
+        "legacy_fp_mips": 50.2,
+        "alu_fast_mips": 83.7,
+        "loadavg_1m": 30.73779296875,
+        "by_rep": {
+          "0": {
+            "wall_s": 13.716369709
+          },
+          "1": {
+            "wall_s": 12.54919375
+          },
+          "2": {
+            "wall_s": 12.520951333
+          }
+        }
+      },
+      "candidate": {
+        "samples": 3,
+        "ok": 3,
+        "legacy_alu_mips": 48.4,
+        "legacy_branch_mips": 53.7,
+        "legacy_memory_mips": 47.3,
+        "legacy_fp_mips": 45.7,
+        "alu_fast_mips": 88.8,
+        "loadavg_1m": 34.38818359375,
+        "by_rep": {
+          "0": {
+            "wall_s": 13.944111667
+          },
+          "1": {
+            "wall_s": 13.816794583
+          },
+          "2": {
+            "wall_s": 13.675266042
+          }
+        }
+      }
+    },
+    "coremark-jit": {
+      "candidate": {
+        "samples": 1,
+        "ok": 1,
+        "region_s": 95.101528833,
+        "region_cpu_s": 66.58494325,
+        "mips_est": 22.883964397897557,
+        "boot_to_prompt_s": 13.759010584,
+        "region_s_all": [
+          95.101528833
+        ],
+        "retired_est": null,
+        "host_iter_per_s": 63.09046840388979,
+        "loadavg_1m": 19.5771484375,
+        "by_rep": {
+          "0": {
+            "region_s": 95.101528833,
+            "region_cpu_s": 66.58494325,
+            "mips_est": 22.883964397897557,
+            "host_iter_per_s": 63.09046840388979
+          }
+        }
+      },
+      "baseline": {
+        "samples": 1,
+        "ok": 1,
+        "region_s": 103.597517166,
+        "region_cpu_s": 71.67209262499999,
+        "mips_est": 21.009190756111213,
+        "boot_to_prompt_s": 14.844123292,
+        "region_s_all": [
+          103.597517166
+        ],
+        "retired_est": null,
+        "host_iter_per_s": 57.91644591622664,
+        "loadavg_1m": 19.5771484375,
+        "by_rep": {
+          "0": {
+            "region_s": 103.597517166,
+            "region_cpu_s": 71.67209262499999,
+            "mips_est": 21.009190756111213,
+            "host_iter_per_s": 57.91644591622664
+          }
+        }
+      }
+    },
+    "coremark-fast": {
+      "candidate": {
+        "samples": 1,
+        "ok": 1,
+        "region_s": 125.936991416,
+        "region_cpu_s": 92.55819312499999,
+        "mips_est": 17.280863831431077,
+        "boot_to_prompt_s": 14.215055875,
+        "region_s_all": [
+          125.936991416
+        ],
+        "retired_est": null,
+        "host_iter_per_s": 47.642872300963305,
+        "loadavg_1m": 19.5771484375,
+        "by_rep": {
+          "0": {
+            "region_s": 125.936991416,
+            "region_cpu_s": 92.55819312499999,
+            "mips_est": 17.280863831431077,
+            "host_iter_per_s": 47.642872300963305
+          }
+        }
+      },
+      "baseline": {
+        "samples": 1,
+        "ok": 1,
+        "region_s": 142.453754041,
+        "region_cpu_s": 107.80022758333332,
+        "mips_est": 15.277238670548714,
+        "boot_to_prompt_s": 15.839860458,
+        "region_s_all": [
+          142.453754041
+        ],
+        "retired_est": null,
+        "host_iter_per_s": 42.11893214322119,
+        "loadavg_1m": 19.5771484375,
+        "by_rep": {
+          "0": {
+            "region_s": 142.453754041,
+            "region_cpu_s": 107.80022758333332,
+            "mips_est": 15.277238670548714,
+            "host_iter_per_s": 42.11893214322119
+          }
+        }
+      }
+    },
+    "alpine-fast": {
+      "candidate": {
+        "samples": 1,
+        "ok": 1,
+        "wall_s": 192.401650458,
+        "cpu_s": 189.38847700000002,
+        "mips": 15.98,
+        "retired": [
+          3073765362
+        ],
+        "wall_s_all": [
+          192.401650458
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 76.76611328125,
+        "by_rep": {
+          "0": {
+            "wall_s": 192.401650458,
+            "cpu_s": 189.38847700000002,
+            "mips": 15.98
+          }
+        }
+      },
+      "baseline": {
+        "samples": 1,
+        "ok": 1,
+        "wall_s": 213.321792042,
+        "cpu_s": 209.23157700000002,
+        "mips": 14.41,
+        "retired": [
+          3073765362
+        ],
+        "wall_s_all": [
+          213.321792042
+        ],
+        "jit_retired_fraction": null,
+        "loadavg_1m": 76.76611328125,
+        "by_rep": {
+          "0": {
+            "wall_s": 213.321792042,
+            "cpu_s": 209.23157700000002,
+            "mips": 14.41
+          }
+        }
+      }
+    },
+    "alpine-jit": {
+      "candidate": {
+        "samples": 1,
+        "ok": 1,
+        "wall_s": 266.693291958,
+        "cpu_s": 260.913479,
+        "mips": 11.53,
+        "retired": [
+          3073765362
+        ],
+        "wall_s_all": [
+          266.693291958
+        ],
+        "jit_retired_fraction": 0.8248711148694374,
+        "loadavg_1m": 76.76611328125,
+        "by_rep": {
+          "0": {
+            "wall_s": 266.693291958,
+            "cpu_s": 260.913479,
+            "mips": 11.53
+          }
+        }
+      },
+      "baseline": {
+        "samples": 1,
+        "ok": 1,
+        "wall_s": 281.592242125,
+        "cpu_s": 275.60566900000003,
+        "mips": 10.92,
+        "retired": [
+          3073765362
+        ],
+        "wall_s_all": [
+          281.592242125
+        ],
+        "jit_retired_fraction": 0.8248711148694374,
+        "loadavg_1m": 76.76611328125,
+        "by_rep": {
+          "0": {
+            "wall_s": 281.592242125,
+            "cpu_s": 275.60566900000003,
+            "mips": 10.92
+          }
+        }
+      }
+    }
+  },
+  "records": [
+    {
+      "case": "busybox-legacy",
+      "label": "baseline",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 57.691928334,
+      "cpu_s": 40.450466,
+      "loadavg_1m": 11.87548828125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 57674,
+      "retired": 326588165,
+      "mips": 5.66,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 47507,
+          "retired": 272989614,
+          "phase_mips": 5.75
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 54451,
+          "retired": 309989410,
+          "phase_mips": 5.33
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 57674,
+          "retired": 326588165,
+          "phase_mips": 5.15
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-legacy",
+      "label": "candidate",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 47.378909792,
+      "cpu_s": 33.526405000000004,
+      "loadavg_1m": 40.4375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 47369,
+      "retired": 326588165,
+      "mips": 6.89,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 40460,
+          "retired": 272989614,
+          "phase_mips": 6.75
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 45570,
+          "retired": 309989410,
+          "phase_mips": 7.24
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 47369,
+          "retired": 326588165,
+          "phase_mips": 9.23
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "baseline",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 18.560657834,
+      "cpu_s": 15.176252,
+      "loadavg_1m": 48.47998046875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 18552,
+      "retired": 325388171,
+      "mips": 17.54,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 14813,
+          "retired": 272989648,
+          "phase_mips": 18.43
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 17462,
+          "retired": 308789415,
+          "phase_mips": 13.51
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 18552,
+          "retired": 325388171,
+          "phase_mips": 15.23
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "candidate",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 13.533775042,
+      "cpu_s": 13.086887,
+      "loadavg_1m": 47.10009765625,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 13523,
+      "retired": 325388171,
+      "mips": 24.06,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 11014,
+          "retired": 272989648,
+          "phase_mips": 24.79
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 12782,
+          "retired": 308789415,
+          "phase_mips": 20.25
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 13523,
+          "retired": 325388171,
+          "phase_mips": 22.4
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "baseline",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 12.897817084,
+      "cpu_s": 12.843765,
+      "loadavg_1m": 42.427734375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 12873,
+      "retired": 325388171,
+      "mips": 25.28,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9593,
+          "retired": 272989648,
+          "phase_mips": 28.46
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 11912,
+          "retired": 308789415,
+          "phase_mips": 15.44
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 12873,
+          "retired": 325388171,
+          "phase_mips": 17.27
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "candidate",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 12.277758625,
+      "cpu_s": 12.004821,
+      "loadavg_1m": 37.060546875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 12251,
+      "retired": 325388171,
+      "mips": 26.56,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 8872,
+          "retired": 272989648,
+          "phase_mips": 30.77
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 11027,
+          "retired": 308789415,
+          "phase_mips": 16.61
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 12251,
+          "retired": 325388171,
+          "phase_mips": 13.56
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "baseline",
+      "rep": 0,
+      "loadavg_1m": 33.51171875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 14.242551708,
+      "region_s": 9.519927375,
+      "region_cpu_s": 9.489320083333332,
+      "loadavg_1m_region": 28.6787109375,
+      "match": [
+        "10000",
+        "91.48",
+        "93.13"
+      ],
+      "exit": 0,
+      "cpu_s_process": 24.227722,
+      "guest_region_s": 1.6499999999999915,
+      "retired_est": 164999999,
+      "mips_est": 17.332064993825558,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "candidate",
+      "rep": 0,
+      "loadavg_1m": 26.9423828125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 12.828284416,
+      "region_s": 8.71291225,
+      "region_cpu_s": 8.692493708333332,
+      "loadavg_1m_region": 23.20068359375,
+      "match": [
+        "10000",
+        "97.88",
+        "99.53"
+      ],
+      "exit": 0,
+      "cpu_s_process": 22.032249,
+      "guest_region_s": 1.6500000000000057,
+      "retired_est": 165000000,
+      "mips_est": 18.937410967268786,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "baseline",
+      "rep": 0,
+      "loadavg_1m": 20.86328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 13.388634208,
+      "region_s": 8.465788709,
+      "region_cpu_s": 8.447628999999997,
+      "loadavg_1m_region": 18.01318359375,
+      "match": [
+        "10000",
+        "64.86",
+        "66.50"
+      ],
+      "exit": 0,
+      "cpu_s_process": 22.498874999999998,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 19.37208754402898,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "candidate",
+      "rep": 0,
+      "loadavg_1m": 17.611328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 12.484692,
+      "region_s": 7.924089458,
+      "region_cpu_s": 7.905232541666667,
+      "loadavg_1m_region": 15.57421875,
+      "match": [
+        "10000",
+        "74.08",
+        "75.72"
+      ],
+      "exit": 0,
+      "cpu_s_process": 21.066368,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 20.6963842179279,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-legacy",
+      "label": "candidate",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 31.210174292,
+      "cpu_s": 31.131016,
+      "loadavg_1m": 17.12548828125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 31202,
+      "retired": 326588165,
+      "mips": 10.47,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 26094,
+          "retired": 272989614,
+          "phase_mips": 10.46
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 29647,
+          "retired": 309989410,
+          "phase_mips": 10.41
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 31202,
+          "retired": 326588165,
+          "phase_mips": 10.67
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-legacy",
+      "label": "baseline",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 38.711741125,
+      "cpu_s": 38.401581,
+      "loadavg_1m": 13.90673828125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 38702,
+      "retired": 326588165,
+      "mips": 8.44,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 31686,
+          "retired": 272989614,
+          "phase_mips": 8.62
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 36465,
+          "retired": 309989410,
+          "phase_mips": 7.74
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 38702,
+          "retired": 326588165,
+          "phase_mips": 7.42
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "candidate",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 15.367595584,
+      "cpu_s": 14.871734,
+      "loadavg_1m": 13.36083984375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 15358,
+      "retired": 325388171,
+      "mips": 21.19,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 12500,
+          "retired": 272989648,
+          "phase_mips": 21.84
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 14492,
+          "retired": 308789415,
+          "phase_mips": 17.97
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 15358,
+          "retired": 325388171,
+          "phase_mips": 19.17
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "baseline",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 15.769590459,
+      "cpu_s": 15.695200999999999,
+      "loadavg_1m": 13.85986328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 15759,
+      "retired": 325388171,
+      "mips": 20.65,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 12702,
+          "retired": 272989648,
+          "phase_mips": 21.49
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 14887,
+          "retired": 308789415,
+          "phase_mips": 16.38
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 15759,
+          "retired": 325388171,
+          "phase_mips": 19.04
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "candidate",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 12.365987542,
+      "cpu_s": 12.330387,
+      "loadavg_1m": 15.58837890625,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 12341,
+      "retired": 325388171,
+      "mips": 26.37,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9117,
+          "retired": 272989648,
+          "phase_mips": 29.94
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 11382,
+          "retired": 308789415,
+          "phase_mips": 15.81
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 12341,
+          "retired": 325388171,
+          "phase_mips": 17.31
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "baseline",
+      "rep": 1,
+      "exit": 0,
+      "wall_s": 13.253121625,
+      "cpu_s": 13.213386,
+      "loadavg_1m": 14.4951171875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 13227,
+      "retired": 325388171,
+      "mips": 24.6,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9872,
+          "retired": 272989648,
+          "phase_mips": 27.65
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 12233,
+          "retired": 308789415,
+          "phase_mips": 15.16
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 13227,
+          "retired": 325388171,
+          "phase_mips": 16.7
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "candidate",
+      "rep": 1,
+      "loadavg_1m": 13.2646484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 12.592288666,
+      "region_s": 8.582022792,
+      "region_cpu_s": 8.567752416666666,
+      "loadavg_1m_region": 12.701171875,
+      "match": [
+        "10000",
+        "104.28",
+        "105.93"
+      ],
+      "exit": 0,
+      "cpu_s_process": 21.670905,
+      "guest_region_s": 1.6500000000000057,
+      "retired_est": 165000000,
+      "mips_est": 19.226236517783484,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "baseline",
+      "rep": 1,
+      "loadavg_1m": 12.1318359375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 14.071892208,
+      "region_s": 9.869633917,
+      "region_cpu_s": 9.856159749999998,
+      "loadavg_1m_region": 12.2666015625,
+      "match": [
+        "10000",
+        "91.48",
+        "93.13"
+      ],
+      "exit": 0,
+      "cpu_s_process": 24.479662,
+      "guest_region_s": 1.6499999999999915,
+      "retired_est": 164999999,
+      "mips_est": 16.71794530451571,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "candidate",
+      "rep": 1,
+      "loadavg_1m": 11.7705078125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 12.168802875,
+      "region_s": 7.6308355,
+      "region_cpu_s": 7.599250125000001,
+      "loadavg_1m_region": 11.3232421875,
+      "match": [
+        "10000",
+        "71.00",
+        "72.65"
+      ],
+      "exit": 0,
+      "cpu_s_process": 20.413202000000002,
+      "guest_region_s": 1.6500000000000057,
+      "retired_est": 165000000,
+      "mips_est": 21.62279608831832,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "baseline",
+      "rep": 1,
+      "loadavg_1m": 10.9765625,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 12.837260625,
+      "region_s": 8.021459583,
+      "region_cpu_s": 8.003009874999998,
+      "loadavg_1m_region": 9.92919921875,
+      "match": [
+        "10000",
+        "67.93",
+        "69.57"
+      ],
+      "exit": 0,
+      "cpu_s_process": 21.53712,
+      "guest_region_s": 1.6399999999999864,
+      "retired_est": 163999999,
+      "mips_est": 20.44515693223292,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-legacy",
+      "label": "baseline",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 36.29412475,
+      "cpu_s": 36.218263,
+      "loadavg_1m": 10.32080078125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 36286,
+      "retired": 326588165,
+      "mips": 9.0,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 30299,
+          "retired": 272989614,
+          "phase_mips": 9.01
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 34430,
+          "retired": 309989410,
+          "phase_mips": 8.96
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 36286,
+          "retired": 326588165,
+          "phase_mips": 8.94
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-legacy",
+      "label": "candidate",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 46.508979417,
+      "cpu_s": 35.07399899999999,
+      "loadavg_1m": 9.123046875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 46499,
+      "retired": 326588165,
+      "mips": 7.02,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 40672,
+          "retired": 272989614,
+          "phase_mips": 6.71
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 44918,
+          "retired": 309989410,
+          "phase_mips": 8.71
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 46499,
+          "retired": 326588165,
+          "phase_mips": 10.5
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "baseline",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 28.169573958,
+      "cpu_s": 17.538823999999998,
+      "loadavg_1m": 32.15185546875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 28153,
+      "retired": 325388171,
+      "mips": 11.56,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 22040,
+          "retired": 272989648,
+          "phase_mips": 12.39
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 26321,
+          "retired": 308789415,
+          "phase_mips": 8.36
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 28153,
+          "retired": 325388171,
+          "phase_mips": 9.06
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-fast",
+      "label": "candidate",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 19.380315583,
+      "cpu_s": 15.018424,
+      "loadavg_1m": 46.3466796875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 19368,
+      "retired": 325388171,
+      "mips": 16.8,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 16780,
+          "retired": 272989648,
+          "phase_mips": 16.27
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 18610,
+          "retired": 308789415,
+          "phase_mips": 19.56
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 19368,
+          "retired": 325388171,
+          "phase_mips": 21.9
+        }
+      ],
+      "ok": true,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "baseline",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 13.526510125,
+      "cpu_s": 13.476287000000001,
+      "loadavg_1m": 46.75341796875,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 13499,
+      "retired": 325388171,
+      "mips": 24.1,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9886,
+          "retired": 272989648,
+          "phase_mips": 27.61
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 12420,
+          "retired": 308789415,
+          "phase_mips": 14.13
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 13499,
+          "retired": 325388171,
+          "phase_mips": 15.38
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "busybox-jit",
+      "label": "candidate",
+      "rep": 2,
+      "exit": 0,
+      "wall_s": 27.459085417,
+      "cpu_s": 16.157543,
+      "loadavg_1m": 40.88134765625,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 27429,
+      "retired": 325388171,
+      "mips": 11.86,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 19837,
+          "retired": 272989648,
+          "phase_mips": 13.76
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 24988,
+          "retired": 308789415,
+          "phase_mips": 6.95
+        },
+        {
+          "phase": "busybox-userland",
+          "wall_ms": 27429,
+          "retired": 325388171,
+          "phase_mips": 6.8
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 3144,
+        "blocks_executed": 30383973,
+        "retired_via_jit": 301343870
+      },
+      "jit_retired_fraction": 0.9261057925796571,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "baseline",
+      "rep": 2,
+      "loadavg_1m": 53.13720703125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 32.159303041,
+      "region_s": 25.319491958,
+      "region_cpu_s": 13.030859791666664,
+      "loadavg_1m_region": 63.53125,
+      "match": [
+        "10000",
+        "43.87",
+        "45.51"
+      ],
+      "exit": 0,
+      "cpu_s_process": 32.391346,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 6.477223171461869,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-fast",
+      "label": "candidate",
+      "rep": 2,
+      "loadavg_1m": 66.83203125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 34.506830792,
+      "region_s": 16.294472917,
+      "region_cpu_s": 11.545759958333331,
+      "loadavg_1m_region": 66.4248046875,
+      "match": [
+        "10000",
+        "47.45",
+        "49.09"
+      ],
+      "exit": 0,
+      "cpu_s_process": 28.911206,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 10.06476250170075,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "baseline",
+      "rep": 2,
+      "loadavg_1m": 67.3359375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 20.668765083,
+      "region_s": 13.628659791,
+      "region_cpu_s": 11.342106125,
+      "loadavg_1m_region": 67.87109375,
+      "match": [
+        "10000",
+        "47.45",
+        "49.09"
+      ],
+      "exit": 0,
+      "cpu_s_process": 29.876152,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 12.033464956569041,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "compute-jit",
+      "label": "candidate",
+      "rep": 2,
+      "loadavg_1m": 61.18896484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 19.768240083,
+      "region_s": 10.845089584,
+      "region_cpu_s": 10.206683083333335,
+      "loadavg_1m_region": 52.09716796875,
+      "match": [
+        "10000",
+        "47.45",
+        "49.09"
+      ],
+      "exit": 0,
+      "cpu_s_process": 27.519472,
+      "guest_region_s": 1.6400000000000006,
+      "retired_est": 164000000,
+      "mips_est": 15.122051203887967,
+      "iterations": 10000,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "baseline",
+      "rep": 0,
+      "loadavg_1m": 48.78955078125,
+      "wall_s": 13.716369709,
+      "legacy_mips": {
+        "alu": 51.6,
+        "branch": 59.5,
+        "memory": 50.5,
+        "fp": 48.5
+      },
+      "alu_fast_mips": 65.6,
+      "alu_legacy_mips_paired": 43.8,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "candidate",
+      "rep": 0,
+      "loadavg_1m": 40.7265625,
+      "wall_s": 13.944111667,
+      "legacy_mips": {
+        "alu": 48.7,
+        "branch": 53.7,
+        "memory": 46.3,
+        "fp": 43.6
+      },
+      "alu_fast_mips": 88.8,
+      "alu_legacy_mips_paired": 47.5,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "candidate",
+      "rep": 1,
+      "loadavg_1m": 34.38818359375,
+      "wall_s": 13.816794583,
+      "legacy_mips": {
+        "alu": 47.9,
+        "branch": 53.2,
+        "memory": 47.3,
+        "fp": 46.1
+      },
+      "alu_fast_mips": 89.4,
+      "alu_legacy_mips_paired": 47.5,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "baseline",
+      "rep": 1,
+      "loadavg_1m": 30.73779296875,
+      "wall_s": 12.54919375,
+      "legacy_mips": {
+        "alu": 55.5,
+        "branch": 60.2,
+        "memory": 51.5,
+        "fp": 50.2
+      },
+      "alu_fast_mips": 85.7,
+      "alu_legacy_mips_paired": 55.3,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "baseline",
+      "rep": 2,
+      "loadavg_1m": 25.7802734375,
+      "wall_s": 12.520951333,
+      "legacy_mips": {
+        "alu": 54.2,
+        "branch": 60.6,
+        "memory": 52.5,
+        "fp": 50.5
+      },
+      "alu_fast_mips": 83.7,
+      "alu_legacy_mips_paired": 53.1,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "microbench",
+      "label": "candidate",
+      "rep": 2,
+      "loadavg_1m": 22.96630859375,
+      "wall_s": 13.675266042,
+      "legacy_mips": {
+        "alu": 48.4,
+        "branch": 54.9,
+        "memory": 47.3,
+        "fp": 45.7
+      },
+      "alu_fast_mips": 88.3,
+      "alu_legacy_mips_paired": 48.0,
+      "ok": true,
+      "exit": 0,
+      "concurrency": 1
+    },
+    {
+      "case": "coremark-jit",
+      "label": "candidate",
+      "rep": 0,
+      "loadavg_1m": 19.5771484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit",
+        "--drive",
+        "file=/Users/blamy/Documents/Codex/wasm-vm-t-bench/bench/guest/bench.ext4,ro"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 13.759010584,
+      "region_s": 95.101528833,
+      "region_cpu_s": 66.58494325,
+      "loadavg_1m_region": 18.48095703125,
+      "match": [
+        "0"
+      ],
+      "exit": 0,
+      "cpu_s_process": 80.993281,
+      "guest_total_s": 21.763,
+      "guest_iter_per_s": 275.697284,
+      "mips_est": 22.883964397897557,
+      "host_iter_per_s": 63.09046840388979,
+      "concurrency": 4
+    },
+    {
+      "case": "coremark-jit",
+      "label": "baseline",
+      "rep": 0,
+      "loadavg_1m": 19.5771484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--jit",
+        "--drive",
+        "file=/Users/blamy/Documents/Codex/wasm-vm-t-bench/bench/guest/bench.ext4,ro"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 14.844123292,
+      "region_s": 103.597517166,
+      "region_cpu_s": 71.67209262499999,
+      "loadavg_1m_region": 18.48095703125,
+      "match": [
+        "0"
+      ],
+      "exit": 0,
+      "cpu_s_process": 87.178557,
+      "guest_total_s": 21.765,
+      "guest_iter_per_s": 275.67195,
+      "mips_est": 21.009190756111213,
+      "host_iter_per_s": 57.91644591622664,
+      "concurrency": 4
+    },
+    {
+      "case": "coremark-fast",
+      "label": "candidate",
+      "rep": 0,
+      "loadavg_1m": 19.5771484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching",
+        "--drive",
+        "file=/Users/blamy/Documents/Codex/wasm-vm-t-bench/bench/guest/bench.ext4,ro"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 14.215055875,
+      "region_s": 125.936991416,
+      "region_cpu_s": 92.55819312499999,
+      "loadavg_1m_region": 18.48095703125,
+      "match": [
+        "0"
+      ],
+      "exit": 0,
+      "cpu_s_process": 107.229001,
+      "guest_total_s": 21.763,
+      "guest_iter_per_s": 275.697284,
+      "mips_est": 17.280863831431077,
+      "host_iter_per_s": 47.642872300963305,
+      "concurrency": 4
+    },
+    {
+      "case": "coremark-fast",
+      "label": "baseline",
+      "rep": 0,
+      "loadavg_1m": 19.5771484375,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--initrd",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/initramfs/initramfs.cpio.gz",
+        "--max-instrs",
+        "200000000000",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--block-cache",
+        "--interrupt-batching",
+        "--drive",
+        "file=/Users/blamy/Documents/Codex/wasm-vm-t-bench/bench/guest/bench.ext4,ro"
+      ],
+      "ok": true,
+      "boot_to_prompt_s": 15.839860458,
+      "region_s": 142.453754041,
+      "region_cpu_s": 107.80022758333332,
+      "loadavg_1m_region": 18.48095703125,
+      "match": [
+        "0"
+      ],
+      "exit": 0,
+      "cpu_s_process": 124.104354,
+      "guest_total_s": 21.763,
+      "guest_iter_per_s": 275.697284,
+      "mips_est": 15.277238670548714,
+      "host_iter_per_s": 42.11893214322119,
+      "concurrency": 4
+    },
+    {
+      "case": "alpine-fast",
+      "label": "candidate",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 192.401650458,
+      "cpu_s": 189.38847700000002,
+      "loadavg_1m": 76.76611328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--drive",
+        "file=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/bench-native-1vhh40vk/alpine-fast.candidate.0.ext4",
+        "--append",
+        "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "--ram-mib",
+        "256",
+        "--max-instrs",
+        "20000000000",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 192391,
+      "retired": 3073765362,
+      "mips": 15.98,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9565,
+          "retired": 234589883,
+          "phase_mips": 24.53
+        },
+        {
+          "phase": "rootfs-mounted",
+          "wall_ms": 11869,
+          "retired": 274189617,
+          "phase_mips": 17.19
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 11898,
+          "retired": 274789613,
+          "phase_mips": 20.69
+        },
+        {
+          "phase": "getty-login",
+          "wall_ms": 192391,
+          "retired": 3073765362,
+          "phase_mips": 15.51
+        }
+      ],
+      "ok": true,
+      "concurrency": 4
+    },
+    {
+      "case": "alpine-fast",
+      "label": "baseline",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 213.321792042,
+      "cpu_s": 209.23157700000002,
+      "loadavg_1m": 76.76611328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--drive",
+        "file=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/bench-native-1vhh40vk/alpine-fast.baseline.0.ext4",
+        "--append",
+        "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "--ram-mib",
+        "256",
+        "--max-instrs",
+        "20000000000",
+        "--block-cache",
+        "--interrupt-batching",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 213312,
+      "retired": 3073765362,
+      "mips": 14.41,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 10560,
+          "retired": 234589883,
+          "phase_mips": 22.21
+        },
+        {
+          "phase": "rootfs-mounted",
+          "wall_ms": 13214,
+          "retired": 274189617,
+          "phase_mips": 14.92
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 13259,
+          "retired": 274789613,
+          "phase_mips": 13.33
+        },
+        {
+          "phase": "getty-login",
+          "wall_ms": 213312,
+          "retired": 3073765362,
+          "phase_mips": 13.99
+        }
+      ],
+      "ok": true,
+      "concurrency": 4
+    },
+    {
+      "case": "alpine-jit",
+      "label": "candidate",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 266.693291958,
+      "cpu_s": 260.913479,
+      "loadavg_1m": 76.76611328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-t-bench/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--drive",
+        "file=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/bench-native-1vhh40vk/alpine-jit.candidate.0.ext4",
+        "--append",
+        "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "--ram-mib",
+        "256",
+        "--max-instrs",
+        "20000000000",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 266628,
+      "retired": 3073765362,
+      "mips": 11.53,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 8630,
+          "retired": 234589883,
+          "phase_mips": 27.18
+        },
+        {
+          "phase": "rootfs-mounted",
+          "wall_ms": 11418,
+          "retired": 274189617,
+          "phase_mips": 14.2
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 11449,
+          "retired": 274789613,
+          "phase_mips": 19.35
+        },
+        {
+          "phase": "getty-login",
+          "wall_ms": 266628,
+          "retired": 3073765362,
+          "phase_mips": 10.97
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 6772,
+        "blocks_executed": 481356132,
+        "retired_via_jit": 2535460261
+      },
+      "jit_retired_fraction": 0.8248711148694374,
+      "concurrency": 4
+    },
+    {
+      "case": "alpine-jit",
+      "label": "baseline",
+      "rep": 0,
+      "exit": 0,
+      "wall_s": 281.592242125,
+      "cpu_s": 275.60566900000003,
+      "loadavg_1m": 76.76611328125,
+      "cmd": [
+        "/Users/blamy/Documents/Codex/wasm-vm-base/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "--no-input",
+        "--fixed-rtc-ns",
+        "1790000000000000000",
+        "--drive",
+        "file=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/bench-native-1vhh40vk/alpine-jit.baseline.0.ext4",
+        "--append",
+        "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "--ram-mib",
+        "256",
+        "--max-instrs",
+        "20000000000",
+        "--jit",
+        "--profile-boot"
+      ],
+      "profile_total_ms": 281531,
+      "retired": 3073765362,
+      "mips": 10.92,
+      "phases": [
+        {
+          "phase": "console-up",
+          "wall_ms": 9302,
+          "retired": 234589883,
+          "phase_mips": 25.22
+        },
+        {
+          "phase": "rootfs-mounted",
+          "wall_ms": 12331,
+          "retired": 274189617,
+          "phase_mips": 13.07
+        },
+        {
+          "phase": "init-handoff",
+          "wall_ms": 12380,
+          "retired": 274789613,
+          "phase_mips": 12.24
+        },
+        {
+          "phase": "getty-login",
+          "wall_ms": 281531,
+          "retired": 3073765362,
+          "phase_mips": 10.4
+        }
+      ],
+      "ok": true,
+      "jit": {
+        "active": true,
+        "blocks_compiled": 6772,
+        "blocks_executed": 481356132,
+        "retired_via_jit": 2535460261
+      },
+      "jit_retired_fraction": 0.8248711148694374,
+      "concurrency": 4
+    }
+  ]
+}

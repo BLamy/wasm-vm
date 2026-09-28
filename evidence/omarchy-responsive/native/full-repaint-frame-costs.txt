@@ -1,0 +1,46 @@
+# Full-screen repaint cost, native diag CLI (frame log: retired instructions at each RESOURCE_FLUSH).
+# Restored pair, then workspace 2 / 1 / 2 / 1 via hyprctl with 20 s guest sleeps between.
+## pair r3 (LP_NUM_THREADS=1)
+n=1 retired=0 delta=0
+n=2 retired=233985142 delta=233985142
+n=3 retired=642984501 delta=408999359
+n=4 retired=1053483763 delta=410499262
+n=5 retired=1465483287 delta=411999524
+n=6 retired=1509482980 delta=43999693
+n=7 retired=1590480003 delta=80997023
+n=8 retired=2230971833 delta=640491830
+n=9 retired=3121970884 delta=890999051
+n=10 retired=4013469900 delta=891499016
+n=11 retired=4429969262 delta=416499362
+n=12 retired=4476468939 delta=46499677
+n=13 retired=4642459601 delta=165990662
+n=14 retired=5052458971 delta=409999370
+n=15 retired=5460958369 delta=408499398
+n=16 retired=5874457763 delta=413499394
+n=17 retired=5918457457 delta=43999694
+n=18 retired=6569447455 delta=650989998
+n=19 retired=7460946480 delta=891499025
+n=20 retired=8352445494 delta=891499014
+n=21 retired=8791444076 delta=438998582
+n=22 retired=8834943767 delta=43499691
+n=23 retired=8893941747 delta=58997980
+## pair r5 (LP_NUM_THREADS=0)
+n=1 retired=0 delta=0
+n=2 retired=133993442 delta=133993442
+n=3 retired=673483503 delta=539490061
+n=4 retired=1080983017 delta=407499514
+n=5 retired=1489982407 delta=408999390
+n=6 retired=1534482077 delta=44499670
+n=7 retired=2425471500 delta=890989423
+n=8 retired=3167970654 delta=742499154
+n=9 retired=3910469801 delta=742499147
+n=10 retired=3956969506 delta=46499705
+n=11 retired=4494959632 delta=537990126
+n=12 retired=4903959033 delta=408999401
+n=13 retired=5312458446 delta=408499413
+n=14 retired=5356458158 delta=43999712
+n=15 retired=5405457713 delta=48999555
+n=16 retired=6298446071 delta=892988358
+n=17 retired=7041445138 delta=742999067
+n=18 retired=7783944288 delta=742499150
+n=19 retired=7830943985 delta=46999697

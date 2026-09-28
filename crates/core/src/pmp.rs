@@ -53,6 +53,16 @@ pub struct Pmp {
     /// Machine observes this revision at execution boundaries and invalidates all cached code.
     /// Deliberately excluded from architectural equality and snapshots.
     revision: u64,
+    /// Perf (derived, never serialized, excluded from equality like `revision`): the byte range
+    /// `[first_lo, first_hi)` and cfg of the LOWEST-numbered non-OFF entry, valid iff `first_ok`.
+    /// `check`'s scan skips every lower (OFF) entry and lands on this one first, so an access lying
+    /// wholly inside it is decided by its cfg alone — the common case (OpenSBI/`allow_all` open one
+    /// all-memory entry), which otherwise recomputed the region on every data access. Rebuilt by
+    /// every `cfg`/`addr` mutator (`refresh_derived`), so a restore rebuilds it too.
+    first_lo: u64,
+    first_hi: u64,
+    first_cfg: u8,
+    first_ok: bool,
 }
 
 impl PartialEq for Pmp {
@@ -71,6 +81,10 @@ impl Default for Pmp {
             addr: [0; NUM_ENTRIES],
             armed: false,
             revision: 0,
+            first_lo: 0,
+            first_hi: 0,
+            first_cfg: 0,
+            first_ok: false,
         }
     }
 }
@@ -92,9 +106,42 @@ impl Pmp {
         self.revision = self.revision.wrapping_add(1);
     }
 
-    /// Recompute the cached `armed` flag from `cfg`. Called only by the `cfg` mutators.
-    fn refresh_armed(&mut self) {
+    /// Recompute the derived fast-path state from `cfg`/`addr`: the `any_armed` gate and the
+    /// lowest armed entry's region. Called by every `cfg`/`addr` mutator (all rare: PMP is
+    /// configured at boot).
+    fn refresh_derived(&mut self) {
         self.armed = self.cfg.iter().any(|c| c & CFG_A != 0);
+        self.first_ok = false;
+        if let Some(i) = self.cfg.iter().position(|c| c & CFG_A != 0)
+            && let Some((lo, hi)) = self.region_checked(i)
+        {
+            self.first_lo = lo;
+            self.first_hi = hi;
+            self.first_cfg = self.cfg[i];
+            self.first_ok = true;
+        }
+    }
+
+    /// [`Self::region`] for an armed entry, or `None` when that computation would overflow (a
+    /// NAPOT/NA4 region reaching past 2^64 — possible only for a hostile restored `pmpaddr`). Such an
+    /// entry is simply not cached, so `check` keeps its exact slow-path arithmetic for it.
+    fn region_checked(&self, i: usize) -> Option<(u64, u64)> {
+        match (self.cfg[i] & CFG_A) >> 3 {
+            A_OFF => None,
+            A_TOR => self.region(i),
+            A_NA4 => {
+                let lo = self.addr[i] << 2;
+                Some((lo, lo.checked_add(4)?))
+            }
+            _ => {
+                let t = (!self.addr[i]).trailing_zeros();
+                if t + 3 >= 64 {
+                    return None;
+                }
+                let base = (self.addr[i] & !((1u64 << (t + 1)) - 1)) << 2;
+                Some((base, base.checked_add(1u64 << (t + 3))?))
+            }
+        }
     }
 
     /// E3-T12b: append the full PMP state (all `NUM_ENTRIES` cfg bytes + addr words) to a CPU-section
@@ -119,7 +166,7 @@ impl Pmp {
         for a in self.addr.iter_mut() {
             *a = r.u64()?;
         }
-        self.refresh_armed(); // restored `cfg` → refresh the cached `any_armed` gate
+        self.refresh_derived(); // restored `cfg`/`addr` → rebuild the derived fast-path state
         if self.cfg != old_cfg || self.addr != old_addr {
             self.bump_revision();
         }
@@ -157,7 +204,7 @@ impl Pmp {
             }
             self.cfg[i] = c;
         }
-        self.refresh_armed(); // `cfg` changed → refresh the cached `any_armed` gate
+        self.refresh_derived(); // `cfg` changed → rebuild the derived fast-path state
         if self.cfg != old {
             self.bump_revision();
         }
@@ -181,6 +228,7 @@ impl Pmp {
         let v = v & ADDR_MASK;
         if self.addr[i] != v {
             self.addr[i] = v;
+            self.refresh_derived(); // an entry's region moved
             self.bump_revision();
         }
     }
@@ -210,8 +258,39 @@ impl Pmp {
     }
 
     /// Is an access of `len` bytes at `addr` by `mode` permitted for `access`? (E1-T15.)
+    #[inline]
     pub fn check(&self, addr: u64, len: u64, access: PmpAccess, mode: Priv) -> bool {
         let end = addr.wrapping_add(len); // access covers [addr, end)
+        // Fast path: the scan below would skip the (OFF) entries below the lowest armed one and
+        // stop there — it matches (`addr < hi && lo < end`) and fully contains the access — so the
+        // verdict is exactly that entry's cfg decision.
+        if self.first_ok
+            && addr < self.first_hi
+            && self.first_lo < end
+            && addr >= self.first_lo
+            && end <= self.first_hi
+        {
+            return Self::permits(self.first_cfg, access, mode);
+        }
+        self.check_scan(addr, end, access, mode)
+    }
+
+    /// The matched entry's verdict: an unlocked entry does not restrict M-mode; otherwise the
+    /// access kind's R/W/X bit decides.
+    #[inline(always)]
+    fn permits(cfg: u8, access: PmpAccess, mode: Priv) -> bool {
+        if matches!(mode, Priv::M) && cfg & CFG_L == 0 {
+            return true;
+        }
+        match access {
+            PmpAccess::Read => cfg & CFG_R != 0,
+            PmpAccess::Write => cfg & CFG_W != 0,
+            PmpAccess::Exec => cfg & CFG_X != 0,
+        }
+    }
+
+    /// The full priority scan over `[addr, end)` (the reference semantics; see [`Self::check`]).
+    fn check_scan(&self, addr: u64, end: u64, access: PmpAccess, mode: Priv) -> bool {
         for i in 0..NUM_ENTRIES {
             let Some((lo, hi)) = self.region(i) else {
                 continue;
@@ -222,16 +301,7 @@ impl Pmp {
                 if addr < lo || end > hi {
                     return false;
                 }
-                let cfg = self.cfg[i];
-                // An unlocked entry does not restrict M-mode; a locked one does.
-                if matches!(mode, Priv::M) && cfg & CFG_L == 0 {
-                    return true;
-                }
-                return match access {
-                    PmpAccess::Read => cfg & CFG_R != 0,
-                    PmpAccess::Write => cfg & CFG_W != 0,
-                    PmpAccess::Exec => cfg & CFG_X != 0,
-                };
+                return Self::permits(self.cfg[i], access, mode);
             }
         }
         // No entry matched: M succeeds; S/U fail (≥1 entry implemented).
@@ -247,9 +317,95 @@ impl Pmp {
             self.cfg[0] != CFG_R | CFG_W | CFG_X | (A_NAPOT << 3) || self.addr[0] != ADDR_MASK;
         self.cfg[0] = CFG_R | CFG_W | CFG_X | (A_NAPOT << 3);
         self.addr[0] = ADDR_MASK; // NAPOT with all trailing ones → entire address space
-        self.refresh_armed(); // arms entry 0 directly → refresh the cached `any_armed` gate
+        self.refresh_derived(); // arms entry 0 directly → rebuild the derived fast-path state
         if changed {
             self.bump_revision();
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// xorshift64* — a tiny deterministic generator (fixed seeds, no dev-dependency).
+    fn next(s: &mut u64) -> u64 {
+        *s ^= *s >> 12;
+        *s ^= *s << 25;
+        *s ^= *s >> 27;
+        s.wrapping_mul(0x2545_F491_4F6C_DD1D)
+    }
+
+    /// The first-entry fast path must be invisible: across randomized PMP programs (OFF/TOR/NA4/
+    /// NAPOT, locks, entries armed at any index, pmpaddr rewrites after cfg writes, restores) and
+    /// accesses aimed at region edges, `check` agrees with the reference `check_scan` for every
+    /// access kind and mode.
+    #[test]
+    fn first_entry_fast_path_matches_full_scan() {
+        for seed in 1..=64u64 {
+            let mut s = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+            let mut p = Pmp::default();
+            for step in 0..40 {
+                match next(&mut s) % 4 {
+                    0 => {
+                        let bank = ((next(&mut s) % 8) * 2) as usize;
+                        // Mostly-OFF bytes so the lowest armed entry varies; lock rarely.
+                        let mut v = 0u64;
+                        for k in 0..8 {
+                            let r = next(&mut s);
+                            let a = if r.is_multiple_of(3) { (r >> 8) % 4 } else { 0 } as u8;
+                            let l = if r.is_multiple_of(23) { CFG_L } else { 0 };
+                            let c = ((r >> 16) as u8 & 0b111) | (a << 3) | l;
+                            v |= u64::from(c) << (k * 8);
+                        }
+                        p.write_cfg(bank, v);
+                    }
+                    1 | 2 => {
+                        let i = (next(&mut s) % 8) as usize; // the low entries matter most
+                        let v = match next(&mut s) % 4 {
+                            0 => ADDR_MASK,                                             // all-memory NAPOT
+                            1 => (0x8000_0000 >> 2) | ((1 << (next(&mut s) % 20)) - 1), // NAPOT
+                            2 => (0x8000_0000 + (next(&mut s) % 0x10_0000)) >> 2,
+                            _ => next(&mut s),
+                        };
+                        p.write_addr(i, v);
+                    }
+                    _ => {
+                        // Round-trip through a snapshot into a fresh unit (rebuilds derived state).
+                        let mut bytes = alloc::vec::Vec::new();
+                        p.snapshot_bytes(&mut bytes);
+                        let mut q = Pmp::default();
+                        let mut r = crate::resume::Reader::new(&bytes, crate::resume::section::CPU);
+                        q.restore_bytes(&mut r).unwrap();
+                        assert_eq!(p, q);
+                        p = q;
+                    }
+                }
+                if step % 7 == 0 {
+                    p.allow_all();
+                }
+                for _ in 0..64 {
+                    // Probe around the cached region's edges and the NAPOT/TOR boundaries.
+                    let edge = match next(&mut s) % 4 {
+                        0 => p.first_lo,
+                        1 => p.first_hi,
+                        2 => 0x8000_0000,
+                        _ => next(&mut s),
+                    };
+                    let addr = edge.wrapping_add((next(&mut s) % 17).wrapping_sub(8));
+                    let len = [1u64, 2, 4, 8, 16][(next(&mut s) % 5) as usize];
+                    let end = addr.wrapping_add(len);
+                    for access in [PmpAccess::Read, PmpAccess::Write, PmpAccess::Exec] {
+                        for mode in [Priv::U, Priv::S, Priv::M] {
+                            assert_eq!(
+                                p.check(addr, len, access, mode),
+                                p.check_scan(addr, end, access, mode),
+                                "seed {seed} step {step} addr {addr:#x} len {len} {access:?} {mode:?}"
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 }

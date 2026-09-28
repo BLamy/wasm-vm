@@ -138,11 +138,16 @@ fuzz-diff-smoke:
 # Browser demo (E0-T23): build the wasm ES module into web/pkg, install the pinned
 # xterm.js (offline, no CDN), and copy the browser-run guest ELFs. Reproducible from a
 # cold clone with only Rust + wasm-pack + npm.
+#
+# The shipped module is built from crates/wasm-web (a cdylib-only re-export of crates/wasm) with
+# [profile.wasm-release] (fat LTO, 16 codegen units, wasm-opt -O3): cargo skips LTO for crates/wasm
+# itself because it is also an rlib. `--out-name wasm_vm_wasm` keeps the file names the page imports.
+# A/B evidence: evidence/perf-overhaul/webbuild/README.md.
 web-build:
-	wasm-pack build crates/wasm --target web
+	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
 	mkdir -p web/pkg web/assets/riscv-tests
-	cp -R crates/wasm/pkg/. web/pkg/
+	cp -R crates/wasm-web/pkg/. web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
 	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 	# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.

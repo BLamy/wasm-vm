@@ -1841,15 +1841,17 @@ fn a_extension_randomized() {
     }
 }
 
-// The original E4-T15 policy remains for every operation outside the measured
-// measured E5.5-T03t..T03x single-precision subsets. Those encodings have their own
-// native/browser differential tests, including FPR state and exact FS traps.
+// Full F/D coverage: every F/D operation (the E4-T15 "unsupported" families included) now
+// translates, alone or buried among integer ops. The only untranslatable ops are block-ending
+// system instructions; a block containing one compiles its prefix and exits precisely
+// (`ExitCode::CallInterp`) at that op, while a block that STARTS with one is still rejected.
+// Exact per-op semantics are proven against the interpreter in
+// `crates/jit-runtime/tests/fp_full_lockstep.rs`.
 #[test]
-fn fp_ops_are_unsupported() {
-    use jit_translate::TranslateError;
+fn fp_ops_translate_and_system_ops_split_blocks() {
+    use jit_translate::{TranslateError, first_untranslated, is_translatable, translated_len};
     use wasm_vm_core::decode::{FpArithOp, FpCmpOp, FpFusedOp, FpIntWidth, FpSgnjOp, Instr::*};
 
-    // Every remaining unsupported family stays behind the measured-policy gate.
     let fp_ops = [
         FpArithS {
             op: FpArithOp::Sub,
@@ -1955,15 +1957,11 @@ fn fp_ops_are_unsupported() {
         },
     ];
     for instr in fp_ops {
-        // A block that is JUST the FP op must be rejected…
         let solo = make_block(&[instr]);
-        assert_eq!(
-            translate_block(&solo, &Abi::FROZEN),
-            Err(TranslateError::Unsupported),
-            "FP op {instr:?} must side-exit (Unsupported), never translate"
+        assert!(
+            translate_block(&solo, &Abi::FROZEN).is_ok(),
+            "FP op {instr:?} must translate"
         );
-        // …and so must a block where the FP op is buried among translatable integer ops — the WHOLE
-        // block side-exits to the interpreter, not just the FP instruction.
         let mixed = make_block(&[
             Addi {
                 rd: 5,
@@ -1978,9 +1976,70 @@ fn fp_ops_are_unsupported() {
             },
         ]);
         assert_eq!(
-            translate_block(&mixed, &Abi::FROZEN),
-            Err(TranslateError::Unsupported),
-            "a block containing FP op {instr:?} must side-exit entirely"
+            translated_len(&mixed),
+            3,
+            "{instr:?} buried among integer ops"
         );
+        assert!(translate_block(&mixed, &Abi::FROZEN).is_ok());
+    }
+
+    let system_ops = [
+        (
+            Csrrs {
+                rd: 5,
+                rs1: 0,
+                csr: 0x100,
+            },
+            "csr:sstatus",
+        ),
+        (
+            Csrrw {
+                rd: 0,
+                rs1: 5,
+                csr: 0x180,
+            },
+            "csr:satp",
+        ),
+        (
+            Csrrsi {
+                rd: 5,
+                uimm: 0,
+                csr: 0xc01,
+            },
+            "csr:time",
+        ),
+        (Mret, "mret"),
+        (Sret, "sret"),
+        (Wfi, "wfi"),
+        (SfenceVma { rs1: 0, rs2: 0 }, "sfence.vma"),
+    ];
+    for (instr, name) in system_ops {
+        let solo = make_block(&[instr]);
+        assert!(!is_translatable(&solo), "{instr:?} alone cannot translate");
+        assert_eq!(
+            translate_block(&solo, &Abi::FROZEN),
+            Err(TranslateError::Unsupported),
+            "a block starting with {instr:?} is rejected"
+        );
+        assert_eq!(first_untranslated(&solo), Some((0, name)));
+        let prefixed = make_block(&[
+            Addi {
+                rd: 5,
+                rs1: 0,
+                imm: 1,
+            },
+            FpArithD {
+                op: FpArithOp::Add,
+                rd: 1,
+                rs1: 2,
+                rs2: 3,
+                rm: 0,
+            },
+            instr,
+        ]);
+        assert!(is_translatable(&prefixed));
+        assert_eq!(translated_len(&prefixed), 2);
+        assert_eq!(first_untranslated(&prefixed), Some((2, name)));
+        assert!(translate_block(&prefixed, &Abi::FROZEN).is_ok());
     }
 }

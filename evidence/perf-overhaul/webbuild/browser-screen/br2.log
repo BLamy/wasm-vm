@@ -1,0 +1,69 @@
+[bench-browser 14:39:43] busybox-jit   A_O        rep 0: ready 12.68 s (boot mips 29.4) region 10.62 s mips 15.6 ok=true (24s)
+[bench-browser 14:40:07] busybox-jit   B_O3       rep 0: ready 12.91 s (boot mips 28.5) region 10.69 s mips 15.5 ok=true (24s)
+[bench-browser 14:40:32] busybox-jit   A_O3       rep 0: ready 12.97 s (boot mips 28.5) region 10.74 s mips 15.5 ok=true (25s)
+[bench-browser 14:40:57] busybox-jit   RFAT16_O3  rep 0: ready 12.38 s (boot mips 29.8) region 11.68 s mips 14.2 ok=true (25s)
+[bench-browser 14:41:34] busybox-nojit A_O        rep 0: ready 21.66 s (boot mips 16.7) region 14.52 s mips 11.4 ok=true (37s)
+[bench-browser 14:42:12] busybox-nojit B_O3       rep 0: ready 22.09 s (boot mips 16.4) region 14.64 s mips 11.3 ok=true (38s)
+[bench-browser 14:42:48] busybox-nojit A_O3       rep 0: ready 21.44 s (boot mips 16.8) region 14.37 s mips 11.6 ok=true (37s)
+[bench-browser 14:43:26] busybox-nojit RFAT16_O3  rep 0: ready 21.59 s (boot mips 16.8) region 14.85 s mips 11.2 ok=true (37s)
+[bench-browser 14:43:49] busybox-jit   RFAT16_O3  rep 1: ready 12.50 s (boot mips 29.5) region 10.20 s mips 16.3 ok=true (24s)
+[bench-browser 14:44:14] busybox-jit   A_O3       rep 1: ready 13.31 s (boot mips 27.7) region 10.82 s mips 15.3 ok=true (25s)
+[bench-browser 14:44:38] busybox-jit   B_O3       rep 1: ready 12.86 s (boot mips 28.6) region 10.48 s mips 15.8 ok=true (24s)
+[bench-browser 14:45:03] busybox-jit   A_O        rep 1: ready 12.73 s (boot mips 29.1) region 10.68 s mips 15.5 ok=true (24s)
+[bench-browser 14:45:39] busybox-nojit RFAT16_O3  rep 1: ready 21.01 s (boot mips 17.2) region 13.93 s mips 11.9 ok=true (36s)
+[bench-browser 14:46:16] busybox-nojit A_O3       rep 1: ready 21.46 s (boot mips 16.9) region 14.45 s mips 11.5 ok=true (37s)
+[bench-browser 14:46:54] busybox-nojit B_O3       rep 1: ready 22.05 s (boot mips 16.4) region 15.40 s mips 10.8 ok=true (38s)
+[bench-browser 14:47:34] busybox-nojit A_O        rep 1: ready 23.73 s (boot mips 15.2) region 15.82 s mips 10.5 ok=true (41s)
+[bench-browser 14:47:59] busybox-jit   A_O        rep 2: ready 13.14 s (boot mips 28.1) region 10.44 s mips 15.9 ok=true (24s)
+[bench-browser 14:48:23] busybox-jit   B_O3       rep 2: ready 12.72 s (boot mips 29.1) region 10.49 s mips 15.8 ok=true (24s)
+[bench-browser 14:48:47] busybox-jit   A_O3       rep 2: ready 12.57 s (boot mips 29.3) region 10.27 s mips 16.2 ok=true (24s)
+[bench-browser 14:49:10] busybox-jit   RFAT16_O3  rep 2: ready 12.19 s (boot mips 30.3) region 9.89 s mips 16.8 ok=true (23s)
+[bench-browser 14:49:46] busybox-nojit A_O        rep 2: ready 21.35 s (boot mips 16.9) region 14.39 s mips 11.5 ok=true (37s)
+[bench-browser 14:50:23] busybox-nojit B_O3       rep 2: ready 21.96 s (boot mips 16.5) region 14.62 s mips 11.4 ok=true (37s)
+[bench-browser 14:51:00] busybox-nojit A_O3       rep 2: ready 21.33 s (boot mips 16.9) region 14.44 s mips 11.5 ok=true (37s)
+[bench-browser 14:51:36] busybox-nojit RFAT16_O3  rep 2: ready 21.16 s (boot mips 17.1) region 13.98 s mips 11.9 ok=true (36s)
+[bench-browser 14:51:59] busybox-jit   RFAT16_O3  rep 3: ready 12.26 s (boot mips 30.1) region 9.82 s mips 16.9 ok=true (23s)
+[bench-browser 14:52:23] busybox-jit   A_O3       rep 3: ready 12.54 s (boot mips 29.5) region 10.68 s mips 15.5 ok=true (24s)
+[bench-browser 14:52:48] busybox-jit   B_O3       rep 3: ready 12.73 s (boot mips 29.0) region 10.74 s mips 15.5 ok=true (24s)
+[bench-browser 14:53:12] busybox-jit   A_O        rep 3: ready 12.79 s (boot mips 28.8) region 10.29 s mips 16.1 ok=true (24s)
+[bench-browser 14:53:48] busybox-nojit RFAT16_O3  rep 3: ready 21.06 s (boot mips 17.2) region 14.09 s mips 11.8 ok=true (36s)
+[bench-browser 14:54:25] busybox-nojit A_O3       rep 3: ready 21.90 s (boot mips 16.5) region 14.68 s mips 11.3 ok=true (38s)
+[bench-browser 14:55:03] busybox-nojit B_O3       rep 3: ready 22.24 s (boot mips 16.2) region 15.32 s mips 10.8 ok=true (38s)
+[bench-browser 14:55:41] busybox-nojit A_O        rep 3: ready 22.51 s (boot mips 17.0) region 14.28 s mips 11.6 ok=true (38s)
+[bench-browser 14:56:05] busybox-jit   A_O        rep 4: ready 12.55 s (boot mips 29.4) region 10.29 s mips 16.1 ok=true (24s)
+[bench-browser 14:56:29] busybox-jit   B_O3       rep 4: ready 12.80 s (boot mips 28.8) region 10.54 s mips 15.8 ok=true (24s)
+[bench-browser 14:56:56] busybox-jit   A_O3       rep 4: ready 13.67 s (boot mips 27.0) region 12.22 s mips 13.6 ok=true (27s)
+[bench-browser 14:57:19] busybox-jit   RFAT16_O3  rep 4: ready 12.76 s (boot mips 28.9) region 10.07 s mips 16.5 ok=true (24s)
+[bench-browser 14:57:56] busybox-nojit A_O        rep 4: ready 21.48 s (boot mips 16.8) region 14.57 s mips 11.4 ok=true (37s)
+[bench-browser 14:58:36] busybox-nojit B_O3       rep 4: ready 22.53 s (boot mips 16.0) region 16.22 s mips 10.2 ok=true (40s)
+[bench-browser 14:59:14] busybox-nojit A_O3       rep 4: ready 22.05 s (boot mips 16.4) region 15.30 s mips 10.8 ok=true (38s)
+[bench-browser 14:59:51] busybox-nojit RFAT16_O3  rep 4: ready 21.35 s (boot mips 17.0) region 13.91 s mips 11.9 ok=true (36s)
+# Browser benchmark (2026-09-27T14:39:18.974Z)
+
+Chromium 131.0.6778.33 (headless=true) · Apple M4 Max · samples=5 · medians · interleaved=true
+
+- **A_O**: `/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/c38a19b9-ce95-4fcc-b09d-e4bcfb239086/scratchpad/webbuild/roots/A_O` rev `?` wasm sha256 `56dd2abd537f` (1.60 MB)
+- **B_O3**: `/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/c38a19b9-ce95-4fcc-b09d-e4bcfb239086/scratchpad/webbuild/roots/B_O3` rev `?` wasm sha256 `97a93031f137` (1.53 MB)
+- **A_O3**: `/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/c38a19b9-ce95-4fcc-b09d-e4bcfb239086/scratchpad/webbuild/roots/A_O3` rev `?` wasm sha256 `ffb5e4db26cf` (1.60 MB)
+- **RFAT16_O3**: `/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/c38a19b9-ce95-4fcc-b09d-e4bcfb239086/scratchpad/webbuild/roots/RFAT16_O3` rev `?` wasm sha256 `8bf3ad5a33a6` (1.61 MB)
+
+| case | metric | A_O | B_O3 | A_O3 | RFAT16_O3 | speedup B_O3 vs A_O | speedup A_O3 vs A_O | speedup RFAT16_O3 vs A_O | ok |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| busybox-jit | (a) cold boot: navigation -> shell prompt s | 12.73 [12.55–13.14] | 12.80 [12.72–12.91] | 12.97 [12.54–13.67] | 12.38 [12.19–12.76] | 0.99x (paired 0.99x) | 0.98x (paired 0.98x) | 1.03x (paired 1.02x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (a) boot MIPS (boot span, wall) | 29.1 [28.1–29.4] | 28.8 [28.5–29.1] | 28.5 [27.0–29.5] | 29.8 [28.9–30.3] | 0.99x (paired 0.98x) | 0.98x (paired 0.97x) | 1.03x (paired 1.01x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (a) boot MIPS (inside runChunk) | 29.1 [28.0–29.3] | 28.8 [28.5–29.2] | 28.6 [26.9–29.6] | 29.9 [28.9–30.2] | 0.99x (paired 0.98x) | 0.98x (paired 0.97x) | 1.03x (paired 1.02x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (a) boot JIT-retired fraction | 0.703 | 0.704 | 0.705 | 0.704 | 1.00x | 1.00x | 1.00x | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (b) shell loop x10000: Enter -> done s | 10.44 [10.29–10.68] | 10.54 [10.48–10.74] | 10.74 [10.27–12.22] | 10.07 [9.82–11.68] | 0.99x (paired 0.99x) | 0.97x (paired 0.99x) | 1.04x (paired 1.05x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (b) shell loop MIPS (wall) | 15.9 [15.5–16.1] | 15.8 [15.5–15.8] | 15.5 [13.6–16.2] | 16.5 [14.2–16.9] | 0.99x (paired 0.99x) | 0.97x (paired 0.99x) | 1.04x (paired 1.05x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-jit | (b) shell loop JIT-retired fraction | 0.535 | 0.530 | 0.535 | 0.533 | 0.99x | 1.00x | 1.00x | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-nojit | (a) cold boot: navigation -> shell prompt s | 21.66 [21.35–23.73] | 22.09 [21.96–22.53] | 21.46 [21.33–22.05] | 21.16 [21.01–21.59] | 0.98x (paired 0.98x) | 1.01x (paired 1.01x) | 1.02x (paired 1.01x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-nojit | (a) boot MIPS (boot span, wall) | 16.8 [15.2–17.0] | 16.4 [16.0–16.5] | 16.8 [16.4–16.9] | 17.1 [16.8–17.2] | 0.97x (paired 0.97x) | 1.00x (paired 1.00x) | 1.01x (paired 1.01x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-nojit | (a) boot MIPS (inside runChunk) | 16.9 [15.3–17.0] | 16.3 [16.0–16.5] | 16.8 [16.4–16.9] | 17.1 [16.8–17.2] | 0.97x (paired 0.97x) | 1.00x (paired 1.00x) | 1.01x (paired 1.01x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-nojit | (b) shell loop x10000: Enter -> done s | 14.52 [14.28–15.82] | 15.32 [14.62–16.22] | 14.45 [14.37–15.30] | 13.98 [13.91–14.85] | 0.95x (paired 0.98x) | 1.01x (paired 1.00x) | 1.04x (paired 1.03x) | 5/5 · 5/5 · 5/5 · 5/5 |
+| busybox-nojit | (b) shell loop MIPS (wall) | 11.4 [10.5–11.6] | 10.8 [10.2–11.4] | 11.5 [10.8–11.6] | 11.9 [11.2–11.9] | 0.95x (paired 0.98x) | 1.01x (paired 1.00x) | 1.04x (paired 1.03x) | 5/5 · 5/5 · 5/5 · 5/5 |
+
+Cells: median [min–max over samples]. Speedup = ratio of medians; 'paired' = median of the per-rep ratios (each A/B pair ran back to back).
+
+All times are host clock (page performance.now()); MIPS = worker retired-instruction counter delta / host time. 'boot span' runs from the page's guest-booting event (includes kernel fetch + worker/wasm start) to the prompt; 'inside runChunk' divides by the worker's summed slice time (excludes scheduler yields and idle).
+
+Median 1-minute load average: busybox-jit/A_O=8.3, busybox-jit/B_O3=7.4, busybox-jit/A_O3=9.0, busybox-jit/RFAT16_O3=8.2, busybox-nojit/A_O=7.3, busybox-nojit/B_O3=6.9, busybox-nojit/A_O3=7.7, busybox-nojit/RFAT16_O3=10.1

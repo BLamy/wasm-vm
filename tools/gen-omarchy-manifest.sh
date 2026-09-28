@@ -77,7 +77,7 @@ cat > "$out" <<JSON
 {
   "generated": "content-hashed Omarchy desktop (kernel + paired RAM snapshot/disk delta)",
   "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "$ksha", "size": $ksize },
+    "kernel": { "url": "$kernel", "sha256": "$ksha", "size": $ksize },
     "bootSnapshot": { "url": "$ram", "sha256": "$rsha", "size": $rsize },
     "overlayDelta": { "url": "$delta", "sha256": "$dsha", "size": $dsize }
   },

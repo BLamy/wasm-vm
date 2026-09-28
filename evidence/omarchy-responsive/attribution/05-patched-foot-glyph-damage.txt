@@ -1,0 +1,107 @@
+### command (run2/012.cmd)
+python3 -c "
+d=open(\"/usr/bin/foot\",\"rb\").read(); a=b\"ext_background_effect_manager_v1\"; assert d.count(a)==1
+open(\"/tmp/foot-nobg\",\"wb\").write(d.replace(a, b\"ext_background_effect_manager_v0\"))
+"; chmod +x /tmp/foot-nobg; ls -la /tmp/foot-nobg; export XDG_RUNTIME_DIR=/run/user/1000; kill 503; sleep 1; hyprctl -i 0 dispatch "hl.dsp.exec_cmd(\"/tmp/foot-nobg\")"; cat /proc/uptime
+
+### output
+# host_ms=236215 at=1234.66s status=0
+-rwxr-xr-x 1 omarchy omarchy 528312 Sep 10 03:16 /tmp/foot-nobg
+ok
+3382.32 3194.37
+
+
+### command (run2/017.cmd)
+L=$(ls /run/user/1000/hypr/*/hyprland.log); wc -l $L; grep virtio7 /proc/interrupts; cat /proc/uptime; date +%T.%N; echo "patched foot line" > /dev/pts/0; sleep 0.3; grep virtio7 /proc/interrupts; sleep 2; grep virtio7 /proc/interrupts; date +%T.%N; cat /proc/uptime
+
+### output
+# host_ms=43584 at=1765.156s status=0
+816 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log
+ 18:        182  SiFive PLIC   8 Edge      virtio7
+3396.24 3194.37
+03:16:47.190331200
+ 18:        182  SiFive PLIC   8 Edge      virtio7
+ 18:        183  SiFive PLIC   8 Edge      virtio7
+03:16:49.662175100
+3398.77 3194.92
+
+
+### command (run2/018.cmd)
+L=$(ls /run/user/1000/hypr/*/hyprland.log); tail -n +780 $L | grep -v -e eglQuery -e "Supported EGL" -e "no matching" -e initMgpu -e CConfigWatcher | cut -c1-140 | tail -30
+
+### output
+# host_ms=5440 at=1815.23s status=0
+DEBUG @ 03:16:37.570103300 ]: Damage: Surface (extents): xy: 647, 38 wh: 621, 750
+DEBUG @ 03:16:37.570131500 ]: Damage: Box: xy: 643, 34 wh: 8, 8
+DEBUG @ 03:16:37.570176800 ]: [CXDGSurfaceResource] xdg_surface 55555ecf67f0 requests geometry 0x0 621x750
+ERR @ 03:16:39.214474400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 03:16:39.280382500 ]: Damage: Surface (extents): xy: 12, 38 wh: 621, 750
+DEBUG @ 03:16:39.280428400 ]: [CXDGSurfaceResource] xdg_surface 55555db7e040 requests geometry 0x0 621x750
+DEBUG @ 03:16:39.284479700 ]: Hyprctl: new connection from pid 2168
+ERR @ 03:16:40.944220200 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 03:16:40.979412400 ]: Damage: Surface (extents): xy: 647, 38 wh: 621, 750
+DEBUG @ 03:16:40.988512300 ]: [Window 55555ec4df40: title: "omarchy@omarchy-demo:~", class: foot] unmapped
+DEBUG @ 03:16:40.988572500 ]: renderer: making a snapshot of 55555ec4df40
+DEBUG @ 03:16:41.000381300 ]: Framebuffer "window snapshot" created, status 36053
+DEBUG @ 03:16:41.000439200 ]: renderer: cleared a snapshot of 55555ec4df40
+DEBUG @ 03:16:41.004500100 ]: renderer: rendered a snapshot of 55555ec4df40
+DEBUG @ 03:16:41.004805900 ]: renderer: made a snapshot of 55555ec4df40
+DEBUG @ 03:16:41.004845600 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 629, 758
+DEBUG @ 03:16:41.004890400 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 629, 758
+DEBUG @ 03:16:41.004923200 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 629, 758
+WARN @ 03:16:41.004985100 ]: ITarget: assignToSpace with a null space?
+DEBUG @ 03:16:41.005013300 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 643, 34 wh: 629, 758
+DEBUG @ 03:16:41.005034400 ]: On closed window, new focused candidate is [Window 555560d42380: title: "omarchy@omarchy-demo:~"]
+DEBUG @ 03:16:41.005088000 ]: Set keyboard focus to surface 55555ee612e0, with [Window 555560d42380: title: "omarchy@omarchy-demo:~"]
+DEBUG @ 03:16:41.005724400 ]: [CPrimarySelectionProtocol] CPrimarySelectionProtocol::updateSelection: cannot send selection to a client with
+DEBUG @ 03:16:41.005761100 ]: Damage: Monitor Virtual-1
+DEBUG @ 03:16:41.005778900 ]: Damage: Monitor Virtual-1
+DEBUG @ 03:16:41.005797000 ]: Damage: Monitor Virtual-1
+DEBUG @ 03:16:41.005887200 ]: CWLSurface 55556144b140 called destroy()
+DEBUG @ 03:16:41.005955900 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 629, 758
+
+
+### command (run4/005.cmd)
+export XDG_RUNTIME_DIR=/run/user/1000; cat /proc/uptime; pgrep -a -u 1000 foot; hyprctl -i 0 layers | grep namespace; hyprctl -i 0 clients | grep -E "class|pid|size"; cat /proc/uptime
+
+### output
+# host_ms=9462 at=895.279s status=0
+309.70 142.75
+1769 /home/omarchy/.local/bin/foot
+		Layer 55555ee5f9d0: xywh: 0 0 1280 26, a: 1, namespace: omarchy-bar, pid: 504
+	size: 1256,750
+	class: foot
+	pid: 1769
+309.88 142.75
+
+
+### command (run4/006.cmd)
+date +%T.%N; python3 /tmp/lat.py 30 3 -- printf '%s%s\n' WVM_KB_ INJECT; date +%T.%N; cat /proc/uptime
+
+### output
+# host_ms=28049 at=912.788s status=0
+02:26:05.614805500
+WVM_KB_INJECT
+irqs [(0.083, 1), (0.161, 2)]
+first_irq_s 0.083 last_irq_s 0.161 idle_delta_s 2.81 elapsed_s 3.164
+02:26:09.000107700
+358.10 190.08
+
+
+### command (run4/009.cmd)
+export XDG_RUNTIME_DIR=/run/user/1000; for i in $(seq 1 60); do hyprctl -i 0 version >/dev/null; done; L=$(ls /run/user/1000/hypr/*/hyprland.log); grep -n "02:26:0\|02:25:59\|02:26:1" $L | grep -v -e eglQuery -e "Supported EGL" -e "no matching" -e initMgpu -e "Hyprctl: new" | cut -c1-140 | tail -30
+
+### output
+# host_ms=70214 at=977.352s status=0
+602:DEBUG @ 02:25:59.926483200 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+603:DEBUG @ 02:25:59.926542300 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+604:DEBUG @ 02:25:59.934729300 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+610:ERR @ 02:25:59.989036500 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+611:DEBUG @ 02:26:05.806493500 ]: Hiding the cursor (hl-mandated)
+612:DEBUG @ 02:26:05.806528800 ]: Damage: Box: xy: 637, 399 wh: 24, 24
+613:DEBUG @ 02:26:05.816360700 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+619:ERR @ 02:26:05.877575900 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+620:DEBUG @ 02:26:05.877675500 ]: Damage: Surface (extents): xy: 208, 52 wh: 14, 17
+626:ERR @ 02:26:05.952954800 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+
+

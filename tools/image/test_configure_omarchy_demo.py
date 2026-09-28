@@ -54,6 +54,10 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self._write("etc/wasm-vm/omarchy-assembly.json", b'{"schema": 1}\n')
         self._write("usr/share/omarchy/config/appearance.conf", b"reviewed-demo-config=true\n")
         self._write("usr/share/omarchy/config/theme.conf", b"theme=synthetic\n")
+        self._write("usr/share/omarchy/config/omarchy/shell.json",
+                    b'{"version": 1, "bar": {"layout": {"left": []}}, "plugins": []}\n')
+        self.foot = b"\x7fELF-synthetic\0ext_background_effect_manager_v1\0wl_seat\0"
+        self._write("usr/bin/foot", self.foot)
         untrusted_home = self.parent / "untrusted-home/blamy/.config"
         untrusted_home.mkdir(parents=True)
         (untrusted_home / "personal.conf").write_bytes(b"PERSONAL-ACCOUNT-SENTINEL\n")
@@ -116,6 +120,37 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertIn("blur = { enabled = false }", profile)
         self.assertIn("shadow = { enabled = false }", profile)
         self.assertIn("render = { cm_enabled = false }", profile)
+
+    def test_responsive_profile_stops_per_frame_full_damage_sources(self) -> None:
+        changes = configure_omarchy_demo.configure(self.root)
+
+        shell = json.loads((self.root / "home/omarchy/.config/omarchy/shell.json").read_text())
+        self.assertEqual(shell["disabledPlugins"], ["omarchy.background"])
+        self.assertEqual(shell["bar"], {"layout": {"left": []}})
+        stay_awake = self.root / "home/omarchy/.local/state/omarchy/indicators/stay-awake"
+        self.assertEqual(stay_awake.read_bytes(), b"")
+        self.assertEqual(os.lstat(stay_awake).st_uid, 1000)
+        foot = self.root / "usr/local/bin/foot"
+        self.assertEqual(foot.stat().st_mode & 0o777, 0o755)
+        patched = foot.read_bytes()
+        self.assertEqual(len(patched), len(self.foot))
+        self.assertNotIn(b"ext_background_effect_manager_v1\0", patched)
+        self.assertEqual([i for i, (a, b) in enumerate(zip(patched, self.foot)) if a != b],
+                         [self.foot.index(b"_v1\0") + 2])
+        self.assertEqual((self.root / "usr/bin/foot").read_bytes(), self.foot)
+        self.assertIn("usr/local/bin/foot", changes)
+        # The compositor rasterizes synchronously: no llvmpipe worker thread races the KMS commit.
+        environment = (self.root / "etc/environment.d/60-omarchy-browser.conf").read_text().split("\n")
+        self.assertIn("LP_NUM_THREADS=0", environment)
+        self.assertNotIn("LP_NUM_THREADS=1", environment)
+        uwsm = (self.root / "home/omarchy/.config/uwsm/env").read_text()
+        self.assertIn(" LP_NUM_THREADS=0 ", uwsm)
+        self.assertNotIn("LP_NUM_THREADS=1", uwsm)
+
+    def test_foot_patch_requires_exactly_one_interface_name(self) -> None:
+        for binary in (b"no-interface", b"ext_background_effect_manager_v1\0" * 2):
+            with self.assertRaisesRegex(ValueError, "exactly once"):
+                configure_omarchy_demo.patch_foot(binary)
 
     def test_source_tree_is_immutable_after_configuration(self) -> None:
         source = self.root / "usr/share/omarchy/config"

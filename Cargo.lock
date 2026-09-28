@@ -2445,6 +2445,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-wasm-web"
+version = "0.0.1"
+dependencies = [
+ "wasm-vm-wasm",
+]
+
+[[package]]
 name = "wasm-vm-wvseccomp"
 version = "0.0.0"
 dependencies = [

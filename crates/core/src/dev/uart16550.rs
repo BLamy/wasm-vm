@@ -227,13 +227,19 @@ impl Uart16550 {
     /// Advance the character-timeout clock one step (the run loop calls this per retired
     /// instruction). Latches the timeout condition when the FIFO is non-empty below the
     /// trigger level and idle long enough.
-    pub fn tick(&mut self) {
+    ///
+    /// Returns `true` while the clock is RUNNING (it counted this step). `false` means the tick was
+    /// a no-op and stays one until a guest RBR read or host input changes the FIFO — the run
+    /// loop's cue that the UART cannot change its interrupt level on its own.
+    pub fn tick(&mut self) -> bool {
         if !self.rx.is_empty() && !self.timeout_latched {
             self.idle_ticks = self.idle_ticks.saturating_add(1);
             if self.idle_ticks >= CHAR_TIMEOUT_TICKS {
                 self.timeout_latched = true;
             }
+            return true;
         }
+        false
     }
 
     /// FCR trigger level in bytes (FCR bits 7:6) — 1/4/8/14.

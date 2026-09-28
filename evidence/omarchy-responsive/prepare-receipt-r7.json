@@ -1,0 +1,688 @@
+{
+ "kind": "omarchy-responsive-cold-pair",
+ "startedAt": "2026-09-27T17:06:04.049Z",
+ "passed": true,
+ "head": "3b2c6f2a6e17ce61a8c63f7a02799e26325ae73d",
+ "profile": {
+  "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/tools/image/omarchy-responsive-profile.sh",
+  "size": 5300,
+  "sha256": "60f743d4bf079d9135fc3183c1bed5cd859b0ba243cada794a2084f284817b66"
+ },
+ "phases": {
+  "profile": {
+   "command": [
+    "target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-dRoYRV/omarchy.ext4",
+    "--ram-mib",
+    "1024",
+    "--net",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--jit",
+    "--block-cache",
+    "--interrupt-batching",
+    "--append",
+    "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "4000000000000",
+    "--resume-from",
+    "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-dRoYRV/restore.snap",
+    "--snapshot-trigger",
+    "WVM_OMARCHY_PROFILE_SYNCED",
+    "--snapshot-out",
+    "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-dRoYRV/discard.snap",
+    "--snapshot-core-id",
+    "302e302e31000000000000000000000000000000000000000000000000000000",
+    "--snapshot-base-id",
+    "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+   ],
+   "serial": [
+    {
+     "label": "identity",
+     "command": "id -u",
+     "status": 0,
+     "output": "1000",
+     "hostMs": 3102
+    },
+    {
+     "label": "profile",
+     "command": "echo IyEvdXNyL2Jpbi9lbnYgYmFzaAojIEFwcGx5IHRoZSByZXNwb25zaXZlIGJyb3dzZXItZGVza3RvcCBwcm9maWxlIHRvIGEgKnJ1bm5pbmcqIE9tYXJjaHkgZGVtbyBzZXNzaW9uLgojCiMgUnVucyBhcyB0aGUgZGVtbyB1c2VyICh1aWQgMTAwMCkgb24gdGh...[7191 chars]",
+     "status": 0,
+     "output": "omarchy-responsive-profile: files applied\nexport OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=0 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\nexport PATH=\"$HOME/.local/bin:$PATH\"",
+     "hostMs": 27412
+    }
+   ],
+   "settleProbes": [],
+   "promptHostMs": 1862,
+   "exit": {
+    "code": 0,
+    "signal": null
+   },
+   "hostMs": 38202
+  },
+  "cold": {
+   "command": [
+    "target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "--drive",
+    "file=/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-dRoYRV/omarchy.ext4",
+    "--ram-mib",
+    "1024",
+    "--net",
+    "--virtio-rng",
+    "--browser-topology",
+    "--icount-divider",
+    "64",
+    "--jit",
+    "--block-cache",
+    "--interrupt-batching",
+    "--append",
+    "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+    "--quantum",
+    "500000",
+    "--max-instrs",
+    "4000000000000",
+    "--snapshot-trigger",
+    "WVM_OMARCHY_RESPONSIVE_READY",
+    "--snapshot-out",
+    "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/.omarchy-responsive-cold-dRoYRV/omarchy-ready.snap",
+    "--snapshot-core-id",
+    "302e302e31000000000000000000000000000000000000000000000000000000",
+    "--snapshot-base-id",
+    "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+   ],
+   "serial": [
+    {
+     "label": "identity",
+     "command": "id -u",
+     "status": 0,
+     "output": "1000",
+     "hostMs": 3981
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 6556
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5258
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4704
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4751
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4249
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4103
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4347
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4564
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4340
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4608
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5625
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4787
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4860
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5456
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5172
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4864
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4710
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4738
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5038
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5424
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5041
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5058
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5146
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 5443
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4781
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4831
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 1,
+     "output": "no such instance",
+     "hostMs": 4679
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 0,
+     "output": "[]\nWV_SPLIT\n{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n],\n        \"1\": [\n],\n        \"2\": [\n],\n        \"3\": [\n]\n    }\n}\n}",
+     "hostMs": 56233
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 0,
+     "output": "[]\nWV_SPLIT\n{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n],\n        \"1\": [\n],\n        \"2\": [\n],\n        \"3\": [\n]\n    }\n}\n}",
+     "hostMs": 39767
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 0,
+     "output": "[{\n    \"address\": \"0x5555804df870\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 12],\n    \"size\": [1256, 776],\n    \"workspace\": {\n        \"id\"...[993 chars]",
+     "hostMs": 236798
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 6,
+     "output": "Hyprland IPC didn't respond in time\n\nCouldn't read (6)",
+     "hostMs": 159630
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 6,
+     "output": "Hyprland IPC didn't respond in time\n\nCouldn't read (6)",
+     "hostMs": 191406
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 6,
+     "output": "Hyprland IPC didn't respond in time\n\nCouldn't read (6)",
+     "hostMs": 160392
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 6,
+     "output": "Hyprland IPC didn't respond in time\n\nCouldn't read (6)",
+     "hostMs": 282679
+    },
+    {
+     "label": "desktop-probe",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients && echo WV_SPLIT && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+     "status": 0,
+     "output": "[{\n    \"address\": \"0x5555804df870\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\"...[1313 chars]",
+     "hostMs": 45958
+    },
+    {
+     "label": "hyprland-pid",
+     "command": "pgrep -x Hyprland",
+     "status": 0,
+     "output": "449",
+     "hostMs": 9395
+    },
+    {
+     "label": "hyprland-environment",
+     "command": "tr '\\000' '\\n' < /proc/449/environ | sed -n '/^GALLIUM_DRIVER=/p;/^LIBGL_ALWAYS_SOFTWARE=/p;/^LP_NUM_THREADS=/p'",
+     "status": 0,
+     "output": "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=0",
+     "hostMs": 7444
+    },
+    {
+     "label": "hyprland-threads",
+     "command": "ps -T -p 449 -o comm=",
+     "status": 0,
+     "output": "Hyprland\nHyprland\nHyprlan:disk$0\npool-spawner\ngmain\ndconf worker\ngdbus\n[pango] fontcon",
+     "hostMs": 6461
+    },
+    {
+     "label": "foot-exe",
+     "command": "readlink /proc/535/exe; test -f ~/.local/state/omarchy/indicators/stay-awake && echo stay-awake",
+     "status": 0,
+     "output": "/home/omarchy/.local/bin/foot\nstay-awake",
+     "hostMs": 5952
+    },
+    {
+     "label": "direct-opaque",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", ...[1142 chars]",
+     "status": 0,
+     "output": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x5555804df870\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInpu...[954 chars]",
+     "hostMs": 4578
+    },
+    {
+     "label": "tablet-click",
+     "command": "printf '%s%s\\n' 'WVM_PREP_' 'TABLET_CLICK'; sleep 5",
+     "status": 0,
+     "output": "WVM_PREP_TABLET_CLICK",
+     "hostMs": 34537
+    },
+    {
+     "label": "clock-flush",
+     "command": "sleep 150",
+     "status": 0,
+     "output": "",
+     "hostMs": 50593
+    },
+    {
+     "label": "final-clients",
+     "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+     "status": 0,
+     "output": "[{\n    \"address\": \"0x5555804df870\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\"...[869 chars]",
+     "hostMs": 3335
+    }
+   ],
+   "settleProbes": [
+    {
+     "label": "desktop-started",
+     "status": 0,
+     "uptime": 88.79,
+     "idleShare": 0.41666666666666535,
+     "hostMs": 50162
+    },
+    {
+     "label": "desktop-started",
+     "status": 0,
+     "uptime": 90.92,
+     "idleShare": 0.9851485148514872,
+     "hostMs": 4403
+    },
+    {
+     "label": "desktop-ready",
+     "status": 0,
+     "uptime": 97.43,
+     "idleShare": 0.9900990099009851,
+     "hostMs": 22177
+    },
+    {
+     "label": "pointer-warm",
+     "status": 0,
+     "uptime": 104.67,
+     "idleShare": 0.9900990099009921,
+     "hostMs": 4177
+    },
+    {
+     "label": "post-flush",
+     "status": 0,
+     "uptime": 256.89,
+     "idleShare": 0.9852216748768605,
+     "hostMs": 4047
+    },
+    {
+     "label": "pre-capture",
+     "status": 0,
+     "uptime": 259.01,
+     "idleShare": 0.990099009900999,
+     "hostMs": 4066
+    }
+   ],
+   "promptHostMs": 667456,
+   "foot": {
+    "address": "0x5555804df870",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+     12,
+     38
+    ],
+    "size": [
+     1256,
+     750
+    ],
+    "workspace": {
+     "id": 1,
+     "name": "1"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "foot",
+    "title": "omarchy@omarchy-demo:~",
+    "initialClass": "foot",
+    "initialTitle": "foot",
+    "pid": 535,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [
+     "default-opacity*",
+     "terminal*"
+    ],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000000"
+   },
+   "layers": {
+    "Virtual-1": {
+     "levels": {
+      "0": [],
+      "1": [],
+      "2": [
+       {
+        "address": "0x55557fe52140",
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 26,
+        "alpha": 1,
+        "namespace": "omarchy-bar",
+        "pid": 547
+       }
+      ],
+      "3": []
+     }
+    }
+   },
+   "lp": {
+    "GALLIUM_DRIVER": "llvmpipe",
+    "LIBGL_ALWAYS_SOFTWARE": "1",
+    "LP_NUM_THREADS": "0",
+    "activeRendererValidated": false,
+    "configurationObserved": "lp0-configuration-observed"
+   },
+   "opaqueFoot": {
+    "address": "0x5555804df870",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+     12,
+     38
+    ],
+    "size": [
+     1256,
+     750
+    ],
+    "workspace": {
+     "id": 1,
+     "name": "1"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "foot",
+    "title": "omarchy@omarchy-demo:~",
+    "initialClass": "foot",
+    "initialTitle": "foot",
+    "pid": 535,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [
+     "default-opacity*",
+     "terminal*"
+    ],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000000"
+   },
+   "finalClients": [
+    {
+     "address": "0x5555804df870",
+     "mapped": true,
+     "hidden": false,
+     "visible": true,
+     "acceptsInput": true,
+     "at": [
+      12,
+      38
+     ],
+     "size": [
+      1256,
+      750
+     ],
+     "workspace": {
+      "id": 1,
+      "name": "1"
+     },
+     "floating": false,
+     "monitor": 0,
+     "class": "foot",
+     "title": "omarchy@omarchy-demo:~",
+     "initialClass": "foot",
+     "initialTitle": "foot",
+     "pid": 535,
+     "xwayland": false,
+     "pinned": false,
+     "pinFullscreened": false,
+     "fullscreen": 0,
+     "fullscreenClient": 0,
+     "fullscreenHandler": "default",
+     "allowedOverFullscreen": true,
+     "grouped": [],
+     "tags": [
+      "default-opacity*",
+      "terminal*"
+     ],
+     "swallowing": "0x0",
+     "focusHistoryID": 0,
+     "inhibitingIdle": false,
+     "xdgTag": "",
+     "xdgDescription": "",
+     "contentType": "none",
+     "tearingHint": false,
+     "stableId": "18000000"
+    }
+   ],
+   "exit": {
+    "code": 0,
+    "signal": null
+   },
+   "hostMs": 2872512
+  }
+ },
+ "inputs": {
+  "bin": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/release/wasm-vm",
+   "size": 12830488,
+   "sha256": "425acc50ae6bd8ce1a387d3668fb9553b068a495076e9b170f19c48fdfeacc29"
+  },
+  "kernel": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+   "size": 24208896,
+   "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+  },
+  "chunkManifest": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+   "size": 1097812,
+   "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+  },
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r3/omarchy-ready.snap.gz",
+   "size": 205018907,
+   "sha256": "ce0aa733933b0f8630cc1135c98dabc0ec562eed0ecd19368bc856af4122dffe"
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r3/omarchy-overlay-delta.bin.gz",
+   "size": 1602157,
+   "sha256": "9e31756d1b10d37af61f399cfa70929abaf3796aba16746d29cb7aa5afa5c878"
+  },
+  "baseImage": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-perf/base.ext4",
+   "size": 4294967296,
+   "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+  }
+ },
+ "binding": {
+  "baseId": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+  "version": "0.0.1"
+ },
+ "restoredDeltaBlocks": 2970,
+ "outputs": {
+  "bootSnapshot": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r7/omarchy-ready.snap.gz",
+   "size": 198380324,
+   "sha256": "0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256",
+   "rawSize": 864348516
+  },
+  "overlayDelta": {
+   "path": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r7/omarchy-overlay-delta.bin.gz",
+   "size": 2037489,
+   "sha256": "b54280f45f5ca91aa01a4dcdc12e14b837b8d7918345067359707c955093c565",
+   "rawSize": 14696485,
+   "blocks": 3581
+  }
+ },
+ "finishedAt": "2026-09-27T17:55:20.707Z"
+}

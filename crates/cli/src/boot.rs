@@ -334,6 +334,11 @@ pub struct BootArgs {
     /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors (overhead A/B).
     #[arg(long)]
     pub no_storm_detect: bool,
+    /// Pin the goldfish RTC to this Unix-epoch nanosecond value instead of the host wall clock.
+    /// The RTC is the only host-time input to a headless boot, so pinning it makes `--evidence`
+    /// digests reproducible run-to-run — the equivalence oracle for interpreter/JIT refactors.
+    #[arg(long)]
+    pub fixed_rtc_ns: Option<u64>,
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
@@ -547,6 +552,15 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
     }
 }
 
+/// A constant RTC for reproducible boots (`--fixed-rtc-ns`).
+struct FixedClock(u64);
+
+impl wasm_vm_core::dev::rtc::WallClock for FixedClock {
+    fn now_ns(&self) -> u64 {
+        self.0
+    }
+}
+
 /// E4-T01: the monotonic host timer the profiler samples on its cold paths. `Instant`-based (unlike
 /// the epoch `SystemClock`), so the elapsed-nanosecond deltas the profiler brackets are non-decreasing.
 /// Lives in the CLI because core bans host time sources for determinism.
@@ -612,16 +626,76 @@ struct SnapshotOnMarker {
     tail: String,
     fired: bool,
     refused: Option<String>,
+    /// Snapshot preparation only: `WASM_VM_PREP_TABLET_CLICK=MARKER@X,Y` injects one virtio-tablet
+    /// left click at output pixel (X,Y) of a 1280x800 display each time MARKER is printed, so a
+    /// prepared desktop has already handled a real pointer device event (see
+    /// tools/image/prepare-omarchy-responsive-cold.mjs). Unset: no behaviour change.
+    tablet_click: Option<(String, i32, i32)>,
+    click_tail: String,
+}
+
+/// Parse `MARKER@X,Y` (pixels on the 1280x800 Omarchy output) into the marker and absolute axes.
+fn parse_tablet_click(spec: &str) -> Option<(String, i32, i32)> {
+    let (marker, at) = spec.rsplit_once('@')?;
+    let (x, y) = at.split_once(',')?;
+    let (x, y): (u32, u32) = (x.parse().ok()?, y.parse().ok()?);
+    if marker.is_empty() || x >= 1280 || y >= 800 {
+        return None;
+    }
+    let axis = |pixels: u32, extent: u32| {
+        ((u64::from(pixels) * 32_767 + u64::from(extent / 2)) / u64::from(extent)) as i32
+    };
+    Some((marker.to_string(), axis(x, 1280), axis(y, 800)))
 }
 
 impl SnapshotOnMarker {
     fn new(trigger: String, out: PathBuf) -> Self {
+        let tablet_click = std::env::var("WASM_VM_PREP_TABLET_CLICK").ok().map(|spec| {
+            parse_tablet_click(&spec).unwrap_or_else(|| {
+                panic!("WASM_VM_PREP_TABLET_CLICK must be MARKER@X,Y, got {spec:?}")
+            })
+        });
         Self {
             trigger,
             out,
             tail: String::new(),
             fired: false,
             refused: None,
+            tablet_click,
+            click_tail: String::new(),
+        }
+    }
+
+    fn feed_tablet_click(&mut self, out: &[u8], m: &mut Machine) {
+        use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, pointer};
+        let Some((marker, x, y)) = self.tablet_click.clone() else {
+            return;
+        };
+        self.click_tail.push_str(&String::from_utf8_lossy(out));
+        while let Some(at) = self.click_tail.find(&marker) {
+            self.click_tail.drain(..at + marker.len());
+            let Some(tablet) = m.tablet_input() else {
+                eprintln!(
+                    "wasm-vm: WASM_VM_PREP_TABLET_CLICK needs --browser-topology (no virtio tablet)"
+                );
+                return;
+            };
+            let mut input = tablet.borrow_mut();
+            let mut accepted = input.inject_event(EV_ABS, pointer::ABS_X, x);
+            accepted &= input.inject_event(EV_ABS, pointer::ABS_Y, y);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 1);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 0);
+            input.sync();
+            eprintln!("wasm-vm: prep tablet click at ({x},{y}) accepted={accepted}");
+        }
+        if self.click_tail.len() > 512 {
+            let mut cut = self.click_tail.len() - 256;
+            while cut < self.click_tail.len() && !self.click_tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.click_tail = self.click_tail.split_off(cut);
         }
     }
 
@@ -632,6 +706,7 @@ impl SnapshotOnMarker {
         if self.fired || self.refused.is_some() {
             return false;
         }
+        self.feed_tablet_click(out, m);
         self.tail.push_str(&String::from_utf8_lossy(out));
         if self.tail.contains(&self.trigger) {
             match m.save_resume() {
@@ -719,12 +794,45 @@ pub fn print_jit_stats(m: &Machine) {
         "jit_pause: samples={} sum_ns={} max_ns={} over_target={}",
         pause.count, pause.sum_ns, pause.max_ns, pause.over_target,
     );
+    // JIT coverage: the share of all retired guest instructions that executed in compiled code,
+    // and why the rest did not (translations by outcome + the first-untranslated-op histogram).
+    let retired_total = m.irq_stats().retired;
+    let coverage_pct = if retired_total == 0 {
+        0.0
+    } else {
+        100.0 * retired_via_jit as f64 / retired_total as f64
+    };
+    let tc = m
+        .executor()
+        .map(|e| e.translation_coverage())
+        .unwrap_or_default();
+    eprintln!(
+        "coverage: retired_via_jit={retired_via_jit} retired_total={retired_total} jit_pct={coverage_pct:.2}%  translations: full={} partial={} rejected={} partial_exits={}",
+        tc.full_blocks, tc.partial_blocks, tc.rejected_blocks, tc.partial_exits,
+    );
+    let first: Vec<String> = tc
+        .first_unsupported
+        .iter()
+        .take(16)
+        .map(|(name, count)| format!("{name}={count}"))
+        .collect();
+    eprintln!("first_untranslated_op: {}", first.join(" "));
+    eprintln!(
+        "partial_resume: rebuilds={} failures={}",
+        m.jit_partial_resume_rebuilds(),
+        m.jit_partial_resume_failures(),
+    );
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
-        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"retired_total\":{},\"blocks_full\":{},\"blocks_partial\":{},\"blocks_rejected\":{},\"partial_exits\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
         compiled,
         executed,
         retired_via_jit,
+        retired_total,
+        tc.full_blocks,
+        tc.partial_blocks,
+        tc.rejected_blocks,
+        tc.partial_exits,
         chain.links_made,
         chain.dispatch_entries,
         cache.installs,
@@ -1225,7 +1333,10 @@ fn assemble(
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(a.icount_divider);
     m.enable_plic();
-    m.enable_rtc(Box::new(SystemClock));
+    match a.fixed_rtc_ns {
+        Some(ns) => m.enable_rtc(Box::new(FixedClock(ns))),
+        None => m.enable_rtc(Box::new(SystemClock)),
+    };
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
@@ -2641,5 +2752,26 @@ mod display_workload_tests {
             ))
         );
         assert!(DisplayWorkload::profile("unknown").is_err());
+    }
+}
+
+#[cfg(test)]
+mod prep_tablet_click_tests {
+    use super::parse_tablet_click;
+
+    #[test]
+    fn marker_and_pixels_map_to_the_tablet_axes() {
+        assert_eq!(
+            parse_tablet_click("WVM_PREP_TABLET_CLICK@640,420"),
+            Some(("WVM_PREP_TABLET_CLICK".to_string(), 16_384, 17_203))
+        );
+        assert_eq!(parse_tablet_click("M@0,0"), Some(("M".to_string(), 0, 0)));
+    }
+
+    #[test]
+    fn malformed_or_off_screen_specs_are_rejected() {
+        for spec in ["@1,2", "M", "M@1", "M@x,2", "M@1280,0", "M@0,800", "M@-1,0"] {
+            assert_eq!(parse_tablet_click(spec), None, "{spec}");
+        }
     }
 }

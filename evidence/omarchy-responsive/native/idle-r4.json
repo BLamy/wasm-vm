@@ -1,0 +1,51 @@
+{
+ "pair": "/Users/blamy/Documents/Codex/wasm-vm-t-omarchy/target/omarchy-responsive-pair-r4",
+ "kernel": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+ "bin": "target/release/wasm-vm",
+ "args": [
+  "boot",
+  "--kernel",
+  "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+  "--drive",
+  "file=/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/82b98b86-28d3-4ec1-befc-ad7a8472a962/scratchpad/idle-r4/disk.ext4",
+  "--ram-mib",
+  "1024",
+  "--net",
+  "--virtio-rng",
+  "--browser-topology",
+  "--icount-divider",
+  "64",
+  "--jit",
+  "--block-cache",
+  "--interrupt-batching",
+  "--quantum",
+  "500000",
+  "--append",
+  "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+  "--max-instrs",
+  "40000000000000",
+  "--no-reboot",
+  "--stats",
+  "--resume-from",
+  "/private/tmp/claude-501/-Users-blamy-Documents-Codex-wasm-vm/82b98b86-28d3-4ec1-befc-ad7a8472a962/scratchpad/idle-r4/restore.snap"
+ ],
+ "results": [
+  {
+   "sample": 0,
+   "hostMs": 20508,
+   "guestSeconds": 10.05,
+   "idleShare": 0.9930486593843099,
+   "top": [
+    "1 560 foot",
+    "1 1603 awk"
+   ]
+  },
+  {
+   "sample": 1,
+   "hostMs": 21711,
+   "guestSeconds": 10.06,
+   "idleShare": 0.991044776119403,
+   "top": []
+  }
+ ]
+}

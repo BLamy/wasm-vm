@@ -503,6 +503,8 @@ fn verifier_mixed_optional_indices_and_unrelated_admission() {
     assert_eq!(read_word(memory, &store, 0x248) >> 32, 0xc000_0000);
     let bytes = translate_block(&blocks[0], &Abi::FROZEN).unwrap();
     assert_eq!(inspect(&bytes).0, ["load", "store", "amo", "lr", "sc"]);
+    // Full F/D coverage: these once-unselected families now translate through the generic
+    // helpers (exact semantics: `fp_full_lockstep.rs`) without disturbing the indices above.
     for raw in [
         0xc020_0053,
         0xc030_0053,
@@ -521,11 +523,11 @@ fn verifier_mixed_optional_indices_and_unrelated_admission() {
         0x5800_0053,
     ] {
         assert!(
-            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_err(),
-            "unselected family {raw:08x}"
+            translate_block(&proof::block(DRAM_BASE, &[raw]), &Abi::FROZEN).is_ok(),
+            "full-coverage FP parcel {raw:08x} rejected"
         );
     }
     eprintln!(
-        "CRITIC_FMADD_INDICES imports=10 exports=run0:10..run5:15 all_optional_combinations=16 mixed_chain_executed=true integer_imports=5 unsupported_families=15"
+        "CRITIC_FMADD_INDICES imports=10 exports=run0:10..run5:15 all_optional_combinations=16 mixed_chain_executed=true integer_imports=5 generic_families=15"
     );
 }

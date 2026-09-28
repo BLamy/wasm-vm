@@ -1,0 +1,118 @@
+Per-echo cost with Quickshell SIGSTOPped and the UNPATCHED Foot, one Hyprland option changed per run.
+Each 'printf X > /dev/pts/0' echo is followed by ~3 guest s; ticks are cumulative utime+stime at 100 Hz.
+
+== expA: debug:damage_tracking=0
+$ XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 eval 'hl.config({ debug = { damage_tracking = 0 } })'
+  ok
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1035.15 898.08
+  417 (Hyprland) S 1786 94
+  462 (llvmpipe-0) S 4598 3
+  503 (foot) S 41 11
+$ printf 'X' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  1038.32 898.90
+  417 (Hyprland) S 1787 95
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 41 11
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1826.90 1686.55
+  417 (Hyprland) S 1789 100
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 42 12
+$ printf 'Y' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  1830.07 1687.38
+  417 (Hyprland) S 1790 100
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 42 12
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  3030.10 2886.00
+  417 (Hyprland) S 1796 105
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 42 15
+
+== expB: render:keep_unmodified_copy=0
+$ XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 eval 'hl.config({ render = { keep_unmodified_copy = 0 } })'
+  ok
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1065.10 927.96
+  417 (Hyprland) S 1787 93
+  462 (llvmpipe-0) S 4598 3
+  503 (foot) S 42 10
+$ printf 'X' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  1068.27 928.77
+  417 (Hyprland) S 1787 95
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 42 10
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1935.12 1794.71
+  417 (Hyprland) S 1791 98
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 43 12
+$ printf 'Y' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  1938.28 1795.53
+  417 (Hyprland) S 1792 99
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 43 12
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  3075.09 2930.91
+  417 (Hyprland) S 1796 106
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 44 13
+
+== expC: general:border_size=0
+$ XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 eval 'hl.config({ general = { border_size = 0 } })'
+  ok
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  142.08 0.97
+  417 (Hyprland) S 1784 91
+  462 (llvmpipe-0) R 5113 3
+  503 (foot) S 43 10
+$ printf 'X' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  145.37 0.97
+  417 (Hyprland) R 1962 91
+  462 (llvmpipe-0) S 5249 3
+  503 (foot) S 43 10
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  630.10 482.73
+  417 (Hyprland) S 1966 94
+  462 (llvmpipe-0) S 5475 3
+  503 (foot) S 44 11
+$ printf 'Y' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  633.27 483.46
+  417 (Hyprland) S 1967 95
+  462 (llvmpipe-0) S 5700 3
+  503 (foot) S 44 11
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1778.02 1626.71
+  417 (Hyprland) S 1969 103
+  462 (llvmpipe-0) S 5700 3
+  503 (foot) S 45 13
+
+== expD: misc:disable_hyprland_logo/force_default_wallpaper=0/disable_splash_rendering
+$ XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 eval 'hl.config({ misc = { disable_hyprland_logo = true, force_def
+  ok
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  1112.09 974.83
+  417 (Hyprland) S 1787 94
+  462 (llvmpipe-0) S 4598 3
+  503 (foot) S 41 11
+$ printf 'X' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  1115.25 975.66
+  417 (Hyprland) S 1787 95
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 41 11
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  2025.10 1884.54
+  417 (Hyprland) S 1790 100
+  462 (llvmpipe-0) S 4816 3
+  503 (foot) S 42 13
+$ printf 'Y' > /dev/pts/0; sleep 3; cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(re
+  2028.27 1885.35
+  417 (Hyprland) S 1791 101
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 42 13
+$ cat /proc/uptime; awk '{ s=$0; i=index(s,") "); rest=substr(s,i+2); split(rest,f," "); if (f[12]+f[13]>0) prin
+  3396.68 3252.33
+  417 (Hyprland) S 1795 110
+  462 (llvmpipe-0) S 5034 3
+  503 (foot) S 43 15
