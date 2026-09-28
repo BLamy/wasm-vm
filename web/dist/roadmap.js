@@ -39,6 +39,7 @@ export const ROADMAP = [
       { name: "Zicntr counters (cycle/time/instret)", status: "verified", evidence: "rv64mi-p-zicntr", group: "rv64mi-p", filter: ["zicntr"] },
       { name: "PMP — 64 entries, WARL, NAPOT/TOR", status: "verified", evidence: "rv64mi-p-pmpaddr + RISCOF pmpm 64-region", group: "rv64mi-p", filter: ["pmpaddr"] },
       { name: "Misaligned scalar load / store", status: "verified", evidence: "rv64mi-p *-misaligned + ma_addr/ma_fetch", group: "rv64mi-p", filter: ["misaligned", "ma_addr", "ma_fetch"] },
+      { name: "Scalar memory across virtual-page boundaries", status: "partial", evidence: "E5.5-T02a Sv39 separated-frame regression", group: "rv64mi-p", filter: ["misaligned-virtual-pages"] },
       { name: "Debug triggers — mcontrol (tdata)", status: "verified", evidence: "rv64mi-p-breakpoint", group: "rv64mi-p", filter: ["breakpoint"] },
       { name: "Sv39 / Sv48 / Sv57 paging + software TLB", capstone: true, status: "verified", evidence: "RISCOF 395/0 vs Sail (vm_sv39/48/57)" },
     ],
@@ -112,6 +113,14 @@ export const ROADMAP = [
     caps: [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
+      { name: "Single-precision FP moves", status: "partial", group: "rv64uf-p", filter: ["move"], evidence: "Live ISA move suite; E5.5-T03t adds integer-only JIT moves with separate native/browser state proof. Desktop response remains unresolved." },
+      { name: "Floating-point memory transfers", status: "partial", group: "rv64u", filter: ["ldst"], evidence: "Live F/D memory suites; E5.5-T03u adds checked JIT FP transfers, exact faults and page permissions. Desktop response remains unresolved." },
+      { name: "Floating-point comparisons", status: "partial", group: "rv64uf", filter: ["fcmp"], evidence: "Live single-precision comparison suite; E5.5-T03v adds JIT comparisons with exact sticky flags and precise exits. Desktop response remains unresolved." },
+      { name: "Floating-point addition and multiplication", status: "partial", group: "rv64uf", filter: ["fadd"], evidence: "Live single-precision add/mul suite; E5.5-T03w keeps FADD.S/FMUL.S compiled through the integer-only software helper with precise rounding and flags. Desktop response remains unresolved." },
+      { name: "Integer-to-float conversions", status: "partial", group: "rv64uf", filter: ["fcvt_w"], evidence: "Live single-precision conversion suite; E5.5-T03x compiles FCVT.S.W/WU/L/LU through the existing software rounding backend with full integer input bits and precise exits. Desktop response remains unresolved." },
+      { name: "Float-to-word conversions", status: "partial", group: "rv64uf", filter: ["fcvt_w"], evidence: "Live single-precision conversion suite; E5.5-T03y compiles FCVT.W.S/WU.S through the existing software backend with exact clipping, rounding, flags and RV64 word sign extension. Desktop response remains unresolved." },
+      { name: "Single-precision division", status: "partial", group: "rv64uf", filter: ["fdiv"], evidence: "Live single-precision division suite; E5.5-T03z compiles FDIV.S through the existing software backend with exact rounding, flags and source boxing. Desktop response remains unresolved." },
+      { name: "Single-precision fused multiply-add", status: "partial", group: "rv64uf", filter: ["fmadd"], evidence: "Live single-precision fused suite; E5.5-T03an compiles FMADD.S through a software helper with one rounding, flags and three-source boxing. E5.5-T03ao calls all five pure FP helpers through direct WASM imports. Desktop response remains unresolved." },
       { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
       { name: "Default whole-machine Web Worker", status: "verified", evidence: "E4-T32: fresh verifier held exact raw-frame Node matrix plus unchanged browser/rr proof" },
       { name: "Bounded multi-target JALR return PIC", status: "verified", evidence: "E4-T37: four-way same-set Node parity, hysteretic replacement, generated EXEC-TLB authority, fuel, invalidation, and telemetry proof" },
@@ -137,6 +146,7 @@ export const ROADMAP = [
       { name: "Bidirectional clipboard sync", status: "verified", evidence: "E5-T24d: Chromium guest↔host round trips, exact UTF-8/CRLF and 256 KiB bounds, 100-copy echo attack, focus privacy, permission staging, and guest helper recovery" },
       { name: "virtio-gpu control + resource queues", status: "verified", evidence: "E5-T07a: native Linux fbcon controlq trace with EDID, resource, scanout, and queue-progress evidence" },
       { name: "Scanout transfer + flush", status: "verified", evidence: "E5-T07b: cold Chromium fbcon frame on the production Canvas2D sink with serial DRM/fbdev markers" },
+      { name: "Linux partial GPU updates", status: "partial", evidence: "E5.5-T03at: correct the first source byte for Linux partial transfers; literal SG, queued-command and browser response verification in progress. Desktop responsiveness remains unresolved." },
       { name: "tty0 fbcon damage rectangles", status: "verified", evidence: "E5-T07c: cold Chromium echo hello proof with independent readback reference and partial flush trace" },
       { name: "fbcon native parity and stress", status: "verified", evidence: "E5-T07d: native null-sink fixture parity, one-million-byte tty0 write, 100 VT switches, delayed Chromium readback, and reload cleanup" },
       { name: "Display/serial host chrome + PNG/WebM capture", status: "verified", evidence: "E5-T08: Chromium 131 + Firefox 132 live view toggle, reserved hotkey, readback-checked PNG, bounded WebM, and 50-toggle proof" },
@@ -150,8 +160,9 @@ export const ROADMAP = [
       { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
       { name: "Desktop cold boot — wallpaper/panel/WM menu", status: "verified", evidence: "E5-T18e: manifest-rebuilt image, 25 cache-disabled local Chromium boots plus warm prime/reload; real cursor and Terminal, all worker fetches observed, fresh verifier sign-off" },
       { name: "Desktop Terminal launcher + T12 keyboard", status: "verified", evidence: "E5-T18b: local Chromium menu/open/type/close proof" },
+      { name: "Omarchy full-screen desktop and fresh warm launch", status: "in-progress", evidence: "E5.5-T03c verifies coherent SDR snapshot rendering and host-side viewport fitting. E5.5-T03e verifies hash-checked persistent boot-file caching and accurate restore phases, including zero boot-artifact downloads on production reload. Guest sessions remain ephemeral. E5.5-T03a is blocked on the pending T03d input-latency remedy; responsive desktop and guest modesets are not yet verified." },
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
-      { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5-T26f: Chromium save/reload/restore CRC, agent re-handshake, drag recovery, keyboard, cursor, and gesture-audio proof" },
+      { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved." },
       { name: "Opt-in desktop monotonic clock", status: "verified", evidence: "E5-T26i: real worker rdtime and restore/pause lifecycle verified; measured wall mode did not improve interaction latency, so icount remains the default" },
       { name: "Deterministic guest timer-rate selection", status: "verified", evidence: "E5-T26j: explicit divider and real-worker restore verified; 10/1/1/10 comparison was negative, so default ten and F's two-second requirement remain unchanged" },
       { name: "Bounded decoded-block cache selection", status: "verified", evidence: "E5-T26k: strict 4096/16384 selection, coherent restore and Chromium comparison verified; fewer decoded builds did not satisfy F, so default 4096 and the two-second requirement remain unchanged" },
@@ -783,6 +794,9 @@ function wireControls() {
   timelineBtn?.classList.toggle("active", state.view === "timeline");
   timelineBtn?.setAttribute("aria-selected", String(state.view === "timeline"));
   document.addEventListener("keydown", (e) => {
+    // A guest canvas owns its keyboard. Never steal a captured slash (or Escape)
+    // for the host roadmap, including when explicit UI-test hooks reveal panels.
+    if (e.defaultPrevented || document.documentElement.dataset.wvmDesktop === "omarchy") return;
     if (e.key === "Escape") closeDetail();
     if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {
       // focus search unless typing in a field

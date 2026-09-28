@@ -57,6 +57,83 @@ use wasm_vm_core::mmio::SystemBus;
 
 extern crate alloc;
 
+// Generated FP imports link to these raw scalar exports in the owning core
+// instance. They have no guest-context or memory argument; the translator
+// validates FS and rounding before entering the existing pure helpers.
+#[unsafe(export_name = "__jit_fp_arith_s")]
+pub extern "C" fn jit_fp_arith_s(a: i32, b: i32, mul: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_arith_s(a as u32, b as u32, mul != 0, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_from_int_s")]
+pub extern "C" fn jit_fp_from_int_s(value: i64, width: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_to_word_s")]
+pub extern "C" fn jit_fp_to_word_s(bits: i32, unsigned: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_div_s")]
+pub extern "C" fn jit_fp_div_s(a: i32, b: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
+}
+
+#[unsafe(export_name = "__jit_fp_fmadd_s")]
+pub extern "C" fn jit_fp_fmadd_s(a: i32, b: i32, c: i32, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
+}
+
+thread_local! {
+    /// Flag mailbox between `__jit_fp_op64` and the immediately following `__jit_fp_flags` call.
+    /// Generated code always issues the two calls back to back on the calling thread. Per-thread
+    /// (like `HOST`) so the shared-memory CPU-worker build (E4-T22, `+atomics`, where plain statics
+    /// live in the shared linear memory) can never hand one thread's flags to another.
+    static FP_OP64_FLAGS: core::cell::Cell<u8> = const { core::cell::Cell::new(0) };
+}
+
+/// Generic F/D helper with a packed `result | flags << 32` return (full F/D coverage).
+#[unsafe(export_name = "__jit_fp_op32")]
+pub extern "C" fn jit_fp_op32(op: i32, a: i64, b: i64, c: i64, rm: i32) -> i64 {
+    wasm_vm_core::jit::fp_op32(op as u32, a as u64, b as u64, c as u64, rm as u8) as i64
+}
+
+/// Generic F/D helper with a 64-bit result; its flags go through the mailbox.
+#[unsafe(export_name = "__jit_fp_op64")]
+pub extern "C" fn jit_fp_op64(op: i32, a: i64, b: i64, c: i64, rm: i32) -> i64 {
+    let (bits, flags) =
+        wasm_vm_core::jit::fp_op64(op as u32, a as u64, b as u64, c as u64, rm as u8);
+    FP_OP64_FLAGS.with(|mailbox| mailbox.set(flags));
+    bits as i64
+}
+
+/// Flags raised by the immediately preceding `__jit_fp_op64` call.
+#[unsafe(export_name = "__jit_fp_flags")]
+pub extern "C" fn jit_fp_flags() -> i32 {
+    i32::from(FP_OP64_FLAGS.with(core::cell::Cell::get))
+}
+
+fn set_fp_helper_imports(env: &Object) {
+    let exports = wasm_bindgen::exports();
+    for (import, export) in [
+        ("fp_arith_s", "__jit_fp_arith_s"),
+        ("fp_from_int_s", "__jit_fp_from_int_s"),
+        ("fp_to_word_s", "__jit_fp_to_word_s"),
+        ("fp_div_s", "__jit_fp_div_s"),
+        ("fp_fmadd_s", "__jit_fp_fmadd_s"),
+        ("fp_op32", "__jit_fp_op32"),
+        ("fp_op64", "__jit_fp_op64"),
+        ("fp_flags", "__jit_fp_flags"),
+    ] {
+        let function: Function = Reflect::get(&exports, &JsValue::from_str(export))
+            .unwrap_throw()
+            .dyn_into()
+            .unwrap_throw();
+        Reflect::set(env, &JsValue::from_str(import), function.as_ref()).unwrap_throw();
+    }
+}
+
 const INLINE_TLB_ENTRIES: u32 = 256;
 const INLINE_TLB_ARRAY_BYTES: u32 = INLINE_TLB_ENTRIES * TlbLayout::SLOT;
 const INLINE_TLB_ARRAY_WORDS: usize = INLINE_TLB_ENTRIES as usize * 2;
@@ -773,7 +850,11 @@ fn with_ctx_load(addr: i64, kind: i32) -> i64 {
         if inline {
             if h.csr.triggers_idle() {
                 match h.jit_ram_phys(b, addr, load_width(kind), false) {
-                    Ok(Some(pa)) => publish_inline_tlb(addr, pa, false),
+                    Ok(Some(pa)) => {
+                        if h.jit_can_inline_ram_page(b, pa, false) {
+                            publish_inline_tlb(addr, pa, false);
+                        }
+                    }
                     Ok(None) => {
                         note_device_boundary(started);
                         mark_chain_abort();
@@ -804,7 +885,10 @@ fn with_ctx_store(addr: i64, val: i64, width: i32) {
             && addr
                 .checked_add(u64::from(width as u32))
                 .is_some_and(|end| (addr >> 12) == ((end - 1) >> 12));
-        if aligned && let Some(pa) = ram_phys {
+        if aligned
+            && let Some(pa) = ram_phys
+            && h.jit_can_inline_ram_page(b, pa, true)
+        {
             publish_inline_tlb(addr, pa, true);
         }
         let touches_compiled_page = ram_phys.is_some_and(|pa| {
@@ -910,6 +994,9 @@ impl BrowserHandoff {
             self.register_version = version;
             bytes = bytes.saturating_add(32 * core::mem::size_of::<u64>() as u64);
         }
+        bytes = bytes.saturating_add(self.image.prepare_fp_registers(hart));
+        self.image.prepare_fp_control(hart);
+        bytes = bytes.saturating_add(core::mem::size_of::<u64>() as u64);
         self.image.set_entry_pc(hart.regs.pc);
         bytes
     }
@@ -943,7 +1030,8 @@ impl BrowserHandoff {
             self.image.commit_registers(hart);
         }
         self.register_version = hart.regs.jit_version();
-        bytes
+        let fp_bytes = self.image.commit_fp_registers(hart);
+        bytes.saturating_add(fp_bytes)
     }
 }
 
@@ -964,7 +1052,7 @@ const STUB: u32 = u32::MAX;
 
 /// The browser (`WebAssembly.compile`/`instantiate`) [`CompiledBlockExecutor`].
 pub struct BrowserExecutor {
-    /// The shared `{ env: { load, store, amo, lr, sc } }` import object handed to every instantiate.
+    /// Shared memory/atomic imports and pure software FP helpers.
     /// Inline-TLB instances additionally import the outer wasm memory as `env.mem`.
     imports: Object,
     /// The import closures, kept alive for the executor's lifetime (dropping them would invalidate
@@ -1162,6 +1250,7 @@ impl BrowserExecutor {
         set_fn(&env, "amo", &amo);
         set_fn(&env, "lr", &lr);
         set_fn(&env, "sc", &sc);
+        set_fp_helper_imports(&env);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
             Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();

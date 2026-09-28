@@ -1,0 +1,213 @@
+{
+  "boundSourceAndBinaries": 7,
+  "fixtures": {
+    "fixture": {
+      "matched": [
+        {
+          "name": "main-short-24",
+          "line": 14,
+          "entry": 7,
+          "exit": 8,
+          "tid": 7,
+          "fd": 3,
+          "inode": "486147",
+          "bytes": 24
+        },
+        {
+          "name": "main-eagain",
+          "line": 16,
+          "entry": 9,
+          "exit": 10,
+          "tid": 7,
+          "fd": 3,
+          "inode": "486147",
+          "bytes": 0
+        },
+        {
+          "name": "main-readv-48-split-7-41",
+          "line": 18,
+          "entry": 11,
+          "exit": 12,
+          "tid": 7,
+          "fd": 5,
+          "inode": "486148",
+          "bytes": 48
+        },
+        {
+          "name": "worker-partial-25",
+          "line": 23,
+          "entry": 16,
+          "exit": 17,
+          "tid": 8,
+          "fd": 7,
+          "inode": "486149",
+          "bytes": 25
+        },
+        {
+          "name": "worker-eagain",
+          "line": 25,
+          "entry": 18,
+          "exit": 19,
+          "tid": 8,
+          "fd": 7,
+          "inode": "486149",
+          "bytes": 0
+        },
+        {
+          "name": "main-interleaved-blocking-24",
+          "line": 26,
+          "entry": 13,
+          "exit": 20,
+          "tid": 7,
+          "fd": 9,
+          "inode": "486150",
+          "bytes": 24
+        },
+        {
+          "name": "main-reused-non-input-24",
+          "line": 28,
+          "entry": 21,
+          "exit": 22,
+          "tid": 7,
+          "fd": 3,
+          "inode": "486151",
+          "bytes": 24
+        }
+      ],
+      "clones": [],
+      "detached": [
+        7,
+        8
+      ],
+      "finished": {
+        "kind": "finished",
+        "failed": false,
+        "stops": 72,
+        "reads": 11,
+        "orphanExits": 0,
+        "capturedBytes": 212,
+        "stopBudgetReached": false,
+        "stopSignal": 15,
+        "observationEndMonotonicMs": 1201849325,
+        "cleanupEndMonotonicMs": 1201849327
+      },
+      "detachedTracers": [
+        "0",
+        "0"
+      ]
+    },
+    "clone-fixture": {
+      "matched": [
+        {
+          "name": "clone-short-24",
+          "line": 17,
+          "entry": 7,
+          "exit": 8,
+          "tid": 12,
+          "fd": 13,
+          "inode": "484038",
+          "bytes": 24
+        },
+        {
+          "name": "main-short-24",
+          "line": 19,
+          "entry": 9,
+          "exit": 10,
+          "tid": 7,
+          "fd": 3,
+          "inode": "484033",
+          "bytes": 24
+        },
+        {
+          "name": "main-eagain",
+          "line": 21,
+          "entry": 11,
+          "exit": 12,
+          "tid": 7,
+          "fd": 3,
+          "inode": "484033",
+          "bytes": 0
+        },
+        {
+          "name": "main-readv-48-split-7-41",
+          "line": 23,
+          "entry": 13,
+          "exit": 14,
+          "tid": 7,
+          "fd": 5,
+          "inode": "484034",
+          "bytes": 48
+        },
+        {
+          "name": "worker-partial-25",
+          "line": 28,
+          "entry": 18,
+          "exit": 19,
+          "tid": 9,
+          "fd": 7,
+          "inode": "484035",
+          "bytes": 25
+        },
+        {
+          "name": "worker-eagain",
+          "line": 30,
+          "entry": 20,
+          "exit": 21,
+          "tid": 9,
+          "fd": 7,
+          "inode": "484035",
+          "bytes": 0
+        },
+        {
+          "name": "main-interleaved-blocking-24",
+          "line": 31,
+          "entry": 15,
+          "exit": 22,
+          "tid": 7,
+          "fd": 9,
+          "inode": "484036",
+          "bytes": 24
+        },
+        {
+          "name": "main-reused-non-input-24",
+          "line": 33,
+          "entry": 23,
+          "exit": 24,
+          "tid": 7,
+          "fd": 3,
+          "inode": "484037",
+          "bytes": 24
+        }
+      ],
+      "clones": [
+        {
+          "kind": "clone",
+          "parent": 7,
+          "tid": 12
+        }
+      ],
+      "detached": [
+        7,
+        9,
+        12
+      ],
+      "finished": {
+        "kind": "finished",
+        "failed": false,
+        "stops": 117,
+        "reads": 12,
+        "orphanExits": 0,
+        "capturedBytes": 236,
+        "stopBudgetReached": false,
+        "stopSignal": 15,
+        "observationEndMonotonicMs": 1201849439,
+        "cleanupEndMonotonicMs": 1201849441
+      },
+      "detachedTracers": [
+        "0",
+        "0",
+        "0"
+      ]
+    }
+  }
+}

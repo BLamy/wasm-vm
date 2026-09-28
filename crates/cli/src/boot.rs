@@ -13,6 +13,7 @@
 //! interactive. Nothing here is a new device — it is glue over [`wasm_vm_core`].
 
 use std::cell::Cell;
+use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "gpu-trace")]
 use std::fmt::Write as _;
 use std::io::{self, Read, Write};
@@ -45,15 +46,50 @@ mod agent_proof;
 /// "recompute the F/D share independently" cross-check (E4-T15 verification §1). It handles both
 /// 32-bit and RVC 16-bit encodings (in RV64 the only compressed FP ops are C.FLD/C.FSD/C.FLDSP/
 /// C.FSDSP — double load/store).
-#[derive(Default)]
 struct FpShareSink {
     total: u64,
     fp: u64,
     fp_ldst: u64,
     fp_compute: u64,
+    opcode7: [u64; 128],
+    op_fp_funct7: [u64; 128],
+    fma_opcode7: [u64; 128],
+    pair_hist: HashMap<(u64, u32), u64>,
+    pair_hist_dropped: u64,
+    region64: BTreeMap<u64, RegionCounts>,
+    region64_dropped: u64,
+    hash: HashSink,
+}
+
+#[derive(Default)]
+struct RegionCounts {
+    total: u64,
+    fp_compute: u64,
+}
+
+impl Default for FpShareSink {
+    fn default() -> Self {
+        Self {
+            total: 0,
+            fp: 0,
+            fp_ldst: 0,
+            fp_compute: 0,
+            opcode7: [0; 128],
+            op_fp_funct7: [0; 128],
+            fma_opcode7: [0; 128],
+            pair_hist: HashMap::new(),
+            pair_hist_dropped: 0,
+            region64: BTreeMap::new(),
+            region64_dropped: 0,
+            hash: HashSink::default(),
+        }
+    }
 }
 
 impl FpShareSink {
+    const MAX_PAIR_HIST: usize = 65_536;
+    const MAX_REGION_HIST: usize = 65_536;
+
     /// `true` iff the raw retired instruction bits are an F/D op. Standard RISC-V opcode map:
     /// 32-bit LOAD-FP(0x07)/STORE-FP(0x27)/MADD(0x43)/MSUB(0x47)/NMSUB(0x4b)/NMADD(0x4f)/
     /// OP-FP(0x53); RVC quadrant-0 funct3=001/101 (C.FLD/C.FSD) and quadrant-2 funct3=001/101
@@ -81,16 +117,120 @@ impl FpShareSink {
 impl TraceSink for FpShareSink {
     #[inline]
     fn retire(&mut self, r: &wasm_vm_core::trace::TraceRecord) {
+        self.hash.retire(r);
         self.total += 1;
+        self.opcode7[(r.insn & 0x7f) as usize] += 1;
+        if let Some(count) = self.pair_hist.get_mut(&(r.pc, r.insn)) {
+            *count += 1;
+        } else if self.pair_hist.len() < Self::MAX_PAIR_HIST {
+            self.pair_hist.insert((r.pc, r.insn), 1);
+        } else {
+            self.pair_hist_dropped += 1;
+        }
         let (is_fp, is_ldst) = Self::is_fp(r.insn);
+        let mut region = if let Some(region) = self.region64.get_mut(&(r.pc & !0x3f)) {
+            Some(region)
+        } else if self.region64.len() < Self::MAX_REGION_HIST {
+            Some(self.region64.entry(r.pc & !0x3f).or_default())
+        } else {
+            self.region64_dropped += 1;
+            None
+        };
+        if let Some(region) = region.as_deref_mut() {
+            region.total += 1;
+        }
         if is_fp {
             self.fp += 1;
             if is_ldst {
                 self.fp_ldst += 1;
             } else {
                 self.fp_compute += 1;
+                if let Some(region) = region {
+                    region.fp_compute += 1;
+                }
+                match r.insn & 0x7f {
+                    0x53 => self.op_fp_funct7[((r.insn >> 25) & 0x7f) as usize] += 1,
+                    0x43 | 0x47 | 0x4b | 0x4f => self.fma_opcode7[(r.insn & 0x7f) as usize] += 1,
+                    _ => {}
+                }
             }
         }
+    }
+}
+
+impl FpShareSink {
+    fn pair_counts_json(&self, fp_only: bool) -> String {
+        let mut pairs: Vec<_> = self
+            .pair_hist
+            .iter()
+            .filter(|((_, insn), _)| !fp_only || Self::is_fp(*insn).0)
+            .map(|(&(pc, insn), &count)| (pc, insn, count))
+            .collect();
+        pairs.sort_by(|a, b| {
+            b.2.cmp(&a.2)
+                .then_with(|| a.0.cmp(&b.0))
+                .then_with(|| a.1.cmp(&b.1))
+        });
+        let mut out = String::from("[");
+        for (index, (pc, insn, count)) in pairs.into_iter().take(32).enumerate() {
+            if index != 0 {
+                out.push(',');
+            }
+            out.push_str(&format!(
+                "{{\"pc\":\"0x{pc:016x}\",\"insn\":\"0x{insn:08x}\",\"count\":{count}}}"
+            ));
+        }
+        out.push(']');
+        out
+    }
+
+    fn regions_json(&self) -> String {
+        let mut out = String::from("[");
+        for (index, (&pc, counts)) in self.region64.iter().enumerate() {
+            if index != 0 {
+                out.push(',');
+            }
+            out.push_str(&format!(
+                "{{\"pc\":\"0x{pc:016x}\",\"total\":{},\"fp_compute\":{}}}",
+                counts.total, counts.fp_compute
+            ));
+        }
+        out.push(']');
+        out
+    }
+
+    fn sparse_counts(counts: &[u64; 128]) -> String {
+        let mut out = String::from("{");
+        let mut first = true;
+        for (value, count) in counts.iter().enumerate().filter(|(_, count)| **count != 0) {
+            if !first {
+                out.push(',');
+            }
+            first = false;
+            out.push_str(&format!("\"0x{value:02x}\":{count}"));
+        }
+        out.push('}');
+        out
+    }
+
+    fn trace_hash(&self) -> u64 {
+        self.hash.hash()
+    }
+
+    fn trace_retired(&self) -> u64 {
+        self.hash.retired()
+    }
+}
+
+fn evidence_mode(fp_hist: bool, jit: bool, display_workload: bool) -> (&'static str, bool) {
+    if fp_hist {
+        ("retirement-records", false)
+    } else if jit {
+        ("jit-retired-counter-only", true)
+    } else if display_workload {
+        ("display-retired-counter-only", true)
+    } else {
+        ("retirement-records", false)
     }
 }
 
@@ -165,6 +305,9 @@ pub struct BootArgs {
     /// Instructions per I/O-service quantum (stdin→UART, UART→stdout drain cadence).
     #[arg(long, default_value_t = 200_000)]
     pub quantum: u64,
+    /// Retired instructions per CLINT `mtime` tick. Defaults to the historical native divider.
+    #[arg(long, default_value_t = 10, value_parser = parse_nonzero_u64)]
+    pub icount_divider: u64,
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
@@ -176,6 +319,11 @@ pub struct BootArgs {
     /// echo-proof `WVM_KB_INJECT` marker, inject one KEY_A make frame followed by one break frame.
     #[arg(long)]
     pub keyboard_proof: bool,
+    /// Diagnostic only: inject N KEY_A make/break pairs, then KEY_B down as a completion
+    /// sentinel. The separately opened guest state fd can observe it without draining the
+    /// measured evdev reader. Omit this option to retain the original four-event proof.
+    #[arg(long, requires = "keyboard_proof", value_parser = clap::value_parser!(u16).range(1..=512))]
+    pub keyboard_proof_burst_pairs: Option<u16>,
     /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
     #[arg(long)]
     pub no_reboot: bool,
@@ -186,6 +334,11 @@ pub struct BootArgs {
     /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors (overhead A/B).
     #[arg(long)]
     pub no_storm_detect: bool,
+    /// Pin the goldfish RTC to this Unix-epoch nanosecond value instead of the host wall clock.
+    /// The RTC is the only host-time input to a headless boot, so pinning it makes `--evidence`
+    /// digests reproducible run-to-run — the equivalence oracle for interpreter/JIT refactors.
+    #[arg(long)]
+    pub fixed_rtc_ns: Option<u64>,
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
@@ -250,6 +403,11 @@ pub struct BootArgs {
     /// evidence is unaffected; turn it on for network/TLS workloads that need prompt entropy.
     #[arg(long)]
     pub virtio_rng: bool,
+    /// Assemble the browser's complete desktop device topology for a shipped resume snapshot:
+    /// keyboard, tablet, mouse, sound, GPU, and the ninth-slot agent console. This is opt-in so
+    /// ordinary headless CLI boots keep their smaller native topology.
+    #[arg(long)]
+    pub browser_topology: bool,
     /// DHCP lease advertised by slirp, in seconds. Short values make renewal tests deterministic.
     #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS)]
     pub net_slirp_lease_secs: u32,
@@ -327,6 +485,16 @@ fn parse_positive_usize(value: &str) -> Result<usize, String> {
     Ok(parsed)
 }
 
+fn parse_nonzero_u64(value: &str) -> Result<u64, String> {
+    let parsed = value
+        .parse::<u64>()
+        .map_err(|e| format!("expected a nonzero integer: {e}"))?;
+    if parsed == 0 {
+        return Err("expected a nonzero integer, got 0".to_string());
+    }
+    Ok(parsed)
+}
+
 fn parse_id32(hex: &str) -> Result<[u8; 32], String> {
     let hex = hex.trim();
     if hex.len() != 64 {
@@ -381,6 +549,15 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_nanos() as u64)
             .unwrap_or(0)
+    }
+}
+
+/// A constant RTC for reproducible boots (`--fixed-rtc-ns`).
+struct FixedClock(u64);
+
+impl wasm_vm_core::dev::rtc::WallClock for FixedClock {
+    fn now_ns(&self) -> u64 {
+        self.0
     }
 }
 
@@ -449,16 +626,76 @@ struct SnapshotOnMarker {
     tail: String,
     fired: bool,
     refused: Option<String>,
+    /// Snapshot preparation only: `WASM_VM_PREP_TABLET_CLICK=MARKER@X,Y` injects one virtio-tablet
+    /// left click at output pixel (X,Y) of a 1280x800 display each time MARKER is printed, so a
+    /// prepared desktop has already handled a real pointer device event (see
+    /// tools/image/prepare-omarchy-responsive-cold.mjs). Unset: no behaviour change.
+    tablet_click: Option<(String, i32, i32)>,
+    click_tail: String,
+}
+
+/// Parse `MARKER@X,Y` (pixels on the 1280x800 Omarchy output) into the marker and absolute axes.
+fn parse_tablet_click(spec: &str) -> Option<(String, i32, i32)> {
+    let (marker, at) = spec.rsplit_once('@')?;
+    let (x, y) = at.split_once(',')?;
+    let (x, y): (u32, u32) = (x.parse().ok()?, y.parse().ok()?);
+    if marker.is_empty() || x >= 1280 || y >= 800 {
+        return None;
+    }
+    let axis = |pixels: u32, extent: u32| {
+        ((u64::from(pixels) * 32_767 + u64::from(extent / 2)) / u64::from(extent)) as i32
+    };
+    Some((marker.to_string(), axis(x, 1280), axis(y, 800)))
 }
 
 impl SnapshotOnMarker {
     fn new(trigger: String, out: PathBuf) -> Self {
+        let tablet_click = std::env::var("WASM_VM_PREP_TABLET_CLICK").ok().map(|spec| {
+            parse_tablet_click(&spec).unwrap_or_else(|| {
+                panic!("WASM_VM_PREP_TABLET_CLICK must be MARKER@X,Y, got {spec:?}")
+            })
+        });
         Self {
             trigger,
             out,
             tail: String::new(),
             fired: false,
             refused: None,
+            tablet_click,
+            click_tail: String::new(),
+        }
+    }
+
+    fn feed_tablet_click(&mut self, out: &[u8], m: &mut Machine) {
+        use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, pointer};
+        let Some((marker, x, y)) = self.tablet_click.clone() else {
+            return;
+        };
+        self.click_tail.push_str(&String::from_utf8_lossy(out));
+        while let Some(at) = self.click_tail.find(&marker) {
+            self.click_tail.drain(..at + marker.len());
+            let Some(tablet) = m.tablet_input() else {
+                eprintln!(
+                    "wasm-vm: WASM_VM_PREP_TABLET_CLICK needs --browser-topology (no virtio tablet)"
+                );
+                return;
+            };
+            let mut input = tablet.borrow_mut();
+            let mut accepted = input.inject_event(EV_ABS, pointer::ABS_X, x);
+            accepted &= input.inject_event(EV_ABS, pointer::ABS_Y, y);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 1);
+            input.sync();
+            accepted &= input.inject_event(EV_KEY, pointer::BTN_LEFT, 0);
+            input.sync();
+            eprintln!("wasm-vm: prep tablet click at ({x},{y}) accepted={accepted}");
+        }
+        if self.click_tail.len() > 512 {
+            let mut cut = self.click_tail.len() - 256;
+            while cut < self.click_tail.len() && !self.click_tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.click_tail = self.click_tail.split_off(cut);
         }
     }
 
@@ -469,6 +706,7 @@ impl SnapshotOnMarker {
         if self.fired || self.refused.is_some() {
             return false;
         }
+        self.feed_tablet_click(out, m);
         self.tail.push_str(&String::from_utf8_lossy(out));
         if self.tail.contains(&self.trigger) {
             match m.save_resume() {
@@ -556,12 +794,45 @@ pub fn print_jit_stats(m: &Machine) {
         "jit_pause: samples={} sum_ns={} max_ns={} over_target={}",
         pause.count, pause.sum_ns, pause.max_ns, pause.over_target,
     );
+    // JIT coverage: the share of all retired guest instructions that executed in compiled code,
+    // and why the rest did not (translations by outcome + the first-untranslated-op histogram).
+    let retired_total = m.irq_stats().retired;
+    let coverage_pct = if retired_total == 0 {
+        0.0
+    } else {
+        100.0 * retired_via_jit as f64 / retired_total as f64
+    };
+    let tc = m
+        .executor()
+        .map(|e| e.translation_coverage())
+        .unwrap_or_default();
+    eprintln!(
+        "coverage: retired_via_jit={retired_via_jit} retired_total={retired_total} jit_pct={coverage_pct:.2}%  translations: full={} partial={} rejected={} partial_exits={}",
+        tc.full_blocks, tc.partial_blocks, tc.rejected_blocks, tc.partial_exits,
+    );
+    let first: Vec<String> = tc
+        .first_unsupported
+        .iter()
+        .take(16)
+        .map(|(name, count)| format!("{name}={count}"))
+        .collect();
+    eprintln!("first_untranslated_op: {}", first.join(" "));
+    eprintln!(
+        "partial_resume: rebuilds={} failures={}",
+        m.jit_partial_resume_rebuilds(),
+        m.jit_partial_resume_failures(),
+    );
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
-        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"retired_total\":{},\"blocks_full\":{},\"blocks_partial\":{},\"blocks_rejected\":{},\"partial_exits\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
         compiled,
         executed,
         retired_via_jit,
+        retired_total,
+        tc.full_blocks,
+        tc.partial_blocks,
+        tc.rejected_blocks,
+        tc.partial_exits,
         chain.links_made,
         chain.dispatch_entries,
         cache.installs,
@@ -614,7 +885,9 @@ pub fn boot(a: BootArgs) -> ExitCode {
         (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
         _ => None,
     };
-    let mut keyboard_proof = a.keyboard_proof.then(KeyboardProof::new);
+    let mut keyboard_proof = a
+        .keyboard_proof
+        .then(|| KeyboardProof::new(a.keyboard_proof_burst_pairs));
     #[cfg(feature = "gpu-trace")]
     if a.display_workload && a.gpu_trace.is_none() {
         eprintln!("wasm-vm: --display-workload requires --gpu-trace");
@@ -714,6 +987,8 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // the JIT FP-translation policy. Off by default (production path uses NullSink below).
         let fp_hist = std::env::var("WASM_VM_FP_HISTOGRAM").is_ok();
         let mut hash = HashSink::new();
+        let mut fp_trace_hash = None;
+        let mut fp_trace_retired = None;
         let outcome = if fp_hist {
             let mut fp = FpShareSink::default();
             let o = run_machine(
@@ -735,22 +1010,39 @@ pub fn boot(a: BootArgs) -> ExitCode {
             } else {
                 100.0 * fp.fp as f64 / fp.total as f64
             };
+            fp_trace_hash = Some(fp.trace_hash());
+            fp_trace_retired = Some(fp.trace_retired());
             eprintln!(
-                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6}}}",
-                fp.total, fp.fp, fp.fp_ldst, fp.fp_compute, pct
+                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6},\"trace_fnv64\":\"{:016x}\",\"trace_retired\":{},\"opcode7\":{},\"op_fp_funct7\":{},\"fma_opcode7\":{},\"pair_hist_distinct\":{},\"pair_hist_dropped\":{},\"pc_insn_top32\":{},\"fp_pc_insn_top32\":{},\"fp_region64_distinct\":{},\"fp_region64_dropped\":{},\"fp_region64\":{}}}",
+                fp.total,
+                fp.fp,
+                fp.fp_ldst,
+                fp.fp_compute,
+                pct,
+                fp.trace_hash(),
+                fp.trace_retired(),
+                FpShareSink::sparse_counts(&fp.opcode7),
+                FpShareSink::sparse_counts(&fp.op_fp_funct7),
+                FpShareSink::sparse_counts(&fp.fma_opcode7),
+                fp.pair_hist.len(),
+                fp.pair_hist_dropped,
+                fp.pair_counts_json(false),
+                fp.pair_counts_json(true),
+                fp.region64.len(),
+                fp.region64_dropped,
+                fp.regions_json()
             );
             o
         } else if a.evidence.is_some() {
             // A concrete retirement sink deliberately keeps the interpreter path active: the
             // compiled-block executor cannot reconstruct one TraceRecord per JIT-retired
-            // instruction. The display workload only needs the authoritative guest-instruction
-            // counter from m.irq_stats().retired, so it also uses the zero-record sink to avoid
-            // making a macro boot pay the per-retirement hashing cost. Keep the evidence file
-            // honest by labeling both opt-in paths as counter-only below.
+            // instruction. The FP diagnostic is the exception in reporting terms: it explicitly
+            // requests that record sink, so its hash/count are record-based even when --jit is
+            // also supplied. The display workload remains counter-only.
             #[cfg(feature = "gpu-trace")]
-            let counter_only_evidence = a.jit || a.display_workload;
+            let counter_only_evidence = !fp_hist && (a.jit || a.display_workload);
             #[cfg(not(feature = "gpu-trace"))]
-            let counter_only_evidence = a.jit;
+            let counter_only_evidence = !fp_hist && a.jit;
             if counter_only_evidence {
                 let mut jit_evidence = NullSink;
                 run_machine(
@@ -882,26 +1174,19 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         if let Some(path) = &a.evidence {
             #[cfg(feature = "gpu-trace")]
-            let counter_only_evidence = a.jit || a.display_workload;
+            let display_workload_enabled = a.display_workload;
             #[cfg(not(feature = "gpu-trace"))]
-            let counter_only_evidence = a.jit;
+            let display_workload_enabled = false;
+            let (evidence_mode, counter_only_evidence) =
+                evidence_mode(fp_hist, a.jit, display_workload_enabled);
             let evidence_retired = if counter_only_evidence {
                 m.irq_stats().retired
             } else {
-                hash.retired()
-            };
-            let evidence_mode = if counter_only_evidence {
-                if a.jit {
-                    "jit-retired-counter-only"
-                } else {
-                    "display-retired-counter-only"
-                }
-            } else {
-                "retirement-records"
+                fp_trace_retired.unwrap_or_else(|| hash.retired())
             };
             let evidence = format!(
                 "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\ntrace mode={evidence_mode}\n{}\noutcome={outcome:?}\n",
-                hash.hash(),
+                fp_trace_hash.unwrap_or_else(|| hash.hash()),
                 evidence_retired,
                 m.snapshot().state_sha256_line(),
             );
@@ -1046,9 +1331,12 @@ fn assemble(
     }
 
     // --- devices, in dependency order (PLIC before its consumers) ---
-    m.enable_clint(10);
+    m.enable_clint(a.icount_divider);
     m.enable_plic();
-    m.enable_rtc(Box::new(SystemClock));
+    match a.fixed_rtc_ns {
+        Some(ns) => m.enable_rtc(Box::new(FixedClock(ns))),
+        None => m.enable_rtc(Box::new(SystemClock)),
+    };
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
@@ -1103,8 +1391,13 @@ fn assemble(
     // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
     // can bind /dev/input/event0 before the host's first key injection.
     let _ = m.enable_virtio_keyboard();
+    if a.browser_topology {
+        // Match crates/wasm::assemble exactly: pointer slots 4/5, sound slot 6, GPU slot 7, and
+        // the browser-only agent console in the ninth platform window (slot 8).
+        let _ = m.enable_virtio_pointer();
+    }
     #[cfg(feature = "gpu-trace")]
-    if a.display_workload {
+    if !a.browser_topology && a.display_workload {
         // T16b drives the real evdev path, so reserve the same absolute tablet and relative mouse
         // slots as the browser assembly before sound/GPU claim the remaining virtio windows.
         let _ = m.enable_virtio_pointer();
@@ -1117,7 +1410,15 @@ fn assemble(
         Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
         a.enable_mic,
     );
-    let agent_state = a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1);
+    let agent_state = if a.browser_topology {
+        let _ = m.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+        let state = m
+            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1)
+            .1;
+        a.agent_proof.as_ref().map(|_| state)
+    } else {
+        a.agent_proof.as_ref().map(|_| m.enable_virtio_console().1)
+    };
 
     #[cfg(feature = "gpu-trace")]
     let display_metrics = a
@@ -1431,16 +1732,18 @@ struct KeyboardProof {
     tail: String,
     injected: bool,
     last_pending_events: Option<usize>,
+    burst_pairs: Option<u16>,
 }
 
 impl KeyboardProof {
     const MARKER: &'static str = "WVM_KB_INJECT";
 
-    fn new() -> Self {
+    fn new(burst_pairs: Option<u16>) -> Self {
         Self {
             tail: String::new(),
             injected: false,
             last_pending_events: None,
+            burst_pairs,
         }
     }
 
@@ -1458,10 +1761,26 @@ impl KeyboardProof {
             let mut state = state.borrow_mut();
             use wasm_vm_core::dev::virtio::input::EV_KEY;
             use wasm_vm_core::dev::virtio::input::keyboard::KEY_A;
-            state.inject_event(EV_KEY, KEY_A, 1);
-            state.sync();
-            state.inject_event(EV_KEY, KEY_A, 0);
-            state.sync();
+            const KEY_B: u16 = 48; // Linux input-event-codes.h; completion sentinel only.
+            if let Some(pairs) = self.burst_pairs {
+                // A proof fixture must not drop events in the host before testing the
+                // Linux client's bounded queue. This does not change normal input policy.
+                state.set_pending_event_budget(usize::from(pairs) * 4 + 2);
+            }
+            for _ in 0..self.burst_pairs.unwrap_or(1) {
+                state.inject_event(EV_KEY, KEY_A, 1);
+                state.sync();
+                state.inject_event(EV_KEY, KEY_A, 0);
+                state.sync();
+            }
+            if let Some(pairs) = self.burst_pairs {
+                state.inject_event(EV_KEY, KEY_B, 1);
+                state.sync();
+                eprintln!(
+                    "wasm-vm: keyboard burst proof pairs={pairs} events={}",
+                    usize::from(pairs) * 4 + 2
+                );
+            }
             self.injected = true;
             eprintln!("wasm-vm: keyboard proof injected KEY_A make/break frames");
         }
@@ -2230,6 +2549,186 @@ mod e4t01_symbolizer_tests {
     }
 }
 
+#[cfg(test)]
+mod cli_config_tests {
+    use super::BootArgs;
+    use clap::{Args as _, Command, FromArgMatches};
+
+    fn parse(args: &[&str]) -> BootArgs {
+        let command = BootArgs::augment_args(Command::new("boot"));
+        let matches = command
+            .try_get_matches_from(args)
+            .expect("boot arguments should parse");
+        BootArgs::from_arg_matches(&matches).expect("boot config should parse")
+    }
+
+    #[test]
+    fn icount_divider_defaults_to_ten_and_accepts_omarchy_sixty_four() {
+        assert_eq!(parse(&["boot", "--kernel", "Image"]).icount_divider, 10);
+        assert_eq!(
+            parse(&["boot", "--kernel", "Image", "--icount-divider", "64"]).icount_divider,
+            64
+        );
+    }
+
+    #[test]
+    fn icount_divider_rejects_zero() {
+        let command = BootArgs::augment_args(Command::new("boot"));
+        let error = command
+            .try_get_matches_from(["boot", "--kernel", "Image", "--icount-divider", "0"])
+            .expect_err("zero divider must be rejected");
+        assert!(error.to_string().contains("nonzero"));
+    }
+
+    #[test]
+    fn keyboard_burst_proof_is_opt_in_and_bounded() {
+        assert_eq!(
+            parse(&["boot", "--kernel", "Image", "--keyboard-proof"]).keyboard_proof_burst_pairs,
+            None
+        );
+        assert_eq!(
+            parse(&[
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "64",
+            ])
+            .keyboard_proof_burst_pairs,
+            Some(64)
+        );
+        for args in [
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof-burst-pairs",
+                "64",
+            ],
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "0",
+            ],
+            vec![
+                "boot",
+                "--kernel",
+                "Image",
+                "--keyboard-proof",
+                "--keyboard-proof-burst-pairs",
+                "513",
+            ],
+        ] {
+            assert!(
+                BootArgs::augment_args(Command::new("boot"))
+                    .try_get_matches_from(args)
+                    .is_err()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod fp_share_sink_tests {
+    use super::FpShareSink;
+    use wasm_vm_core::trace::{HashSink, TraceRecord, TraceSink};
+
+    #[test]
+    fn composite_sink_counts_fp_and_hashes_the_same_records() {
+        let records = [
+            TraceRecord {
+                pc: 0x8000,
+                insn: 0x0000_0053,
+                rd: Some((1, 7)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8004,
+                insn: 0x0000_0007,
+                rd: Some((2, 9)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8008,
+                insn: 0x0000_0043,
+                rd: Some((3, 11)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x800c,
+                insn: 0x0000_0033,
+                rd: Some((4, 13)),
+                mem: None,
+            },
+            TraceRecord {
+                pc: 0x8010,
+                insn: 0x0000_0024,
+                rd: None,
+                mem: None,
+            },
+        ];
+        let mut combined = FpShareSink::default();
+        let mut expected_hash = HashSink::new();
+        for record in &records {
+            combined.retire(record);
+            expected_hash.retire(record);
+        }
+
+        assert_eq!(combined.total, records.len() as u64);
+        assert_eq!(combined.fp, 3);
+        assert_eq!(combined.fp_ldst, 1);
+        assert_eq!(combined.fp_compute, 2);
+        assert_eq!(combined.opcode7[0x53], 1);
+        assert_eq!(combined.op_fp_funct7[0], 1);
+        assert_eq!(combined.fma_opcode7[0x43], 1);
+        assert_eq!(combined.fma_opcode7[0x24], 0);
+        assert_eq!(combined.trace_retired(), expected_hash.retired());
+        assert_eq!(combined.trace_hash(), expected_hash.hash());
+    }
+
+    #[test]
+    fn evidence_mode_matrix_marks_fp_histogram_as_record_based() {
+        assert_eq!(
+            super::evidence_mode(false, false, false),
+            ("retirement-records", false)
+        );
+        assert_eq!(
+            super::evidence_mode(false, true, false),
+            ("jit-retired-counter-only", true)
+        );
+        assert_eq!(
+            super::evidence_mode(false, false, true),
+            ("display-retired-counter-only", true)
+        );
+        assert_eq!(
+            super::evidence_mode(true, true, true),
+            ("retirement-records", false)
+        );
+    }
+
+    #[test]
+    fn pc_instruction_histogram_is_bounded_and_counts_dropped_pairs() {
+        let mut sink = FpShareSink::default();
+        for index in 0..=FpShareSink::MAX_PAIR_HIST {
+            sink.retire(&TraceRecord {
+                pc: 0x8000 + index as u64 * 64,
+                insn: 0x33,
+                rd: None,
+                mem: None,
+            });
+        }
+
+        assert_eq!(sink.pair_hist.len(), FpShareSink::MAX_PAIR_HIST);
+        assert_eq!(sink.pair_hist_dropped, 1);
+        assert_eq!(sink.region64.len(), FpShareSink::MAX_REGION_HIST);
+        assert_eq!(sink.region64_dropped, 1);
+    }
+}
+
 #[cfg(all(test, feature = "gpu-trace"))]
 mod display_workload_tests {
     use super::DisplayWorkload;
@@ -2253,5 +2752,26 @@ mod display_workload_tests {
             ))
         );
         assert!(DisplayWorkload::profile("unknown").is_err());
+    }
+}
+
+#[cfg(test)]
+mod prep_tablet_click_tests {
+    use super::parse_tablet_click;
+
+    #[test]
+    fn marker_and_pixels_map_to_the_tablet_axes() {
+        assert_eq!(
+            parse_tablet_click("WVM_PREP_TABLET_CLICK@640,420"),
+            Some(("WVM_PREP_TABLET_CLICK".to_string(), 16_384, 17_203))
+        );
+        assert_eq!(parse_tablet_click("M@0,0"), Some(("M".to_string(), 0, 0)));
+    }
+
+    #[test]
+    fn malformed_or_off_screen_specs_are_rejected() {
+        for spec in ["@1,2", "M", "M@1", "M@x,2", "M@1280,0", "M@0,800", "M@-1,0"] {
+            assert_eq!(parse_tablet_click(spec), None, "{spec}");
+        }
     }
 }

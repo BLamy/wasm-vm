@@ -21,6 +21,194 @@ use crate::hart::Hart;
 use crate::mmio::SystemBus;
 use alloc::boxed::Box;
 
+/// Pure generated-code helper for FADD.S / FMUL.S. Operands have already been
+/// NaN-box checked and `rm` resolved/validated (0..=4) by the generated caller.
+/// Low 32 bits are the raw result; bits 32..36 are newly accrued RISC-V flags.
+/// No hart, bus, memory, device or scheduler reference crosses this boundary.
+pub fn fp_arith_s(a: u32, b: u32, multiply: bool, rm: u8) -> u64 {
+    use crate::softfloat::{F32, RoundMode, SoftFloat};
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = if multiply {
+        F32::mul(a, b, round)
+    } else {
+        F32::add(a, b, round)
+    };
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
+/// Pure FCVT.S.{W,WU,L,LU} helper. The generated caller validates `rm` and
+/// selects width 0=W, 1=WU, 2=L or 3=LU. The full integer source crosses this
+/// boundary unchanged; the software backend applies width and signedness.
+/// Return raw f32 bits in 0..31 and new flags in 32..36, as for `fp_arith_s`.
+pub fn fp_from_int_s(value: u64, width: u8, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{RoundMode, f32_from_int};
+    let width = match width {
+        0 => FpIntWidth::W,
+        1 => FpIntWidth::Wu,
+        2 => FpIntWidth::L,
+        3 => FpIntWidth::Lu,
+        _ => panic!("generated FP helper requires a decoded integer width"),
+    };
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = f32_from_int(value, width, round);
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
+/// Pure FCVT.W[U].S helper. The caller checks the source NaN box and validates
+/// rounding before entry. Return low word bits in 0..31 and flags in 32..36;
+/// the generated caller sign-extends the word for both signed and unsigned W.
+pub fn fp_to_word_s(bits: u32, unsigned: bool, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{RoundMode, f32_to_int};
+    let width = if unsigned {
+        FpIntWidth::Wu
+    } else {
+        FpIntWidth::W
+    };
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (word, flags) = f32_to_int(bits, width, round);
+    u64::from(word as u32) | (u64::from(flags.0) << 32)
+}
+
+/// Pure FDIV.S helper. The generated caller checks source NaN boxes and
+/// validates rounding. Return result bits in 0..31 and new flags in 32..36;
+/// no guest execution context crosses this boundary.
+pub fn fp_div_s(a: u32, b: u32, rm: u8) -> u64 {
+    use crate::softfloat::{F32, RoundMode, SoftFloat};
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = F32::div(a, b, round);
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
+/// Pure FMADD.S helper. Three independently NaN-box-checked sources and a
+/// validated rounding mode enter one software fused operation. Return raw
+/// result bits and newly raised flags; never touch guest execution context.
+pub fn fp_fmadd_s(a: u32, b: u32, c: u32, rm: u8) -> u64 {
+    use crate::softfloat::{F32, RoundMode, SoftFloat};
+    let round = RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    let (bits, flags) = F32::fma(a, b, c, round);
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
+/// Operation selectors for the generic generated-code FP helpers [`fp_op64`] / [`fp_op32`].
+///
+/// These cover every F/D operation whose exact RISC-V result cannot be produced by a few inline
+/// integer wasm instructions (rounding, flag computation, NaN canonicalization). The generated
+/// caller has already checked FS, NaN-box-checked every single-precision source (passing the
+/// canonical NaN for an improperly boxed operand, exactly like `FRegs::read_f32`) and resolved +
+/// validated the rounding mode, so each helper is a pure function of its operands. Every selector
+/// calls the same `softfloat` routine `Hart::execute` uses, so results and flags are bit-identical
+/// to the interpreter by construction.
+pub mod fp_op {
+    // ── fp_op64: 64-bit result, flags returned separately ──
+    pub const ADD_D: u32 = 0;
+    pub const SUB_D: u32 = 1;
+    pub const MUL_D: u32 = 2;
+    pub const DIV_D: u32 = 3;
+    pub const SQRT_D: u32 = 4;
+    pub const FMADD_D: u32 = 5;
+    pub const FMSUB_D: u32 = 6;
+    pub const FNMSUB_D: u32 = 7;
+    pub const FNMADD_D: u32 = 8;
+    pub const MIN_D: u32 = 9;
+    pub const MAX_D: u32 = 10;
+    /// FCVT.D.S: `a` holds the (NaN-box-checked) single-precision bits.
+    pub const CVT_D_S: u32 = 11;
+    pub const CVT_D_L: u32 = 12;
+    pub const CVT_D_LU: u32 = 13;
+    pub const CVT_L_D: u32 = 14;
+    pub const CVT_LU_D: u32 = 15;
+    /// FCVT.L[U].S: `a` holds the (NaN-box-checked) single-precision bits.
+    pub const CVT_L_S: u32 = 16;
+    pub const CVT_LU_S: u32 = 17;
+    // ── fp_op32: packed `result[31:0] | flags << 32` ──
+    pub const SUB_S: u32 = 32;
+    pub const SQRT_S: u32 = 33;
+    pub const FMSUB_S: u32 = 34;
+    pub const FNMSUB_S: u32 = 35;
+    pub const FNMADD_S: u32 = 36;
+    pub const MIN_S: u32 = 37;
+    pub const MAX_S: u32 = 38;
+    /// FCLASS.S (no flags; the 10-bit class mask in the low word).
+    pub const CLASS_S: u32 = 39;
+    /// FCVT.S.D: the rounded single-precision bits (the caller NaN-boxes them).
+    pub const CVT_S_D: u32 = 40;
+    /// FCVT.W[U].D: the low result word (the caller sign-extends it, as for FCVT.W[U].S).
+    pub const CVT_W_D: u32 = 41;
+    pub const CVT_WU_D: u32 = 42;
+    /// FCLASS.D (no flags).
+    pub const CLASS_D: u32 = 43;
+}
+
+/// Pure generic helper for F/D operations with a 64-bit result. Returns `(result, flags)`; the
+/// executor publishes `flags` through its per-thread flag mailbox (`fp_flags` import) because a
+/// 64-bit result plus five flag bits do not fit one wasm `i64` return. `rm` is validated 0..=4.
+pub fn fp_op64(op: u32, a: u64, b: u64, c: u64, rm: u8) -> (u64, u8) {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{F64, RoundMode, SoftFloat};
+    let round =
+        || RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    const NEG: u64 = 0x8000_0000_0000_0000;
+    let (bits, flags) = match op {
+        fp_op::ADD_D => F64::add(a, b, round()),
+        fp_op::SUB_D => F64::sub(a, b, round()),
+        fp_op::MUL_D => F64::mul(a, b, round()),
+        fp_op::DIV_D => F64::div(a, b, round()),
+        fp_op::SQRT_D => F64::sqrt(a, round()),
+        // Negation by sign flip before the single fused rounding, exactly as `Hart::execute`.
+        fp_op::FMADD_D => F64::fma(a, b, c, round()),
+        fp_op::FMSUB_D => F64::fma(a, b, c ^ NEG, round()),
+        fp_op::FNMSUB_D => F64::fma(a ^ NEG, b, c, round()),
+        fp_op::FNMADD_D => F64::fma(a ^ NEG, b, c ^ NEG, round()),
+        fp_op::MIN_D => crate::softfloat::f64_minmax(a, b, false),
+        fp_op::MAX_D => crate::softfloat::f64_minmax(a, b, true),
+        fp_op::CVT_D_S => crate::softfloat::f32_to_f64(a as u32),
+        fp_op::CVT_D_L => crate::softfloat::f64_from_int(a, FpIntWidth::L, round()),
+        fp_op::CVT_D_LU => crate::softfloat::f64_from_int(a, FpIntWidth::Lu, round()),
+        fp_op::CVT_L_D => crate::softfloat::f64_to_int(a, FpIntWidth::L, round()),
+        fp_op::CVT_LU_D => crate::softfloat::f64_to_int(a, FpIntWidth::Lu, round()),
+        fp_op::CVT_L_S => crate::softfloat::f32_to_int(a as u32, FpIntWidth::L, round()),
+        fp_op::CVT_LU_S => crate::softfloat::f32_to_int(a as u32, FpIntWidth::Lu, round()),
+        _ => panic!("generated FP helper requires a known 64-bit operation"),
+    };
+    (bits, flags.0)
+}
+
+/// Pure generic helper for F/D operations with a result of at most 32 bits. Returns the raw
+/// result bits in 0..31 and the newly raised flags in 32..36, like [`fp_arith_s`].
+/// Single-precision operands arrive in the low 32 bits of `a`/`b`/`c`.
+pub fn fp_op32(op: u32, a: u64, b: u64, c: u64, rm: u8) -> u64 {
+    use crate::decode::FpIntWidth;
+    use crate::softfloat::{F32, Flags, RoundMode, SoftFloat};
+    let round =
+        || RoundMode::from_bits(rm).expect("generated FP helper requires validated rounding");
+    const NEG: u32 = 0x8000_0000;
+    let (a32, b32, c32) = (a as u32, b as u32, c as u32);
+    let (bits, flags): (u32, Flags) = match op {
+        fp_op::SUB_S => F32::sub(a32, b32, round()),
+        fp_op::SQRT_S => F32::sqrt(a32, round()),
+        fp_op::FMSUB_S => F32::fma(a32, b32, c32 ^ NEG, round()),
+        fp_op::FNMSUB_S => F32::fma(a32 ^ NEG, b32, c32, round()),
+        fp_op::FNMADD_S => F32::fma(a32 ^ NEG, b32, c32 ^ NEG, round()),
+        fp_op::MIN_S => crate::softfloat::f32_minmax(a32, b32, false),
+        fp_op::MAX_S => crate::softfloat::f32_minmax(a32, b32, true),
+        fp_op::CLASS_S => (crate::softfloat::fclass_f32(a32) as u32, Flags::NONE),
+        fp_op::CVT_S_D => crate::softfloat::f64_to_f32(a, round()),
+        fp_op::CVT_W_D => {
+            let (word, flags) = crate::softfloat::f64_to_int(a, FpIntWidth::W, round());
+            (word as u32, flags)
+        }
+        fp_op::CVT_WU_D => {
+            let (word, flags) = crate::softfloat::f64_to_int(a, FpIntWidth::Wu, round());
+            (word as u32, flags)
+        }
+        fp_op::CLASS_D => (crate::softfloat::fclass_f64(a) as u32, Flags::NONE),
+        _ => panic!("generated FP helper requires a known 32-bit operation"),
+    };
+    u64::from(bits) | (u64::from(flags.0) << 32)
+}
+
 /// The frozen `CpuState` linear-memory offsets (`docs/jit-architecture.md` §3.1). These MUST match
 /// `jit_translate::Abi::FROZEN`; the executor syncs guest registers to `XREG_BASE` and reads the
 /// exit protocol back from `EXIT_*`.
@@ -29,6 +217,16 @@ pub mod abi {
     pub const XREG_BASE: u32 = 0x000;
     /// End of the integer-register array.
     pub const XREG_END: u32 = XREG_BASE + 32 * 8;
+    /// Reserved FLEN=64 register range, now consumed by the FP move subset.
+    pub const FREG_BASE: u32 = 0x108;
+    /// Low byte: fcsr; bit 8: FS enabled; bit 9: FP state dirtied; upper word:
+    /// exact FPR write mask. This transport metadata is never a guest CSR value.
+    pub const FP_STATE: u32 = 0x208;
+    pub const FP_ENABLED: u64 = 1 << 8;
+    pub const FP_DIRTY: u64 = 1 << 9;
+    /// A generated `fflags`/`frm`/`fcsr` CSR write executed: the low byte is then the
+    /// authoritative `{frm, fflags}` pair (overwritten, not accrued) at commit.
+    pub const FP_CSR_WRITTEN: u64 = 1 << 10;
     /// `exit_reason` — the [`super::ExitCode`] the block wrote before returning.
     pub const EXIT_REASON: u32 = 0x218;
     /// `exit_pc` — the guest PC to resume at.
@@ -100,9 +298,9 @@ pub mod abi {
 
 /// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
 ///
-/// The current translator consumes x0..x31 plus `entry_pc` on entry and produces x0..x31 plus the
-/// exit header on return. Reserved gaps inside the 568-byte range are transported but intentionally
-/// carry no architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
+/// The translator consumes integer/FPR images, FP control and `entry_pc`, producing
+/// changed registers and the exit header. The remaining reserved gaps have no
+/// architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
 /// byte view stays alignment-independent and little-endian-correct on every Rust host.
 #[repr(C)]
 pub struct CpuStateHandoff {
@@ -113,6 +311,8 @@ pub struct CpuStateHandoff {
     /// to an imported-memory module cover both the frozen handoff and the auxiliary state while
     /// preserving [`Self::as_bytes`] and its exact 568-byte contract.
     chain: [u64; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
+    /// Host-only cache key, beyond every generated-code offset and byte view.
+    fp_register_version: Option<(u64, u64)>,
 }
 
 impl Default for CpuStateHandoff {
@@ -120,16 +320,64 @@ impl Default for CpuStateHandoff {
         Self {
             words: [0; abi::HANDOFF_LEN / 8],
             chain: [0; ((abi::CHAIN_STATE_END - abi::HANDOFF_END) / 8) as usize],
+            fp_register_version: None,
         }
     }
 }
 
 impl CpuStateHandoff {
-    /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
-    /// header need not be initialized because generated code never consumes them on entry.
+    /// Marshal live registers, FP permission/control and virtual entry PC. An unchanged
+    /// FPR image is reused; the prior exit header is never consumed on entry.
     pub fn prepare(&mut self, hart: &Hart) {
         self.prepare_registers(hart);
+        self.prepare_fp_registers(hart);
+        self.prepare_fp_control(hart);
         self.set_entry_pc(hart.regs.pc);
+    }
+
+    /// Marshal the raw FLEN=64 image, including writable f0. Browser callers may
+    /// elide this copy only while the FRegs mutation stamp remains unchanged.
+    pub fn prepare_fp_registers(&mut self, hart: &Hart) -> u64 {
+        let version = Some(hart.fregs.jit_version());
+        if self.fp_register_version == version {
+            return 0;
+        }
+        #[cfg(target_endian = "little")]
+        self.words[abi::FREG_BASE as usize / 8..abi::FP_STATE as usize / 8]
+            .copy_from_slice(hart.fregs.jit_words());
+        #[cfg(target_endian = "big")]
+        for register in 0..32u8 {
+            self.put_u64(
+                abi::FREG_BASE + u32::from(register) * 8,
+                hart.fregs.read_raw(register),
+            );
+        }
+        self.fp_register_version = version;
+        32 * 8
+    }
+
+    /// Refresh FS permission and fcsr for every invocation, clearing the previous
+    /// invocation's dirty metadata independently of register-copy elision.
+    pub fn prepare_fp_control(&mut self, hart: &Hart) {
+        self.put_u64(
+            abi::FP_STATE,
+            u64::from(hart.csr.fflags | (hart.csr.frm << 5))
+                | if hart.csr.fp_off() {
+                    0
+                } else {
+                    abi::FP_ENABLED
+                },
+        );
+    }
+
+    /// Commit only executed FPR writes and accrued flags. FP-to-integer moves leave FS
+    /// unchanged. Arithmetic only ORs new flags into the low byte, so accruing it is exact; a
+    /// generated `fflags`/`frm`/`fcsr` write (which may clear flags or change the rounding
+    /// mode) marks [`abi::FP_CSR_WRITTEN`], making the low byte the authoritative new pair.
+    pub fn commit_fp_registers(&mut self, hart: &mut Hart) -> u64 {
+        let bytes = commit_fp_state(hart, |offset| self.get_u64(offset));
+        self.fp_register_version = Some(hart.fregs.jit_version());
+        bytes
     }
 
     /// Marshal only the live integer-register image. The browser executor uses this separately so
@@ -342,6 +590,118 @@ impl CpuStateHandoff {
     }
 }
 
+/// Exit header of one compiled call, read straight from a module's private state memory.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ModuleExitHeader {
+    pub reason: i32,
+    pub next_pc: u64,
+    pub exit_info: u64,
+}
+
+#[inline(always)]
+fn state_u64(state: &[u8], offset: u32) -> u64 {
+    let at = offset as usize;
+    u64::from_le_bytes(state[at..at + 8].try_into().expect("8-byte state word"))
+}
+
+#[inline(always)]
+fn put_state_u64(state: &mut [u8], offset: u32, value: u64) {
+    let at = offset as usize;
+    state[at..at + 8].copy_from_slice(&value.to_le_bytes());
+}
+
+/// Native private-memory fast path of [`CpuStateHandoff::prepare`]: marshal the entry image
+/// DIRECTLY into a module's own state memory (`state` starts at [`abi::XREG_BASE`]), with no
+/// intermediate handoff buffer, producing exactly the bytes the generated code consumes.
+///
+/// `fp_image` is `None` for a block whose translated ops contain no F/D or FP-CSR op: such
+/// generated code never reads or writes the FPR image or the FP state word, so neither is
+/// transferred (the stale bytes left in the memory are unobservable). Otherwise it is the cached
+/// `FRegs` mutation stamp that this memory's FPR image mirrors: the 256-byte image is copied only
+/// when the hart's stamp differs, and the FP control word is refreshed on every FP entry (which
+/// also clears the previous call's dirty mask).
+pub fn prepare_module_state(
+    state: &mut [u8],
+    hart: &Hart,
+    fp_image: Option<&mut Option<(u64, u64)>>,
+) {
+    let state = &mut state[..abi::HANDOFF_END as usize];
+    for (register, word) in hart.regs.jit_words().iter().enumerate() {
+        put_state_u64(state, abi::XREG_BASE + register as u32 * 8, *word);
+    }
+    if let Some(cached) = fp_image {
+        let version = hart.fregs.jit_version();
+        if *cached != Some(version) {
+            for (register, word) in hart.fregs.jit_words().iter().enumerate() {
+                put_state_u64(state, abi::FREG_BASE + register as u32 * 8, *word);
+            }
+            *cached = Some(version);
+        }
+        put_state_u64(
+            state,
+            abi::FP_STATE,
+            u64::from(hart.csr.fflags | (hart.csr.frm << 5))
+                | if hart.csr.fp_off() {
+                    0
+                } else {
+                    abi::FP_ENABLED
+                },
+        );
+    }
+    put_state_u64(state, abi::ENTRY_PC, hart.regs.pc);
+}
+
+/// Native private-memory fast path of [`CpuStateHandoff::commit_registers`] +
+/// [`CpuStateHandoff::commit_fp_registers`]: commit a returned module image straight from its
+/// state memory and return the exit header. `fp_image` must be the same selector passed to the
+/// matching [`prepare_module_state`]; after an FP commit it records the hart's new `FRegs` stamp,
+/// because the memory's FPR image then equals the committed register file.
+pub fn commit_module_state(
+    state: &[u8],
+    hart: &mut Hart,
+    fp_image: Option<&mut Option<(u64, u64)>>,
+) -> ModuleExitHeader {
+    let state = &state[..abi::HANDOFF_END as usize];
+    let mut words = [0_u64; 32];
+    for (register, word) in words.iter_mut().enumerate().skip(1) {
+        *word = state_u64(state, abi::XREG_BASE + register as u32 * 8);
+    }
+    hart.regs.jit_commit_words(&words);
+    if let Some(cached) = fp_image {
+        commit_fp_state(hart, |offset| state_u64(state, offset));
+        *cached = Some(hart.fregs.jit_version());
+    }
+    ModuleExitHeader {
+        reason: state_u64(state, abi::EXIT_REASON) as i32,
+        next_pc: state_u64(state, abi::EXIT_PC),
+        exit_info: state_u64(state, abi::EXIT_INFO),
+    }
+}
+
+/// Shared FP commit: executed FPR writes (by the generated dirty mask) and the accrued — or, after
+/// a generated `fflags`/`frm`/`fcsr` write, overwritten — FP control pair. Returns FPR bytes moved.
+fn commit_fp_state(hart: &mut Hart, get_u64: impl Fn(u32) -> u64) -> u64 {
+    let state = get_u64(abi::FP_STATE);
+    let mut mask = (state >> 32) as u32;
+    let bytes = u64::from(mask.count_ones()) * 8;
+    while mask != 0 {
+        let register = mask.trailing_zeros() as u8;
+        hart.fregs
+            .write_raw(register, get_u64(abi::FREG_BASE + u32::from(register) * 8));
+        mask &= mask - 1;
+    }
+    if state & abi::FP_DIRTY != 0 {
+        if state & abi::FP_CSR_WRITTEN != 0 {
+            hart.csr.fflags = state as u8 & 0x1f;
+            hart.csr.frm = (state >> 5) as u8 & 0x07;
+        } else {
+            hart.csr.accrue_fflags(state as u8 & 0x1f);
+        }
+        hart.csr.mark_fp_dirty();
+    }
+    bytes
+}
+
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only
 /// the first three; the rest are reserved for later tickets and surfaced here so the run loop can
 /// preserve the already-committed compiled state defensively if it ever sees one.
@@ -353,7 +713,16 @@ pub enum ExitCode {
     BranchTaken,
     /// A guest trap (`ecall`/`ebreak`) must be delivered at `next_pc`.
     Trap,
-    /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/INTERRUPT_POLL) — not produced
+    /// FS=Off at an FP instruction. `exit_info` holds its original instruction
+    /// bits and `next_pc` its precise virtual PC; only the preceding prefix retired.
+    IllegalInstruction,
+    /// Partial-block exit (`CALL_INTERP`, code 6): the compiled prefix of a block retired and the
+    /// block's first untranslated instruction must now be INTERPRETED at `next_pc`, as the
+    /// continuation of the same decoded block (no block boundary / interrupt sample in between).
+    /// `exit_info` = `(op_index << 56) | block_phys_start` names that decoded block and the index
+    /// of the untranslated op; for a one-block call `op_index` is also the retired prefix length.
+    CallInterp,
+    /// Any reserved variant (MMIO/MMU_MISS/NOT_COMPILED/INTERRUPT_POLL) — not produced
     /// by the current translator; treated as a benign unlinked fall-through because the module
     /// register image has already been committed.
     Reserved(i32),
@@ -369,6 +738,8 @@ impl ExitCode {
             0 => ExitCode::Fallthrough,
             1 => ExitCode::BranchTaken,
             2 => ExitCode::Trap,
+            6 => ExitCode::CallInterp,
+            9 => ExitCode::IllegalInstruction,
             8 => ExitCode::Budget,
             other => ExitCode::Reserved(other),
         }
@@ -546,6 +917,22 @@ pub struct JitEntryCostStats {
     pub device_boundary_ns: u64,
 }
 
+/// JIT translation-coverage counters (diagnostic only; never architectural state).
+///
+/// A block is *full* when every op translated, *partial* when a translated prefix ends in a
+/// [`ExitCode::CallInterp`] exit at the first untranslated op, and *rejected* when not even its
+/// first op translates. `first_unsupported` histograms the first untranslated op of every partial
+/// or rejected translation by mnemonic, most frequent first.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct TranslationCoverage {
+    pub full_blocks: u64,
+    pub partial_blocks: u64,
+    pub rejected_blocks: u64,
+    /// Runtime partial-block exits that handed the untranslated op to the interpreter.
+    pub partial_exits: u64,
+    pub first_unsupported: alloc::vec::Vec<(&'static str, u64)>,
+}
+
 impl JitCacheStats {
     /// Re-translation rate = retranslations / installs (the thrash signal). `0.0` before any install.
     pub fn retranslation_rate(&self) -> f64 {
@@ -708,6 +1095,12 @@ pub trait CompiledBlockExecutor {
         JitEntryCostStats::default()
     }
 
+    /// Translation-coverage diagnostics (full / partial / rejected blocks and the first
+    /// untranslated op histogram). Executors without the ledger return the zero default.
+    fn translation_coverage(&self) -> TranslationCoverage {
+        TranslationCoverage::default()
+    }
+
     /// Arm or disarm optional host-clock sampling in the compiled entry path. Structural counters
     /// remain live in both modes. The default is inert for native/simple executors without an
     /// entry timer.
@@ -783,6 +1176,15 @@ pub trait CompiledBlockExecutor {
     /// The current chain-depth budget.
     fn chain_depth_budget(&self) -> u32 {
         1
+    }
+
+    /// Whether [`Self::execute_with_budget`] consumes the in-module direct-chain fuel. The run loop
+    /// trims that fuel to the next timer deadline before EVERY host entry; an executor that never
+    /// chains inside a module (the native one-block-per-call executor) returns `false` so the core
+    /// skips the per-entry deadline computation. Defaults to `true` (always compute), which is
+    /// behaviour-preserving for every executor.
+    fn uses_direct_chain_fuel(&self) -> bool {
+        true
     }
 
     /// Lazily link `edge` (0 = taken / sole / fall-through successor, 1 = not-taken) of the block at
@@ -881,6 +1283,43 @@ impl ChainStats {
 mod tests {
     use super::{CpuStateHandoff, abi};
     use crate::hart::Hart;
+
+    #[test]
+    fn fp_handoff_exact_offsets_dirty_mask_and_copy_elision() {
+        let mut hart = Hart::default();
+        let mut handoff = CpuStateHandoff::default();
+        hart.fregs.write_raw(0, 0x1234);
+        hart.fregs.write_raw(31, 0x9876);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 256);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 0);
+        assert_eq!(handoff.as_bytes()[0x108..0x110], 0x1234_u64.to_le_bytes());
+        assert_eq!(handoff.as_bytes()[0x200..0x208], 0x9876_u64.to_le_bytes());
+        hart.fregs.write_raw(31, 0xabcd);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 256);
+        handoff.prepare_fp_control(&hart);
+        assert_eq!(handoff.get_u64(0x208), 0);
+        handoff.put_u64(0x108, 0xffff_ffff_7fa0_0001);
+        handoff.put_u64(0x200, 0xffff_ffff_8000_0000);
+        handoff.put_u64(0x208, (0x8000_0001_u64 << 32) | (1 << 9));
+        assert_eq!(handoff.commit_fp_registers(&mut hart), 16);
+        assert_eq!(hart.fregs.read_raw(0), 0xffff_ffff_7fa0_0001);
+        assert_eq!(hart.fregs.read_raw(31), 0xffff_ffff_8000_0000);
+        assert_eq!(hart.fregs.read_raw(1), 0);
+        assert_eq!(hart.csr.fs(), 3);
+        assert_eq!(handoff.prepare_fp_registers(&hart), 0);
+        handoff.prepare_fp_control(&hart);
+        assert_eq!(handoff.get_u64(0x208), 1 << 8, "old dirty mask is cleared");
+        let before = hart.fregs.jit_version();
+        assert_eq!(handoff.commit_fp_registers(&mut hart), 0);
+        assert_eq!(hart.fregs.jit_version(), before);
+        hart.fregs = hart.fregs.clone();
+        assert_eq!(
+            handoff.prepare_fp_registers(&hart),
+            256,
+            "clone has a fresh identity"
+        );
+        assert_eq!(handoff.as_bytes().len(), 568);
+    }
 
     #[test]
     fn cpu_state_handoff_pins_frozen_layout_endian_and_x0() {

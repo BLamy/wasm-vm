@@ -1,0 +1,50 @@
+node --test tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.505292ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.099458ms)
+✔ post-marker presentation helper rejects typing frames (99.279709ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.136959ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.136792ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.096125ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.134417ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.441292ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.637209ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.170084ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.278041ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (185.390708ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (2.812917ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.208709ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.27675ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.251542ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.080625ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.130791ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.615583ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (1.38375ms)
+✔ opt-in observer preserves transport, private ownership and disposal (2.423833ms)
+✔ frame and event rings remain bounded; malformed frames cannot interrupt transport (1.029ms)
+✔ export owns the latest bytes and restores the observer before canvas readback (0.449084ms)
+✔ literal BGRA and BGRX conversion crops the actual top-left viewport (0.109625ms)
+✔ saved-byte audit binds latest frame, nonce, presentation completion and file digest (60.440708ms)
+✔ AT runtime selection binds both corrected sources and the exact built WASM (2.918125ms)
+✔ AS admits only verified AR bytes and leaves old AJ source guards intact (0.438208ms)
+✔ AR properties must name its exact restored Foot; the AJ default stays unchanged (1.069917ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.788209ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (15.305458ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (16.865791ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (66.106958ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (75.485917ms)
+✔ synthetic AR input checks loaded kernel before properties and keeps uninstrumented original deadlines (49.522083ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (7.079125ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.008583ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (9.846542ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (48.892667ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (11.921333ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 400.516167
+node tools/verify/omarchy-input-kernel-response.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1/response target/omarchy-input-kernel-prepared-pair-r1 --display-pixel-probe
+{"result":"input-trial-physical-nonce-and-fresh-presentation","machineAcceptance":true,"desktopAcceptance":false,"visualInspectionRequired":true}

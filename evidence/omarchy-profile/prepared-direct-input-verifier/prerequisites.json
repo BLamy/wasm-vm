@@ -1,0 +1,870 @@
+{
+  "headAtCheck": "9cc377180921be98f904c3689a1d7c48b9df3947",
+  "scope": "Carried prerequisite identity only. AK implementation and guest responsiveness are not yet verified.",
+  "seals": [
+    {
+      "name": "AJ worker R2",
+      "index": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/sha256.txt",
+      "indexSha256": "3a0f9c5dda2451270754cf3df8a23461d1710c8d95eb17376aa642d08476b1c6",
+      "committedAt": "39c1441e",
+      "filesChecked": 12,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze-head-only.log",
+          "sha256": "ef73b920d940d7aa4bd745d77b3ae299d1178635815cb1c5565bf12e6b7b35fa"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze-head-only.py",
+          "sha256": "5901933a2aa494258373e0185c3cd562c389693ef31f54504388daf5d3472265"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze.py",
+          "sha256": "eb64408fb6119be4644ac58c1cc4289630016a54e988b50bf37971b41c552128"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/frozen.json",
+          "sha256": "ef73b920d940d7aa4bd745d77b3ae299d1178635815cb1c5565bf12e6b7b35fa"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-gates-r2/scope-correction.json",
+          "sha256": "baae6032318384e884d0bd65cc092d4697118da044d7ec8626f2aaca1dfb1d4b"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/desktop.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/latest.png",
+          "sha256": "3e021cc7e35d411e2146a46133622afa996475f4948241e303b1af06d79ae599"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/prepared-desktop.png",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/report.json",
+          "sha256": "c3c9650269f392bb58cb4e5757f9429f86784cd1d013c88345250cbf71e467dc"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/serial.log",
+          "sha256": "606a859518bb0be4e5d9bdc427d925727fe188c214a958d546d57bc2f4d872cd"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/desktop.log",
+          "sha256": "36e983b1f620e528b454924ea1642b7f14ac98bcff33e6c3f9e3274b020fc24c"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-r2/run.json",
+          "sha256": "682e320acaa344e8117ea90a9c39a05781736895244728cc7c1293d44881a514"
+        }
+      ]
+    },
+    {
+      "name": "AJ independent verifier R2",
+      "index": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/sha256.txt",
+      "indexSha256": "756b8d41ade51334946fbd6da5d382f679921a53c6664e2ec73242da4b4749f2",
+      "committedAt": "39c1441e",
+      "filesChecked": 19,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-adaptation.json",
+          "sha256": "44f236b156c1904a0fa3a9a9c4ced3ea53cfc95905d7bdb5f5db57868bbd51c3"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-correction.json",
+          "sha256": "09148de10b418f9b647dafd7c34c3bc9cb04480e280e054040e3b11d0f30d240"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-final.py",
+          "sha256": "23c1788ee1297a28573578f91df6949113b793f24140c6a7587b2754c153ffac"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-image.py",
+          "sha256": "a970275ecf08909aadadeec5962f55b41acd25155a2813eec13ce03f73fb1cab"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-pair.py",
+          "sha256": "6e155b75c4dafc91716a541eaffc11cded043675efab174db98b062f57bfa482"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-run.py",
+          "sha256": "eb9e2792cff9f4f8bdd931e7d29e05477fb2efb96bd45310e5003760783bdcd4"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/audit-source.py",
+          "sha256": "5a29fbe9bf42379a04397c1cbd7e1b8e2e6b47fe9c87067eeeba8b521fa5a173"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/build-queue.log",
+          "sha256": "74219aa109f90bfb66d5911efb5b1223295f713e30875381f8141cf489ed11a6"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/coverage.md",
+          "sha256": "acddf0a343ed38a2f95dbbcc6059104a147178a12c29ccea9dc3103bcd4bbd9f"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/final-audit.json",
+          "sha256": "d8af2bb1e02aa985d9fa18c391112e032e9d960237b61154a5e64e85cb6ccba9"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/metadata-audit.json",
+          "sha256": "b4dc3539d2f9d643b7be7868a442a8d6a01e0b3f8388df88031c701a3052aee1"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/pair-audit.json",
+          "sha256": "aadc4b2d2e266664e79cc404cc2581ff35f5b07405ac8955b5eba7f4614875b4"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/predictions.md",
+          "sha256": "e7672929f768db49bd0c6671340c92be470293cb09f00ef6b7b0bc5f9a13d005"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/prepared-image.json",
+          "sha256": "d397e1de5f7abd5fa39997c62028725f6458e578db7273a0c342e4b3698e3628"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/run-audit.json",
+          "sha256": "db9cc463966e5655f6b1aea5549cd85c3879c8285b475248c559096d1f062d2e"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/source-audit.json",
+          "sha256": "08c6c514859bcd2cc127a7665ca00af28d120522438080f29484beff644e0c79"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/task-entry.md",
+          "sha256": "218970d44c66a73e86c3069540e63e29c26116ed6736a2d82617069862c0800b"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/task-policy.log",
+          "sha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734"
+        },
+        {
+          "path": "evidence/omarchy-profile/prepared-direct-opaque-verifier-r2/verdict.md",
+          "sha256": "526c4492b852dea7975ea3cfe35b28d8280cd5aed2488e5deb1822528b9da8f5"
+        }
+      ]
+    },
+    {
+      "name": "AL worker",
+      "index": "evidence/omarchy-profile/snapshot-allocation-gates/sha256.txt",
+      "indexSha256": "01786a6b6a15415c7977b4dc23fde07a2e1d82cb1b775340aefe8c888cb42632",
+      "committedAt": "27eab37c",
+      "filesChecked": 33,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-baseline/allocation-stack.json",
+          "sha256": "c921258d9a61374fe055b73bff0828fe7d3d9f5ca68473b58d7604d35eef2c94"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-baseline/probe.mjs.txt",
+          "sha256": "c96634e60017d39ec60449ff3ba660cd81dce6f226a7cca8192c0a04b9862f6b"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-baseline/report.json",
+          "sha256": "7f952756e541e50dfeff038326776e85579564d46c1dcb5e443afef8f1b53545"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/affected-clippy.json",
+          "sha256": "3dbab22519ed525a49b3312cf65c9e7904ac0fd30d102beb49175a7f43daead6"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/affected-clippy.log",
+          "sha256": "a82232d02fee3e1663bda236660624d27a6bdbe6118aa35dab00523c732a7734"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/affected-commands.json",
+          "sha256": "c2523b1e18bd5f669308730e0cd86ec532b238af8360bd24cb54e341237ee777"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/browser-commands.json",
+          "sha256": "871c1dcf1c670bfc643f0e653d752df9776182dfa91ff1ce91ebef6999db8730"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/browser.log",
+          "sha256": "813eccee9ebac4ceca6725cc89a1338aec8b7ab5536e2c5de07749f0f27bb887"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/ci-commands.json",
+          "sha256": "e841601d0d0657c562a2cb83ac624942a2f241dade3feafd4b4d98de678411da"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/ci.log",
+          "sha256": "7b14ffacc5864d379fdfc67aaeec2b20f618ad2302230202ca8d4ea9ee5e0456"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser/report.json",
+          "sha256": "16b857995c0047d7421db398043714f5d58bb948a3b28c0e50cd93e3e06af02e"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser/suite.png",
+          "sha256": "cc9b988227b387ef25621cb1c1690fccee5e7ff358eb6d922c87dacd4037d9e0"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser.log",
+          "sha256": "21130f79fd6791bd93b50ac4f5cbc45fcd5f1e11d8d9e6d86536933772a062a1"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/build.log",
+          "sha256": "92ebd61f3e9c73ae24b284cbe5c106eb34bf34e1f6126a69618e325ec0c49782"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/checkout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/clone.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/native.log",
+          "sha256": "589dd738065e164a9bc9ec4d5b4e63c16b5eb1fe53dbaaa2ce4ac6b17ea138a9"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold/report.json",
+          "sha256": "f119f5e28ffcdc3daf329a0a4286a0bafd8766641d282739cba133cccdb9c69a"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/cold.py",
+          "sha256": "2ece10aa9e3cb9983bd0617e3f4cd469aba66dfabf189ead513e0def8a66caeb"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/core-clippy.log",
+          "sha256": "7776ee6116d8a1c4c3eb49060d02270a106d4df201ee530abf5e3e4fa6ff8c0a"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/deploy.log",
+          "sha256": "7950a297ff9f15710e00bc55a753618d8e048440d6f74d346a0253b5e88e0d7c"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/fmt.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/gauntlet-classification.json",
+          "sha256": "87102e581ea83acf397d2a593008e502dbfb4d13795d5e097a72ca23e678d4a9"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/harness-syntax.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/public.json",
+          "sha256": "001103b54964517869ef4bf448a31bbf4bf1400668c441a6abbec20b44dfaa8b"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/record.py",
+          "sha256": "73af74319f8ec9e86eeb9606643de1072a170b8cb27e271bdd43801f2a2df25a"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/resume-format.log",
+          "sha256": "f61739ff8c71cd5a98da25a9ffed5fb28a2012f9ddb425725d8670486f66088c"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/resume-machines.log",
+          "sha256": "a48ffecf542439886f98693ef8dd5b5decd4b3b3cb1ca8340a089080527d6b5d"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/source-closure.json",
+          "sha256": "fb93e83defa7e59a869f0b825aadb4fa23b7a801c3e643ae1ef5eff18527c9d6"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/wasm-clippy.log",
+          "sha256": "fe817e806008e23fdfaa01b92291df503885b80595c14fad24157fd2c9eed119"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/wasm-native-lib.log",
+          "sha256": "52de05d2d8ddc8b0c047f7c6218ea75b73a55da7eedce84c577b2c56ae23be5c"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-r1/report.json",
+          "sha256": "1cf10ece87cdc3ef9ed1443d6d95ee7c402e3d79811781cca8c3e3439ae47d00"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-r1/suite.png",
+          "sha256": "e7bcc6b3e69056eaedb0ca5e99dea6b2841ce546df6577933311de2260f419ca"
+        }
+      ]
+    },
+    {
+      "name": "AL independent verifier",
+      "index": "evidence/omarchy-profile/snapshot-allocation-verifier/sha256.txt",
+      "indexSha256": "beb56a096ced5f60cbac0c5b1c3d0304046addf599011be2f3812935944a496f",
+      "committedAt": "27eab37c",
+      "filesChecked": 25,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-gates/sha256.txt",
+          "sha256": "01786a6b6a15415c7977b4dc23fde07a2e1d82cb1b775340aefe8c888cb42632"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/audit_available.py",
+          "sha256": "b0fc5c245a5c2314d840546299991242c17407d4b5d47d06df960ed9c0fa3e71"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/audit_cold_and_deploy.py",
+          "sha256": "fe1fc8b528a5bdbe3613b2e3355ad5e0d80998cb9c1309ce5de773b134943226"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/audit_final.py",
+          "sha256": "bd6254abd6b43ca6ebcf51628a636bf348b84ba63fa6a3bfebb5c65ee4b687e1"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/available-proof-audit.json",
+          "sha256": "e1598c4ebc2a3ba6374e6b9901e770cf39f0cfdd1c67bcdfc7a8cdee86f8de0a"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/candidate-byte-attack/attack.log",
+          "sha256": "d5e97bc77ee340f0655f3a031feff2d120d59f2fe8cacdee5c27f79f2305aa20"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/candidate-byte-attack/compile.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/candidate-byte-attack/report.json",
+          "sha256": "705b1f2eb9efe29f21508e932ee9a7e98b3b9ab165c10ca77d18c3aee43016e7"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/cold-deploy-audit.json",
+          "sha256": "76b866dc632766cb8c5b6c1fcb0f9dabe1780d0025f171afd64927a88fa59953"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/coverage.md",
+          "sha256": "c5f7e52f83d26cca52012542f2bb621e6d18694d06ba80c320ff441821f217b5"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/derive_r3_oracle.py",
+          "sha256": "256d2cedefa9c3f70ccf7b9cb12a381990decd84ea5d98e3dbc6edd6819e3479"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/final-audit.json",
+          "sha256": "0a9583f374b4582b70a87b57bd55e42647df895294885dc862b65bada92cee75"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/original-allocation-control/attack.log",
+          "sha256": "8eff0ab7aa4ee763fe9a691ba51538f7b7b673b7b35b0edfdd52a5d4d4965bf6"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/original-allocation-control/compile.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/original-allocation-control/report.json",
+          "sha256": "d32f10b6d7138f01df3b1811d621809cd5c56f250548b0d4aedf2c56cef567de"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/predictions.md",
+          "sha256": "8850eb4037b0096f4cd66922f7cf150251f347da952a137d0588ebc7084c58bc"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/r3-byte-oracle.json",
+          "sha256": "a73dad7579a68cbf7bc98ec156a4944de2026773b9b94e7a71ef54f194d9f0ca"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/attack.log",
+          "sha256": "0fe47054e636798a134bcea94363395da788b1789605ac1579d67c1704eb798b"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/compile.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/mutation.diff",
+          "sha256": "2ff2b31e299949fc22c27afcfa1c315a37e1937b7608ce061174b18d6745049c"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/reservation-removed-sabotage/report.json",
+          "sha256": "e9f79484a1f810e49b150a5c3f66c1c5b584e09b33aea69d341d1837debb7b58"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/run_attack.py",
+          "sha256": "9e1f0521717cb369266543c86cfbc71455e5733d7211ad53d96a23ab691254ef"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/run_sabotage.py",
+          "sha256": "ad026196a8b94ba0e3cbc20b36e39cf6698ee3d59fe0dc5fea41fbfd819a79ef"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/serialization_attack.rs",
+          "sha256": "979a09316ae989fb5e2d5143156151b24ad632d8ebc6ed2e0c4bf266606b2eec"
+        },
+        {
+          "path": "evidence/omarchy-profile/snapshot-allocation-verifier/verdict.md",
+          "sha256": "c93f0bd27cdfe885883a164694464b4f7cc526ac22fdc1cff88fd0f488c9186f"
+        }
+      ]
+    },
+    {
+      "name": "AI independent verifier",
+      "index": "evidence/omarchy-profile/direct-opaque-verifier/sha256.txt",
+      "indexSha256": "e98b479dc9d9dd6b1cc38cbb3fb936d92aae36967bef3716e55cd62422d6446c",
+      "committedAt": null,
+      "filesChecked": 41,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/affected-tests.log",
+          "sha256": "9c0bf9159fd50994dbf3b5abc9511b160a78c3eefb0f7129b794b66d8eae65a3"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack-r2.json",
+          "sha256": "6a6161cdb6430cf0654a809d87e5e325bb4ed26dd519158d32dd32d816c13bbb"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack-r2.log",
+          "sha256": "6a6161cdb6430cf0654a809d87e5e325bb4ed26dd519158d32dd32d816c13bbb"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack-r2.mjs",
+          "sha256": "2cef7729a1428f67e106df99ed3ef94c324493b0769aeddf2fcfdd02f068a08a"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack.json",
+          "sha256": "50ddc67f9fb19eba03c8ba0120de9aa7fc2913a8a6a3cfdc81034e658e8063ea"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack.log",
+          "sha256": "50ddc67f9fb19eba03c8ba0120de9aa7fc2913a8a6a3cfdc81034e658e8063ea"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/attack.mjs",
+          "sha256": "8ad923e8c2bf2437f30e46fa894c3d34866b7c998867c72eea25fb640a235b9f"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/audit-run.mjs",
+          "sha256": "d288f73a2a959a61cf352dfc80ab7cf6d9bb9fb2f1b5276b07d86e29114ca214"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/audit-source.py",
+          "sha256": "3871bcd727d02d23202bc459d6c1d56b99efcf162ea9c000aa1f199d80449cc2"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/carried-input-proof.json",
+          "sha256": "3eff0525716e2ebd8f40166d203acb35c6c600cd3691b08e21935f4b174c9323"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/coverage.md",
+          "sha256": "90a9d534c3faecf71a19042a4fa5d89fb4619a5591897b0b7276b05ac2810438"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/direct-opaque-r1-audit.json",
+          "sha256": "85c33f5a38ebb153dca699145089cb9348d58f063ed11e1b14c637935017773e"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/direct-opaque-r1-audit.log",
+          "sha256": "fb70238c1e6ea15b1485ecbc20fe48f36364db60540a48e2d22c774a3aea5447"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/direct-opaque-r2-audit.json",
+          "sha256": "e1b55225aec5b259d866547467df72a5d137835418b72f96ad2aeed0f9f6fc76"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/direct-opaque-r2-audit.log",
+          "sha256": "08c3eff590d5a669b419aaf165f86b2a19d0ae301704e28706c91ee94a0da924"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/final-verdict.md",
+          "sha256": "d7b2b11846aa5fb891809f383fcb4702388f549eb30c4eaa8bfd830ab4113f2e"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/findings.md",
+          "sha256": "91624874463a30943362e72b895bf6c1c142a911a21b5edf8c97f70c8333f948"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/implementation.diff",
+          "sha256": "296da4002ae5c6e6b3a1d39ab0a159d260d4b65cd56a81fba1bdb4f9427d022f"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/incremental-proof.json",
+          "sha256": "4e0f594980456b43b21f7c10c347b1474b1326662941090933556229dbb78e46"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/predictions-r2.md",
+          "sha256": "6648d867cbdffd7091d724c77d438073c027f95f613223a8dc4af8ed17320384"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/predictions.md",
+          "sha256": "f93a472ce0469b0d0ac875742449d19d402403531fc0d6620f393317e90b8bca"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/pure-tests-r2.log",
+          "sha256": "3a08b7a9c9757129edd10a8063603adb64cc0fbfec5115334844b7c10d2ce3ac"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/pure-tests.log",
+          "sha256": "d6470554badea8ea269aee143a93a301c91734e722a3f779a1f4be973e59d50e"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/seal-audit.json",
+          "sha256": "31dd7f89a2b54e8050d83e59a57f8dc9ffc45b9714006180ee820d1896153e61"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/source-audit-r1.json",
+          "sha256": "8a300af3b9870dccd7014cee86a1e4dd97a0cad795062860e778016078efd9ee"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/source-audit-r1.log",
+          "sha256": "cbf2395a418bcf805f4a0d103bd64863b9dc587223c8ae5ca8be73d432768c46"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/source-audit.json",
+          "sha256": "7b3e19f4a34af441bada316b2aa4723fab97f5fc31d815c2f9e047fc3edaeb10"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/source-audit.log",
+          "sha256": "cbf2395a418bcf805f4a0d103bd64863b9dc587223c8ae5ca8be73d432768c46"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/source-semantics.md",
+          "sha256": "01a327d082eb0fec222f076e58b0887d1525f1e0d152db62ee0d2457b42587e5"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/task-verification-entry.md",
+          "sha256": "2d894446a22a34e899ee102cf8f7592efd6bdd03a5b924efb761aabaa5abf263"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage/coverage-78973-1789534032693-0.json",
+          "sha256": "4502da6f8ce932b330c11cd030c93f71ad5b9c3ce91b4174d200fb21cf7ae7d7"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage/coverage-78974-1789534032747-0.json",
+          "sha256": "65ac3548feb927e8dc5cdbf1793ff08ef4da9439c111a9da4c07b299fa2ebe9e"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage/coverage-78975-1789534032856-0.json",
+          "sha256": "e1c64807fc05b66a1af0fe075ffe0f7079bc418b00629e8bcba934c94a94998c"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage/coverage-78976-1789534033037-0.json",
+          "sha256": "6a7866390c09ae6c5b6bc477398a9e94872887be84e9d8302158b0256e460ce9"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage-r2/coverage-82308-1789534341816-0.json",
+          "sha256": "c0b4577cc9fb107be5f7b1c3ec24fbafca88ae3cf51e72c321627dbe4bd4f1bd"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage-r2/coverage-82309-1789534341888-0.json",
+          "sha256": "7539d667593ec1dab368511a6a0138d407838354bd64c25350f19de50af06187"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage-r2/coverage-82310-1789534342012-0.json",
+          "sha256": "0b2cbfcfb562d48c6def1adbeb0aa3d5e9206ffebc73afb2d29fb222e0f71a9c"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/v8-coverage-r2/coverage-85673-1789534782331-0.json",
+          "sha256": "af6db4ae51d54b17977681f7595167f90cd18404bbae7e2d0348341eb54ecae5"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/wrapper-test.json",
+          "sha256": "941d349b9c34b15285a4c5df231a1142dd05db699b0ed826f29d3a0971644cbe"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/wrapper-test.log",
+          "sha256": "941d349b9c34b15285a4c5df231a1142dd05db699b0ed826f29d3a0971644cbe"
+        },
+        {
+          "path": "evidence/omarchy-profile/direct-opaque-verifier/wrapper-test.mjs",
+          "sha256": "cb15f5aff8b10e32df8d06b49ac38bf4444f388d15fadd4e6e9f69ea9de26c64"
+        }
+      ]
+    },
+    {
+      "name": "AI carried physical auditor and input fence",
+      "index": "evidence/omarchy-profile/opaque-foot-verifier/sha256.txt",
+      "indexSha256": "2e3a3b3be066c3dff0b6fbb3754560a20289bfe6e2bd2fe1bb1651ef91e3b175",
+      "committedAt": null,
+      "filesChecked": 59,
+      "files": [
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack-fixture-correction.log",
+          "sha256": "974518bdf7b0484589791a883411d5a95028894e353efa5ed46571122f4606d9"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack-r1.json",
+          "sha256": "c6f019c1ea1381670b327b9921eda7ac0e7d6c60d72c2983edfd5042acc0a3a2"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack-r1.log",
+          "sha256": "6f6a4b65d33b8aeba0ddd7c2e426e3c3872debbbde24c6ef1d99e972a8dc3d4b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack.json",
+          "sha256": "d0409d01f338e80e1f595bae27f7e3c5234a6e92141820f25dd50a7921dabf5b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack.log",
+          "sha256": "6f6a4b65d33b8aeba0ddd7c2e426e3c3872debbbde24c6ef1d99e972a8dc3d4b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/attack.mjs",
+          "sha256": "f7465776b0681a637c2a02b8177b26929177bc99700792ca4524b858a4bd1ebe"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/audit-run.mjs",
+          "sha256": "91cca147008dd5ce6f5b244e146055c169951d12adabec2d4cba775b1c825b20"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/audit-seal.py",
+          "sha256": "2c5046fe80c76903df7ba05087d9f8ec739c425fe9881c921afd43b81554d291"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/audit-source.py",
+          "sha256": "6ef59680fb36a1887b184f4d5fbaf50875cddc43a64eaee13de4d8248d927ae0"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/coverage.md",
+          "sha256": "7c8d36b3676c02e3bbf9fab703f8e36a5955f2d989269494836d8f222eec6d83"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/final-verdict.md",
+          "sha256": "9ab6aca74109ec4818037795eb9f86678c5235747240e02e5defcf9616609ba5"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/findings.md",
+          "sha256": "5177bfa9c239fb7a06c48c0af741b67fc84f53a64cb0990dd34be6f894d1ddd6"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-fixed.json",
+          "sha256": "4f63a02c3956c53d7ccac89a93c09e1bc67d3d0be8bc2e051470b65c99087f9b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-fixed.log",
+          "sha256": "4f63a02c3956c53d7ccac89a93c09e1bc67d3d0be8bc2e051470b65c99087f9b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-recheck-before-correction.log",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-recheck.log",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-test-before-correction.json",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-test-before-correction.log",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-test.json",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-test.log",
+          "sha256": "a5e0e358d83c53a3bb9d85f4d93941ef684c0a4cd79e9ed6d3b233c9ee76907e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/input-audit-test.mjs",
+          "sha256": "465d00a7f2cf66b4f673105a2240692e16890e8c69ca82d89199dc74ff8530b4"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r1-audit.json",
+          "sha256": "473c56ea0bf5856cf7548d9ffed94ed8ece7b098b1996ae7a0b60dfc28d39747"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r1-audit.log",
+          "sha256": "e3ac6b9ca50cd15efca550c681d3a7555069f18f40253d62c4043c6b1b26183f"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r2-audit.json",
+          "sha256": "b12a585f49d0b1e50b0f699ffdd512feb2306ba10af13fdee34e8583e24490d3"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r2-audit.log",
+          "sha256": "7fd603e17932c6ed7aadc46b93b8718f8058063a1ea8dc23188cc755aab7cf8e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r3-audit.json",
+          "sha256": "cc71e9129d04d796e88dff8d7d4d814c0c7ba932e698d50a26e4aaa162ea978c"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/opaque-foot-r3-audit.log",
+          "sha256": "347f6e1375e7cac46e1f25b46a688c8cd7939e61a29168523479ce511ad5ad8d"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/predictions.md",
+          "sha256": "4934f19dd2d6b7d2ee46dc8bbe5bb652e2d18d44893dfbaa68c7ff4311137f38"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/r2-observation.json",
+          "sha256": "062d6386101279958bb4c38003db5e5d9134b135a522b1165cf8d0916c3ee21b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/seal-audit.json",
+          "sha256": "c27f89c2effa39758fbc5252ae4d99c9c8d11cdf78571d5d46579d31bc9709b1"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/seal-audit.log",
+          "sha256": "c27f89c2effa39758fbc5252ae4d99c9c8d11cdf78571d5d46579d31bc9709b1"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/source-audit-r1.json",
+          "sha256": "81f0e63f2b0df342afec2c2ed665773cd123d509f7e616a83a432013b07526d0"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/source-audit-r1.log",
+          "sha256": "abace8c10443071b2c4ed8e10f7b8d47f327629485175897dadb15769da78f89"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/source-audit.json",
+          "sha256": "a2ec72950c9b81e6d0b398fc754bb13df4fee1f16ed52304d42c4bf67f4f0b88"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/source-audit.log",
+          "sha256": "abace8c10443071b2c4ed8e10f7b8d47f327629485175897dadb15769da78f89"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/task-verification-entry.md",
+          "sha256": "738c4238e658ede6fca8f2b02fb99a7c327e6602df3c87b3f35dcb342f622403"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/tests-corrected.log",
+          "sha256": "c2b0eea605f19ee0e507b607ae5b545bbe756827d527d274819042a52ef62543"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/tests-r1.log",
+          "sha256": "7eac0cfd18714268b1d38ce14122680cf3d8f3294acf0efcb5d4e0e94d9ddcd3"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/tests.log",
+          "sha256": "230f98c3f096f1a1164b21ea755be48af20695e25be0d3945c0c0050ac7f7e39"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage/coverage-50961-1789530874731-0.json",
+          "sha256": "378391829eef0d22b2d0dd960225d203b2613bbb814ed728a96a03b5bd80bf3f"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage/coverage-50962-1789530874818-0.json",
+          "sha256": "8f047e7a83b270d05255d5204297db7f8c17379ae917bf431ab613df96a07131"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage/coverage-52935-1789531128702-0.json",
+          "sha256": "0fcb025ae698e8f27031edeb3ae363711b1827aaa1eb7c8f6b805f6bfa5d2416"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60160-1789531976057-0.json",
+          "sha256": "3c96c83787d55c08b0ccf0dc6e72b31f45dc7563bb641fdd13aa6e18bed3ebc9"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60162-1789531977513-0.json",
+          "sha256": "d3f09065bb2d0adaec03da57600f017b1f38d7ce48bafa2b587f8e62f8092246"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60163-1789531976145-0.json",
+          "sha256": "621d8884e9c1273cd533d271a2ffe75ccd17814f86eea58266e3af25d500e66e"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60164-1789531976218-0.json",
+          "sha256": "c388baefe4e31ebefa879b32eba64ea49982097b23404b9841d0746a5233378b"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60165-1789531977560-0.json",
+          "sha256": "408c63da6a7c1971577372a7a7b210e73fc430a899535de35e50d1e03328a891"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-corrected/coverage-60173-1789531977601-0.json",
+          "sha256": "6673609f517e65863adcfa33b5df2c94d35e3896dccbfc54be13479294465597"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-53199-1789531166404-0.json",
+          "sha256": "03b2357c7d3dcc88d411d78ca7dd4e79099905b7469ede33c13d67b52fe4b127"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-53214-1789531167245-0.json",
+          "sha256": "3f0c70c07be7e0ead0a5d32995f98c29fae5a43a4445ccef0262f66b04e1cc69"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-53215-1789531167650-0.json",
+          "sha256": "437fce30e37a85bafa948d71690b1b6c7435b461fca0ac0559c4732db55667dc"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-54043-1789531289907-0.json",
+          "sha256": "a42e1f064101eaf0e7d4bc136a5a3215442b5f31c3453e212b5b908f1f150203"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-54267-1789531318355-0.json",
+          "sha256": "f800dfe9d366ae898faff2a7494a8981a7ac92d741e9a9a1de1dd57d23c1ce95"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-56048-1789531444627-0.json",
+          "sha256": "ac41baa1a6a06b8ac0aebf99fd304c75253c486b2216218cfffd14611fff2f5a"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-56148-1789531457743-0.json",
+          "sha256": "96d22172b7e8000afd2bcf7497d936a833f005edad419d398c6fa4165d085971"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/v8-coverage-r2/coverage-57403-1789531622384-0.json",
+          "sha256": "8e2a887e470d8b8fb66c5b747e779900717819e314afeed325764ef3b06f4764"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/wrapper-test.json",
+          "sha256": "24795f5949a27f92eee2c08005e1150cc55455ac6f110c67dcdb68c4a55935c0"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/wrapper-test.log",
+          "sha256": "24795f5949a27f92eee2c08005e1150cc55455ac6f110c67dcdb68c4a55935c0"
+        },
+        {
+          "path": "evidence/omarchy-profile/opaque-foot-verifier/wrapper-test.mjs",
+          "sha256": "5fa1bdaeec667c64b7cfaa7cd57a3cd7f69a7ba7d6871c5992f2525e6dd68580"
+        }
+      ]
+    }
+  ],
+  "pairAndBase": [
+    {
+      "path": "target/omarchy-direct-opaque-r2/omarchy-ready.snap.gz",
+      "bytes": 207172408,
+      "sha256": "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    },
+    {
+      "path": "target/omarchy-direct-opaque-r2/omarchy-overlay-delta.bin.gz",
+      "bytes": 1232847,
+      "sha256": "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "path": "target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    }
+  ],
+  "alClosureFiles": [
+    {
+      "path": "crates/core/src/resume.rs",
+      "sha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3"
+    },
+    {
+      "path": "tools/verify/omarchy-snapshot-allocation.mjs",
+      "sha256": "0e17c10459b3154bd7475b75d7347284e2936c64712365eb397e3155ad10909c"
+    },
+    {
+      "path": "web/roadmap.js",
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm.js",
+      "sha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec"
+    },
+    {
+      "path": "web/dist/sw.js",
+      "sha256": "0cae2f657076b8f113e25f40570e6ce807cbfe41cdc2891e2d9f0ca34b4be9d0"
+    }
+  ],
+  "runtimeDiffAgainst27eab37c": "",
+  "carried": "AJ independently parsed the entire coherent full-RAM/delta pair. Matching compressed bytes carry that proof; no redundant decompression or guest run is needed. AL runtime, cold-clone, and deployment proofs carry by identical bytes. AI physical-auditor/fence evidence is unchanged; AK auditor deltas still require fresh review."
+}

@@ -1,0 +1,34 @@
+{
+  "head": "53a095a485787e4ce6177712830d76728342b083",
+  "reportSha256": "8f1b33b6fff167632f5423e7205d122fcdf42044986d8a5af77d3a0e54cff933",
+  "elfSha256": "00645db64ba22d39876c0db2fe80a05756004ce256e3583efe971338f67bc71f",
+  "elfWordsMatchReport": true,
+  "reportScreenshotsRehashed": true,
+  "literalRegistersChecked": {
+    "10": "2",
+    "11": "fffffffffffffffe",
+    "12": "ffffffffffffff00",
+    "13": "ffffffffffffffff",
+    "14": "9",
+    "16": "ffffffff3fc00000",
+    "17": "ffffffffbfc00000",
+    "18": "ffffffff40000000",
+    "19": "ffffffff40800000",
+    "20": "19",
+    "21": "3"
+  },
+  "actualRamDigest": "dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8",
+  "retiredViaJit": 3605,
+  "retiredTotal": 4000,
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "visualInspection": [
+    "suite.png: 127 green passes, 0 failed, total/done 127.",
+    "capability-inspection.png: green pip and Float-to-word conversions, 1/1 passing, live.",
+    "built-page.png: T03y task and verification text visible; desktop acceptance remains unresolved."
+  ],
+  "status": "Production conversion proof HELD; physical, cold and public evidence pending."
+}

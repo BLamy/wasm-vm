@@ -1,0 +1,236 @@
+{
+  "head": "d35217b4655d77fe762dd5ca98b98313e928c3c1",
+  "clone": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "sharedImmutableGitObjectsOnly": true,
+  "freshBuildDirectory": true,
+  "startedAt": "2026-09-17T04:34:53.299624+00:00",
+  "steps": [
+    {
+      "name": "clone",
+      "args": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "code": 0,
+      "seconds": 0.031704042,
+      "log": "cold-clone.log",
+      "sha256": "811d208ff370d99a6c14d76cd7fb1960da8f2e33217d2e331301a3a5227a17dd"
+    },
+    {
+      "name": "checkout",
+      "args": [
+        "git",
+        "checkout",
+        "--detach",
+        "d35217b4655d77fe762dd5ca98b98313e928c3c1"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 1.8927685829999998,
+      "log": "cold-checkout.log",
+      "sha256": "5193f1b07f30f7c1a2389674c8d8c75c9cbf3a6f7cdb929273d5d6b93b0212e4"
+    },
+    {
+      "name": "npm",
+      "args": [
+        "npm",
+        "ci",
+        "--offline",
+        "--ignore-scripts",
+        "--include=dev",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo/web",
+      "code": 0,
+      "seconds": 0.417014875,
+      "log": "cold-npm.log",
+      "sha256": "117db2f95791128f23a61c3b278209d281beffa01950a56b4f7b4811e6e7179e"
+    },
+    {
+      "name": "fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 0.9384231669999998,
+      "log": "cold-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 101,
+      "seconds": 5.744167416,
+      "log": "cold-clippy.log",
+      "sha256": "330dbd00a6e2715f13e67dc72e54689a9e6d401be6c375750b360252413aa18b"
+    },
+    {
+      "name": "clippy-trace",
+      "args": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--all-targets",
+        "--features",
+        "trace",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 3.001367542,
+      "log": "cold-clippy-trace.log",
+      "sha256": "a980449b9ff87563d39527622c7249d0e772c49d297e2cb96e78a63d4de1ea56"
+    },
+    {
+      "name": "core",
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 9.899482375,
+      "log": "cold-core.log",
+      "sha256": "3131353e7d0e99c4c3279763b194ec09f7a5219fd40c60e943799c3b12b77530"
+    },
+    {
+      "name": "capacity",
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "decoded_cache_capacity_tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 0.11067291700000048,
+      "log": "cold-capacity.log",
+      "sha256": "7b8503a14d0349e8ccba3b50c582e607b31ff1d5e549263e2d170051256870e1"
+    },
+    {
+      "name": "publication",
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "dynamic_link_publication",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 2.513648708,
+      "log": "cold-publication.log",
+      "sha256": "7974e1e1bf32a0d25264ed972f694e13eac901883986b4c4e217d3c5443ffe3b"
+    },
+    {
+      "name": "wasm",
+      "args": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--lib"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 11.982978291,
+      "log": "cold-wasm.log",
+      "sha256": "3bb864b7dbef304661408ff4bfe828bed350815633855b798b1115847f54b206"
+    },
+    {
+      "name": "browser-jit",
+      "args": [
+        "wasm-pack",
+        "test",
+        "--mode",
+        "no-install",
+        "--node",
+        "crates/wasm",
+        "--locked",
+        "--offline",
+        "--test",
+        "jit_browser_parity",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 21.208986875,
+      "log": "cold-browser-jit.log",
+      "sha256": "b04d056add947c41554abd8bcfee9b586c57665f05613937a58bc24e9e171da6"
+    },
+    {
+      "name": "node",
+      "args": [
+        "node",
+        "--test",
+        "tools/verify/omarchy-input-kernel-response.test.mjs",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-desktop-live.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs"
+      ],
+      "cwd": "/private/tmp/wasm-vm-bb-cold-_fx08tec/repo",
+      "code": 0,
+      "seconds": 0.48575450000000586,
+      "log": "cold-node.log",
+      "sha256": "80af2ad57cef56264774ecdc7fd49c200dbd0e830b36de18ca3f9f1d79524d91"
+    }
+  ],
+  "pristineBefore": true,
+  "initialAllTargetsFailure": "Unchanged retirement_capture_baseline example requires trace feature; resumed all-target clippy with explicit trace.",
+  "trackedStatusAfter": "",
+  "finishedAt": "2026-09-17T04:37:09.882688+00:00",
+  "passed": true
+}

@@ -1,0 +1,7123 @@
+[
+  {
+    "time": "2026-09-17T06:13:43.922Z",
+    "event": "ready",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false
+  },
+  {
+    "time": "2026-09-17T06:13:50.951Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "screenshot",
+      "name": "interactive-before.png"
+    },
+    "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-before.png"
+  },
+  {
+    "time": "2026-09-17T06:13:50.976Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "click",
+      "x": 400,
+      "y": 300
+    },
+    "result": {
+      "clicked": {
+        "x": 400,
+        "y": 300
+      },
+      "delayMs": 0
+    }
+  },
+  {
+    "time": "2026-09-17T06:13:51.031Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 41,
+        "completed": 41,
+        "pending": 0,
+        "averageMs": 17.386707340798726,
+        "maxMs": 81.55000019073486
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1247285605",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 399,
+        "totalSliceMs": 7268.3749985694885,
+        "averageSliceMs": 18.216478693156613,
+        "maxSliceMs": 81.31500005722046,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 154
+          },
+          {
+            "leMs": 32,
+            "count": 78
+          },
+          {
+            "leMs": 64,
+            "count": 82
+          },
+          {
+            "leMs": 128,
+            "count": 1
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 81.77500009536743,
+        "requestedInstructions": 199500000,
+        "retiredInstructions": 199491241,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 9,
+        "outputBytes": 1116,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 400,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 2520,
+        "executedBlocks": 6176758,
+        "retiredViaJit": 153690174,
+        "directChainEntries": 15324686,
+        "directChainLinks": 9147952,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 6176758,
+          "stateCopyCalls": 12353516,
+          "stateCopyBytes": 732574512,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 3548734,
+          "authorityChecks": 3667841,
+          "memorySplitExits": 173341,
+          "deviceBoundaries": 44024,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 199991241,
+        "jitEngineCalls": 6176758,
+        "jitLogicalBlocksPerEngineCall": 2.4810241877697004,
+        "jitRetiredShare": 0.7684845257798065,
+        "chainLinksMade": 1021,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 1601780,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 4866350,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 2522,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 390,
+        "jitCacheInstalls": 2520,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 390,
+        "jitCacheCodeBytes": 32131190,
+        "compileQueue": {
+          "admitted": 4558,
+          "droppedBackpressure": 3874,
+          "cancelledStale": 0,
+          "popped": 3032,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 6906,
+          "deduped": 2050765,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 84,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 44070,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 7203040,
+        "blockBuilds": 481192,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:13:57.500Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "type",
+      "text": "echo INTERACTIVE_GATE",
+      "enter": true,
+      "delay": 80
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-17T06:13:57.683Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 221,
+        "completed": 221,
+        "pending": 0,
+        "averageMs": 13.247850678085742,
+        "maxMs": 151.99000000953674
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1249309038",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 658,
+        "totalSliceMs": 13868.164996385574,
+        "averageSliceMs": 21.07623859633066,
+        "maxSliceMs": 320.4849998950958,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 220
+          },
+          {
+            "leMs": 32,
+            "count": 231
+          },
+          {
+            "leMs": 64,
+            "count": 111
+          },
+          {
+            "leMs": 128,
+            "count": 10
+          },
+          {
+            "leMs": 256,
+            "count": 1
+          },
+          {
+            "leMs": 512,
+            "count": 1
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 321.00499987602234,
+        "requestedInstructions": 329000000,
+        "retiredInstructions": 328990924,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 9,
+        "outputBytes": 1116,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 659,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 2767,
+        "executedBlocks": 7964912,
+        "retiredViaJit": 281097519,
+        "directChainEntries": 20027767,
+        "directChainLinks": 12062905,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 7964912,
+          "stateCopyCalls": 15929824,
+          "stateCopyBytes": 1058012760,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 3924908,
+          "authorityChecks": 4775808,
+          "memorySplitExits": 175930,
+          "deviceBoundaries": 44024,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 329490924,
+        "jitEngineCalls": 7964912,
+        "jitLogicalBlocksPerEngineCall": 2.51449946967399,
+        "jitRetiredShare": 0.8531267434850497,
+        "chainLinksMade": 1097,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 2390657,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 5942372,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 2769,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 462,
+        "jitCacheInstalls": 2767,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 461,
+        "jitCacheCodeBytes": 37884612,
+        "compileQueue": {
+          "admitted": 4810,
+          "droppedBackpressure": 3874,
+          "cancelledStale": 0,
+          "popped": 3284,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 7158,
+          "deduped": 2094026,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 85,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 44210,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 7429753,
+        "blockBuilds": 549854,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:14:39.666Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "screenshot",
+      "name": "interactive-after-30s.png"
+    },
+    "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-30s.png"
+  },
+  {
+    "time": "2026-09-17T06:14:39.759Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 384,
+        "completed": 384,
+        "pending": 0,
+        "averageMs": 13.698424476509294,
+        "maxMs": 151.99000000953674
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 685,
+            "y": 8,
+            "width": 7,
+            "height": 9
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1269207407",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 3205,
+        "totalSliceMs": 55801.804995298386,
+        "averageSliceMs": 17.410859592916815,
+        "maxSliceMs": 320.4849998950958,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 2246
+          },
+          {
+            "leMs": 32,
+            "count": 558
+          },
+          {
+            "leMs": 64,
+            "count": 236
+          },
+          {
+            "leMs": 128,
+            "count": 74
+          },
+          {
+            "leMs": 256,
+            "count": 6
+          },
+          {
+            "leMs": 512,
+            "count": 1
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 321.00499987602234,
+        "requestedInstructions": 1602500000,
+        "retiredInstructions": 1602486561,
+        "fetchWaits": 1,
+        "fetchRequestedChunks": 1,
+        "fetchWaitTotalMs": 7.509999990463257,
+        "fetchWaitMaxMs": 7.509999990463257,
+        "outputCalls": 14,
+        "outputBytes": 2262,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 3206,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 3445,
+        "executedBlocks": 27660436,
+        "retiredViaJit": 1511288477,
+        "directChainEntries": 75871730,
+        "directChainLinks": 48211658,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 27660436,
+          "stateCopyCalls": 55320872,
+          "stateCopyBytes": 4416084032,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 12946282,
+          "authorityChecks": 17194522,
+          "memorySplitExits": 264240,
+          "deviceBoundaries": 76108,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 1602986561,
+        "jitEngineCalls": 27660436,
+        "jitLogicalBlocksPerEngineCall": 2.7429694166787537,
+        "jitRetiredShare": 0.9427954755011824,
+        "chainLinksMade": 2356,
+        "chainLinksCut": 1064,
+        "chainDispatchEntries": 10419045,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 18511998,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 5792,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 1027,
+        "jitCacheInstalls": 5729,
+        "jitCacheRetranslations": 239,
+        "jitCacheEvictions": 367,
+        "jitCacheBatches": 650,
+        "jitCacheCodeBytes": 52702139,
+        "compileQueue": {
+          "admitted": 8623,
+          "droppedBackpressure": 4430,
+          "cancelledStale": 0,
+          "popped": 6781,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 11211,
+          "deduped": 3269923,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 1680783,
+          "excluded": 107,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 65536,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 12633606,
+        "blockBuilds": 1673862,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:15:18.726Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "screenshot",
+      "name": "interactive-after-60s.png"
+    },
+    "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-60s.png"
+  },
+  {
+    "time": "2026-09-17T06:15:18.914Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 536,
+        "completed": 536,
+        "pending": 0,
+        "averageMs": 13.476445900415307,
+        "maxMs": 151.99000000953674
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 682,
+            "height": 56
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1284605828",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 5176,
+        "totalSliceMs": 94828.36000037193,
+        "averageSliceMs": 18.320780525574175,
+        "maxSliceMs": 320.4849998950958,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 3486
+          },
+          {
+            "leMs": 32,
+            "count": 1011
+          },
+          {
+            "leMs": 64,
+            "count": 504
+          },
+          {
+            "leMs": 128,
+            "count": 84
+          },
+          {
+            "leMs": 256,
+            "count": 6
+          },
+          {
+            "leMs": 512,
+            "count": 1
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 321.00499987602234,
+        "requestedInstructions": 2588000000,
+        "retiredInstructions": 2587985503,
+        "fetchWaits": 1,
+        "fetchRequestedChunks": 1,
+        "fetchWaitTotalMs": 7.509999990463257,
+        "fetchWaitMaxMs": 7.509999990463257,
+        "outputCalls": 14,
+        "outputBytes": 2262,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 5177,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 2395,
+        "executedBlocks": 40034317,
+        "retiredViaJit": 2366880303,
+        "directChainEntries": 110334647,
+        "directChainLinks": 70300852,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 40034317,
+          "stateCopyCalls": 80068634,
+          "stateCopyBytes": 6683690056,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 21837977,
+          "authorityChecks": 28391665,
+          "memorySplitExits": 272221,
+          "deviceBoundaries": 76532,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 2588485503,
+        "jitEngineCalls": 40034317,
+        "jitLogicalBlocksPerEngineCall": 2.7560017322138903,
+        "jitRetiredShare": 0.9143880853328464,
+        "chainLinksMade": 2859,
+        "chainLinksCut": 2052,
+        "chainDispatchEntries": 14269758,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 27876574,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 6968,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 1495,
+        "jitCacheInstalls": 6905,
+        "jitCacheRetranslations": 1081,
+        "jitCacheEvictions": 796,
+        "jitCacheBatches": 689,
+        "jitCacheCodeBytes": 54675540,
+        "compileQueue": {
+          "admitted": 9841,
+          "droppedBackpressure": 4430,
+          "cancelledStale": 0,
+          "popped": 7999,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 12429,
+          "deduped": 3489120,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 7190538,
+          "excluded": 109,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 65536,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 18979771,
+        "blockBuilds": 2451091,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:16:02.403Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "screenshot",
+      "name": "interactive-after-90s.png"
+    },
+    "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-90s.png"
+  },
+  {
+    "time": "2026-09-17T06:16:02.689Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 706,
+        "completed": 706,
+        "pending": 0,
+        "averageMs": 13.15494334663953,
+        "maxMs": 151.99000000953674
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "drawnPresents": 4,
+        "drawnBytes": 16384000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 4,
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "successfulPresents": 4,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 16384000,
+          "drawnPresents": 4,
+          "drawnBytes": 16384000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 1260,
+            "height": 782
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1304113609",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 7673,
+        "totalSliceMs": 138427.330006361,
+        "averageSliceMs": 18.040835397675096,
+        "maxSliceMs": 320.4849998950958,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 5336
+          },
+          {
+            "leMs": 32,
+            "count": 1502
+          },
+          {
+            "leMs": 64,
+            "count": 625
+          },
+          {
+            "leMs": 128,
+            "count": 119
+          },
+          {
+            "leMs": 256,
+            "count": 6
+          },
+          {
+            "leMs": 512,
+            "count": 1
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 321.00499987602234,
+        "requestedInstructions": 3836500000,
+        "retiredInstructions": 3836483459,
+        "fetchWaits": 1,
+        "fetchRequestedChunks": 1,
+        "fetchWaitTotalMs": 7.509999990463257,
+        "fetchWaitMaxMs": 7.509999990463257,
+        "outputCalls": 14,
+        "outputBytes": 2262,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 7674,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 2315,
+        "executedBlocks": 57782268,
+        "retiredViaJit": 3559502044,
+        "directChainEntries": 159810801,
+        "directChainLinks": 102029277,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 57782268,
+          "stateCopyCalls": 115564536,
+          "stateCopyBytes": 9819404624,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 32569405,
+          "authorityChecks": 43230090,
+          "memorySplitExits": 300124,
+          "deviceBoundaries": 91014,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 3836983459,
+        "jitEngineCalls": 57782268,
+        "jitLogicalBlocksPerEngineCall": 2.7657412305103706,
+        "jitRetiredShare": 0.927682405211015,
+        "chainLinksMade": 3429,
+        "chainLinksCut": 2654,
+        "chainDispatchEntries": 19797973,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 41074159,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 8473,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 1892,
+        "jitCacheInstalls": 8409,
+        "jitCacheRetranslations": 2167,
+        "jitCacheEvictions": 1234,
+        "jitCacheBatches": 648,
+        "jitCacheCodeBytes": 52797422,
+        "compileQueue": {
+          "admitted": 11630,
+          "droppedBackpressure": 4478,
+          "cancelledStale": 0,
+          "popped": 9760,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 14238,
+          "deduped": 4088644,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 9946234,
+          "excluded": 128,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 65536,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 23240987,
+        "blockBuilds": 3427541,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:16:40.412Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "screenshot",
+      "name": "interactive-after-120s.png"
+    },
+    "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-120s.png"
+  },
+  {
+    "time": "2026-09-17T06:16:40.524Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyH",
+          "evdev": 35,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyO",
+          "evdev": 24,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Space",
+          "evdev": 57,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyN",
+          "evdev": 49,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyR",
+          "evdev": 19,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyI",
+          "evdev": 23,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyV",
+          "evdev": 47,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Minus",
+          "evdev": 12,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyG",
+          "evdev": 34,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyT",
+          "evdev": 20,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyE",
+          "evdev": 18,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 849,
+        "completed": 849,
+        "pending": 0,
+        "averageMs": 14.846354540161025,
+        "maxMs": 151.99000000953674
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "drawnPresents": 4,
+        "drawnBytes": 16384000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 4,
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "successfulPresents": 4,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 16384000,
+          "drawnPresents": 4,
+          "drawnBytes": 16384000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 1260,
+            "height": 782
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1314652662",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 9022,
+        "totalSliceMs": 176230.63501048088,
+        "averageSliceMs": 19.53343327538028,
+        "maxSliceMs": 320.4849998950958,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 84
+          },
+          {
+            "leMs": 16,
+            "count": 5937
+          },
+          {
+            "leMs": 32,
+            "count": 1541
+          },
+          {
+            "leMs": 64,
+            "count": 1333
+          },
+          {
+            "leMs": 128,
+            "count": 120
+          },
+          {
+            "leMs": 256,
+            "count": 6
+          },
+          {
+            "leMs": 512,
+            "count": 1
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 321.00499987602234,
+        "requestedInstructions": 4511000000,
+        "retiredInstructions": 4510982872,
+        "fetchWaits": 1,
+        "fetchRequestedChunks": 1,
+        "fetchWaitTotalMs": 7.509999990463257,
+        "fetchWaitMaxMs": 7.509999990463257,
+        "outputCalls": 14,
+        "outputBytes": 2262,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 9023,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 2434,
+        "executedBlocks": 62531724,
+        "retiredViaJit": 3878158733,
+        "directChainEntries": 173144558,
+        "directChainLinks": 110613633,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 62531724,
+          "stateCopyCalls": 125063448,
+          "stateCopyBytes": 10721775128,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 36208890,
+          "authorityChecks": 47712448,
+          "memorySplitExits": 303483,
+          "deviceBoundaries": 91017,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": false,
+        "guestRetired": 4511482872,
+        "jitEngineCalls": 62531724,
+        "jitLogicalBlocksPerEngineCall": 2.7689074748682763,
+        "jitRetiredShare": 0.8596195182451754,
+        "chainLinksMade": 3483,
+        "chainLinksCut": 2654,
+        "chainDispatchEntries": 21281243,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 44768279,
+        "jitResidencyPolicy": "cap-1024",
+        "jitResidencyCap": 1024,
+        "jitSubmittedMembers": 8592,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 1944,
+        "jitCacheInstalls": 8528,
+        "jitCacheRetranslations": 2234,
+        "jitCacheEvictions": 1234,
+        "jitCacheBatches": 698,
+        "jitCacheCodeBytes": 56609983,
+        "compileQueue": {
+          "admitted": 11764,
+          "droppedBackpressure": 4478,
+          "cancelledStale": 0,
+          "popped": 9894,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 14372,
+          "deduped": 4183157,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 23088826,
+          "excluded": 130,
+          "queueDepth": 0,
+          "queueHighWater": 312,
+          "candidates": 65536,
+          "generation": 6
+        },
+        "decodedCacheEntries": 16384,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 6,
+        "blockEntryHits": 36500938,
+        "blockBuilds": 3858063,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      }
+    }
+  },
+  {
+    "time": "2026-09-17T06:17:00.224Z",
+    "event": "process-sample-rpc-before-submit",
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "startedAt": "2026-09-17T06:17:00.224Z",
+    "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "timeoutMs": 299939
+  },
+  {
+    "time": "2026-09-17T06:17:11.266Z",
+    "headed": false,
+    "pageUrl": "http://127.0.0.1:61930/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-1024&decodedCacheEntries=16384&jalr=0&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A61930#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": "cap-1024",
+    "decodedCacheEntries": "16384",
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "admissionProbeRequested": false,
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "actualCommand": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "result": {
+      "status": "sampled",
+      "startedAt": "2026-09-17T06:17:00.163Z",
+      "startedMs": 1789625820163,
+      "timeoutMs": 300000,
+      "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            417,
+            462
+          ]
+        }
+      ],
+      "limitation": "Read-only sequential proc/host observations; no input-consumption or active-PC proof.",
+      "before": {
+        "startedAt": "2026-09-17T06:17:00.163Z",
+        "completedAt": "2026-09-17T06:17:00.224Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyH",
+              "evdev": 35,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyH",
+              "evdev": 35,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyO",
+              "evdev": 24,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyO",
+              "evdev": 24,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Space",
+              "evdev": 57,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Space",
+              "evdev": 57,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyN",
+              "evdev": 49,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyN",
+              "evdev": 49,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyR",
+              "evdev": 19,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyR",
+              "evdev": 19,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyV",
+              "evdev": 47,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyV",
+              "evdev": 47,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Minus",
+              "evdev": 12,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Minus",
+              "evdev": 12,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyG",
+              "evdev": 34,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyG",
+              "evdev": 34,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Enter",
+              "evdev": 28,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Enter",
+              "evdev": 28,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [
+            {
+              "sequence": 1,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 3,
+                  "code": 0,
+                  "value": 10240
+                },
+                {
+                  "eventType": 3,
+                  "code": 1,
+                  "value": 12288
+                }
+              ],
+              "sync": 0,
+              "source": "pointermove",
+              "coordinates": {
+                "x": 10240,
+                "y": 12288
+              }
+            },
+            {
+              "sequence": 2,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 1,
+                  "code": 272,
+                  "value": 1
+                }
+              ],
+              "sync": 0,
+              "source": "pointerdown",
+              "button": 0,
+              "evdev": 272
+            },
+            {
+              "sequence": 3,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 1,
+                  "code": 272,
+                  "value": 0
+                }
+              ],
+              "sync": 0,
+              "source": "pointerup",
+              "button": 0,
+              "evdev": 272
+            }
+          ],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 928,
+            "completed": 928,
+            "pending": 0,
+            "averageMs": 14.475996773818444,
+            "maxMs": 151.99000000953674
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 5,
+            "drawnPresents": 5,
+            "drawnBytes": 20480000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 20480000,
+              "drawnPresents": 5,
+              "drawnBytes": 20480000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 10,
+                "y": 36,
+                "width": 1260,
+                "height": 754
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1324144838",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 10237,
+            "totalSliceMs": 195859.680008173,
+            "averageSliceMs": 19.132527108349418,
+            "maxSliceMs": 320.4849998950958,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 84
+              },
+              {
+                "leMs": 16,
+                "count": 6849
+              },
+              {
+                "leMs": 32,
+                "count": 1805
+              },
+              {
+                "leMs": 64,
+                "count": 1366
+              },
+              {
+                "leMs": 128,
+                "count": 126
+              },
+              {
+                "leMs": 256,
+                "count": 6
+              },
+              {
+                "leMs": 512,
+                "count": 1
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 321.00499987602234,
+            "requestedInstructions": 5118500000,
+            "retiredInstructions": 5118482155,
+            "fetchWaits": 1,
+            "fetchRequestedChunks": 1,
+            "fetchWaitTotalMs": 7.509999990463257,
+            "fetchWaitMaxMs": 7.509999990463257,
+            "outputCalls": 14,
+            "outputBytes": 2262,
+            "inputCalls": 2,
+            "inputBytes": 129,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 10238,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 2366,
+            "executedBlocks": 70909748,
+            "retiredViaJit": 4460499445,
+            "directChainEntries": 196625682,
+            "directChainLinks": 125716834,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 70909748,
+              "stateCopyCalls": 141819496,
+              "stateCopyBytes": 12234949168,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 42438350,
+              "authorityChecks": 55362342,
+              "memorySplitExits": 311594,
+              "deviceBoundaries": 93238,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": false,
+            "guestRetired": 5118982153,
+            "jitEngineCalls": 70909748,
+            "jitLogicalBlocksPerEngineCall": 2.772900589069926,
+            "jitRetiredShare": 0.8713645235871562,
+            "chainLinksMade": 3678,
+            "chainLinksCut": 2967,
+            "chainDispatchEntries": 23776805,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 51170722,
+            "jitResidencyPolicy": "cap-1024",
+            "jitResidencyCap": 1024,
+            "jitSubmittedMembers": 9060,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 2083,
+            "jitCacheInstalls": 8996,
+            "jitCacheRetranslations": 2594,
+            "jitCacheEvictions": 1450,
+            "jitCacheBatches": 621,
+            "jitCacheCodeBytes": 50526767,
+            "compileQueue": {
+              "admitted": 12285,
+              "droppedBackpressure": 4478,
+              "cancelledStale": 0,
+              "popped": 10415,
+              "queueHighWater": 256,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 14893,
+              "deduped": 4326058,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 24283143,
+              "excluded": 130,
+              "queueDepth": 0,
+              "queueHighWater": 312,
+              "candidates": 65536,
+              "generation": 6
+            },
+            "decodedCacheEntries": 16384,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 0,
+            "discoveryGeneration": 6,
+            "blockEntryHits": 38074436,
+            "blockBuilds": 4334224,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          }
+        }
+      },
+      "rpc": {
+        "startedAt": "2026-09-17T06:17:00.224Z",
+        "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+        "submittedAt": "2026-09-17T06:17:00.225Z",
+        "timeoutMs": 299938,
+        "raw": {
+          "stdout": "WVMPS boot-before\n9a5fad90-09ed-41a8-9309-7c396c980f14\nWVMPS_END 0\nWVMPS uptime-before\n132.47 0.97\nWVMPS_END 0\nWVMPS clock-ticks\n100\nWVMPS_END 0\nWVMPS leader-417-before\n-bash: /proc/417/stat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-stat-before\n-bash: /proc/417/task/417/stat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-schedstat\n-bash: /proc/417/task/417/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-wchan\n-bash: /proc/417/task/417/wchan: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-stat-after\n-bash: /proc/417/task/417/stat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-stat-before\n-bash: /proc/417/task/462/stat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-schedstat\n-bash: /proc/417/task/462/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-wchan\n-bash: /proc/417/task/462/wchan: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-stat-after\n-bash: /proc/417/task/462/stat: No such file or directory\nWVMPS_END 1\nWVMPS leader-417-after\n-bash: /proc/417/stat: No such file or directory\nWVMPS_END 1\nWVMPS uptime-after\n132.52 0.97\nWVMPS_END 0\nWVMPS boot-after\n9a5fad90-09ed-41a8-9309-7c396c980f14\nWVMPS_END 0\n\n",
+          "exit": 0
+        },
+        "completedAt": "2026-09-17T06:17:10.936Z"
+      },
+      "after": {
+        "startedAt": "2026-09-17T06:17:10.936Z",
+        "completedAt": "2026-09-17T06:17:11.264Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyH",
+              "evdev": 35,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyH",
+              "evdev": 35,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyO",
+              "evdev": 24,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyO",
+              "evdev": 24,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Space",
+              "evdev": 57,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Space",
+              "evdev": 57,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyN",
+              "evdev": 49,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyN",
+              "evdev": 49,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyR",
+              "evdev": 19,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyR",
+              "evdev": 19,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyC",
+              "evdev": 46,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyI",
+              "evdev": 23,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyV",
+              "evdev": 47,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyV",
+              "evdev": 47,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Minus",
+              "evdev": 12,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Minus",
+              "evdev": 12,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyG",
+              "evdev": 34,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyG",
+              "evdev": 34,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyA",
+              "evdev": 30,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyT",
+              "evdev": 20,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyE",
+              "evdev": 18,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "ShiftLeft",
+              "evdev": 42,
+              "value": 0,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Enter",
+              "evdev": 28,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "Enter",
+              "evdev": 28,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [
+            {
+              "sequence": 1,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 3,
+                  "code": 0,
+                  "value": 10240
+                },
+                {
+                  "eventType": 3,
+                  "code": 1,
+                  "value": 12288
+                }
+              ],
+              "sync": 0,
+              "source": "pointermove",
+              "coordinates": {
+                "x": 10240,
+                "y": 12288
+              }
+            },
+            {
+              "sequence": 2,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 1,
+                  "code": 272,
+                  "value": 1
+                }
+              ],
+              "sync": 0,
+              "source": "pointerdown",
+              "button": 0,
+              "evdev": 272
+            },
+            {
+              "sequence": 3,
+              "device": "tablet",
+              "mode": "absolute",
+              "events": [
+                {
+                  "eventType": 1,
+                  "code": 272,
+                  "value": 0
+                }
+              ],
+              "sync": 0,
+              "source": "pointerup",
+              "button": 0,
+              "evdev": 272
+            }
+          ],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 970,
+            "completed": 970,
+            "pending": 0,
+            "averageMs": 15.28551031560013,
+            "maxMs": 151.99000000953674
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 5,
+            "successfulPresents": 5,
+            "drawnPresents": 5,
+            "drawnBytes": 20480000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 5,
+              "enqueued": 5,
+              "coalesced": 0,
+              "presented": 5,
+              "successfulPresents": 5,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 20480000,
+              "drawnPresents": 5,
+              "drawnBytes": 20480000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 10,
+                "y": 36,
+                "width": 1260,
+                "height": 754
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1325879100",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 10459,
+            "totalSliceMs": 206777.0650086403,
+            "averageSliceMs": 19.77025193695767,
+            "maxSliceMs": 320.4849998950958,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 84
+              },
+              {
+                "leMs": 16,
+                "count": 6913
+              },
+              {
+                "leMs": 32,
+                "count": 1843
+              },
+              {
+                "leMs": 64,
+                "count": 1412
+              },
+              {
+                "leMs": 128,
+                "count": 196
+              },
+              {
+                "leMs": 256,
+                "count": 10
+              },
+              {
+                "leMs": 512,
+                "count": 1
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 321.00499987602234,
+            "requestedInstructions": 5229500000,
+            "retiredInstructions": 5229474793,
+            "fetchWaits": 2,
+            "fetchRequestedChunks": 2,
+            "fetchWaitTotalMs": 15.335000038146973,
+            "fetchWaitMaxMs": 7.825000047683716,
+            "outputCalls": 52,
+            "outputBytes": 5534,
+            "inputCalls": 3,
+            "inputBytes": 1344,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 10460,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 3165,
+            "executedBlocks": 74868845,
+            "retiredViaJit": 4549098948,
+            "directChainEntries": 205226243,
+            "directChainLinks": 130358307,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 74868845,
+              "stateCopyCalls": 149737690,
+              "stateCopyBytes": 12725773976,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 44294762,
+              "authorityChecks": 57682948,
+              "memorySplitExits": 434040,
+              "deviceBoundaries": 132347,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": false,
+            "guestRetired": 5229974738,
+            "jitEngineCalls": 74868845,
+            "jitLogicalBlocksPerEngineCall": 2.741143435563885,
+            "jitRetiredShare": 0.8698127956426087,
+            "chainLinksMade": 4384,
+            "chainLinksCut": 3193,
+            "chainDispatchEntries": 24858175,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 54525663,
+            "jitResidencyPolicy": "cap-1024",
+            "jitResidencyCap": 1024,
+            "jitSubmittedMembers": 10457,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 2309,
+            "jitCacheInstalls": 10393,
+            "jitCacheRetranslations": 3527,
+            "jitCacheEvictions": 1657,
+            "jitCacheBatches": 639,
+            "jitCacheCodeBytes": 51470367,
+            "compileQueue": {
+              "admitted": 15300,
+              "droppedBackpressure": 6405,
+              "cancelledStale": 0,
+              "popped": 12183,
+              "queueHighWater": 256,
+              "queueDepth": 248,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 18865,
+              "deduped": 5620623,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 24986458,
+              "excluded": 149,
+              "queueDepth": 29,
+              "queueHighWater": 312,
+              "candidates": 65536,
+              "generation": 6
+            },
+            "decodedCacheEntries": 16384,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 0,
+            "discoveryGeneration": 6,
+            "blockEntryHits": 42128063,
+            "blockBuilds": 4604867,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          }
+        }
+      },
+      "process": {
+        "bootId": "9a5fad90-09ed-41a8-9309-7c396c980f14",
+        "clockTicks": "100",
+        "uptimeBefore": "132.47",
+        "uptimeAfter": "132.52",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": false,
+            "error": "AssertionError [ERR_ASSERTION]: AssertionError [ERR_ASSERTION]: leader-417-before: missing/unreadable proc field\n\n1 !== 0\n"
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": false,
+            "error": "AssertionError [ERR_ASSERTION]: AssertionError [ERR_ASSERTION]: leader-417-before: missing/unreadable proc field\n\n1 !== 0\n"
+          }
+        ]
+      },
+      "finishedMs": 1789625831266,
+      "finishedAt": "2026-09-17T06:17:11.266Z",
+      "elapsedMs": 11103,
+      "deltas": {
+        "available": false,
+        "reason": "no consecutive successful samples"
+      }
+    }
+  }
+]

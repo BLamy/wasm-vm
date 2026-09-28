@@ -1,0 +1,6 @@
+{
+  "productFinding": false,
+  "initialAuditError": "FileNotFoundError: tools/verify/pkg/wasm_vm_wasm.js",
+  "cause": "The verifier import scanner initially treated the literal import inside the existing failure-checkpoint CDP Runtime.evaluate expression as a Node dependency.",
+  "correction": "Classify that exact expression at omarchy-failure-checkpoint.mjs:126 and :142 as a browser dependency. The optional failure-checkpoint path is disabled in this trial; the actual served WASM JS and binary are independently compared against disk and frozen Git bytes by audit-run.mjs. No implementation or evidence changed."
+}

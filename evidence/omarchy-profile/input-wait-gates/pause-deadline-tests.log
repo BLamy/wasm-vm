@@ -1,0 +1,15 @@
+✔ only an already-failed unchanged input deadline permits capture (19.282292ms)
+✔ pause occurs first, once, without changing the verdict (1.56625ms)
+✔ pause confirmation cannot complete beyond the fixed diagnostic deadline (1.679375ms)
+✔ debugger expression rejects ambiguous/dead instances and calls the real digest method once (0.62925ms)
+✔ RAM identity comes from the live digest, not a stale duplicate kernel anchor (13.10425ms)
+✔ snapshot stream hashes exact bytes and rejects short/oversized bodies (18.08ms)
+✔ bounded RAM chunks require contiguous offsets and stop exactly at the end (1.566959ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 292.376375

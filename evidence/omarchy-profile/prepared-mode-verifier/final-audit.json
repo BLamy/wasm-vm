@@ -1,0 +1,55 @@
+{
+  "guestHead": "545f22ad618fe8f9bd6dea3c4fe4cb6c54cc006e",
+  "captureFixtureHead": "4d3aef8ec125aefe9c00a162619bd9aa0591de36",
+  "sealSha256": "b3fd0051965f62799c41bd7a283b2ce48a1aa20094c81ca48a7670e880c86708",
+  "sealedArtifacts": 21,
+  "preservedR1Artifacts": 17,
+  "unchangedCurrentHelpers": 19,
+  "modeWire": {
+    "requestIndex": 252,
+    "requestId": 235,
+    "replyIndex": 253,
+    "commandIndex": 254,
+    "commandReplyIndex": 950,
+    "requests640x400": 1,
+    "accepted": true,
+    "smallerModeObserved": true,
+    "beforeCounters": 3,
+    "afterCounters": 6
+  },
+  "focusQueryCompleted": false,
+  "pixelQualificationReached": false,
+  "exportStarted": false,
+  "privatePairDirectories": [
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-mode640-r1",
+      "entries": [],
+      "mode": "0o700"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-mode640-r2",
+      "entries": [],
+      "mode": "0o700"
+    }
+  ],
+  "png": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-mode-r2/desktop/failure.png",
+    "sha256": "658bf3e9ddc65742c6a9eb38880568a004a89c9a2b94ce4a5d40d2c1d8ce6587",
+    "width": 1280,
+    "height": 800,
+    "pixels": 1024000,
+    "maximumRGBChannel": 0,
+    "minimumAlpha": 255,
+    "entirelyBlack": true
+  },
+  "cleanup": {
+    "startedAt": "2026-09-16T03:29:19.706Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  },
+  "processTableCheck": "Unavailable under verifier sandbox (ps EPERM); cleanup proof uses the recorded owned-browser/client close and normally closed child.",
+  "result": "negative-preparation-only",
+  "usablePair": false,
+  "keyboardTested": false
+}

@@ -1,0 +1,349 @@
+{
+  "reportSha256": "41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555",
+  "profileSha256": "a6e8f0c8189b783efc4e293f6001df4d9e559e3ca814bd5097ae394b781146b2",
+  "rawLineForProfile": 1,
+  "profileSpanUs": 30024727,
+  "weightedUs": 30024349,
+  "samples": 20007,
+  "nodes": 2743,
+  "timing": {
+    "fence": {
+      "startedAt": "2026-09-16T02:35:41.466Z",
+      "method": "Input.setIgnoreInputEvents",
+      "ignore": true,
+      "acknowledgedAt": "2026-09-16T02:35:41.468Z"
+    },
+    "keyboard": {
+      "verified": false,
+      "nonce": "b536627330350715",
+      "guestFile": "/tmp/desktop-keys-9024ef784a418e5f",
+      "startedAt": "2026-09-16T02:35:38.679Z",
+      "enteredAtMs": 1789526141466,
+      "typedAt": "2026-09-16T02:35:41.466Z",
+      "typingMs": 2787,
+      "readbackStartedAt": "2026-09-16T02:35:41.466Z",
+      "readbackTimeoutMs": 120000,
+      "deadlineMs": 120000,
+      "deadlineAt": "2026-09-16T02:37:41.466Z",
+      "stage": "readback",
+      "failedAt": "2026-09-16T02:37:41.467Z",
+      "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+      "desktopReadyPageMs": 39019.41000008583,
+      "firstPhysicalKeydownPageMs": 62377.22499990463,
+      "readyToFirstPhysicalKeydownMs": 23357.814999818802
+    },
+    "sampleStart": "2026-09-16T02:37:41.575Z",
+    "sampleStop": "2026-09-16T02:38:11.612Z",
+    "captureFinished": "2026-09-16T02:38:11.626Z"
+  },
+  "postVerdictMethods": {
+    "inputDeviceStats": 1,
+    "jitStats": 1,
+    "schedulerStats": 1,
+    "guestClockState": 1,
+    "keyboardLedState": 115
+  },
+  "postVerdictGuestInput": false,
+  "lateReplies": [
+    {
+      "id": "mu3hqces22",
+      "command": "if [ -f '/tmp/desktop-keys-9024ef784a418e5f' ]; then cat '/tmp/desktop-keys-9024ef784a418e5f'; else (exit 75); fi",
+      "sentAt": "2026-09-16T02:37:41.332Z",
+      "stdout": "",
+      "exit": 75,
+      "completedAt": "2026-09-16T02:37:45.558Z"
+    }
+  ],
+  "leadingSelf": [
+    {
+      "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+      "us": 3903577,
+      "percent": 13.001370987261039,
+      "nodes": [
+        7
+      ],
+      "samples": 2601,
+      "sampleRanges": [
+        {
+          "id": 7,
+          "sampleFirst": 1,
+          "sampleLast": 19999
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+      "us": 2240711,
+      "percent": 7.462979463767891,
+      "nodes": [
+        26,
+        100,
+        358
+      ],
+      "samples": 1493,
+      "sampleRanges": [
+        {
+          "id": 26,
+          "sampleFirst": 21,
+          "sampleLast": 19991
+        },
+        {
+          "id": 100,
+          "sampleFirst": 84,
+          "sampleLast": 19727
+        },
+        {
+          "id": 358,
+          "sampleFirst": 738,
+          "sampleLast": 19136
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::flush_page::h7e4f5a8e39056cfd",
+      "us": 1992562,
+      "percent": 6.636486939317153,
+      "nodes": [
+        91,
+        93,
+        167,
+        242,
+        1047
+      ],
+      "samples": 1330,
+      "sampleRanges": [
+        {
+          "id": 167,
+          "sampleFirst": 152,
+          "sampleLast": 20005
+        },
+        {
+          "id": 93,
+          "sampleFirst": 80,
+          "sampleLast": 19960
+        },
+        {
+          "id": 242,
+          "sampleFirst": 333,
+          "sampleLast": 19985
+        },
+        {
+          "id": 91,
+          "sampleFirst": 76,
+          "sampleLast": 19566
+        },
+        {
+          "id": 1047,
+          "sampleFirst": 3442,
+          "sampleLast": 9704
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+      "us": 1496316,
+      "percent": 4.983675083179988,
+      "nodes": [
+        35,
+        52,
+        65,
+        125,
+        128,
+        129,
+        163,
+        221,
+        224,
+        316,
+        608,
+        892
+      ],
+      "samples": 997,
+      "sampleRanges": [
+        {
+          "id": 129,
+          "sampleFirst": 104,
+          "sampleLast": 19858
+        },
+        {
+          "id": 52,
+          "sampleFirst": 40,
+          "sampleLast": 19967
+        },
+        {
+          "id": 221,
+          "sampleFirst": 281,
+          "sampleLast": 19971
+        },
+        {
+          "id": 125,
+          "sampleFirst": 101,
+          "sampleLast": 19866
+        },
+        {
+          "id": 65,
+          "sampleFirst": 50,
+          "sampleLast": 19515
+        },
+        {
+          "id": 224,
+          "sampleFirst": 294,
+          "sampleLast": 19007
+        },
+        {
+          "id": 35,
+          "sampleFirst": 26,
+          "sampleLast": 20006
+        },
+        {
+          "id": 128,
+          "sampleFirst": 103,
+          "sampleLast": 17319
+        },
+        {
+          "id": 608,
+          "sampleFirst": 3068,
+          "sampleLast": 19690
+        },
+        {
+          "id": 892,
+          "sampleFirst": 2661,
+          "sampleLast": 17879
+        },
+        {
+          "id": 163,
+          "sampleFirst": 144,
+          "sampleLast": 16147
+        },
+        {
+          "id": 316,
+          "sampleFirst": 586,
+          "sampleLast": 12431
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h95922160ac631d34",
+      "us": 1204127,
+      "percent": 4.0105016098767035,
+      "nodes": [
+        9,
+        415
+      ],
+      "samples": 803,
+      "sampleRanges": [
+        {
+          "id": 9,
+          "sampleFirst": 13,
+          "sampleLast": 19965
+        },
+        {
+          "id": 415,
+          "sampleFirst": 842,
+          "sampleLast": 15079
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+      "us": 1084118,
+      "percent": 3.610796024253515,
+      "nodes": [
+        22,
+        217,
+        245,
+        2254
+      ],
+      "samples": 722,
+      "sampleRanges": [
+        {
+          "id": 22,
+          "sampleFirst": 10,
+          "sampleLast": 19946
+        },
+        {
+          "id": 245,
+          "sampleFirst": 340,
+          "sampleLast": 19995
+        },
+        {
+          "id": 217,
+          "sampleFirst": 277,
+          "sampleLast": 18843
+        },
+        {
+          "id": 2254,
+          "sampleFirst": 11685,
+          "sampleLast": 11685
+        }
+      ]
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+      "us": 1028667,
+      "percent": 3.4261092555245742,
+      "nodes": [
+        23,
+        50,
+        166,
+        280,
+        400
+      ],
+      "samples": 688,
+      "sampleRanges": [
+        {
+          "id": 23,
+          "sampleFirst": 8,
+          "sampleLast": 19861
+        },
+        {
+          "id": 50,
+          "sampleFirst": 37,
+          "sampleLast": 19761
+        },
+        {
+          "id": 280,
+          "sampleFirst": 414,
+          "sampleLast": 19937
+        },
+        {
+          "id": 166,
+          "sampleFirst": 150,
+          "sampleLast": 19094
+        },
+        {
+          "id": 400,
+          "sampleFirst": 807,
+          "sampleLast": 19476
+        }
+      ]
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h090ab5e8d762af0f",
+      "us": 961686,
+      "percent": 3.20302032193937,
+      "nodes": [
+        29,
+        766,
+        919
+      ],
+      "samples": 640,
+      "sampleRanges": [
+        {
+          "id": 29,
+          "sampleFirst": 17,
+          "sampleLast": 20001
+        },
+        {
+          "id": 766,
+          "sampleFirst": 2218,
+          "sampleLast": 19970
+        },
+        {
+          "id": 919,
+          "sampleFirst": 2842,
+          "sampleLast": 18393
+        }
+      ]
+    }
+  ]
+}

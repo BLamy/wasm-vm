@@ -1,0 +1,18 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Checking wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+error: unused variable: `display_metrics`
+   --> crates/cli/src/boot.rs:788:52
+    |
+788 |         let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+    |                                                    ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_display_metrics`
+    |
+    = note: `-D unused-variables` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(unused_variables)]`
+
+error: could not compile `wasm-vm-cli` (bin "wasm-vm") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `wasm-vm-cli` (bin "wasm-vm" test) due to 1 previous error

@@ -1,0 +1,139 @@
+{
+  "passed": true,
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "clone": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "pristineBeforeBuild": true,
+  "runtime": {
+    "task": "E5.5-T03at",
+    "files": {
+      "crates/core/src/dev/virtio/gpu/resources.rs": {
+        "size": 63306,
+        "sha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f"
+      },
+      "crates/core/src/dev/virtio/gpu/mod.rs": {
+        "size": 169241,
+        "sha256": "035c9ddce5b9bcaadc96257aa067c12fcea50235096660783728e82f59d971bf"
+      },
+      "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+        "size": 1602266,
+        "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+      }
+    }
+  },
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchingLogs": [
+        "artifact-omarchy-input-kernel-r3.log",
+        "artifact-omarchy-input-kernel-prepared-pair-r1.log",
+        "checkout.log",
+        "clone.log",
+        "artifact-omarchy-profile-chunks-sdr-r3-256k.log"
+      ]
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "2e61bf3e971595741c627e8b68fcaee055c27945"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchingLogs": [
+        "artifact-omarchy-input-kernel-r3.log",
+        "artifact-omarchy-input-kernel-prepared-pair-r1.log",
+        "checkout.log",
+        "clone.log",
+        "artifact-omarchy-profile-chunks-sdr-r3-256k.log"
+      ]
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-input-kernel-r3"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchingLogs": [
+        "artifact-omarchy-input-kernel-r3.log",
+        "artifact-omarchy-input-kernel-prepared-pair-r1.log",
+        "checkout.log",
+        "clone.log",
+        "artifact-omarchy-profile-chunks-sdr-r3-256k.log"
+      ]
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-input-kernel-prepared-pair-r1"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchingLogs": [
+        "artifact-omarchy-input-kernel-r3.log",
+        "artifact-omarchy-input-kernel-prepared-pair-r1.log",
+        "checkout.log",
+        "clone.log",
+        "artifact-omarchy-profile-chunks-sdr-r3-256k.log"
+      ]
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-profile-chunks-sdr-r3-256k"
+      ],
+      "code": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matchingLogs": [
+        "artifact-omarchy-input-kernel-r3.log",
+        "artifact-omarchy-input-kernel-prepared-pair-r1.log",
+        "checkout.log",
+        "clone.log",
+        "artifact-omarchy-profile-chunks-sdr-r3-256k.log"
+      ]
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "code": 0,
+      "logSha256": "69cbd0509d69ec579956fe7d71c8bdf5ea843c766c114d423b27f92b0bb70964",
+      "matchingLogs": [
+        "build.log"
+      ]
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03at",
+        "GPU_TRANSFER_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-r1/cold"
+      ],
+      "code": 0,
+      "logSha256": "d5898595c2a2a01accb49a0d146cf5ed745e1894e26ebbc0c9dfba21dc3e802c",
+      "matchingLogs": [
+        "acceptance.log"
+      ]
+    }
+  ],
+  "finalImagesByteIdentical": true,
+  "imageSha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24"
+}

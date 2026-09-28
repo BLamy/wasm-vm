@@ -1,0 +1,9 @@
+{
+  "verdict": "verified",
+  "scope": "negative diagnostic only",
+  "desktopSolved": false,
+  "releaseEligible": false,
+  "files": 41,
+  "indexSha256": "e98b479dc9d9dd6b1cc38cbb3fb936d92aae36967bef3716e55cd62422d6446c",
+  "workerIndexSha256": "acc32d1ee23deed68bd1a4e50a92bd7b8151a023361ca606d59cec0ff713d8ca"
+}

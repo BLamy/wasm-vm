@@ -1,0 +1,92 @@
+[
+  {
+    "arm": "control",
+    "path": "evidence/omarchy-profile/residency-after-fp-r1/control/report.json",
+    "sha256": "65fb5dc0ac51e50702ea0583ea8bdb15f8bab98455c9068b1165581a2c86bdd5",
+    "lastCompleteRead": {
+      "id": "mu3g4tvh12",
+      "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+      "sentAt": "2026-09-16T01:52:57.917Z",
+      "stdout": "",
+      "exit": 75,
+      "completedAt": "2026-09-16T01:53:05.960Z"
+    },
+    "pendingReads": [
+      {
+        "id": "mu3g50ut13",
+        "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+        "sentAt": "2026-09-16T01:53:06.965Z"
+      }
+    ],
+    "citations": {
+      "lastCompletedFence": [
+        25026
+      ],
+      "deadline": [
+        25868
+      ],
+      "result": [
+        25876
+      ],
+      "firstResidencyPolicy": [
+        126,
+        1244,
+        25594
+      ],
+      "firstInputEvents": [
+        2898
+      ],
+      "keyboard": [
+        25857
+      ],
+      "cleanup": [
+        25879
+      ]
+    }
+  },
+  {
+    "arm": "candidate",
+    "path": "evidence/omarchy-profile/residency-after-fp-r1/candidate/report.json",
+    "sha256": "33eaa82a64ade55c36efb27aca5ac021a3d028ab77dbdd696b83a4be6d8dc037",
+    "lastCompleteRead": {
+      "id": "mu3g932417",
+      "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+      "sentAt": "2026-09-16T01:56:16.444Z",
+      "stdout": "",
+      "exit": 75,
+      "completedAt": "2026-09-16T01:56:23.905Z"
+    },
+    "pendingReads": [
+      {
+        "id": "mu3g99la18",
+        "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+        "sentAt": "2026-09-16T01:56:24.911Z"
+      }
+    ],
+    "citations": {
+      "lastCompletedFence": [
+        24069
+      ],
+      "deadline": [
+        24791
+      ],
+      "result": [
+        24799
+      ],
+      "firstResidencyPolicy": [
+        116,
+        1279,
+        24517
+      ],
+      "firstInputEvents": [
+        2973
+      ],
+      "keyboard": [
+        24780
+      ],
+      "cleanup": [
+        24802
+      ]
+    }
+  }
+]

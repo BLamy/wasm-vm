@@ -1,0 +1,30 @@
+    Blocking waiting for file lock on package cache
+   Compiling smallvec v1.15.2
+   Compiling proptest v1.11.0
+   Compiling hashbrown v0.15.5
+   Compiling pulley-macros v35.0.0
+   Compiling cranelift-bitset v0.122.0
+   Compiling thiserror-impl v2.0.18
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling cranelift-entity v0.122.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling wasmtime v35.0.0
+   Compiling regalloc2 v0.12.2
+   Compiling wasmparser v0.235.0
+   Compiling object v0.36.7
+   Compiling wasmparser v0.240.0
+   Compiling thiserror v2.0.18
+   Compiling cranelift-bforest v0.122.0
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling cobs v0.3.0
+   Compiling postcard v1.1.3
+   Compiling cranelift-codegen-meta v0.122.0
+   Compiling cranelift-codegen v0.122.0
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasmprinter v0.235.0
+   Compiling wasmtime-environ v35.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+
+WORKER: stopped redundant run with SIGINT after the full native-compatible workspace suite passed its network tests and advanced into core tests. This interrupted duplicate is not counted as evidence; see native-workspace.log.

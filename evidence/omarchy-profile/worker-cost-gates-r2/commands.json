@@ -1,0 +1,52 @@
+{
+  "head": "8ad5886126ddf062403455e266471d83e0e7feee",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "commands": [
+    {
+      "label": "affected-recorder",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-worker-cost.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs"
+      ],
+      "startedAt": "2026-09-16T02:34:18Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:34:18Z"
+    },
+    {
+      "label": "real-input-fence",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-worker-cost-input.browser.test.mjs"
+      ],
+      "startedAt": "2026-09-16T02:34:18Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:34:20Z"
+    },
+    {
+      "label": "cost-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-worker-cost.mjs"
+      ],
+      "startedAt": "2026-09-16T02:34:20Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:34:20Z"
+    },
+    {
+      "label": "recorder-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-desktop-live.mjs"
+      ],
+      "startedAt": "2026-09-16T02:34:20Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:34:20Z"
+    }
+  ],
+  "allPassed": true
+}

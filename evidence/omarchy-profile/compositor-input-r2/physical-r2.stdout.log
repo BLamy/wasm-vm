@@ -1,0 +1,79 @@
+{
+  "purpose": "actual-compositor-input-read-diagnostic",
+  "desktopAcceptance": false,
+  "head": "9c5e197a65889f5301830b3a2ec4dd836e3980de",
+  "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "observerSha256": "10d9e82ce33bb8eafaf55e8aa5e8ee86bd7bdfa4998fd367f374ff70e3ff792d",
+  "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-direct-opaque-r2",
+  "pairIdentities": {
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "bootSnapshot": {
+      "size": 207172408,
+      "sha256": "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    },
+    "overlayDelta": {
+      "size": 1232847,
+      "sha256": "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    }
+  },
+  "startedAt": "2026-09-16T10:42:33.126Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/physical-r2/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T10:49:18.095Z",
+  "reportSha256": "c272930f9dcf5545aa83fdb97b614cdccdef79c1ecd3aabfa96f1bef1c5c3327",
+  "diagnosticRecorded": true,
+  "streams": [
+    {
+      "identity": {
+        "valid": true,
+        "input": true,
+        "path": "/dev/input/event1",
+        "subsystem": "../../../../../../../../class/input",
+        "dev": "5",
+        "inode": "630",
+        "rdev": "3393",
+        "mode": 8624,
+        "errno": 0
+      },
+      "keyEvents": 2,
+      "synReports": 3,
+      "synDropped": 0,
+      "matchesEntirePhysicalSequence": false
+    },
+    {
+      "identity": {
+        "valid": true,
+        "input": true,
+        "path": "/dev/input/event0",
+        "subsystem": "../../../../../../../../class/input",
+        "dev": "5",
+        "inode": "629",
+        "rdev": "3392",
+        "mode": 8624,
+        "errno": 0
+      },
+      "keyEvents": 3,
+      "synReports": 4,
+      "synDropped": 1,
+      "matchesEntirePhysicalSequence": false
+    }
+  ],
+  "tracingErrors": []
+}

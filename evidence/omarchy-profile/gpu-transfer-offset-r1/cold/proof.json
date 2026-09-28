@@ -1,0 +1,119 @@
+{
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "cold": true,
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z",
+      "startedAt": "2026-09-16T23:18:24.272887+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:27.111055+00:00",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "2e61bf3e971595741c627e8b68fcaee055c27945"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:27.111333+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:27.228351+00:00",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-input-kernel-r3"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:27.364525+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:27.372467+00:00",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-input-kernel-prepared-pair-r1"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:27.372781+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:27.374974+00:00",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "cp",
+        "-cR",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+        "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo/target/omarchy-profile-chunks-sdr-r3-256k"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:27.375247+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:28.946287+00:00",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:28.946673+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:18:47.525595+00:00",
+      "logSha256": "69cbd0509d69ec579956fe7d71c8bdf5ea843c766c114d423b27f92b0bb70964"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03at",
+        "GPU_TRANSFER_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/gpu-transfer-offset-r1/cold"
+      ],
+      "cwd": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+      "startedAt": "2026-09-16T23:18:47.526836+00:00",
+      "code": 0,
+      "finishedAt": "2026-09-16T23:22:20.437887+00:00",
+      "logSha256": "d5898595c2a2a01accb49a0d146cf5ed745e1894e26ebbc0c9dfba21dc3e802c"
+    }
+  ],
+  "passed": true,
+  "clone": "/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo",
+  "pristineBeforeBuild": true,
+  "runtime": {
+    "task": "E5.5-T03at",
+    "files": {
+      "crates/core/src/dev/virtio/gpu/resources.rs": {
+        "size": 63306,
+        "sha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f"
+      },
+      "crates/core/src/dev/virtio/gpu/mod.rs": {
+        "size": 169241,
+        "sha256": "035c9ddce5b9bcaadc96257aa067c12fcea50235096660783728e82f59d971bf"
+      },
+      "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+        "size": 1602266,
+        "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+      }
+    }
+  },
+  "runtimeMatched": true
+}

@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-90e3975c91217361)
+
+running 7 tests
+test dispatch::tests::cold_counter_recycling_saturating_lifetime_accounting_and_toggle ... ok
+test dispatch::tests::cold_counter_recycling_preserves_decisions_fifo_priority_generation_and_observer ... ok
+test dispatch::tests::cold_counter_recycling_disabled_parity_including_admission_observer ... ok
+test tests::cold_counter_recycling_smc_stale_generation_and_live_byte_guards ... ok
+test tests::cold_counter_recycling_preserves_compile_queue_cache_and_installed_sentinel ... ok
+test tests::cold_counter_recycling_retired_trace_architecture_parity_varied_schedules ... ok
+test dispatch::tests::cold_counter_recycling_finite_real_capacity_flood_then_hot_512 ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 347 filtered out; finished in 0.60s
+

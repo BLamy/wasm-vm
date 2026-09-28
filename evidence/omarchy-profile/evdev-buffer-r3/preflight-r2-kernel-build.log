@@ -1,0 +1,2 @@
+drivers/input/evdev.c: OK
+/out/build.sh: line 7: patch: command not found

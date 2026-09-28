@@ -1,0 +1,14 @@
+{
+  "snapshotSha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+  "pageSha256": "68e042889bbbe68b7fb56eb2bca604d2b79f384620da6d33a1e3b1bb6b680f9b",
+  "profileSha256": "5133c92488d51075599604a79eff7f649e5743ada8a6f60fb0bfa506672bc521",
+  "independentlyRecountedParcels": 24,
+  "allFormatSingleAndDynamic": true,
+  "completeComputeRegionSum": 13424839,
+  "fmaOpcodeRetirements": 1278792,
+  "eachParcelInMeasuredComputeRegion": true,
+  "recordedSv57WitnessArithmeticCorrect": true,
+  "unchangedVerifiedWalkerSha256": "af97fbadc536b8f18a7417cdd5f86d84b033ee435941d9178240db8fa8471d9a",
+  "trailingPartialParcelExcluded": true,
+  "limitation": "Static page identifies S parcels; the historical dynamic opcode histogram has no per-PC S/D attribution. Fresh full raw page walk is worker evidence; this critic checks its unchanged walker, input pins, witness arithmetic, and actual output bytes without repeating the full decode."
+}

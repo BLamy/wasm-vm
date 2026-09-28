@@ -138,11 +138,16 @@ fuzz-diff-smoke:
 # Browser demo (E0-T23): build the wasm ES module into web/pkg, install the pinned
 # xterm.js (offline, no CDN), and copy the browser-run guest ELFs. Reproducible from a
 # cold clone with only Rust + wasm-pack + npm.
+#
+# The shipped module is built from crates/wasm-web (a cdylib-only re-export of crates/wasm) with
+# [profile.wasm-release] (fat LTO, 16 codegen units, wasm-opt -O3): cargo skips LTO for crates/wasm
+# itself because it is also an rlib. `--out-name wasm_vm_wasm` keeps the file names the page imports.
+# A/B evidence: evidence/perf-overhaul/webbuild/README.md.
 web-build:
-	wasm-pack build crates/wasm --target web
+	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
 	mkdir -p web/pkg web/assets/riscv-tests
-	cp -R crates/wasm/pkg/. web/pkg/
+	cp -R crates/wasm-web/pkg/. web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
 	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 	# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
@@ -1571,3 +1576,192 @@ verify-E3.5-T03:
 	cargo build --release -p wasm-vm-cli
 	cargo test --release -p wasm-vm-cli --test boot_wvrun -- --ignored --nocapture
 	@echo "verify-E3.5-T03 (tiny OCI runner — wvrun runs a bundle + isolates + propagates exit): OK"
+
+# The committed dist is the release under test. Do not silently rebuild it or
+# reuse old evidence. Override OMARCHY_EVIDENCE_DIR with a new path for each run.
+OMARCHY_EVIDENCE_DIR ?= evidence/omarchy-profile/acceptance
+.PHONY: verify-E5.5-T04a
+verify-E5.5-T04a:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/guest-rpc.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/omarchy-seeded-loader.test.mjs
+	node tools/verify/omarchy-desktop-live.mjs local "$(OMARCHY_EVIDENCE_DIR)" verify
+
+# E5.5-T03c proves visible pixels and host-side viewport fitting only. The separate
+# T04a physical-keyboard acceptance above deliberately keeps its stronger contract.
+OMARCHY_RENDER_URL ?= local
+OMARCHY_RENDER_EVIDENCE_DIR ?= evidence/omarchy-profile/rendering-recovery-acceptance
+.PHONY: verify-E5.5-T03c
+verify-E5.5-T03c:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test tools/gen-omarchy-manifest.test.mjs tools/verify/omarchy-rendering-recovery.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/omarchy-desktop-readiness.test.mjs web/tests/e5-t22b-viewport.test.mjs web/tests/pointer.test.mjs
+	node tools/verify/omarchy-rendering-recovery.mjs "$(OMARCHY_RENDER_URL)" "$(OMARCHY_RENDER_EVIDENCE_DIR)"
+
+OMARCHY_CACHE_URL ?= local
+OMARCHY_CACHE_EVIDENCE_DIR ?= evidence/omarchy-profile/boot-cache-acceptance
+.PHONY: verify-E5.5-T03e
+verify-E5.5-T03e:
+	@test -f web/dist/app.html || { echo "Build web/dist first" >&2; exit 1; }
+	npm --prefix web ci --no-audit --no-fund
+	node tools/fetch-omarchy-snapshot.mjs
+	node --test web/tests/boot-asset-cache.test.mjs web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-seeded-loader.test.mjs web/tests/e5.5-t03e-critic.test.mjs web/tests/e5.5-t03e-critic-ui.test.mjs
+	node tools/verify/omarchy-boot-cache.mjs "$(OMARCHY_CACHE_URL)" "$(OMARCHY_CACHE_EVIDENCE_DIR)"
+
+# T03f has two deliberately separate lanes: deterministic offline inspection of
+# a completed run, and a fresh unique cold-WASM record. The latter is never an
+# implicit prerequisite of the former and never writes release/prod assets.
+OMARCHY_T03F_RECORD_DIR ?= evidence/omarchy-profile/softpipe-r1/cold-wasm
+OMARCHY_T03F_RECORD_ROOT ?= evidence/omarchy-profile/softpipe-runs
+.PHONY: verify-E5.5-T03f
+verify-E5.5-T03f:
+	node --check tools/verify/omarchy-software-renderer-measurement.mjs
+	node --test tools/verify/omarchy-software-renderer-measurement.test.mjs tools/verify/omarchy-softpipe-candidate.test.mjs
+	node tools/verify/omarchy-software-renderer-measurement.mjs verify "$(OMARCHY_T03F_RECORD_DIR)"
+
+.PHONY: record-E5.5-T03f
+record-E5.5-T03f:
+	OMARCHY_T03F_RECORD_ROOT="$(OMARCHY_T03F_RECORD_ROOT)" node tools/verify/omarchy-software-renderer-measurement.mjs record
+
+# E5.5-T03t: exact FP-move state boundary. Build web/dist first (`make web-dist`)
+# so the final browser leg tests the same deployable bytes that are being submitted.
+.PHONY: verify-E5_5-T03t
+verify-E5_5-T03t:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --lib jit::tests
+	cargo test -p wasm-vm-core --lib hart::fregs::tests
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_moves --test fp_moves_critic -- --nocapture
+	cargo test -p wasm-vm-wasm --lib admission_probe_tests
+	wasm-pack test --node crates/wasm --test jit_fp_moves -- --nocapture
+	node tools/verify/omarchy-fp-moves-browser.mjs $(or $(FP_MOVES_OUT),evidence/omarchy-profile/fp-moves-browser)
+
+# E5.5-T03u: actual compiled FP memory, precise faults and page-wide authority.
+# Build web/dist once before this acceptance target.
+.PHONY: verify-E5_5-T03u
+verify-E5_5-T03u:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_memory --test fp_memory_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_memory --test jit_fp_memory_critic --test jit_fp_memory_growth_critic --test jit_fp_memory_verifier -- --nocapture
+	node tools/verify/omarchy-fp-memory-browser.mjs $(or $(FP_MEMORY_OUT),evidence/omarchy-profile/fp-memory-browser)
+
+.PHONY: verify-E5_5-T03v
+verify-E5_5-T03v:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_comparisons --test fp_comparisons_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture
+	node tools/verify/omarchy-fp-comparisons-browser.mjs $(or $(FP_COMPARISONS_OUT),evidence/omarchy-profile/fp-comparisons-browser)
+
+.PHONY: verify-E5_5-T03w
+verify-E5_5-T03w:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_arithmetic_flags -- --nocapture
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_arithmetic --test fp_arithmetic_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_arithmetic --test jit_fp_arithmetic_verifier -- --nocapture
+	node tools/verify/omarchy-fp-arithmetic-browser.mjs $(or $(FP_ARITHMETIC_OUT),evidence/omarchy-profile/fp-arithmetic-browser)
+
+.PHONY: verify-E5_5-T03x
+verify-E5_5-T03x:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_from_integer --test fp_from_integer_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_from_integer --test jit_fp_from_integer_verifier -- --nocapture
+	node tools/verify/omarchy-fp-from-integer-browser.mjs $(or $(FP_FROM_INTEGER_OUT),evidence/omarchy-profile/fp-from-integer-browser)
+
+.PHONY: verify-E5_5-T03y
+verify-E5_5-T03y:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_to_word --test fp_to_word_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_to_word --test jit_fp_to_word_verifier -- --nocapture
+	node tools/verify/omarchy-fp-to-word-browser.mjs $(or $(FP_TO_WORD_OUT),evidence/omarchy-profile/fp-to-word-browser)
+
+.PHONY: verify-E5_5-T03z
+verify-E5_5-T03z:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_division_flags
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_division --test fp_division_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_division --test jit_fp_division_verifier -- --nocapture
+	node tools/verify/omarchy-fp-division-browser.mjs $(or $(FP_DIVISION_OUT),evidence/omarchy-profile/fp-division-browser)
+
+.PHONY: verify-E5_5-T03an
+verify-E5_5-T03an:
+	cargo fmt --all --check
+	cargo test -p wasm-vm-core --test fp_fmadd_flags
+	cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+	cargo test -p wasm-vm-jit-runtime --test fp_fmadd --test fp_fmadd_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_fp_fmadd --test jit_fp_fmadd_verifier -- --nocapture
+	node tools/verify/omarchy-fmadd-browser.mjs $(or $(FP_FMADD_OUT),evidence/omarchy-profile/fmadd-browser)
+
+.PHONY: verify-E5_5-T03ao
+verify-E5_5-T03ao:
+	cargo fmt --all --check
+	wasm-pack test --node crates/wasm --test jit_fp_direct_imports_verifier --test jit_fp_arithmetic_verifier --test jit_fp_from_integer_verifier --test jit_fp_to_word_verifier --test jit_fp_division_verifier --test jit_fp_fmadd_verifier -- --nocapture
+	node tools/verify/omarchy-direct-fp-browser.mjs $(or $(DIRECT_FP_BROWSER_OUT),evidence/omarchy-profile/direct-fp-browser)
+	node tools/verify/omarchy-direct-fp-benchmark.mjs $(or $(DIRECT_FP_BENCH_OUT),evidence/omarchy-profile/direct-fp-benchmark)
+
+.PHONY: verify-E5_5-T03ap
+verify-E5_5-T03ap:
+	node --test tools/verify/omarchy-compositor-input.test.mjs
+	python3 tools/verify/omarchy-input-observer-build.py $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build
+	node tools/verify/omarchy-compositor-input.mjs $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/physical $(or $(COMPOSITOR_INPUT_OUT),evidence/omarchy-profile/compositor-input-r1)/build/observer-riscv64 $(or $(COMPOSITOR_INPUT_PAIR),target/omarchy-direct-opaque-r2)
+
+.PHONY: verify-E5_5-T03aq
+verify-E5_5-T03aq:
+	cargo fmt --check
+	cargo clippy -p wasm-vm-cli --features gpu-trace -- -D warnings
+	cargo test -p wasm-vm-cli --features gpu-trace --bin wasm-vm cli_config_tests
+	cargo build --release -p wasm-vm-cli --features gpu-trace --bin wasm-vm
+	python3 tools/build-omarchy-input-kernel.py $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
+	python3 tools/verify/omarchy-evdev-burst.py $(or $(EVDEV_PROOF_OUT),evidence/omarchy-profile/evdev-burst-r1) $(or $(EVDEV_KERNEL_OUT),target/omarchy-input-kernel-r1)
+
+.PHONY: verify-E5_5-T03ar
+verify-E5_5-T03ar:
+	node --test tools/verify/omarchy-input-kernel-state.test.mjs tools/verify/omarchy-direct-opaque-preparation.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	python3 tools/verify/omarchy-input-kernel-native.py $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native $(or $(INPUT_KERNEL_NATIVE_PAIR),target/omarchy-input-kernel-native-pair-r1)
+	node tools/verify/omarchy-prepare-input-kernel.mjs $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/browser $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) $(or $(INPUT_KERNEL_OUT),evidence/omarchy-profile/input-kernel-pair-r1)/native/run.json
+
+.PHONY: verify-E5_5-T03as
+verify-E5_5-T03as:
+	node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(INPUT_KERNEL_RESPONSE_OUT),evidence/omarchy-profile/input-kernel-response-r1) $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1)
+
+.PHONY: verify-E5_5-T03at-device verify-E5_5-T03at
+verify-E5_5-T03at-device:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-core -p wasm-vm-wasm --all-targets -- -D warnings
+	cargo test -p wasm-vm-core --features gpu-trace --lib dev::virtio::gpu -- --nocapture --test-threads=1
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+
+verify-E5_5-T03at: verify-E5_5-T03at-device
+	E5_DEMO_TASK=E5.5-T03at E5_DEMO_OUT=$(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/demo node tools/verify/e5-t18e-demo-smoke.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --gpu-transfer-offset
+
+.PHONY: verify-E5_5-T03au
+verify-E5_5-T03au:
+	node --test tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_PIXEL_OUT),evidence/omarchy-profile/display-pixel-boundary-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-pixel-probe
+
+.PHONY: verify-E5_5-T03av
+verify-E5_5-T03av:
+	node --test tools/verify/omarchy-display-late-probe.test.mjs tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_LATE_OUT),evidence/omarchy-profile/display-late-response-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-late-probe
+
+.PHONY: verify-E5_5-T03aw
+verify-E5_5-T03aw:
+	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(CAP1024_OUT),evidence/omarchy-profile/residency-cap1024-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024
+
+.PHONY: verify-E5_5-T03ax
+verify-E5_5-T03ax:
+	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
+	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DECODED_CACHE_OUT),evidence/omarchy-profile/residency-decoded-cache16384-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024-cache16384

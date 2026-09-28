@@ -1,0 +1,345 @@
+{
+  "passed": true,
+  "head": "9c5e197a65889f5301830b3a2ec4dd836e3980de",
+  "reportSha256": "c272930f9dcf5545aa83fdb97b614cdccdef79c1ecd3aabfa96f1bef1c5c3327",
+  "traceSha256": "b5a7263afeead83140f4e5f0cc5f59986aca72d2252fb287b34cf4071f68d9bf",
+  "observerSha256": "10d9e82ce33bb8eafaf55e8aa5e8ee86bd7bdfa4998fd367f374ff70e3ff792d",
+  "sourceHelpers": 38,
+  "tids": [
+    417,
+    441,
+    462,
+    463,
+    468,
+    469,
+    470,
+    481,
+    482,
+    483,
+    484,
+    485,
+    589
+  ],
+  "ready": {
+    "kind": "ready",
+    "pid": 417,
+    "tracerPid": 1860,
+    "threads": 13,
+    "monotonicMs": 157732
+  },
+  "finished": {
+    "kind": "finished",
+    "failed": false,
+    "stops": 1072,
+    "reads": 58,
+    "orphanExits": 0,
+    "capturedBytes": 8464,
+    "stopBudgetReached": false,
+    "stopSignal": 15,
+    "observationEndMonotonicMs": 166540,
+    "cleanupEndMonotonicMs": 166544
+  },
+  "evdev": [
+    {
+      "line": 132,
+      "fd": 22,
+      "returned": 168,
+      "events": [
+        [
+          160,
+          661080,
+          3,
+          0,
+          7680
+        ],
+        [
+          160,
+          661080,
+          3,
+          1,
+          8192
+        ],
+        [
+          160,
+          661080,
+          0,
+          0,
+          0
+        ],
+        [
+          160,
+          661086,
+          1,
+          272,
+          1
+        ],
+        [
+          160,
+          661086,
+          0,
+          0,
+          0
+        ],
+        [
+          160,
+          661091,
+          1,
+          272,
+          0
+        ],
+        [
+          160,
+          661091,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "line": 134,
+      "fd": 22,
+      "returned": -11,
+      "events": []
+    },
+    {
+      "line": 136,
+      "fd": 21,
+      "returned": 192,
+      "events": [
+        [
+          160,
+          816556,
+          0,
+          3,
+          0
+        ],
+        [
+          160,
+          816556,
+          0,
+          0,
+          0
+        ],
+        [
+          160,
+          821236,
+          1,
+          30,
+          0
+        ],
+        [
+          160,
+          821236,
+          0,
+          0,
+          0
+        ],
+        [
+          160,
+          821243,
+          1,
+          28,
+          1
+        ],
+        [
+          160,
+          821243,
+          0,
+          0,
+          0
+        ],
+        [
+          160,
+          821251,
+          1,
+          28,
+          0
+        ],
+        [
+          160,
+          821251,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "line": 138,
+      "fd": 21,
+      "returned": -11,
+      "events": []
+    },
+    {
+      "line": 140,
+      "fd": 21,
+      "returned": -11,
+      "events": []
+    }
+  ],
+  "physicalKeyEvents": 128,
+  "matchedAcknowledgments": 256,
+  "nonceReads": [
+    {
+      "id": "mu3z6lmk8",
+      "exit": 75
+    },
+    {
+      "id": "mu3z6ntp9",
+      "exit": 75
+    },
+    {
+      "id": "mu3z6qii10",
+      "exit": 75
+    },
+    {
+      "id": "mu3z6t9d11",
+      "exit": 75
+    },
+    {
+      "id": "mu3z6vuk12",
+      "exit": 75
+    },
+    {
+      "id": "mu3z6yjz13",
+      "exit": 75
+    },
+    {
+      "id": "mu3z712014",
+      "exit": 75
+    },
+    {
+      "id": "mu3z73of15",
+      "exit": 75
+    },
+    {
+      "id": "mu3z76bb16",
+      "exit": 75
+    },
+    {
+      "id": "mu3z78u617",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7bkk18",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7e8519",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7guu20",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7jgd21",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7m3z22",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7osv23",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7rlh24",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7ug625",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7wtx26",
+      "exit": 75
+    },
+    {
+      "id": "mu3z7z5x27",
+      "exit": 75
+    },
+    {
+      "id": "mu3z81mn28",
+      "exit": 75
+    },
+    {
+      "id": "mu3z842n29",
+      "exit": 75
+    },
+    {
+      "id": "mu3z86le30",
+      "exit": 75
+    },
+    {
+      "id": "mu3z89cq31",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8bpv32",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8enl33",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8hsv34",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8ki435",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8mzc36",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8ph637",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8s3238",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8uo739",
+      "exit": 75
+    },
+    {
+      "id": "mu3z8xee40",
+      "exit": 75
+    },
+    {
+      "id": "mu3z900i41",
+      "exit": 75
+    },
+    {
+      "id": "mu3z92nt42",
+      "exit": 75
+    },
+    {
+      "id": "mu3z95dk43",
+      "exit": 75
+    }
+  ],
+  "typedAt": "2026-09-16T10:46:13.241Z",
+  "deadlineAt": "2026-09-16T10:48:13.241Z",
+  "observerStopSentAt": "2026-09-16T10:48:19.159Z",
+  "collection": {
+    "startedAt": "2026-09-16T10:48:13.273Z",
+    "deadlineAt": "2026-09-16T10:51:13.273Z",
+    "timeoutMs": 180000,
+    "status": "collected-and-detached",
+    "finishedAt": "2026-09-16T10:49:17.795Z"
+  },
+  "images": {
+    "prepared-direct.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "failure.png": "b18a805c328b7b2b0b5d85b8866d452516aa2b5a41b8eb90a99a19a314a7efe6"
+  },
+  "imageInspection": "Personally viewed both original images: initial empty shell prompt and no typed command/returned prompt at failure.",
+  "limitation": "ptrace perturbs scheduling; SYN_DROPPED is not unique to overflow; no uninstrumented responsiveness proof."
+}

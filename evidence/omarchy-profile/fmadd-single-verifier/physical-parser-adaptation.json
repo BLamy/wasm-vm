@@ -1,0 +1,21 @@
+{
+  "source": "evidence/omarchy-profile/prepared-recycling-verifier/audit-run.py",
+  "sourceSha256": "7646c35f852f5c423b692de9073c3a7f71a60a3a8b865a00ce916a01dbcdb7a6",
+  "adapted": "evidence/omarchy-profile/fmadd-single-verifier/audit-physical.py",
+  "replacements": {
+    "REPO / 'evidence/omarchy-profile/prepared-recycling-input-r1'": "REPO / 'evidence/omarchy-profile/fmadd-single-r1/physical-input'",
+    "OUTPUT_NAME = 'r2-run-inspection.json' if PAIR.name.endswith('-r2') else 'run-inspection.json'": "OUTPUT_NAME = 'physical-inspection.json'",
+    "WASM = '8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4'": "WASM = '0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced'",
+    "HEAD = 'e7e378288581069ae0471e3ca141507e1f5faf30'": "HEAD = 'c531ceffb9b7adc8de9f5ebc927d00076a26f1dd'",
+    "run['purpose'] == 'prepared-pair-existing-recycling-candidate'": "run['purpose'] == 'prepared-pair-fmadd-single-runtime'"
+  },
+  "semanticParserUnchanged": false,
+  "initialAdaptedSha256": "51fcbb4577f6669013c4a9b6c04145c244103704201d74a33ede20cbb744439b",
+  "adaptedSha256": "b4cc16759308579be15c6e8543122734f2d0d9f1002ce0371222c63f04b9c7d4",
+  "boundedCleanupCorrection": {
+    "initialFailure": "physical-audit-initial.log:147 assumed graceful shutdown only",
+    "taskRequirement": "unchanged 30,000ms cleanup budget",
+    "inspectedSource": "tools/verify/omarchy-desktop-live.mjs:1508-1515 is unchanged and explicitly supports bounded owned browser kill",
+    "replacement": "Require closed, no killError, client closed, exact 10s browser-server timeout, and 10,000 <= total cleanup <= 30,000ms; retain forceKilled and closeError in receipt. Raw input, nonce, deadline and mode assertions stay unchanged."
+  }
+}

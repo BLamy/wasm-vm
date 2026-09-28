@@ -1,0 +1,31 @@
+diff --git a/crates/core/src/hart/mod.rs b/crates/core/src/hart/mod.rs
+index 7e3780e7..4642aa1f 100644
+--- a/crates/core/src/hart/mod.rs
++++ b/crates/core/src/hart/mod.rs
+@@ -1162,6 +1162,26 @@ impl Hart {
+         Ok(bus.ram_contains(pa, width).then_some(pa))
+     }
+ 
++    /// A generated inline-TLB tag authorizes every aligned access in a 4 KiB
++    /// page. An individual successful transfer is insufficient: PMP can grant
++    /// only one word, or deny a smaller region inside an otherwise allowed page.
++    /// Keep those pages on checked imports, without changing the completed access.
++    pub fn jit_can_inline_ram_page(&self, bus: &impl Bus, pa: u64, write: bool) -> bool {
++        let page = pa & !0xfff;
++        self.csr.triggers_idle()
++            && bus.ram_contains(page, 4096)
++            && self.csr.pmp.check(
++                page,
++                4096,
++                if write {
++                    crate::pmp::PmpAccess::Write
++                } else {
++                    crate::pmp::PmpAccess::Read
++                },
++                self.csr.data_priv(),
++            )
++    }
++
+     /// E4-T14: perform a JIT-emitted LR (load-reserved) — the `env.lr(addr, width)` host import.
+     /// `width` is 4 (`lr.w`) or 8 (`lr.d`). Byte-identical to the interpreter's `LrW`/`LrD` arms:
+     /// natural-alignment pre-check (misaligned → `LoadAddrMisaligned`, reservation untouched), the

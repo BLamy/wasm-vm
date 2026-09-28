@@ -1,0 +1,50 @@
+[  130.271842] omarchy-demo systemd[189]: Queued start job for default target Main User Target.
+[  130.343464] omarchy-demo systemd[189]: Created slice User Application Slice.
+[  130.349192] omarchy-demo systemd[189]: Reached target Paths.
+[  130.351292] omarchy-demo systemd[189]: Reached target Timers.
+[  130.397535] omarchy-demo systemd[189]: Starting D-Bus User Message Bus Socket...
+[  130.413795] omarchy-demo systemd[189]: Listening on GnuPG network certificate management daemon.
+[  130.420541] omarchy-demo systemd[189]: Listening on GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[  130.422988] omarchy-demo systemd[189]: Listening on GnuPG cryptographic agent and passphrase cache (restricted).
+[  130.437666] omarchy-demo systemd[189]: Listening on GnuPG cryptographic agent (ssh-agent emulation).
+[  130.452216] omarchy-demo systemd[189]: Listening on GnuPG cryptographic agent and passphrase cache.
+[  130.454529] omarchy-demo systemd[189]: Listening on GnuPG public key management service.
+[  130.750815] omarchy-demo systemd[189]: Listening on Query the User Interactively for a Password.
+[  130.755496] omarchy-demo systemd[189]: Listening on Disk Image Download Service Socket.
+[  130.949604] omarchy-demo systemd[189]: Listening on Journal Log Access Socket.
+[  130.955534] omarchy-demo systemd[189]: Listening on Virtual Machine and Container Registration Service Socket.
+[  131.250920] omarchy-demo systemd[189]: Listening on Simple File System Backed Storage Provider.
+[  131.510711] omarchy-demo systemd[189]: Listening on D-Bus User Message Bus Socket.
+[  131.519336] omarchy-demo systemd[189]: Reached target Sockets.
+[  131.524979] omarchy-demo systemd[189]: Reached target Basic System.
+[  131.526408] omarchy-demo systemd[189]: Reached target Main User Target.
+[  131.527139] omarchy-demo systemd[189]: Startup finished in 30.408s.
+[  144.674426] omarchy-demo uwsm[221]: Selected compositor ID: hyprland.desktop
+                                                 Command Line: /usr/bin/start-hyprland
+                                             Plugin/binary ID: start_hyprland
+                                        Initial Desktop Names: Hyprland
+                                                         Name: Hyprland
+                                                  Description: An intelligent dynamic tiling Wayland compositor
+[  144.698095] omarchy-demo systemd[189]: Created slice User Core Session Slice.
+[  144.726775] omarchy-demo systemd[189]: Starting D-Bus User Message Bus...
+[  145.026273] omarchy-demo dbus-broker-launch[249]: Policy to allow eavesdropping in /usr/share/dbus-1/session.conf +31: Eavesdropping is deprecated and ignored
+[  145.043389] omarchy-demo dbus-broker-launch[249]: Policy to allow eavesdropping in /usr/share/dbus-1/session.conf +33: Eavesdropping is deprecated and ignored
+[  145.029882] omarchy-demo systemd[189]: Started D-Bus User Message Bus.
+[  145.093630] omarchy-demo dbus-broker-launch[249]: Ready
+[  145.439120] omarchy-demo uwsm[221]: Created dir "/run/user/1000/systemd/user/"
+[  145.442282] omarchy-demo uwsm[221]: Created unit subdir "wayland-wm-env@hyprland.desktop.service.d/" (run).
+[  145.445622] omarchy-demo uwsm[221]: Created "wayland-wm-env@hyprland.desktop.service.d/50_custom.conf" (run).
+[  145.449166] omarchy-demo uwsm[221]: Created unit subdir "wayland-wm@hyprland.desktop.service.d/" (run).
+[  145.450725] omarchy-demo uwsm[221]: Created "wayland-wm@hyprland.desktop.service.d/50_custom.conf" (run).
+[  145.456476] omarchy-demo uwsm[221]: Created unit subdir "app-@autostart.service.d/" (run).
+[  145.457960] omarchy-demo uwsm[221]: Created "app-@autostart.service.d/slice-tweak.conf" (run).
+[  145.459998] omarchy-demo uwsm[221]: Created unit subdir "app-flatpak-.scope.d/" (run).
+[  145.465609] omarchy-demo uwsm[221]: Created "app-flatpak-.scope.d/order-tweak.conf" (run).
+[  145.467528] omarchy-demo uwsm[221]: Created unit subdir "plasma-xdg-desktop-portal-kde.service.d/" (run).
+[  145.472563] omarchy-demo uwsm[221]: Created "plasma-xdg-desktop-portal-kde.service.d/order-tweak.conf" (run).
+[  145.473556] omarchy-demo uwsm[221]: Reloading systemd user manager.
+[  145.701629] omarchy-demo systemd[189]: Reload requested from client PID 221 ('uwsm')...
+[  145.702161] omarchy-demo systemd[189]: Reloading...
+[  170.721454] omarchy-demo uwsm[221]: org.freedesktop.DBus.Error.NoReply: Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+[  180.635973] omarchy-demo systemd[189]: Reloading finished in 34886 ms.
+[  253.644518] omarchy-demo systemd[189]: Reached target Sound Card.

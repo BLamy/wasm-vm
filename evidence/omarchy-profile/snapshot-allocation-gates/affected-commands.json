@@ -1,0 +1,124 @@
+{
+  "head": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "phase": "affected",
+  "wasmSha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4",
+  "commands": [
+    {
+      "label": "fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "startedAt": "2026-09-16T06:13:08Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:13:09Z"
+    },
+    {
+      "label": "core-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "startedAt": "2026-09-16T06:13:09Z",
+      "code": 101,
+      "finishedAt": "2026-09-16T06:13:41Z"
+    },
+    {
+      "label": "wasm-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "startedAt": "2026-09-16T06:13:41Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:13:45Z"
+    },
+    {
+      "label": "resume-format",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "resume::",
+        "--",
+        "--nocapture"
+      ],
+      "startedAt": "2026-09-16T06:13:45Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:13:45Z"
+    },
+    {
+      "label": "resume-machines",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "cpu_resume",
+        "--test",
+        "snapshot_coherence",
+        "--test",
+        "virtio_blk_quiesce",
+        "--test",
+        "guest_clock",
+        "--test",
+        "desktop_machine_resume",
+        "--test",
+        "desktop_machine_resume_verifier",
+        "--test",
+        "desktop_machine_audio_resume",
+        "--test",
+        "virtio_console",
+        "--",
+        "--nocapture"
+      ],
+      "startedAt": "2026-09-16T06:13:45Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:14:05Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "startedAt": "2026-09-16T06:14:05Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:14:10Z"
+    },
+    {
+      "label": "harness-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-snapshot-allocation.mjs"
+      ],
+      "startedAt": "2026-09-16T06:14:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T06:14:10Z"
+    }
+  ],
+  "allPassed": false
+}

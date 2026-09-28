@@ -1,0 +1,52 @@
+{
+  "head": "bb3c13dd6014ca15f29fe897b3ba207d65bc67b8",
+  "startedAt": "2026-09-16T06:19:19Z",
+  "origins": [
+    "https://46ecc765.wasm-vm.pages.dev",
+    "https://wasm-vm.pages.dev"
+  ],
+  "files": [
+    {
+      "url": "https://46ecc765.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1597586,
+      "sha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4"
+    },
+    {
+      "url": "https://46ecc765.wasm-vm.pages.dev/roadmap.js",
+      "bytes": 51201,
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "url": "https://46ecc765.wasm-vm.pages.dev/sw.js",
+      "bytes": 5053,
+      "sha256": "0cae2f657076b8f113e25f40570e6ce807cbfe41cdc2891e2d9f0ca34b4be9d0"
+    },
+    {
+      "url": "https://46ecc765.wasm-vm.pages.dev/artifacts-omarchy.json",
+      "bytes": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1597586,
+      "sha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "bytes": 51201,
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/sw.js",
+      "bytes": 5053,
+      "sha256": "0cae2f657076b8f113e25f40570e6ce807cbfe41cdc2891e2d9f0ca34b4be9d0"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json",
+      "bytes": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0"
+    }
+  ],
+  "passed": true,
+  "finishedAt": "2026-09-16T06:19:21Z"
+}

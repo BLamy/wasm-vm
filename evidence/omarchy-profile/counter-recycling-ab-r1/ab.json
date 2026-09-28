@@ -1,0 +1,63 @@
+{
+  "head": "65903012f592d7625c13d632bbd70e9e859b96aa",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "startedAt": "2026-09-14T07:32:37.732Z",
+  "arms": [
+    {
+      "arm": "control",
+      "args": [
+        "tools/verify/omarchy-desktop-live.mjs",
+        "local",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/counter-recycling-ab-r1/control",
+        "input-trial"
+      ],
+      "startedAt": "2026-09-14T07:32:37.860Z",
+      "code": 1,
+      "signal": null,
+      "closed": true,
+      "watchdog": null,
+      "finishedAt": "2026-09-14T07:38:14.423Z",
+      "result": "failed",
+      "outcome": "startup-failed-input-not-tested",
+      "startup": {
+        "startedAt": "2026-09-14T07:33:13.350Z",
+        "timeoutMs": 300000,
+        "deadlineAt": "2026-09-14T07:38:13.350Z"
+      },
+      "cleanup": {
+        "startedAt": "2026-09-14T07:38:13.510Z",
+        "timeoutMs": 30000,
+        "closed": true
+      }
+    },
+    {
+      "arm": "candidate",
+      "args": [
+        "tools/verify/omarchy-desktop-live.mjs",
+        "local",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/counter-recycling-ab-r1/candidate",
+        "input-trial"
+      ],
+      "startedAt": "2026-09-14T07:38:14.617Z",
+      "code": 1,
+      "signal": null,
+      "closed": true,
+      "watchdog": null,
+      "finishedAt": "2026-09-14T07:43:55.098Z",
+      "result": "failed",
+      "outcome": "startup-failed-input-not-tested",
+      "startup": {
+        "startedAt": "2026-09-14T07:38:53.937Z",
+        "timeoutMs": 300000,
+        "deadlineAt": "2026-09-14T07:43:53.937Z"
+      },
+      "cleanup": {
+        "startedAt": "2026-09-14T07:43:54.098Z",
+        "timeoutMs": 30000,
+        "closed": true
+      }
+    }
+  ],
+  "finishedAt": "2026-09-14T07:43:55.140Z",
+  "claim": "Compare actual per-arm acceptance; counters alone do not establish responsiveness."
+}

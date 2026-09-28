@@ -1,7 +1,7 @@
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 **Status:** accepted · **Date:** 2026-08-05 · **Epic:** 4 (acceleration) · **Depends on:** E4-T06 §9.4,
-E4-T12 · **Ships:** side-exit-all (option a)
+E4-T12 · **Original decision:** side-exit-all (option a); measured Omarchy subsets in §§6–13
 
 `docs/jit-architecture.md` §9.4 flags FP as "the one place 'fast' and 'provably identical' conflict"
 and defers it to *this* measured decision. The three options were (a) side-exit every F/D op to the
@@ -91,4 +91,268 @@ Revisit only if a *measured* target workload shows a materially higher dynamic F
 hybrid — translate only the trivially-identical ops (fld/fsd/fmv/fsgnj, and at most fadd/fmul in RNE
 with a fflags side-exit) and differentially prove each byte-identical (result + fflags + NaN-box)
 over the FP corner set — never a blanket full translation.
-</content>
+
+## 6. Measured Omarchy move subset (E5.5-T03t)
+
+T03s independently recorded the current R3 renderer at 13,424,839 FP-compute
+instructions among 99,998,678 retirements (13.425016%), including 3,545,385
+FSGNJ.S-family operations. Complete 64-byte region counts support the reopening
+condition; the truncated PC/insn pair list is not a full-workload distribution.
+See `evidence/omarchy-profile/renderer-opcodes-r1/` and its critic audit.
+
+The narrow hybrid now emits integer operations for **FSGNJ.S, FSGNJN.S,
+FSGNJX.S, FMV.W.X and FMV.X.W**. Every other F/D operation retains the previous
+interpreter policy. No host floating-point instruction, rounded arithmetic or
+exception synthesis is introduced. This is instruction support, not a measured
+speedup or a responsive-desktop verdict; the original physical-input deadline
+still gates the Omarchy release.
+
+Sign injection checks NaN boxes independently for both operands, preserves the
+payload of a valid box, and boxes its result. FMV.X.W instead uses raw low bits
+and sign-extends them; FMV.W.X boxes raw low integer bits. The sign operations and
+FMV.W.X mark FS Dirty even for an unchanged value; FMV.X.W leaves FS unchanged.
+All five preserve fflags and frm, including reserved frm values since they do
+not round. These rules follow the [F specification](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/f-st-ext.adoc)
+and [D NaN-boxing specification](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/d-st-ext.adoc).
+
+### Handoff and precise exits
+
+The formerly reserved `+0x108..+0x208` range holds all 32 raw FPR words, including
+writable f0. `+0x208` retains fcsr in its low byte and adds host-only metadata:
+bit 8 is FS-enabled, bit 9 records an FP-state write, and bits 32..63 are the
+exact FPR write mask. This packed transport word is never exposed as a guest CSR.
+Other offsets and the 568-byte transfer span stay unchanged. FP writes update
+this memory immediately, so same-module and cross-module successors share it.
+Only executed writes commit back, including an FP prefix before a memory fault.
+
+Each translated block checks FS immediately before its first selected FP op.
+FS cannot change inside the block: CSR instructions remain interpreter boundaries.
+A failed check returns exit code 9 with the exact raw instruction in exit_info,
+the virtual fault PC and the exact retired chain prefix. Core handles it through
+the existing precise-trap path; no prefix instruction is replayed.
+
+Native and browser handoffs skip the FPR copy only while both object identity
+and mutation version agree. Defaults and clones allocate a new non-architectural
+identity; FP writes increment only a local version. Neither stamp is serialized
+or included in architectural equality. This covers equal write counts and
+replacement at the same address without adding an atomic to each FP write.
+
+## 7. Measured FP memory transfers (E5.5-T03u)
+
+FLW/FSW and FLD/FSD, including RV64C's existing FLD/FSD expansions, now use
+exactly the integer JIT memory imports and inline RAM path. FLW boxes its raw
+32-bit result; FLD retains all 64 bits. Both dirty FS only after success. FSW
+stores the raw low 32 bits even for a malformed NaN box; FSD stores all 64 bits.
+Stores preserve FS. All transfers preserve fflags/frm and use the same FS-Off
+guard and original instruction parcel as the measured move subset.
+
+Integer base registers and FP source/destination registers remain separate even
+when their indices alias. Raw stores enter the existing bounded commit log,
+reservation invalidation, atomic barrier and code-page invalidation path. A
+fault preserves the completed prefix and never replays its device side effects.
+
+The independent memory attack found that a successful four-byte PMP check could
+previously publish a whole-page inline tag. Both integer and FP refills now
+require the entire 4 KiB physical page to be ordinary RAM with the required PMP
+permission at the effective data privilege and with triggers idle. Subpage
+permissions remain on checked imports. This changes cache eligibility, not the
+result of the already completed access.
+
+The renderer recorded 4,241,032 FP transfers in a 99,998,678-instruction window.
+This slice removes that measured boundary; physical keyboard readback and a
+visible application response remain the separate desktop acceptance gate.
+
+## 8. Measured single-precision comparisons (E5.5-T03v)
+
+The renderer recording contains 1,713,705 FEQ.S/FLT.S/FLE.S instructions in
+99,998,678 retirements. These three operations now compile with integer bit
+operations. NaN boxing is checked before classifying operands, signed zeros
+compare equal, and negative values reverse the unsigned magnitude ordering.
+There is no host floating-point arithmetic or rounded result in this path.
+
+All comparisons with NaN produce integer zero. FEQ adds NV only for signaling
+NaNs; FLT/FLE add NV for either kind of NaN. A malformed box becomes canonical
+quiet NaN, including when its low bits resemble signaling NaN. These rules
+follow the [F comparison specification](https://docs.riscv.org/reference/isa/v20260120/unpriv/f-st-ext.html)
+and [D NaN-boxing specification](https://docs.riscv.org/reference/isa/v20260120/unpriv/d-st-ext.html).
+
+Generated code ORs accrued flags and the FP dirty marker into the existing
+handoff word immediately. Its FPR write mask and frm bits remain unchanged.
+Native and browser exits accrue those flags before marking FS Dirty, including
+comparisons writing x0 and prefixes before a later memory fault. A fresh entry
+still reloads live fcsr, so an interpreted CSR clear cannot revive stale flags.
+The existing FS-Off guard preserves the exact virtual PC and original word.
+
+All source FPR bits survive. Double-precision comparisons, conversions and
+rounded arithmetic remain interpreted. Exact instruction behavior does not
+establish desktop latency; physical nonce readback and a visible application
+response remain the release gate.
+
+## 9. Measured FADD.S/FMUL.S helper boundary (E5.5-T03w)
+
+Generated blocks admit only FADD.S and FMUL.S from the arithmetic family.
+They use `env.fp_arith_s(i32 a, i32 b, i32 multiply, i32 resolved_rm) -> i64`,
+a pure call to the same integer-only `F32::add`/`F32::mul` backend used by the
+interpreter. The result packs raw f32 bits in bits0..31 and new exception flags
+in bits32..36. The helper has no hart, bus, memory or scheduler reference.
+
+Generated code checks FS before its first FP instruction and resolves each
+arithmetic instruction's static/dynamic rounding mode before any helper call.
+A reserved mode takes the precise illegal-instruction exit with original parcel,
+virtual PC and completed prefix. NaN-box checking precedes the helper; its
+result is boxed and published immediately with the existing FPR dirty mask.
+New flags are ORed into FP control state without changing frm.
+
+The helper is import index5 only in modules containing selected arithmetic.
+Integer-only modules retain their five imports and identical generated bytes.
+Batch exports and intra-module calls use the actual allocated function indices,
+so a mixed module shifts every block definition together. Native and browser
+executors expose the same pure import; private and shared memory paths keep the
+existing handoff. Other arithmetic, conversions and double-precision operations
+remain interpreted. This capability alone makes no desktop responsiveness claim.
+
+Literal goldens exposed the pinned APFloat finite-saturation overflow status gap.
+F32 add/mul restore OF only for an inexact largest result whose widened software
+operation reaches magnitude 2^128. Near-boundary truncation below 2^128 remains
+NX only; the original rounded result is retained. The independent reference is
+[Berkeley SoftFloat rounding](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c),
+which raises OF|NX for overflow even when directed rounding returns the maximum
+finite value. No other arithmetic family or format changes in this slice.
+
+## 10. Measured integer-to-float conversions (E5.5-T03x)
+
+The same renderer recording contains 985,870 FCVT.S.W/WU/L/LU retirements.
+These four instructions now call `env.fp_from_int_s(i64 value, i32 width,
+i32 resolved_rm) -> i64`, backed by the existing integer-only
+`softfloat::f32_from_int`. Width codes 0/1/2/3 denote W/WU/L/LU. The full source
+integer crosses the helper boundary; the backend truncates and interprets its
+signedness. Raw f32 bits and new flags use the existing packed helper result.
+No hart, memory, device or scheduler reference is passed.
+
+The generated FS and per-instruction rounding checks precede the helper call.
+Integer source registers participate in the existing batch read masks, so a
+direct predecessor's updated integer value is visible. FPR destinations use
+the separate boxed FPR/dirty-mask path, including writable f0; x0 stays zero.
+Publishing the packed result and ORing flags is shared with arithmetic and
+does not modify frm. Reserved modes retain the original parcel and virtual
+fault PC after any completed prefix.
+
+The optional conversion import is index 5 when no arithmetic helper is present,
+or 6 after that helper. Generated bodies retain its actual allocated index;
+batch exports and direct calls already use their allocated function indices.
+Integer-only and arithmetic-only modules retain their existing layout. Other
+conversion directions and FP families keep their established admission policy.
+This capability does not establish physical desktop responsiveness.
+
+## 11. Measured float-to-word conversions (E5.5-T03y)
+
+The renderer recording contains 426,264 single-precision float-to-integer
+retirements, without separating destination widths. The saved renderer page
+contains eight FCVT.W.S/RTZ encodings. FCVT.W.S and FCVT.WU.S now call the pure
+`env.fp_to_word_s(i32 bits, i32 unsigned, i32 resolved_rm) -> i64` helper through
+the existing integer-only `softfloat::f32_to_int` backend. Low result bits and
+new flags fit the existing packed word; L/LU destinations stay interpreted.
+The helper receives no execution context and has no memory/device side effect.
+
+Generated code checks FS, validates the resolved rounding mode and canonicalizes
+malformed NaN boxes before the call. It sign-extends the returned low 32 bits
+for both W and WU, writes the integer destination and accrues flags/FS Dirty
+without writing any FPR or its dirty-mask bits. An exact result discarded into
+x0 still dirties FS. Integer batch write masks include the destination so a
+direct successor consumes the current value. The optional helper is allocated
+after arithmetic and from-integer imports; its actual index is retained at
+every call site, and all defined functions use their allocated indices.
+
+The [RISC-V F conversion rules](https://docs.riscv.org/reference/isa/v20260120/unpriv/f-st-ext.html)
+require clipping according to the rounded result and suppress new NX when NV
+is raised. This includes negative fractions that can round to unsigned zero
+without invalidity. Independent literal tests cover these distinctions, word
+sign extension, NaNs, flags, reserved modes and fault prefixes. The software
+backend, decoder and interpreter remain unchanged. Desktop responsiveness is
+still judged by physical input, independent nonce readback and real pixels at
+the original deadline.
+
+## 12. Measured single-precision division (E5.5-T03z)
+
+The renderer recording contains 213,132 FDIV.S retirements; its saved code page
+contains four dynamic-rounding division parcels. FDIV.S now calls the pure
+`env.fp_div_s(i32 a, i32 b, i32 resolved_rm) -> i64` helper through the existing
+integer-only `F32::div` backend. Source NaN boxes and FS/resolved rounding are
+checked before the call. Boxed result bits, sticky flags and FPR dirty masks
+use the established arithmetic publication path. The helper takes no guest
+context and cannot touch memory, devices or scheduling. Its optional import
+comes after the three existing FP helpers; every call retains the allocated
+index (5 alone, up to 8 with all three predecessors). Modules without division
+retain their previous import layout and emitted behavior.
+
+Independent exact-rational literals exposed two inherited division flag gaps
+in the pinned APFloat backend. F32 division alone corrects missing OF for an
+inexact largest finite result whose exact magnitude reaches 2^128, and missing
+UF when a tiny value rounds to the smallest normal. Original rounded bits and
+all other FP families/formats remain unchanged. Normalized 24-bit integer
+significands make both checks exact; no host floating point is used.
+
+For tininess, precision-24 rounding with an unbounded exponent is distinct
+from the final subnormal rounding. Immediately below 2^-126, nearest modes
+reach normal at 2^-126−2^-151; away-from-zero rounding reaches normal strictly
+above 2^-126−2^-150. Comparisons against those rational boundaries retain UF
+where the final result itself is normal. This follows the primary
+[SoftFloat division](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/f32_div.c)
+and [rounding](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c)
+paths and the [RISC-V tininess rule](https://docs.riscv.org/reference/isa/_attachments/riscv-unprivileged.pdf).
+The worker retains the original failing literal run and a direct backend
+regression, alongside native/private/shared generated-module evidence.
+
+Instruction correctness does not establish desktop responsiveness. The actual
+trusted-keyboard, independent nonce and visible-response gate remains 120 seconds.
+
+## 13. Measured single-precision fused multiply-add (E5.5-T03an)
+
+The recorded R3 workload also contains 1,278,792 FMADD-opcode retirements.
+The raw opcode histogram does not separate formats. Independently rebuilding
+its saved renderer address space locates 24 FMADD.S/dynamic-rounding parcels
+in the measured hot regions. This corrects the earlier claim that the selected
+FP subsets exhausted the measured workload. The exact AL post-failure host
+sample still executes F32::fma. Neither observation establishes a speedup.
+
+FMADD.S alone now calls `env.fp_fmadd_s(i32 a, i32 b, i32 c, i32 rm) -> i64`.
+The helper performs one software fused operation. All three NaN boxes and the
+resolved rounding mode are checked before the call, and all sources are read
+before destination publication, preserving every alias position. Result bits,
+sticky flags, FS Dirty and the FPR write mask use the established packed-result
+path. The optional import follows the four earlier FP helpers and keeps its
+allocated index; modules without FMADD retain their previous layout. Other
+fused instructions and double precision retain their admission policy.
+
+Independent exact-rational literals found missing OF for finite saturation and
+missing UF at some tiny results rounded to normal in the existing F32 fused
+backend. A narrow correction preserves its result bits and only checks those
+two inexact boundary outputs. It widens the inputs exactly to software binary64
+and performs a directed fused operation; binary64 has sufficient exponent range
+for every binary32 product and sum. Every comparison threshold is exactly
+representable, so downward magnitude rounding preserves strict-less-than and
+at-least comparisons, and upward rounding preserves at-most comparisons. This
+also distinguishes 2^128 minus a minimum subnormal from 2^128 plus one, which a
+nearest-rounded wider check could conflate. The shared F32 correction applies
+to interpreted fused sign variants; F64 and other arithmetic families remain
+unchanged. No host floating-point operation is introduced.
+
+Semantics follow the [RISC-V fused-operation rules](https://github.com/riscv/riscv-isa-manual/blob/main/src/unpriv/f-st-ext.adoc)
+and the primary [SoftFloat fused operation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_mulAddF32.c)
+and [rounding implementation](https://github.com/ucb-bar/berkeley-softfloat-3/blob/master/source/s_roundPackToF32.c).
+The actual physical nonce and visible returned-prompt gate remains 120 seconds.
+
+
+## 14. Direct browser imports for pure FP helpers (E5.5-T03ao)
+
+The browser executor binds its five pure FP imports directly to scalar exports
+from the owning main WebAssembly instance. Each exported function delegates to
+the same integer-only numerical helper with the existing i32/i64 signature.
+Generated modules retain their existing import layout and guard/publication
+code. Loads, stores and atomics keep their context-dependent closures.
+
+The independent browser tests check actual function identity, all five types,
+full packed i64 results, retained imports after executor replacement/drop, and
+memory growth. A paired browser benchmark compares the frozen closure bundle
+with this bundle on identical compiled guest work. The physical keyboard nonce
+and visible returned-prompt acceptance remain separate, at Enter+120 seconds.

@@ -1,0 +1,6 @@
+{"kind":"started","pid":13,"tracerPid":16,"monotonicMs":1201849445}
+{"kind":"seized","pid":13,"tid":13}
+{"kind":"process-identity","tid":13,"tgid":13,"tracerPid":16,"startTime":"120184944","comm":"clone-fixture-a","exe":"/output/clone-fixture-aarch64"}
+{"kind":"error","stage":"seize","tid":15,"errno":1}
+{"kind":"detached","tid":13}
+{"kind":"finished","failed":true,"stops":0,"reads":0,"orphanExits":0,"capturedBytes":0,"stopBudgetReached":false,"stopSignal":0,"observationEndMonotonicMs":1201849445,"cleanupEndMonotonicMs":1201849445}

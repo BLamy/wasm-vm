@@ -1,0 +1,53 @@
+{
+  "diagnosticOnly": true,
+  "desktopAcceptance": false,
+  "actualHead": "26085068dd2b892f4c2ab585e3461c3f91aefe6a",
+  "servedResponses": 83,
+  "explicitDiagnosticCommands": 0,
+  "implicitSerialCommands": [
+    {
+      "command": "ls -la '/root'",
+      "sentAt": "2026-09-14T03:47:04.590Z",
+      "completedAt": "2026-09-14T03:48:36.931Z"
+    },
+    {
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-14T03:47:34.592Z",
+      "completedAt": "2026-09-14T03:49:24.562Z"
+    },
+    {
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-14T03:49:29.563Z",
+      "completedAt": null
+    }
+  ],
+  "keyupToEndpointMs": 142878,
+  "immediateToEndpointMs": 142229,
+  "guestRetiredDelta": 597947910,
+  "guestClockTicksDelta": "597947895",
+  "frames": [
+    1,
+    1,
+    1
+  ],
+  "presents": [
+    1,
+    1,
+    1
+  ],
+  "opaqueAgentMessages": 190,
+  "digests": {
+    "identities.json": "d75f6b6d63aeee69e4a7aaef6af2ed2a9442acded22dc190575a64012d8f2c33",
+    "wire.json": "f20726ca47d71c7936a9d1e31bad1a134119033fa0554282fa19b431ba0e97a8",
+    "diagnostic.json": "710b3705e3daed7c82db5c09a1b5d17ac1f5f0d3706b7010535079091a5708f0",
+    "before-input.png": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e",
+    "after-input-immediate.png": "e9e97d1afcbaf32fba419933c1ac580983d21901d6d195e9c710258776533ee9",
+    "after-input-window.png": "eb4b181dc1480935a2ef49f1480d082eeb8371d5229dbef13a473b1c05c3da3e"
+  },
+  "limitations": [
+    "Screenshots require separate visual inspection.",
+    "Opaque agent messages are not payload-audited.",
+    "Input queue drainage is not guest consumption.",
+    "Sequential stats are not atomic instruction/clock snapshots."
+  ]
+}

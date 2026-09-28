@@ -1,0 +1,69 @@
+✔ harness-only cold mode requires local LP0 chunks, no pair, and exactly 90 minutes (4.186667ms)
+✔ harness-only origin check refuses inherited storage or app/worker execution (38.509542ms)
+✔ harness-only cold proof rejects stored restore even with shipped restore false (0.946708ms)
+✔ harness-only desktop proof accepts mapped LP0 with blank log or a strict actual label (26.416875ms)
+✔ harness-only desktop proof rejects stale PID, worker, duplicate environment, and false GL claims (11.598375ms)
+✔ harness-only outer deadline includes queued operations and rejects expired success (41.917ms)
+✔ prewarm sync proof rejects cross-TTY marker evidence (115.963875ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.495625ms)
+✔ post-marker presentation helper rejects typing frames (1770.382916ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.669417ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.329208ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.378708ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.339375ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (3.684ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (24.686084ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (2.156333ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (1.727667ms)
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (1835.277125ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (20.577959ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (5.87475ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (18.940166ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (1.2945ms)
+✔ server identities bind exactly the bytes served and their repository path (0.701041ms)
+✔ T03g LP setting accepts only 0 or 1 and preserves unset behavior (25.624459ms)
+✔ T03g LP0 requires exact same-PID environment values and no exact worker (36.166958ms)
+✔ T03g LP1 validates the setting but does not claim an active renderer (8.218875ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 25
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4506.082417
+
+✖ failing tests:
+
+test at tools/verify/omarchy-desktop-live.test.mjs:154:1
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (1835.277125ms)
+  AssertionError [ERR_ASSERTION]: node:net:2302
+        const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                      ^
+  
+  Error: listen EPERM: operation not permitted 127.0.0.1
+      at Server.setupListenHandle [as _listen2] (node:net:2302:21)
+      at listenInCluster (node:net:2433:12)
+      at node:net:2662:7
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    code: 'EPERM',
+    errno: -1,
+    syscall: 'listen',
+    address: '127.0.0.1'
+  }
+  
+  Node.js v24.20.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.test.mjs:169:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,132 @@
+[
+  {
+    "arm": "control",
+    "reportSha256": "d07c1228c8181a6828bc88a1408bda8036fd0aa2695a342a694c6fa99fa05713",
+    "inputReadbackDeadline": "2026-09-16T01:25:27.477Z",
+    "physicalEvents": 128,
+    "completedNonceReads": 12,
+    "pendingNonceReads": 1,
+    "nonceVerified": false,
+    "desktopAccepted": false,
+    "frames": [
+      2,
+      2
+    ],
+    "intervalRetired": 1171954511,
+    "intervalJitRetired": 392248093,
+    "intervalJitPercent": 33.469566379782464,
+    "coldEpochs": [
+      "0",
+      "0"
+    ],
+    "countsDropped": [
+      8165047,
+      23042761
+    ],
+    "cacheInstalls": [
+      20420,
+      33499
+    ],
+    "cacheRetranslations": [
+      18387,
+      31017
+    ],
+    "cacheEvictionsBatches": [
+      5222,
+      7567
+    ],
+    "residentBlocks": [
+      54,
+      136
+    ],
+    "inputDeviceBefore": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "inputDeviceAfter": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "guestSecondsElapsed": 1.8311789,
+    "images": {
+      "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "visualObservation": "Personally viewed baseline and failure: original Foot prompt and cursor only, no typed command or application response."
+  },
+  {
+    "arm": "candidate",
+    "reportSha256": "cb8147bcdea6c4bf36481b0a374d6386477e6462a7bbb536b93135f51454c1c0",
+    "inputReadbackDeadline": "2026-09-16T01:29:46.053Z",
+    "physicalEvents": 128,
+    "completedNonceReads": 13,
+    "pendingNonceReads": 1,
+    "nonceVerified": false,
+    "desktopAccepted": false,
+    "frames": [
+      2,
+      2
+    ],
+    "intervalRetired": 1257950870,
+    "intervalJitRetired": 404673284,
+    "intervalJitPercent": 32.169243938755734,
+    "coldEpochs": [
+      "1",
+      "2"
+    ],
+    "countsDropped": [
+      0,
+      0
+    ],
+    "cacheInstalls": [
+      22345,
+      35645
+    ],
+    "cacheRetranslations": [
+      20473,
+      33534
+    ],
+    "cacheEvictionsBatches": [
+      3346,
+      5796
+    ],
+    "residentBlocks": [
+      123,
+      141
+    ],
+    "inputDeviceBefore": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "inputDeviceAfter": {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    "guestSecondsElapsed": 1.9655483,
+    "images": {
+      "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "visualObservation": "Personally viewed baseline and failure: original Foot prompt and cursor only, no typed command or application response."
+  }
+]

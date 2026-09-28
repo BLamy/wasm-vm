@@ -1,0 +1,34 @@
+{
+  "status": "provisional; final source/artifacts/cold/production/public/physical pending",
+  "fixtures": {
+    "tests/support/jit_fp_to_word_verifier.rs": "20dea48d13a43b48143acccba3556bc93d0b597b075a3ea2bad2759310f78d57",
+    "crates/jit-runtime/tests/fp_to_word_verifier.rs": "5c5863ad415b324910b886bfec1ad35d35a0a4efe2fec0c1d0d280cf7148b753",
+    "crates/wasm/tests/jit_fp_to_word_verifier.rs": "87628ce8b1a2342960b89d41c87a7ea0f7ee2b50d78bda946094c878946b2bf1"
+  },
+  "logs": {
+    "native-preseal.log": "c697d07cf1fef76865f9f45c3cc1a1f3d33486cf6db1fc9155b6f5ccfe36684f",
+    "native-mask-preseal.log": "b2afa94d4103fc37e0999e948c4773aedcaa5759746e93505b24580103ec7edc",
+    "wasm-preseal-fixed.log": "85d9a79a4c05758fdb2c4f455a6e3580b6e9ccb8b12c0f304b70232fd5b9cabe",
+    "clippy-native.log": "bb9327488cc3fc17e29e14b1390b492c55f6b060e2ad55ac74f1a7a073384044",
+    "clippy-wasm.log": "73323e5a4e5fa9c0a7805293d6a69d3367acee47092aab1d36b566b24536fb57",
+    "sabotage-mutant.log": "270e2e6e13113eeaa731bc5e24e8dd376a166a29cf36701c67f05a139804260b",
+    "sabotage-restored.log": "b49fd42bd2694eec0fbfed04270ef11170cc89df70b7a8bfe00c454305aa2278"
+  },
+  "native_tests": 5,
+  "wasm_tests": 6,
+  "literal_cases_per_executor": 21120,
+  "literal_digest": 4083560513975942652,
+  "seeded_cases_per_executor": 1792,
+  "illegal_per_executor": 868,
+  "seeded_digest_all_executors": 4721190114470949240,
+  "control_cases_per_executor": 12,
+  "control_digest": 8504544371684976080,
+  "instrumented_cases": 2048,
+  "legal_helper_calls": 1080,
+  "illegal_helper_calls": 0,
+  "real_growth_scenarios": 6,
+  "real_growth_bytes_each": 65536,
+  "chain_scenarios": 16,
+  "sabotage_detected": true,
+  "fmt_clippy": "pass"
+}

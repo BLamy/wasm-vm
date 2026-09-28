@@ -1,0 +1,316 @@
+OMARCHY_MODE_PREPARATION {"at":"2026-09-16T03:31:04.964Z","brightPixels":172,"brightColors":16,"nonblank":true,"frames":4}
+{
+  "synthetic": true,
+  "noGuestLaunched": true,
+  "prediction": "Nonblank pixels with non-advanced frame counters cannot authorize screenshot or export",
+  "held": true,
+  "captures": 0,
+  "elapsedMs": 101,
+  "harnessSha256": "a9a622f5b7a220334af14bff94b19b770bb2b99207723edbeb0d32b3f6d2bc73",
+  "trace": [
+    "actual-mode-read",
+    "set-display",
+    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.monitor({ output = \"\", mode = \"640x400@60\", position = \"auto\", scale = 1 })'",
+    "fresh-mode-predicate",
+    "actual-mode-read",
+    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+    "forged-visible-but-stale-pixels"
+  ],
+  "receipt": {
+    "purpose": "offline-only-no-input",
+    "startedAt": "2026-09-16T03:31:04.955Z",
+    "deadlineAt": "2026-09-16T03:31:05.054Z",
+    "status": "preparation-failed-input-untested",
+    "keyboardTested": false,
+    "runtimeBefore": {
+      "label": "physical-keyboard-before",
+      "timestamp": "2026-09-16T02:35:38.678Z",
+      "context": "primary",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 214,
+        "executedBlocks": 27492493,
+        "retiredViaJit": 1668763032,
+        "directChainEntries": 71301370,
+        "directChainLinks": 43809288,
+        "dynamicLinkAttempts": 3524866,
+        "dynamicLinkHits": 2617341,
+        "dynamicLinkRefusals": 907525,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 68,
+        "dynamicLinkInstalls": 410140,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 27492493,
+          "stateCopyCalls": 54984986,
+          "stateCopyBytes": 5685274872,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 19616641,
+          "authorityChecks": 37607375,
+          "memorySplitExits": 140313,
+          "deviceBoundaries": 48126,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 2075987540,
+        "jitEngineCalls": 27492493,
+        "jitLogicalBlocksPerEngineCall": 2.5934850651776107,
+        "jitRetiredShare": 0.8038405818177502,
+        "chainLinksMade": 2591,
+        "chainLinksCut": 2443,
+        "chainDispatchEntries": 11804916,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 20490146,
+        "jitResidencyPolicy": "cap-256",
+        "jitResidencyCap": 256,
+        "jitSubmittedMembers": 5260,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 1980,
+        "jitCacheInstalls": 5162,
+        "jitCacheRetranslations": 1940,
+        "jitCacheEvictions": 1690,
+        "jitCacheBatches": 198,
+        "jitCacheCodeBytes": 14230085,
+        "compileQueue": {
+          "admitted": 10926,
+          "droppedBackpressure": 7245,
+          "cancelledStale": 0,
+          "popped": 7784,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 15029,
+          "deduped": 14457647,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 3891237,
+          "excluded": 105,
+          "queueDepth": 0,
+          "queueHighWater": 392,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 25385308,
+        "blockBuilds": 4850133,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 512,
+          "capacity": 65536
+        }
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 4152,
+        "totalSliceMs": 58557.71000576019,
+        "averageSliceMs": 14.103494702736077,
+        "maxSliceMs": 98.59999990463257,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 2
+          },
+          {
+            "leMs": 8,
+            "count": 387
+          },
+          {
+            "leMs": 16,
+            "count": 2687
+          },
+          {
+            "leMs": 32,
+            "count": 869
+          },
+          {
+            "leMs": 64,
+            "count": 190
+          },
+          {
+            "leMs": 128,
+            "count": 17
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 98.67999982833862,
+        "requestedInstructions": 2076000000,
+        "retiredInstructions": 2075987540,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 15,
+        "outputBytes": 2324,
+        "inputCalls": 2,
+        "inputBytes": 129,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 4153,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1372898080",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "guestSession": {
+        "key": "omarchy",
+        "generation": 1
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    },
+    "foot": {
+      "address": "synthetic-foot",
+      "class": "foot",
+      "mapped": true,
+      "hidden": false,
+      "at": [
+        10,
+        36
+      ],
+      "size": [
+        620,
+        354
+      ]
+    },
+    "active": {
+      "address": "synthetic-foot",
+      "class": "foot",
+      "mapped": true,
+      "hidden": false,
+      "at": [
+        10,
+        36
+      ],
+      "size": [
+        620,
+        354
+      ]
+    },
+    "lastPixels": {
+      "state": {
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "latest": {
+          "resourceWidth": 640,
+          "resourceHeight": 448,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 400
+          }
+        },
+        "backend": "canvas2d",
+        "width": 1280,
+        "height": 800
+      },
+      "pixels": {
+        "brightPixels": 172,
+        "brightColors": 16,
+        "nonblank": true
+      }
+    },
+    "error": "Error: mode preparation: wait for visible Foot: deadline exceeded (UNPROVEN)",
+    "finishedAt": "2026-09-16T03:31:05.055Z"
+  }
+}

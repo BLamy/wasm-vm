@@ -1,0 +1,23 @@
+{
+  "scratch": "/private/tmp/wasm-vm-division-critic-c_bjr246",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/private/tmp/wasm-vm-division-critic-c_bjr246/Cargo.toml",
+    "--",
+    "--nocapture"
+  ],
+  "mutation": "One isolated expected 1/3 RNE result changed from 3eaaaaab to 3eaaaaaa",
+  "original_support_sha256": "031f46b2fdb5fcde0914c259de5e10d6ea19c361bff490dd3ef45394e1785c61",
+  "mutant_support_sha256": "19921f1166c3203fc49bd782025c208543a21de11cc70983d5814288c86df25e",
+  "wrapper_sha256": "dd2271d7d9e0592bcb3ff17816c9b1259f51358c131e907f780add5165482bc8",
+  "restored_support_sha256": "031f46b2fdb5fcde0914c259de5e10d6ea19c361bff490dd3ef45394e1785c61",
+  "mutant_exit": 101,
+  "restored_exit": 0,
+  "logs": {
+    "sabotage-mutant.log": "53beb7b510f180415601198c45aae1de6053ffc96c3167f79f3bf1f8ad2ec76d",
+    "sabotage-restored.log": "51a6f599fe61d53eb7eb4ffcb0f33086a279657ced2f132a810bd403af62cffe"
+  }
+}

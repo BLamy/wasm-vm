@@ -1,0 +1,84 @@
+{
+  "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+  "bytes": 1602331,
+  "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "exports": {
+    "__jit_fp_arith_s": {
+      "functionIndex": 1710,
+      "typeIndex": 93,
+      "signature": [
+        [
+          127,
+          127,
+          127,
+          127
+        ],
+        [
+          126
+        ]
+      ],
+      "definedInMainInstance": true
+    },
+    "__jit_fp_div_s": {
+      "functionIndex": 1800,
+      "typeIndex": 37,
+      "signature": [
+        [
+          127,
+          127,
+          127
+        ],
+        [
+          126
+        ]
+      ],
+      "definedInMainInstance": true
+    },
+    "__jit_fp_fmadd_s": {
+      "functionIndex": 1748,
+      "typeIndex": 93,
+      "signature": [
+        [
+          127,
+          127,
+          127,
+          127
+        ],
+        [
+          126
+        ]
+      ],
+      "definedInMainInstance": true
+    },
+    "__jit_fp_from_int_s": {
+      "functionIndex": 1801,
+      "typeIndex": 162,
+      "signature": [
+        [
+          126,
+          127,
+          127
+        ],
+        [
+          126
+        ]
+      ],
+      "definedInMainInstance": true
+    },
+    "__jit_fp_to_word_s": {
+      "functionIndex": 1723,
+      "typeIndex": 37,
+      "signature": [
+        [
+          127,
+          127,
+          127
+        ],
+        [
+          126
+        ]
+      ],
+      "definedInMainInstance": true
+    }
+  }
+}

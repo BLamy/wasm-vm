@@ -1,0 +1,40 @@
+[INFO]: 🎯  Checking for the Wasm target...
+    Blocking waiting for file lock on build directory
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.39s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/jit_fp_memory_growth_critic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_growth_critic-5423a30b3e875881.wasm)
+running 2 tests
+Invoking test: critic_fp_growth_shared_success_and_precise_faults
+CRITIC_GROWTH inline=true fault=None code=Fallthrough pc=0000000040006018 retired=6 trap=None f31=ffffffffffa12345 f0=7ff0000000001234 writes=1 payload=ffffffffffa12345
+CRITIC_GROWTH inline=true fault=Store code=Trap pc=0000000040006008 retired=2 trap=Some(Trap { cause: StoreAccessFault, tval: 268435456 }) f31=ffffffffffa12345 f0=0123456789abcdef writes=1 payload=ffffffffffa12345
+CRITIC_GROWTH inline=true fault=Load code=Trap pc=0000000040006010 retired=4 trap=Some(Trap { cause: LoadAccessFault, tval: 1342177280 }) f31=ffffffffffa12345 f0=0123456789abcdef writes=1 payload=ffffffffffa12345
+test critic_fp_growth_shared_success_and_precise_faults ... ok
+Invoking test: critic_fp_growth_private_success_and_precise_faults
+CRITIC_GROWTH inline=false fault=None code=Fallthrough pc=0000000040006018 retired=0 trap=None f31=ffffffffffa12345 f0=7ff0000000001234 writes=1 payload=ffffffffffa12345
+CRITIC_GROWTH inline=false fault=Store code=Trap pc=0000000040006008 retired=0 trap=Some(Trap { cause: StoreAccessFault, tval: 268435456 }) f31=ffffffffffa12345 f0=0123456789abcdef writes=1 payload=ffffffffffa12345
+CRITIC_GROWTH inline=false fault=Load code=Trap pc=0000000040006010 retired=0 trap=Some(Trap { cause: LoadAccessFault, tval: 1342177280 }) f31=ffffffffffa12345 f0=0123456789abcdef writes=1 payload=ffffffffffa12345
+test critic_fp_growth_private_success_and_precise_faults ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.12s
+
+     Running tests/jit_fp_memory_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_verifier-5cfb98a8a325b795.wasm)
+running 2 tests
+Invoking test: verifier_shared_raw_memory_and_permissions
+test verifier_shared_raw_memory_and_permissions ... ok
+Invoking test: verifier_private_raw_memory_and_permissions
+test verifier_private_raw_memory_and_permissions ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.16s
+

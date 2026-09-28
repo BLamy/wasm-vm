@@ -1,0 +1,82 @@
+### command (run2/009.cmd)
+ps -o pid,tty,args --ppid 503; cat /proc/uptime; date +%T.%N; echo "hello from serial" > /dev/pts/0 2>&1 || true; ls -la /dev/pts/; sleep 1; date +%T.%N; cat /proc/uptime; L=$(ls /run/user/1000/hypr/*/hyprland.log); tail -n 12 $L | cut -c1-140
+
+### output
+# host_ms=45199 at=810.587s status=0
+    PID TT       COMMAND
+    763 pts/0    /bin/bash
+704.21 536.75
+02:31:55.161482300
+total 0
+drwxr-xr-x  2 root    root      0 Sep 10 02:20 .
+drwxr-xr-x 14 root    root  13140 Sep 10 02:20 ..
+crw-------  1 omarchy tty  136, 0 Sep 10  2026 0
+c---------  1 root    root   5, 2 Sep 10 02:20 ptmx
+02:31:56.293462300
+705.41 536.75
+DEBUG @ 02:26:59.926865400 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:26:59.934993300 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+DEBUG @ 02:26:59.981680300 from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_d
+ERR @ 02:26:59.989225700 from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDevi
+ERR @ 02:26:59.989248100 from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDevi
+ERR @ 02:26:59.989266000 from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found
+ERR @ 02:26:59.989283500 from aquamarine ]: drm: initMgpu: no renderer
+ERR @ 02:26:59.989299400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:27:59.926969400 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:27:59.927000300 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:27:59.935199900 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+DEBUG @ 02:27:59.981861700 from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_d
+
+
+### command (run2/010.cmd)
+grep virtio7 /proc/interrupts; cat /proc/uptime; date +%T.%N; echo "second line from serial" > /dev/pts/0; sleep 0.5; grep virtio7 /proc/interrupts; date +%T.%N; sleep 3; grep virtio7 /proc/interrupts; date +%T.%N; cat /proc/uptime
+
+### output
+# host_ms=78699 at=864.901s status=0
+ 18:        166  SiFive PLIC   8 Edge      virtio7
+706.30 536.75
+02:31:57.243119600
+ 18:        166  SiFive PLIC   8 Edge      virtio7
+02:31:57.866315200
+ 18:        168  SiFive PLIC   8 Edge      virtio7
+02:32:00.994052000
+710.11 536.75
+
+
+### command (run2/011.cmd)
+sh /tmp/snap.sh > /tmp/a; cat /proc/uptime; sleep 2; cat /proc/uptime; sh /tmp/snap.sh > /tmp/b; awk "NR==FNR{a[\$1]=\$3;next}{d=\$3-a[\$1]; if(d>0) print d, \$1, \$2}" /tmp/a /tmp/b | sort -rn | head -6; L=$(ls /run/user/1000/hypr/*/hyprland.log); wc -l $L; tail -n +534 $L | grep -v -e eglQuery -e "Supported EGL" -e "no matching" -e initMgpu -e CConfigWatcher | cut -c1-140 | tail -40
+
+### output
+# host_ms=83028 at=953.317s status=0
+711.10 536.75
+713.18 536.75
+225 462 llvmpipe-0
+2 2051 sh
+1 2053 awk
+590 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log
+DEBUG @ 02:27:59.935199900 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:27:59.989510300 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:28:59.926225800 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:28:59.926256400 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:28:59.934422400 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:28:59.988725300 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:29:59.917936400 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:29:59.917966900 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:29:59.926174300 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:29:59.976428500 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:30:59.925174800 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:30:59.925205400 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:30:59.933311000 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:30:59.987602900 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:31:54.989783400 ]: Hyprctl: new connection from pid 1996
+DEBUG @ 02:31:55.177794000 ]: Damage: Box: xy: 12, 38 wh: 1256, 750
+DEBUG @ 02:31:55.177834100 ]: Damage: Surface (extents): xy: 26, 52 wh: 308, 34
+DEBUG @ 02:31:55.214201400 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:31:56.585594300 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:31:57.273476100 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:31:57.273506200 ]: Damage: Surface (extents): xy: 16, 6 wh: 1249, 13
+ERR @ 02:31:58.296227000 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:31:58.863778900 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:31:58.863805500 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+
+

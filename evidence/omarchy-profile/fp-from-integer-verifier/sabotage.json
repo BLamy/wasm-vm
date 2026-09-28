@@ -1,0 +1,26 @@
+{
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-fp-from-int-sabotage-obcmov2j",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-fp-from-int-sabotage-obcmov2j/Cargo.toml",
+    "--target-dir",
+    "/Users/blamy/Documents/Codex/wasm-vm/target",
+    "--test",
+    "fp_from_integer_verifier",
+    "verifier_native_conversion_literals",
+    "--",
+    "--nocapture"
+  ],
+  "expected_failure": "CRITIC_FCVT_POSITIVE_HALF_GOLDEN",
+  "original_expected": "ffffffff4b800000",
+  "sabotaged_expected": "ffffffff4b800001",
+  "returncode": 101,
+  "original_sha256": "c2fe4a8b016d2f7d459993316664062e37b77230406ee4e9f9e348bcd70ae54d",
+  "sabotaged_sha256": "caced72c2d1c5f64317f443f42715d1f88b48d9015323a6685d35adea8dd37f4",
+  "production_files_untouched": true,
+  "restored_returncode": 0,
+  "restored_log": "sabotage-restored.log"
+}

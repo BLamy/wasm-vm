@@ -1,0 +1,50 @@
+✔ generator binds chunkedImage to pretty JSON raw bytes, not canonical identity (166.848584ms)
+✔ generator rejects a mixed RAM/delta pair before rewriting output (276.987917ms)
+omarchy-rendering-recovery: focused source/syntax checks passed
+✔ tools/verify/omarchy-rendering-recovery.test.mjs (204.624625ms)
+✔ CSS/DPR rounding and minimum/maximum clamps are finite, hidden panes do not hotplug (1.293958ms)
+✔ desktopViewportPixelMode keeps a fixed bounded backing and CSS-contain fits each viewport (0.433667ms)
+✔ fixed desktop backing continues CSS resizing without a redundant hotplug or clear (0.647333ms)
+✔ pointer inverse uses the actual centered CSS canvas rect (0.168625ms)
+✔ 50 resizes/5 seconds send one trailing request at exactly 250ms, DPR listener rearms and disposes (2.274083ms)
+✔ in-flight requests serialize latest intent, stale replies and disposed completions cannot restore old state (0.733ms)
+✔ scalar fallback detects silent DPR changes without CSS or media-query notification (0.30075ms)
+✔ controller replacement ignores old completion, initial binding has no duplicate timer, errors recover (0.311041ms)
+✔ native fit keeps odd resource stride and independently checks every clipped/padded pixel (0.361833ms)
+✔ presentation keeps fixed viewport on pending old frame and later matching frame (1.073333ms)
+✔ requires a mapped Omarchy bar and background, not a process or login banner (0.507584ms)
+✔ a black or solid framebuffer is not rendered desktop evidence (2.517625ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (4.080625ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (2.409333ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.797042ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (1.34025ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.684083ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.509208ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (1.893458ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.55925ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.487459ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.069291ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (1.998667ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.405542ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.778958ms)
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.898875ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.515375ms)
+✔ browser button numbers map to the documented evdev codes (0.106791ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.519334ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.265208ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.14075ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.227ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (1.403375ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.241708ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (5.033917ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.240875ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.503791ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.395333ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 502.621833

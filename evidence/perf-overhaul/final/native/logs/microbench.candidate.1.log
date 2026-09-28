@@ -1,0 +1,23 @@
+
+running 2 tests
+test perf_fast_interpreter_does_not_trail_legacy ... ok
+test report ... === E1-T23 native perf baseline (MIPS = minstret / wall) ===
+| workload | median MIPS | spread % | retired |
+|---|---:|---:|---:|
+| alu | 74.4 | 2.8 | 20000000 |
+| branch | 91.6 | 7.6 | 20000000 |
+| memory | 84.2 | 5.2 | 20000000 |
+| fp | 75.8 | 5.4 | 20000000 |
+
+JSON:
+[
+  { "workload": "alu", "mips_median": 74.37, "spread_pct": 2.8, "retired": 20000000 },
+  { "workload": "branch", "mips_median": 91.56, "spread_pct": 7.6, "retired": 20000000 },
+  { "workload": "memory", "mips_median": 84.25, "spread_pct": 5.2, "retired": 20000000 },
+  { "workload": "fp", "mips_median": 75.82, "spread_pct": 5.4, "retired": 20000000 },
+]
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 8.30s
+
+fast-interpreter: legacy=74.5 MIPS fast=160.1 MIPS ratio=2.15x

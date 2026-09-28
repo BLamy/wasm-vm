@@ -1,0 +1,29 @@
+{
+  "head": "f494ef51de1763d3a7f78d11f96d6afc50fc46e0",
+  "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "reportSha256": "48f3c5ce35ce838e1c546da0f35e9ea89ab80189f721b78a80e0278f193dbd0b",
+  "imagesViewedIndependently": [
+    {
+      "file": "evidence/omarchy-profile/fp-arithmetic-r1/cold/browser/suite.png",
+      "sha256": "9375c8176fd17b9f942255c15d00a7f8ff2e206a734eb3355e7e0ea9585c1f18",
+      "visualObservation": "All 127 tests passed; zero failed; 127 done, actual suite image."
+    },
+    {
+      "file": "evidence/omarchy-profile/fp-arithmetic-r1/cold/browser/capability-inspection.png",
+      "sha256": "e71079f9ebaf0d23b06df89822983b59ae3beac08598f6e770b5e1aff0c547a4",
+      "visualObservation": "Floating-point addition and multiplication, green status, 1/1 passing, live in browser; disclosed inspection-only reveal."
+    },
+    {
+      "file": "evidence/omarchy-profile/fp-arithmetic-r1/cold/browser/built-page.png",
+      "sha256": "750b63ed62a6883ed49830d34125430d21ff4d5fa523e4dd01b61f9194b874f7",
+      "visualObservation": "Actual T03w task detail visible with in-progress status at frozen source; task wording and live capability panels readable."
+    }
+  ],
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "errors": [],
+  "passed": true
+}

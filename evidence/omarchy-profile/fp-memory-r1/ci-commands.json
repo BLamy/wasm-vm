@@ -1,0 +1,20 @@
+{
+  "head": "6854af681417fee0235cca97f10d8557f1e54773",
+  "wasmSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+  "phase": "ci",
+  "commands": [
+    {
+      "label": "ci",
+      "args": [
+        "make",
+        "-k",
+        "ci"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T19:36:25Z",
+      "code": 2,
+      "finishedAt": "2026-09-15T19:43:44Z"
+    }
+  ],
+  "allPassed": false
+}

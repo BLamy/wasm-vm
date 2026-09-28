@@ -1,0 +1,11 @@
+{
+  "head": "c7dfe5912f77e1368000c1a68e4bce2ee7449011",
+  "purpose": "pre-freeze falsification, not final submission",
+  "sha256": {
+    "crates/core/src/jit.rs": "48dbb6fe6eb4d87e241b18fc26954b45c56c425476c6980e6b22e985ed22acd1",
+    "crates/jit-translate/src/lib.rs": "6dd59d0c6270fd65ecc32a32de5583f50ebf61b157ac94611bd8c036e4fe32ec",
+    "tests/support/jit_fp_comparisons_verifier.rs": "3b3eaa22c75f2ccc235090307b5714815063bc37b50f8a1eee5307da806c5feb",
+    "crates/jit-runtime/tests/fp_comparisons_verifier.rs": "f50f360605618402aba751e4c4be116e372291c36581a2a3e50539ad2e32741e",
+    "crates/wasm/tests/jit_fp_comparisons_verifier.rs": "c200ebce68bb875ca60a39d72a13a47f3d52a8cce20fa21ebf53ae3747c0bf74"
+  }
+}

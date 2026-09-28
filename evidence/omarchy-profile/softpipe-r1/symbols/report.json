@@ -1,0 +1,396 @@
+{
+  "schema": "wasm-vm.omarchy-softpipe.symbol-companion.v1",
+  "status": "passed",
+  "release": {
+    "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+    "expectedSha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+    "bytes": 1566204
+  },
+  "rawInput": {
+    "path": "target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "sha256": "7de90b04f4b00b5b39360c4fc9665921a7e0a5e454c65e039919e188fc9a3af2",
+    "bytes": 35074352
+  },
+  "profile": {
+    "path": "evidence/omarchy-profile/input-followup-r1/renderer.cpuprofile",
+    "sha256": "96d5cfb0d18f81cf3ff54af6b0473db34763859de3b5b76a82ec25642a601bc2",
+    "selectedIndices": [
+      183,
+      175,
+      286,
+      1394,
+      503
+    ]
+  },
+  "tools": {
+    "bindgen": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+    "wasmOpt": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt"
+  },
+  "commands": [
+    {
+      "command": "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+      "args": [
+        "--target",
+        "web",
+        "--out-dir",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/symbols/bindgen",
+        "--out-name",
+        "wasm_vm_wasm",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+      "args": [
+        "-O",
+        "-g",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/symbols/bindgen/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/symbols/named.wasm"
+      ],
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "provenance": {
+    "head": "8f2051b0f369ddf45f13fb08a0970cf16c6fce6c",
+    "releaseHistory": "7c6fc874560e807d312b7d3657aadeec42356f05 2026-09-10T02:17:55-04:00 fix(omarchy): restore coherent desktop and preserve viewport pixels\nca61b608286f555ce188b114518a6178f188136d 2026-09-09T22:18:07-04:00 fix(desktop): preserve GPU queue wakeups and fence streamed guest output\n0ceba313f589a7d4d1ddd7f5b87bccc79e6aaef8 2026-09-09T21:20:44-04:00 fix(omarchy): restore a fresh graphical desktop with paired memory and disk\n14e4acdc15d2e930fb614af1e9c5c230c4c8d4f3 2026-09-09T00:19:06-04:00 Support scalar memory across separate virtual page frames\n078500ebbef1c5d90adf973790ad68b7579a5879 2026-09-08T20:10:52-04:00 Specialize optional retirement capture with retained native and WASM proof\naaa8d40625eaf3a2bf9ba6a5dbe4ef0909495ca0 2026-09-08T17:23:16-04:00 test(plic): promote independent hostile gateway and seed regression\n84fd5190832924a0f609b4a10d1bfaee2704dc0e 2026-09-08T15:38:22-04:00 perf(wasm): retain inline cache authority across saved S privilege changes\ndeb595c78aa96cbcbc674fa3cbe30a7e53dd522f 2026-09-08T14:04:57-04:00 perf(wasm): retain inline cache across interrupt status changes",
+    "webDistBuildHistory": "a4e44a25b189e253271fab25de831f1bb5713d97 2026-09-09T21:30:20-04:00 fix(release): include public guest selection metadata in clean builds\n359f35f93476e7c4fe81fa4b0d7d60bc99e0fde5 2026-09-04T06:39:19-04:00 feat(e5-t06c): measure presentation backends\n5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4 2026-09-03T18:49:39-04:00 feat(e5-t13c): wire keyboard focus recovery\n933e8282c7c0e167980880a1d4a3c57a70bf1173 2026-09-01T01:57:59-04:00 feat(web): publish compute results on landing page\n1bc60f0c06279a71191e69fd47f0de6a64b5c296 2026-09-01T00:12:02-04:00 fix: invalidate published workload cache\n78fdd5779766c091ac9d0afc6c3c7d05f15f482a 2026-08-31T11:04:37-04:00 docs: replace monolithic docs with truthful topic pages\nc625ea10610179d06c799177510123fdbe7d61ac 2026-08-12T02:57:38-04:00 feat: isolate virtio networking and document JIT lessons\neaa7185b20e3dd40c4c9c575cabae817a435347b 2026-08-10T10:26:13-04:00 fix(jit): harden bulk handoff boundaries"
+  },
+  "named": {
+    "path": "target/omarchy-softpipe-r1/symbols/named.wasm",
+    "sha256": "954f5edfda14dd461ddf615f557a0a3116b88bdb28148dd841c70b4cd5162c57",
+    "bytes": 1737171
+  },
+  "sections": {
+    "release": [
+      {
+        "id": 1,
+        "length": 1385,
+        "payloadSha256": "b26457113116ce4f34b7fe379e489b551361a85b972d5a51e2e8822941b54671"
+      },
+      {
+        "id": 2,
+        "length": 9859,
+        "payloadSha256": "5678fbceed3edf26774e46f593b174f7186d0f391ef6407eb9c76197e913435c"
+      },
+      {
+        "id": 3,
+        "length": 1745,
+        "payloadSha256": "87e40e4f3ebcf3b61b5303645606dfb427c21506625c4493ee0026d525be4c2e"
+      },
+      {
+        "id": 4,
+        "length": 11,
+        "payloadSha256": "d279023a6f504a6bf137a952be55572589aaeefdbea02818880e2b2e1df52d40"
+      },
+      {
+        "id": 5,
+        "length": 3,
+        "payloadSha256": "2e2461dd6852f58de2d470cabcf5c41b6e56fdb6ee9169954fe02a13b3ef4bae"
+      },
+      {
+        "id": 6,
+        "length": 25,
+        "payloadSha256": "9f3284643e37aa8f76901e2f68da5958da703c849eb8be8df996785645fa7284"
+      },
+      {
+        "id": 7,
+        "length": 4117,
+        "payloadSha256": "e914528db1ef11007f69aa1722f9a2a9c83853fddba26e238548beecce8bbca1"
+      },
+      {
+        "id": 9,
+        "length": 1237,
+        "payloadSha256": "3886a87c211f062506871fef8d6a3be9b81c87ccc5331d9863b447db2c403447"
+      },
+      {
+        "id": 12,
+        "length": 2,
+        "payloadSha256": "f8bfc0acc4ff3ec30a6959a5917c1df34026d4e37f90ca26e93c68b11cfdbf3a"
+      },
+      {
+        "id": 10,
+        "length": 1351991,
+        "payloadSha256": "9c8489ecffbf94274fb2e119425202914ec6d5505db56073063f8478d94ebc06"
+      },
+      {
+        "id": 11,
+        "length": 195567,
+        "payloadSha256": "cd06613eb1d28221332c28104661db8a6cb873b782dc25187c2695de62920f24"
+      },
+      {
+        "id": 0,
+        "length": 112,
+        "payloadSha256": "7ea5678500a6a24975e7b4d1710b084b66d0c509360b169dbe2abb1d8b67497a"
+      },
+      {
+        "id": 0,
+        "length": 107,
+        "payloadSha256": "9e2ce4482fc954ee09d2ce53614423c249d91e954c7fcd5de98a26cb14a3fa31"
+      }
+    ],
+    "named": [
+      {
+        "id": 1,
+        "length": 1385,
+        "payloadSha256": "b26457113116ce4f34b7fe379e489b551361a85b972d5a51e2e8822941b54671"
+      },
+      {
+        "id": 2,
+        "length": 9859,
+        "payloadSha256": "5678fbceed3edf26774e46f593b174f7186d0f391ef6407eb9c76197e913435c"
+      },
+      {
+        "id": 3,
+        "length": 1745,
+        "payloadSha256": "87e40e4f3ebcf3b61b5303645606dfb427c21506625c4493ee0026d525be4c2e"
+      },
+      {
+        "id": 4,
+        "length": 11,
+        "payloadSha256": "d279023a6f504a6bf137a952be55572589aaeefdbea02818880e2b2e1df52d40"
+      },
+      {
+        "id": 5,
+        "length": 3,
+        "payloadSha256": "2e2461dd6852f58de2d470cabcf5c41b6e56fdb6ee9169954fe02a13b3ef4bae"
+      },
+      {
+        "id": 6,
+        "length": 25,
+        "payloadSha256": "9f3284643e37aa8f76901e2f68da5958da703c849eb8be8df996785645fa7284"
+      },
+      {
+        "id": 7,
+        "length": 4117,
+        "payloadSha256": "e914528db1ef11007f69aa1722f9a2a9c83853fddba26e238548beecce8bbca1"
+      },
+      {
+        "id": 9,
+        "length": 1237,
+        "payloadSha256": "3886a87c211f062506871fef8d6a3be9b81c87ccc5331d9863b447db2c403447"
+      },
+      {
+        "id": 12,
+        "length": 2,
+        "payloadSha256": "f8bfc0acc4ff3ec30a6959a5917c1df34026d4e37f90ca26e93c68b11cfdbf3a"
+      },
+      {
+        "id": 10,
+        "length": 1351991,
+        "payloadSha256": "9c8489ecffbf94274fb2e119425202914ec6d5505db56073063f8478d94ebc06"
+      },
+      {
+        "id": 11,
+        "length": 195567,
+        "payloadSha256": "cd06613eb1d28221332c28104661db8a6cb873b782dc25187c2695de62920f24"
+      },
+      {
+        "id": 0,
+        "length": 170963,
+        "payloadSha256": "f5f99ef6fc84719fd9156adb0e08d28c4da66ecbdbb1ea63086e6e0aa47e8d94"
+      },
+      {
+        "id": 0,
+        "length": 112,
+        "payloadSha256": "7ea5678500a6a24975e7b4d1710b084b66d0c509360b169dbe2abb1d8b67497a"
+      },
+      {
+        "id": 0,
+        "length": 107,
+        "payloadSha256": "9e2ce4482fc954ee09d2ce53614423c249d91e954c7fcd5de98a26cb14a3fa31"
+      }
+    ],
+    "allNoncustomSectionsEqual": true,
+    "mismatches": []
+  },
+  "binding": {
+    "releaseSha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+    "namedSha256": "954f5edfda14dd461ddf615f557a0a3116b88bdb28148dd841c70b4cd5162c57",
+    "names": 1883,
+    "sections": [
+      {
+        "id": 1,
+        "payloadSha256": "b26457113116ce4f34b7fe379e489b551361a85b972d5a51e2e8822941b54671"
+      },
+      {
+        "id": 2,
+        "payloadSha256": "5678fbceed3edf26774e46f593b174f7186d0f391ef6407eb9c76197e913435c"
+      },
+      {
+        "id": 3,
+        "payloadSha256": "87e40e4f3ebcf3b61b5303645606dfb427c21506625c4493ee0026d525be4c2e"
+      },
+      {
+        "id": 4,
+        "payloadSha256": "d279023a6f504a6bf137a952be55572589aaeefdbea02818880e2b2e1df52d40"
+      },
+      {
+        "id": 5,
+        "payloadSha256": "2e2461dd6852f58de2d470cabcf5c41b6e56fdb6ee9169954fe02a13b3ef4bae"
+      },
+      {
+        "id": 6,
+        "payloadSha256": "9f3284643e37aa8f76901e2f68da5958da703c849eb8be8df996785645fa7284"
+      },
+      {
+        "id": 7,
+        "payloadSha256": "e914528db1ef11007f69aa1722f9a2a9c83853fddba26e238548beecce8bbca1"
+      },
+      {
+        "id": 9,
+        "payloadSha256": "3886a87c211f062506871fef8d6a3be9b81c87ccc5331d9863b447db2c403447"
+      },
+      {
+        "id": 12,
+        "payloadSha256": "f8bfc0acc4ff3ec30a6959a5917c1df34026d4e37f90ca26e93c68b11cfdbf3a"
+      },
+      {
+        "id": 10,
+        "payloadSha256": "9c8489ecffbf94274fb2e119425202914ec6d5505db56073063f8478d94ebc06"
+      },
+      {
+        "id": 11,
+        "payloadSha256": "cd06613eb1d28221332c28104661db8a6cb873b782dc25187c2695de62920f24"
+      }
+    ]
+  },
+  "selectedFunctions": {
+    "175": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+    "183": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+    "286": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+    "503": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+    "1394": "__udivti3"
+  },
+  "profileTop": [
+    {
+      "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+      "us": 2002768,
+      "percent": 19.968322165530743
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+      "us": 1512928,
+      "percent": 15.084439993674803
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+      "us": 594972,
+      "percent": 5.932086280323111
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+      "us": 562135,
+      "percent": 5.604689499992323
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+      "us": 539969,
+      "percent": 5.383686453647886
+    },
+    {
+      "name": "__udivti3",
+      "us": 456985,
+      "percent": 4.556305925007323
+    },
+    {
+      "name": "alloc::collections::btree::map::BTreeMap<K,V,A>::remove::h49400433011d1148",
+      "us": 378571,
+      "percent": 3.7744899511711485
+    },
+    {
+      "name": "js-to-wasm:iil:i wasm://wasm/000143b6",
+      "us": 334576,
+      "percent": 3.3358438705105202
+    },
+    {
+      "name": "now",
+      "us": 320103,
+      "percent": 3.1915428198138214
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockDiscovery::on_block_entry::h603a5b4937cad8ca",
+      "us": 307875,
+      "percent": 3.069625232035252
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h95922160ac631d34",
+      "us": 261534,
+      "percent": 2.607588681884231
+    },
+    {
+      "name": "wasm_vm_core::pmp::Pmp::check::h49feb29917fd316e",
+      "us": 241302,
+      "percent": 2.4058683158443213
+    },
+    {
+      "name": "wasm_vm_core::mmu::finish_leaf::hb5c91ebad7369df2",
+      "us": 200944,
+      "percent": 2.003484442147273
+    },
+    {
+      "name": "Module",
+      "us": 107295,
+      "percent": 1.0697700016929674
+    },
+    {
+      "name": "wasm_vm_core::decode::decode::hc0ed8cae72412bec",
+      "us": 106258,
+      "percent": 1.0594307361935908
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h1c6b17789b9d53e7",
+      "us": 87088,
+      "percent": 0.8682988947055982
+    },
+    {
+      "name": "rustc_apfloat::ieee::sig::mul::h05bcd4e13dd4cace",
+      "us": 83923,
+      "percent": 0.8367426986539812
+    },
+    {
+      "name": "<std[f839c7267e543978]::hash::random::DefaultHasher as core[2c5ad5f686fcca5c]::hash::Hasher>::write",
+      "us": 76142,
+      "percent": 0.7591633111413014
+    },
+    {
+      "name": "<rustc_apfloat::ieee::IeeeFloat<S> as rustc_apfloat::Float>::mul_r::ha9b0486279c76e53",
+      "us": 70988,
+      "percent": 0.7077760648695687
+    },
+    {
+      "name": "wasm_vm_core::dev::virtio::net::service::h88973684b4a526cb",
+      "us": 67816,
+      "percent": 0.6761500762832404
+    },
+    {
+      "name": "core::hash::BuildHasher::hash_one::he61abe7265f819be",
+      "us": 67753,
+      "percent": 0.6755219434708386
+    },
+    {
+      "name": "<wasm_vm_core::softfloat::F32 as wasm_vm_core::softfloat::SoftFloat>::fma::h1178d08e2231c9c4",
+      "us": 67044,
+      "percent": 0.6684529567407923
+    },
+    {
+      "name": "__multi3",
+      "us": 63349,
+      "percent": 0.6316124687753185
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::decode_at::hbaeb13e5b7b0e262",
+      "us": 62779,
+      "percent": 0.6259293623773969
+    },
+    {
+      "name": "wasm_vm_core::csr::Csrs::next_interrupt::he02f95cae226d67a",
+      "us": 61117,
+      "percent": 0.60935862056451
+    }
+  ]
+}

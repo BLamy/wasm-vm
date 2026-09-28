@@ -1,0 +1,10 @@
+[package]
+name = "ba-public-counter-verifier"
+version = "0.0.0"
+edition = "2024"
+[workspace]
+[dependencies]
+wasm-vm-core = { path = "../../../../crates/core" }
+[[bin]]
+name = "ba-public-counter-verifier"
+path = "main.rs"

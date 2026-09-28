@@ -1,0 +1,23 @@
+{
+  "head": "37c7ffa1",
+  "directory": "/private/tmp/wasm-vm-fp-baseline-tpgv0sro",
+  "paths": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates/core",
+    ".cargo/config.toml"
+  ],
+  "change": "workspace members narrowed to core only; core sources, test and cargo config unchanged. Original Cargo.lock copied, then unused packages pruned by Cargo for the narrowed workspace; retained versions/checksums audited independently.",
+  "buildCommand": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "/private/tmp/wasm-vm-fp-baseline-tpgv0sro/Cargo.toml",
+    "-p",
+    "wasm-vm-core",
+    "--release",
+    "--test",
+    "perf_baseline",
+    "--no-run"
+  ]
+}

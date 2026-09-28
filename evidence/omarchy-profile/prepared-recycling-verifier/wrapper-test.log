@@ -1,0 +1,90 @@
+{
+  "productEvidence": false,
+  "purpose": "actual wrapper branch coverage with synthetic process, files, hash pins and reports",
+  "sourceSha256": "1c5751d507df172e0ce8c2feb81221c9964fd2b61aecd39ef34d3fd3a6e00937",
+  "cases": [
+    {
+      "name": "negative",
+      "held": true,
+      "rejected": false,
+      "error": null,
+      "wroteExplicitNonAcceptance": true,
+      "signals": [
+        "mkdir-mocked",
+        "spawn-mocked"
+      ]
+    },
+    {
+      "name": "synthetic-positive",
+      "held": true,
+      "rejected": false,
+      "error": null,
+      "wroteExplicitNonAcceptance": true,
+      "signals": [
+        "mkdir-mocked",
+        "spawn-mocked"
+      ]
+    },
+    {
+      "name": "wrong-pair-size",
+      "held": true,
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 207172408\n",
+      "wroteExplicitNonAcceptance": false,
+      "signals": []
+    },
+    {
+      "name": "wrong-pair-hash",
+      "held": true,
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75'\n",
+      "wroteExplicitNonAcceptance": false,
+      "signals": []
+    },
+    {
+      "name": "wrong-wasm",
+      "held": true,
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: trial requires verified AL runtime\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4'\n",
+      "wroteExplicitNonAcceptance": false,
+      "signals": []
+    },
+    {
+      "name": "watchdog",
+      "held": true,
+      "rejected": true,
+      "error": "Error: prepared input trial did not close normally; UNPROVEN",
+      "wroteExplicitNonAcceptance": false,
+      "signals": [
+        "mkdir-mocked",
+        "spawn-mocked",
+        "unref",
+        "stream-destroy",
+        "stream-destroy",
+        "disconnect"
+      ]
+    },
+    {
+      "name": "audit-error",
+      "held": true,
+      "rejected": true,
+      "error": "Error: synthetic raw audit rejection",
+      "wroteExplicitNonAcceptance": false,
+      "signals": [
+        "mkdir-mocked",
+        "spawn-mocked"
+      ]
+    },
+    {
+      "name": "late-fence",
+      "held": true,
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt))\n",
+      "wroteExplicitNonAcceptance": false,
+      "signals": [
+        "mkdir-mocked",
+        "spawn-mocked"
+      ]
+    }
+  ]
+}

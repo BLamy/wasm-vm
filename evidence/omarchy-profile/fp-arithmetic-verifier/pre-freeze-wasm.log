@@ -1,0 +1,56 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.56s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running tests/jit_fp_arithmetic_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_arithmetic_verifier-92334c500db83fe3.wasm)
+running 6 tests
+Invoking test: verifier_shared_arithmetic_survives_growth
+CRITIC_ARITHMETIC_GROWTH inline=true fault=None pc=0000000040007814 retired=5 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=true fault=Store pc=0000000040007804 retired=1 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=true fault=Load pc=000000004000780c retired=3 writes=1 flags_before=9 flags_after=17
+test verifier_shared_arithmetic_survives_growth ... ok
+Invoking test: verifier_shared_arithmetic
+CRITIC_SHARED_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+CRITIC_SHARED_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+CRITIC_SHARED_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_shared_arithmetic ... ok
+Invoking test: verifier_same_module_arithmetic_successors
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_arithmetic_successors ... ok
+Invoking test: verifier_private_arithmetic_survives_growth
+CRITIC_ARITHMETIC_GROWTH inline=false fault=None pc=0000000040007814 retired=0 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=false fault=Store pc=0000000040007804 retired=0 writes=1 flags_before=9 flags_after=17
+CRITIC_ARITHMETIC_GROWTH inline=false fault=Load pc=000000004000780c retired=0 writes=1 flags_before=9 flags_after=17
+test verifier_private_arithmetic_survives_growth ... ok
+Invoking test: verifier_private_arithmetic
+CRITIC_PRIVATE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+CRITIC_PRIVATE_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+CRITIC_PRIVATE_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_private_arithmetic ... ok
+Invoking test: verifier_cross_module_arithmetic_successors
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=09
+CRITIC_ARITHMETIC_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_arithmetic_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.44s
+

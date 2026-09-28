@@ -38,6 +38,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "sendMouseEvent",
   "syncMouse",
   "keyboardLedState",
+  "inputDeviceStats",
   "pause",
   "resume",
   "isPaused",

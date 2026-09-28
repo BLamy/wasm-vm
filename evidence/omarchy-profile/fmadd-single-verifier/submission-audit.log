@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "submissionCommit": "1479a26360eb5ee70144440a25941a8d10ee4493",
+  "indexSha256": "656107deda13733b1d493aa30b9c5d955145d7e1aa257e3fc8702f897c0db0a6",
+  "frozenSourceClosureUnchanged": true,
+  "sourceHead": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "artifactAndColdHead": "c531ceffb9b7adc8de9f5ebc927d00076a26f1dd",
+  "runtimeWasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "completedAcceptanceTests": {
+    "targets": 6,
+    "passed": 18,
+    "failed": 0,
+    "ignored": 0
+  },
+  "desktopResponsive": false,
+  "broadCiPassed": false
+}

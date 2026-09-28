@@ -1,0 +1,37 @@
+{
+  "personallyViewed": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-input-r1/desktop/failure.png",
+  "observed": "Original 1280x800 native Foot window; empty shell prompt and cursor in the upper left. No typed command, nonce, or returned prompt following a command.",
+  "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "otherImages": "desktop.png and prepared-direct.png are byte-identical to the personally viewed failure image; latest.png is startup progress only.",
+  "images": [
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-input-r1/desktop/latest.png",
+      "sha256": "d8a2dcbf1c925154e70693c62421487299613348a1558cca9bac6ddbabb8fc41",
+      "width": 1280,
+      "height": 800,
+      "timestamp": "2026-09-16T07:35:01.031Z"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-input-r1/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "width": 1280,
+      "height": 800,
+      "timestamp": "2026-09-16T07:35:31.109Z"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-input-r1/desktop/prepared-direct.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "width": 1280,
+      "height": 800,
+      "timestamp": "2026-09-16T07:35:37.009Z"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-input-r1/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "width": 1280,
+      "height": 800,
+      "timestamp": "2026-09-16T07:37:39.775Z"
+    }
+  ],
+  "desktopAcceptance": false
+}

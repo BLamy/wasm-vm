@@ -1,0 +1,6 @@
+{"kind":"started","pid":12,"tracerPid":15,"monotonicMs":1201849331}
+{"kind":"seized","pid":12,"tid":12}
+{"kind":"process-identity","tid":12,"tgid":12,"tracerPid":15,"startTime":"120184933","comm":"fixture-aarch64","exe":"/output/fixture-aarch64"}
+{"kind":"error","stage":"seize","tid":14,"errno":1}
+{"kind":"detached","tid":12}
+{"kind":"finished","failed":true,"stops":0,"reads":0,"orphanExits":0,"capturedBytes":0,"stopBudgetReached":false,"stopSignal":0,"observationEndMonotonicMs":1201849331,"cleanupEndMonotonicMs":1201849331}

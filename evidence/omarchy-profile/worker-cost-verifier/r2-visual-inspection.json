@@ -1,0 +1,11 @@
+{
+  "inspectedAt": "2026-09-16T02:40:57.258545+00:00",
+  "image": "evidence/omarchy-profile/worker-cost-r2/desktop/failure.png",
+  "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "personallyViewed": true,
+  "observed": "Actual Omarchy/Foot image retains its top bar and original empty shell prompt. No typed printf command, nonce or visible terminal response.",
+  "sameBytesAsInitialDesktop": true,
+  "sameBytesAsR1Failure": true,
+  "desktopResponsive": false,
+  "rawAcceptance": "No independent nonce by Enter+120s. Frames 2 to 3 do not change physical-input failure."
+}

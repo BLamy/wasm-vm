@@ -23,10 +23,10 @@ fi
 # `bash tools/deploy-r2.sh`. Here we only ship the small manifests and REWRITE their relative
 # `releases/…` URLs to the R2 public base (kernel/initramfs/rootfs/chunked-alpine). The chunked-image
 # manifest URL is set to R2 directly in web/main.js (R2_ASSETS).
-R2_PUBLIC="https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev"
+R2_PUBLIC="${R2_PUBLIC:-https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev}"
 R2_BUCKET="${R2_BUCKET:-wasm-vm}"
 PAGES_FILE_LIMIT=$((25 * 1024 * 1024))
-MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json)
+MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json artifacts-omarchy.json)
 LOCAL_RECORDS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-artifact-records.XXXXXX")
 RELEASE_URLS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-release-urls.XXXXXX")
 R2_QUEUE=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-r2-queue.XXXXXX")
@@ -63,13 +63,17 @@ ensure_r2_object() {
     . "$env_file"
     set +a
   fi
-  : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID is required to upload $key}"
-  : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY is required to upload $key}"
-  : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT is required to upload $key}"
-  AWS_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID \
-  AWS_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY \
-    aws --endpoint-url "$R2_S3_ENDPOINT" s3 cp "$source" "s3://$R2_BUCKET/$key" \
-      --no-progress --only-show-errors
+  if command -v aws >/dev/null 2>&1 && [ -n "${R2_ACCESS_KEY_ID:-}" ] &&
+    [ -n "${R2_SECRET_ACCESS_KEY:-}" ] && [ -n "${R2_S3_ENDPOINT:-}" ]; then
+    AWS_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID \
+    AWS_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY \
+      aws --endpoint-url "$R2_S3_ENDPOINT" s3 cp "$source" "s3://$R2_BUCKET/$key" \
+        --no-progress --only-show-errors
+  else
+    # Wrangler's authenticated OAuth session is the supported fallback on a developer machine
+    # without the AWS CLI or long-lived S3 credentials. It preserves the same exact-byte check below.
+    npx --yes wrangler r2 object put "$R2_BUCKET/$key" --file "$source" --remote -y
+  fi
   public_object_is_exact "$url" "$expected_size" "$expected_sha" || {
     echo "[deploy] ERROR: public R2 verification failed for $key" >&2
     exit 1
@@ -149,15 +153,18 @@ done < "$LOCAL_RECORDS"
 # JSON string equality so a URL such as `a.bin` cannot collide with `axbin`.
 while IFS= read -r relative; do
   case "$relative" in
-    releases/chunked-alpine/*|releases/chunked-node-alpine/*)
+    releases/chunked-alpine/*|releases/chunked-node-alpine/*|releases/chunked-omarchy/*)
       rewrite_r2_reference "$relative" "${relative#releases/}"
       ;;
   esac
 done < "$RELEASE_URLS"
 
 # Do NOT ship the big artifacts with the site. The chunked bases (chunked-alpine + E3.6-T05
-# chunked-node-alpine) live on R2, uploaded separately; their manifest URLs are rewritten to R2 above.
-rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" "$DIST/releases/chunked-node-alpine" 2>/dev/null || true
+# chunked-node-alpine + E5.5-T03a chunked-omarchy) live on R2, uploaded separately; their manifest
+# URLs are rewritten to R2 above when they appear in a deploy manifest. Omarchy's runtime path is
+# intentionally a direct R2 URL because its 4 GiB image is not a Pages artifact entry.
+rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" \
+  "$DIST/releases/chunked-node-alpine" "$DIST/releases/chunked-omarchy" 2>/dev/null || true
 
 # Validate the exact staged tree after optional snapshots have been copied and excluded artifacts
 # have been removed. Remote entries are checked below through their public URL; every remaining
@@ -169,6 +176,7 @@ python3 tools/validate-deploy-artifacts.py \
   --reject-local-prefix releases/rootfs/ \
   --reject-local-prefix releases/chunked-alpine/ \
   --reject-local-prefix releases/chunked-node-alpine/ \
+  --reject-local-prefix releases/chunked-omarchy/ \
   --binding-file "$R2_QUEUE" --binding-root "$PWD" --r2-base "$R2_PUBLIC"
 
 # Check R2 without credentials first. A missing or mismatched public object is not accepted as

@@ -59,6 +59,54 @@ pub trait Bus {
         false
     }
 
+    // ── Softmmu fast path (perf overhaul) ─────────────────────────────────────────────
+    // The hart's fast TLB publishes an entry only for a page that `ram_contains(page, 4096)`
+    // proved is entirely RAM, so an access it serves is naturally aligned and inside RAM. These
+    // accessors let a bus skip device dispatch (and redundant range/alignment checks) for such
+    // an access. Each MUST be observably identical to its checked counterpart — same value, same
+    // side effects (e.g. the code-write log) — and the defaults simply ARE the checked accessors.
+
+    /// [`Self::load8`] of a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_load8(&mut self, addr: u64) -> Result<u8, BusFault> {
+        self.load8(addr)
+    }
+    /// [`Self::load16`] of a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_load16(&mut self, addr: u64) -> Result<u16, BusFault> {
+        self.load16(addr)
+    }
+    /// [`Self::load32`] of a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_load32(&mut self, addr: u64) -> Result<u32, BusFault> {
+        self.load32(addr)
+    }
+    /// [`Self::load64`] of a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_load64(&mut self, addr: u64) -> Result<u64, BusFault> {
+        self.load64(addr)
+    }
+    /// [`Self::store8`] to a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_store8(&mut self, addr: u64, val: u8) -> Result<(), BusFault> {
+        self.store8(addr, val)
+    }
+    /// [`Self::store16`] to a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_store16(&mut self, addr: u64, val: u16) -> Result<(), BusFault> {
+        self.store16(addr, val)
+    }
+    /// [`Self::store32`] to a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_store32(&mut self, addr: u64, val: u32) -> Result<(), BusFault> {
+        self.store32(addr, val)
+    }
+    /// [`Self::store64`] to a fast-TLB-proven RAM address.
+    #[inline(always)]
+    fn ram_store64(&mut self, addr: u64, val: u64) -> Result<(), BusFault> {
+        self.store64(addr, val)
+    }
+
     /// E4-T01 phase 3: the profiler's monotonic host time in ns, or `None` when profiling is not
     /// armed on this bus. Read ONLY on the COLD page-table-walk path ([`crate::mmu`]'s `walk_leaf`,
     /// reached only on a TLB miss) to bracket the walk — never on the hot TLB-hit path. The default

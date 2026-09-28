@@ -1,0 +1,577 @@
+{
+  "head": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+  "wasmSha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "elfSha256": "5c1d23a991c0e9deb58d857b951f5caa72bec9a19fb398f2151c7f003e5a5b2c",
+  "words": [
+    8375,
+    805343347,
+    1364083,
+    2347123,
+    4288680119,
+    591429779,
+    4026564819,
+    4026532179,
+    524288659,
+    539000915,
+    538976211,
+    570400851,
+    3758097235,
+    4026728659,
+    4294083219,
+    4261582051,
+    3759113171,
+    1057907,
+    2106611,
+    805315955,
+    1431,
+    2063959443,
+    372775,
+    32879655,
+    111
+  ],
+  "attemptedBudget": 4000,
+  "errors": [],
+  "passed": true,
+  "browser": "152.0.7977.84",
+  "runs": [
+    {
+      "jit": false,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 160,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "80000060",
+        "0",
+        "ffffffffffa01234",
+        "0",
+        "0",
+        "0",
+        "0",
+        "7fa01234",
+        "ffffffffffa01234",
+        "9",
+        "7",
+        "8000000a00006000",
+        "80000800",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661",
+      "stats": {
+        "retired": 4000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 4000,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 0,
+          "deduped": 0,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 0,
+          "queueDepth": 0,
+          "queueHighWater": 0,
+          "candidates": 0,
+          "generation": 1
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 1,
+        "blockEntryHits": 0,
+        "blockBuilds": 0,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 64,
+          "capacity": 65536
+        }
+      }
+    },
+    {
+      "jit": true,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 160,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "80000060",
+        "0",
+        "ffffffffffa01234",
+        "0",
+        "0",
+        "0",
+        "0",
+        "7fa01234",
+        "ffffffffffa01234",
+        "9",
+        "7",
+        "8000000a00006000",
+        "80000800",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661",
+      "stats": {
+        "retired": 4000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": true,
+        "compiledBlocks": 1,
+        "executedBlocks": 31,
+        "retiredViaJit": 3639,
+        "directChainEntries": 915,
+        "directChainLinks": 884,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 1,
+        "dynamicLinkInstalls": 1,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 31,
+          "stateCopyCalls": 62,
+          "stateCopyBytes": 7424,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 1,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 4000,
+        "jitEngineCalls": 31,
+        "jitLogicalBlocksPerEngineCall": 29.516129032258064,
+        "jitRetiredShare": 0.90975,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 29,
+        "chainMaxDepth": 1,
+        "chainLinksFollowed": 3,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 3,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 2,
+        "jitCacheInstalls": 3,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 1,
+        "jitCacheCodeBytes": 66178,
+        "compileQueue": {
+          "admitted": 5,
+          "droppedBackpressure": 0,
+          "cancelledStale": 2,
+          "popped": 3,
+          "queueHighWater": 3,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 5,
+          "deduped": 65,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 6,
+          "queueDepth": 0,
+          "queueHighWater": 3,
+          "candidates": 0,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 10,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 65,
+        "blockBuilds": 11,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 1,
+          "capacity": 65536
+        }
+      }
+    }
+  ],
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "capability": "Single-precision FP moves1/1 passing · live in browser",
+  "screenshotSha256": "4bd2ee6eb76589db54436ee167050308f6ed6d571732996d8ebba5a0b1a70fb7"
+}

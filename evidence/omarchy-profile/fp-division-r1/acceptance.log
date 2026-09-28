@@ -1,0 +1,124 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-core --test fp_division_flags
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/fp_division_flags.rs (target/debug/deps/fp_division_flags-8cd6f826f2334e8c)
+
+running 1 test
+test division_literal_boundary_flags ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.89s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_division --test fp_division_verifier -- --nocapture
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+     Running tests/fp_division.rs (target/debug/deps/fp_division-2e8905c5540d9dfd)
+
+running 3 tests
+FP_DIVISION CSR/later-fault/invalid-prefix/aliases cases=80
+test division_native_handoff_and_faults ... ok
+FP_DIVISION runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test division_native_runloop ... ok
+FP_DIVISION corpus cases=30720 register_flags_fnv=fc9d8c60370e34a2
+test division_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.54s
+
+     Running tests/fp_division_verifier.rs (target/debug/deps/fp_division_verifier-0856e053b9558d34)
+
+running 5 tests
+CRITIC_NATIVE_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_native_division_control_and_faults ... ok
+CRITIC_NATIVE_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+test verifier_native_division_literals ... ok
+CRITIC_DIVISION_INDICES imports=9 exports=run0:9,run1:10,run2:11,run3:12,run4:13 all_optional_combinations=8 mixed_chain_executed=true integer_imports=5 unsupported_families=9
+test verifier_mixed_optional_indices_and_integer_behavior ... ok
+CRITIC_NATIVE_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+test verifier_native_division_seeded_aliases_and_illegal ... ok
+CRITIC_DIVISION_PURITY cases=1536 legal_helper_calls=810 illegal_helper_calls=0 import_index=5 exact_masks=true integer_wasm_only=true
+test verifier_generated_division_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.32s
+
+wasm-pack test --node crates/wasm --test jit_fp_division --test jit_fp_division_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.93s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+     Running tests/jit_fp_division.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_division-47b60617862d4355.wasm)
+running 2 tests
+Invoking test: division_browser_private
+test division_browser_private ... ok
+Invoking test: division_browser_inline
+test division_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 37.92s
+
+     Running tests/jit_fp_division_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_division_verifier-16dca927e10c195e.wasm)
+running 6 tests
+Invoking test: verifier_shared_division_memory_growth
+CRITIC_DIVISION_GROWTH inline=true fault=None pc=000000004000b818 retired=6 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=true fault=Store pc=000000004000b804 retired=1 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=true fault=Load pc=000000004000b810 retired=4 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_shared_division_memory_growth ... ok
+Invoking test: verifier_shared_division
+CRITIC_SHARED_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+CRITIC_SHARED_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+CRITIC_SHARED_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_shared_division ... ok
+Invoking test: verifier_same_module_division_successors
+CRITIC_DIVISION_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_DIVISION_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_division_successors ... ok
+Invoking test: verifier_private_division_memory_growth
+CRITIC_DIVISION_GROWTH inline=false fault=None pc=000000004000b818 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=false fault=Store pc=000000004000b804 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=false fault=Load pc=000000004000b810 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_private_division_memory_growth ... ok
+Invoking test: verifier_private_division
+CRITIC_PRIVATE_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+CRITIC_PRIVATE_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+CRITIC_PRIVATE_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_private_division ... ok
+Invoking test: verifier_cross_module_division_successors
+CRITIC_DIVISION_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_DIVISION_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_division_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 2.92s
+
+node tools/verify/omarchy-fp-division-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-division-r1/browser
+{"passed":true,"wasmSha256":"1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d","digest":"fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":50,"retiredViaJit":4601,"directChainEntries":1325,"directChainLinks":1275,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":50,"stateCopyCalls":100,"stateCopyBytes":10152,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":5000,"jitEngineCalls":50,"jitLogicalBlocksPerEngineCall":26.5,"jitRetiredShare":0.9202,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":46,"chainMaxDepth":1,"chainLinksFollowed":5,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":2,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":2,"jitCacheCodeBytes":146315,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":40,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":40,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

@@ -1,0 +1,151 @@
+{
+  "rawReportSha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af",
+  "canvasAndGpu": [
+    1280,
+    800
+  ],
+  "resource": [
+    1280,
+    832
+  ],
+  "rectangles": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "x": 10,
+      "y": 36,
+      "width": 118,
+      "height": 28
+    }
+  ],
+  "validObservedStates": 2,
+  "rejectedMutations": [
+    {
+      "field": [
+        "width"
+      ],
+      "value": 118
+    },
+    {
+      "field": [
+        "height"
+      ],
+      "value": 28
+    },
+    {
+      "field": [
+        "gpu",
+        "width"
+      ],
+      "value": 118
+    },
+    {
+      "field": [
+        "gpu",
+        "height"
+      ],
+      "value": 28
+    },
+    {
+      "field": [
+        "fixedViewport"
+      ],
+      "value": false
+    },
+    {
+      "field": [
+        "latest",
+        "resourceWidth"
+      ],
+      "value": 118
+    },
+    {
+      "field": [
+        "latest",
+        "resourceHeight"
+      ],
+      "value": 28
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "x"
+      ],
+      "value": -1
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "y"
+      ],
+      "value": -1
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "width"
+      ],
+      "value": 0
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "height"
+      ],
+      "value": 0
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "x"
+      ],
+      "value": 1280
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "y"
+      ],
+      "value": 832
+    },
+    {
+      "field": [
+        "latest",
+        "rect",
+        "width"
+      ],
+      "value": 0.5
+    },
+    {
+      "field": [
+        "errors"
+      ],
+      "value": [
+        "corrupt"
+      ]
+    }
+  ],
+  "unchangedSources": {
+    "crates/core/src/dev/virtio/gpu/resources.rs": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+    "crates/wasm/src/lib.rs": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0",
+    "web/src/sink/presentation.js": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819",
+    "tools/verify/omarchy-opaque-foot-command.mjs": "1bb836ac9706f8d0af041770a997a1ac421632cc65f759a979f77668525c0a67"
+  },
+  "sourceCitations": {
+    "crates/core/src/dev/virtio/gpu/resources.rs:65": "tracking sink publishes later changed-pixel bounds while Resource width/height stay separate",
+    "crates/wasm/src/lib.rs:2336": "browser FrameSink opts into transferred-damage tracking",
+    "web/src/sink/presentation.js:499": "state reports fixed viewport dimensions separately from raw latest rectangle/resource dimensions",
+    "tools/verify/omarchy-opaque-foot-command.mjs:33": "inherited verifier incorrectly requires every latest damage rectangle to remain full viewport"
+  },
+  "claim": "actual fixed presentation is retained; partial damage is not a resize; nonce and visible response remain failed"
+}

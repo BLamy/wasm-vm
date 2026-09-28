@@ -1,0 +1,73 @@
+Diff in /Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime/tests/mixed_fp_regions.rs:1:
+ //! E5.5-T03b: integer JIT regions remain eligible on either side of interpreted F/D regions.
+ 
+ use jit_runtime::WasmtimeExecutor;
+-use wasm_vm_core::bus::mmap::DRAM_BASE;
+ use wasm_vm_core::bus::Bus;
++use wasm_vm_core::bus::mmap::DRAM_BASE;
+ use wasm_vm_core::hart::Exception;
+ use wasm_vm_core::{Machine, RunOutcome};
+ 
+Diff in /Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime/tests/mixed_fp_regions.rs:238:
+     let exec = jit.take_executor().expect("JIT executor installed");
+ 
+     assert_eq!(got, want, "mixed F/D/C JIT run diverged from interpreter");
+-    assert_eq!(got.f[3], 0xffff_ffff_7fc0_0000, "f32 result must be NaN-boxed");
++    assert_eq!(
++        got.f[3], 0xffff_ffff_7fc0_0000,
++        "f32 result must be NaN-boxed"
++    );
+     assert_ne!(got.fcsr & 0x01, 0, "FDIV.S must preserve NX in fcsr");
+-    assert!(exec.compiled_count() >= 2, "both integer regions must compile");
+-    assert!(exec.is_compiled(DRAM_BASE), "integer prefix must be JIT-eligible");
+     assert!(
++        exec.compiled_count() >= 2,
++        "both integer regions must compile"
++    );
++    assert!(
++        exec.is_compiled(DRAM_BASE),
++        "integer prefix must be JIT-eligible"
++    );
++    assert!(
+         exec.is_compiled(DRAM_BASE + 22),
+         "integer continuation must be JIT-eligible"
+     );
+Diff in /Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime/tests/mixed_fp_regions.rs:360:
+     let exec = jit.take_executor().expect("JIT executor installed");
+ 
+     assert_eq!(got, want, "page-edge mixed region diverged");
+-    assert!(exec.is_compiled(edge), "page-edge integer prefix must compile");
+     assert!(
++        exec.is_compiled(edge),
++        "page-edge integer prefix must compile"
++    );
++    assert!(
+         exec.is_compiled(edge + 8),
+         "page-one integer continuation must compile"
+     );
+Diff in /Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime/tests/mixed_fp_regions.rs:445:
+     configure_jit(&mut jit);
+     assert_eq!(jit.run(500), RunOutcome::MaxInstrs);
+     let jit_before = jit.executor().unwrap().retired_via_jit();
+-    assert!(jit_before > 0, "initial mixed run must retire through the JIT");
++    assert!(
++        jit_before > 0,
++        "initial mixed run must retire through the JIT"
++    );
+     jit.bus_mut()
+         .store32(DRAM_BASE + 24, enc_addi(3, 3, 7))
+         .unwrap();
+Diff in /Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime/tests/mixed_fp_regions.rs:482:
+         assert_eq!(m.run(500), RunOutcome::MaxInstrs);
+         let state = snapshot(&mut m);
+         let exec = m.take_executor().expect("JIT executor installed");
+-        (state, exec.compiled_count(), exec.executed_blocks(), exec.retired_via_jit())
++        (
++            state,
++            exec.compiled_count(),
++            exec.executed_blocks(),
++            exec.retired_via_jit(),
++        )
+     };
+ 
+     let first = run();

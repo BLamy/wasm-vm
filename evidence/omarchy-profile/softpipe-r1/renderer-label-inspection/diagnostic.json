@@ -1,0 +1,260 @@
+[
+  {
+    "time": "2026-09-10T13:41:33.495Z",
+    "event": "ready",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    }
+  },
+  {
+    "time": "2026-09-10T13:46:04.374Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances"
+    },
+    "actualCommand": "( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances\n )",
+    "result": {
+      "stdout": "[\n{\n    \"instance\": \"efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177\",\n    \"time\": 1789006846,\n    \"pid\": 417,\n    \"wl_socket\": \"wayland-1\"\n}\n]\n\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T13:46:31.418Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "sed -n '1,230p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log"
+    },
+    "actualCommand": "( sed -n '1,230p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log\n )",
+    "result": {
+      "stdout": "DEBUG ]: Old rlimit: soft -> 65536, hard -> 524288\nDEBUG ]: New rlimit: soft -> 524288, hard -> 524288\nDEBUG ]: Creating the EventLoopManager!\nDEBUG ]: Creating the KeybindManager!\nDEBUG ]: Creating the AnimationManager!\nDEBUG ]: Creating the DynamicPermissionManager!\nDEBUG ]: Creating the MonitorState!\nDEBUG ]: Creating the WorkspaceState!\nDEBUG ]: Creating the ConfigManager!\nDEBUG ]: [cfg] Regular config at /home/omarchy/.config/hypr/hyprland.lua\nDEBUG ]: [cfg] Using lua config found at /home/omarchy/.config/hypr/hyprland.lua\nDEBUG ]: Creating the Error Overlay!\nDEBUG ]: Creating the LayoutManager!\nDEBUG ]: Creating the TokenManager!\nDEBUG ]: Creating the EventManager!\nDEBUG ]: Disabling stdout logs (debug.enable_stdout_logs = 0). Further logs will be written to /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log\nDEBUG ]: Creating the PointerManager!\nDEBUG ]: Creating the AsyncResourceGatherer!\nDEBUG from aquamarine ]: Creating an Aquamarine backend!\nDEBUG from aquamarine ]: [libseat] [libseat/backend/seatd.c:64] Could not connect to socket /run/seatd.sock: No such file or directory\nDEBUG from aquamarine ]: [libseat] [libseat/libseat.c:76] Backend 'seatd' failed to open seat, skipping\nDEBUG from aquamarine ]: [libseat] [libseat/libseat.c:73] Seat opened with backend 'logind'\nDEBUG from aquamarine ]: [libinput] event0  - wasm-vm virtio keyboard: is tagged by udev as: Keyboard\nDEBUG from aquamarine ]: [libinput] event0  - wasm-vm virtio keyboard: device is a keyboard\nDEBUG from aquamarine ]: [libinput] event1  - wasm-vm virtio tablet: is tagged by udev as: Mouse\nDEBUG from aquamarine ]: [libinput] event1  - wasm-vm virtio tablet: device is a pointer\nDEBUG from aquamarine ]: [libinput] event2  - wasm-vm virtio mouse: is tagged by udev as: Mouse\nDEBUG from aquamarine ]: [libinput] event2  - wasm-vm virtio mouse: emulating high-resolution scroll wheel events.\nDEBUG from aquamarine ]: [libinput] event2  - wasm-vm virtio mouse: device is a pointer\nDEBUG from aquamarine ]: drm: Enumerated device /sys/devices/platform/soc/10008000.virtio_mmio/drm/card0\nDEBUG from aquamarine ]: libseat: Device /dev/dri/card0 supports kms\nDEBUG from aquamarine ]: drm: Found 1 GPUs\nDEBUG from aquamarine ]: drm: Starting backend for /dev/dri/card0, with driver virtio_gpu\nDEBUG from aquamarine ]: drm: Registered gpu /dev/dri/card0\nWARN from aquamarine ]: drm: AQ_NO_MODIFIERS enabled, disabling modifiers for DRM buffers.\nDEBUG from aquamarine ]: drm: Atomic supported, using atomic for modesetting\nDEBUG from aquamarine ]: drm: drmProps.supportsAsyncCommit: false\nDEBUG from aquamarine ]: drm: drmProps.supportsAddFb2Modifiers: false\nDEBUG from aquamarine ]: drm: drmProps.supportsTimelines: true\nDEBUG from aquamarine ]: drm: found 1 CRTCs\nDEBUG from aquamarine ]: drm: Plane 31 has type 1\nDEBUG from aquamarine ]: drm: Plane 31 has 1 formats\nDEBUG from aquamarine ]: drm: Basic init pass for gpu /dev/dri/card0\nDEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card0\nDEBUG from aquamarine ]: drm: Scanning connector id 34\nDEBUG from aquamarine ]: drm: Initializing connector id 34\nDEBUG from aquamarine ]: drm: Connector gets name Virtual-1\nDEBUG from aquamarine ]: drm: Connector 34 connection state: 1\nDEBUG from aquamarine ]: drm: Rechecking CRTCs\nDEBUG from aquamarine ]: drm: Skipping connector Virtual-1, has crtc 33 and is connected\nDEBUG from aquamarine ]: drm: slot 0 crtc 33 taken by Virtual-1, skipping\nDEBUG from aquamarine ]: drm: Connector Virtual-1 connected\nDEBUG from aquamarine ]: drm: Connecting connector Virtual-1, CRTC ID 33\nDEBUG from aquamarine ]: drm: Dumping detected modes:\nDEBUG from aquamarine ]: drm: Mode 0: 1280x800@60.00Hz  (preferred)\nDEBUG from aquamarine ]: drm: Physical size [Vector2D: x: 340, y: 210] (mm)\nDEBUG from aquamarine ]: drm: Description Wave Systems Corporation WASM VM WVM-0001 (Virtual-1)\nDEBUG from aquamarine ]: drm: connector Virtual-1 crtc is incapable of vrr: props.vrr_capable -> 0, crtc->props.vrr_enabled -> 24\nDEBUG from aquamarine ]: drm: Explicit sync supported\nDEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support CTM\nDEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support HDR (0)\nDEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support Colorspace (0)\nDEBUG from aquamarine ]: drm: gpu /dev/dri/card0 becomes primary drm\nDEBUG from aquamarine ]: DRM Dumb: created a dumb allocator\nDEBUG from aquamarine ]: Starting the Aquamarine backend!\nDEBUG from aquamarine ]: Starting the Wayland backend!\nERR from aquamarine ]: Wayland backend cannot start: wl_display_connect failed (is a wayland compositor running?)\nERR from aquamarine ]: Requested backend (wayland) could not start, enabling fallbacks\nERR from aquamarine ]: Implementation wayland failed, erasing.\nDEBUG from aquamarine ]: Created a GBM allocator with drm fd 26\nDEBUG from aquamarine ]: drm: Connectors size2 1\nDEBUG from aquamarine ]: Created a GBM allocator with drm fd 29\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: onReady: no renderer for gl formats\nDEBUG from aquamarine ]: drm: onReady: connector 34\nDEBUG from aquamarine ]: drm: onReady: connector 34 has output name Virtual-1\nDEBUG from aquamarine ]: Swapchain: Clearing\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to initialize renderer state for /dev/dri/card0\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nDEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1280, y: 800] and format XR24 with modifier 0x0 : LINEAR\nDEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1280, y: 800] and format XR24 with modifier 0x0 : LINEAR\nDEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1280, y: 800] and format XR24 with modifier 0x0 : LINEAR\nDEBUG from aquamarine ]: Swapchain: Reconfigured a swapchain to [Vector2D: x: 1280, y: 800] XR24 of length 3\nDEBUG from aquamarine ]: drm: Modesetting Virtual-1 with 1280x800@60.00Hz\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: Couldn't get the gamma_size prop\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: drm: Cannot commit when a page-flip is awaiting\nDEBUG from aquamarine ]: backend: poll fd 13 for implementation headless\nDEBUG from aquamarine ]: backend: poll fd 24 for implementation drm\nDEBUG from aquamarine ]: backend: poll fd 14 for session\nDEBUG from aquamarine ]: backend: poll fd 16 for session\nDEBUG from aquamarine ]: backend: poll fd 17 for session\nDEBUG from aquamarine ]: backend: poll fd 25 for idle\nDEBUG from aquamarine ]: udev: new udev change event for card0\nDEBUG from aquamarine ]: udev: DRM device card0 changed\nDEBUG from aquamarine ]: drm: Got a lease event for /dev/dri/card0\nDEBUG from aquamarine ]: libinput: New device wasm-vm virtio keyboard: 65261-1\nDEBUG from aquamarine ]: libinput: New device wasm-vm virtio tablet: 65261-2\nDEBUG from aquamarine ]: libinput: New device wasm-vm virtio mouse: 65261-3\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T13:48:20.145Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177 systeminfo"
+    },
+    "actualCommand": "( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177 systeminfo\n )",
+    "result": {
+      "stdout": "Hyprland 0.56.2 built from branch v0.56.2 at commit efb50993780079460b0cbed1363e2166a2de1d9f clean ([gha] Nix: update inputs).\nDate: Wed Aug 5 14:13:21 2026\nTag: v0.56.2, commits: 7661\n\nLibraries:\nHyprgraphics: built against 0.5.1, system has 0.5.1\nHyprutils: built against 0.14.1, system has 0.14.1\nHyprcursor: built against 0.1.13, system has 0.1.13\nHyprlang: built against 0.6.8, system has 0.6.8\nAquamarine: built against 0.14.0, system has 0.14.0\n\nVersion ABI string: efb50993780079460b0cbed1363e2166a2de1d9f_aq_0.14_hu_0.14_hg_0.5_hc_0.1_hlg_0.6\nno flags were set\n\n\nSystem Information:\nSystem name: Linux\nNode name: omarchy-demo\nRelease: 6.6.63\nVersion: #1 SMP Thu Nov 14 2024\n\nLibraries:\nHyprgraphics: built against 0.5.1, system has 0.5.1\nHyprutils: built against 0.14.1, system has 0.14.1\nHyprcursor: built against 0.1.13, system has 0.1.13\nHyprlang: built against 0.6.8, system has 0.6.8\nAquamarine: built against 0.14.0, system has 0.14.0\n\n\n\nGPU information: \n\n\nos-release: NAME=\"Arch Linux\"\nPRETTY_NAME=\"Arch Linux\"\nID=arch\nBUILD_ID=rolling\nANSI_COLOR=\"38;2;23;147;209\"\nHOME_URL=\"https://archlinux.org/\"\nDOCUMENTATION_URL=\"https://wiki.archlinux.org/\"\nSUPPORT_URL=\"https://bbs.archlinux.org/\"\nBUG_REPORT_URL=\"https://gitlab.archlinux.org/groups/archlinux/-/issues\"\nPRIVACY_POLICY_URL=\"https://terms.archlinux.org/docs/privacy-policy/\"\nLOGO=archlinux-logo\n\n\nplugins:\n\nExplicit sync: missing\nGL ver: 3.2\nBackend: drm\n\nMonitor info:\n\tPanel Virtual-1: 1280x800, Virtual-1 Wave Systems Corporation WASM VM WVM-0001 -> backend drm\n\t\texplicit ✔️\n\t\tedid:\n\t\t\thdr ❌\n\t\t\tchroma ✔️\n\t\t\tbt2020 ❌\n\t\tvrr capable ❌\n\t\tnon-desktop ❌\n\t\t\n\nState:\n\nconfigProvider: lua\nbackend: drm\n\n\n\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T13:48:43.393Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "journalctl --user -b _PID=417 --no-pager -o short-monotonic | sed -n '/Renderer:/p;/Vendor:/p;/GL_VERSION/p;/OpenGL/p'"
+    },
+    "actualCommand": "( journalctl --user -b _PID=417 --no-pager -o short-monotonic | sed -n '/Renderer:/p;/Vendor:/p;/GL_VERSION/p;/OpenGL/p'\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T13:49:25.812Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "journalctl --user -b --no-pager -o short-monotonic | sed -n '/Renderer:/p;/Vendor:/p;/GL_VERSION/p;/OpenGL/p'"
+    },
+    "actualCommand": "( journalctl --user -b --no-pager -o short-monotonic | sed -n '/Renderer:/p;/Vendor:/p;/GL_VERSION/p;/OpenGL/p'\n )",
+    "result": {
+      "stdout": "\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T13:49:25.833Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "renderer-desktop.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/renderer-label-inspection/renderer-desktop.png"
+  },
+  {
+    "time": "2026-09-10T13:50:27.914Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "sed -n '/[Rr]enderer/p;/[Vv]endor/p;/[Oo]pen[Gg][Ll]/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log | tail -n 20; XDG_RUNTIME_DIR=/run/user/1000 hyprctl getoption debug:disable_logs"
+    },
+    "actualCommand": "( sed -n '/[Rr]enderer/p;/[Vv]endor/p;/[Oo]pen[Gg][Ll]/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log | tail -n 20; XDG_RUNTIME_DIR=/run/user/1000 hyprctl getoption debug:disable_logs\n )",
+    "result": {
+      "stdout": "ERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for /dev/dri/card0\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommitHYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)\n\n\n",
+      "exit": 1
+    }
+  },
+  {
+    "time": "2026-09-10T13:53:47.896Z",
+    "pageUrl": "http://127.0.0.1:65390/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1#ide",
+    "sourceReceipt": {
+      "kind": "web-dist",
+      "root": "/Users/blamy/Documents/Codex/wasm-vm/web/dist",
+      "candidate": false
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 getoption debug:disable_logs; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 rollinglog | sed -n '/Renderer:/p;/Vendor:/p'"
+    },
+    "actualCommand": "( XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 getoption debug:disable_logs; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 rollinglog | sed -n '/Renderer:/p;/Vendor:/p'\n )",
+    "result": {
+      "stdout": "bool: true\nset: false\n\n",
+      "exit": 0
+    }
+  }
+]

@@ -1,0 +1,4 @@
+INPUT_TRIAL_START control
+INPUT_TRIAL_END {"arm":"control","code":1,"result":"failed","outcome":"nonce-readback-failed"}
+INPUT_TRIAL_START candidate
+INPUT_TRIAL_END {"arm":"candidate","code":1,"result":"failed","outcome":"nonce-readback-failed"}

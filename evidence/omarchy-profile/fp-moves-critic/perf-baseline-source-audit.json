@@ -1,0 +1,920 @@
+{
+  "baselineHead": "37c7ffa1",
+  "baselineDirectory": "/private/tmp/wasm-vm-fp-baseline-tpgv0sro",
+  "filesVerified": 226,
+  "files": [
+    {
+      "path": ".cargo/config.toml",
+      "gitBlob": "60757f978fbaac8944f42c6533a5538f5f14ea55"
+    },
+    {
+      "path": "crates/core/Cargo.toml",
+      "gitBlob": "151fe97eccad5eaa702cfb16f9f511bceadbd419"
+    },
+    {
+      "path": "crates/core/benches/mmio_dispatch.rs",
+      "gitBlob": "9a379033348dcf7db44d05158d9a04356cc9913f"
+    },
+    {
+      "path": "crates/core/benches/softfloat_bench.rs",
+      "gitBlob": "2f86c718d6b7a7ba321794675d9614aa7626e42c"
+    },
+    {
+      "path": "crates/core/examples/retirement_capture_baseline.rs",
+      "gitBlob": "fac908bc63c75d8ae4591dee0f69450e0161481f"
+    },
+    {
+      "path": "crates/core/examples/retirement_capture_probe.rs",
+      "gitBlob": "4804516d200290bcffc746c6ff385b865265f854"
+    },
+    {
+      "path": "crates/core/examples/zerocost.rs",
+      "gitBlob": "8c6c85868fdd50ad3f2e0d024f503adfd924200d"
+    },
+    {
+      "path": "crates/core/src/block.rs",
+      "gitBlob": "871a650dc6abd4ff3d5633c63ebd7466ab10dd7e"
+    },
+    {
+      "path": "crates/core/src/bus.rs",
+      "gitBlob": "793914984a618b158a908276e2a6d2f7e369c98e"
+    },
+    {
+      "path": "crates/core/src/compile_queue.rs",
+      "gitBlob": "bb6db1d0a71480f89ae9e894b8a2c50b48f159ee"
+    },
+    {
+      "path": "crates/core/src/csr.rs",
+      "gitBlob": "ee3e29314875972069c5ca0f58bb82fb27ac19d8"
+    },
+    {
+      "path": "crates/core/src/decode.rs",
+      "gitBlob": "a2cdb329f0812cdc5621ef470d5553c16d2050fb"
+    },
+    {
+      "path": "crates/core/src/decode_c.rs",
+      "gitBlob": "2452e328c63f73db05b87d41ce6e61e3140ecb27"
+    },
+    {
+      "path": "crates/core/src/decoded_cache_capacity_tests.rs",
+      "gitBlob": "824abd5506ab92c309404b9b10b76733e733768f"
+    },
+    {
+      "path": "crates/core/src/desktop_restore.rs",
+      "gitBlob": "e0bfe55fbe1bab91fe150c5d623df66cc7062e75"
+    },
+    {
+      "path": "crates/core/src/desktop_restore_tests.rs",
+      "gitBlob": "f46e8fe9099afc8436029be9fef4681fb6db749a"
+    },
+    {
+      "path": "crates/core/src/desktop_snapshot.rs",
+      "gitBlob": "14b98e0539545e305f6afc2d8f0e317aedc0e029"
+    },
+    {
+      "path": "crates/core/src/desktop_snapshot_tests.rs",
+      "gitBlob": "f40adeecaf0e51859bdba763e058e0b6ea4b3633"
+    },
+    {
+      "path": "crates/core/src/dev/clint.rs",
+      "gitBlob": "fcb0b9cfd5cfdcc74db7c68b640ff18ae553d410"
+    },
+    {
+      "path": "crates/core/src/dev/console.rs",
+      "gitBlob": "7b3176c007e8f14a65aaf1b88b29bece9ea25f6a"
+    },
+    {
+      "path": "crates/core/src/dev/mod.rs",
+      "gitBlob": "c2c86df2bd3012446bb2a8e18350abb7e57bd2f0"
+    },
+    {
+      "path": "crates/core/src/dev/plic.rs",
+      "gitBlob": "eaed2a3971cc63770b05592a38d53bbee51568a4"
+    },
+    {
+      "path": "crates/core/src/dev/rtc.rs",
+      "gitBlob": "dc56f71f2c0727dcb4b2dada5062fd529cde2217"
+    },
+    {
+      "path": "crates/core/src/dev/syscon.rs",
+      "gitBlob": "0540478040ebd83e1a92a90380ac0cafd656c9c9"
+    },
+    {
+      "path": "crates/core/src/dev/uart16550.rs",
+      "gitBlob": "19ef4e226e14f8f79de5ce64cd39a426f6693763"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/blk.rs",
+      "gitBlob": "5a05cf28e1ad1004e7c4ef6cafced279a1175d1d"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/console.rs",
+      "gitBlob": "3e1e7da281bd7ecee928d38eb596b3061094e7ae"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/damage.rs",
+      "gitBlob": "28371487b07a7fdc65167d8223d58838f1dae5b4"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/edid.rs",
+      "gitBlob": "4a037d6f02aafa0c014169d889000f56ec5b4986"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "gitBlob": "7f45b76a06477e09dd658f8e69153b24b57a0add"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/protocol.rs",
+      "gitBlob": "7d0f25f2652c331bc725223d3e20d5cde33aefe7"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs",
+      "gitBlob": "04852e9b42baf1a3b73df9c694dc5c2b860898b2"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/resources.rs",
+      "gitBlob": "65d72b9fbea15314c0b51a82072321b02f72c827"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "gitBlob": "f1edb119c52f25fa8b1d07f232264f6d3cd00ffa"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/tiles.rs",
+      "gitBlob": "ffeee35c0da922f9eef2b9a14eb5e110eb0d05ed"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/input/keyboard.rs",
+      "gitBlob": "dcb7b2aa21531086d27e0ebde2a51b6dd78adb92"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/input/mod.rs",
+      "gitBlob": "f9ff36daf130ddba733f923334cbee05c62193cb"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/input/pointer.rs",
+      "gitBlob": "4f15b7b4be3950bb20b1217612c127547b63c588"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/input/snapshot.rs",
+      "gitBlob": "8c7a5b7ab9293a505358d464ce06671c8dead95e"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/mmio.rs",
+      "gitBlob": "c1245b3032922f1b6e4d90a2c0beef6f54bbe9da"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/mod.rs",
+      "gitBlob": "98685c14781c066455ff34d85425fcc7af287a4f"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/net.rs",
+      "gitBlob": "adc3c9c654cc6d8689dca58deb67addc348f0dad"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/queue.rs",
+      "gitBlob": "a9cc69a24bfade12a01cc0abf1c10982e8e42dac"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/rng.rs",
+      "gitBlob": "6ee3ba80d1c029613985373b235a5556443e39bb"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/snd/mod.rs",
+      "gitBlob": "3ab4bb6b9733e44e189997d55c929739c97e52b3"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/snd/snapshot.rs",
+      "gitBlob": "391e185b186bc7f8d9d8cd82dc8893bf09150359"
+    },
+    {
+      "path": "crates/core/src/diag/irqstats.rs",
+      "gitBlob": "5ca2d5534be6c3ec44deded9b8962d64c051d6e5"
+    },
+    {
+      "path": "crates/core/src/diag/mod.rs",
+      "gitBlob": "e16ef31162b79e7f28d68cc8a3e9f216e64bb46e"
+    },
+    {
+      "path": "crates/core/src/dispatch.rs",
+      "gitBlob": "bc60096ad533a4fa226c1831a6b6973c3712d116"
+    },
+    {
+      "path": "crates/core/src/fdt.rs",
+      "gitBlob": "31ca095fa4505c743a661c85fad69c8f55adb8fe"
+    },
+    {
+      "path": "crates/core/src/hart/fregs.rs",
+      "gitBlob": "2dd59bbdb0a0775a7f1b6345e54715063d889b4f"
+    },
+    {
+      "path": "crates/core/src/hart/mod.rs",
+      "gitBlob": "7e3780e7bea90e71016a63aa7ca1a6797c2b5214"
+    },
+    {
+      "path": "crates/core/src/hart/regs.rs",
+      "gitBlob": "9d30db3f5e536c67ffb767b190011f20bcdb7a83"
+    },
+    {
+      "path": "crates/core/src/htif.rs",
+      "gitBlob": "c286e074af92fe54d965ddae3b0d0ad43d74e353"
+    },
+    {
+      "path": "crates/core/src/jit.rs",
+      "gitBlob": "021584a7a2a8be0310066662836f446b303adfe3"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "gitBlob": "c32af9760040894115b6d561fdb8f92cebf45f83"
+    },
+    {
+      "path": "crates/core/src/loader.rs",
+      "gitBlob": "71c485a25ff6a536010dc55e59ea08150a962b9b"
+    },
+    {
+      "path": "crates/core/src/mmio.rs",
+      "gitBlob": "434d31c353199321f883f4f78e02df3b095f6b9a"
+    },
+    {
+      "path": "crates/core/src/mmu.rs",
+      "gitBlob": "a078b44e380c0a7ba220a9540ab79121f14e93bb"
+    },
+    {
+      "path": "crates/core/src/platform.rs",
+      "gitBlob": "0f19b592a7cc84f6b3b7af6868244bfdd254f0bc"
+    },
+    {
+      "path": "crates/core/src/pmp.rs",
+      "gitBlob": "8f330994566dc21b5c698f86165ceab5bbc927e8"
+    },
+    {
+      "path": "crates/core/src/pmp_audit_tests.rs",
+      "gitBlob": "8b744652c2517b7403c08989ac9aa5c2ece03e0b"
+    },
+    {
+      "path": "crates/core/src/prof/clock.rs",
+      "gitBlob": "78ec86d676dcea611018be3d77894a8629532d0d"
+    },
+    {
+      "path": "crates/core/src/prof/histogram.rs",
+      "gitBlob": "a4103f8325dc46cddeb48aa74dab8fc3f02f2c3f"
+    },
+    {
+      "path": "crates/core/src/prof/mod.rs",
+      "gitBlob": "43fccc1b219acd0720a2550672ae8a51954c20ce"
+    },
+    {
+      "path": "crates/core/src/prof/pause.rs",
+      "gitBlob": "c1f68345484868616cbf78a30e9d2d8449c92d7e"
+    },
+    {
+      "path": "crates/core/src/prof/report.rs",
+      "gitBlob": "008b3cb0316a8839694a7a2128aace5571b31218"
+    },
+    {
+      "path": "crates/core/src/prof/tests.rs",
+      "gitBlob": "82a79f1341ab2e39969bdf4c8cb3e2da04ccbe8b"
+    },
+    {
+      "path": "crates/core/src/ram.rs",
+      "gitBlob": "218610e07a058f5bb86c94ec2e81e1e6645e65fa"
+    },
+    {
+      "path": "crates/core/src/resume.rs",
+      "gitBlob": "72c5efbdba81b04aa88a0f12ca9ec76f0eab0781"
+    },
+    {
+      "path": "crates/core/src/resume_tests.rs",
+      "gitBlob": "edc6474cfeb3f939bebfb41df025e0475874ba8b"
+    },
+    {
+      "path": "crates/core/src/sbi/base.rs",
+      "gitBlob": "9d314487695dc690768fd7f65df1f802dee582fc"
+    },
+    {
+      "path": "crates/core/src/sbi/dbcn.rs",
+      "gitBlob": "e962017d6212aac78eb285a1557b35f5d099140d"
+    },
+    {
+      "path": "crates/core/src/sbi/hsm.rs",
+      "gitBlob": "9700b8f70d99ad6f0df087a7113ee340ee4593c4"
+    },
+    {
+      "path": "crates/core/src/sbi/ipi.rs",
+      "gitBlob": "1158852391222f4223ac0cd3b0e8ca7a96e59d4f"
+    },
+    {
+      "path": "crates/core/src/sbi/legacy.rs",
+      "gitBlob": "6e59936f34c31326c48ff23d99e2faf6a8d2e3dd"
+    },
+    {
+      "path": "crates/core/src/sbi/mod.rs",
+      "gitBlob": "98ca822608a93a1dc796b1e621a2e106238446d0"
+    },
+    {
+      "path": "crates/core/src/sbi/rfence.rs",
+      "gitBlob": "3d3ea451eab0cc9e962faa51070921e4038d7f1c"
+    },
+    {
+      "path": "crates/core/src/sbi/srst.rs",
+      "gitBlob": "d947b95db40d79b7d7e8dc8a6c6739cd5ccc0a8b"
+    },
+    {
+      "path": "crates/core/src/sbi/time.rs",
+      "gitBlob": "a8ff66ce19d1af5a3f15d68dbbf08832cfb25faf"
+    },
+    {
+      "path": "crates/core/src/snapshot.rs",
+      "gitBlob": "e5e23a84f490000f7add9d0389e343a72b565084"
+    },
+    {
+      "path": "crates/core/src/softfloat.rs",
+      "gitBlob": "e20da749fb8aff85f1bcb102195dc3f86dcfa19e"
+    },
+    {
+      "path": "crates/core/src/time.rs",
+      "gitBlob": "b0bd430f25010bca4e6771bf5fee9c62c6e465c2"
+    },
+    {
+      "path": "crates/core/src/tlb.rs",
+      "gitBlob": "2f281d71b2faec8a4ab9fa960df6f54a226bc278"
+    },
+    {
+      "path": "crates/core/src/trace.rs",
+      "gitBlob": "46ddca509adbae46da5a1d18febef249aae2a410"
+    },
+    {
+      "path": "crates/core/src/zicsr_stub.rs",
+      "gitBlob": "08367615d281ba1ec438500ae0afc76f8a87cf27"
+    },
+    {
+      "path": "crates/core/tests/async_compile_pipeline.rs",
+      "gitBlob": "5b0141473e02fccc707e8e95d67f0fa38459c192"
+    },
+    {
+      "path": "crates/core/tests/boot_contract.rs",
+      "gitBlob": "1707779694c762e802bde9e337e2a35b84367bdc"
+    },
+    {
+      "path": "crates/core/tests/clint.rs",
+      "gitBlob": "eee6e875ca9031daca3cb357f2b4dc135a2f4206"
+    },
+    {
+      "path": "crates/core/tests/console.rs",
+      "gitBlob": "b785fce1963baad02772dea89d2486e424fb6f5b"
+    },
+    {
+      "path": "crates/core/tests/cpu_resume.rs",
+      "gitBlob": "152848fa7c3671674df2dc6b1b14d5e1d8de58e0"
+    },
+    {
+      "path": "crates/core/tests/critic_storm_hostile.rs",
+      "gitBlob": "4bfd1086c8a8a5bd276ecbbe42cd358150941b9e"
+    },
+    {
+      "path": "crates/core/tests/csr.rs",
+      "gitBlob": "9286c247cfb4334f009bb3a1463021feaac0ef5c"
+    },
+    {
+      "path": "crates/core/tests/data/decode_fuzz_corpus_e0t06.txt",
+      "gitBlob": "f8ff431413000f0b9847ed30fcbc2659d4fc9ef0"
+    },
+    {
+      "path": "crates/core/tests/data/model_e0t08.py",
+      "gitBlob": "15cf67465cfa2bc341a704a03fd510cd954a7e71"
+    },
+    {
+      "path": "crates/core/tests/data/spec_model_e0t09.py",
+      "gitBlob": "d143b0af9effdb88a2ef3492cc53fac133f32495"
+    },
+    {
+      "path": "crates/core/tests/decode_golden.rs",
+      "gitBlob": "6533a775caf9502f55cb23184e88c538f7b68597"
+    },
+    {
+      "path": "crates/core/tests/decode_props.proptest-regressions",
+      "gitBlob": "3c1f810d1224f6620d2130fb8046b9088fa5b570"
+    },
+    {
+      "path": "crates/core/tests/decode_props.rs",
+      "gitBlob": "e6fcbc89539fb1ebc0715dda4e12bfd7419d6441"
+    },
+    {
+      "path": "crates/core/tests/desktop_machine_audio_resume.rs",
+      "gitBlob": "d009715a714fc532a003e8f16a5bf12fe8b7056b"
+    },
+    {
+      "path": "crates/core/tests/desktop_machine_resume.rs",
+      "gitBlob": "fea2fe89f5f5a09fad71938db5bb0dfbb0b9e678"
+    },
+    {
+      "path": "crates/core/tests/desktop_machine_resume_verifier.rs",
+      "gitBlob": "8ddaa2c85712a87dfc867905eb86261c7a8c3d6d"
+    },
+    {
+      "path": "crates/core/tests/desktop_snapshot_save.rs",
+      "gitBlob": "95d9c1e3e2d2ad49b06f6eb8292edcdf097304bc"
+    },
+    {
+      "path": "crates/core/tests/determinism.rs",
+      "gitBlob": "6fa97c2bf0f59890bd1f00a660bd6ae8e523125b"
+    },
+    {
+      "path": "crates/core/tests/exhaustive.rs",
+      "gitBlob": "0be67bd1edb746c12e15dffc4fe52346ba7009fa"
+    },
+    {
+      "path": "crates/core/tests/fdt_emit.rs",
+      "gitBlob": "98a5aa8c3f83f51be6dab1cf8ada0c08b71b443e"
+    },
+    {
+      "path": "crates/core/tests/fixtures/build.sh",
+      "gitBlob": "cbe53a828c936b81aa85eccdc63913938f920dcb"
+    },
+    {
+      "path": "crates/core/tests/fixtures/link.ld",
+      "gitBlob": "0e5d9febe0465220578ea7e3b252a0b174e49497"
+    },
+    {
+      "path": "crates/core/tests/fixtures/minimal.elf",
+      "gitBlob": "d3dc0527d1c320f3f230f325ebf856aa2dbb96b8"
+    },
+    {
+      "path": "crates/core/tests/fixtures/minimal.objdump.txt",
+      "gitBlob": "6469a8c27921335dd70d926769809a1d132f4fdb"
+    },
+    {
+      "path": "crates/core/tests/fixtures/minimal.readelf.txt",
+      "gitBlob": "2011471e85bbf5dce6de4b23eddcdce5e61d6ea2"
+    },
+    {
+      "path": "crates/core/tests/fixtures/minimal.s",
+      "gitBlob": "4715f177eadaf97f11407d98f141844e773b5159"
+    },
+    {
+      "path": "crates/core/tests/fixtures/stripped.elf",
+      "gitBlob": "3dca34a271ac34ce91f6b2ec734bfc23a84c505c"
+    },
+    {
+      "path": "crates/core/tests/genuine/i386.elf",
+      "gitBlob": "735773a72ecb6fb8e5d5a51238ebbc0c494b76fb"
+    },
+    {
+      "path": "crates/core/tests/genuine/i386.s",
+      "gitBlob": "77bb47f4ddd2de804f3bfbe01a82b1ea39a72daf"
+    },
+    {
+      "path": "crates/core/tests/genuine/rv32.elf",
+      "gitBlob": "107fd580c5cf39e56f4cbfd6a6d011131f891862"
+    },
+    {
+      "path": "crates/core/tests/genuine/x86_64_dyn.elf",
+      "gitBlob": "3e72bef11bc493f12b40fb49d10915f31adc1dc7"
+    },
+    {
+      "path": "crates/core/tests/genuine/x86_64_exec.elf",
+      "gitBlob": "8406cae6a681f1c8f97a7d9c0f993b3f4d13cb2b"
+    },
+    {
+      "path": "crates/core/tests/golden/virt.dts",
+      "gitBlob": "7b1640859fb2c7c1bf40b11d1a4bbc82382362be"
+    },
+    {
+      "path": "crates/core/tests/golden_run.rs",
+      "gitBlob": "4f215352368308cfeb3fc83eeebdf91f0ec04061"
+    },
+    {
+      "path": "crates/core/tests/guest_clock.rs",
+      "gitBlob": "30962279b62f0fb95e0766e47be1405d333f34ee"
+    },
+    {
+      "path": "crates/core/tests/hart_control.rs",
+      "gitBlob": "7649fafa9434a8856fa01036849d303a2eee91d2"
+    },
+    {
+      "path": "crates/core/tests/hart_memory.rs",
+      "gitBlob": "d63d322222334ec7fcd45081f8380114020c72ca"
+    },
+    {
+      "path": "crates/core/tests/hart_semantics.rs",
+      "gitBlob": "025ca66c022bedd34f2d5221c9b42ed924e749bc"
+    },
+    {
+      "path": "crates/core/tests/hot_path.rs",
+      "gitBlob": "27f0fe3d13b90978d91d479bc7d42352e01675ae"
+    },
+    {
+      "path": "crates/core/tests/hotness_discovery.rs",
+      "gitBlob": "0b5c6dc78ace06abbe67f73c453679e4a8819f73"
+    },
+    {
+      "path": "crates/core/tests/htif_run.rs",
+      "gitBlob": "e948a5b5626fca2ecbcab32c153895d5c4b92d39"
+    },
+    {
+      "path": "crates/core/tests/icount_divider.rs",
+      "gitBlob": "debc3783e8de7b076654c24ba614630d0fe4216b"
+    },
+    {
+      "path": "crates/core/tests/interrupts.rs",
+      "gitBlob": "d92b558753130ea7ad55c6b7e32bfa3f714b1fae"
+    },
+    {
+      "path": "crates/core/tests/isa_scan.rs",
+      "gitBlob": "6482317104b6acf4effad4223da4f6edf65e6e79"
+    },
+    {
+      "path": "crates/core/tests/jit_entry_timing.rs",
+      "gitBlob": "7182754686b008a34fc6e972ff618a123e8c45bd"
+    },
+    {
+      "path": "crates/core/tests/loader_elf.rs",
+      "gitBlob": "27d7c2af01bdfefaa92f773311c330e95c38cd7d"
+    },
+    {
+      "path": "crates/core/tests/misaligned_virtual_pages.rs",
+      "gitBlob": "e2818afc2f3f6a7641b7c631c8c8d649b8b63275"
+    },
+    {
+      "path": "crates/core/tests/no_stdout_in_core.rs",
+      "gitBlob": "2a3005b5a57d861cedf58a2ee02613fa0af3b4bc"
+    },
+    {
+      "path": "crates/core/tests/perf_baseline.rs",
+      "gitBlob": "d8adca5abe4891c87d0ee23bfc782e90ef178d91"
+    },
+    {
+      "path": "crates/core/tests/plic.rs",
+      "gitBlob": "1d96d0278c83283d1cd360aedccdf5bab4a1d856"
+    },
+    {
+      "path": "crates/core/tests/plic_sparse.rs",
+      "gitBlob": "8deab1c33168b615370c72cc9ceba240755230a0"
+    },
+    {
+      "path": "crates/core/tests/plic_sparse_verifier.rs",
+      "gitBlob": "1706860105d7f4c3e61e554c16048d2a12f7f0b3"
+    },
+    {
+      "path": "crates/core/tests/pmp.rs",
+      "gitBlob": "d82b4324779f2d6780e4aff802a22350aaeed7d8"
+    },
+    {
+      "path": "crates/core/tests/pmp_privilege_adversarial.rs",
+      "gitBlob": "abc604487d631371a89d10135b04bb54e27c5125"
+    },
+    {
+      "path": "crates/core/tests/pmp_privilege_audit.rs",
+      "gitBlob": "fc726e73ab5cab5259ac7f39f37b3e05882653dd"
+    },
+    {
+      "path": "crates/core/tests/precise_exceptions.rs",
+      "gitBlob": "22aa77638cd68aebe39d40737370dc83001a33a0"
+    },
+    {
+      "path": "crates/core/tests/predecode_batching.rs",
+      "gitBlob": "467c5e1ad65810a598ba42f49e5ef789032eecec"
+    },
+    {
+      "path": "crates/core/tests/predecode_diff.rs",
+      "gitBlob": "15586fdf827feeb56acd5433dd93f2b46df8d50e"
+    },
+    {
+      "path": "crates/core/tests/predecode_entry_safety.rs",
+      "gitBlob": "bc6baa3e8d2d3e9029c028de12205d5c379ed810"
+    },
+    {
+      "path": "crates/core/tests/predecode_smc_diff.rs",
+      "gitBlob": "e7a1e304ddd51e3e9b9632757386c267e2f5e4c0"
+    },
+    {
+      "path": "crates/core/tests/privilege.rs",
+      "gitBlob": "30158ca88e812fca10acd7e2a49d5e06a7d6a5c8"
+    },
+    {
+      "path": "crates/core/tests/prof_sampling.rs",
+      "gitBlob": "5e6b5dbb9845519b13e079953f0dd8c942547224"
+    },
+    {
+      "path": "crates/core/tests/prof_time_accounting.rs",
+      "gitBlob": "3d7494a1e3c45f2608b0cb9463f3dec61e80112f"
+    },
+    {
+      "path": "crates/core/tests/reset.rs",
+      "gitBlob": "fdf07084ace7c9308d2bdfbf2ca040235e06f33d"
+    },
+    {
+      "path": "crates/core/tests/restore_decision.rs",
+      "gitBlob": "d5663e560d9c347a09a580cbef2379f8765d7c1d"
+    },
+    {
+      "path": "crates/core/tests/retirement_capture.rs",
+      "gitBlob": "2138f95516b6db434c3edb890b784336d3314e28"
+    },
+    {
+      "path": "crates/core/tests/retirement_capture_verifier.rs",
+      "gitBlob": "203a0a96bcb83b82e989b929c5450aa2ddeec45c"
+    },
+    {
+      "path": "crates/core/tests/riscv_tests.rs",
+      "gitBlob": "27bbc626a9fc872fb89b184e268e426bdd46b8ab"
+    },
+    {
+      "path": "crates/core/tests/riscv_tests_f.rs",
+      "gitBlob": "239a79311ef5f91ad9c688993d72714695329c27"
+    },
+    {
+      "path": "crates/core/tests/riscv_tests_mi.rs",
+      "gitBlob": "d3a4c4fcb85c2338d420e8b65d35af2c0ff47cd5"
+    },
+    {
+      "path": "crates/core/tests/riscv_tests_suite.rs",
+      "gitBlob": "9dfd14c26b578eabdd1359cdbe4f3ceeeb720dfd"
+    },
+    {
+      "path": "crates/core/tests/rv64a.rs",
+      "gitBlob": "b7a1d1f05fabc0f27fd7318c17d241e2c251fdf7"
+    },
+    {
+      "path": "crates/core/tests/rv64c.rs",
+      "gitBlob": "6bddd982e37a5d8322f95013ead8d8489b74a762"
+    },
+    {
+      "path": "crates/core/tests/rv64d.rs",
+      "gitBlob": "cfb43576ff371db01a63de2e4a5a1e917b238d87"
+    },
+    {
+      "path": "crates/core/tests/rv64f.rs",
+      "gitBlob": "b90c56fac9c06d2266a4e0cd206015eb9225d573"
+    },
+    {
+      "path": "crates/core/tests/rv64m.rs",
+      "gitBlob": "4cca03f37cd11c1bb163c32f4737bcded9db7764"
+    },
+    {
+      "path": "crates/core/tests/sbi_console.rs",
+      "gitBlob": "e3de6ae18045d2f1708a9e6075676bdf69605db7"
+    },
+    {
+      "path": "crates/core/tests/sbi_ipi_hsm.rs",
+      "gitBlob": "9b2e328353d9e1a17cd99bbb97c05294c454582a"
+    },
+    {
+      "path": "crates/core/tests/sbi_rfence_stale_tlb.rs",
+      "gitBlob": "0ead74df380ee3583ce70297b7a3c7b4cd42a455"
+    },
+    {
+      "path": "crates/core/tests/sbi_timer.rs",
+      "gitBlob": "ff2790b82ce176679addb1907adb52ee9219f043"
+    },
+    {
+      "path": "crates/core/tests/sbi_timer_fuzz.rs",
+      "gitBlob": "a167bf18effd988c2764218d6de1eb47aa4adedd"
+    },
+    {
+      "path": "crates/core/tests/sbi_timer_opensbi_diff.rs",
+      "gitBlob": "6e7e3b014fc1a036673ada5827d2e4ee53a1b54f"
+    },
+    {
+      "path": "crates/core/tests/signature.rs",
+      "gitBlob": "2f15e579b35ee29e77eb0e56c384abab6a883540"
+    },
+    {
+      "path": "crates/core/tests/snapshot.rs",
+      "gitBlob": "55200efb156821661d480e9b16691356be6b28cc"
+    },
+    {
+      "path": "crates/core/tests/snapshot_coherence.rs",
+      "gitBlob": "e8cf9cb69f0dfbb6759b376c235f273b91d3f3b4"
+    },
+    {
+      "path": "crates/core/tests/softfloat.rs",
+      "gitBlob": "a9fcf7e58d12e03a2af901ef71dcfa2fb4b9609c"
+    },
+    {
+      "path": "crates/core/tests/storm_detection.rs",
+      "gitBlob": "18b884da6b8bb4967ec0bb0b1ba42af2e8523710"
+    },
+    {
+      "path": "crates/core/tests/support/plic_sparse_cases.rs",
+      "gitBlob": "f2f0a1a33cde27172aeb91270b910035cca1f179"
+    },
+    {
+      "path": "crates/core/tests/support/plic_sparse_verifier_cases.rs",
+      "gitBlob": "ebefaca43aba0a2559a8dc65cfb83941c10aaa43"
+    },
+    {
+      "path": "crates/core/tests/support/retirement_capture_verifier_support.rs",
+      "gitBlob": "6228b66228aab789cbe2c148cdd7f082d36e9e12"
+    },
+    {
+      "path": "crates/core/tests/sv39.rs",
+      "gitBlob": "f8e1bd34dfa162ecc3ce7b37eddbfc09109e90d0"
+    },
+    {
+      "path": "crates/core/tests/sv39_e2e.rs",
+      "gitBlob": "9d414d7d0d0dc708033ba9eb6aa333740c5aec31"
+    },
+    {
+      "path": "crates/core/tests/sv48.rs",
+      "gitBlob": "bc1074ec8ea7e2a052815de1b2716c0e54998093"
+    },
+    {
+      "path": "crates/core/tests/tlb.rs",
+      "gitBlob": "cd28c8fa03946018e025d5d1bf6c0b337521c399"
+    },
+    {
+      "path": "crates/core/tests/torture_data.rs",
+      "gitBlob": "5a7218a1005c9d6eb11fcc764b5df2548eee89f0"
+    },
+    {
+      "path": "crates/core/tests/trace_golden.rs",
+      "gitBlob": "b863bef1bdf3f69f3e382b04724faa6baa09ce51"
+    },
+    {
+      "path": "crates/core/tests/trace_mem_exec.rs",
+      "gitBlob": "5d19857ed9a7a2fcfce8cf8534b518b293975f88"
+    },
+    {
+      "path": "crates/core/tests/trace_retire.rs",
+      "gitBlob": "4e4f562edff3e5dbb42b50a6f7b8a8e22bb2c864"
+    },
+    {
+      "path": "crates/core/tests/triggers.rs",
+      "gitBlob": "bd0e47d9c114827396709c38cec25f600ed6c344"
+    },
+    {
+      "path": "crates/core/tests/uart16550_irq.rs",
+      "gitBlob": "e30c26b3d6ac8efb1816d2994be519cb9a702edd"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t04.rs",
+      "gitBlob": "699b7b4db69e82b0aefff4c0272891ea8177e5cf"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t05.rs",
+      "gitBlob": "f7990f6272f1aa6512a8c03eba994209eaacd3e8"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t06_angles.rs",
+      "gitBlob": "84f15a5e905640bebb02fcb005e99aa34f26f441"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t06_golden.rs",
+      "gitBlob": "e2600845e1c840b2e8c1dd45e0e0e46447e96f7c"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t07_angles.rs",
+      "gitBlob": "301ef7dda5538846e79f23874bcefa9e377db99b"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t07_diff.rs",
+      "gitBlob": "b354c8298a47118c337234f76bea4bfc814e268f"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t07_novel.rs",
+      "gitBlob": "e537b31d5540f699c377d0ffec38d94a73946949"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t08_attacks.rs",
+      "gitBlob": "09e2a2ba79050bb41bdba65b4154f53690fe83ef"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t08_diff.rs",
+      "gitBlob": "80d2c59d9a9cde5dd24998d67b1d1cec8b3ec214"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t09_angles.rs",
+      "gitBlob": "787b84c929b17893badde2b6d2c8a5aca27fc70f"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t10.rs",
+      "gitBlob": "d940903dc395db9a02bec35f60bd4ee7fc3c6b0c"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t11_attacks.rs",
+      "gitBlob": "e095e247445950fa15a6d819c0c36e64004bb94d"
+    },
+    {
+      "path": "crates/core/tests/verifier_e0t12.rs",
+      "gitBlob": "4b71f278948a7bc812828088702ee9a66cae3ea8"
+    },
+    {
+      "path": "crates/core/tests/verifier_e2_sweep.rs",
+      "gitBlob": "254acd9dc379699869c6e1826e67ad1798d976cd"
+    },
+    {
+      "path": "crates/core/tests/verifier_fuzz.rs",
+      "gitBlob": "622bd7994cf4b88bf5e48294d4fb9640beaa1f54"
+    },
+    {
+      "path": "crates/core/tests/verifier_genuine.rs",
+      "gitBlob": "eba122c7c8d3681caed15d60be52a3575aef458d"
+    },
+    {
+      "path": "crates/core/tests/virtio_blk.rs",
+      "gitBlob": "ff60746d286a92ef809805db30c7f000828995dd"
+    },
+    {
+      "path": "crates/core/tests/virtio_blk_flush.rs",
+      "gitBlob": "a3e1180e5f98d8cc6085f20296d503df95587319"
+    },
+    {
+      "path": "crates/core/tests/virtio_blk_quiesce.rs",
+      "gitBlob": "d14ecaabf2a354d116b16193c33b1e54f44c13fe"
+    },
+    {
+      "path": "crates/core/tests/virtio_blk_torture.rs",
+      "gitBlob": "ae4788af7b8679ffcc9aa969e2e357d0c17ee72d"
+    },
+    {
+      "path": "crates/core/tests/virtio_console.rs",
+      "gitBlob": "11f2f1562b74b38238296b405ce91d7c0efddc40"
+    },
+    {
+      "path": "crates/core/tests/virtio_gpu_machine.rs",
+      "gitBlob": "dbee314d50ed0f79aef91171911aa715cd4706e5"
+    },
+    {
+      "path": "crates/core/tests/virtio_keyboard.rs",
+      "gitBlob": "c728def708097c8155ab5fd164c76372c4e037f5"
+    },
+    {
+      "path": "crates/core/tests/virtio_keyboard_guest_stream.rs",
+      "gitBlob": "6e7dff95162032cca7a9b824e0efd1c8d6f05eb4"
+    },
+    {
+      "path": "crates/core/tests/virtio_mmio_slots.rs",
+      "gitBlob": "49598aaa016f59b9da7cec168f1d153bcc4bd55e"
+    },
+    {
+      "path": "crates/core/tests/virtio_net.rs",
+      "gitBlob": "b921af47f1e7c0464503caff6bdce32da0222403"
+    },
+    {
+      "path": "crates/core/tests/virtio_net_critic.rs",
+      "gitBlob": "360acaa0a9ff011e5f48994dd727f0fdef8d65e2"
+    },
+    {
+      "path": "crates/core/tests/virtio_net_machine.rs",
+      "gitBlob": "7a0af1e82f0d5530dab49920bfaaa4a7da65525c"
+    },
+    {
+      "path": "crates/core/tests/virtio_net_wiring_probes.rs",
+      "gitBlob": "87ea882c5e61f3dca2f854e59b44a5858401d199"
+    },
+    {
+      "path": "crates/core/tests/virtio_pointer.rs",
+      "gitBlob": "c9fabd0732be4fafa9ee028871144ef379d2ab82"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd.rs",
+      "gitBlob": "2dbe5b4a7b2bcea1252a485c1af4a5825ee2cde9"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_capture.rs",
+      "gitBlob": "17de4e45b3b2032946e0f123748f594532efbe4a"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_capture_config.rs",
+      "gitBlob": "672575b52ef2319700183606f13427ddfc7085ac"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_machine.rs",
+      "gitBlob": "aba724b9157ce1110a3c285b8390109103a98207"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_playback.rs",
+      "gitBlob": "f977b4ac11f537740663bb1601e3ea48f9407d3f"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_queue.rs",
+      "gitBlob": "bdf7cc92d2ad96cc7f390786131e641b50583c80"
+    },
+    {
+      "path": "crates/core/tests/virtio_snd_release_capture.rs",
+      "gitBlob": "da401b3bd514254f1f73891e29687b63863ba7c4"
+    },
+    {
+      "path": "crates/core/tests/virtqueue.rs",
+      "gitBlob": "cbd2bdd2a130bbceba5ef692071ab7d2fec5bfa9"
+    },
+    {
+      "path": "crates/core/tests/wfi_fast_forward_critic.rs",
+      "gitBlob": "1116ed65eb56c0b78e6f1f0958b4fca934ad88ea"
+    },
+    {
+      "path": "crates/core/tests/zicntr.rs",
+      "gitBlob": "bec3289b80ea1532465e88032e8d3558cd1fc0a7"
+    }
+  ],
+  "workspaceManifestOnlyChange": "members narrowed to crates/core; reviewed unified diff contains no other change",
+  "lock": {
+    "originalSha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "afterBuildSha256": "eae59fed87256083b4b12c6c8e835e37b0fdc6e31e030a0557eed10a6d72ea8d",
+    "originalPackages": 308,
+    "afterBuildPackages": 88,
+    "allRetainedVersionsAndChecksumsUnchanged": true,
+    "explanation": "Cargo pruned dependencies after workspace narrowing; the full lockfile is not byte-identical after build."
+  }
+}

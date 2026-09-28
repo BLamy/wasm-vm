@@ -1,0 +1,13 @@
+clippy started
+clippy exit=0
+wasm-test-clippy started
+wasm-test-clippy exit=0
+wasm-native-lib started
+wasm-native-lib exit=0
+recorder-harness started
+recorder-harness exit=0
+no-host-float started
+no-host-float exit=0
+acceptance started
+acceptance exit=0
+{"head": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46", "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916", "phase": "affected", "commands": [{"label": "clippy", "args": ["cargo", "clippy", "-p", "wasm-vm-wasm", "--lib", "--", "-D", "warnings"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:46Z", "code": 0, "finishedAt": "2026-09-16T09:18:50Z"}, {"label": "wasm-test-clippy", "args": ["cargo", "clippy", "-p", "wasm-vm-wasm", "--target", "wasm32-unknown-unknown", "--lib", "--test", "jit_fp_direct_imports_verifier", "--", "-D", "warnings"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:50Z", "code": 0, "finishedAt": "2026-09-16T09:18:50Z"}, {"label": "wasm-native-lib", "args": ["cargo", "test", "-p", "wasm-vm-wasm", "--lib"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:50Z", "code": 0, "finishedAt": "2026-09-16T09:18:56Z"}, {"label": "recorder-harness", "args": ["/Users/blamy/.nvm/versions/node/v24.20.0/bin/node", "--test", "tools/verify/omarchy-input-trial.test.mjs", "tools/verify/omarchy-user-input.test.mjs", "tools/verify/omarchy-worker-cost.test.mjs", "tools/verify/omarchy-prepared-direct.test.mjs", "tools/verify/omarchy-owned-trial.test.mjs", "tools/verify/omarchy-desktop-live.test.mjs"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:56Z", "code": 0, "finishedAt": "2026-09-16T09:18:57Z"}, {"label": "no-host-float", "args": ["bash", "tools/ci/no-host-float.sh"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:57Z", "code": 0, "finishedAt": "2026-09-16T09:18:57Z"}, {"label": "acceptance", "args": ["make", "verify-E5_5-T03ao", "DIRECT_FP_BROWSER_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-r1/browser", "DIRECT_FP_BENCH_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-r1/benchmark"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:18:57Z", "code": 0, "finishedAt": "2026-09-16T09:19:24Z"}], "allPassed": true}

@@ -1,0 +1,19 @@
+
+running 6 tests
+test detached_and_destination_bounds_do_not_mutate ... ok
+test independent_sg_partition_seeds_preserve_the_literal_oracle ... SG seed=7c0f11f29b47a503: 256 independently partitioned literal cases passed
+SG seed=2ff4d78a94eb6971: 256 independently partitioned literal cases passed
+SG seed=ddd1453223feaa19: 256 independently partitioned literal cases passed
+ok
+test invalid_later_backing_range_is_prevalidated_before_the_first_row ... ok
+test invalid_tail_and_large_offsets_preserve_shadow_damage_and_guest_ram ... rejected offset=4, shadow/damage/RAM unchanged
+rejected offset=27, shadow/damage/RAM unchanged
+rejected offset=18446744073709551612, shadow/damage/RAM unchanged
+rejected offset=18446744073709551615, shadow/damage/RAM unchanged
+ok
+test literal_unaligned_source_crosses_sg_and_ram_pages_at_exact_end ... literal oracle: offset=3 dest=(1,1,2,2) backing=27 words=07060504,0b0a0908,17161514,1b1a1918
+ok
+test zero_area_retains_checked_noop_behavior ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.46s
+

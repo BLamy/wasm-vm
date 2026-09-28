@@ -224,6 +224,29 @@ impl SystemBus {
         self.windows.iter().map(|w| (w.start, w.hits)).collect()
     }
 
+    /// The side effect of every successful RAM store (guest, fast-path, or device/DMA): when the
+    /// block cache is on, record the physical page frame(s) it touched so the Machine can
+    /// page-invalidate cached code (E4-T05 Phase B). Both the start and end frames are logged so a
+    /// misaligned (E1-T26) RAM store that straddles a page boundary invalidates BOTH pages.
+    #[inline(always)]
+    fn note_ram_store(&mut self, addr: u64, width: u64) {
+        if self.track_code_writes {
+            let start = addr >> 12;
+            self.code_write_log.push(start);
+            let end = addr.wrapping_add(width - 1) >> 12;
+            if end != start {
+                self.code_write_log.push(end);
+            }
+        }
+    }
+
+    /// Total MMIO accesses that have landed in any device window (the sum of the E2-T25 per-window
+    /// counters, without allocating). Deterministic. The JIT chain loop compares it across one
+    /// compiled block to detect a device access that needs the full boundary service pass.
+    pub fn device_access_count(&self) -> u64 {
+        self.windows.iter().map(|w| w.hits).sum()
+    }
+
     /// True when every byte of `[addr, addr + width)` lies in `[start, last]`.
     /// Plain u64 compares; cannot wrap (width - 1 <= 7, and addr <= last).
     #[inline(always)]
@@ -356,19 +379,9 @@ macro_rules! sysbus_store {
                     $width,
                     u64::from(val),
                 ),
-                // A store that reached RAM (Ok) may have overwritten cached code. Record the
-                // physical page frame(s) it touched so the Machine can page-invalidate the block
-                // cache (E4-T05 Phase B). Both the start and end frames are logged so a misaligned
-                // (E1-T26) RAM store that straddles a page boundary invalidates BOTH pages.
+                // A store that reached RAM (Ok) may have overwritten cached code: log its frame(s).
                 Ok(()) => {
-                    if self.track_code_writes {
-                        let start = addr >> 12;
-                        self.code_write_log.push(start);
-                        let end = addr.wrapping_add(core::mem::size_of::<$ty>() as u64 - 1) >> 12;
-                        if end != start {
-                            self.code_write_log.push(end);
-                        }
-                    }
+                    self.note_ram_store(addr, core::mem::size_of::<$ty>() as u64);
                     Ok(())
                 }
                 other => other,
@@ -377,7 +390,37 @@ macro_rules! sysbus_store {
     };
 }
 
+// Softmmu fast path: the address is proven RAM, so go straight to RAM (no device fallback) while
+// keeping every RAM-store side effect of `sysbus_store!` (the code-write log).
+macro_rules! sysbus_ram_load {
+    ($name:ident, $ty:ty) => {
+        #[inline(always)]
+        fn $name(&mut self, addr: u64) -> Result<$ty, BusFault> {
+            self.ram.$name(addr)
+        }
+    };
+}
+
+macro_rules! sysbus_ram_store {
+    ($name:ident, $ty:ty) => {
+        #[inline(always)]
+        fn $name(&mut self, addr: u64, val: $ty) -> Result<(), BusFault> {
+            self.ram.$name(addr, val)?;
+            self.note_ram_store(addr, core::mem::size_of::<$ty>() as u64);
+            Ok(())
+        }
+    };
+}
+
 impl Bus for SystemBus {
+    sysbus_ram_load!(ram_load8, u8);
+    sysbus_ram_load!(ram_load16, u16);
+    sysbus_ram_load!(ram_load32, u32);
+    sysbus_ram_load!(ram_load64, u64);
+    sysbus_ram_store!(ram_store8, u8);
+    sysbus_ram_store!(ram_store16, u16);
+    sysbus_ram_store!(ram_store32, u32);
+    sysbus_ram_store!(ram_store64, u64);
     sysbus_load!(load8, u8, Width::B1);
     sysbus_load!(load16, u16, Width::B2);
     sysbus_load!(load32, u32, Width::B4);
@@ -464,6 +507,31 @@ mod tests {
         let (dev, log) = RecordingDevice::new(read_value);
         bus.attach(WIN_BASE, WIN_LEN, Box::new(dev)).unwrap();
         (bus, log)
+    }
+
+    #[test]
+    fn fast_path_ram_accessors_keep_every_ram_side_effect() {
+        let (mut bus, log) = bus_with_device(0);
+        bus.arm_code_write_tracking(true);
+        bus.ram_store64(DRAM_BASE + 0x1000, 7).unwrap();
+        bus.ram_store8(DRAM_BASE + 0x2FFF, 1).unwrap();
+        assert_eq!(bus.load64(DRAM_BASE + 0x1000), Ok(7));
+        assert_eq!(bus.ram_load64(DRAM_BASE + 0x1000), Ok(7));
+        assert_eq!(bus.ram_load8(DRAM_BASE + 0x2FFF), Ok(1));
+        // Exactly the frames the checked stores would log, in order.
+        let mut checked = SystemBus::new(Ram::new(RAM_SIZE as usize).unwrap());
+        checked.arm_code_write_tracking(true);
+        checked.store64(DRAM_BASE + 0x1000, 7).unwrap();
+        checked.store8(DRAM_BASE + 0x2FFF, 1).unwrap();
+        assert_eq!(bus.code_write_log_mut(), checked.code_write_log_mut());
+        assert_eq!(
+            bus.code_write_log_mut().as_slice(),
+            &[(DRAM_BASE + 0x1000) >> 12, (DRAM_BASE + 0x2FFF) >> 12]
+        );
+        // Never device dispatch: an address outside RAM faults without reaching the window.
+        assert_eq!(bus.ram_load32(WIN_BASE), Err(BusFault::Access));
+        assert_eq!(bus.ram_store32(WIN_BASE, 1), Err(BusFault::Access));
+        assert!(log.borrow().reads.is_empty() && log.borrow().writes.is_empty());
     }
 
     #[test]

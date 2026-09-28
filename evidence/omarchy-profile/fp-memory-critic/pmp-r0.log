@@ -1,0 +1,287 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 27.02s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/jit_fp_memory_critic.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_critic-8cd3935d9ce091cf.wasm)
+running 4 tests
+Invoking test: critic_pmp_two_fp_stores_respect_narrow_authority
+CRITIC_PMP fp=true store=true code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=00000000ffa12345 x7=000000007fa05678 data0=ffa12345 data1=7fa05678
+panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+  left: Fallthrough
+ right: Trap
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+
+
+test critic_pmp_two_fp_stores_respect_narrow_authority ... FAIL
+Invoking test: critic_pmp_two_fp_loads_respect_narrow_authority
+CRITIC_PMP fp=true store=false code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=ffffffff7fa12345 f1=ffffffff81234567 x6=00000000ffa12345 x7=000000007fa05678 data0=7fa12345 data1=81234567
+panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+  left: Fallthrough
+ right: Trap
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+
+
+test critic_pmp_two_fp_loads_respect_narrow_authority ... FAIL
+Invoking test: critic_pmp_integer_store_control
+CRITIC_PMP fp=false store=true code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=00000000ffa12345 x7=000000007fa05678 data0=ffa12345 data1=7fa05678
+panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+  left: Fallthrough
+ right: Trap
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+
+
+test critic_pmp_integer_store_control ... FAIL
+Invoking test: critic_pmp_integer_load_control
+CRITIC_PMP fp=false store=false code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=000000007fa12345 x7=ffffffff81234567 data0=7fa12345 data1=81234567
+panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+  left: Fallthrough
+ right: Trap
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+    at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+
+
+test critic_pmp_integer_load_control ... FAIL
+
+failures:
+
+---- critic_pmp_two_fp_stores_respect_narrow_authority output ----
+    log output:
+        CRITIC_PMP fp=true store=true code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=00000000ffa12345 x7=000000007fa05678 data0=ffa12345 data1=7fa05678
+    
+    error output:
+        panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+        assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+          left: Fallthrough
+         right: Trap
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21717]:0x4945a7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21699]:0x49454c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21339]:0x493583)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319b2f)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[16686]:0x46cfb1)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14104]:0x44c9d7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[3787]:0x2f673c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core::panicking::assert_failed::h7d6b71dada9f23dc (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[11367]:0x41b3b6)
+
+---- critic_pmp_two_fp_loads_respect_narrow_authority output ----
+    log output:
+        CRITIC_PMP fp=true store=false code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=ffffffff7fa12345 f1=ffffffff81234567 x6=00000000ffa12345 x7=000000007fa05678 data0=7fa12345 data1=81234567
+    
+    error output:
+        panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+        assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+          left: Fallthrough
+         right: Trap
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21717]:0x4945a7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21699]:0x49454c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21339]:0x493583)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319b2f)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[16686]:0x46cfb1)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14104]:0x44c9d7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[3787]:0x2f673c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core::panicking::assert_failed::h7d6b71dada9f23dc (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[11367]:0x41b3b6)
+
+---- critic_pmp_integer_store_control output ----
+    log output:
+        CRITIC_PMP fp=false store=true code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=00000000ffa12345 x7=000000007fa05678 data0=ffa12345 data1=7fa05678
+    
+    error output:
+        panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+        assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+          left: Fallthrough
+         right: Trap
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21717]:0x4945a7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21699]:0x49454c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21339]:0x493583)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319b2f)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[16686]:0x46cfb1)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14104]:0x44c9d7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[3787]:0x2f673c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core::panicking::assert_failed::h7d6b71dada9f23dc (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[11367]:0x41b3b6)
+
+---- critic_pmp_integer_load_control output ----
+    log output:
+        CRITIC_PMP fp=false store=false code=Fallthrough pc=0000000040002008 retired=2 trap=None f0=01234567ffa12345 f1=89abcdef7fa05678 x6=000000007fa12345 x7=ffffffff81234567 data0=7fa12345 data1=81234567
+    
+    error output:
+        panicked at crates/wasm/tests/jit_fp_memory_critic.rs:87:5:
+        assertion `left == right` failed: CRITIC_PMP_NEXT_WORD_DENIED
+          left: Fallthrough
+         right: Trap
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2713:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:3493:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp8aFfl2/wasm-bindgen-test.js:2712:57)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21222]:0x492e94)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[12788]:0x437541)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[5318]:0x34fc02)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14370]:0x450679)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319abd)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21717]:0x4945a7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21699]:0x49454c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21339]:0x493583)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[4337]:0x319b2f)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[8702]:0x3d5931)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[21622]:0x4942c2)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[16686]:0x46cfb1)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[14104]:0x44c9d7)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[3787]:0x2f673c)
+            at jit_fp_memory_critic-8cd3935d9ce091cf.wasm.core::panicking::assert_failed::h7d6b71dada9f23dc (wasm://wasm/jit_fp_memory_critic-8cd3935d9ce091cf.wasm-0a0098a6:wasm-function[11367]:0x41b3b6)
+
+failures:
+
+    critic_pmp_two_fp_stores_respect_narrow_authority
+    critic_pmp_two_fp_loads_respect_narrow_authority
+    critic_pmp_integer_store_control
+    critic_pmp_integer_load_control
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test jit_fp_memory_critic`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_memory_critic-8cd3935d9ce091cf.wasm --nocapture` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--test" "jit_fp_memory_critic" "--" "--nocapture"

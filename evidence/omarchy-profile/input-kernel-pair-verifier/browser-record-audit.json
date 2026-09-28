@@ -1,0 +1,139 @@
+{
+  "kind": "critic-actual-browser-audit",
+  "passed": true,
+  "reportSha256": "667d7d1528dab2bfa1198faf6d64a530cdf18ed26ffba79602650105cf0d7809",
+  "runSha256": "577f33d7ecc5b29b161c436dbfcc1be11e3676ff1293bf45b71738f2954f4180",
+  "nativeRecordSha256": "6b21acf1b7398e9655ee8f9f3bc90f2eb7bc3c238cd30cd372b9263d8cee5629",
+  "screenshot": {
+    "sha256": "a3b201ce2e00db5602df2b55f51b687af5524ce3d5f02dabb47487eb1de2e27b",
+    "size": 10763,
+    "width": 1280,
+    "height": 800,
+    "personallyInspected": true,
+    "description": "Readable empty omarchy shell prompt inside full-size dark Foot, desktop bar above, no typed command; preparation only."
+  },
+  "serial": [
+    {
+      "rid": "mu4nb6ug0",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+      "sentAt": "2026-09-16T22:01:38.152Z",
+      "completedAt": "2026-09-16T22:01:56.647Z",
+      "response": {
+        "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x555584dc5b70\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 484\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x5555851adf40\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 484\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4nbs451",
+      "command": "sha256sum /sys/kernel/notes",
+      "sentAt": "2026-09-16T22:02:05.718Z",
+      "completedAt": "2026-09-16T22:02:09.871Z",
+      "response": {
+        "stdout": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f  /sys/kernel/notes\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4nbvci2",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T22:02:09.906Z",
+      "completedAt": "2026-09-16T22:02:20.999Z",
+      "response": {
+        "stdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\n    \"address\": \"0x55558518d650\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 473,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "rid": "mu4ng6pc3",
+      "command": "sync",
+      "sentAt": "2026-09-16T22:05:31.248Z",
+      "completedAt": "2026-09-16T22:05:34.453Z",
+      "response": {
+        "stdout": "\n",
+        "exit": 0
+      }
+    }
+  ],
+  "foot": {
+    "address": "0x55558518d650",
+    "mapped": true,
+    "hidden": false,
+    "visible": true,
+    "acceptsInput": true,
+    "at": [
+      12,
+      38
+    ],
+    "size": [
+      1256,
+      750
+    ],
+    "workspace": {
+      "id": 1,
+      "name": "1"
+    },
+    "floating": false,
+    "monitor": 0,
+    "class": "foot",
+    "title": "omarchy@omarchy-demo:~",
+    "initialClass": "foot",
+    "initialTitle": "foot",
+    "pid": 473,
+    "xwayland": false,
+    "pinned": false,
+    "pinFullscreened": false,
+    "fullscreen": 0,
+    "fullscreenClient": 0,
+    "fullscreenHandler": "default",
+    "allowedOverFullscreen": true,
+    "grouped": [],
+    "tags": [
+      "default-opacity*",
+      "terminal*"
+    ],
+    "swallowing": "0x0",
+    "focusHistoryID": 0,
+    "inhibitingIdle": false,
+    "xdgTag": "",
+    "xdgDescription": "",
+    "contentType": "none",
+    "tearingHint": false,
+    "stableId": "18000000"
+  },
+  "pair": {
+    "snapshotBytes": 890430683,
+    "blocks": 2750,
+    "generation": 48,
+    "base": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+    "snapshot": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+      "size": 205400326,
+      "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+    },
+    "delta": {
+      "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+      "size": 1285559,
+      "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+    },
+    "coreId": "302e302e31000000000000000000000000000000000000000000000000000000",
+    "capturedAt": "2026-09-16T22:06:44.053Z",
+    "paused": true,
+    "restoreDecision": "resume"
+  },
+  "overlay": {
+    "seed": "696f50e2aa752321caec296fe82ce60399fa97712515e14072a530b5ee407bf8",
+    "name": "wvov-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44-seed-696f50e2aa752321caec296fe82ce60399fa97712515e14072a530b5ee407bf8"
+  },
+  "clocks": {
+    "visibleAfterNavigationMs": 237648,
+    "exportMs": 75084,
+    "cleanupMs": 7616
+  },
+  "inputEvents": 0,
+  "keyboardAcceptance": false,
+  "frameProgress": [
+    2,
+    3
+  ],
+  "inputBufferKernelNotesSha256": "7117bfaf56cad575a6473084a94e6e2976cc08b598b5fbbe7d9d3142d238d55f"
+}

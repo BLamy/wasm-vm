@@ -1,0 +1,136 @@
+{
+  "purpose": "fixed-direct-opaque-input",
+  "acceptanceClaim": false,
+  "head": "f55923bda86172359f73db8ea998692ceb155fae",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "startedAt": "2026-09-16T04:46:30.757Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-opaque-r1/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T04:48:03.179Z",
+  "reportSha256": "edf2736a39f59d2035d8e9f0607e031b1cdefe9fba9e305e734b9c13eed63411",
+  "input": {
+    "arm": "candidate",
+    "machineAcceptance": false,
+    "visualInspectionRequired": true,
+    "result": "failed",
+    "outcome": "startup-failed-input-not-tested",
+    "startup": {
+      "startedAt": "2026-09-16T04:46:32.947Z",
+      "timeoutMs": 300000,
+      "deadlineAt": "2026-09-16T04:51:32.947Z"
+    },
+    "keyboard": null,
+    "trustedEvents": 0,
+    "matchedKeyboardCalls": 0,
+    "completedReads": 0,
+    "pendingReads": 0,
+    "readExits": [],
+    "nonceReplies": 0,
+    "framesBefore": 3,
+    "framesAfter": 3,
+    "intervalRetired": 0,
+    "intervalJitRetired": 0,
+    "intervalJitShare": null,
+    "discoveryBefore": {
+      "nominated": 23078,
+      "deduped": 20753462,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 6374464,
+      "excluded": 132,
+      "queueDepth": 90,
+      "queueHighWater": 392,
+      "candidates": 65536,
+      "generation": 5
+    },
+    "discoveryAfter": {
+      "nominated": 23078,
+      "deduped": 20753462,
+      "droppedStale": 0,
+      "droppedOverflow": 0,
+      "countsDropped": 6374464,
+      "excluded": 132,
+      "queueDepth": 90,
+      "queueHighWater": 392,
+      "candidates": 65536,
+      "generation": 5
+    },
+    "recyclingBefore": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "recyclingAfter": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "residency": {
+      "policy": "cap-256",
+      "cap": 256
+    },
+    "cacheBefore": {
+      "blocks": 806,
+      "installs": 7444,
+      "evictions": 2340
+    },
+    "cacheAfter": {
+      "blocks": 806,
+      "installs": 7444,
+      "evictions": 2340
+    },
+    "serial": [
+      {
+        "rid": "mu3mc5rq0",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-16T04:46:37.622Z",
+        "completedAt": "2026-09-16T04:47:05.867Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      },
+      {
+        "rid": "mu3mdei41",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch setprop active opaque 1; dispatch setprop active force_rgbx 1; dispatch setprop active opacity 1; dispatch setprop active opacity_inactive 1; dispatch setprop active opacity_fullscreen 1; dispatch setprop active opacity_override 1; dispatch setprop active opacity_inactive_override 1; dispatch setprop active opacity_fullscreen_override 1; getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+        "sentAt": "2026-09-16T04:47:35.596Z",
+        "completedAt": "2026-09-16T04:48:02.924Z",
+        "response": {
+          "stdout": "error: [string \"return hl.dispatch(setprop active opaque 1)\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active force_rgbx ...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity 1)\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ina...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ful...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ove...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ina...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ful...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nfalse\n\n\nfalse\n\n\n0.985\n\n\n0.96\n\n\n1\n\n\nfalse\n\n\nfalse\n\n\nfalse\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+          "exit": 0
+        }
+      }
+    ]
+  },
+  "configuration": {
+    "configuration": "configuration-failed",
+    "wire": {
+      "rid": "mu3mdei41",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch setprop active opaque 1; dispatch setprop active force_rgbx 1; dispatch setprop active opacity 1; dispatch setprop active opacity_inactive 1; dispatch setprop active opacity_fullscreen 1; dispatch setprop active opacity_override 1; dispatch setprop active opacity_inactive_override 1; dispatch setprop active opacity_fullscreen_override 1; getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+      "sentAt": "2026-09-16T04:47:35.596Z",
+      "completedAt": "2026-09-16T04:48:02.924Z",
+      "response": {
+        "stdout": "error: [string \"return hl.dispatch(setprop active opaque 1)\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active force_rgbx ...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity 1)\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ina...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ful...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ove...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ina...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nerror: [string \"return hl.dispatch(setprop active opacity_ful...\"]:1: ')' expected near 'active'\n\n → Note: dispatch in lua is a shorthand for hl.dispatch(...), your syntax might need to be updated.\n\n\nfalse\n\n\nfalse\n\n\n0.985\n\n\n0.96\n\n\n1\n\n\nfalse\n\n\nfalse\n\n\nfalse\n\n\n{\n    \"address\": \"0x55555eb73630\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 503,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+        "exit": 0
+      }
+    },
+    "physicalInputTested": false
+  },
+  "result": "failed",
+  "desktopAcceptance": false,
+  "visualInspectionRequired": true
+}

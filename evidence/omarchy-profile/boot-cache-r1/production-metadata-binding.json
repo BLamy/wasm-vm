@@ -1,0 +1,54 @@
+node:internal/child_process:1160
+    result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);
+                   ^
+
+<ref *1> Error: spawnSync git ENOBUFS
+    at Object.spawnSync (node:internal/child_process:1160:20)
+    at spawnSync (node:child_process:928:24)
+    at execFileSync (node:child_process:971:15)
+    at file:///Users/blamy/Documents/Codex/wasm-vm/[eval1]:1:585
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -55,
+  code: 'ENOBUFS',
+  syscall: 'spawnSync git',
+  path: 'git',
+  spawnargs: [
+    'show',
+    '18d14adb68627864a102616bbad7e61fcfab1649:web/dist/pkg/wasm_vm_wasm_bg.wasm'
+  ],
+  error: [Circular *1],
+  status: null,
+  signal: 'SIGTERM',
+  output: [
+    null,
+    Buffer(1064960) [Uint8Array] [
+        0,  97, 115, 109,   1,   0,   0,   0,   1, 233,  10, 163,
+        1,  96,   1, 127,   0,  96,   2, 127, 127,   0,  96,   2,
+      127, 127,   1, 127,  96,   3, 127, 127, 127,   0,  96,   1,
+      127,   1, 127,  96,   0,   3, 127, 127, 127,  96,   4, 127,
+      127, 127, 127,   0,  96,   3, 127, 127, 127,   1, 127,  96,
+        1, 127,   1, 126,  96,   5, 127, 127, 127, 127, 127,   0,
+       96,   0,   2, 127, 127,  96,   1, 111,   1, 127,  96,   2,
+      127, 126,   0,  96,   1, 127,   3, 127, 127, 127,  96,   1,
+      111,   1, 111,  96,
+      ... 1064860 more items
+    ],
+    Buffer(0) [Uint8Array] []
+  ],
+  pid: 40025,
+  stdout: Buffer(1064960) [Uint8Array] [
+      0,  97, 115, 109,   1,   0,   0,   0,   1, 233,  10, 163,
+      1,  96,   1, 127,   0,  96,   2, 127, 127,   0,  96,   2,
+    127, 127,   1, 127,  96,   3, 127, 127, 127,   0,  96,   1,
+    127,   1, 127,  96,   0,   3, 127, 127, 127,  96,   4, 127,
+    127, 127, 127,   0,  96,   3, 127, 127, 127,   1, 127,  96,
+      1, 127,   1, 126,  96,   5, 127, 127, 127, 127, 127,   0,
+     96,   0,   2, 127, 127,  96,   1, 111,   1, 127,  96,   2,
+    127, 126,   0,  96,   1, 127,   3, 127, 127, 127,  96,   1,
+    111,   1, 111,  96,
+    ... 1064860 more items
+  ],
+  stderr: Buffer(0) [Uint8Array] []
+}
+
+Node.js v24.20.0

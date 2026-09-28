@@ -1,0 +1,139 @@
+{
+  "schema": "wasm-vm.e5.5-t03g.runtime-identities.v1",
+  "heads": {
+    "nativeCapture": "0d3e609629e45021357b0e07f09ab70f9765edf8",
+    "builtCapture": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+  },
+  "files": [
+    {
+      "path": "target/release/wasm-vm",
+      "role": "native-executable",
+      "sha256": "d5bc0b0f8c807117cee8822fe14d837cb4e39f4884e950cead54105e7ddd8bf6",
+      "size": 17045720
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "role": "kernel",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "role": "core",
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "size": 1566204
+    },
+    {
+      "path": "Cargo.toml",
+      "role": "harness",
+      "sha256": "fc7cbaedc583510a98e1ce66875c32af7fe9aa43bc80cb16b298168dd0c61479",
+      "size": 1543,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "Cargo.lock",
+      "role": "harness",
+      "sha256": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+      "size": 73548,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/chunk_image.py",
+      "role": "harness",
+      "sha256": "165ccaf1c591247e23c509e6bed4fa2f614f1dee7e8a045698ad4cea447484d0",
+      "size": 5282,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/build-omarchy-snapshot.sh",
+      "role": "harness",
+      "sha256": "52be1d94bc74fa6bbfaca4f3c6af7c071d3ab54313356b00d2d77d533aa1fbb3",
+      "size": 5902,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-native-capture.mjs",
+      "role": "harness",
+      "sha256": "084101b6271eb4bd08826bc4d900e293f87ba9b63efb1b60fda0a951c69b1be2",
+      "size": 6340,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "role": "harness",
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8",
+      "size": 47036,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "web/omarchy-desktop-readiness.js",
+      "role": "harness",
+      "sha256": "8c534fe9093db5945f5bec0d6fc06ec4a92a4b8342c6d6f47543e9f2355aaa56",
+      "size": 1256,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-thread-setting.mjs",
+      "role": "harness",
+      "sha256": "a0e82ca953f0fc06cb94475443c28f76cc7c1a4a0e1da83e0e2da8af267667c4",
+      "size": 2051,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/gen-omarchy-manifest.sh",
+      "role": "harness",
+      "sha256": "a8a71b8bf5503872156945a262f36a0234c7e1ba0225924b04d8616aa3c70b7a",
+      "size": 4008,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-thread-candidate.mjs",
+      "role": "harness",
+      "sha256": "31b4a90749676d7164d6f15ccec8b94ca3e0a651af1100d0db11f0bd6c0d908c",
+      "size": 9026,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-softpipe-candidate.mjs",
+      "role": "harness",
+      "sha256": "09c53053218b52041ccc2cacc2e09de220af63d0451fedd1c28371788047f331",
+      "size": 23076,
+      "frozenHead": "0d3e609629e45021357b0e07f09ab70f9765edf8"
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "role": "harness",
+      "sha256": "17281deb8bcdf091a47ff444a80e7acb9678d2c8359cb65d892ce7257ea05164",
+      "size": 60063,
+      "frozenHead": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+    },
+    {
+      "path": "tools/verify/omarchy-renderer-log.mjs",
+      "role": "harness",
+      "sha256": "dff6ff9d534efbb6afa3b0fd549d7b903f38ce999f2e6981673ec7efccad8bbc",
+      "size": 2406,
+      "frozenHead": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+    },
+    {
+      "path": "tools/verify/omarchy-live-recording.mjs",
+      "role": "harness",
+      "sha256": "d55b4c366dabeac0dad1d0f7938fce040d9d7d6a9f3747d526c5dd3b80378e92",
+      "size": 3890,
+      "frozenHead": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+    },
+    {
+      "path": "web/package.json",
+      "role": "harness",
+      "sha256": "7fd9542da215986a1844f96d9a32855508266a27c6ec4377c4a7ad2be6f3354f",
+      "size": 901,
+      "frozenHead": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+    },
+    {
+      "path": "web/package-lock.json",
+      "role": "harness",
+      "sha256": "1390c5d47562959ba7cb440b5bc53477c54014c845e2365eafda3e4ec90e7fca",
+      "size": 3299,
+      "frozenHead": "91a45c236b07974a9d7c87a0f8fa66f37e6f7e15"
+    }
+  ]
+}

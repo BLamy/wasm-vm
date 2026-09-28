@@ -1,0 +1,38 @@
+✔ generator binds chunkedImage to pretty JSON raw bytes, not canonical identity (130.350666ms)
+✔ generator rejects a mixed RAM/delta pair before rewriting output (246.779666ms)
+✔ requires a mapped Omarchy bar and background, not a process or login banner (1.066833ms)
+✔ a black or solid framebuffer is not rendered desktop evidence (2.241459ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (3.898ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (1.300917ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.426458ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (1.072417ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.4815ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.398666ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (1.144083ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.45325ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.663125ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.462958ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (2.076084ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.373166ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.387375ms)
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.729875ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.511625ms)
+✔ browser button numbers map to the documented evdev codes (0.097666ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.462917ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.237208ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.130708ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.19375ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (1.572959ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.281459ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (3.408458ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.200625ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.429167ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.251416ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 422.252459

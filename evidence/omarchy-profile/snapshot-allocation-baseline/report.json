@@ -1,0 +1,37 @@
+{
+  "purpose": "ephemeral snapshot allocation diagnostic, no guest instructions executed",
+  "logs": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "log",
+      "text": "{\"stage\":\"before-constructor\",\"wasmMemoryBytes\":1310720}"
+    },
+    {
+      "type": "log",
+      "text": "{\"stage\":\"constructed\",\"wasmMemoryBytes\":1147994112}"
+    },
+    {
+      "type": "log",
+      "text": "{\"stage\":\"before-restore\",\"snapshotBytes\":899181735,\"wasmMemoryBytes\":1147994112}"
+    },
+    {
+      "type": "log",
+      "text": "{\"stage\":\"restored\",\"wasmMemoryBytes\":3121020928}"
+    },
+    {
+      "type": "log",
+      "text": "{\"stage\":\"save-error\",\"error\":\"RuntimeError: unreachable\",\"stack\":\"RuntimeError: unreachable\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1821]:0x1550ab\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1669]:0x153224\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1016]:0x121130\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[945]:0x119cd0\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[191]:0x39f3d\\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1513]:0x14b5ec\\n    at WasmLinux.saveSnapshot (http://127.0.0.1:62803/pkg/wasm_vm_wasm.js:936:26)\\n    at eval (eval at evaluate (:234:30), <anonymous>:11:41)\\n    at async <anonymous>:260:30\",\"wasmMemoryBytes\":3121020928}"
+    }
+  ],
+  "errors": [],
+  "result": {
+    "saved": false,
+    "error": "RuntimeError: unreachable",
+    "stack": "RuntimeError: unreachable\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1821]:0x1550ab\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1669]:0x153224\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1016]:0x121130\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[945]:0x119cd0\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[191]:0x39f3d\n    at http://127.0.0.1:62803/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1513]:0x14b5ec\n    at WasmLinux.saveSnapshot (http://127.0.0.1:62803/pkg/wasm_vm_wasm.js:936:26)\n    at eval (eval at evaluate (:234:30), <anonymous>:11:41)\n    at async <anonymous>:260:30",
+    "before": 3121020928,
+    "after": 3121020928
+  }
+}

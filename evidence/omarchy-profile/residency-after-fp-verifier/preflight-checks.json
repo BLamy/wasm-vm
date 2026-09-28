@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-09-16T01:50:55.040Z",
+  "recorderSha256": "c346bc7a37bb5cc217732acd9e05763acb64f34ffad9fdcec533efa88dd450ca",
+  "browsersLaunched": 0,
+  "guestRuns": 0,
+  "cases": [
+    {
+      "label": "experiment-outside-input-trial",
+      "mode": "verify",
+      "env": {
+        "OMARCHY_INPUT_TRIAL_EXPERIMENT": "residency"
+      },
+      "expected": "OMARCHY_INPUT_TRIAL_EXPERIMENT requires input-trial mode",
+      "args": [
+        "tools/verify/omarchy-desktop-live.mjs",
+        "local",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-verifier/preflight-never-created/experiment-outside-input-trial",
+        "verify"
+      ],
+      "status": 1,
+      "signal": null,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: OMARCHY_INPUT_TRIAL_EXPERIMENT requires input-trial mode\n+ actual - expected\n\n+ 'residency'\n- undefined\n\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:87:10 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 'residency',\n  expected: undefined,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.20.0\n",
+      "noOutputSetup": true
+    },
+    {
+      "label": "mixed-residency-and-checkpoint",
+      "mode": "input-trial",
+      "env": {
+        "OMARCHY_INPUT_TRIAL_EXPERIMENT": "residency",
+        "OMARCHY_INPUT_TRIAL_ARM": "control",
+        "OMARCHY_CANDIDATE_PAIR_DIR": "pinned",
+        "OMARCHY_CANDIDATE_CHUNKS": "pinned",
+        "OMARCHY_FAILURE_CHECKPOINT": "1"
+      },
+      "expected": "residency is isolated from other experiments",
+      "args": [
+        "tools/verify/omarchy-desktop-live.mjs",
+        "local",
+        "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-verifier/preflight-never-created/mixed-residency-and-checkpoint",
+        "input-trial"
+      ],
+      "status": 1,
+      "signal": null,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: residency is isolated from other experiments\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.mjs:89:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.20.0\n",
+      "noOutputSetup": true
+    }
+  ]
+}

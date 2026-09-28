@@ -1,0 +1,78 @@
+{
+  "url": "http://127.0.0.1:64707/app.html?guest=omarchy&desktop=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A64707#ide",
+  "mode": "verify",
+  "startedAt": "2026-09-10T13:32:18.803Z",
+  "errors": [],
+  "observations": [],
+  "candidate": {
+    "localOnly": true,
+    "source": {
+      "kind": "local-only-candidate",
+      "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot",
+      "chunkDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/chunks",
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      },
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "image": {
+        "imageLen": 4294967296,
+        "chunkSize": 262144,
+        "chunkCount": 16384
+      }
+    },
+    "manifest": {
+      "generated": "LOCAL-ONLY diagnostic candidate (not a release claim)",
+      "artifacts": {
+        "kernel": {
+          "url": "/candidate/kernel",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        },
+        "bootSnapshot": {
+          "url": "/candidate/boot-snapshot",
+          "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+          "size": 205050833
+        },
+        "overlayDelta": {
+          "url": "/candidate/overlay-delta",
+          "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+          "size": 1209196
+        }
+      },
+      "chunkedImage": {
+        "key": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812
+      }
+    }
+  },
+  "httpSelfTest": {
+    "app": true,
+    "wasmMime": "application/wasm",
+    "kernel": {
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "traversalStatus": 403,
+    "coop": "same-origin",
+    "coep": "require-corp"
+  },
+  "result": "http-selftest-passed",
+  "finishedAt": "2026-09-10T13:32:18.865Z"
+}

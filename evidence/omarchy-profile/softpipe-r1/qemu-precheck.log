@@ -1,0 +1,855 @@
+
+OpenSBI v1.8.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name               : riscv-virtio,qemu
+Platform Features           : medeleg
+Platform HART Count         : 1
+Platform HART Protection    : pmp
+Platform IPI Device         : aclint-mswi
+Platform Timer Device       : aclint-mtimer @ 10000000Hz
+Platform Console Device     : uart8250
+Platform HSM Device         : ---
+Platform PMU Device         : ---
+Platform Reboot Device      : syscon-reboot
+Platform Shutdown Device    : syscon-poweroff
+Platform Suspend Device     : ---
+Platform CPPC Device        : ---
+Firmware Base               : 0x80000000
+Firmware Size               : 321 KB
+Firmware RW Offset          : 0x40000
+Firmware RW Size            : 65 KB
+Firmware Heap Offset        : 0x47000
+Firmware Heap Size          : 37 KB (total), 0 KB (reserved), 12 KB (used), 23 KB (free)
+Firmware Scratch Size       : 4096 B (total), 1464 B (used), 2632 B (free)
+Runtime SBI Version         : 3.0
+Standard SBI Extensions     : time,rfnc,ipi,base,hsm,srst,pmu,dbcn,fwft,legacy,dbtr,sse
+Experimental SBI Extensions : none
+
+Domain0 Name                : root
+Domain0 Boot HART           : 0
+Domain0 HARTs               : 0*
+Domain0 Region00            : 0x0000000080040000-0x000000008005ffff M: (F,R,W) S/U: ()
+Domain0 Region01            : 0x0000000080000000-0x000000008003ffff M: (F,R,X) S/U: ()
+Domain0 Region02            : 0x0000000000100000-0x0000000000100fff M: (I,R,W) S/U: (R,W)
+Domain0 Region03            : 0x0000000010000000-0x0000000010000fff M: (I,R,W) S/U: (R,W)
+Domain0 Region04            : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region05            : 0x000000000c400000-0x000000000c5fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region06            : 0x000000000c000000-0x000000000c3fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region07            : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address        : 0x0000000080200000
+Domain0 Next Arg1           : 0x00000000bfe00000
+Domain0 Next Mode           : S-mode
+Domain0 SysReset            : yes
+Domain0 SysSuspend          : yes
+
+Boot HART ID                : 0
+Boot HART Domain            : root
+Boot HART Priv Version      : v1.12
+Boot HART Base ISA          : rv64imafdch
+Boot HART ISA Extensions    : sstc,zicntr,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count         : 16
+Boot HART PMP Granularity   : 2 bits
+Boot HART PMP Address Bits  : 54
+Boot HART MHPM Info         : 16 (0x0007fff8)
+Boot HART Debug Triggers    : 2 triggers
+Boot HART MIDELEG           : 0x0000000000001666
+Boot HART MEDELEG           : 0x0000000000f4b509
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] random: crng init done
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v3.0 detected
+[    0.000000] SBI implementation ID=0x1 Version=0x10008
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x000000008003ffff (256 KiB) nomap non-reusable mmode_resv1@80000000
+[    0.000000] OF: reserved mem: 0x0000000080040000..0x000000008005ffff (128 KiB) nomap non-reusable mmode_resv0@80040000
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008005ffff]
+[    0.000000]   node   0: [mem 0x0000000080060000-0x00000000bfffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000bfffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] riscv: base ISA extensions acdfhim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0
+[    0.000000] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 258048
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000040000000   (1024 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 989124K/1048576K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 59452K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: interrupt-controller@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000060] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.000638] riscv-timer: Timer interrupt in S-mode is available via sstc extension
+[    0.005514] Console: colour dummy device 80x25
+[    0.008647] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.009143] pid_max: default: 32768 minimum: 301
+[    0.010303] LSM: initializing lsm=capability,integrity
+[    0.012341] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.012728] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.035597] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.036251] riscv: ELF compat mode supported
+[    0.036514] ASID allocator using 16 bits (65536 entries)
+[    0.038160] rcu: Hierarchical SRCU implementation.
+[    0.038334] rcu: 	Max phase no-delay instances is 1000.
+[    0.040994] EFI services will not be available.
+[    0.043585] smp: Bringing up secondary CPUs ...
+[    0.044399] smp: Brought up 1 node, 1 CPU
+[    0.054585] devtmpfs: initialized
+[    0.063240] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.063673] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.065664] pinctrl core: initialized pinctrl subsystem
+[    0.072835] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.082901] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.083495] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.083963] audit: initializing netlink subsys (disabled)
+[    0.088252] thermal_sys: Registered thermal governor 'step_wise'
+[    0.088839] audit: type=2000 audit(0.052:1): state=initialized audit_enabled=0 res=1
+[    0.090146] cpuidle: using governor menu
+[    0.119369] cpu0: rdtime lacks granularity needed to measure unaligned access speed
+[    0.131210] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.131604] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.229034] raid6: int64x8  gen()  2304 MB/s
+[    0.326261] raid6: int64x4  gen()  4352 MB/s
+[    0.419172] raid6: int64x2  gen()  4594 MB/s
+[    0.515530] raid6: int64x1  gen()  3821 MB/s
+[    0.515762] raid6: using algorithm int64x2 gen() 4594 MB/s
+[    0.617397] raid6: .... xor() 3007 MB/s, rmw enabled
+[    0.617656] raid6: using intx1 recovery algorithm
+[    0.619054] ACPI: Interpreter disabled.
+[    0.619707] iommu: Default domain type: Translated
+[    0.619936] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.622365] SCSI subsystem initialized
+[    0.624874] Advanced Linux Sound Architecture Driver Initialized.
+[    0.633595] clocksource: Switched to clocksource riscv_clocksource
+[    0.635907] pnp: PnP ACPI: disabled
+[    0.650740] NET: Registered PF_INET protocol family
+[    0.651674] IP idents hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.655942] tcp_listen_portaddr_hash hash table entries: 512 (order: 2, 16384 bytes, linear)
+[    0.656303] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.656674] TCP established hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.657097] TCP bind hash table entries: 8192 (order: 7, 524288 bytes, linear)
+[    0.657977] TCP: Hash tables configured (established 8192 bind 8192)
+[    0.659166] UDP hash table entries: 512 (order: 3, 49152 bytes, linear)
+[    0.659643] UDP-Lite hash table entries: 512 (order: 3, 49152 bytes, linear)
+[    0.660774] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.663489] RPC: Registered named UNIX socket transport module.
+[    0.663821] RPC: Registered udp transport module.
+[    0.664016] RPC: Registered tcp transport module.
+[    0.664288] RPC: Registered tcp-with-tls transport module.
+[    0.664498] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.665172] kvm [1]: hypervisor extension available
+[    0.665382] kvm [1]: using Sv57x4 G-stage page table format
+[    0.665647] kvm [1]: VMID 14 bits available
+[    0.671992] workingset: timestamp_bits=46 max_order=18 bucket_order=0
+[    0.675877] NFS: Registering the id_resolver key type
+[    0.676767] Key type id_resolver registered
+[    0.676934] Key type id_legacy registered
+[    0.677272] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.677896] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.679006] 9p: Installing v9fs 9p2000 file system support
+[    0.726036] NET: Registered PF_ALG protocol family
+[    0.726448] xor: measuring software checksum speed
+[    0.727469]    8regs           :  4494 MB/sec
+[    0.728373]    8regs_prefetch  :  4673 MB/sec
+[    0.729327]    32regs          :  4469 MB/sec
+[    0.730222]    32regs_prefetch :  4727 MB/sec
+[    0.730399] xor: using function: 32regs_prefetch (4727 MB/sec)
+[    0.730922] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    0.731400] io scheduler mq-deadline registered
+[    0.731607] io scheduler kyber registered
+[    0.731839] io scheduler bfq registered
+[    0.746045] input: QEMU Virtio Keyboard as /devices/platform/soc/10006000.virtio_mmio/virtio2/input/input0
+[    0.748590] input: QEMU Virtio Tablet as /devices/platform/soc/10005000.virtio_mmio/virtio3/input/input1
+[    0.812678] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.821346] printk: console [ttyS0] disabled
+[    0.824479] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 14, base_baud = 230400) is a 16550A
+[    0.826263] printk: console [ttyS0] enabled
+[    0.826263] printk: console [ttyS0] enabled
+[    0.826965] printk: bootconsole [sbi0] disabled
+[    0.826965] printk: bootconsole [sbi0] disabled
+[    0.828879] SuperH (H)SCI(F) driver initialized
+[    0.836220] [drm] features: -virgl +edid -resource_blob -host_visible
+[    0.836257] [drm] features: -context_init
+[    0.837164] [drm] number of scanouts: 1
+[    0.837268] [drm] number of cap sets: 0
+[    0.846209] [drm] Initialized virtio_gpu 0.1.0 0 for 10007000.virtio_mmio on minor 0
+[    0.882472] Console: switching to colour frame buffer device 160x50
+[    0.888594] virtio-mmio 10007000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+[    0.900268] loop: module loaded
+[    0.900783] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.902513] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    0.921279] mousedev: PS/2 mouse device common for all mice
+[    0.924910] goldfish_rtc 101000.rtc: registered as rtc0
+[    0.925517] goldfish_rtc 101000.rtc: setting system clock to 2026-09-10T13:15:39 UTC (1789046139)
+[    0.928610] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    0.929035] syscon-poweroff: probe of poweroff failed with error -16
+[    0.930138] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.932308] sdhci: Secure Digital Host Controller Interface driver
+[    0.932446] sdhci: Copyright(c) Pierre Ossman
+[    0.932908] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.933814] riscv-pmu-sbi: SBI PMU extension is available
+[    0.934372] riscv-pmu-sbi: 16 firmware and 18 hardware counters
+[    0.934644] riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
+[    0.941309] IPVS: Registered protocols (TCP, UDP)
+[    0.941554] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    0.943379] IPVS: ipvs loaded.
+[    0.943592] IPVS: [rr] scheduler registered.
+[    0.945017] Initializing XFRM netlink socket
+[    0.945638] NET: Registered PF_INET6 protocol family
+[    0.951133] Segment Routing with IPv6
+[    0.951353] In-situ OAM (IOAM) with IPv6
+[    0.952041] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.954174] NET: Registered PF_PACKET protocol family
+[    0.954720] Bridge firewalling registered
+[    0.955479] 8021q: 802.1Q VLAN Support v1.8
+[    0.956206] 9pnet: Installing 9P2000 support
+[    0.956705] Key type dns_resolver registered
+[    0.985506] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    0.992010] Btrfs loaded, zoned=no, fsverity=no
+[    0.995359] clk: Disabling unused clocks
+[    0.995663] ALSA device list:
+[    0.995771]   No soundcards found.
+[    1.025210] EXT4-fs (vda): mounted filesystem d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w with ordered data mode. Quota mode: disabled.
+[    1.025864] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    1.028093] devtmpfs: mounted
+[    1.068980] Freeing unused kernel image (initmem) memory: 2200K
+[    1.069526] Run /sbin/init as init process
+P+q6E616D65\[18t[!p]104\[0m[?7h[1G[0J[    1.713212] systemd[1]: systemd 261.2-1-arch running in system mode (+PAM +AUDIT -SELINUX +APPARMOR -IMA +IPE +SMACK +SECCOMP +GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF +XKBCOMMON +UTMP +LIBARCHIVE)
+[    1.713926] systemd[1]: Detected virtualization qemu.
+[    1.714374] systemd[1]: Detected architecture riscv64.
+
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+[    1.725772] systemd[1]: Initializing machine ID from random generator.
+[    1.746136] systemd[1]: Hostname set to <omarchy-demo>.
+]3008;start=a932b0b4be3e4016b5945f3740451a45;user=root;hostname=omarchy-demo;machineid=4f7810fbc4e5438288f9ac8768f7cb01;bootid=b318fc5c97cf4e7399751f3140b6514e;pid=1;comm=systemd;type=boot\[    2.145720] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+[    3.994049] systemd[1]: Queued start job for default target Graphical Interface.
+[    4.037157] systemd[1]: Created slice Slice /system/dirmngr.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/dirmngr[0m.
+[    4.044808] systemd[1]: Created slice Slice /system/gpg-agent.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent[0m.
+[    4.049464] systemd[1]: Created slice Slice /system/gpg-agent-browser.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-browser[0m.
+[    4.054690] systemd[1]: Created slice Slice /system/gpg-agent-extra.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-extra[0m.
+[    4.060064] systemd[1]: Created slice Slice /system/gpg-agent-ssh.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-ssh[0m.
+[    4.065656] systemd[1]: Created slice Slice /system/keyboxd.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/keyboxd[0m.
+[    4.070526] systemd[1]: Created slice Slice /system/modprobe.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/modprobe[0m.
+[    4.075515] systemd[1]: Created slice Slice /system/serial-getty.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/serial-getty[0m.
+[    4.079471] systemd[1]: Created slice User and Session Slice.
+[[0;32m  OK  [0m] Created slice [0;1;39mUser and Session Slice[0m.
+[    4.082338] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Wall Directory Watch[0m.
+[    4.084647] systemd[1]: Arbitrary Executable File Formats File System Automount Point skipped, unmet condition check ConditionPathExists=/proc/sys/fs/binfmt_misc
+[    4.085793] systemd[1]: Expecting device /dev/ttyS0...
+         Expecting device [0;1;39m/dev/ttyS0[0m...
+[    4.087475] systemd[1]: Reached target Image Downloads.
+[[0;32m  OK  [0m] Reached target [0;1;39mImage Downloads[0m.
+[    4.088653] systemd[1]: Reached target Local Integrity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Integrity Protected Volumes[0m.
+[    4.089866] systemd[1]: Reached target Slice Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mSlice Units[0m.
+[    4.091302] systemd[1]: Reached target Swaps.
+[[0;32m  OK  [0m] Reached target [0;1;39mSwaps[0m.
+[    4.092491] systemd[1]: Reached target Local Verity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Verity Protected Volumes[0m.
+[    4.096429] systemd[1]: Listening on Device-mapper event daemon FIFOs.
+[[0;32m  OK  [0m] Listening on [0;1;39mDevice-mapper event daemon FIFOs[0m.
+[    4.109736] systemd[1]: Listening on Query the User Interactively for a Password.
+[[0;32m  OK  [0m] Listening on [0;1;39mQuery the User Interactively for a Password[0m.
+[    4.122894] systemd[1]: Listening on Process Core Dump Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mProcess Core Dump Socket[0m.
+[    4.132701] systemd[1]: Listening on Credential Encryption/Decryption.
+[[0;32m  OK  [0m] Listening on [0;1;39mCredential Encryption/Decryption[0m.
+[    4.146980] systemd[1]: Listening on Factory Reset Management.
+[[0;32m  OK  [0m] Listening on [0;1;39mFactory Reset Management[0m.
+[    4.149227] systemd[1]: Listening on Hostname Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mHostname Service Socket[0m.
+[    4.151944] systemd[1]: Listening on Journal Socket (/dev/log).
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Socket (/dev/log)[0m.
+[    4.154328] systemd[1]: Listening on Journal Sockets.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Sockets[0m.
+[    4.167558] systemd[1]: Listening on Console Output Muting Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mConsole Output Muting Service Socket[0m.
+[    4.169572] systemd[1]: TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-os
+[    4.169999] systemd[1]: Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+[    4.178857] systemd[1]: Listening on Disk Repartitioning Service Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Repartitioning Service Socket[0m.
+[    4.191999] systemd[1]: Listening on Simple Block Device Backed Storage Provider.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple Block Device Backed Storage Provider[0m.
+[    4.205199] systemd[1]: Listening on Simple File System Backed Storage Provider.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple File System Backed Storage Provider[0m.
+[    4.207982] systemd[1]: Listening on udev Control Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Control Socket[0m.
+[    4.209634] systemd[1]: Listening on udev Kernel Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Kernel Socket[0m.
+[    4.211728] systemd[1]: Listening on udev Varlink Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Varlink Socket[0m.
+[    4.235156] systemd[1]: Mounting Huge Pages File System...
+         Mounting [0;1;39mHuge Pages File System[0m...
+[    4.260493] systemd[1]: Mounting POSIX Message Queue File System...
+         Mounting [0;1;39mPOSIX Message Queue File System[0m...
+[    4.295516] systemd[1]: Mounting Kernel Debug File System...
+         Mounting [0;1;39mKernel Debug File System[0m...
+[    4.297632] systemd[1]: Kernel Trace File System skipped, unmet condition check ConditionPathExists=/sys/kernel/tracing
+[    4.312309] systemd[1]: tmp.mount: x-systemd.graceful-option=usrquota specified, but option is not available, suppressing.
+[    4.350895] systemd[1]: Mounting Temporary Directory /tmp...
+         Mounting [0;1;39mTemporary Directory /tmp[0m...
+[    4.359901] systemd[1]: Create List of Static Device Nodes skipped, unmet condition check ConditionFileNotEmpty=/lib/modules/6.6.63/modules.devname
+[    4.424179] systemd[1]: Starting Load Kernel Module configfs...
+         Starting [0;1;39mLoad Kernel Module configfs[0m...
+[    4.442703] systemd[1]: Load Kernel Module drm skipped, unmet condition check ConditionKernelModuleLoaded=!drm
+[    4.527961] systemd[1]: Starting Load Kernel Module fuse...
+         Starting [0;1;39mLoad Kernel Module fuse[0m...
+[    4.544649] systemd[1]: File System Check on Root Device skipped, unmet condition check ConditionPathIsReadWrite=!/
+[    4.545212] systemd[1]: Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+[    4.724460] systemd[1]: Starting Journal Service...
+         Starting [0;1;39mJournal Service[0m...
+[    4.780659] systemd[1]: Load Kernel Modules skipped, no trigger condition checks were met.
+[    4.781134] systemd[1]: TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+[    4.781453] systemd[1]: TPM PCR OS Separator skipped, unmet condition check ConditionSecurity=measured-os
+[    4.868496] systemd[1]: Starting Remount Root and Kernel File Systems...
+         Starting [0;1;39mRemount Root and Kernel File Systems[0m...
+[    4.961716] systemd[1]: Starting Apply Kernel Variables...
+         Starting [0;1;39mApply Kernel Variables[0m...
+[    5.063689] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+         Starting [0;1;39mCreate Static Device Nodes in /dev gracefully[0m...
+[    5.078859] systemd[1]: Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+[    5.079301] systemd[1]: TPM PCR NvPCR Initialization Separator skipped, unmet condition check ConditionPathExists=/etc/initrd-release
+[    5.079618] systemd[1]: TPM NvPCR Product ID Measurement skipped, unmet condition check ConditionSecurity=measured-os
+[    5.155610] systemd[1]: Starting Load udev Rules from Credentials...
+         Starting [0;1;39mLoad udev Rules from Credentials[0m...
+[    5.223975] systemd[1]: Starting Coldplug All udev Devices...
+         Starting [0;1;39mColdplug All udev Devices[0m...
+[    5.336387] systemd[1]: Starting Virtual Console Setup...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[    5.609823] systemd[1]: Mounted Huge Pages File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mHuge Pages File System[0m.
+[    5.655157] systemd[1]: Mounted POSIX Message Queue File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mPOSIX Message Queue File System[0m.
+[    5.700951] systemd[1]: Mounted Kernel Debug File System.
+[[0;32m  OK  [0m] Mounted [0;1;39mKernel Debug File System[0m.
+[    5.727895] systemd[1]: Mounted Temporary Directory /tmp.
+[[0;32m  OK  [0m] Mounted [0;1;39mTemporary Directory /tmp[0m.
+[    5.749587] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[    5.814224] systemd[1]: Finished Load Kernel Module configfs.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module configfs[0m.
+[    5.907579] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[    5.931709] systemd[1]: Finished Load Kernel Module fuse.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module fuse[0m.
+[    5.951062] systemd[1]: FUSE Control File System skipped, unmet condition check ConditionPathExists=/sys/fs/fuse/connections
+[    5.984696] systemd[1]: Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+[    6.038941] EXT4-fs (vda): re-mounted d07702aa-4f31-44b2-a5b0-9dbec2511e25 r/w. Quota mode: disabled.
+[    6.094935] systemd[1]: Finished Remount Root and Kernel File Systems.
+[[0;32m  OK  [0m] Finished [0;1;39mRemount Root and Kernel File Systems[0m.
+[    6.125253] systemd[1]: Finished Apply Kernel Variables.
+[[0;32m  OK  [0m] Finished [0;1;39mApply Kernel Variables[0m.
+[    6.177153] systemd[1]: Finished Load udev Rules from Credentials.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad udev Rules from Credentials[0m.
+[    6.180965] systemd-journald[72]: Collecting audit messages is disabled.
+[    6.239384] systemd[1]: Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+[    6.292582] systemd[1]: Starting Load/Save OS Random Seed...
+         Starting [0;1;39mLoad/Save OS Random Seed[0m...
+[    6.293354] systemd[1]: TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+[    6.558935] loadkeys[84]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+[    6.613058] systemd[1]: Started Journal Service.
+[[0;32m  OK  [0m] Started [0;1;39mJournal Service[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad/Save OS Random Seed[0m.
+         Starting [0;1;39mFlush Journal to Persistent Storage[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev gracefully[0m.
+[    7.369031] systemd-journald[72]: Received client request to flush runtime journal.
+         Starting [0;1;39mJournal Log Access Socket[0m...
+         Starting [0;1;39mCreate Static Device Nodes in /dev[0m...
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Log Access Socket[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mFlush Journal to Persistent Storage[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPreparation for Local File Systems[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal File Systems[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mBoot Loader Control Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Image Download Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSystem Extension Image Management[0m.
+         Starting [0;1;39mTell Plymouth To Write Out Runtime Data[0m...
+         Starting [0;1;39mCreate System Files and Directories[0m...
+         Starting [0;1;39mRule-based Manager for Device Events and Files[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mTell Plymouth To Write Out Runtime Data[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRule-based Manager for Device Events and Files[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate System Files and Directories[0m.
+         Starting [0;1;39mRecord System Boot/Shutdown in UTMP[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mRecord System Boot/Shutdown in UTMP[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mColdplug All udev Devices[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDispatch Password Requests to Console Directory Watch[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Encrypted Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPath Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSystem Initialization[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRefresh existing PGP keys of archlinux-keyring regularly[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily verification of password and group files[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily Cleanup of Temporary Directories[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mTimer Units[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mD-Bus System Message Bus Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mAuthorization Manager Agent Helper[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mOpenSSH Server Socket…temd-ssh-generator, AF_UNIX Local)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mUser Login Management Varlink Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mVirtual Machine and C…tainer Registration Service Socket[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSocket Units[0m.
+         Starting [0;1;39mD-Bus System Message Bus[0m...
+[[0;32m  OK  [0m] Started [0;1;39mD-Bus System Message Bus[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mBasic System[0m.
+         Starting [0;1;39mNetwork Manager[0m...
+         Starting [0;1;39mUser Login Management[0m...
+[[0;32m  OK  [0m] Found device [0;1;39m/dev/ttyS0[0m.
+[[0;32m  OK  [0m] Started [0;1;39mUser Login Management[0m.
+[[0m[0;31m*     [0m] A start job is running for Network Manager (13s / 10min 8s)
+M[K[[0;1;31m*[0m[0;31m*    [0m] A start job is running for Network Manager (13s / 10min 8s)
+M[K[[0;31m*[0;1;31m*[0m[0;31m*   [0m] A start job is running for Network Manager (14s / 10min 8s)
+M[K[ [0;31m*[0;1;31m*[0m[0;31m*  [0m] A start job is running for Network Manager (14s / 10min 8s)
+M[K[  [0;31m*[0;1;31m*[0m[0;31m* [0m] A start job is running for Network Manager (15s / 10min 8s)
+M[K[   [0;31m*[0;1;31m*[0m[0;31m*[0m] A start job is running for Network Manager (15s / 10min 8s)
+M[K[    [0;31m*[0;1;31m*[0m] A start job is running for Network Manager (15s / 10min 8s)
+M[K[     [0;31m*[0m] A start job is running for Network Manager (16s / 10min 8s)
+M[K[    [0;31m*[0;1;31m*[0m] A start job is running for Network Manager (16s / 10min 8s)
+M[K[   [0;31m*[0;1;31m*[0m[0;31m*[0m] A start job is running for Network Manager (17s / 10min 8s)
+M[K[  [0;31m*[0;1;31m*[0m[0;31m* [0m] A start job is running for Network Manager (17s / 10min 8s)
+M[K         Starting [0;1;39mHostname Service[0m...
+[K[[0;32m  OK  [0m] Stopped [0;1;39mVirtual Console Setup[0m.
+         Stopping [0;1;39mVirtual Console Setup[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Started [0;1;39mHostname Service[0m.
+[[0;32m  OK  [0m] Started [0;1;39mNetwork Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mNetwork[0m.
+         Starting [0;1;39mPermit User Sessions[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mPermit User Sessions[0m.
+         Starting [0;1;39mHold until boot process finishes up[0m...
+         Starting [0;1;39mTerminate Plymouth Boot Screen[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mHold until boot process finishes up[0m.
+[[0;32m  OK  [0m] Started [0;1;39mSerial Getty on ttyS0[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLogin Prompts[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mTerminate Plymouth Boot Screen[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mMulti-User System[0m.
+[[0;32m  OK  [0m] Started [0;1;39mSimple Desktop Display Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mGraphical Interface[0m.
+[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8]3008;start=62eef1305610423f8158d61fe2096a45;user=root;hostname=omarchy-demo;machineid=4f7810fbc4e5438288f9ac8768f7cb01;bootid=b318fc5c97cf4e7399751f3140b6514e;pid=154;comm=(agetty);servicename=serial-getty@ttyS0.service;invocationid=23539060088640a9bf502a2799ce4a73;type=service\P+q6E616D65\
+Arch Linux 6.6.63 (ttyS0)
+
+omarchy-demo login: omarchy (automatic login)
+
+Omarchy RISC-V browser demo candidate
+Optional applications and toolchains are not bundled.
+No personal accounts, credentials or VM session state were imported.
+Desktop/browser verification is recorded separately.
+]3008;start=9cfe608ad7be44fcba2bf8bf7b5daffa;user=root;hostname=omarchy-demo;machineid=4f7810fbc4e5438288f9ac8768f7cb01;bootid=b318fc5c97cf4e7399751f3140b6514e;pid=154;comm=login;targetuser=omarchy;sessionid=1;type=session\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ R[Kprintf '\nQEMU_PRECHECK_BEGIN\n'; id -u; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j instances; printf '\nQEMU_PRECHECK_END\n'
+[?2004l]3008;start=312fcef5-390a-48a5-805d-45b5f336451f;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_PRECHECK_BEGIN
+1000
+
+]
+
+
+QEMU_PRECHECK_END
+]3008;end=312fcef5-390a-48a5-805d-45b5f336451f;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\nQEMU_SESSION_BEGIN\n'; ps -u 1000 -o pid=,comm=; systemctl --user show wayland-wm@hyprland.desktop.service -p ActiveState -p Result; journalctl --user -b --no-pager -n 70; printf '\nQEMU_SESSION_END\n'
+[?2004l]3008;start=73fe59f7-10f7-4117-89e2-2f1d611482ef;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_SESSION_BEGIN
+    164 systemd
+    167 (sd-pam)
+    174 bash
+    178 gnome-keyring-d
+    186 sh
+    210 dbus-broker-lau
+    211 dbus-broker
+    217 waitpid
+    218 systemctl
+    253 start-hyprland
+    269 Hyprland
+    292 dconf-service
+    298 omarchy-launch-
+    299 foot
+    300 quickshell
+    328 ps
+ActiveState=active
+Result=success
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:          uuuuu                      UUUUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:         nnnuu                        UUUUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:        nnnnn                          YUUUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:        xxnn                            YUUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:        xxxn                            YYUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:       xxxx                              YYUU
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:       rxxx                              YYYY
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:       rrrx                              YYYY
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:        rrrx                            XXXY
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:        rrrr                            XXXX
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:         rrrr                          zzXX
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:          rrrr                        zzzz
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:           rrrrr                    ccczz
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:            rrrrrx                vccccc
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:              rrrrxxxx        uuvvvvvc
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:                 rrxxxxxxnnnnuuuuuv
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]:                     xxxxxnnnnu
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: WARN ]: Failed to change process scheduling strategy
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Old rlimit: soft -> 65536, hard -> 524288
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: New rlimit: soft -> 524288, hard -> 524288
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the EventLoopManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the KeybindManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the AnimationManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the DynamicPermissionManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the MonitorState!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the WorkspaceState!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the ConfigManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: [cfg] Regular config at /home/omarchy/.config/hypr/hyprland.lua
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: [cfg] Using lua config found at /home/omarchy/.config/hypr/hyprland.lua
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the Error Overlay!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the LayoutManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the TokenManager!
+Sep 10 13:16:23 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the EventManager!
+Sep 10 13:16:24 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Disabling stdout logs (debug.enable_stdout_logs = 0). Further logs will be written to /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log
+Sep 10 13:16:24 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the PointerManager!
+Sep 10 13:16:24 omarchy-demo uwsm_hyprland.desktop[269]: DEBUG ]: Creating the AsyncResourceGatherer!
+Sep 10 13:16:25 omarchy-demo uwsm_waitenv[252]: Expecting variables to appear in activation environment:
+Sep 10 13:16:25 omarchy-demo uwsm_waitenv[252]:   HYPRLAND_INSTANCE_SIGNATURE, WAYLAND_DISPLAY
+Sep 10 13:16:27 omarchy-demo systemd[164]: Starting User preferences database...
+Sep 10 13:16:27 omarchy-demo systemd[164]: Started User preferences database.
+Sep 10 13:16:28 omarchy-demo uwsm_waitenv[252]: [0;1;39m[0;1;31m[0;1;39mAll expected variables appeared in activation environment.[0m
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]: [0;1;39m[0;1;31m[0;1;39mAll expected variables appeared in activation environment.[0m
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]: Exporting variables to systemd user manager:
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   DISPLAY (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   HYPRLAND_INSTANCE_SIGNATURE (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   PATH (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   QT_QPA_PLATFORMTHEME (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   WAYLAND_DISPLAY (already set)
+Sep 10 13:16:28 omarchy-demo systemd[164]: Finished Wait for WAYLAND_DISPLAY and other variables.
+Sep 10 13:16:28 omarchy-demo systemd[164]: wayland-session-waitenv.service: Consumed 1.887s CPU time over 11.472s wall clock time, 16.7M memory peak.
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]: Marking variables for later cleanup from systemd user manager on stop:
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]:   HYPRLAND_INSTANCE_SIGNATURE
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]:   QT_QPA_PLATFORMTHEME
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]: Autoready: Declaring unit for hyprland.desktop ready and restricting notification access.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Started Main service for Hyprland, An intelligent dynamic tiling Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Current graphical user session.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Created slice User Graphical Application Slice.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target XDG Autostart for session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Startup of XDG autostart applications.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Starting Certificate and Key Storage...
+Sep 10 13:16:29 omarchy-demo systemd[164]: Starting Secret Storage Service...
+Sep 10 13:16:29 omarchy-demo systemd[164]: app-gnome\x2dkeyring\x2dpkcs11@autostart.service: Skipped due to 'exec-condition'.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Condition check resulted in Certificate and Key Storage being skipped.
+Sep 10 13:16:29 omarchy-demo systemd[164]: app-gnome\x2dkeyring\x2dsecrets@autostart.service: Skipped due to 'exec-condition'.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Condition check resulted in Secret Storage Service being skipped.
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Launching config: "/usr/share/omarchy/shell/shell.qml"
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Shell ID: "c0240dfe8c8e8a421e1f8db23a03fc60" Path ID "c0240dfe8c8e8a421e1f8db23a03fc60"
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Saving logs to "/run/user/1000/quickshell/by-id/c8ivg5lt/log.qslog"
+Sep 10 13:16:31 omarchy-demo systemd[164]: Starting Portal service...
+
+QEMU_SESSION_END
+]3008;end=73fe59f7-10f7-4117-89e2-2f1d611482ef;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\nQEMU_RENDERER_BEGIN\n'; tr '\000' '\n' < /proc/269/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p'; ps -T -p 269 -o comm=; sed -n '/Renderer:/p;/Vendor:/p;/EGL: Failed/p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log; printf '\nQEMU_RENDERER_END\n'
+[?2004l]3008;start=176da81b-2c57-4fcb-a863-1055f0262843;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_RENDERER_BEGIN
+-bash: /proc/269/environ: No such file or directory
+
+QEMU_RENDERER_END
+]3008;end=176da81b-2c57-4fcb-a863-1055f0262843;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\nQEMU_EXIT_BEGIN\n'; ps -u 1000 -o pid=,comm=; journalctl --user -b --no-pager -n 100; sed -n '1,35p' /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log; printf '\nQEMU_EXIT_END\n'
+[?2004l]3008;start=3d15f958-2d36-485e-a57e-98dd7e7cbf9e;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_EXIT_BEGIN
+    164 systemd
+    167 (sd-pam)
+    174 bash
+    210 dbus-broker-lau
+    211 dbus-broker
+    292 dconf-service
+    427 ps
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   PATH (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   QT_QPA_PLATFORMTHEME (already set)
+Sep 10 13:16:28 omarchy-demo uwsm_hyprland.desktop[255]:   WAYLAND_DISPLAY (already set)
+Sep 10 13:16:28 omarchy-demo systemd[164]: Finished Wait for WAYLAND_DISPLAY and other variables.
+Sep 10 13:16:28 omarchy-demo systemd[164]: wayland-session-waitenv.service: Consumed 1.887s CPU time over 11.472s wall clock time, 16.7M memory peak.
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]: Marking variables for later cleanup from systemd user manager on stop:
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]:   HYPRLAND_INSTANCE_SIGNATURE
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]:   QT_QPA_PLATFORMTHEME
+Sep 10 13:16:29 omarchy-demo uwsm_hyprland.desktop[255]: Autoready: Declaring unit for hyprland.desktop ready and restricting notification access.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Started Main service for Hyprland, An intelligent dynamic tiling Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Current graphical user session.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Created slice User Graphical Application Slice.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target XDG Autostart for session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Reached target Startup of XDG autostart applications.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Starting Certificate and Key Storage...
+Sep 10 13:16:29 omarchy-demo systemd[164]: Starting Secret Storage Service...
+Sep 10 13:16:29 omarchy-demo systemd[164]: app-gnome\x2dkeyring\x2dpkcs11@autostart.service: Skipped due to 'exec-condition'.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Condition check resulted in Certificate and Key Storage being skipped.
+Sep 10 13:16:29 omarchy-demo systemd[164]: app-gnome\x2dkeyring\x2dsecrets@autostart.service: Skipped due to 'exec-condition'.
+Sep 10 13:16:29 omarchy-demo systemd[164]: Condition check resulted in Secret Storage Service being skipped.
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Launching config: "/usr/share/omarchy/shell/shell.qml"
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Shell ID: "c0240dfe8c8e8a421e1f8db23a03fc60" Path ID "c0240dfe8c8e8a421e1f8db23a03fc60"
+Sep 10 13:16:30 omarchy-demo omarchy-shell[300]:   INFO: Saving logs to "/run/user/1000/quickshell/by-id/c8ivg5lt/log.qslog"
+Sep 10 13:16:31 omarchy-demo systemd[164]: Starting Portal service...
+Sep 10 13:16:32 omarchy-demo systemd[164]: Starting sandboxed app permission store...
+Sep 10 13:16:32 omarchy-demo systemd[164]: Started sandboxed app permission store.
+Sep 10 13:16:32 omarchy-demo systemd[164]: Starting flatpak document portal service...
+Sep 10 13:16:33 omarchy-demo systemd[164]: Started flatpak document portal service.
+Sep 10 13:16:33 omarchy-demo xdg-document-portal[347]: fuse: device /dev/fuse not found. Kernel module not loaded?
+Sep 10 13:16:33 omarchy-demo xdg-document-portal[347]: error: fuse init failed: Can't mount path /run/user/1000/doc
+Sep 10 13:16:33 omarchy-demo systemd[164]: [0;1;39m[0;1;31m[0;1;39mxdg-document-portal.service: Main process exited, code=exited, status=6/NOTCONFIGURED[0m
+Sep 10 13:16:33 omarchy-demo systemd[164]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mxdg-document-portal.service: Failed with result 'exit-code'.[0m
+Sep 10 13:16:33 omarchy-demo /usr/lib/xdg-desktop-portal[332]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mDocument portal fuse mount point unknown: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable[0m
+Sep 10 13:16:33 omarchy-demo systemd[164]: Starting Portal service (GTK/GNOME implementation)...
+Sep 10 13:16:35 omarchy-demo uwsm_hyprland.desktop[269]: failed to mkdir() crash report directory
+Sep 10 13:16:35 omarchy-demo uwsm_hyprland.desktop[269]: No such file or directory
+Sep 10 13:16:42 omarchy-demo systemd-coredump[363]: ]8;;man:core(5)\[🡕]]8;;\ [0;1;31m[0;1;39m[0;1;31mProcess 269 (Hyprland) of user 1000 dumped core.[0m
+                                                    [0;1;31m[0m
+                                                    [0;1;31mStack trace of thread 269:[0m
+                                                    [0;1;31m#0  0x00007fff96e290e6 n/a (libc.so.6 + 0x7a0e6)[0m
+                                                    [0;1;31m#1  0x00007fff96de9430 raise (libc.so.6 + 0x3a430)[0m
+                                                    [0;1;31m#2  0x00007fff96dd6d50 abort (libc.so.6 + 0x27d50)[0m
+                                                    [0;1;31m#3  0x00005555645b3a06 n/a (Hyprland + 0x41ea06)[0m
+                                                    [0;1;31m#4  0x00005555645b603a _ZN13CrashReporter18createAndSaveCrashEi (Hyprland + 0x42103a)[0m
+                                                    [0;1;31m#5  0x00005555644b151a n/a (Hyprland + 0x31c51a)[0m
+                                                    [0;1;31m#6  0x00007fff986a5800 n/a (linux-vdso.so.1 + 0x800)[0m
+                                                    [0;1;31mELF object binary architecture: RISC-V[0m
+Sep 10 13:16:43 omarchy-demo uwsm_hyprland.desktop[253]: ERR from start-hyprland ]: Couldn't waitpid for hyprland: No child processes
+Sep 10 13:16:43 omarchy-demo uwsm_hyprland.desktop[253]: DEBUG from start-hyprland ]: hyprland exit, breaking poll, checking state
+Sep 10 13:16:43 omarchy-demo uwsm_hyprland.desktop[253]: DEBUG from start-hyprland ]: Hyprland exit cleanly.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Removed slice User Graphical Application Slice.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target XDG Autostart for session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopping sandboxed app permission store...
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped sandboxed app permission store.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped Portal service.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped Portal service (GTK/GNOME implementation).
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target Current graphical user session.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target Session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target Startup of XDG autostart applications.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped Main service for Hyprland, An intelligent dynamic tiling Wayland compositor.
+Sep 10 13:16:43 omarchy-demo systemd[164]: wayland-wm@hyprland.desktop.service: Consumed 13.258s CPU time over 26.409s wall clock time, 250.1M memory peak.
+Sep 10 13:16:43 omarchy-demo systemd[164]: wayland-wm@hyprland.desktop.service: Triggering OnSuccess= dependencies.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target Session services which should run early before the graphical session is brought up.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped target Preparation for session of hyprland.desktop Wayland compositor.
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopping Bind graphical session to PID 186...
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopping Environment preloader for Hyprland, An intelligent dynamic tiling Wayland compositor...
+Sep 10 13:16:43 omarchy-demo systemd[164]: Stopped Bind graphical session to PID 186.
+Sep 10 13:16:43 omarchy-demo systemd[164]: wayland-session-bindpid@186.service: Triggering OnSuccess= dependencies.
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Cleaning up...
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Found environment cleanup file "env_cleanup.list".
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Found initial systemd state file "env_pre".
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Removing variables from systemd user manager:
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   DEBUGINFOD_URLS
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   DESKTOP_SESSION
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   DISPLAY
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   EDITOR
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   HYPRLAND_INSTANCE_SIGNATURE
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   MAIL
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   MOTD_SHOWN
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   QT_QPA_PLATFORMTHEME
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   TERMINAL
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   UWSM_FINALIZE_VARNAMES
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   UWSM_WAIT_VARNAMES
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   WAYLAND_DISPLAY
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_BACKEND
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_CACHE_HOME
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_CONFIG_DIRS
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_CONFIG_HOME
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_CURRENT_DESKTOP
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_DATA_DIRS
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_DATA_HOME
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_MENU_PREFIX
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_SESSION_CLASS
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_SESSION_DESKTOP
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_SESSION_TYPE
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   XDG_STATE_HOME
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Restoring initial systemd vars.
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: Exporting variables to systemd user manager:
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]:   PATH (updating)
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: [0;1;39m[0;1;31m[0;1;39mRemoved "env_cleanup.list".[0m
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: [0;1;39m[0;1;31m[0;1;39mRemoved "env_pre".[0m
+Sep 10 13:16:45 omarchy-demo uwsm_env-preloader[387]: [0;1;39m[0;1;31m[0;1;39mRemoved "env_session.conf".[0m
+Sep 10 13:16:45 omarchy-demo systemd[164]: Stopped Environment preloader for Hyprland, An intelligent dynamic tiling Wayland compositor.
+Sep 10 13:16:45 omarchy-demo systemd[164]: wayland-wm-env@hyprland.desktop.service: Consumed 1.645s CPU time over 31.176s wall clock time, 16.7M memory peak.
+Sep 10 13:16:45 omarchy-demo systemd[164]: wayland-wm-env@hyprland.desktop.service: Triggering OnSuccess= dependencies.
+Sep 10 13:16:45 omarchy-demo systemd[164]: Stopped target Session envelope of hyprland.desktop Wayland compositor.
+Sep 10 13:16:45 omarchy-demo systemd[164]: Reached target Shutdown graphical session units.
+Sep 10 13:16:45 omarchy-demo systemd[164]: Stopped target Shutdown graphical session units.
+Sep 10 13:16:45 omarchy-demo uwsm[186]: PID 218 exited with RC 0
+DEBUG ]: Old rlimit: soft -> 65536, hard -> 524288
+DEBUG ]: New rlimit: soft -> 524288, hard -> 524288
+DEBUG ]: Creating the EventLoopManager!
+DEBUG ]: Creating the KeybindManager!
+DEBUG ]: Creating the AnimationManager!
+DEBUG ]: Creating the DynamicPermissionManager!
+DEBUG ]: Creating the MonitorState!
+DEBUG ]: Creating the WorkspaceState!
+DEBUG ]: Creating the ConfigManager!
+DEBUG ]: [cfg] Regular config at /home/omarchy/.config/hypr/hyprland.lua
+DEBUG ]: [cfg] Using lua config found at /home/omarchy/.config/hypr/hyprland.lua
+DEBUG ]: Creating the Error Overlay!
+DEBUG ]: Creating the LayoutManager!
+DEBUG ]: Creating the TokenManager!
+DEBUG ]: Creating the EventManager!
+DEBUG ]: Disabling stdout logs (debug.enable_stdout_logs = 0). Further logs will be written to /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log
+DEBUG ]: Creating the PointerManager!
+DEBUG ]: Creating the AsyncResourceGatherer!
+DEBUG from aquamarine ]: Creating an Aquamarine backend!
+DEBUG from aquamarine ]: [libseat] [libseat/backend/seatd.c:64] Could not connect to socket /run/seatd.sock: No such file or directory
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:76] Backend 'seatd' failed to open seat, skipping
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:73] Seat opened with backend 'logind'
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: is tagged by udev as: Mouse
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: emulating high-resolution scroll wheel events.
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: device is a pointer
+DEBUG from aquamarine ]: [libinput] event0  - QEMU Virtio Keyboard: is tagged by udev as: Keyboard
+DEBUG from aquamarine ]: [libinput] event0  - QEMU Virtio Keyboard: device is a keyboard
+DEBUG from aquamarine ]: drm: Enumerated device /sys/devices/platform/soc/10007000.virtio_mmio/drm/card0
+DEBUG from aquamarine ]: libseat: Device /dev/dri/card0 supports kms
+DEBUG from aquamarine ]: drm: Found 1 GPUs
+DEBUG from aquamarine ]: drm: Starting backend for /dev/dri/card0, with driver virtio_gpu
+DEBUG from aquamarine ]: drm: Registered gpu /dev/dri/card0
+WARN from aquamarine ]: drm: AQ_NO_MODIFIERS enabled, disabling modifiers for DRM buffers.
+DEBUG from aquamarine ]: drm: Atomic supported, using atomic for modesetting
+DEBUG from aquamarine ]: drm: drmProps.supportsAsyncCommit: false
+
+QEMU_EXIT_END
+]3008;end=3d15f958-2d36-485e-a57e-98dd7e7cbf9e;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\nQEMU_CRASH_LOG_BEGIN\n'; tail -100 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log; printf '\nQEMU_CRASH_LOG_END\n'
+[?2004l]3008;start=365aaf80-c1ee-46ef-a64d-4b0715608b4b;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_CRASH_LOG_BEGIN
+DEBUG ]: [cfg] Regular config at /home/omarchy/.config/hypr/hyprland.lua
+DEBUG ]: [cfg] Using lua config found at /home/omarchy/.config/hypr/hyprland.lua
+DEBUG ]: Creating the Error Overlay!
+DEBUG ]: Creating the LayoutManager!
+DEBUG ]: Creating the TokenManager!
+DEBUG ]: Creating the EventManager!
+DEBUG ]: Disabling stdout logs (debug.enable_stdout_logs = 0). Further logs will be written to /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789046183_44560866/hyprland.log
+DEBUG ]: Creating the PointerManager!
+DEBUG ]: Creating the AsyncResourceGatherer!
+DEBUG from aquamarine ]: Creating an Aquamarine backend!
+DEBUG from aquamarine ]: [libseat] [libseat/backend/seatd.c:64] Could not connect to socket /run/seatd.sock: No such file or directory
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:76] Backend 'seatd' failed to open seat, skipping
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:73] Seat opened with backend 'logind'
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: is tagged by udev as: Mouse
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: emulating high-resolution scroll wheel events.
+DEBUG from aquamarine ]: [libinput] event1  - QEMU Virtio Tablet: device is a pointer
+DEBUG from aquamarine ]: [libinput] event0  - QEMU Virtio Keyboard: is tagged by udev as: Keyboard
+DEBUG from aquamarine ]: [libinput] event0  - QEMU Virtio Keyboard: device is a keyboard
+DEBUG from aquamarine ]: drm: Enumerated device /sys/devices/platform/soc/10007000.virtio_mmio/drm/card0
+DEBUG from aquamarine ]: libseat: Device /dev/dri/card0 supports kms
+DEBUG from aquamarine ]: drm: Found 1 GPUs
+DEBUG from aquamarine ]: drm: Starting backend for /dev/dri/card0, with driver virtio_gpu
+DEBUG from aquamarine ]: drm: Registered gpu /dev/dri/card0
+WARN from aquamarine ]: drm: AQ_NO_MODIFIERS enabled, disabling modifiers for DRM buffers.
+DEBUG from aquamarine ]: drm: Atomic supported, using atomic for modesetting
+DEBUG from aquamarine ]: drm: drmProps.supportsAsyncCommit: false
+DEBUG from aquamarine ]: drm: drmProps.supportsAddFb2Modifiers: false
+DEBUG from aquamarine ]: drm: drmProps.supportsTimelines: true
+DEBUG from aquamarine ]: drm: found 1 CRTCs
+DEBUG from aquamarine ]: drm: Plane 31 has type 1
+DEBUG from aquamarine ]: drm: Plane 31 has 1 formats
+DEBUG from aquamarine ]: drm: Basic init pass for gpu /dev/dri/card0
+DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card0
+DEBUG from aquamarine ]: drm: Scanning connector id 34
+DEBUG from aquamarine ]: drm: Initializing connector id 34
+DEBUG from aquamarine ]: drm: Connector gets name Virtual-1
+DEBUG from aquamarine ]: drm: Connector 34 connection state: 1
+DEBUG from aquamarine ]: drm: Rechecking CRTCs
+DEBUG from aquamarine ]: drm: Skipping connector Virtual-1, has crtc 33 and is connected
+DEBUG from aquamarine ]: drm: slot 0 crtc 33 taken by Virtual-1, skipping
+DEBUG from aquamarine ]: drm: Connector Virtual-1 connected
+DEBUG from aquamarine ]: drm: Connecting connector Virtual-1, CRTC ID 33
+DEBUG from aquamarine ]: drm: Dumping detected modes:
+DEBUG from aquamarine ]: drm: Mode 0: 1280x800@74.99Hz  (preferred)
+DEBUG from aquamarine ]: drm: Mode 1: 5120x2160@50.00Hz 
+DEBUG from aquamarine ]: drm: Mode 2: 4096x2160@50.00Hz 
+DEBUG from aquamarine ]: drm: Mode 3: 3840x2160@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 4: 3840x2160@59.94Hz 
+DEBUG from aquamarine ]: drm: Mode 5: 3840x2160@50.00Hz 
+DEBUG from aquamarine ]: drm: Mode 6: 1920x1440@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 7: 2560x1080@50.00Hz 
+DEBUG from aquamarine ]: drm: Mode 8: 1856x1392@59.99Hz 
+DEBUG from aquamarine ]: drm: Mode 9: 1792x1344@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 10: 2048x1152@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 11: 1920x1200@59.88Hz 
+DEBUG from aquamarine ]: drm: Mode 12: 1920x1080@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 13: 1920x1080@50.00Hz 
+DEBUG from aquamarine ]: drm: Mode 14: 1600x1200@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 15: 1680x1050@59.95Hz 
+DEBUG from aquamarine ]: drm: Mode 16: 1400x1050@59.98Hz 
+DEBUG from aquamarine ]: drm: Mode 17: 1280x1024@60.02Hz 
+DEBUG from aquamarine ]: drm: Mode 18: 1440x900@59.89Hz 
+DEBUG from aquamarine ]: drm: Mode 19: 1280x960@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 20: 1360x768@60.02Hz 
+DEBUG from aquamarine ]: drm: Mode 21: 1280x768@59.87Hz 
+DEBUG from aquamarine ]: drm: Mode 22: 1024x768@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 23: 800x600@60.32Hz 
+DEBUG from aquamarine ]: drm: Mode 24: 640x480@60.00Hz 
+DEBUG from aquamarine ]: drm: Mode 25: 640x480@59.94Hz 
+DEBUG from aquamarine ]: drm: Physical size [Vector2D: x: 320, y: 200] (mm)
+DEBUG from aquamarine ]: drm: Description Red Hat, Inc. QEMU Monitor  (Virtual-1)
+DEBUG from aquamarine ]: drm: connector Virtual-1 crtc is incapable of vrr: props.vrr_capable -> 0, crtc->props.vrr_enabled -> 24
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support CTM
+DEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support HDR (0)
+DEBUG from aquamarine ]: drm: connector Virtual-1 crtc doesn't support Colorspace (0)
+DEBUG from aquamarine ]: drm: gpu /dev/dri/card0 becomes primary drm
+DEBUG from aquamarine ]: DRM Dumb: created a dumb allocator
+DEBUG from aquamarine ]: Starting the Aquamarine backend!
+DEBUG from aquamarine ]: Starting the Wayland backend!
+ERR from aquamarine ]: Wayland backend cannot start: wl_display_connect failed (is a wayland compositor running?)
+ERR from aquamarine ]: Requested backend (wayland) could not start, enabling fallbacks
+ERR from aquamarine ]: Implementation wayland failed, erasing.
+DEBUG from aquamarine ]: Created a GBM allocator with drm fd 25
+DEBUG from aquamarine ]: drm: Connectors size2 1
+DEBUG from aquamarine ]: Created a GBM allocator with drm fd 27
+DEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless
+ERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT
+ERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT
+ERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found
+ERR from aquamarine ]: drm: onReady: no renderer for gl formats
+DEBUG from aquamarine ]: drm: onReady: connector 34
+DEBUG from aquamarine ]: drm: onReady: connector 34 has output name Virtual-1
+DEBUG from aquamarine ]: Swapchain: Clearing
+DEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless
+ERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT
+ERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT
+ERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found
+ERR from aquamarine ]: drm: initMgpu: no renderer
+ERR from aquamarine ]: drm: Failed to initialize renderer state for /dev/dri/card0
+QEMU_CRASH_LOG_END
+]3008;end=365aaf80-c1ee-46ef-a64d-4b0715608b4b;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf '\nQEMU_PRECHECK_CLOSING\n'; sync
+[?2004l]3008;start=9c679e25-34b3-4a81-8979-4af3bba479a4;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=command;cwd=/home/omarchy\
+QEMU_PRECHECK_CLOSING
+]3008;end=9c679e25-34b3-4a81-8979-4af3bba479a4;exit=success\]3008;start=5d968a30-0fc2-4648-9cc6-1cc511b2b139;machineid=4f7810fbc4e5438288f9ac8768f7cb01;user=omarchy;hostname=omarchy-demo;bootid=b318fc5c-97cf-4e73-9975-1f3140b6514e;pid=00000000000000000174;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ QEMU: Terminated
+

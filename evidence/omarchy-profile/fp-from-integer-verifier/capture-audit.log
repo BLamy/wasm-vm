@@ -1,0 +1,53 @@
+{
+  "browser": {
+    "reportSha256": "50779f7610e217086f697fc50c2e23f9d61a4b28d0515366f3e5aafbbabe584e",
+    "head": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+    "wasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+    "elfSha256": "170850ed3232b08073a037a511a4c4e1c3e8e6ec15da282aca38a2fd62285b2b",
+    "guestRamDigest": "5df84ec4c17598ab2c56293bb5b78338947ce9991af18e0ef795aa4a07d2df44",
+    "retiredViaJit": 3611,
+    "guestRetired": 4000,
+    "suite": "127/127",
+    "errors": [],
+    "imagesInspected": true,
+    "imageFinding": "Suite shows 127 passed, 0 failed, 127 done; conversion capability green/live 1/1; built page contains real E5.5-T03x task detail.",
+    "sourceFileSha256": {
+      "crates/core/src/jit.rs": "d1e8aabe61ef0ce5558aa39d440031c8ef1bb03a11db07a110380149b6925af0",
+      "crates/core/src/softfloat.rs": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25",
+      "crates/jit-translate/src/lib.rs": "836fa6bd342f24e85cc07e570ab96caf1f27de5b3207feed79526f2465a32ffe",
+      "crates/jit-runtime/src/lib.rs": "4a72cad3c319ad6ebf41a67be9b41e545f0fab91c99454468a478ad61ce9eef7",
+      "crates/wasm/src/jit_browser.rs": "5997c537a67e66342077aebfc582195b6f58de196cfa7fa22f276bb0cd583f2f",
+      "tests/support/jit_fp_from_integer_verifier.rs": "c2fe4a8b016d2f7d459993316664062e37b77230406ee4e9f9e348bcd70ae54d",
+      "crates/jit-runtime/tests/fp_from_integer_verifier.rs": "9e00896cb2827e87a3d4af328d352925917bdfa2eb79350b0db5e83d3c8f03d9",
+      "crates/wasm/tests/jit_fp_from_integer_verifier.rs": "d1ce0706d0e5a5ea0717ddadd36ce245718f7076f8e934588ef22c8329325e8d",
+      "tools/verify/omarchy-fp-from-integer-browser.mjs": "a12aa635b7778240eacb2fec611596d9199781037d48798cac6b89bdfbebe1c7"
+    },
+    "passed": true
+  },
+  "physical": {
+    "reportSha256": "29b15c67cd97e1d8daac22b4bf449ba7bd35f3ec5fd6703e8a1e8054fdd7f1fa",
+    "head": "b587faf6f1bee5db45c5c9368d0a748f9badaff4",
+    "wasmSha256": "0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312",
+    "enteredAt": "2026-09-15T22:38:14.941Z",
+    "deadlineAt": "2026-09-15T22:40:14.941Z",
+    "failedAt": "2026-09-15T22:40:14.943Z",
+    "deadlineMs": 120000,
+    "trustedEvents": 128,
+    "acceptedEvents": 128,
+    "completedReadbacks": 13,
+    "pendingReadbacks": 1,
+    "nonceVerified": false,
+    "serialNonceInjection": false,
+    "imagesInspected": true,
+    "imageFinding": "Both actual Foot captures show the same empty shell prompt and cursor with no typed command or output.",
+    "beforeSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "afterSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "frames": [
+      2,
+      2
+    ],
+    "pinnedGuestArtifactsUnchangedFromT03w": true,
+    "cleanupClosed": true,
+    "t03qStatus": "pending"
+  }
+}

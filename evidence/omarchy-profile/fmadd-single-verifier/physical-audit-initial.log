@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-physical.py", line 348, in <module>
+    main()
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-physical.py", line 276, in main
+    summary = inspect_arm(r, 'candidate', run['head'])
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-verifier/audit-physical.py", line 147, in inspect_arm
+    assert r['cleanup']['closed'] and not r['cleanup'].get('forceKilled')
+AssertionError

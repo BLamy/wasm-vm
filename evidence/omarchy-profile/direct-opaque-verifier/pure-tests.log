@@ -1,0 +1,20 @@
+✔ one synchronous direct batch contains only the specified writes then reads (2.667625ms)
+✔ every property and acknowledgment is required; exit0 error strings never pass (6.284334ms)
+✔ expired, late and rejected configuration cannot reach input or renew the deadline (0.901959ms)
+✔ direct audit binds complete actual wire and rejects reordered, forged, duplicate and late evidence (3.301792ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (25.192ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (25.610959ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (25.139917ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (6.032416ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.72575ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (17.640084ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (67.77475ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (20.920625ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 275.956

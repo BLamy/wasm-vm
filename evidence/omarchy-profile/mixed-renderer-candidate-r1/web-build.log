@@ -1,0 +1,18 @@
+bash tools/build-web-dist.sh
+[web-dist] building wasm + installing pinned deps (make web-build)…
+wasm-pack build crates/wasm --target web
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `release` profile [optimized + debuginfo] target(s) in 9.17s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+Error: Operation not permitted (os error 1)
+To disable `wasm-opt`, add `wasm-opt = false` to your package metadata in your `Cargo.toml`.
+Caused by: Operation not permitted (os error 1)
+To disable `wasm-opt`, add `wasm-opt = false` to your package metadata in your `Cargo.toml`.
+make[1]: *** [web-build] Error 1
+make: *** [web-dist] Error 2

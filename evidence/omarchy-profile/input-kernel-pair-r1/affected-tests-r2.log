@@ -1,0 +1,50 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.491375ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.107958ms)
+✔ post-marker presentation helper rejects typing frames (107.056625ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.165291ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.151833ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.105417ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.130875ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.544875ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.721417ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.169292ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.277166ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (196.391125ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (2.98ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.338417ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.310209ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.274458ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.087833ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.15ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.66ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (2.036541ms)
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T11:49:41.124Z","brightPixels":100,"brightColors":20,"nonblank":true,"frames":4}
+✔ direct preparation uses embedded active Foot and post-response fresh pixels before export (4.898917ms)
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T11:49:41.185Z","brightPixels":0,"brightColors":0,"nonblank":false,"frames":5}
+✔ wrong properties/window, stale image, blank terminal and failed export cannot make a prepared pair (126.739667ms)
+✔ native terminal ROI rejects bar-only pixels, wrong geometry and expired startup (3.359542ms)
+✔ one synchronous direct batch contains only the specified writes then reads (1.827167ms)
+✔ every property and acknowledgment is required; exit0 error strings never pass (3.494917ms)
+✔ expired, late and rejected configuration cannot reach input or renew the deadline (0.530459ms)
+✔ direct audit binds complete actual wire and rejects reordered, forged, duplicate and late evidence (2.32275ms)
+✔ running kernel fingerprint rejects old kernel, command echo and failed reads (0.781792ms)
+✔ actual warm capture exports every exact-seed block while paused and binds both headers (79.18825ms)
+✔ actual warm capture rejects a running guest, foreign overlay seed and stale restore decision (144.188959ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.719375ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (15.335125ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (15.809458ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (65.750625ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (86.848459ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (4.375458ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.132834ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (11.308083ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (49.608208ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (13.144708ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5112.172208

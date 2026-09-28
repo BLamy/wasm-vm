@@ -1,0 +1,179 @@
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: console=ttyS0 earlycon=sbi rdinit=/init -- legacy
+[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 216540K/262144K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 45604K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.001300] Console: colour dummy device 80x25
+[    0.001500] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.001657] pid_max: default: 32768 minimum: 301
+[    0.002165] LSM: initializing lsm=capability,integrity
+[    0.002892] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.003026] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.014896] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.015595] riscv: ELF compat mode unsupported
+[    0.015676] ASID allocator using 16 bits (65536 entries)
+[    0.016581] rcu: Hierarchical SRCU implementation.
+[    0.016655] rcu: 	Max phase no-delay instances is 1000.
+[    0.018232] EFI services will not be available.
+[    0.019072] smp: Bringing up secondary CPUs ...
+[    0.019180] smp: Brought up 1 node, 1 CPU
+[    0.021674] devtmpfs: initialized
+[    0.032489] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.032642] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.033649] pinctrl core: initialized pinctrl subsystem
+[    0.043266] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.047642] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.047854] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.048140] audit: initializing netlink subsys (disabled)
+[    0.051467] thermal_sys: Registered thermal governor 'step_wise'
+[    0.051637] audit: type=2000 audit(0.048:1): state=initialized audit_enabled=0 res=1
+[    0.051876] cpuidle: using governor menu
+[    0.077020] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast
+[    0.098905] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.099003] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.169930] raid6: int64x8  gen()    42 MB/s
+[    0.238501] raid6: int64x4  gen()    57 MB/s
+[    0.306840] raid6: int64x2  gen()    58 MB/s
+[    0.375435] raid6: int64x1  gen()    52 MB/s
+[    0.375517] raid6: using algorithm int64x2 gen() 58 MB/s
+[    0.444104] raid6: .... xor() 32 MB/s, rmw enabled
+[    0.444185] raid6: using intx1 recovery algorithm
+[    0.445140] ACPI: Interpreter disabled.
+[    0.445936] iommu: Default domain type: Translated
+[    0.446018] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.449579] SCSI subsystem initialized
+[    0.452971] Advanced Linux Sound Architecture Driver Initialized.
+[    0.459010] clocksource: Switched to clocksource riscv_clocksource
+[    0.461250] pnp: PnP ACPI: disabled
+[    0.523169] NET: Registered PF_INET protocol family
+[    0.524571] IP idents hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.533798] tcp_listen_portaddr_hash hash table entries: 128 (order: 0, 4096 bytes, linear)
+[    0.533990] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.534145] TCP established hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.534519] TCP bind hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.535745] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.536123] UDP hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.536458] UDP-Lite hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.537459] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.540444] RPC: Registered named UNIX socket transport module.
+[    0.540532] RPC: Registered udp transport module.
+[    0.540612] RPC: Registered tcp transport module.
+[    0.540691] RPC: Registered tcp-with-tls transport module.
+[    0.540776] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.541037] kvm [1]: hypervisor extension not available
+[    0.546222] Unpacking initramfs...
+[    0.554064] Freeing initrd memory: 16K
+[    0.554416] workingset: timestamp_bits=46 max_order=16 bucket_order=0
+[    0.557990] NFS: Registering the id_resolver key type
+[    0.558263] Key type id_resolver registered
+[    0.558340] Key type id_legacy registered
+[    0.558545] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.558675] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.559943] 9p: Installing v9fs 9p2000 file system support
+[    1.712853] NET: Registered PF_ALG protocol family
+[    1.712954] xor: measuring software checksum speed
+[    1.731852]    8regs           :   174 MB/sec
+[    1.750742]    8regs_prefetch  :   174 MB/sec
+[    1.769650]    32regs          :   174 MB/sec
+[    1.788595]    32regs_prefetch :   173 MB/sec
+[    1.788679] xor: using function: 32regs (174 MB/sec)
+[    1.788993] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    1.789097] io scheduler mq-deadline registered
+[    1.789181] io scheduler kyber registered
+[    1.789333] io scheduler bfq registered
+[    1.807829] input: wasm-vm virtio keyboard as /devices/platform/soc/10004000.virtio_mmio/virtio0/input/input0
+[    2.194777] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    2.208484] printk: console [ttyS0] disabled
+[    2.210693] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 13, base_baud = 230400) is a 16550A
+[    2.210906] printk: console [ttyS0] enabled
+[    2.211145] printk: bootconsole [sbi0] disabled
+[    2.210906] printk: console [ttyS0] enabled
+[    2.211145] printk: bootconsole [sbi0] disabled
+[    2.213747] SuperH (H)SCI(F) driver initialized
+[    2.259948] loop: module loaded
+[    2.277823] mousedev: PS/2 mouse device common for all mice
+[    2.281679] goldfish_rtc 101000.rtc: registered as rtc0
+[    2.281887] goldfish_rtc 101000.rtc: setting system clock to 2026-09-16T11:29:29 UTC (1789558169)
+[    2.285083] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.285331] syscon-poweroff: probe of poweroff failed with error -16
+[    2.287883] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    2.290773] sdhci: Secure Digital Host Controller Interface driver
+[    2.290923] sdhci: Copyright(c) Pierre Ossman
+[    2.292097] sdhci-pltfm: SDHCI platform and OF driver helper
+[    2.303114] IPVS: Registered protocols (TCP, UDP)
+[    2.303289] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    2.304503] IPVS: ipvs loaded.
+[    2.304632] IPVS: [rr] scheduler registered.
+[    2.306341] Initializing XFRM netlink socket
+[    2.306734] NET: Registered PF_INET6 protocol family
+[    2.313705] Segment Routing with IPv6
+[    2.314325] In-situ OAM (IOAM) with IPv6
+[    2.315414] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.319585] NET: Registered PF_PACKET protocol family
+[    2.319927] Bridge firewalling registered
+[    2.320321] 8021q: 802.1Q VLAN Support v1.8
+[    2.320898] 9pnet: Installing 9P2000 support
+[    2.321431] Key type dns_resolver registered
+[    2.548238] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    2.560491] Btrfs loaded, zoned=no, fsverity=no
+[    2.564262] Legacy PMU implementation is available
+[    2.565516] clk: Disabling unused clocks
+[    2.565684] ALSA device list:
+[    2.565780]   #0: VirtIO SoundCard at platform/10007000.virtio_mmio/virtio1
+[    2.579261] Freeing unused kernel image (initmem) memory: 2200K
+[    2.579421] Run /init as init process
+WVB_KERNEL 6.6.63 #1 SMP Thu Nov 14 2024 riscv64
+WVB_DEVICE name=wasm-vm virtio keyboard measured=3 state=4 major=13 minor=64 inode=621 event_bytes=24
+WVM_KB_INJECT
+WVB_EVENT 0 997daa6a00000000ff710c000000000001001e0001000000
+WVB_EVENT 1 997daa6a00000000ff710c00000000000000000000000000
+WVB_EVENT 2 997daa6a000000002a720c000000000001001e0000000000
+WVB_EVENT 3 997daa6a000000002a720c00000000000000000000000000
+WVB_DONE count=4 eagain=1
+[    2.646672] reboot: Power down

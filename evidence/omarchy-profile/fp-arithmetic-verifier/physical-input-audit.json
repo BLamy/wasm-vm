@@ -1,0 +1,24 @@
+{
+  "reportSha256": "c20fe7de2adb79c581367529f52d942b535d43f4d15e257dfa58cb4ee8cc8b85",
+  "head": "d64b037b362b36490d58b82663a448ac0532b025",
+  "wasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "enteredAt": "2026-09-15T21:44:39.143Z",
+  "deadlineAt": "2026-09-15T21:46:39.143Z",
+  "failedAt": "2026-09-15T21:46:39.144Z",
+  "deadlineMs": 120000,
+  "trustedEvents": 128,
+  "acceptedEvents": 128,
+  "completedReadbacks": 13,
+  "pendingReadbacks": 1,
+  "nonceVerified": false,
+  "imagesInspected": true,
+  "imageFinding": "Identical initial shell prompt and cursor; no command, output, or visible typed text.",
+  "beforeSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "afterSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "frames": [
+    2,
+    2
+  ],
+  "cleanupClosed": true,
+  "t03qStatus": "pending"
+}

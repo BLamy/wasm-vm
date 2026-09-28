@@ -1,0 +1,25 @@
+{
+  "started_ns": 1789545520372846000,
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "wasm-vm-jit-runtime",
+    "--test",
+    "fp_fmadd_verifier",
+    "--",
+    "--nocapture"
+  ],
+  "source": {
+    "crates/core/src/softfloat.rs": "bd18494f8a8224c54f88bdedb354c3dd8f515a9299e7882899ed50f2c3fd1d02",
+    "crates/core/src/jit.rs": "eb7f86b7fda3d5f520cc27fddb15f810eef6a560b230baa67e835a1873ee202f",
+    "crates/jit-translate/src/lib.rs": "fc3883e53bb28182cd7033c1a337bc51008193576392563b5d2e7779cee4d134",
+    "crates/jit-runtime/src/lib.rs": "6b853f29caf4257ac172187ac29200a48f4f43aa11ac7be61b88f38c84b64566",
+    "tests/support/jit_fp_fmadd_verifier.rs": "d4200d3c4e67f15dfbf60d0bc1c6a221bac5fe291e0c71b46e6d209f24f10e8c",
+    "crates/jit-runtime/tests/fp_fmadd_verifier.rs": "85116fac32cdb8c7c9ac4c5ce118c52862c05c9eacd27748a9bc1558e57524de"
+  },
+  "head": "f2259af777216192163ed742a76312a35c7440fb",
+  "frozen": false,
+  "exit_code": 0,
+  "finished_ns": 1789545563725597000
+}

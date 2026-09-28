@@ -1,0 +1,9 @@
+{
+  "index": "evidence/omarchy-profile/prepared-recycling-verifier/sha256.txt",
+  "sha256": "b7e0be1d94f52d8ea37932ab78622880003c7d16bd6d02fdbaa78fa9e7cfecfa",
+  "files": 38,
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "worker": "678c7346",
+  "verdict": "verified negative experiment only",
+  "immutable": true
+}

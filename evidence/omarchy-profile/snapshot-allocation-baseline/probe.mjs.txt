@@ -1,0 +1,42 @@
+import fs from 'node:fs/promises';
+import {createReadStream} from 'node:fs';
+import {createServer} from 'node:http';
+import {chromium} from '../../web/node_modules/playwright/index.mjs';
+const root=process.cwd();
+const routes={
+ '/kernel':root+'/releases/kernel/6.6.63/Image',
+ '/manifest':root+'/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json',
+ '/snapshot.gz':root+'/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz',
+ '/delta.gz':root+'/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz',
+ '/pkg/wasm_vm_wasm.js':root+'/web/dist/pkg/wasm_vm_wasm.js',
+ '/pkg/wasm_vm_wasm_bg.wasm':root+'/web/dist/pkg/wasm_vm_wasm_bg.wasm',
+};
+const server=createServer((req,res)=>{
+ res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
+ if(req.url==='/'){res.setHeader('Content-Type','text/html');res.end('<!doctype html><title>Snapshot allocation diagnostic</title>');return;}
+ const p=routes[req.url]??(req.url.startsWith('/pkg/snippets/')&&!req.url.includes('..')?root+'/web/dist'+req.url:null);if(!p){res.writeHead(404).end();return;}
+ res.setHeader('Content-Type',req.url.endsWith('.js')?'text/javascript':req.url.endsWith('.wasm')?'application/wasm':'application/octet-stream');createReadStream(p).pipe(res);
+});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));
+let browser;const report={purpose:'ephemeral snapshot allocation diagnostic, no guest instructions executed',logs:[],errors:[]};
+try{
+ browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+ const page=await browser.newPage({serviceWorkers:'block'});
+ page.on('console',m=>{const v={type:m.type(),text:m.text()};report.logs.push(v);console.log(JSON.stringify(v));});
+ page.on('pageerror',e=>report.errors.push(e.stack));
+ await page.goto(`http://127.0.0.1:${server.address().port}/`);
+ report.result=await Promise.race([page.evaluate(async()=>{
+  const mod=await import('/pkg/wasm_vm_wasm.js');const wasm=await mod.default();
+  const mem=()=>wasm.memory.buffer.byteLength;const note=x=>console.log(JSON.stringify({...x,wasmMemoryBytes:mem()}));
+  const fetchBytes=async(u,gzip=false)=>{const r=await fetch(u);return new Uint8Array(await new Response(gzip?r.body.pipeThrough(new DecompressionStream('gzip')):r.body).arrayBuffer());};
+  const manifest=await(await fetch('/manifest')).text();const kernel=await fetchBytes('/kernel'),delta=await fetchBytes('/delta.gz',true);
+  note({stage:'before-constructor'});
+  const vm=mod.WasmLinux.newChunkedDiskSeeded(1024,kernel,manifest,location.origin+'/unused/',128,new Uint32Array(),'console=ttyS0',()=>{},false,delta);
+  note({stage:'constructed'});
+  const snap=await fetchBytes('/snapshot.gz',true);note({stage:'before-restore',snapshotBytes:snap.length});
+  vm.loadSnapshotBlob(snap);note({stage:'restored'});
+  const before=mem();try{const saved=vm.saveSnapshot();note({stage:'saved',snapshotBytes:saved.length});return {saved:true,bytes:saved.length,before,after:mem()};}
+  catch(error){note({stage:'save-error',error:String(error),stack:error.stack});return{saved:false,error:String(error),stack:error.stack,before,after:mem()};}
+ }),new Promise((_,reject)=>setTimeout(()=>reject(Error('90s diagnostic cutoff')),90000).unref())]);
+} catch(e){report.failure=e.stack;}finally{await fs.writeFile(root+'/target/omarchy-export-diagnostic/report.json',JSON.stringify(report,null,2)+'\n');await browser?.close();await new Promise(r=>server.close(r));}
+console.log(JSON.stringify(report.result??report.failure));

@@ -1,0 +1,59 @@
+{
+  "purpose": "independent invocation of frozen AS audit; image still failed",
+  "passed": true,
+  "machineAcceptance": true,
+  "visualInspectionRequired": true,
+  "configuration": "properties-confirmed",
+  "trustedEvents": 128,
+  "completedReads": 27,
+  "nonceReplies": 1,
+  "runtimes": [
+    {
+      "clock": {
+        "mode": "icount",
+        "mtime": "1285136963",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "jitResidencyPolicy": "cap-256",
+      "jitResidencyCap": 256,
+      "recycling": true,
+      "entryTiming": false,
+      "presentation": {
+        "rect": {
+          "x": 10,
+          "y": 8,
+          "width": 682,
+          "height": 56
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 832
+      }
+    },
+    {
+      "clock": {
+        "mode": "icount",
+        "mtime": "1345807146",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "jitResidencyPolicy": "cap-256",
+      "jitResidencyCap": 256,
+      "recycling": true,
+      "entryTiming": false,
+      "presentation": {
+        "rect": {
+          "x": 10,
+          "y": 36,
+          "width": 1260,
+          "height": 754
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 832
+      }
+    }
+  ],
+  "observer": null,
+  "workerCost": null,
+  "errors": []
+}

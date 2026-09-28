@@ -1,0 +1,30 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/private/tmp/fp-memory-assertion-eb_5352s/Cargo.toml",
+    "--target-dir",
+    "/Users/blamy/Documents/Codex/wasm-vm/target",
+    "--",
+    "--nocapture"
+  ],
+  "scratch": "/private/tmp/fp-memory-assertion-eb_5352s",
+  "head": "6854af681417fee0235cca97f10d8557f1e54773",
+  "sourceSha256": "78afee2395e6c1ca419067269b58573df76276cd064042c455ad88aa236821eb",
+  "sabotagedSourceSha256": "e0600809dd2e0d00e1ed10ef3920cdfe4e944a47189865dde2a5c4f55b382099",
+  "returncode": 101,
+  "expectedAssertionObserved": true,
+  "failedTestObserved": true,
+  "runtimeBefore": {
+    "crates/core/src/hart/mod.rs": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "crates/jit-translate/src/lib.rs": "55478865657306316de9ad8193a473ff8a4326d7bafc4c7a9fb6d93acc5ddeea",
+    "crates/wasm/src/jit_browser.rs": "2228c6f4f62871dd7aae03fb629613d5202e6993a043f709750564734e57f7f5"
+  },
+  "runtimeAfter": {
+    "crates/core/src/hart/mod.rs": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "crates/jit-translate/src/lib.rs": "55478865657306316de9ad8193a473ff8a4326d7bafc4c7a9fb6d93acc5ddeea",
+    "crates/wasm/src/jit_browser.rs": "2228c6f4f62871dd7aae03fb629613d5202e6993a043f709750564734e57f7f5"
+  }
+}

@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running tests/dynamic_link_publication.rs (target/debug/deps/dynamic_link_publication-5abbdb592901db19)
+
+running 1 test
+test disabled_dynamic_chaining_skips_publication_but_enabled_publishes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

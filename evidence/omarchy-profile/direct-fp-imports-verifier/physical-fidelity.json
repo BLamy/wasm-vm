@@ -1,0 +1,565 @@
+{
+  "passed": true,
+  "head": "a3beb0e8dc5da21374a6d59e25658f5db5ce79da",
+  "rawReportSha256": "6ab46d14d2b0b037c59a1c13673609c94590c7432beeb2efbaffedeaa66a75af",
+  "sameTrialFields": [
+    "arm",
+    "recycling",
+    "experiment",
+    "jitResidencyPolicy",
+    "jitResidencyCap",
+    "startupMs",
+    "typingMs",
+    "readbackMs",
+    "captureMs",
+    "cleanupMs",
+    "profilingRequested",
+    "admissionProbeRequested"
+  ],
+  "sameSourceRoles": [
+    "kernel",
+    "bootSnapshot",
+    "overlayDelta",
+    "chunkManifest",
+    "image"
+  ],
+  "sameQueriesExceptOwnedOrigin": {
+    "guest": [
+      "omarchy"
+    ],
+    "desktop": [
+      "1"
+    ],
+    "omarchyDivider": [
+      "64"
+    ],
+    "jit": [
+      "1"
+    ],
+    "jitColdCounterRecycling": [
+      "1"
+    ],
+    "jitResidency": [
+      "cap-256"
+    ]
+  },
+  "helpersBoundToCommittedHead": [
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "4c4b53fafac66799407bd1eff8fb5e828c05fb0de8cd77719861ade11ccbb79e"
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "sha256": "df81c486611439d28979ba7827ce0aa0f30a2dcb7f0de12114bec50d471c9cd7"
+    },
+    {
+      "path": "tools/verify/omarchy-recycling-ab.mjs",
+      "sha256": "5a8d7b1a9b82b59b2355d22c2fc460681d50ea228f8f21595f6b42afad50175b"
+    },
+    {
+      "path": "tools/verify/omarchy-residency-ab.mjs",
+      "sha256": "20c564cd64500607490a9ea78f787f59ead9cfac942deeb6b382e2945b106180"
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost.mjs",
+      "sha256": "c42b70a3ddfe7469dca3ae32b786b7c8e275a2c831a2fc3aa60b76187c85c7d7"
+    },
+    {
+      "path": "tools/verify/omarchy-worker-cost-capture.mjs",
+      "sha256": "7a112cb87376910a49b4a17c6d281f87cd70655dcd8223e794dfa2260030a520"
+    },
+    {
+      "path": "tools/verify/omarchy-mode-preparation.mjs",
+      "sha256": "a9a622f5b7a220334af14bff94b19b770bb2b99207723edbeb0d32b3f6d2bc73"
+    },
+    {
+      "path": "tools/verify/omarchy-prepare-mode.mjs",
+      "sha256": "26f09dae1a2bfacac7725e9b3f229cf80155d7f755b9df49798b4350ebb8cbbc"
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot.mjs",
+      "sha256": "939d5ac6ca128eeeab18e86725722736633baae0d3a85ec22cbddf8714f6ee74"
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot-command.mjs",
+      "sha256": "1bb836ac9706f8d0af041770a997a1ac421632cc65f759a979f77668525c0a67"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque.mjs",
+      "sha256": "4e0f051b955a19578b31149cb37025d5df74c52971abd71ba89dac550178e002"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque-command.mjs",
+      "sha256": "a2705da081a74c8c41fdba67d7062eb675bd2f0feb846c13c5333e8f6919eb88"
+    },
+    {
+      "path": "tools/verify/omarchy-input-audit.mjs",
+      "sha256": "e1b74d4bfbc2ef971f65e4b972d2aa82cc1f6e157837bae9fcec5afdf7bec817"
+    },
+    {
+      "path": "tools/verify/omarchy-prepared-direct-state.mjs",
+      "sha256": "786bd9f7c29b5281a2c78ee137060a85916a3412d0c66e1ec8cef79377ca1c98"
+    },
+    {
+      "path": "tools/verify/omarchy-prepared-direct-input.mjs",
+      "sha256": "e828961f7cdb03205873d71565345b3f99c397116003c07ffd6e0bd876b9ebe3"
+    },
+    {
+      "path": "tools/verify/omarchy-prepared-recycling-input.mjs",
+      "sha256": "1c5751d507df172e0ce8c2feb81221c9964fd2b61aecd39ef34d3fd3a6e00937"
+    },
+    {
+      "path": "tools/verify/omarchy-fmadd-input.mjs",
+      "sha256": "db88a67bf15a46b6846cbf68cdd963b5044b4cd0d5ee68e8b750247fd09b73ad"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-fp-input.mjs",
+      "sha256": "6b4cb59fe3851753e7ed4029f2b229b96079a554653db5bd113c5527567d63d0"
+    },
+    {
+      "path": "tools/verify/omarchy-direct-opaque-preparation.mjs",
+      "sha256": "7f0b758be12f06353b3053295e6892700bf8d2c984d731723881772a7244332b"
+    },
+    {
+      "path": "tools/verify/omarchy-prepare-direct-opaque.mjs",
+      "sha256": "8565e75c7956a56ca51ab93fc70712c5e42f8ef0baa9e9606fca302cf67caa18"
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-preparation.mjs",
+      "sha256": "7cbc9f3deaa19517052d813d94eb28f1820a7480e6882b9511f2f78c79e84f83"
+    },
+    {
+      "path": "tools/verify/omarchy-prepare-opaque.mjs",
+      "sha256": "4d9220bb8ca61380ef8be9937154b2258383abe4a214287ba1e31201d2662bf5"
+    },
+    {
+      "path": "tools/verify/e5-t22c-cpu-profile.mjs",
+      "sha256": "d80ef3a26e4c40eea023205e10bf0356c55938c1772fd8d502aa7c871e82c88b"
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-services.mjs",
+      "sha256": "c7b234f5ff9ef8a3071d16056e4caea598927a96ffe702d7f6aa47ae17f9e895"
+    },
+    {
+      "path": "tools/verify/omarchy-failure-checkpoint.mjs",
+      "sha256": "14f3aeec604386fa15e4748f56986a4104660f046f9c0b323de4004003860a54"
+    },
+    {
+      "path": "tools/verify/omarchy-input-wait.mjs",
+      "sha256": "4f31fbaccec21335a9a10580976eb56dd07a4cbc07770c93c90534fd23a6781b"
+    },
+    {
+      "path": "tools/verify/omarchy-render-mode.mjs",
+      "sha256": "2c168dcbc9ca92584e104bec4e65998d43ad844ee0c06654d4695707d1edab80"
+    },
+    {
+      "path": "tools/verify/omarchy-render-budget.mjs",
+      "sha256": "5c28659c76421f7e9c9a0f54108e9c794d89fa028c6644953bdf88142bea17fc"
+    },
+    {
+      "path": "tools/verify/omarchy-compositor-command.mjs",
+      "sha256": "03618e89cca383e0f9d775c35a1587beccbbb8a9556c0f4b7de73d44b88de366"
+    },
+    {
+      "path": "tools/verify/omarchy-compositor-mode.mjs",
+      "sha256": "ed5582c6fe34c3dd95919404ed457ca104d20c7bc7db689c50bb3452dd7d6937"
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8"
+    },
+    {
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+    },
+    {
+      "path": "tools/verify/omarchy-live-recording.mjs",
+      "sha256": "e69245f453e7ec4ca8ba821075f0c5500ed0e736e102c58010e118de2925d8db"
+    }
+  ],
+  "servedWebFilesBoundToCommittedHead": [
+    {
+      "path": "web/dist/app.html",
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "path": "web/dist/vendor/xterm/xterm.css",
+      "sha256": "ba8e6985669488981ccf40c0cefe3aba80722cb6c92de7ad628b0bd717faf2b6"
+    },
+    {
+      "path": "web/dist/vendor/xterm/xterm.js",
+      "sha256": "1f991ac3b4b283ebf96e60ae23a00a52765dd3a2e46fa6fdda9f1aab032f7495"
+    },
+    {
+      "path": "web/dist/vendor/xterm/addon-fit.js",
+      "sha256": "bdaefa370b1bfc42ee88d46fe6072400902a4d4b2d45cd93438dda9b23c97089"
+    },
+    {
+      "path": "web/dist/tabs.js",
+      "sha256": "469b2a604cf324fefadbb8be3e19e171951c4ee930d6b51c073c9827c08722bd"
+    },
+    {
+      "path": "web/dist/ide.js",
+      "sha256": "6a3981e5103b6977651fd07d488cdacf09b1a34b1dd85ee3ffe7607b1fc01d5b"
+    },
+    {
+      "path": "web/dist/docs-mount.js",
+      "sha256": "8e2e988bddc36af623154a826d068e0127458d4bbe4d8fc8c60f2426e122c745"
+    },
+    {
+      "path": "web/dist/omarchy-startup-state.js",
+      "sha256": "fb80a37bc3c1d1c5fce23716dac25e04dee7bc6a43c8c77ec3c62ad0a29c2ac8"
+    },
+    {
+      "path": "web/dist/coi-serviceworker-register.js",
+      "sha256": "86c5571dc7e1088c3938073e6edc913423030a6dcc90060780278d69f0c8cb4c"
+    },
+    {
+      "path": "web/dist/cpu-isolation.js",
+      "sha256": "b4a675d7a5f622d92fa486ae7d4bc0556130f99855772984fe05a0eeff6a092d"
+    },
+    {
+      "path": "web/dist/main.js",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab"
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "sha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949"
+    },
+    {
+      "path": "web/dist/riscv-tests.js",
+      "sha256": "444101ff3f82a222368b662065d93969aeddaa991151b69cbe03c04dc39886b5"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm.js",
+      "sha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6"
+    },
+    {
+      "path": "web/dist/loader.js",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    {
+      "path": "web/dist/linux-worker-host.js",
+      "sha256": "fb6e9b2c0517e463e75c534dc12792ded532ca1050139fc0346cf08e7df52d82"
+    },
+    {
+      "path": "web/dist/overlay-reset-target.js",
+      "sha256": "2aee312f3dae8544ef21eb284231cc79384260b5484a698d69d24b1549cad098"
+    },
+    {
+      "path": "web/dist/terminal.js",
+      "sha256": "fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae"
+    },
+    {
+      "path": "web/dist/file-transfer.js",
+      "sha256": "d0eed6ba7f0594a166cee9aea832550575709e07a11100504bf7c5c41ff7e646"
+    },
+    {
+      "path": "web/dist/boot-progress.js",
+      "sha256": "5e1e5155623204b2e106b3c05087e2188f2341769e05388e9dd272044aa2359e"
+    },
+    {
+      "path": "web/dist/guest-rpc.js",
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "path": "web/dist/src/input/keyboard.js",
+      "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67"
+    },
+    {
+      "path": "web/dist/src/input/capture.js",
+      "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369"
+    },
+    {
+      "path": "web/dist/src/input/held-keys.js",
+      "sha256": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a"
+    },
+    {
+      "path": "web/dist/src/input/reconciliation.js",
+      "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
+    },
+    {
+      "path": "web/dist/src/audio/autoplay.js",
+      "sha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2"
+    },
+    {
+      "path": "web/dist/src/audio/sink.js",
+      "sha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417"
+    },
+    {
+      "path": "web/dist/src/audio/capture-ring.js",
+      "sha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176"
+    },
+    {
+      "path": "web/dist/src/audio/microphone.js",
+      "sha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee"
+    },
+    {
+      "path": "web/dist/src/input/pointer.js",
+      "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5"
+    },
+    {
+      "path": "web/dist/src/sink/presentation.js",
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819"
+    },
+    {
+      "path": "web/dist/src/sink/viewport.js",
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "path": "web/dist/src/sink/cursor-controller.js",
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0"
+    },
+    {
+      "path": "web/dist/desktop-agent-session.js",
+      "sha256": "98bd5cabd71e0483b15f5e00816675b5377ef633a69e71838d14a1d3efeca798"
+    },
+    {
+      "path": "web/dist/desktop-restore.js",
+      "sha256": "49a1c6e2104b821ce983a447e7d126909a18482288ff5386929bc742c5c46151"
+    },
+    {
+      "path": "web/dist/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b"
+    },
+    {
+      "path": "web/dist/omarchy-desktop-readiness.js",
+      "sha256": "8c534fe9093db5945f5bec0d6fc06ec4a92a4b8342c6d6f47543e9f2355aaa56"
+    },
+    {
+      "path": "web/dist/linux-worker-protocol.js",
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "path": "web/dist/boot-path.js",
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47"
+    },
+    {
+      "path": "web/dist/overlay-seed-identity.js",
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d"
+    },
+    {
+      "path": "web/dist/task-quiescence.js",
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86"
+    },
+    {
+      "path": "web/dist/guest-clock.js",
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133"
+    },
+    {
+      "path": "web/dist/decoded-cache.js",
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae"
+    },
+    {
+      "path": "web/dist/admission-probe.js",
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c"
+    },
+    {
+      "path": "web/dist/boot-asset-cache.js",
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe"
+    },
+    {
+      "path": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "web/dist/osc52.js",
+      "sha256": "89132eee9f4ca5ca1cc45596518b4cef77ee7bb8f773ac37cf98839fbeb3e18c"
+    },
+    {
+      "path": "web/dist/paste.js",
+      "sha256": "9cd015e36130f8b4bcb18a91b8cc06f32a2199ce32527abf65bb433bafeaeff7"
+    },
+    {
+      "path": "web/dist/progress.js",
+      "sha256": "871b963702d62708622f41a3131003feb670c9e07a160de02ee37b89b5e97167"
+    },
+    {
+      "path": "web/dist/src/input/keymap.js",
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada"
+    },
+    {
+      "path": "web/dist/src/audio/ring.js",
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893"
+    },
+    {
+      "path": "web/dist/src/audio/worklet.js",
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21"
+    },
+    {
+      "path": "web/dist/src/audio/capture-worklet.js",
+      "sha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a"
+    },
+    {
+      "path": "web/dist/src/sink/canvas2d.js",
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936"
+    },
+    {
+      "path": "web/dist/src/sink/webgl.js",
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4"
+    },
+    {
+      "path": "web/dist/src/sink/frame-scheduler.js",
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+    },
+    {
+      "path": "web/dist/src/sink/visibility-scheduler.js",
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80"
+    },
+    {
+      "path": "web/dist/src/sink/cursor.js",
+      "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b"
+    },
+    {
+      "path": "web/dist/desktop-agent-bridge.js",
+      "sha256": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338"
+    },
+    {
+      "path": "web/dist/agent-channel.js",
+      "sha256": "2bd1a2ed1a4afa7bc3ca514afb333b851db76425cc7383462102fae392705ac1"
+    },
+    {
+      "path": "web/dist/src/sink/present-backend.js",
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "path": "web/dist/tasks.json",
+      "sha256": "34439008cc88b55226a2b38cf1c1c7d01ae85fa0cd6401ed95c609433fef8266"
+    },
+    {
+      "path": "web/dist/assets/hello.elf",
+      "sha256": "d562f9ec53be1727d7f4a0cf0f114d282cb18a414f2747579d50836d97373f92"
+    },
+    {
+      "path": "web/dist/artifacts-alpine.json",
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "web/dist/artifacts-node-alpine.json",
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "web/dist/main.js",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab"
+    },
+    {
+      "path": "web/dist/ide.js",
+      "sha256": "6a3981e5103b6977651fd07d488cdacf09b1a34b1dd85ee3ffe7607b1fc01d5b"
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "sha256": "6ef66c86dd6d621582c6a96b40bdf812ef174cc194896ebea541bcf042ca6949"
+    },
+    {
+      "path": "web/dist/loader.js",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    {
+      "path": "web/dist/guest-rpc.js",
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "path": "web/dist/linux-worker.js",
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9"
+    },
+    {
+      "path": "web/dist/loader.js",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    {
+      "path": "web/dist/linux-worker-protocol.js",
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "path": "web/dist/boot-path.js",
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm.js",
+      "sha256": "677aa95b8db667b8bd9de21af74682d71d1d2b568812bdbd8cd7e0a73f8f71c6"
+    },
+    {
+      "path": "web/dist/overlay-seed-identity.js",
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d"
+    },
+    {
+      "path": "web/dist/task-quiescence.js",
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86"
+    },
+    {
+      "path": "web/dist/guest-clock.js",
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133"
+    },
+    {
+      "path": "web/dist/decoded-cache.js",
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae"
+    },
+    {
+      "path": "web/dist/boot-asset-cache.js",
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe"
+    },
+    {
+      "path": "web/dist/admission-probe.js",
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c"
+    },
+    {
+      "path": "web/dist/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b"
+    },
+    {
+      "path": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "path": "web/dist/src/audio/worklet.js",
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21"
+    },
+    {
+      "path": "web/dist/src/audio/ring.js",
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893"
+    }
+  ],
+  "inputDeviceSamples": [
+    {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    },
+    {
+      "pendingEventBudget": 256,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 1,
+      "rejectedEvents": 0
+    }
+  ],
+  "frames": [
+    2,
+    3
+  ],
+  "intervalRetired": 3544856799,
+  "intervalJitRetired": 2539095415,
+  "intervalJitShare": 0.716275877693078,
+  "guestClockTicksAdvanced": 55388388,
+  "clockTimebaseHz": 10000000,
+  "physicalOutcome": "nonce-readback-failed",
+  "performanceClaim": "No speedup inference from a single physical trial; benchmark is separate."
+}

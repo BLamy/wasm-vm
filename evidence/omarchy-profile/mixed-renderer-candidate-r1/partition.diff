@@ -1,0 +1,48 @@
+diff --git a/crates/core/src/hart/mod.rs b/crates/core/src/hart/mod.rs
+index 7e3780e7..f223bae1 100644
+--- a/crates/core/src/hart/mod.rs
++++ b/crates/core/src/hart/mod.rs
+@@ -34,7 +34,7 @@ use regs::XRegs;
+ 
+ /// Every F/D instruction requires `mstatus.FS != Off` (E1-T06); this identifies them so the
+ /// check happens once, before any architectural state is read.
+-const fn is_fp(i: &Instr) -> bool {
++pub(crate) const fn is_fp(i: &Instr) -> bool {
+     use Instr::*;
+     matches!(
+         i,
+diff --git a/crates/core/src/lib.rs b/crates/core/src/lib.rs
+index d32ccdd6..8b68fb50 100644
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -4049,12 +4049,17 @@ impl Machine {
+             return Ok(first);
+         }
+ 
+-        // Walk contiguous ops within this physical page to the first terminator / page edge / cap.
++        // Walk one translatable/interpreted region within this physical page to the first
++        // architectural terminator / page edge / cap. FP is deliberately not an architectural
++        // terminator: an integer region stops immediately before FP, while an FP entry walks the
++        // contiguous FP region. This keeps FP interpreter-only without excluding the neighboring
++        // integer regions from JIT discovery.
+         let mut ops = alloc::vec::Vec::with_capacity(8);
+         let mut total_len = u64::from(first.len);
+         ops.push(first);
+         let page_base = pc & !(dispatch::PAGE - 1);
+         if !dispatch::is_terminator(&first.instr) {
++            let first_is_fp = crate::hart::is_fp(&first.instr);
+             let mut va = pc.wrapping_add(u64::from(first.len));
+             while ops.len() < dispatch::MAX_BLOCK_OPS {
+                 // Stop if the next op would begin in a different physical page.
+@@ -4076,6 +4081,11 @@ impl Machine {
+                     page_base,
+                     "block op must not leave the entry physical page"
+                 );
++                // Keep each cache entry in one FP/integer region. Do not include the boundary
++                // instruction: it will be fetched as the next block entry on the following step.
++                if crate::hart::is_fp(&op.instr) != first_is_fp {
++                    break;
++                }
+                 total_len += u64::from(op.len);
+                 let is_term = dispatch::is_terminator(&op.instr);
+                 ops.push(op);

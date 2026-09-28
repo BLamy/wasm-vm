@@ -1,0 +1,62 @@
+{
+  "head": "81f01ba31171b8d670f3842948e556b62bcb0d75",
+  "verifiedParent": "53103e762c6c4003a5976bfa90131a03702fd2e7",
+  "taskOnlyChanges": [
+    "tasks/QUEUE.md",
+    "tasks/epic-5.5-omarchy/E5.5-T03aa-admission-after-fp.md"
+  ],
+  "frozenAt": "2026-09-16T01:20:40Z",
+  "files": [
+    {
+      "path": "crates/core/src/dispatch.rs",
+      "sha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sha256": "32bea9ae8c42a11e117c63efd81668d57f5dda51a23a792f21b81bd77d69c409",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "sha256": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/main.js",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/cold-counter-recycling.js",
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-recycling-ab.mjs",
+      "sha256": "be304eebf600a093baa89b5e0da4e0d77fe08aa1b8d9617acd623b52e1f8c2e1",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "be29c8f609f90469a92826b1a24338b0b60bd390cdca393c214cbf4a41c0b2c6",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "sha256": "21ee4e382967134a48d616d257c9c42598e65e1875579fb871bfd9b38e8e641e",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "07be829a35c6453d1af1a231f66c6c38f13e2e51fef619419c8540862a75aaf8",
+      "unchangedFromVerified": true
+    }
+  ],
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d"
+}

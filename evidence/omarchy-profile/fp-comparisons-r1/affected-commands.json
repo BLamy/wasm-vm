@@ -1,0 +1,126 @@
+{
+  "head": "2e7cd66994e63c1ca39f492d49c5764a31c87739",
+  "wasmSha256": "4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd",
+  "phase": "affected",
+  "commands": [
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:36:06Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:36:15Z"
+    },
+    {
+      "label": "core-handoff",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace",
+        "--lib",
+        "jit::tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:36:15Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:36:29Z"
+    },
+    {
+      "label": "fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_moves",
+        "--test",
+        "fp_memory",
+        "--test",
+        "precise_traps",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:36:29Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:36:53Z"
+    },
+    {
+      "label": "native-fp-isa",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "jit_execution",
+        "fp_suites_verdict_identical_under_jit",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:36:53Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:37:24Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:37:24Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:37:37Z"
+    },
+    {
+      "label": "no-host-float",
+      "args": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:37:37Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:37:37Z"
+    },
+    {
+      "label": "acceptance",
+      "args": [
+        "make",
+        "verify-E5_5-T03v",
+        "FP_COMPARISONS_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-comparisons-r1/acceptance-browser"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T20:37:37Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T20:38:45Z"
+    }
+  ],
+  "allPassed": true
+}

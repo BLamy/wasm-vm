@@ -1,0 +1,1348 @@
+{
+  "head": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+  "abSha256": "dfc6de4d0330b6607a5b498e53a2fdb14508b80439e33fd9b0324b0cf5950b10",
+  "arms": [
+    {
+      "arm": "control",
+      "head": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+      "result": "failed",
+      "outcome": "nonce-readback-failed",
+      "servedReceipts": 95,
+      "browserRequests": 86,
+      "helpers": 14,
+      "rawSerialRequests": [
+        {
+          "id": "mu3fzyp70",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+          "sentAt": "2026-09-16T01:49:10.891Z",
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n",
+          "exit": 0,
+          "completedAt": "2026-09-16T01:50:50.428Z"
+        },
+        {
+          "id": "mu3g2k5u1",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:12.018Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:51:18.382Z"
+        },
+        {
+          "id": "mu3g2pur2",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:19.395Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:51:27.536Z"
+        },
+        {
+          "id": "mu3g2wwt3",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:28.541Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:51:36.426Z"
+        },
+        {
+          "id": "mu3g33ru4",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:37.434Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:51:47.355Z"
+        },
+        {
+          "id": "mu3g3c7c5",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:48.360Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:51:57.411Z"
+        },
+        {
+          "id": "mu3g3jyp6",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:51:58.417Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:08.132Z"
+        },
+        {
+          "id": "mu3g3s8g7",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:09.137Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:17.820Z"
+        },
+        {
+          "id": "mu3g3zpl8",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:18.825Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:27.706Z"
+        },
+        {
+          "id": "mu3g47c69",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:28.710Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:37.441Z"
+        },
+        {
+          "id": "mu3g4eul10",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:38.445Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:47.219Z"
+        },
+        {
+          "id": "mu3g4me711",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:48.224Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:52:56.913Z"
+        },
+        {
+          "id": "mu3g4tvh12",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:52:57.917Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:53:05.960Z"
+        },
+        {
+          "id": "mu3g50ut13",
+          "command": "if [ -f '/tmp/desktop-keys-b91b8e45c6f84f63' ]; then cat '/tmp/desktop-keys-b91b8e45c6f84f63'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:53:06.965Z"
+        }
+      ],
+      "runtimeSamples": [
+        {
+          "label": "physical-keyboard-before",
+          "timestamp": "2026-09-16T01:51:08.738Z",
+          "context": "primary",
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 49,
+            "executedBlocks": 17318505,
+            "retiredViaJit": 927520618,
+            "directChainEntries": 32932538,
+            "directChainLinks": 15614301,
+            "dynamicLinkAttempts": 2276857,
+            "dynamicLinkHits": 1560385,
+            "dynamicLinkRefusals": 716472,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 8,
+            "dynamicLinkInstalls": 97188,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 17318505,
+              "stateCopyCalls": 34637010,
+              "stateCopyBytes": 5447164456,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 8056365,
+              "authorityChecks": 20897962,
+              "memorySplitExits": 53392,
+              "deviceBoundaries": 25904,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1637987918,
+            "jitEngineCalls": 17318505,
+            "jitLogicalBlocksPerEngineCall": 1.90158088125967,
+            "jitRetiredShare": 0.56625608028447,
+            "chainLinksMade": 8364,
+            "chainLinksCut": 8357,
+            "chainDispatchEntries": 11440335,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 13604165,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 21720,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 5800,
+            "jitCacheInstalls": 21642,
+            "jitCacheRetranslations": 19569,
+            "jitCacheEvictions": 5733,
+            "jitCacheBatches": 23,
+            "jitCacheCodeBytes": 1712024,
+            "compileQueue": {
+              "admitted": 29672,
+              "droppedBackpressure": 15068,
+              "cancelledStale": 0,
+              "popped": 24468,
+              "queueHighWater": 256,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 39536,
+              "deduped": 17986971,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 9051784,
+              "excluded": 105,
+              "queueDepth": 0,
+              "queueHighWater": 481,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 46780083,
+            "blockBuilds": 4523484,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 3276,
+            "totalSliceMs": 118609.89499497414,
+            "averageSliceMs": 36.20570665292251,
+            "maxSliceMs": 273.2849998474121,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 1
+              },
+              {
+                "leMs": 16,
+                "count": 4
+              },
+              {
+                "leMs": 32,
+                "count": 1800
+              },
+              {
+                "leMs": 64,
+                "count": 1260
+              },
+              {
+                "leMs": 128,
+                "count": 176
+              },
+              {
+                "leMs": 256,
+                "count": 32
+              },
+              {
+                "leMs": 512,
+                "count": 3
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 275.4800000190735,
+            "requestedInstructions": 1638000000,
+            "retiredInstructions": 1637987918,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "fetchWaitMaxMs": 0,
+            "outputCalls": 15,
+            "outputBytes": 2324,
+            "inputCalls": 2,
+            "inputBytes": 129,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 3277,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1366054336",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "guestSession": {
+            "key": "omarchy",
+            "generation": 1
+          },
+          "presentation": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8192000,
+              "drawnPresents": 2,
+              "drawnBytes": 8192000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          }
+        },
+        {
+          "label": "input-trial-failure",
+          "timestamp": "2026-09-16T01:53:12.088Z",
+          "context": "primary",
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 119,
+            "executedBlocks": 32977316,
+            "retiredViaJit": 1316918437,
+            "directChainEntries": 73624762,
+            "directChainLinks": 40647796,
+            "dynamicLinkAttempts": 12234214,
+            "dynamicLinkHits": 8496152,
+            "dynamicLinkRefusals": 3738062,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 308321,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 32977316,
+              "stateCopyCalls": 65954632,
+              "stateCopyBytes": 9672133040,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 22699323,
+              "authorityChecks": 49907426,
+              "memorySplitExits": 290808,
+              "deviceBoundaries": 100304,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 2824440534,
+            "jitEngineCalls": 32977316,
+            "jitLogicalBlocksPerEngineCall": 2.2325880614419926,
+            "jitRetiredShare": 0.4662581566675675,
+            "chainLinksMade": 11947,
+            "chainLinksCut": 11926,
+            "chainDispatchEntries": 22287160,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 28087819,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 34900,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 8225,
+            "jitCacheInstalls": 34820,
+            "jitCacheRetranslations": 32338,
+            "jitCacheEvictions": 8148,
+            "jitCacheBatches": 21,
+            "jitCacheCodeBytes": 1792920,
+            "compileQueue": {
+              "admitted": 71900,
+              "droppedBackpressure": 86338,
+              "cancelledStale": 0,
+              "popped": 43416,
+              "queueHighWater": 256,
+              "queueDepth": 248,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 130182,
+              "deduped": 51053397,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 24917159,
+              "excluded": 192,
+              "queueDepth": 180,
+              "queueHighWater": 481,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 136081735,
+            "blockBuilds": 12895931,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 5649,
+            "totalSliceMs": 241676.0549943447,
+            "averageSliceMs": 42.78209506007164,
+            "maxSliceMs": 273.2849998474121,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 9
+              },
+              {
+                "leMs": 16,
+                "count": 21
+              },
+              {
+                "leMs": 32,
+                "count": 2234
+              },
+              {
+                "leMs": 64,
+                "count": 2510
+              },
+              {
+                "leMs": 128,
+                "count": 829
+              },
+              {
+                "leMs": 256,
+                "count": 43
+              },
+              {
+                "leMs": 512,
+                "count": 3
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 275.4800000190735,
+            "requestedInstructions": 2824500000,
+            "retiredInstructions": 2824440534,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "fetchWaitMaxMs": 0,
+            "outputCalls": 90,
+            "outputBytes": 14376,
+            "inputCalls": 15,
+            "inputBytes": 2581,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 5650,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1384592658",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "guestSession": {
+            "key": "omarchy",
+            "generation": 1
+          },
+          "presentation": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8192000,
+              "drawnPresents": 2,
+              "drawnBytes": 8192000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          }
+        }
+      ],
+      "closed": true,
+      "screenshots": [
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/latest.png",
+          "timestamp": "2026-09-16T01:49:08.290Z",
+          "sha256": "ea54266ba9e8f50ad4ba097be7e0ad1b7d82c9bdd01ec3d678ae4081fd85ee76"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/latest.png",
+          "timestamp": "2026-09-16T01:49:38.427Z",
+          "sha256": "f410ff2c59bbba780638688eeee23f6d82e0093dcced2faee523a5da35b8b14f"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/latest.png",
+          "timestamp": "2026-09-16T01:50:08.506Z",
+          "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/latest.png",
+          "timestamp": "2026-09-16T01:50:38.595Z",
+          "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/desktop.png",
+          "timestamp": "2026-09-16T01:51:08.672Z",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/control/failure.png",
+          "timestamp": "2026-09-16T01:53:12.082Z",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        }
+      ],
+      "physicalInputTested": true,
+      "trustedPhysicalEvents": 128,
+      "matchedKeyboardRPCs": 256,
+      "completedReads": 12,
+      "pendingReads": 1,
+      "nonce": "ccc3a2db3651b7fb",
+      "nonceVerified": false,
+      "deadlineAt": "2026-09-16T01:53:12.013Z",
+      "desktopAccepted": false,
+      "freshGuestFrame": false,
+      "keyboard": {
+        "verified": false,
+        "nonce": "ccc3a2db3651b7fb",
+        "guestFile": "/tmp/desktop-keys-b91b8e45c6f84f63",
+        "startedAt": "2026-09-16T01:51:08.739Z",
+        "enteredAtMs": 1789523472013,
+        "typedAt": "2026-09-16T01:51:12.013Z",
+        "typingMs": 3274,
+        "readbackStartedAt": "2026-09-16T01:51:12.013Z",
+        "readbackTimeoutMs": 120000,
+        "deadlineMs": 120000,
+        "deadlineAt": "2026-09-16T01:53:12.013Z",
+        "stage": "readback",
+        "failedAt": "2026-09-16T01:53:12.016Z",
+        "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+        "desktopReadyPageMs": 109486.1700000763,
+        "firstPhysicalKeydownPageMs": 127798.43499994278,
+        "readyToFirstPhysicalKeydownMs": 18312.264999866486
+      },
+      "visualAcceptance": "Requires independent inspection; counters do not establish response.",
+      "reportSha256": "65fb5dc0ac51e50702ea0583ea8bdb15f8bab98455c9068b1165581a2c86bdd5"
+    },
+    {
+      "arm": "candidate",
+      "head": "f730bc553ee63eec303aa36ab8291e3af2afac24",
+      "result": "failed",
+      "outcome": "nonce-readback-failed",
+      "servedReceipts": 95,
+      "browserRequests": 86,
+      "helpers": 14,
+      "rawSerialRequests": [
+        {
+          "id": "mu3g5g900",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+          "sentAt": "2026-09-16T01:53:26.917Z",
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n",
+          "exit": 0,
+          "completedAt": "2026-09-16T01:54:23.632Z"
+        },
+        {
+          "id": "mu3g6qru1",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:54:27.211Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:54:31.667Z"
+        },
+        {
+          "id": "mu3g6uzs2",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:54:32.680Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:54:39.703Z"
+        },
+        {
+          "id": "mu3g716r3",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:54:40.708Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:54:47.050Z"
+        },
+        {
+          "id": "mu3g76uu4",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:54:48.054Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:54:53.050Z"
+        },
+        {
+          "id": "mu3g7bhj5",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:54:54.055Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:00.384Z"
+        },
+        {
+          "id": "mu3g7h586",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:01.388Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:08.103Z"
+        },
+        {
+          "id": "mu3g7n3n7",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:09.107Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:15.635Z"
+        },
+        {
+          "id": "mu3g7swv8",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:16.639Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:22.431Z"
+        },
+        {
+          "id": "mu3g7y5m9",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:23.434Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:29.939Z"
+        },
+        {
+          "id": "mu3g83ya10",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:30.946Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:36.209Z"
+        },
+        {
+          "id": "mu3g88sc11",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:37.212Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:42.442Z"
+        },
+        {
+          "id": "mu3g8dlh12",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:43.445Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:48.572Z"
+        },
+        {
+          "id": "mu3g8ibs13",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:49.577Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:55:55.181Z"
+        },
+        {
+          "id": "mu3g8nfb14",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:55:56.183Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:56:01.102Z"
+        },
+        {
+          "id": "mu3g8rzv15",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:56:02.107Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:56:09.192Z"
+        },
+        {
+          "id": "mu3g8y8k16",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:56:10.196Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:56:15.439Z"
+        },
+        {
+          "id": "mu3g932417",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:56:16.444Z",
+          "stdout": "",
+          "exit": 75,
+          "completedAt": "2026-09-16T01:56:23.905Z"
+        },
+        {
+          "id": "mu3g99la18",
+          "command": "if [ -f '/tmp/desktop-keys-a65f08739c733920' ]; then cat '/tmp/desktop-keys-a65f08739c733920'; else (exit 75); fi",
+          "sentAt": "2026-09-16T01:56:24.911Z"
+        }
+      ],
+      "runtimeSamples": [
+        {
+          "label": "physical-keyboard-before",
+          "timestamp": "2026-09-16T01:54:24.432Z",
+          "context": "primary",
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 960,
+            "executedBlocks": 18959886,
+            "retiredViaJit": 1137572692,
+            "directChainEntries": 51323386,
+            "directChainLinks": 32363824,
+            "dynamicLinkAttempts": 2829043,
+            "dynamicLinkHits": 2045612,
+            "dynamicLinkRefusals": 783431,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 22,
+            "dynamicLinkInstalls": 367912,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 18959886,
+              "stateCopyCalls": 37919772,
+              "stateCopyBytes": 3818958360,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 14375089,
+              "authorityChecks": 25405503,
+              "memorySplitExits": 152706,
+              "deviceBoundaries": 41798,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1388488798,
+            "jitEngineCalls": 18959886,
+            "jitLogicalBlocksPerEngineCall": 2.7069459172908528,
+            "jitRetiredShare": 0.8192883468981361,
+            "chainLinksMade": 1474,
+            "chainLinksCut": 1238,
+            "chainDispatchEntries": 9119387,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 12950431,
+            "jitResidencyPolicy": "cap-256",
+            "jitResidencyCap": 256,
+            "jitSubmittedMembers": 3626,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 945,
+            "jitCacheInstalls": 3532,
+            "jitCacheRetranslations": 531,
+            "jitCacheEvictions": 650,
+            "jitCacheBatches": 208,
+            "jitCacheCodeBytes": 17088869,
+            "compileQueue": {
+              "admitted": 8609,
+              "droppedBackpressure": 6369,
+              "cancelledStale": 0,
+              "popped": 5855,
+              "queueHighWater": 256,
+              "queueDepth": 248,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 12536,
+              "deduped": 10390812,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 450355,
+              "excluded": 102,
+              "queueDepth": 64,
+              "queueHighWater": 429,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 16947549,
+            "blockBuilds": 4016537,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 2777,
+            "totalSliceMs": 58586.31999993324,
+            "averageSliceMs": 21.096982355035376,
+            "maxSliceMs": 244.8949999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 3
+              },
+              {
+                "leMs": 16,
+                "count": 1517
+              },
+              {
+                "leMs": 32,
+                "count": 979
+              },
+              {
+                "leMs": 64,
+                "count": 158
+              },
+              {
+                "leMs": 128,
+                "count": 114
+              },
+              {
+                "leMs": 256,
+                "count": 6
+              },
+              {
+                "leMs": 512,
+                "count": 0
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 246.20499992370605,
+            "requestedInstructions": 1388500000,
+            "retiredInstructions": 1388488798,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "fetchWaitMaxMs": 0,
+            "outputCalls": 13,
+            "outputBytes": 2063,
+            "inputCalls": 2,
+            "inputBytes": 129,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 2778,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1362155912",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "guestSession": {
+            "key": "omarchy",
+            "generation": 1
+          },
+          "presentation": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8192000,
+              "drawnPresents": 2,
+              "drawnBytes": 8192000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          }
+        },
+        {
+          "label": "input-trial-failure",
+          "timestamp": "2026-09-16T01:56:27.227Z",
+          "context": "primary",
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1176,
+            "executedBlocks": 64280166,
+            "retiredViaJit": 2227819514,
+            "directChainEntries": 172132697,
+            "directChainLinks": 107853039,
+            "dynamicLinkAttempts": 27021286,
+            "dynamicLinkHits": 18840078,
+            "dynamicLinkRefusals": 8181208,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 3,
+            "dynamicLinkInstalls": 3436059,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 64280166,
+              "stateCopyCalls": 128560332,
+              "stateCopyBytes": 12322855128,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 64898974,
+              "authorityChecks": 112645053,
+              "memorySplitExits": 1739911,
+              "deviceBoundaries": 514905,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 3031923059,
+            "jitEngineCalls": 64280166,
+            "jitLogicalBlocksPerEngineCall": 2.6778508474915887,
+            "jitRetiredShare": 0.734787615202474,
+            "chainLinksMade": 11453,
+            "chainLinksCut": 10876,
+            "chainDispatchEntries": 29908033,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 54166522,
+            "jitResidencyPolicy": "cap-256",
+            "jitResidencyCap": 256,
+            "jitSubmittedMembers": 17374,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 4232,
+            "jitCacheInstalls": 17278,
+            "jitCacheRetranslations": 13163,
+            "jitCacheEvictions": 3770,
+            "jitCacheBatches": 246,
+            "jitCacheCodeBytes": 19072423,
+            "compileQueue": {
+              "admitted": 53487,
+              "droppedBackpressure": 45735,
+              "cancelledStale": 0,
+              "popped": 32151,
+              "queueHighWater": 256,
+              "queueDepth": 248,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 78334,
+              "deduped": 30202884,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 17779869,
+              "excluded": 199,
+              "queueDepth": 200,
+              "queueHighWater": 429,
+              "candidates": 65471,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 80210555,
+            "blockBuilds": 14452557,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 512,
+              "capacity": 65536
+            }
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 6064,
+            "totalSliceMs": 181023.57500505447,
+            "averageSliceMs": 29.852172659144866,
+            "maxSliceMs": 244.8949999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 13
+              },
+              {
+                "leMs": 16,
+                "count": 1837
+              },
+              {
+                "leMs": 32,
+                "count": 2539
+              },
+              {
+                "leMs": 64,
+                "count": 1043
+              },
+              {
+                "leMs": 128,
+                "count": 623
+              },
+              {
+                "leMs": 256,
+                "count": 9
+              },
+              {
+                "leMs": 512,
+                "count": 0
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 246.20499992370605,
+            "requestedInstructions": 3032000000,
+            "retiredInstructions": 3031923059,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "fetchWaitMaxMs": 0,
+            "outputCalls": 125,
+            "outputBytes": 19336,
+            "inputCalls": 20,
+            "inputBytes": 3531,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 6065,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1387834572",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "guestSession": {
+            "key": "omarchy",
+            "generation": 1
+          },
+          "presentation": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8192000,
+              "drawnPresents": 2,
+              "drawnBytes": 8192000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          }
+        }
+      ],
+      "closed": true,
+      "screenshots": [
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/candidate/latest.png",
+          "timestamp": "2026-09-16T01:53:24.006Z",
+          "sha256": "ea54266ba9e8f50ad4ba097be7e0ad1b7d82c9bdd01ec3d678ae4081fd85ee76"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/candidate/latest.png",
+          "timestamp": "2026-09-16T01:53:54.266Z",
+          "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/candidate/desktop.png",
+          "timestamp": "2026-09-16T01:54:24.349Z",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        },
+        {
+          "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-r1/candidate/failure.png",
+          "timestamp": "2026-09-16T01:56:27.261Z",
+          "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+        }
+      ],
+      "physicalInputTested": true,
+      "trustedPhysicalEvents": 128,
+      "matchedKeyboardRPCs": 256,
+      "completedReads": 17,
+      "pendingReads": 1,
+      "nonce": "5ac8e7e4e7f9c9b2",
+      "nonceVerified": false,
+      "deadlineAt": "2026-09-16T01:56:27.208Z",
+      "desktopAccepted": false,
+      "freshGuestFrame": false,
+      "keyboard": {
+        "verified": false,
+        "nonce": "5ac8e7e4e7f9c9b2",
+        "guestFile": "/tmp/desktop-keys-a65f08739c733920",
+        "startedAt": "2026-09-16T01:54:24.432Z",
+        "enteredAtMs": 1789523667208,
+        "typedAt": "2026-09-16T01:54:27.208Z",
+        "typingMs": 2776,
+        "readbackStartedAt": "2026-09-16T01:54:27.208Z",
+        "readbackTimeoutMs": 120000,
+        "deadlineMs": 120000,
+        "deadlineAt": "2026-09-16T01:56:27.208Z",
+        "stage": "readback",
+        "failedAt": "2026-09-16T01:56:27.210Z",
+        "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+        "desktopReadyPageMs": 65931.92999982834,
+        "firstPhysicalKeydownPageMs": 66734.46499991417,
+        "readyToFirstPhysicalKeydownMs": 802.5350000858307
+      },
+      "visualAcceptance": "Requires independent inspection; counters do not establish response.",
+      "reportSha256": "33eaa82a64ade55c36efb27aca5ac021a3d028ab77dbdd696b83a4be6d8dc037"
+    }
+  ]
+}

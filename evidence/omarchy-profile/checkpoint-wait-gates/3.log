@@ -1,0 +1,16 @@
+✔ pinned layout rejects a changed task offset even with intact kernel identity (1.099458ms)
+✔ container rejects duplicate, unknown, missing and truncated sections (0.246792ms)
+✔ sparse decoder respects literal, zero, truncation and total-size boundaries (0.425ms)
+✔ saved-mode page walks cover Sv39/Sv48/Sv57 and noncontiguous page reads (0.425917ms)
+✔ page walks reject invalid/reserved/non-leaf PTEs and misaligned superpages (0.293708ms)
+✔ task-list traversal checks reciprocal closure, cycles and count bounds (0.16725ms)
+✔ kernel unwind stops at the proven trap boundary and keeps saved context labeled (0.140875ms)
+✔ kernel unwind rejects nonincreasing, unaligned, out-of-stack and non-text frames (0.183291ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.036791

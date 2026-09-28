@@ -1,0 +1,631 @@
+{
+  "head": "b630ddcbf5a1555deb9ec785306e0b5c8f001fd4",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "elfSha256": "b587726be44a8f2ced1e146946861bd5db0d2492b1575eb6eb80c70ec88bbe46",
+  "words": [
+    8375,
+    805343347,
+    1069171,
+    2183283,
+    8855,
+    4278354579,
+    419431187,
+    172039,
+    4366471,
+    8560903,
+    12755335,
+    16949767,
+    21144199,
+    25341703,
+    403731283,
+    405869523,
+    408028243,
+    3222484307,
+    3489989843,
+    9733459,
+    434111955,
+    435095123,
+    4294116115,
+    4228062947,
+    1059443,
+    2108147,
+    805317491,
+    40022055,
+    41071655,
+    42121255,
+    43170855,
+    77770791,
+    78820391,
+    79869991,
+    33732227,
+    42120963,
+    50509699,
+    58898435,
+    67287171,
+    75675907,
+    84064643,
+    111
+  ],
+  "attemptedBudget": 5000,
+  "errors": [],
+  "passed": true,
+  "browser": "152.0.7977.84",
+  "runs": [
+    {
+      "jit": false,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 136,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "800000a4",
+        "0",
+        "2000",
+        "0",
+        "0",
+        "0",
+        "80002000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "0",
+        "0",
+        "ffffffff3eaaaaaa",
+        "ffffffff7f7fffff",
+        "ffffffff00800000",
+        "ffffffff3f800000",
+        "ffffffff40000000",
+        "ffffffff7f800000",
+        "ffffffff7fc00000",
+        "1f",
+        "2",
+        "8000000a00006000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca",
+      "stats": {
+        "retired": 5000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 5000,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 0,
+          "deduped": 0,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 0,
+          "queueDepth": 0,
+          "queueHighWater": 0,
+          "candidates": 0,
+          "generation": 1
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 1,
+        "blockEntryHits": 0,
+        "blockBuilds": 0,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 64,
+          "capacity": 65536
+        }
+      }
+    },
+    {
+      "jit": true,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 136,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "800000a4",
+        "0",
+        "2000",
+        "0",
+        "0",
+        "0",
+        "80002000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "0",
+        "0",
+        "ffffffff3eaaaaaa",
+        "ffffffff7f7fffff",
+        "ffffffff00800000",
+        "ffffffff3f800000",
+        "ffffffff40000000",
+        "ffffffff7f800000",
+        "ffffffff7fc00000",
+        "1f",
+        "2",
+        "8000000a00006000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca",
+      "stats": {
+        "retired": 5000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": true,
+        "compiledBlocks": 4,
+        "executedBlocks": 50,
+        "retiredViaJit": 4601,
+        "directChainEntries": 1325,
+        "directChainLinks": 1275,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 1,
+        "dynamicLinkInstalls": 1,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 50,
+          "stateCopyCalls": 100,
+          "stateCopyBytes": 10152,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 1,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 5000,
+        "jitEngineCalls": 50,
+        "jitLogicalBlocksPerEngineCall": 26.5,
+        "jitRetiredShare": 0.9202,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 46,
+        "chainMaxDepth": 1,
+        "chainLinksFollowed": 5,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 4,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 2,
+        "jitCacheInstalls": 4,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 2,
+        "jitCacheCodeBytes": 146315,
+        "compileQueue": {
+          "admitted": 4,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 4,
+          "queueHighWater": 2,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 4,
+          "deduped": 40,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 6,
+          "queueDepth": 0,
+          "queueHighWater": 2,
+          "candidates": 0,
+          "generation": 3
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 40,
+        "blockBuilds": 10,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 1,
+          "capacity": 65536
+        }
+      }
+    }
+  ],
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "capability": "Single-precision division1/1 passing · live in browser",
+  "suiteScreenshotSha256": "a26d89453501b7af5cf11dedf7d15d85e1c30dab8ad88842320a42dedba86c77",
+  "capabilityInspection": {
+    "description": "Legacy computed capability, container revealed for inspection only",
+    "sha256": "26e1995193a94872f55c3ff54127eb87b0b958198f957870647edae70bd9e9d3"
+  },
+  "screenshotSha256": "63430f56fd93f7d8aed115fc1884e21f9826d5c1572b5ba99b3bb2e85d111229"
+}

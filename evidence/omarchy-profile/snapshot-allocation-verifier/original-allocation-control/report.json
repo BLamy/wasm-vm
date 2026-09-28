@@ -1,0 +1,33 @@
+{
+  "startedAt": "2026-09-16T06:07:29.441027+00:00",
+  "head": "d52e8eaac48be3f67ef5967b409b47f8727041b0",
+  "source": "crates/core/src/resume.rs",
+  "sourceSha256": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+  "commands": [
+    {
+      "name": "compile",
+      "argv": [
+        "rustc",
+        "--edition=2024",
+        "-O",
+        "serialization_attack.rs",
+        "-o",
+        "serialization-attack"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "attack",
+      "argv": [
+        "./serialization-attack"
+      ],
+      "exitCode": 101
+    }
+  ],
+  "scrubbedVariables": [
+    "RUSTFLAGS",
+    "RUST_LOG",
+    "CARGO_*"
+  ],
+  "finishedAt": "2026-09-16T06:07:29.903516+00:00"
+}

@@ -1,0 +1,47 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (1.418167ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (3.399416ms)
+✔ post-marker presentation helper rejects typing frames (2730.495292ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.316917ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (119.679667ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (42.98775ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (3.844708ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (3.396834ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (217.398292ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.559708ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (2.26225ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (4935.584791ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (96.5945ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (22.150916ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (40.274875ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (2.304417ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.450708ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (13.305666ms)
+✔ service-isolated startup failure is retained without claiming input acceptance (22.186458ms)
+✔ rejects unsolicited agent frames, hidden Explorer and Docker calls (5.611042ms)
+✔ does not accept a success label without physical input, timing and fresh frames (24.88825ms)
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (181.835083ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (35.219792ms)
+✔ all four R3 source bindings and image layout must match (1.157958ms)
+✔ actual runtime must match the selected arm with observer/timing off (70.889666ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (46.994083ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (10.640208ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (19.934667ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (12.232834ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (46.928792ms)
+✔ future/invalid navigation cannot extend setup (0.419291ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.341209ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.169625ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (751.21925ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (57.324542ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (16.061458ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (210.283459ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (1216.877916ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (486.889792ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11638.556625

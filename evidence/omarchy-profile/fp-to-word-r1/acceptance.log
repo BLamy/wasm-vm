@@ -1,0 +1,113 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.03s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_to_word --test fp_to_word_verifier -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running tests/fp_to_word.rs (target/debug/deps/fp_to_word-7ecd12574a5c45f4)
+
+running 3 tests
+FP_TO_WORD runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test to_word_native_runloop ... ok
+FP_TO_WORD CSR/consume/later-fault/invalid-prefix cases=192
+test to_word_native_handoff_and_faults ... ok
+FP_TO_WORD corpus cases=52224 register_flags_fnv=9311f74cb245717f
+test to_word_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.28s
+
+     Running tests/fp_to_word_verifier.rs (target/debug/deps/fp_to_word_verifier-9fbd82d76aca750e)
+
+running 5 tests
+CRITIC_NATIVE_TO_WORD_CONTROL Receipt { cases: 12, illegal: 0, digest: 8504544371684976080 }
+test verifier_native_conversion_control_and_faults ... ok
+CRITIC_TO_WORD_INDICES imports=8 exports=run0:8,run1:9,run2:10,run3:11 all_optional_combinations=4 mixed_chain_executed=true integer_imports=5 unsupported_families=8
+test verifier_mixed_optional_indices_and_integer_behavior ... ok
+CRITIC_NATIVE_TO_WORD_LITERALS Receipt { cases: 21120, illegal: 0, digest: 4083560513975942652 }
+test verifier_native_conversion_literals ... ok
+CRITIC_NATIVE_TO_WORD_SEEDED Receipt { cases: 1792, illegal: 868, digest: 4721190114470949240 }
+test verifier_native_conversion_seeded_aliases_and_illegal ... ok
+CRITIC_TO_WORD_PURITY cases=2048 legal_helper_calls=1080 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_conversion_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.35s
+
+wasm-pack test --node crates/wasm --test jit_fp_to_word --test jit_fp_to_word_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running tests/jit_fp_to_word.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_to_word-c4d493f067f3f80d.wasm)
+running 2 tests
+Invoking test: to_word_browser_private
+test to_word_browser_private ... ok
+Invoking test: to_word_browser_inline
+test to_word_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 63.87s
+
+     Running tests/jit_fp_to_word_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_to_word_verifier-0fb85bbc8c94a29d.wasm)
+running 6 tests
+Invoking test: verifier_shared_conversion_memory_growth
+CRITIC_TO_WORD_GROWTH inline=true fault=None pc=0000000040009c18 retired=6 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_TO_WORD_GROWTH inline=true fault=Store pc=0000000040009c04 retired=1 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_TO_WORD_GROWTH inline=true fault=Load pc=0000000040009c10 retired=4 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_shared_conversion_memory_growth ... ok
+Invoking test: verifier_shared_conversion
+CRITIC_SHARED_TO_WORD_LITERALS Receipt { cases: 21120, illegal: 0, digest: 4083560513975942652 }
+CRITIC_SHARED_TO_WORD_SEEDED Receipt { cases: 1792, illegal: 868, digest: 4721190114470949240 }
+CRITIC_SHARED_TO_WORD_CONTROL Receipt { cases: 12, illegal: 0, digest: 8504544371684976080 }
+test verifier_shared_conversion ... ok
+Invoking test: verifier_same_module_conversion_successors
+CRITIC_TO_WORD_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_TO_WORD_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=true fault=true budget=7 retired=5 entries=2 links=1 pc=0000000080000014 flags=09
+test verifier_same_module_conversion_successors ... ok
+Invoking test: verifier_private_conversion_memory_growth
+CRITIC_TO_WORD_GROWTH inline=false fault=None pc=0000000040009c18 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_TO_WORD_GROWTH inline=false fault=Store pc=0000000040009c04 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_TO_WORD_GROWTH inline=false fault=Load pc=0000000040009c10 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_private_conversion_memory_growth ... ok
+Invoking test: verifier_private_conversion
+CRITIC_PRIVATE_TO_WORD_LITERALS Receipt { cases: 21120, illegal: 0, digest: 4083560513975942652 }
+CRITIC_PRIVATE_TO_WORD_SEEDED Receipt { cases: 1792, illegal: 868, digest: 4721190114470949240 }
+CRITIC_PRIVATE_TO_WORD_CONTROL Receipt { cases: 12, illegal: 0, digest: 8504544371684976080 }
+test verifier_private_conversion ... ok
+Invoking test: verifier_cross_module_conversion_successors
+CRITIC_TO_WORD_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_TO_WORD_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_TO_WORD_CHAIN same=false fault=true budget=7 retired=5 entries=2 links=1 pc=0000000080000014 flags=09
+test verifier_cross_module_conversion_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 4.49s
+
+node tools/verify/omarchy-fp-to-word-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-to-word-r1/browser
+{"passed":true,"wasmSha256":"7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9","digest":"dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":31,"retiredViaJit":3605,"directChainEntries":717,"directChainLinks":686,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":31,"stateCopyCalls":62,"stateCopyBytes":8624,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":4000,"jitEngineCalls":31,"jitLogicalBlocksPerEngineCall":23.129032258064516,"jitRetiredShare":0.90125,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":29,"chainMaxDepth":1,"chainLinksFollowed":3,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":2,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":2,"jitCacheCodeBytes":142613,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":57,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":57,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

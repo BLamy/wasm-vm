@@ -1,0 +1,210 @@
+{
+  "productEvidence": false,
+  "purpose": "bounded independent partial-property and false-success attack",
+  "sourceHashes": {
+    "tools/verify/omarchy-direct-opaque-command.mjs": "a2705da081a74c8c41fdba67d7062eb675bd2f0feb846c13c5333e8f6919eb88",
+    "tools/verify/omarchy-latency-receipt.mjs": "79f97639b99c2a9c3b42917ecbdc9bb85b7d6c079abe3791d6bc088655d1b395",
+    "web/guest-rpc.js": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+  },
+  "fixedCommand": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+  "literalControlStdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1.000\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\n",
+  "partialStdout": "ok\nok\nok\nok\nok\nok\nok\nok\ntrue\ntrue\n1\n1.000\n1\ntrue\ntrue\n{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\n",
+  "cases": [
+    {
+      "name": "literal complete response control",
+      "expectedRejection": false,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": false,
+          "error": null,
+          "value": {
+            "address": "0x7f1ab234",
+            "class": "foot",
+            "mapped": true,
+            "hidden": false,
+            "at": [
+              16,
+              40
+            ],
+            "size": [
+              1248,
+              744
+            ]
+          }
+        },
+        {
+          "run": 2,
+          "rejected": false,
+          "error": null,
+          "value": {
+            "address": "0x7f1ab234",
+            "class": "foot",
+            "mapped": true,
+            "hidden": false,
+            "at": [
+              16,
+              40
+            ],
+            "size": [
+              1248,
+              744
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "complete actual wire control",
+      "expectedRejection": false,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": false,
+          "error": null,
+          "value": {
+            "configuration": "properties-confirmed",
+            "wire": {
+              "rid": "criticai1",
+              "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+              "sentAt": "1970-01-01T00:00:01.100Z",
+              "completedAt": "1970-01-01T00:00:01.200Z",
+              "response": {
+                "stdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1.000\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\n",
+                "exit": 0
+              }
+            },
+            "physicalInputTested": false
+          }
+        },
+        {
+          "run": 2,
+          "rejected": false,
+          "error": null,
+          "value": {
+            "configuration": "properties-confirmed",
+            "wire": {
+              "rid": "criticai1",
+              "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'dispatch hl.dsp.window.set_prop({ prop = \"opaque\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"force_rgbx\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_inactive_override\", value = \"1\", window = \"activewindow\" }); dispatch hl.dsp.window.set_prop({ prop = \"opacity_fullscreen_override\", value = \"1\", window = \"activewindow\" }); getprop active opaque; getprop active force_rgbx; getprop active opacity; getprop active opacity_inactive; getprop active opacity_fullscreen; getprop active opacity_override; getprop active opacity_inactive_override; getprop active opacity_fullscreen_override; j/activewindow'",
+              "sentAt": "1970-01-01T00:00:01.100Z",
+              "completedAt": "1970-01-01T00:00:01.200Z",
+              "response": {
+                "stdout": "ok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\nok\n\n\ntrue\n\n\ntrue\n\n\n1\n\n\n1.000\n\n\n1\n\n\ntrue\n\n\ntrue\n\n\ntrue\n\n\n{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\n",
+                "exit": 0
+              }
+            },
+            "physicalInputTested": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "exit-zero partial final override read",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: missing direct property or active-window output",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: missing direct property or active-window output",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "exit-zero first write failure with otherwise good reads",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: every direct write must succeed\n+ actual - expected\n\n  [\n+   'Invalid prop name',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n-   'ok'\n  ]\n",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: every direct write must succeed\n+ actual - expected\n\n  [\n+   'Invalid prop name',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n    'ok',\n-   'ok'\n  ]\n",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "forged complete summary over actual partial wire",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: reported properties disagree with actual wire\n+ actual - expected\n\n  {\n    exit: 0,\n    stdout: 'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1.000\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n+     'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      '{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\\n'\n  }\n",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: reported properties disagree with actual wire\n+ actual - expected\n\n  {\n    exit: 0,\n    stdout: 'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'ok\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1.000\\n' +\n+     '\\n' +\n+     '\\n' +\n      '1\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      'true\\n' +\n+     '\\n' +\n+     '\\n' +\n+     'true\\n' +\n+     '\\n' +\n+     '\\n' +\n      '{\"address\":\"0x7f1ab234\",\"class\":\"foot\",\"mapped\":true,\"hidden\":false,\"at\":[16,40],\"size\":[1248,744]}\\n'\n  }\n",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "actual complete reply arrives beyond original deadline",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(receipt.respondedAt) < receipt.deadlineAtMs)\n",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(receipt.respondedAt) < receipt.deadlineAtMs)\n",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "failed configuration attempts to claim physical typing",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: unconfirmed properties cannot reach physical input\n+ actual - expected\n\n+ {\n+   guestFile: '/tmp/not-an-actual-input',\n+   startedAt: '1970-01-01T00:00:01.500Z',\n+   typedAt: '1970-01-01T00:00:01.600Z'\n+ }\n- undefined\n",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: unconfirmed properties cannot reach physical input\n+ actual - expected\n\n+ {\n+   guestFile: '/tmp/not-an-actual-input',\n+   startedAt: '1970-01-01T00:00:01.500Z',\n+   typedAt: '1970-01-01T00:00:01.600Z'\n+ }\n- undefined\n",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "changed direct batch order cannot bind to fixed command",
+      "expectedRejection": true,
+      "repeats": [
+        {
+          "run": 1,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: unapproved serial command",
+          "value": null
+        },
+        {
+          "run": 2,
+          "rejected": true,
+          "error": "AssertionError [ERR_ASSERTION]: unapproved serial command",
+          "value": null
+        }
+      ]
+    }
+  ]
+}

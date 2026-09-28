@@ -1,0 +1,349 @@
+{
+  "schema": "wasm-vm.e5.5-t03g.thread-candidate.v1",
+  "task": "E5.5-T03g",
+  "result": "passed",
+  "source": {
+    "path": "target/omarchy-profile-sdr-r3.ext4",
+    "size": 4294967296,
+    "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+  },
+  "candidate": {
+    "path": "target/omarchy-thread-r1/omarchy-profile-lp0.ext4",
+    "size": 4294967296,
+    "sha256": "bbd63fcc64bdd21d7348af600276bd2b52f433d7b4d61161006e424e973c2637"
+  },
+  "changedBytes": 2,
+  "debugfsImageId": "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+  "patches": [
+    {
+      "path": "/etc/environment.d/60-omarchy-browser.conf",
+      "absoluteOffset": 37498943,
+      "length": 1,
+      "oldHex": "31",
+      "newHex": "30",
+      "metadata": {
+        "inode": 455,
+        "mode": "0644",
+        "uid": 0,
+        "gid": 0,
+        "size": 141,
+        "blockCount": 8,
+        "physicalBlock": 9155
+      }
+    },
+    {
+      "path": "/home/omarchy/.config/uwsm/env",
+      "absoluteOffset": 41357421,
+      "length": 1,
+      "oldHex": "31",
+      "newHex": "30",
+      "metadata": {
+        "inode": 1203,
+        "mode": "0644",
+        "uid": 1000,
+        "gid": 1000,
+        "size": 155,
+        "blockCount": 8,
+        "physicalBlock": 10097
+      }
+    }
+  ],
+  "metadata": [
+    {
+      "path": "/etc/environment.d/60-omarchy-browser.conf",
+      "source": {
+        "inode": 455,
+        "mode": "0644",
+        "uid": 0,
+        "gid": 0,
+        "size": 141,
+        "blockCount": 8,
+        "physicalBlock": 9155
+      },
+      "candidate": {
+        "inode": 455,
+        "mode": "0644",
+        "uid": 0,
+        "gid": 0,
+        "size": 141,
+        "blockCount": 8,
+        "physicalBlock": 9155
+      },
+      "stat": "Inode: 455   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 141\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xca590c13\nEXTENTS:\n(0):9155\n"
+    },
+    {
+      "path": "/home/omarchy/.config/uwsm/env",
+      "source": {
+        "inode": 1203,
+        "mode": "0644",
+        "uid": 1000,
+        "gid": 1000,
+        "size": 155,
+        "blockCount": 8,
+        "physicalBlock": 10097
+      },
+      "candidate": {
+        "inode": 1203,
+        "mode": "0644",
+        "uid": 1000,
+        "gid": 1000,
+        "size": 155,
+        "blockCount": 8,
+        "physicalBlock": 10097
+      },
+      "stat": "Inode: 1203   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:  1000   Group:  1000   Project:     0   Size: 155\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xc82f062c\nEXTENTS:\n(0):10097\n"
+    }
+  ],
+  "commands": [
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ],
+      "stdout": "Inode: 455   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 141\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xca590c13\nEXTENTS:\n(0):9155\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /etc/environment.d/60-omarchy-browser.conf 0",
+        "/image"
+      ],
+      "stdout": "9155\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ],
+      "stdout": "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=1\nAQ_NO_MODIFIERS=1\nQT_QUICK_BACKEND=software\nOMARCHY_PATH=/usr/share/omarchy\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ],
+      "stdout": "Inode: 1203   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:  1000   Group:  1000   Project:     0   Size: 155\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xc82f062c\nEXTENTS:\n(0):10097\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /home/omarchy/.config/uwsm/env 0",
+        "/image"
+      ],
+      "stdout": "10097\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ],
+      "stdout": "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=1 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "cp",
+      "args": [
+        "-c",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4"
+      ],
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ],
+      "stdout": "Inode: 455   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 141\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xca590c13\nEXTENTS:\n(0):9155\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /etc/environment.d/60-omarchy-browser.conf 0",
+        "/image"
+      ],
+      "stdout": "9155\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ],
+      "stdout": "LIBGL_ALWAYS_SOFTWARE=1\nGALLIUM_DRIVER=llvmpipe\nLP_NUM_THREADS=0\nAQ_NO_MODIFIERS=1\nQT_QUICK_BACKEND=software\nOMARCHY_PATH=/usr/share/omarchy\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ],
+      "stdout": "Inode: 1203   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:  1000   Group:  1000   Project:     0   Size: 155\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n atime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\n mtime: 0x6aa21283:00000000 -- Thu Sep 10 02:14:27 2026\ncrtime: 0x6aa2129a:00000000 -- Thu Sep 10 02:14:50 2026\nSize of extra inode fields: 32\nInode checksum: 0xc82f062c\nEXTENTS:\n(0):10097\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /home/omarchy/.config/uwsm/env 0",
+        "/image"
+      ],
+      "stdout": "10097\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-thread-r1/omarchy-profile-lp0.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ],
+      "stdout": "export OMARCHY_PATH=/usr/share/omarchy\nexport LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe LP_NUM_THREADS=0 AQ_NO_MODIFIERS=1 QT_QUICK_BACKEND=software\n",
+      "stderr": "debugfs 1.47.0 (5-Feb-2023)\n"
+    }
+  ]
+}

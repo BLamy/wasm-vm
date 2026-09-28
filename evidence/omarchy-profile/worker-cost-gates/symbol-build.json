@@ -1,0 +1,63 @@
+{
+  "head": "3cb109d87f1bf08ad0ba6c6122ff0e884d4d3030",
+  "raw": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm",
+    "sha256": "32f8ef83470cd6cf8358b8ea99f3c7c8f38e6e64efcb1129fa66abeab5e796de"
+  },
+  "commands": [
+    {
+      "label": "bindgen-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T02:16:02Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:02Z"
+    },
+    {
+      "label": "wasmopt-version",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "--version"
+      ],
+      "startedAt": "2026-09-16T02:16:02Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:02Z"
+    },
+    {
+      "label": "bindgen",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen",
+        "--target",
+        "web",
+        "--out-dir",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-worker-cost-symbols",
+        "--out-name",
+        "wasm_vm_wasm",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm"
+      ],
+      "startedAt": "2026-09-16T02:16:02Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:03Z"
+    },
+    {
+      "label": "named-companion",
+      "args": [
+        "/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt",
+        "-O",
+        "-g",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-worker-cost-symbols/wasm_vm_wasm_bg.wasm",
+        "-o",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-worker-cost-symbols/named.wasm"
+      ],
+      "startedAt": "2026-09-16T02:16:03Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:04Z"
+    }
+  ],
+  "named": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-worker-cost-symbols/named.wasm",
+    "sha256": "106b3345fbf40110f6de4cb1f89e772f8f539ef0c617bec8f6c597da90d1805b"
+  }
+}

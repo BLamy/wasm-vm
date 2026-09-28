@@ -1,0 +1,5 @@
+HELD same-page replacement, target retention, reinsertion, stale generation
+
+thread 'main' (28549805) panicked at evidence/omarchy-profile/code-page-index-verifier-r3/sabotage-attacks.rs:268:30:
+forged other-page slot must survive
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

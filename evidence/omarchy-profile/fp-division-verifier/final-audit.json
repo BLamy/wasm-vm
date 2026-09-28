@@ -1,0 +1,223 @@
+{
+  "verdict": "verified",
+  "scope": "E5.5-T03z FDIV.S and required recorded submission",
+  "workerSubmission": "74b3713cdcb0a6c8d518188eb27077055471a3aa",
+  "runtimeAndArtifactHead": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+  "coldHead": "619a569e4f97ad3d7d68dbf68fb8c3693082da79",
+  "workerFilesRehashed": 69,
+  "workerIndexSha256": "da8b6685880651034ec46f81a030ba2dcb516d8c1eb5fba551bb7158829e902a",
+  "workerIndexMatchesCommittedAndDiskBytes": true,
+  "postFreezeRuntimeFixtureDependencyHarnessAppChanges": false,
+  "sourceSha256": {
+    "tests/support/jit_fp_division_verifier.rs": "031f46b2fdb5fcde0914c259de5e10d6ea19c361bff490dd3ef45394e1785c61",
+    "crates/jit-runtime/tests/fp_division_verifier.rs": "6c87850266f31ff0777e1930775752ed95be6cef617733bf1d360cbc89928a7c",
+    "crates/wasm/tests/jit_fp_division_verifier.rs": "d6935194a253c1821cfd228fcf65f638bda78ded21e145c6366f1e164383a267",
+    "crates/core/src/jit.rs": "fb81d1cdd4dddf41583f7b9f1270c82cc9d7098d9d02ad864e0c10f72d9a10ce",
+    "crates/core/src/softfloat.rs": "45bc63fd2e28da55c2a7b649d521e6ad1494a9d3af22a80101de16b400f9e3dd",
+    "crates/jit-translate/src/lib.rs": "4cb90a7f1679fc808f5bc19af2ac259942bba6cc778682f15fd0d1e165c66025",
+    "crates/jit-runtime/src/lib.rs": "3fc85977c379d4fc0e1e39dbee13c693b913134964591d8267e813338345af07",
+    "crates/wasm/src/jit_browser.rs": "148966dd4910b95ca25444c4c9ce5cc9033ff4a5f59a61273cdffa1b7a008ded"
+  },
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "affectedCommandsPassed": 11,
+  "tests": {
+    "software-fp-regression": {
+      "targets": 3,
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0
+    },
+    "core-handoff": {
+      "targets": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fp-regression": {
+      "targets": 10,
+      "passed": 39,
+      "failed": 0,
+      "ignored": 0
+    },
+    "native-fp-isa": {
+      "targets": 1,
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "wasm-native-lib": {
+      "targets": 1,
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    "acceptance": {
+      "targets": 6,
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "coldTestsPassed": 18,
+  "independentDigests": {
+    "literal": 13921326542630639717,
+    "seeded": 11762350621951788834,
+    "control": 18234555522940624504
+  },
+  "production": {
+    "head": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+    "reportSha256": "27cdcd0cc5158e78d72d7b9606e999b1b9b67f8efc195807d6352c3388741067",
+    "elfSha256": "b587726be44a8f2ced1e146946861bd5db0d2492b1575eb6eb80c70ec88bbe46",
+    "elfWordsMatchReport": true,
+    "divisionInstructions": [
+      [
+        14,
+        6,
+        0,
+        1,
+        7
+      ],
+      [
+        15,
+        7,
+        2,
+        3,
+        1
+      ],
+      [
+        16,
+        8,
+        4,
+        5,
+        0
+      ],
+      [
+        20,
+        11,
+        0,
+        30,
+        0
+      ],
+      [
+        21,
+        12,
+        30,
+        30,
+        0
+      ]
+    ],
+    "literalRegistersChecked": {
+      "10": "1",
+      "13": "ffffffff3eaaaaaa",
+      "14": "ffffffff7f7fffff",
+      "15": "ffffffff00800000",
+      "16": "ffffffff3f800000",
+      "17": "ffffffff40000000",
+      "18": "ffffffff7f800000",
+      "19": "ffffffff7fc00000",
+      "20": "1f",
+      "21": "2"
+    },
+    "independentlyReconstructedRamDigest": "fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca",
+    "retiredViaJit": 4601,
+    "retiredTotal": 5000,
+    "suite": {
+      "metric-pass": "127",
+      "metric-fail": "0",
+      "metric-done": "127"
+    },
+    "screenshotsRehashed": true
+  },
+  "coldProduction": {
+    "head": "619a569e4f97ad3d7d68dbf68fb8c3693082da79",
+    "reportSha256": "e917fbac262d9da57e18c30989c959347c4e430dab4b379e7207e5e2197f753a",
+    "elfSha256": "b587726be44a8f2ced1e146946861bd5db0d2492b1575eb6eb80c70ec88bbe46",
+    "elfWordsMatchReport": true,
+    "divisionInstructions": [
+      [
+        14,
+        6,
+        0,
+        1,
+        7
+      ],
+      [
+        15,
+        7,
+        2,
+        3,
+        1
+      ],
+      [
+        16,
+        8,
+        4,
+        5,
+        0
+      ],
+      [
+        20,
+        11,
+        0,
+        30,
+        0
+      ],
+      [
+        21,
+        12,
+        30,
+        30,
+        0
+      ]
+    ],
+    "literalRegistersChecked": {
+      "10": "1",
+      "13": "ffffffff3eaaaaaa",
+      "14": "ffffffff7f7fffff",
+      "15": "ffffffff00800000",
+      "16": "ffffffff3f800000",
+      "17": "ffffffff40000000",
+      "18": "ffffffff7f800000",
+      "19": "ffffffff7fc00000",
+      "20": "1f",
+      "21": "2"
+    },
+    "independentlyReconstructedRamDigest": "fba6d266740297e684328e066f7b134589bcbf96acc2320629cc44563602a6ca",
+    "retiredViaJit": 4601,
+    "retiredTotal": 5000,
+    "suite": {
+      "metric-pass": "127",
+      "metric-fail": "0",
+      "metric-done": "127"
+    },
+    "screenshotsRehashed": true
+  },
+  "screenshotsViewedAndRehashed": 8,
+  "publicArtifactsMatched": 10,
+  "desktopResponsive": false,
+  "broadCiPassed": false,
+  "inheritedCiFailureTargets": [
+    [
+      "clippy",
+      "101"
+    ],
+    [
+      "test",
+      "101"
+    ],
+    [
+      "wasm",
+      "1"
+    ],
+    [
+      "test-riscv",
+      "1"
+    ],
+    [
+      "determinism",
+      "1"
+    ]
+  ],
+  "T03q": "remains gated",
+  "pendingFollowUp": "E5.5-T03aa"
+}

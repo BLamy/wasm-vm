@@ -1,0 +1,396 @@
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 415c978c..e2e33f68 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -29,6 +29,7 @@ import { requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-
+ import { prepareOpaqueDesktop } from "./omarchy-opaque-preparation.mjs";
+ import { prepareDirectOpaqueDesktop } from "./omarchy-direct-opaque-preparation.mjs";
+ import { requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
++import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
+ 
+ const [urlArg, output, mode = "verify"] = process.argv.slice(2);
+ if (urlArg === "--selftest-presentation") {
+@@ -62,6 +63,7 @@ const failureCheckpoint = process.env.OMARCHY_FAILURE_CHECKPOINT === "1";
+ const workerCost = process.env.OMARCHY_WORKER_COST === "1";
+ const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
+ const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
++const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
+ const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+ const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+ if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+@@ -114,6 +116,11 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
+     && !opaqueFoot && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
+   "direct opaque requires its isolated fixed residency candidate input trial");
+ }
++if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
++  assert.ok(preparedDirect && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
++    && !opaqueFoot && !directOpaque && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
++  "prepared direct input requires its isolated fixed residency candidate trial");
++}
+ let modePairOutput = null;
+ if (modePair) {
+   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
+@@ -421,7 +428,8 @@ async function runHttpSelfTest(baseUrl) {
+ }
+ 
+ candidate = await prepareLocalCandidate();
+-if (ownedRecording) assertInputTrialSource(candidate.source);
++if (preparedDirect) assertPreparedDirectSource(candidate.source);
++else if (ownedRecording) assertInputTrialSource(candidate.source);
+ if (modePair) await fs.mkdir(modePairOutput, { recursive: false, mode: 0o700 });
+ const local = urlArg === "local" || urlArg === "selftest" ? await startLocalServer() : null;
+ ownedServer = local?.server || null;
+@@ -436,6 +444,7 @@ if (renderBudget) report.renderBudgetRequested = true;
+ if (compositorMode) report.compositorModeRequested = true;
+ if (opaqueFoot) report.opaqueFootRequested = true;
+ if (directOpaque) report.directOpaqueRequested = true;
++if (preparedDirect) report.preparedDirectRequested = true;
+ if (coldPair) report.progressCaptureErrors = [];
+ if (ownedRecording) {
+   const scope = ["tools/verify/omarchy-desktop-live.mjs", "tools/verify/omarchy-input-trial.mjs",
+@@ -445,6 +454,7 @@ if (ownedRecording) {
+     "tools/verify/omarchy-opaque-foot.mjs", "tools/verify/omarchy-opaque-foot-command.mjs",
+     "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
+     "tools/verify/omarchy-input-audit.mjs",
++    "tools/verify/omarchy-prepared-direct-state.mjs", "tools/verify/omarchy-prepared-direct-input.mjs",
+     "tools/verify/omarchy-direct-opaque-preparation.mjs", "tools/verify/omarchy-prepare-direct-opaque.mjs",
+     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
+     "tools/verify/e5-t22c-cpu-profile.mjs",
+@@ -1224,6 +1234,12 @@ async function runLive() {
+     assertOriginalPresentation(report.directOpaque.presentation);
+     await startupCall(() => screenshot("direct-opaque.png"));
+   }
++  if (preparedDirect) {
++    await requestPreparedDirectProperties((command, timeout) => exec(command, page, "prepared-direct:read", timeout), coldDeadline, report);
++    report.preparedDirect.presentation = await startupCall(() => page.evaluate(() => window.__presentation.state()));
++    assertOriginalPresentation(report.preparedDirect.presentation);
++    await startupCall(() => screenshot("prepared-direct.png"));
++  }
+   if (coldPair) {
+     report.restoreOutcomes = await startupCall(() => page.evaluate(async () => ({
+       shipped: window.__linux.restoredFromBootSnapshot(),
+@@ -1273,7 +1289,7 @@ async function runLive() {
+   const beforeInput = await startupCall(() => runtimeDiagnostics(page, "physical-keyboard-before"));
+   if (inputTrial) {
+     assertInputTrialRuntime(beforeInput, trial);
+-    if (opaqueFoot || directOpaque) assertOriginalPresentation(beforeInput.presentation);
++    if (opaqueFoot || directOpaque || preparedDirect) assertOriginalPresentation(beforeInput.presentation);
+     remainingTrialMs(coldDeadline);
+     report.startup.readyProvenAt = new Date().toISOString();
+     report.startup.elapsedMs = Date.now() - Date.parse(report.startup.startedAt);
+@@ -1301,6 +1317,7 @@ async function runLive() {
+     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     if (directOpaque) report.directOpaqueInputFence = await fenceWorkerCostInput(page, report.keyboard);
++    if (preparedDirect) report.preparedDirectInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     report.keyboard.stage = "post-enter-focus";
+     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
+       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
+@@ -1477,7 +1494,7 @@ try {
+     await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
+     // Disconnect the recorder's Playwright client as well as closing the owned
+     // browser server; debugger sessions must not retain its websocket transport.
+-    if (failureCheckpoint || workerCost || modePair || opaqueFoot || directOpaque) {
++    if (failureCheckpoint || workerCost || modePair || opaqueFoot || directOpaque || preparedDirect) {
+       try {
+         await withinTrialDeadline(() => browser.close(), Math.min(cleanupDeadline, Date.now() + 5000), "browser client close");
+         report.cleanup.clientClosed = true;
+diff --git a/tools/verify/omarchy-input-audit.mjs b/tools/verify/omarchy-input-audit.mjs
+index 0bbc49d2..18141963 100644
+--- a/tools/verify/omarchy-input-audit.mjs
++++ b/tools/verify/omarchy-input-audit.mjs
+@@ -4,11 +4,14 @@ import { inputTrialOptions, assertInputTrialRuntime, assertInputTrialSource } fr
+ import { auditSerial } from "./omarchy-latency-receipt.mjs";
+ import { evdevForCode } from "../../web/src/input/keymap.js";
+ import { physicalStroke } from "./omarchy-browser-session.mjs";
++import { assertPreparedDirectSource } from "./omarchy-prepared-direct-state.mjs";
+ const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n), "invalid timestamp"); return n; };
+ const success = "input-trial-physical-nonce-and-fresh-presentation";
+ const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
+ 
+-export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [] }) {
++export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false }) {
++  assert.equal(typeof preparedDirect, "boolean");
++  assert.equal(report.preparedDirectRequested === true, preparedDirect);
+   assert.equal(report.trial.head, head, "wrong source head");
+   assert.equal(report.trial.scopedStatus, "");
+   assert.equal(report.trial.arm, arm);
+@@ -24,7 +27,8 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
+   assert.equal(report.startup.timeoutMs, 300000);
+   assert.equal(at(report.startup.deadlineAt)-at(report.startup.startedAt), 300000);
+   assert.equal(report.restored, true);
+-  assertInputTrialSource(report.candidate.source);
++  if (preparedDirect) assertPreparedDirectSource(report.candidate.source);
++  else assertInputTrialSource(report.candidate.source);
+   assert.deepEqual(report.errors, []);
+   assert.equal(report.cleanup.closed, true);
+   const runtimes = report.observations.filter(row => row.runtime).map(row => row.runtime);
+diff --git a/tools/verify/omarchy-prepared-direct-input.mjs b/tools/verify/omarchy-prepared-direct-input.mjs
+new file mode 100644
+index 00000000..5b5fd6d0
+--- /dev/null
++++ b/tools/verify/omarchy-prepared-direct-input.mjs
+@@ -0,0 +1,70 @@
++#!/usr/bin/env node
++// One physical input trial from the exact separately verified prepared pair.
++import assert from "node:assert/strict";
++import fs from "node:fs/promises";
++import { createWriteStream } from "node:fs";
++import { spawn, execFileSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { fileURLToPath } from "node:url";
++import path from "node:path";
++import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
++import { auditInputReport } from "./omarchy-input-audit.mjs";
++import { PREPARED_DIRECT_COMMAND, PREPARED_DIRECT_IDENTITIES, PREPARED_DIRECT_WASM,
++  auditPreparedDirect } from "./omarchy-prepared-direct-state.mjs";
++import { assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
++
++const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
++assert.ok(process.argv[2] && process.argv[3], "usage: omarchy-prepared-direct-input.mjs NEW_OUTPUT_DIR VERIFIED_PAIR_DIR");
++const out = path.resolve(process.argv[2]), pair = path.resolve(process.argv[3]);
++const sha = bytes => createHash("sha256").update(bytes).digest("hex");
++for (const [role, filename] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
++  const bytes = await fs.readFile(path.join(pair, filename));
++  assert.equal(bytes.length, PREPARED_DIRECT_IDENTITIES[role].size);
++  assert.equal(sha(bytes), PREPARED_DIRECT_IDENTITIES[role].sha256);
++}
++const wasmSha256 = sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm")));
++assert.equal(wasmSha256, PREPARED_DIRECT_WASM, "trial requires verified AL runtime");
++await fs.mkdir(out, { recursive: false });
++const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim();
++const receipt = { purpose: "physical-input-from-prepared-direct-pair", acceptanceClaim: false, head,
++  wasmSha256, pairDirectory: pair, pairIdentities: PREPARED_DIRECT_IDENTITIES, startedAt: new Date().toISOString() };
++const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
++await save();
++const env = { ...process.env };
++for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[key];
++Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: "residency",
++  OMARCHY_PREPARED_DIRECT: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
++  OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
++receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
++const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
++const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
++child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
++receipt.exit = await watchOwnedTrial(child);
++child.stdout.unpipe(log); child.stderr.unpipe(log); await new Promise(resolve => log.end(resolve));
++receipt.finishedAt = new Date().toISOString(); await save();
++if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
++  child.unref(); child.stdout.destroy(); child.stderr.destroy(); if (child.connected) child.disconnect();
++  throw Error("prepared input trial did not close normally; UNPROVEN");
++}
++const bytes = await fs.readFile(path.join(out, "desktop/report.json"));
++const report = JSON.parse(bytes);
++try {
++  receipt.reportSha256 = sha(bytes);
++  receipt.input = auditInputReport(report, { head, wasmSha256, arm: "candidate", preparedDirect: true,
++    startupCommands: [PREPARED_DIRECT_COMMAND] });
++  receipt.configuration = auditPreparedDirect(report);
++  for (const row of report.observations.filter(row => row.runtime)) assertOriginalPresentation(row.runtime.presentation);
++  if (report.keyboard?.typedAt) {
++    const fence = report.preparedDirectInputFence;
++    assert.equal(fence.method, "Input.setIgnoreInputEvents"); assert.equal(fence.ignore, true);
++    assert.ok(Date.parse(fence.startedAt) >= report.keyboard.enteredAtMs);
++    assert.ok(Date.parse(fence.acknowledgedAt) >= Date.parse(fence.startedAt));
++    assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt));
++    assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(fence.startedAt)));
++  }
++  receipt.result = report.result;
++  receipt.desktopAcceptance = false; // Worker and fresh critic must personally inspect the real image.
++  receipt.visualInspectionRequired = true;
++} catch (error) { receipt.auditError = String(error); throw error; }
++finally { await save(); }
++console.log(JSON.stringify(receipt, null, 2));
+diff --git a/tools/verify/omarchy-prepared-direct-state.mjs b/tools/verify/omarchy-prepared-direct-state.mjs
+new file mode 100644
+index 00000000..f3acecc2
+--- /dev/null
++++ b/tools/verify/omarchy-prepared-direct-state.mjs
+@@ -0,0 +1,88 @@
++// Only the independently verified T03aj R2 pair is admitted by this input trial.
++import assert from "node:assert/strict";
++import { R3_IDENTITIES, remainingTrialMs, withinTrialDeadline } from "./omarchy-input-trial.mjs";
++import { auditSerial } from "./omarchy-latency-receipt.mjs";
++
++export const PREPARED_DIRECT_WASM = "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4";
++export const PREPARED_DIRECT_IDENTITIES = Object.freeze({
++  kernel: R3_IDENTITIES.kernel,
++  chunkManifest: R3_IDENTITIES.chunkManifest,
++  bootSnapshot: Object.freeze({ size: 207172408, sha256: "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75" }),
++  overlayDelta: Object.freeze({ size: 1232847, sha256: "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972" }),
++});
++const properties = ["opaque", "force_rgbx", "opacity", "opacity_inactive", "opacity_fullscreen",
++  "opacity_override", "opacity_inactive_override", "opacity_fullscreen_override"];
++export const PREPARED_DIRECT_COMMAND = `XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch '${[
++  ...properties.map(prop => `getprop active ${prop}`), "j/activewindow",
++].join("; ")}'`;
++
++export function assertPreparedDirectSource(source) {
++  for (const [role, identity] of Object.entries(PREPARED_DIRECT_IDENTITIES)) {
++    assert.equal(source?.[role]?.size, identity.size, `${role}: not verified AJ R2 size`);
++    assert.equal(source?.[role]?.sha256, identity.sha256, `${role}: not verified AJ R2 bytes`);
++  }
++  assert.deepEqual(source.image, { imageLen: 4294967296, chunkSize: 262144, chunkCount: 16384 });
++}
++
++export function assertPreparedDirectProperties(response) {
++  assert.equal(response?.exit, 0, "prepared property read failed");
++  const lines = response.stdout.split(/\r?\n/u).map(s => s.trim()).filter(Boolean);
++  assert.ok(lines.length > 8, "missing saved properties or active Foot");
++  for (let i = 0; i < properties.length; i++) {
++    if (i >= 2 && i <= 4) assert.match(lines[i], /^1(?:\.0+)?$/u, `${properties[i]} is not one`);
++    else assert.equal(lines[i], "true", `${properties[i]} is not true`);
++  }
++  const foot = JSON.parse(lines.slice(8).join("\n"));
++  assert.equal(foot.class, "foot"); assert.equal(foot.mapped, true); assert.equal(foot.hidden, false);
++  assert.equal(foot.visible, true); assert.equal(foot.acceptsInput, true);
++  assert.equal(foot.address, "0x55555eb73630"); assert.equal(foot.pid, 503);
++  assert.deepEqual(foot.at, [12, 38]); assert.deepEqual(foot.size, [1256, 750]);
++  return foot;
++}
++
++export async function requestPreparedDirectProperties(exec, deadline, report) {
++  const receipt = report.preparedDirect = { command: PREPARED_DIRECT_COMMAND, requestCount: 0,
++    startedAt: new Date().toISOString(), deadlineAtMs: deadline, status: "reading" };
++  try {
++    const timeout = remainingTrialMs(deadline); receipt.requestCount++;
++    receipt.response = await withinTrialDeadline(() => exec(PREPARED_DIRECT_COMMAND, timeout), deadline, "saved opaque properties");
++    receipt.respondedAt = new Date().toISOString();
++    receipt.foot = assertPreparedDirectProperties(receipt.response);
++    receipt.status = "properties-confirmed";
++  } catch (error) { receipt.status = "properties-unproven"; receipt.error = String(error); throw error; }
++  finally { receipt.finishedAt = new Date().toISOString(); }
++}
++
++export function auditPreparedDirect(report) {
++  assert.equal(report.preparedDirectRequested, true);
++  const receipt = report.preparedDirect;
++  const read = report.keyboard ? `if [ -f '${report.keyboard.guestFile}' ]; then cat '${report.keyboard.guestFile}'; else (exit 75); fi` : null;
++  const serial = auditSerial(report.workerTraffic, [PREPARED_DIRECT_COMMAND, ...(read ? [read] : [])]);
++  assert.ok(serial.every(row => [PREPARED_DIRECT_COMMAND, read,
++    "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers"].includes(row.command)), "unexpected serial command");
++  const commands = serial.filter(row => row.command === PREPARED_DIRECT_COMMAND);
++  if (!receipt) {
++    assert.equal(commands.length, 0); assert.equal(report.keyboard, undefined);
++    assert.equal(report.trial.outcome, "startup-failed-input-not-tested");
++    return { configuration: "not-reached", physicalInputTested: false };
++  }
++  assert.equal(receipt.command, PREPARED_DIRECT_COMMAND);
++  assert.equal(receipt.requestCount, 1); assert.equal(commands.length, 1);
++  assert.equal(receipt.deadlineAtMs, Date.parse(report.startup.deadlineAt));
++  const wire = commands[0];
++  assert.ok(Date.parse(wire.sentAt) >= Date.parse(receipt.startedAt));
++  assert.ok(Date.parse(wire.sentAt) < receipt.deadlineAtMs);
++  if (receipt.response) {
++    assert.deepEqual(receipt.response, wire.response, "saved properties disagree with actual wire");
++    assert.ok(Date.parse(wire.completedAt) <= Date.parse(receipt.respondedAt));
++    assert.ok(Date.parse(receipt.respondedAt) < receipt.deadlineAtMs);
++  }
++  if (receipt.status === "properties-confirmed") {
++    assert.deepEqual(receipt.foot, assertPreparedDirectProperties(receipt.response));
++    if (report.keyboard) assert.ok(Date.parse(report.keyboard.startedAt) >= Date.parse(receipt.respondedAt));
++  } else {
++    assert.equal(receipt.status, "properties-unproven");
++    assert.equal(report.keyboard, undefined, "unconfirmed saved properties cannot reach physical input");
++  }
++  return { configuration: receipt.status, wire, physicalInputTested: Boolean(report.keyboard?.typedAt) };
++}
+diff --git a/tools/verify/omarchy-prepared-direct.test.mjs b/tools/verify/omarchy-prepared-direct.test.mjs
+new file mode 100644
+index 00000000..1e79e447
+--- /dev/null
++++ b/tools/verify/omarchy-prepared-direct.test.mjs
+@@ -0,0 +1,93 @@
++// Synthetic auditor controls, never substituted for actual guest acceptance.
++import assert from "node:assert/strict";
++import test from "node:test";
++import { formatRpcCommand } from "../../web/guest-rpc.js";
++import { R3_IDENTITIES, assertInputTrialSource } from "./omarchy-input-trial.mjs";
++import { PREPARED_DIRECT_IDENTITIES, PREPARED_DIRECT_COMMAND, assertPreparedDirectSource,
++  assertPreparedDirectProperties, requestPreparedDirectProperties, auditPreparedDirect } from "./omarchy-prepared-direct-state.mjs";
++
++const iso = value => new Date(value).toISOString();
++const foot = { address: "0x55555eb73630", pid: 503, class: "foot", mapped: true,
++  hidden: false, visible: true, acceptsInput: true, at: [12,38], size: [1256,750] };
++const values = ["true", "true", "1", "1.000000", "1", "true", "true", "true"];
++const response = { exit: 0, stdout: `${values.join("\n\n\n")}\n\n\n${JSON.stringify(foot,null,2)}\n` };
++const source = () => ({ ...structuredClone(PREPARED_DIRECT_IDENTITIES),
++  image: { imageLen: 4294967296, chunkSize: 262144, chunkCount: 16384 } });
++function fixture() {
++  return { preparedDirectRequested: true, startup: { deadlineAt: iso(5000) },
++    preparedDirect: { command: PREPARED_DIRECT_COMMAND, requestCount: 1, startedAt: iso(1200),
++      deadlineAtMs: 5000, respondedAt: iso(1500), finishedAt: iso(1500),
++      status: "properties-confirmed", response: structuredClone(response), foot: structuredClone(foot) },
++    trial: { outcome: "startup-failed-input-not-tested" }, workerTraffic: [
++      { type: "serial-input", sent: true, bytes: [...Buffer.from(formatRpcCommand(PREPARED_DIRECT_COMMAND,"prep1"))], ms: 1300, timestamp: iso(1300) },
++      { type: "serial-output", text: `\n__WVBEGIN_prep1\n${response.stdout}__WVEND_prep1_0\n`, ms: 1400, timestamp: iso(1400) },
++    ] };
++}
++
++test("prepared selection accepts only the verified pair while original R3 guards stay exact", () => {
++  assertPreparedDirectSource(source());
++  assert.throws(() => assertInputTrialSource(source()));
++  const old = { ...structuredClone(R3_IDENTITIES), image: source().image };
++  assertInputTrialSource(old); assert.throws(() => assertPreparedDirectSource(old));
++  for (const role of Object.keys(PREPARED_DIRECT_IDENTITIES)) for (const field of ["size", "sha256"]) {
++    const bad = source(); bad[role][field] = field === "size" ? 0 : "0".repeat(64);
++    assert.throws(() => assertPreparedDirectSource(bad));
++  }
++  const bad = source(); bad.image.imageLen /= 2; assert.throws(() => assertPreparedDirectSource(bad));
++});
++
++test("one read-only batch checks eight saved properties and the exact restored Foot", async () => {
++  assert.deepEqual(PREPARED_DIRECT_COMMAND.split("--batch '")[1].slice(0,-1).split("; "), [
++    "getprop active opaque", "getprop active force_rgbx", "getprop active opacity",
++    "getprop active opacity_inactive", "getprop active opacity_fullscreen", "getprop active opacity_override",
++    "getprop active opacity_inactive_override", "getprop active opacity_fullscreen_override", "j/activewindow",
++  ]);
++  assert.doesNotMatch(PREPARED_DIRECT_COMMAND, /dispatch|set_prop|reload|keyword|nonce|sendkey/u);
++  assert.deepEqual(assertPreparedDirectProperties(response), foot);
++  const report = {}, calls = [];
++  await requestPreparedDirectProperties(async (command, timeout) => {
++    assert.ok(timeout > 0 && timeout <= 1000); calls.push(command); return response;
++  }, Date.now()+1000, report);
++  assert.deepEqual(calls, [PREPARED_DIRECT_COMMAND]);
++  assert.equal(report.preparedDirect.status, "properties-confirmed");
++});
++
++test("missing property, altered active Foot, write acknowledgment or exit0 error text fails closed", () => {
++  for (let i=0; i<values.length; i++) {
++    const bad=[...values]; bad[i]=i>=2&&i<=4 ? "0.985" : "false";
++    assert.throws(()=>assertPreparedDirectProperties({exit:0,stdout:bad.join("\n")+"\n"+JSON.stringify(foot)}));
++    bad.splice(i,1);
++    assert.throws(()=>assertPreparedDirectProperties({exit:0,stdout:bad.join("\n")+"\n"+JSON.stringify(foot)}));
++  }
++  for (const stdout of ["ok\n"+response.stdout, response.stdout+"trailing", "IPC timeout", values.join("\n")])
++    assert.throws(()=>assertPreparedDirectProperties({exit:0,stdout}));
++  assert.throws(()=>assertPreparedDirectProperties({...response,exit:1}));
++  for (const mutation of [{class:"kitty"},{address:"0x55555eb73631"},{pid:504},{mapped:false},
++    {hidden:true},{visible:false},{acceptsInput:false},{at:[12,39]},{size:[640,400]}])
++    assert.throws(()=>assertPreparedDirectProperties({exit:0,stdout:values.join("\n")+"\n"+JSON.stringify({...foot,...mutation})}));
++});
++
++test("expired or late property replies do not renew startup or admit input", async t => {
++  t.mock.timers.enable({apis:["Date"],now:1000}); let calls=0; const report={};
++  await assert.rejects(requestPreparedDirectProperties(async()=>{calls++;},999,report), /deadline/u);
++  assert.equal(calls,0);
++  await assert.rejects(requestPreparedDirectProperties(async()=>{calls++;t.mock.timers.tick(1001);return response;},2000,report), /deadline/u);
++  assert.equal(calls,1); assert.equal(report.preparedDirect.status,"properties-unproven");
++});
++
++test("prepared audit rejects forged, duplicate, late and mutating raw property commands", () => {
++  assert.equal(auditPreparedDirect(fixture()).configuration,"properties-confirmed");
++  for (const mutate of [r=>r.workerTraffic.pop(),
++    r=>{r.workerTraffic[1].text=r.workerTraffic[1].text.replace("true","false");},
++    r=>{r.preparedDirect.foot.pid=504;}, r=>{r.preparedDirect.respondedAt=iso(5001);},
++    r=>{r.keyboard={startedAt:iso(1400)};},
++    r=>r.workerTraffic.push({...r.workerTraffic[0],bytes:[...Buffer.from(formatRpcCommand(PREPARED_DIRECT_COMMAND,"prep2"))]}),
++    r=>{r.workerTraffic[0].bytes=[...Buffer.from(formatRpcCommand("hyprctl reload","prep1"))];},
++  ]) { const bad=fixture(); mutate(bad); assert.throws(()=>auditPreparedDirect(bad)); }
++  const negative=fixture(); delete negative.preparedDirect.response; delete negative.preparedDirect.respondedAt;
++  negative.preparedDirect.status="properties-unproven"; negative.workerTraffic.pop();
++  assert.equal(auditPreparedDirect(negative).physicalInputTested,false);
++  negative.keyboard={startedAt:iso(1600)}; assert.throws(()=>auditPreparedDirect(negative));
++  const early=fixture(); delete early.preparedDirect; early.workerTraffic=[];
++  assert.equal(auditPreparedDirect(early).configuration,"not-reached");
++});

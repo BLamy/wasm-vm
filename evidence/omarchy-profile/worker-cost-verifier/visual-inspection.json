@@ -1,0 +1,10 @@
+{
+  "inspectedAt": "2026-09-16T02:24:34.407337+00:00",
+  "image": "evidence/omarchy-profile/worker-cost-r1/desktop/failure.png",
+  "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "personallyViewed": true,
+  "observed": "Actual 1280x800 Omarchy/Foot terminal image, top bar and original shell prompt with an empty command line. No typed printf command, nonce, or terminal response is visible.",
+  "sameBytesAsInitialDesktop": true,
+  "desktopResponsive": false,
+  "rawAcceptance": "Independent nonce did not arrive by Enter+120s. A third presented frame does not change that failure."
+}

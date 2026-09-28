@@ -1,0 +1,53 @@
+E5.5-T03b worker focused tests
+Date: 2026-09-10
+Command: cargo test -p wasm-vm-jit-runtime --test mixed_fp_regions
+
+Result: PASS — 9 passed, 0 failed, 0 ignored
+
+Coverage:
+- mixed F/D/C state equality: integer registers, FP registers, fcsr, memory, PC, retire count
+- compressed C.FLD/C.FSD interpreter-only region with JIT-retired integer prefix/continuation
+- alternating FP/integer regions with JIT-retired integer regions on every handoff
+- entry at the middle of an integer region
+- FP-off fault after a compiled integer prefix, preserving precise trap PC and retire count
+- FP region at a physical page edge with JIT-retired neighbors
+- self-modifying continuation invalidation and recompilation after an FP handoff
+- tiny decoded-cache determinism across repeated mixed runs
+
+Follow-up proof-gap run: 2026-09-10
+Commands:
+- cargo fmt --all -- --check
+- cargo test -p wasm-vm-jit-runtime --test mixed_fp_regions
+
+Result: PASS — 12 passed, 0 failed, 0 ignored
+
+Added coverage:
+- unmapped FP load access fault immediately after a JIT-retired integer prefix; interpreter/JIT
+  compare cause, tval, PC, all integer/FP registers, fcsr, memory, and retired count
+- dynamic frm values RNE, RTZ, RDN, RUP, and RMM across mixed handoffs, including sticky NV/NX
+  flags and distinct RDN/RUP results; integer regions assert actual JIT retirement
+- pending timer interrupt at the FP seam using the predecode batching model; handler entry is
+  deterministic, never before expiry, and within MAX_BLOCK_OPS of expiry after a JIT-retired
+  integer prefix
+
+Scope: test and evidence log only; runtime, task metadata, dist, and commits unchanged.
+
+Final proof-clarity run: 2026-09-10
+Commands:
+- rustfmt --edition 2024 --check crates/jit-runtime/tests/mixed_fp_regions.rs
+- cargo fmt --all -- --check
+- cargo test -p wasm-vm-jit-runtime --test mixed_fp_regions
+
+Result: PASS — 13 passed, 0 failed, 0 ignored
+
+Final sufficiency changes:
+- renamed the FP load case to `fp_load_access_fault_after_jitted_integer_prefix_is_precise`;
+  it uses the aligned-but-unmapped FAULT_ADDR because ordinary misaligned RAM accesses are
+  intentionally supported by the core E1-T26 semantics
+- added `fp_store_access_fault_after_jitted_integer_prefix_is_precise`, with the same full
+  interpreter/JIT comparison and actual JIT retirement assertion
+- strengthened the FP-seam interrupt case with a post-warm sentinel, MEPC seam-PC assertion,
+  handler-PC delivery assertion, and repeated deterministic schedules at deadlines 8, 20, and 32
+  (each run twice), all bounded by MAX_BLOCK_OPS
+
+Scope: test and evidence log only; runtime, task metadata, dist, and commits unchanged.

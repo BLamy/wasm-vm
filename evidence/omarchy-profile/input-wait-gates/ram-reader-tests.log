@@ -1,0 +1,17 @@
+✔ pinned RAM adapter preserves the earlier decoder and excludes current-task stale registers (906.77675ms)
+✔ pinned layout rejects a changed task offset even with intact kernel identity (1.272583ms)
+✔ container rejects duplicate, unknown, missing and truncated sections (0.283792ms)
+✔ sparse decoder respects literal, zero, truncation and total-size boundaries (0.400125ms)
+✔ saved-mode page walks cover Sv39/Sv48/Sv57 and noncontiguous page reads (0.382375ms)
+✔ page walks reject invalid/reserved/non-leaf PTEs and misaligned superpages (0.273875ms)
+✔ task-list traversal checks reciprocal closure, cycles and count bounds (0.164833ms)
+✔ kernel unwind stops at the proven trap boundary and keeps saved context labeled (0.140958ms)
+✔ kernel unwind rejects nonincreasing, unaligned, out-of-stack and non-text frames (0.161459ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 951.351833

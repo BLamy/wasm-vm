@@ -1,0 +1,10 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.62s
+     Running tests/fp_to_word_verifier.rs (target/debug/deps/fp_to_word_verifier-9fbd82d76aca750e)
+
+running 1 test
+CRITIC_TO_WORD_INDICES imports=8 exports=run0:8,run1:9,run2:10,run3:11 all_optional_combinations=4 mixed_chain_executed=true integer_imports=5 unsupported_families=8
+test verifier_mixed_optional_indices_and_integer_behavior ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.34s
+

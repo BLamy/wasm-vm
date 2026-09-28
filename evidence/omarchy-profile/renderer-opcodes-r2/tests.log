@@ -1,0 +1,13 @@
+✔ pair binding rejects wrong identities and malformed, duplicate or out-of-range records (29.8745ms)
+✔ diagnostic adaptation changes only the explicitly waived 64 identity bytes (1.195667ms)
+✔ raw compute recount and regions reject count drift and preserve truncation (0.755166ms)
+✔ owned recorder reaps a SIGTERM-resistant child with SIGKILL and records spawn failure (6017.323125ms)
+✔ owned recorder preserves native exit/output and terminates a timed-out child (141.057208ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6226.10275

@@ -1,0 +1,103 @@
+{
+  "purpose": "smaller-guest-scanout-trial",
+  "head": "8bb65d19ed814fcc3d0892a2c8a0a208e5aeec30",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "startedAt": "2026-09-15T15:56:02.067Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/render-budget-r1/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-15T16:01:05.023Z",
+  "audit": {
+    "serviceIsolation": true,
+    "desktopAcceptance": false,
+    "inputOutcome": "startup-failed-input-not-tested",
+    "serial": [
+      {
+        "rid": "mu2utbsb0",
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+        "sentAt": "2026-09-15T15:56:09.323Z",
+        "completedAt": "2026-09-15T15:56:55.879Z",
+        "response": {
+          "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+          "exit": 0
+        }
+      }
+    ],
+    "keyboard": null,
+    "guestSession": {
+      "key": "omarchy",
+      "generation": 1
+    },
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": true,
+      "sizeMismatch": true,
+      "framesReceived": 6,
+      "successfulPresents": 6,
+      "drawnPresents": 6,
+      "drawnBytes": 24576000,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": {
+        "enqueued": 6,
+        "coalesced": 0,
+        "presented": 6,
+        "skipped": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "paused": false,
+        "disposed": false,
+        "scheduled": false,
+        "hidden": false,
+        "mode": "raf",
+        "timerMs": 250
+      },
+      "gpu": {
+        "framesReceived": 6,
+        "enqueued": 6,
+        "coalesced": 0,
+        "presented": 6,
+        "successfulPresents": 6,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 1,
+        "uploadedBytes": 24576000,
+        "drawnPresents": 6,
+        "drawnBytes": 24576000,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 800
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 832
+      },
+      "errors": []
+    },
+    "note": "Absence of hidden service traffic is not sufficient evidence of interactive input."
+  }
+}

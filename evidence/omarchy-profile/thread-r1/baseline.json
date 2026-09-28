@@ -1,0 +1,6 @@
+{
+  "lpNumThreads": "1",
+  "inputDeadlineMs": 120000,
+  "reportPath": "evidence/omarchy-profile/softpipe-r1/baseline-built-r2/report.json",
+  "reportSha256": "88496d6e239c36348e72d3c62a41c66b342071c3a4c08c81a8586de69e63ccc7"
+}

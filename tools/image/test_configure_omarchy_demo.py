@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+"""Focused synthetic safety tests for configure-omarchy-demo.py."""
+
+from __future__ import annotations
+
+import importlib.util
+import json
+import os
+from pathlib import Path
+import tempfile
+import unittest
+
+
+MODULE_PATH = Path(__file__).with_name("configure-omarchy-demo.py")
+SPEC = importlib.util.spec_from_file_location("configure_omarchy_demo", MODULE_PATH)
+assert SPEC and SPEC.loader
+configure_omarchy_demo = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(configure_omarchy_demo)
+
+
+ROOT_MARKER = b"wasm-vm-public-omarchy-root-v1\n"
+
+
+def tree_snapshot(root: Path) -> tuple[tuple[str, str, int, bytes | str], ...]:
+    """Capture synthetic tree contents without following symlinks."""
+    entries: list[tuple[str, str, int, bytes | str]] = []
+    for path in sorted([root, *root.rglob("*")], key=os.fspath):
+        relative = "." if path == root else path.relative_to(root).as_posix()
+        info = os.lstat(path)
+        mode = info.st_mode
+        if path.is_symlink():
+            value: bytes | str = os.readlink(path)
+            kind = "link"
+        elif path.is_dir():
+            value = b""
+            kind = "dir"
+        else:
+            value = path.read_bytes()
+            kind = "file"
+        entries.append((relative, kind, mode, value))
+    return tuple(entries)
+
+
+class ConfigureOmarchyDemoTests(unittest.TestCase):
+    def setUp(self) -> None:
+        if os.geteuid() != 0:
+            self.skipTest("configure requires container root")
+        temp_parent = "/private/tmp" if Path("/private/tmp").is_dir() else None
+        self.temp = tempfile.TemporaryDirectory(prefix="configure-omarchy-demo-test-", dir=temp_parent)
+        self.parent = Path(self.temp.name)
+        self.root = self.parent / "package-root"
+        self.root.mkdir()
+        (self.root / ".wasm-vm-public-omarchy-root").write_bytes(ROOT_MARKER)
+        self._write("etc/wasm-vm/omarchy-assembly.json", b'{"schema": 1}\n')
+        self._write("usr/share/omarchy/config/appearance.conf", b"reviewed-demo-config=true\n")
+        self._write("usr/share/omarchy/config/theme.conf", b"theme=synthetic\n")
+        self._write("usr/share/omarchy/config/omarchy/shell.json",
+                    b'{"version": 1, "bar": {"layout": {"left": []}}, "plugins": []}\n')
+        self.foot = b"\x7fELF-synthetic\0ext_background_effect_manager_v1\0wl_seat\0"
+        self._write("usr/bin/foot", self.foot)
+        untrusted_home = self.parent / "untrusted-home/blamy/.config"
+        untrusted_home.mkdir(parents=True)
+        (untrusted_home / "personal.conf").write_bytes(b"PERSONAL-ACCOUNT-SENTINEL\n")
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def _write(self, relative: str, content: bytes) -> None:
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+
+    def test_reviewed_config_is_copied_without_personal_accounts(self) -> None:
+        source = self.root / "usr/share/omarchy/config"
+        before = tree_snapshot(source)
+
+        changes = configure_omarchy_demo.configure(self.root)
+
+        self.assertIn("etc/fstab", changes)
+        self.assertEqual(
+            (self.root / "home/omarchy/.config/appearance.conf").read_bytes(),
+            b"reviewed-demo-config=true\n",
+        )
+        self.assertEqual(
+            (self.root / "home/omarchy/.config/theme.conf").read_bytes(),
+            b"theme=synthetic\n",
+        )
+        self.assertFalse((self.root / "home/blamy").exists())
+        self.assertFalse((self.root / "etc/passwd").exists())
+        self.assertFalse((self.root / "etc/shadow").exists())
+        self.assertNotIn("PERSONAL-ACCOUNT-SENTINEL", json.dumps(changes))
+        overlay = json.loads((self.root / "etc/wasm-vm/demo-overlay.json").read_text())
+        self.assertEqual(overlay["configurationSource"], "package-verified usr/share/omarchy/config")
+        self.assertFalse(overlay["desktopVerified"])
+        self.assertFalse(overlay["upstreamFullUserProvisioning"])
+        startup = self.root / "home/omarchy/.config/default/hypr/autostart.lua"
+        self.assertIn("omarchy-launch-shell", startup.read_text())
+        self.assertIn("/usr/local/bin/omarchy-demo-session", startup.read_text())
+        self.assertNotIn("omarchy-provision-first-run", startup.read_text())
+        hyprland = (self.root / "home/omarchy/.config/hypr/hyprland.lua").read_text()
+        self.assertIn("omarchy_preinstalled_bindings = false", hyprland)
+        self.assertLess(hyprland.index("omarchy_preinstalled_bindings = false"),
+                        hyprland.index('require("default.hypr.omarchy")'))
+        self.assertNotIn("omarchy_default_bindings = false", hyprland)
+        self.assertFalse((self.root / "home/omarchy/.local/state/omarchy/done").exists())
+        self.assertEqual(os.readlink(self.root / "etc/systemd/system/serial-getty@hvc0.service"), "/dev/null")
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").stat().st_mode & 0o777, 0o755)
+        self.assertEqual((self.root / "usr/local/bin/omarchy-demo-session").read_bytes(),
+                         MODULE_PATH.with_name("omarchy-demo-session.sh").read_bytes())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@.service").is_symlink())
+        self.assertFalse((self.root / "etc/systemd/system/serial-getty@ttyS0.service").is_symlink())
+        self.assertIn("--autologin omarchy", (self.root / "etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf").read_text())
+        self.assertEqual(tree_snapshot(source), before)
+
+    def test_browser_looknfeel_disables_color_management_and_effects(self) -> None:
+        configure_omarchy_demo.configure(self.root)
+
+        profile = (self.root / "home/omarchy/.config/hypr/looknfeel.lua").read_text()
+        self.assertIn("animations = { enabled = false }", profile)
+        self.assertIn("blur = { enabled = false }", profile)
+        self.assertIn("shadow = { enabled = false }", profile)
+        self.assertIn("render = { cm_enabled = false }", profile)
+
+    def test_responsive_profile_stops_per_frame_full_damage_sources(self) -> None:
+        changes = configure_omarchy_demo.configure(self.root)
+
+        shell = json.loads((self.root / "home/omarchy/.config/omarchy/shell.json").read_text())
+        self.assertEqual(shell["disabledPlugins"], ["omarchy.background"])
+        self.assertEqual(shell["bar"], {"layout": {"left": []}})
+        stay_awake = self.root / "home/omarchy/.local/state/omarchy/indicators/stay-awake"
+        self.assertEqual(stay_awake.read_bytes(), b"")
+        self.assertEqual(os.lstat(stay_awake).st_uid, 1000)
+        foot = self.root / "usr/local/bin/foot"
+        self.assertEqual(foot.stat().st_mode & 0o777, 0o755)
+        patched = foot.read_bytes()
+        self.assertEqual(len(patched), len(self.foot))
+        self.assertNotIn(b"ext_background_effect_manager_v1\0", patched)
+        self.assertEqual([i for i, (a, b) in enumerate(zip(patched, self.foot)) if a != b],
+                         [self.foot.index(b"_v1\0") + 2])
+        self.assertEqual((self.root / "usr/bin/foot").read_bytes(), self.foot)
+        self.assertIn("usr/local/bin/foot", changes)
+        # The compositor rasterizes synchronously: no llvmpipe worker thread races the KMS commit.
+        environment = (self.root / "etc/environment.d/60-omarchy-browser.conf").read_text().split("\n")
+        self.assertIn("LP_NUM_THREADS=0", environment)
+        self.assertNotIn("LP_NUM_THREADS=1", environment)
+        uwsm = (self.root / "home/omarchy/.config/uwsm/env").read_text()
+        self.assertIn(" LP_NUM_THREADS=0 ", uwsm)
+        self.assertNotIn("LP_NUM_THREADS=1", uwsm)
+
+    def test_foot_patch_requires_exactly_one_interface_name(self) -> None:
+        for binary in (b"no-interface", b"ext_background_effect_manager_v1\0" * 2):
+            with self.assertRaisesRegex(ValueError, "exactly once"):
+                configure_omarchy_demo.patch_foot(binary)
+
+    def test_source_tree_is_immutable_after_configuration(self) -> None:
+        source = self.root / "usr/share/omarchy/config"
+        before = tree_snapshot(source)
+
+        configure_omarchy_demo.configure(self.root)
+
+        self.assertEqual(tree_snapshot(source), before)
+
+    def test_root_marker_and_root_symlink_ancestors_fail_closed(self) -> None:
+        marker = self.root / ".wasm-vm-public-omarchy-root"
+        marker.unlink()
+        outside = self.parent / "outside"
+        outside.write_bytes(b"outside-sentinel\n")
+        marker.symlink_to(outside)
+        with self.assertRaisesRegex(ValueError, "sanitized Omarchy tree"):
+            configure_omarchy_demo.configure(self.root)
+        self.assertFalse((self.root / "home/omarchy/.config").exists())
+
+        alias = self.parent / "root-alias"
+        alias.symlink_to(self.root)
+        with self.assertRaisesRegex(ValueError, "real absolute directory"):
+            configure_omarchy_demo.configure(alias)
+        self.assertEqual(outside.read_bytes(), b"outside-sentinel\n")
+
+    def test_generated_parent_symlink_cannot_receive_configuration(self) -> None:
+        outside = self.parent / "outside"
+        outside.mkdir()
+        environment = self.root / "etc/environment.d"
+        environment.mkdir(parents=True)
+        environment.rmdir()
+        environment.symlink_to(outside, target_is_directory=True)
+
+        with self.assertRaisesRegex(ValueError, "overlay would follow a symlink"):
+            configure_omarchy_demo.configure(self.root)
+
+        self.assertFalse((outside / "60-omarchy-browser.conf").exists())
+
+    def test_dangling_generated_leaf_cannot_be_replaced(self) -> None:
+        target = self.parent / "must-not-be-created"
+        fstab = self.root / "etc/fstab"
+        fstab.parent.mkdir(parents=True, exist_ok=True)
+        fstab.symlink_to(target)
+
+        with self.assertRaisesRegex(ValueError, "overlay would follow a symlink"):
+            configure_omarchy_demo.configure(self.root)
+
+        self.assertFalse(target.exists())
+        self.assertTrue(fstab.is_symlink())
+
+    def test_repeated_configuration_fails_before_mutating_overlay(self) -> None:
+        configure_omarchy_demo.configure(self.root)
+        before = tree_snapshot(self.root)
+
+        with self.assertRaisesRegex(ValueError, "freshly empty"):
+            configure_omarchy_demo.configure(self.root)
+
+        self.assertEqual(tree_snapshot(self.root), before)
+
+
+if __name__ == "__main__":
+    unittest.main()

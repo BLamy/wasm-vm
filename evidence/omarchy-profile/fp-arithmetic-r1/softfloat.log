@@ -1,0 +1,28 @@
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.20s
+     Running tests/fp_arithmetic_flags.rs (target/debug/deps/fp_arithmetic_flags-8e2ae6cd531cef83)
+
+running 1 test
+FP_ARITH backend literal overflow/threshold/tininess cases=45
+test single_add_mul_finite_overflow_and_threshold_flags ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/softfloat.rs (target/debug/deps/softfloat-b19cf16b00d120f2)
+
+running 11 tests
+test add_and_fma_directed_modes ... ok
+test basic_ops_reference_vectors ... ok
+test canonical_nan_and_snan_signaling ... ok
+test compares_signaling_vs_quiet ... ok
+test fma_is_truly_fused_not_double_rounded ... ok
+test sqrt_perfect_squares_are_exact ... ok
+test sqrt_specials ... ok
+test sqrt_subnormals_and_tiny ... ok
+test sqrt_f32_matches_host_rne ... ok
+test sqrt_f64_matches_host_and_directed_modes_bracket ... ok
+test mul_div_directed_modes_match_independent_oracle ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.36s
+

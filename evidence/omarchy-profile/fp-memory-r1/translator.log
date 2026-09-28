@@ -1,0 +1,52 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.33s
+     Running tests/batch.rs (target/debug/deps/batch-36a35b62658a6aa7)
+
+running 6 tests
+test softmmu_state_memory_is_fixed_for_stable_browser_views ... ok
+test fence_i_successor_keeps_static_edge_on_host_return_path ... ok
+test flat_memory_abi_rejects_static_edge_slots ... ok
+test single_block_batch_matches_translate_block_shape ... ok
+test intra_batch_edge_is_direct_call_not_call_indirect ... ok
+test static_cross_batch_edge_uses_edge_local_funcref_call_when_enabled ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 12 tests
+test randomized_differential_100k ... ignored, 100k-block full campaign — run with `cargo test --release -- --ignored`
+test randomized_differential_longblocks ... ignored, adversarial long-block campaign — run with --ignored
+test fp_ops_are_unsupported ... ok
+E4-T09 translation time: median = 19.08 µs/block over 5000 blocks (budget < 50 µs)
+test translation_time_budget ... ok
+test lrsc_directed_sequences ... ok
+test m_extension_directed_mines ... ok
+test c_extension_pc_arithmetic ... ok
+test directed_edge_cases ... ok
+test amo_all_ops_w_and_d_corners ... ok
+test a_extension_randomized has been running for over 60 seconds
+test m_extension_corner_cross_product has been running for over 60 seconds
+test randomized_differential_small has been running for over 60 seconds
+M-extension corner cross-product: 2548 cases, zero divergences, zero wasm traps
+test m_extension_corner_cross_product ... ok
+test a_extension_randomized ... ok
+test randomized_differential_small ... ok
+
+test result: ok. 10 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 185.51s
+
+     Running tests/inline_tlb.rs (target/debug/deps/inline_tlb-1fe8ba762516ddfe)
+
+running 7 tests
+test satp_switch_flushes_the_fast_tlb ... ok
+test readonly_page_store_faults_like_interpreter ... ok
+test unmapped_access_faults_like_interpreter ... ok
+test mmio_is_never_fastpathed ... ok
+test aligned_roundtrip_takes_fastpath_on_retry ... ok
+test misaligned_and_straddling_match_interpreter ... ok
+inline-TLB coherence fuzz: 6000 iterations, byte-identical to the interpreter
+test tlb_coherence_fuzz ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+

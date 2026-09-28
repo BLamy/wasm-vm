@@ -12,10 +12,46 @@
 pub const CANONICAL_NAN_F32: u32 = 0x7fc0_0000;
 
 /// The 32 FLEN=64 floating-point registers.
-#[derive(Clone, PartialEq, Eq, Default)]
 pub struct FRegs {
     f: [u64; 32],
+    /// Non-architectural mutation stamp for the browser's compiled-state handoff.
+    jit_version: u64,
+    jit_identity: u64,
 }
+
+// Allocate identity on creation only. Per-instruction writes increment the local
+// version without atomics; identities distinguish equal versions on different
+// register files, including replacement at the same address.
+static NEXT_IDENTITY: core::sync::atomic::AtomicU64 = core::sync::atomic::AtomicU64::new(1);
+
+impl Default for FRegs {
+    fn default() -> Self {
+        let identity = NEXT_IDENTITY.fetch_add(1, core::sync::atomic::Ordering::Relaxed);
+        assert_ne!(identity, 0, "FRegs identity space exhausted");
+        Self {
+            f: [0; 32],
+            jit_version: 0,
+            jit_identity: identity,
+        }
+    }
+}
+
+impl Clone for FRegs {
+    fn clone(&self) -> Self {
+        Self {
+            f: self.f,
+            ..Self::default()
+        }
+    }
+}
+
+impl PartialEq for FRegs {
+    fn eq(&self, other: &Self) -> bool {
+        self.f == other.f
+    }
+}
+
+impl Eq for FRegs {}
 
 impl FRegs {
     /// Raw 64-bit read (the stored bit pattern) — used by FLD/FSD/FMV and f64 ops (E1-T07).
@@ -30,6 +66,16 @@ impl FRegs {
     pub fn write_raw(&mut self, r: u8, bits: u64) {
         debug_assert!(r < 32, "f-register index {r} out of range");
         self.f[r as usize] = bits;
+        self.jit_version = self.jit_version.wrapping_add(1);
+    }
+
+    /// Mutation stamp only; snapshots and architectural equality exclude it.
+    pub fn jit_version(&self) -> (u64, u64) {
+        (self.jit_identity, self.jit_version)
+    }
+
+    pub(crate) fn jit_words(&self) -> &[u64; 32] {
+        &self.f
     }
 
     /// Read a single-precision operand with NaN-box checking: a value whose upper 32 bits
@@ -54,6 +100,21 @@ impl FRegs {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn jit_stamps_distinguish_creation_clone_and_same_value_write() {
+        let mut a = FRegs::default();
+        let b = FRegs::default();
+        assert!(a == b);
+        assert_ne!(a.jit_version(), b.jit_version());
+        let before = a.jit_version();
+        a.write_raw(0, 0);
+        assert_eq!(a.jit_version().0, before.0);
+        assert_ne!(a.jit_version(), before);
+        let cloned = a.clone();
+        assert!(a == cloned);
+        assert_ne!(a.jit_version().0, cloned.jit_version().0);
+    }
 
     #[test]
     fn write_f32_boxes_and_read_f32_unboxes() {

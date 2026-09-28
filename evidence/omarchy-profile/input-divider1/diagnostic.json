@@ -1,0 +1,59 @@
+[
+  {
+    "time": "2026-09-10T01:59:43.743Z",
+    "request": {
+      "op": "click",
+      "x": 300,
+      "y": 200
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T01:59:52.438Z",
+    "request": {
+      "op": "type",
+      "text": "printf 'abc' > /tmp/omarchy-diagnostic-keys",
+      "delay": 200,
+      "enter": true
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:00:12.073Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /tmp/omarchy-diagnostic-keys; cat /proc/uptime; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos"
+    },
+    "result": {
+      "stdout": "cat: /tmp/omarchy-diagnostic-keys: No such file or directory\n524.39 0.96\nHyprland IPC didn't respond in time\n\nCouldn't read (6)\n\n",
+      "exit": 6
+    }
+  },
+  {
+    "time": "2026-09-10T02:00:12.096Z",
+    "request": {
+      "op": "screenshot",
+      "name": "keys.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-divider1/keys.png"
+  },
+  {
+    "time": "2026-09-10T02:00:53.559Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /proc/uptime; ps -T -p 439 -o pid,tid,pcpu,stat,time,wchan:25,comm; cat /tmp/omarchy-diagnostic-keys"
+    },
+    "result": {
+      "stdout": "565.12 0.96\n    PID     TID %CPU STAT     TIME WCHAN                     COMMAND\n    439     439  4.4 Rl   00:00:24 -                         Hyprland\n    439     463  0.0 Sl   00:00:00 futex_wait_queue          Hyprland\n    439     488 35.3 Rl   00:03:08 -                         llvmpipe-0\n    439     489  0.0 Sl   00:00:00 futex_wait_queue          Hyprland\n    439     490  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$0\n    439     491  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$1\n    439     498  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$2\n    439     503  0.0 Sl   00:00:00 futex_wait_queue          pool-spawner\n    439     504  0.0 Sl   00:00:00 poll_schedule_timeout.con gmain\n    439     505  0.0 Sl   00:00:00 poll_schedule_timeout.con dconf worker\n    439     506  0.0 Sl   00:00:00 poll_schedule_timeout.con gdbus\n    439     610  0.0 Sl   00:00:00 futex_wait_queue          [pango] fontcon\n    439     666  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$3\ncat: /tmp/omarchy-diagnostic-keys: No such file or directory\n\n",
+      "exit": 1
+    }
+  },
+  {
+    "time": "2026-09-10T02:00:53.583Z",
+    "request": {
+      "op": "screenshot",
+      "name": "later.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-divider1/later.png"
+  }
+]

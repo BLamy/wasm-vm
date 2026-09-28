@@ -1,0 +1,31 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/invalidation.rs (target/debug/deps/invalidation-ef4386f2ef118dee)
+
+running 13 tests
+test store_to_non_code_page_invalidates_nothing ... ok
+test fence_i_invalidates_translated_block ... ok
+test fence_i_is_near_free ... ok
+test page_granular_store_invalidates_only_written_page ... ok
+test two_page_smc_byte_identical_jit_vs_interp ... ok
+test precise_fault_retirement_uses_virtual_entry_pc ... ok
+test sfence_vma_global_page_exempt_from_asid_fence ... ok
+test sfence_vma_reuse_same_phys_new_va ... ok
+test sfence_vma_asid_form_never_underflushes ... ok
+test sfence_vma_remap_to_different_phys ... ok
+test mstatus_sum_change_uses_new_permission_view ... ok
+test sfence_vma_all_four_forms_flush_stale ... ok
+test rv64mi_suite_verdict_identical_under_jit ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.11s
+
+     Running tests/precise_traps.rs (target/debug/deps/precise_traps-97c1dc8cbba287fe)
+
+running 5 tests
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test overwritten_base_register_fault ... ok
+test mmio_store_then_fault_commits_once ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+

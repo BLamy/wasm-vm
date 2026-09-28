@@ -1,0 +1,8 @@
+{"event":"launch","at":"2026-09-14T04:41:19.580Z","executable":"/Users/blamy/.nvm/versions/node/v24.20.0/bin/node","args":["tools/verify/omarchy-input-diagnostic.mjs","evidence/omarchy-profile/admission-witness-r1","64","1","--pair-directory","target/omarchy-sdr-r3-snapshot","--chunk-dir","target/omarchy-profile-chunks-sdr-r3-256k","--headed","--admission-probe"]}
+{"at":"2026-09-14T04:43:38.729Z","ready":"INPUT_DIAGNOSTIC_READY"}
+{"at":"2026-09-14T04:43:40.181Z","request":{"op":"stats","phase":"initial"},"time":"2026-09-14T04:43:39.673Z","generation":"5","records":0,"fullMapRefusals":"0"}
+{"at":"2026-09-14T04:43:40.886Z","request":{"op":"screenshot","name":"initial.png"},"time":"2026-09-14T04:43:40.735Z"}
+{"at":"2026-09-14T04:44:41.104Z","request":{"op":"stats","phase":"middle"},"time":"2026-09-14T04:44:40.657Z","generation":"5","records":0,"fullMapRefusals":"0"}
+{"at":"2026-09-14T04:45:41.107Z","request":{"op":"stats","phase":"final"},"time":"2026-09-14T04:45:40.715Z","generation":"5","records":0,"fullMapRefusals":"0"}
+{"at":"2026-09-14T04:45:41.835Z","request":{"op":"screenshot","name":"final.png"},"time":"2026-09-14T04:45:41.261Z"}
+{"event":"exit","code":0,"signal":null,"finished":true}

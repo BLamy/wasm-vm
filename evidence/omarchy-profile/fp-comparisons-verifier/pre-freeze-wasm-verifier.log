@@ -1,0 +1,125 @@
+COMMAND: wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_fp_comparisons_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm)
+running 6 tests
+Invoking test: verifier_shared_comparisons
+CRITIC_SHARED_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+CRITIC_SHARED_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+CRITIC_SHARED_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_shared_comparisons ... ok
+Invoking test: verifier_shared_comparison_flags_survive_growth
+CRITIC_GROWTH inline=true fault=None pc=0000000040006014 retired=5 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=true fault=Store pc=0000000040006004 retired=1 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=true fault=Load pc=000000004000600c retired=3 writes=1 flags_before=19 flags_after=2
+test verifier_shared_comparison_flags_survive_growth ... ok
+Invoking test: verifier_same_module_comparison_successors
+CRITIC_CHAIN same=true fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=true fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=11
+CRITIC_CHAIN same=true fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=true fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=11
+test verifier_same_module_comparison_successors ... ok
+Invoking test: verifier_private_comparisons
+CRITIC_PRIVATE_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+CRITIC_PRIVATE_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+CRITIC_PRIVATE_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_private_comparisons ... ok
+Invoking test: verifier_private_comparison_flags_survive_growth
+CRITIC_GROWTH inline=false fault=None pc=0000000040006014 retired=0 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=false fault=Store pc=0000000040006004 retired=0 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=false fault=Load pc=000000004000600c retired=0 writes=1 flags_before=19 flags_after=2
+test verifier_private_comparison_flags_survive_growth ... ok
+Invoking test: verifier_cross_module_comparison_successors
+CRITIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+panicked at crates/wasm/tests/jit_fp_comparisons_verifier.rs:155:9:
+assertion `left == right` failed
+  left: BranchTaken
+ right: Budget
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:2718:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:3498:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:2717:57)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21414]:0x4a0e25)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[12888]:0x44463a)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[5362]:0x35aff8)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[14482]:0x45da80)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[4372]:0x3246d3)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[8773]:0x3e1edb)
+    at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21818]:0x4a2287)
+
+
+test verifier_cross_module_comparison_successors ... FAIL
+
+failures:
+
+---- verifier_cross_module_comparison_successors output ----
+    log output:
+        CRITIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+    
+    error output:
+        panicked at crates/wasm/tests/jit_fp_comparisons_verifier.rs:155:9:
+        assertion `left == right` failed
+          left: BranchTaken
+         right: Budget
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:2718:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:3498:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmp0CU7gJ/wasm-bindgen-test.js:2717:57)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21414]:0x4a0e25)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[12888]:0x44463a)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[5362]:0x35aff8)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[14482]:0x45da80)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[4372]:0x3246d3)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[8773]:0x3e1edb)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21818]:0x4a2287)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21913]:0x4a256c)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21895]:0x4a2511)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21534]:0x4a153c)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[4372]:0x324745)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[8773]:0x3e1edb)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[21818]:0x4a2287)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[16818]:0x47a792)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[14215]:0x459da4)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.core[2c5ad5f686fcca5c]::panicking::assert_failed_inner (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[3820]:0x301156)
+            at jit_fp_comparisons_verifier-715f978417416b00.wasm.core::panicking::assert_failed::ha17047dfb4d84181 (wasm://wasm/jit_fp_comparisons_verifier-715f978417416b00.wasm-0a18e01a:wasm-function[11453]:0x428012)
+
+failures:
+
+    verifier_cross_module_comparison_successors
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 filtered out; finished in 0.63s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test jit_fp_comparisons_verifier`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm --nocapture` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--test" "jit_fp_comparisons_verifier" "--" "--nocapture"

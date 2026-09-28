@@ -1,0 +1,33 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling wasm-vm-fp-division-critic-sabotage v0.0.0 (/private/tmp/wasm-vm-division-critic-c_bjr246)
+warning: function `native` is never used
+ --> src/lib.rs:4:4
+  |
+4 | fn native(_: &wasm_vm_core::Machine) -> Box<dyn wasm_vm_core::jit::CompiledBlockExecutor> {
+  |    ^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-fp-division-critic-sabotage` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.59s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_fp_division_critic_sabotage-31b1b95b7617e4fc)
+
+running 1 test
+
+thread 'isolated_division_literal' (26297861) panicked at src/proof.rs:504:21:
+assertion `left == right` failed: CRITIC_FDIV_THIRD_GOLDEN
+  left: 18446744070465956523
+ right: 18446744070465956522
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test isolated_division_literal ... FAILED
+
+failures:
+
+failures:
+    isolated_division_literal
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `--lib`

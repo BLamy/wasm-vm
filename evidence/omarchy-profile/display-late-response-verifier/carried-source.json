@@ -1,0 +1,42 @@
+{
+  "au": "556d4d3e",
+  "av": "3055f67a",
+  "carriedSource": [
+    {
+      "file": "tools/verify/omarchy-display-pixel-probe.mjs",
+      "unchanged": true,
+      "size": 9216,
+      "sha256": "c7418e0640265d4e29e9c49891bce6a67bb1aeb40a8e584989d2b213e288aa0f"
+    },
+    {
+      "file": "tools/verify/omarchy-owned-trial.mjs",
+      "unchanged": true,
+      "size": 4305,
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8"
+    },
+    {
+      "file": "tools/verify/omarchy-input-trial.mjs",
+      "unchanged": true,
+      "size": 5778,
+      "sha256": "df81c486611439d28979ba7827ce0aa0f30a2dcb7f0de12114bec50d471c9cd7"
+    },
+    {
+      "file": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "unchanged": true,
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+    },
+    {
+      "file": "tools/verify/omarchy-gpu-transfer-runtime.json",
+      "unchanged": true,
+      "size": 523,
+      "sha256": "19815628e024bea7bb1ca59c4b0b1546f893b040f1a57f023b7f956a36a00547"
+    },
+    {
+      "file": "tools/verify/omarchy-input-kernel-response-state.mjs",
+      "unchanged": true,
+      "size": 1408,
+      "sha256": "6535d97757ed4e78bf7b94c803c83e385c8c7023bb9b223c77af2f61f11fca90"
+    }
+  ]
+}

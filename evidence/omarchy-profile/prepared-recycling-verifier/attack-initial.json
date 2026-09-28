@@ -1,0 +1,37 @@
+{
+  "head": "e7e378288581069ae0471e3ca141507e1f5faf30",
+  "productEvidence": false,
+  "base": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/report.json",
+  "baseSha256": "0d4f8f50d2d9e940ce098f744202bcff49ae3c1048b39d692231d1d2c7fa38ea",
+  "transformation": "Preserved AK physical key/ACK sequence and property reply. Relabelled head and recycling, fabricated success flags and 100 fresh frames, removed refusal counts; only the control adds an explicitly synthetic timely nonce reply. No transformed report is a real guest recording.",
+  "sources": {
+    "tools/verify/omarchy-input-audit.mjs": "e1b74d4bfbc2ef971f65e4b972d2aa82cc1f6e157837bae9fcec5afdf7bec817",
+    "tools/verify/omarchy-input-trial.mjs": "df81c486611439d28979ba7827ce0aa0f30a2dcb7f0de12114bec50d471c9cd7",
+    "tools/verify/omarchy-prepared-direct-state.mjs": "786bd9f7c29b5281a2c78ee137060a85916a3412d0c66e1ec8cef79377ca1c98",
+    "tools/verify/omarchy-latency-receipt.mjs": "79f97639b99c2a9c3b42917ecbdc9bb85b7d6c079abe3791d6bc088655d1b395",
+    "web/guest-rpc.js": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+  },
+  "cases": [
+    {
+      "name": "synthetic machine-only positive control",
+      "held": true,
+      "rejected": false,
+      "error": null,
+      "result": {
+        "machineAcceptance": true,
+        "nonceReplies": 1,
+        "visualInspectionRequired": true,
+        "configuration": "properties-confirmed"
+      },
+      "fixtureSha256": "8cfd910c35990fba095eb8abd6290c855dabcdb406ab2a4c409c1e666d17b4b0"
+    },
+    {
+      "name": "convincing success without raw nonce",
+      "held": true,
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire",
+      "result": null,
+      "fixtureSha256": "0cf3016ba86c4844542a0040178990e3eede3c53ceea41c990ab9c0266ea0802"
+    }
+  ]
+}

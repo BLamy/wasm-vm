@@ -1,0 +1,62 @@
+{
+  "purpose": "running-kernel-identity-mismatch",
+  "positiveAccepted": true,
+  "sourceSha256": "006152b5bd7f84c9caa0afee16f38b039d48276cb5058613d75ba0e65e60e737",
+  "attacks": [
+    {
+      "name": "original executing kernel behind candidate metadata",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "candidate and original lines",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "duplicate candidate lines",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "wrong sysfs path",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "failed shell command with candidate output",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel notes were not readable\n\n1 !== 0\n"
+    },
+    {
+      "name": "missing exit",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel notes were not readable\n\nundefined !== 0\n"
+    },
+    {
+      "name": "empty output",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "digest-only output",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "hash prefix",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "suffix payload",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "wrong single digest byte",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    }
+  ]
+}

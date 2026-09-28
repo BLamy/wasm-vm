@@ -1,0 +1,33 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.507625ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.147416ms)
+✔ post-marker presentation helper rejects typing frames (201.840792ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.140042ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.137167ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.139625ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.14375ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.638625ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.975625ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.562583ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.413041ms)
+✔ real Chrome keeps physical keys and transferable worker traffic observable without replacing them (1614.559625ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (3.729167ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (0.527375ms)
+✔ server identities bind exactly the bytes served and their repository path (0.322292ms)
+✔ invalid expectedRenderer is rejected before the fake CLI is spawned (33.248166ms)
+✔ valid synthetic softpipe instance exercises environment and thread probes (115.703625ms)
+✔ requested softpipe rejects a synthetic llvmpipe thread (116.162208ms)
+✔ explicit LP0 validates the same synthetic PID environment before snapshot (130.205583ms)
+✔ malicious PID is rejected before any PID-derived command is sent (1005.35575ms)
+✔ LP0 plan changes exactly the last digit and preserves its source buffer (0.742ms)
+✔ LP0 plan rejects duplicate values, undeclared files, allocation changes and wrong old bytes (0.638625ms)
+✔ T03g LP setting accepts only 0 or 1 and preserves unset behavior (0.839208ms)
+✔ T03g LP0 requires exact same-PID environment values and no exact worker (1.464208ms)
+✔ T03g LP1 validates the setting but does not claim an active renderer (0.158708ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1745.030417

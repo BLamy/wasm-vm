@@ -1,0 +1,57 @@
+{
+  "seals": [
+    {
+      "name": "AJ worker R2",
+      "files": 12,
+      "indexSha256": "3a0f9c5dda2451270754cf3df8a23461d1710c8d95eb17376aa642d08476b1c6"
+    },
+    {
+      "name": "AJ independent verifier R2",
+      "files": 19,
+      "indexSha256": "756b8d41ade51334946fbd6da5d382f679921a53c6664e2ec73242da4b4749f2"
+    },
+    {
+      "name": "AL worker",
+      "files": 33,
+      "indexSha256": "01786a6b6a15415c7977b4dc23fde07a2e1d82cb1b775340aefe8c888cb42632"
+    },
+    {
+      "name": "AL independent verifier",
+      "files": 25,
+      "indexSha256": "beb56a096ced5f60cbac0c5b1c3d0304046addf599011be2f3812935944a496f"
+    },
+    {
+      "name": "AI independent verifier",
+      "files": 41,
+      "indexSha256": "e98b479dc9d9dd6b1cc38cbb3fb936d92aae36967bef3716e55cd62422d6446c"
+    },
+    {
+      "name": "AI carried physical auditor and input fence",
+      "files": 59,
+      "indexSha256": "2e3a3b3be066c3dff0b6fbb3754560a20289bfe6e2bd2fe1bb1651ef91e3b175"
+    }
+  ],
+  "pairAndBase": [
+    {
+      "path": "target/omarchy-direct-opaque-r2/omarchy-ready.snap.gz",
+      "bytes": 207172408,
+      "sha256": "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    },
+    {
+      "path": "target/omarchy-direct-opaque-r2/omarchy-overlay-delta.bin.gz",
+      "bytes": 1232847,
+      "sha256": "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "path": "target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    }
+  ],
+  "runtimeUnchanged": true
+}

@@ -1,0 +1,7 @@
+{"kind":"seized","pid":7,"tid":7}
+{"kind":"process-identity","tid":7,"tgid":7,"tracerPid":9,"startTime":"120125521","comm":"python3","exe":"/usr/bin/python3.12"}
+{"kind":"ready","pid":7,"tracerPid":9,"threads":1}
+{"kind":"signal","tid":7,"signal":19}
+{"kind":"signal","tid":7,"signal":18}
+{"kind":"detached","tid":7}
+{"kind":"finished","failed":false,"stops":127,"reads":0,"orphanExits":0,"capturedBytes":0,"stopBudgetReached":false}

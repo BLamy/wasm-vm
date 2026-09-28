@@ -1,0 +1,12 @@
+ef73b920d940d7aa4bd745d77b3ae299d1178635815cb1c5565bf12e6b7b35fa  evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze-head-only.log
+5901933a2aa494258373e0185c3cd562c389693ef31f54504388daf5d3472265  evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze-head-only.py
+eb64408fb6119be4644ac58c1cc4289630016a54e988b50bf37971b41c552128  evidence/omarchy-profile/prepared-direct-opaque-gates-r2/freeze.py
+ef73b920d940d7aa4bd745d77b3ae299d1178635815cb1c5565bf12e6b7b35fa  evidence/omarchy-profile/prepared-direct-opaque-gates-r2/frozen.json
+baae6032318384e884d0bd65cc092d4697118da044d7ec8626f2aaca1dfb1d4b  evidence/omarchy-profile/prepared-direct-opaque-gates-r2/scope-correction.json
+97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/desktop.png
+3e021cc7e35d411e2146a46133622afa996475f4948241e303b1af06d79ae599  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/latest.png
+97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/prepared-desktop.png
+c3c9650269f392bb58cb4e5757f9429f86784cd1d013c88345250cbf71e467dc  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/report.json
+606a859518bb0be4e5d9bdc427d925727fe188c214a958d546d57bc2f4d872cd  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop/serial.log
+36e983b1f620e528b454924ea1642b7f14ac98bcff33e6c3f9e3274b020fc24c  evidence/omarchy-profile/prepared-direct-opaque-r2/desktop.log
+682e320acaa344e8117ea90a9c39a05781736895244728cc7c1293d44881a514  evidence/omarchy-profile/prepared-direct-opaque-r2/run.json

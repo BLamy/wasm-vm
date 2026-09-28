@@ -1,0 +1,77 @@
+{
+  "head": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+  "policy": "Read-only independent HTTP fetch; expected bytes from frozen Git commit",
+  "artifacts": [
+    {
+      "url": "https://1a65f9cb.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 1597495,
+      "sha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+      "expectedSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d"
+    },
+    {
+      "url": "https://1a65f9cb.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 121404,
+      "sha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec",
+      "expectedSha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec"
+    },
+    {
+      "url": "https://1a65f9cb.wasm-vm.pages.dev/roadmap.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 51100,
+      "sha256": "b103a1eba94fe4bdbffbe7c7200f32b028cc570fe5ee5a78ab124daf424d6b32",
+      "expectedSha256": "b103a1eba94fe4bdbffbe7c7200f32b028cc570fe5ee5a78ab124daf424d6b32"
+    },
+    {
+      "url": "https://1a65f9cb.wasm-vm.pages.dev/app.html?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "https://1a65f9cb.wasm-vm.pages.dev/sw.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "67f10be4a396d7712edca8982c9aa8622d78ea200e6ddc14a507208b9b5c3ca6",
+      "expectedSha256": "67f10be4a396d7712edca8982c9aa8622d78ea200e6ddc14a507208b9b5c3ca6"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 1597495,
+      "sha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+      "expectedSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 121404,
+      "sha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec",
+      "expectedSha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 51100,
+      "sha256": "b103a1eba94fe4bdbffbe7c7200f32b028cc570fe5ee5a78ab124daf424d6b32",
+      "expectedSha256": "b103a1eba94fe4bdbffbe7c7200f32b028cc570fe5ee5a78ab124daf424d6b32"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/app.html?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/sw.js?critic=f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "67f10be4a396d7712edca8982c9aa8622d78ea200e6ddc14a507208b9b5c3ca6",
+      "expectedSha256": "67f10be4a396d7712edca8982c9aa8622d78ea200e6ddc14a507208b9b5c3ca6"
+    }
+  ],
+  "passed": true
+}

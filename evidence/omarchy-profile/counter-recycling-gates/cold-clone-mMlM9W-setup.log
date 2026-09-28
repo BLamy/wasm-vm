@@ -1,0 +1,30 @@
+started_utc=2026-09-14T06:50:46Z
+source=/Users/blamy/Documents/Codex/wasm-vm
+frozen_head=d68be8425cae6f8a921b2ecc85d757314a6b09d4
+scratch=/private/tmp/wasm-vm-t03k-cold.mMlM9W
+clone=/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo
+log_prefix=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/counter-recycling-gates/cold-clone-mMlM9W
+scratch_command=mktemp -d /private/tmp/wasm-vm-t03k-cold.XXXXXX
+scrub_policy=RUSTFLAGS,CARGO_*,RUSTC_WRAPPER,RUSTC_WORKSPACE_WRAPPER,RUSTDOCFLAGS,RUST_LOG
+removed_names=RUST_LOG
+selected_CARGO_TARGET_DIR=/private/tmp/wasm-vm-t03k-cold.mMlM9W/target
+HOME_and_CODEX_HOME=not_modified; ordinary registry/toolchain cache allowed; compilation target isolated
+command: git clone --no-hardlinks --no-checkout /Users/blamy/Documents/Codex/wasm-vm /private/tmp/wasm-vm-t03k-cold.mMlM9W/repo
+Cloning into '/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo'...
+done.
+command: git -C /private/tmp/wasm-vm-t03k-cold.mMlM9W/repo checkout --detach d68be8425cae6f8a921b2ecc85d757314a6b09d4
+HEAD is now at d68be842 Freeze local cold-counter recycling candidate and bounded physical-input trial
+actual_head=d68be8425cae6f8a921b2ecc85d757314a6b09d4
+object_alternates=ABSENT
+clone_symlink=NO
+target_initial=NEW_EMPTY_DIRECTORY
+initial_status=CLEAN
+git version 2.50.1 (Apple Git-155)
+cargo 1.96.0 (30a34c682 2026-05-25)
+rustc 1.96.0 (ac68faa20 2026-05-25)
+binary: rustc
+commit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96
+commit-date: 2026-05-25
+host: aarch64-apple-darwin
+release: 1.96.0
+LLVM version: 22.1.2

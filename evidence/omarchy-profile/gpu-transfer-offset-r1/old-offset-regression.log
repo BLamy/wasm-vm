@@ -1,0 +1,36 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.63s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 9 tests
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+
+thread 'dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows' (28067226) panicked at crates/core/src/dev/virtio/gpu/resources.rs:1164:17:
+assertion `left == right` failed
+  left: 2768240652
+ right: 2768240646
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+
+thread 'dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence' (28067229) panicked at crates/core/src/dev/virtio/gpu/mod.rs:3937:9:
+assertion `left == right` failed
+  left: 3405643778
+ right: 3405643777
+test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... FAILED
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... FAILED
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+1280x800 transfer: 127.539041ms
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+
+failures:
+
+failures:
+    dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows
+    dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence
+
+test result: FAILED. 7 passed; 2 failed; 0 ignored; 0 measured; 345 filtered out; finished in 0.21s
+
+error: test failed, to rerun pass `-p wasm-vm-core --lib`

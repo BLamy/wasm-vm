@@ -1,0 +1,29 @@
+COMMAND: wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier -- verifier_cross_module_comparison_successors --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.66s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/jit_fp_comparisons_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm)
+running 1 test
+Invoking test: verifier_cross_module_comparison_successors
+CRITIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=false fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=11
+CRITIC_CHAIN same=false fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=false fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=11
+test verifier_cross_module_comparison_successors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 5 filtered out; finished in 0.05s
+

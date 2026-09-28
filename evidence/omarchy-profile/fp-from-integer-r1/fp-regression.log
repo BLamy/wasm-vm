@@ -1,0 +1,80 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.26s
+     Running tests/fp_arithmetic.rs (target/debug/deps/fp_arithmetic-6cb5755871e4271a)
+
+running 3 tests
+FP_ARITH runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test arithmetic_native_runloop ... ok
+FP_ARITH handoff/fault/invalid-prefix/same-source cases=80
+test arithmetic_native_handoff_and_faults ... ok
+FP_ARITH corpus cases=17664 register_flags_fnv=0303711512bb0d8a
+test arithmetic_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.84s
+
+     Running tests/fp_arithmetic_verifier.rs (target/debug/deps/fp_arithmetic_verifier-1e9215b6d7d1823d)
+
+running 5 tests
+CRITIC_ARITHMETIC_INDICES imports=6 exports=run0:6,run1:7,run2:8 actual_chain=true integer_imports=5 unsupported_families=5
+test verifier_mixed_batch_function_indices_and_unselected_fallbacks ... ok
+CRITIC_NATIVE_ARITHMETIC_CONTROL Receipt { cases: 11, disabled: 0, digest: 12235252711163659176 }
+test verifier_native_arithmetic_control_handoff_and_faults ... ok
+CRITIC_NATIVE_ARITHMETIC_GOLDENS Receipt { cases: 8832, disabled: 0, digest: 17621813032391191516 }
+test verifier_native_literal_arithmetic_goldens ... ok
+CRITIC_NATIVE_ARITHMETIC_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 12643572604827571813 }
+test verifier_native_seeded_arithmetic_aliases_and_illegal ... ok
+CRITIC_ARITHMETIC_IMPORT cases=1024 legal_helper_calls=540 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_arithmetic_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.70s
+
+     Running tests/fp_comparisons.rs (target/debug/deps/fp_comparisons-ba991415e9420539)
+
+running 3 tests
+FP_COMPARE runloop prefixes=1 FS-off-prefix-bytes=2 later-fault-flags=18
+test comparisons_native_runloop ... ok
+FP_COMPARE handoff/fault/same-source cases=80 expected_flags=18
+test comparisons_native_handoff_and_faults ... ok
+FP_COMPARE corpus cases=7648 register_flags_fnv=5d33ab4828b8874f
+test comparisons_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.82s
+
+     Running tests/fp_memory.rs (target/debug/deps/fp_memory-a00db03fea6c7968)
+
+running 4 tests
+FP_MEMORY runloop prefixes=1,2 compressed_mtval=2002 fault_tval=50000000
+test fp_memory_native_runloop ... ok
+FP_MEMORY virtual crossings cases=80 digest=ff5e630874ab4138
+test fp_memory_native_virtual_pages ... ok
+FP_MEMORY MMIO/fault precedence cases=32
+test fp_memory_native_mmio_faults ... ok
+FP_MEMORY transfers cases=1472 digest=98a95999f6d6a9fc
+test fp_memory_native_transfers ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.50s
+
+     Running tests/fp_moves.rs (target/debug/deps/fp_moves-78690d5eb0fc1409)
+
+running 3 tests
+FP_MOVES handoff equal-version replacements=4 CSR-only FS-Off rechecks=4
+test fp_moves_native_handoff_reuse ... ok
+FP_MOVES precise prefix=1 pc=0000000080000004 cause=2 tval=0000000020209053
+FP_MOVES precise prefix=1 pc=0000000080000104 cause=5 tval=00000000deadbeec
+test fp_moves_native_precise_runloop ... ok
+FP_MOVES cases=1984 guest_state_fnv64=dc6031f4c37c7ec3
+test fp_moves_native_directed ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s
+
+     Running tests/precise_traps.rs (target/debug/deps/precise_traps-97f1f18b4149f203)
+
+running 5 tests
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test overwritten_base_register_fault ... ok
+test mmio_store_then_fault_commits_once ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+

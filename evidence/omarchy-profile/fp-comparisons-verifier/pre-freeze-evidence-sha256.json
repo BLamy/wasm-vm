@@ -1,0 +1,15 @@
+{
+  "predictions.md": "c51e3525584d581e727b39beaa4718d3327822d9bbe6c93da1b3385b96357a8b",
+  "pre-freeze-native.log": "b3f12d7e769ddc5b3bdd93c7b1fc8079baeefa7c5b13618fe8b37dd0e98496ab",
+  "pre-freeze-wasm.log": "0f3759cbcd5258cf04abd6578d7217ff0aa15401ebf16480209d47b0b7cbf5c1",
+  "pre-freeze-wasm-stop.json": "859a4bb5d404d0ed62ebf26eb2679338bf86776f37f284c11d0d68a3aa4cc66b",
+  "pre-freeze-wasm-verifier.log": "f6603f6e4b199bccbc8dc1cf4bc149dd4419dd823d410a67f61632e6d3997edb",
+  "pre-freeze-wasm-verifier-result.json": "6fc9f929d791b89368449ecc8c2dabe90d79694c7856c21af31c4202228b9e2f",
+  "cross-module-fixture-correction.md": "81961e2f6196e189affd3c74da683833db7f4d39c01ac95fe6257371ff0c2b6a",
+  "cross-module-corrected.log": "f97a284c915cc646c2c267fc78591380197dc01fef1afe7eaff43810b7046d1e",
+  "cross-module-corrected-result.json": "9498d8dfea48db9a0466da88c4259816608e34bf193cd9e10afc338151e3fa2d",
+  "wrong-golden-check.py": "34852a82051726a812fc45d4da1832f16273788f91469c1dbb8e0a368822e173",
+  "wrong-golden-wrong.log": "c7ed7ed0bce240451bb061cccdd7e6dcc4c5d3bdb4dfebf562dc09c30e318073",
+  "wrong-golden-restored.log": "4ef8676735366d298b9889e8f3c1340c02e792190b0bf497bb678b79ad80950b",
+  "wrong-golden-result.json": "f26df6188b41076b815f52935a92b2355b185ccffcb8df39d3e3356fb5d830a0"
+}

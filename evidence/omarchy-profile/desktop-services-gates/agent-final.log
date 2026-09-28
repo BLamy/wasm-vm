@@ -1,0 +1,26 @@
+✔ guest CLIP_SET writes when allowed, stages denial, and flushes only from a gesture (20.972667ms)
+✔ focused paste sends CLIP_SET before the key-ready barrier and unfocused paste never reads data (6.791208ms)
+✔ host and guest directions use bounded, generation-aware echo history (2.75075ms)
+✔ 100 immediate host-copy/guest-echo pairs emit once per action without feedback (21.880042ms)
+✔ paste and guest payload limits reject without reading navigator.clipboard or throwing (29.965208ms)
+✔ gesture listeners are idempotent and detach preserves the caller-owned channel (0.650959ms)
+✔ channel generation changes invalidate a stale expected echo (0.636875ms)
+✔ desktop restore requires fresh Channel HELLO and applies T22 viewport (5.111125ms)
+✔ desktop restore may pause only after the fresh HELLO (0.534167ms)
+✔ a dropped Channel or refused restore clears the T22 surface (8.068541ms)
+✔ desktop agent bridge owns queued guest bytes, negotiates, reconnects, and drains output (26.502ms)
+✔ lazy Omarchy discards pre-controller and dormant bytes; availability reads are passive (8.7155ms)
+✔ CLI retains a bounded owned pre-controller queue and automatically starts exactly once (3.738458ms)
+✔ retired lazy references cannot activate; old active transports cannot send into any owner (3.896375ms)
+✔ explicit restore uses the real Channel fresh HELLO, not preloaded Omarchy output (37.404875ms)
+✔ actual main publishes the winning generation during early guest-ready, never query identity (10.528458ms)
+✔ actual main supplied restore bypasses default; omitted channel activates one shared session (3.7175ms)
+✔ actual main fences retirement immediately and ignores late callbacks/retained channels (8.482916ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 358.853792

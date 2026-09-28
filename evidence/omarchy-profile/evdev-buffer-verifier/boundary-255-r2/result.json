@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "prediction": "1022 exact events; no SYN_DROPPED",
+  "filesBefore": [
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+      "bytes": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+      "bytes": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz",
+      "bytes": 16883,
+      "sha256": "8697951ed69a16357d09e301e02ba6c9bafa7daf2a9f99fae3fc89514a06c63e"
+    }
+  ],
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "--initrd",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz",
+    "--append",
+    "console=ttyS0 earlycon=sbi loglevel=3 rdinit=/init -- burst",
+    "--no-input",
+    "--no-reboot",
+    "--max-instrs",
+    "4000000000",
+    "--block-cache",
+    "--interrupt-batching",
+    "--keyboard-proof",
+    "--keyboard-proof-burst-pairs",
+    "255",
+    "--evidence",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-verifier/boundary-255-r2/guest.evidence.txt"
+  ],
+  "environmentKeys": [
+    "DEVELOPER_DIR",
+    "HOME",
+    "PATH",
+    "TMPDIR"
+  ],
+  "startedAtUnixSeconds": 1789558333.2666502,
+  "head": "fe446fb5c4c52ece022465a3f8e6c301bcc30186",
+  "returncode": 0,
+  "elapsedSeconds": 22.408195734024048,
+  "eventCount": 1022,
+  "synchronizationDrops": 0,
+  "eventBytes": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-verifier/boundary-255-r2/events.bin",
+    "bytes": 24528,
+    "sha256": "06cf3f87e6ddf4b2b746db24e96bb4c4a647a033e2481fd9f2babe09132a4fa2"
+  },
+  "argumentAttacks": [
+    {
+      "label": "zero",
+      "command": [
+        "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+        "--keyboard-proof",
+        "--keyboard-proof-burst-pairs",
+        "0"
+      ],
+      "returncode": 2
+    },
+    {
+      "label": "over-limit",
+      "command": [
+        "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+        "--keyboard-proof",
+        "--keyboard-proof-burst-pairs",
+        "513"
+      ],
+      "returncode": 2
+    },
+    {
+      "label": "missing-opt-in",
+      "command": [
+        "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+        "boot",
+        "--kernel",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+        "--keyboard-proof-burst-pairs",
+        "64"
+      ],
+      "returncode": 2
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+      "bytes": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+      "bytes": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz",
+      "bytes": 16883,
+      "sha256": "8697951ed69a16357d09e301e02ba6c9bafa7daf2a9f99fae3fc89514a06c63e"
+    }
+  ]
+}

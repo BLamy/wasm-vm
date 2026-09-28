@@ -1,0 +1,46 @@
+{
+  "broadCiPassed": false,
+  "exitCode": 2,
+  "failingTargets": [
+    [
+      "clippy",
+      "101"
+    ],
+    [
+      "test",
+      "101"
+    ],
+    [
+      "wasm",
+      "1"
+    ],
+    [
+      "test-riscv",
+      "1"
+    ],
+    [
+      "determinism",
+      "1"
+    ]
+  ],
+  "sameFailingTargetsAsVerifiedPredecessor": true,
+  "sameCompilerErrorsAsPredecessor": true,
+  "failureBoundariesUnchanged": {
+    "crates/wvseccomp/src/main.rs": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+    "crates/core/src/dispatch.rs": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+    "crates/core/src/hart/mod.rs": "259846d4adfdd4eb33397271ba5bae5b1cac08343a7037ac13f220093073bb97",
+    "crates/wasm/tests/resume.rs": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+    "crates/core/src/resume.rs": "89cc796fbeec449fb4b3391c554345228a369f071b0706de4feef596b1393190",
+    "crates/core/src/dev/virtio/gpu/resources.rs": "af4b47c28b6801fd8ce3816f288be08feb2d3c2db2d562b0a2f6f19e95fbf2bd",
+    "tools/ci/determinism-hazards.sh": "8e6e3a153a2eb2e78a3c9d47ef1436170bcf0383a1e923283ec63bc38b5342cc",
+    "Cargo.lock": "593066d089878547aace500f8eb93f7989c93eba3b050b634b4f8ad1e55bc4a7",
+    "crates/wasm/src/jit_browser.rs::test_modules": "71d9ce66ecb458424f34db484777b056ce6d079a4d844b9e419ff4586db604be"
+  },
+  "resumeFailure": "reserved_section_is_refused_as_unsupported_on_wasm32 at crates/wasm/tests/resume.rs:93, VIRTIO_RNG expectation",
+  "determinismFailure": "Existing test-only Instant/Duration at gpu/resources.rs:1225,1242",
+  "perfSmokeMips": 25.1,
+  "perfFloorMips": 15,
+  "ciLogSha256": "4e0f160280fb06a196f8e642bb46b07a9f3ca8ff1f5e206e0d509fb68428b275",
+  "predecessorCiLogSha256": "aad68f99b394628c63567e5bd57495eec2ae6a49279c7849788636d840a238a4",
+  "notes": "Inherited limitations remain failures; no W/WU runtime or fixture failure is hidden or relabeled."
+}

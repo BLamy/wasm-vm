@@ -1,0 +1,13 @@
+{
+  "attack": "Forge an on-time success receipt while preserving actual missing nonce replies",
+  "target": "evidence/omarchy-profile/admission-after-fp-gates/audit.mjs:auditReport",
+  "originalReportSha256": "d07c1228c8181a6828bc88a1408bda8036fd0aa2695a342a694c6fa99fa05713",
+  "targetSourceSha256": "1b94d83baa854a7af28727699a3be8ed28b431ea445381e042e87ad34947585d",
+  "unchangedOriginalAcceptance": false,
+  "unchangedRawNonceReplies": 0,
+  "inMemoryOnly": true,
+  "originalReportUnchanged": true,
+  "rejected": true,
+  "reason": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire",
+  "browsersLaunched": 0
+}

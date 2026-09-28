@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-09-16T06:32:03Z",
+  "head": "7a3f3f3583220c320b850dfb10d7aca87fd1525e",
+  "originalCheckExit": 1,
+  "originalFailure": "Extra broad worktree diff includes preserved unrelated user edit tools/verify/e5-t22c-guest-mode.mjs. Explicit source identity and clean runtime checks preceding it passed.",
+  "originalScriptSha256": "eb64408fb6119be4644ac58c1cc4289630016a54e988b50bf37971b41c552128",
+  "effectiveScriptSha256": "5901933a2aa494258373e0185c3cd562c389693ef31f54504388daf5d3472265",
+  "onlySubstitution": {
+    "before": "git('diff', '--name-only', '32c412f7', '--', 'tools/verify')",
+    "after": "git('diff', '--name-only', '32c412f7', 'HEAD', '--', 'tools/verify')"
+  },
+  "actualWorkingDiff": [
+    "tools/verify/e5-t22c-guest-mode.mjs",
+    "tools/verify/omarchy-snapshot-allocation.mjs"
+  ],
+  "committedDiff": [
+    "tools/verify/omarchy-snapshot-allocation.mjs"
+  ],
+  "runtimeOrHarnessEdited": false,
+  "supplementalCheckExit": 0
+}

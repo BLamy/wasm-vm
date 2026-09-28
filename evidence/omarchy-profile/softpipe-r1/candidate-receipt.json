@@ -1,0 +1,379 @@
+{
+  "schema": "wasm-vm.e5.5-t03f.softpipe-candidate.v1",
+  "task": "E5.5-T03f",
+  "command": "node tools/verify/omarchy-softpipe-candidate.mjs prepare --out <new-directory>",
+  "source": {
+    "path": "target/omarchy-profile-sdr-r3.ext4",
+    "size": 4294967296,
+    "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+  },
+  "candidate": {
+    "path": "target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4",
+    "size": 4294967296,
+    "sha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5"
+  },
+  "baseSha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c",
+  "derivedSha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5",
+  "copy": {
+    "method": "cp -c"
+  },
+  "ext4": {
+    "blockSize": 4096,
+    "blockCount": 1048576,
+    "debugfsImage": "wasm-vm-omarchy-image:profile",
+    "debugfsImageId": "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a"
+  },
+  "patches": [
+    {
+      "path": "/etc/environment.d/60-omarchy-browser.conf",
+      "inode": 455,
+      "logicalOffset": 24,
+      "physicalBlock": 9155,
+      "blockSize": 4096,
+      "writeAbsoluteOffset": 37498904,
+      "writeLength": 23,
+      "writeOldHex": "47414c4c49554d5f4452495645523d6c6c766d70697065",
+      "writeNewHex": "47414c4c49554d5f4452495645523d736f667470697065",
+      "absoluteOffset": 37498919,
+      "length": 4,
+      "oldHex": "6c6c766d",
+      "newHex": "736f6674",
+      "oldAscii": "llvm",
+      "newAscii": "soft"
+    },
+    {
+      "path": "/home/omarchy/.config/uwsm/env",
+      "inode": 1203,
+      "logicalOffset": 70,
+      "physicalBlock": 10097,
+      "blockSize": 4096,
+      "writeAbsoluteOffset": 41357382,
+      "writeLength": 23,
+      "writeOldHex": "47414c4c49554d5f4452495645523d6c6c766d70697065",
+      "writeNewHex": "47414c4c49554d5f4452495645523d736f667470697065",
+      "absoluteOffset": 41357397,
+      "length": 4,
+      "oldHex": "6c6c766d",
+      "newHex": "736f6674",
+      "oldAscii": "llvm",
+      "newAscii": "soft"
+    }
+  ],
+  "metadata": [
+    {
+      "path": "/etc/environment.d/60-omarchy-browser.conf",
+      "source": {
+        "inode": 455,
+        "mode": "0644",
+        "uid": 0,
+        "gid": 0,
+        "size": 141,
+        "blockCount": 8,
+        "physicalBlock": 9155
+      },
+      "candidate": {
+        "inode": 455,
+        "mode": "0644",
+        "uid": 0,
+        "gid": 0,
+        "size": 141,
+        "blockCount": 8,
+        "physicalBlock": 9155
+      }
+    },
+    {
+      "path": "/home/omarchy/.config/uwsm/env",
+      "source": {
+        "inode": 1203,
+        "mode": "0644",
+        "uid": 1000,
+        "gid": 1000,
+        "size": 155,
+        "blockCount": 8,
+        "physicalBlock": 10097
+      },
+      "candidate": {
+        "inode": 1203,
+        "mode": "0644",
+        "uid": 1000,
+        "gid": 1000,
+        "size": 155,
+        "blockCount": 8,
+        "physicalBlock": 10097
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "wasm-vm-omarchy-image:profile",
+        "--format",
+        "{{.Id}}"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stats",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /etc/environment.d/60-omarchy-browser.conf 0",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /home/omarchy/.config/uwsm/env 0",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ]
+    },
+    {
+      "command": "cp",
+      "args": [
+        "-c",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-sdr-r3.ext4",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stats",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /etc/environment.d/60-omarchy-browser.conf 0",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /etc/environment.d/60-omarchy-browser.conf",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "stat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "bmap /home/omarchy/.config/uwsm/env 0",
+        "/image"
+      ]
+    },
+    {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-v",
+        "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4:/image:ro",
+        "sha256:6df4c3fafd2db3b394b7e1836dc626fedbd57706330edc6c5a66f488f081791a",
+        "debugfs",
+        "-R",
+        "cat /home/omarchy/.config/uwsm/env",
+        "/image"
+      ]
+    }
+  ],
+  "result": "passed"
+}

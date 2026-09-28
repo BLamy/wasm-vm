@@ -1,0 +1,123 @@
+{
+  "prediction": "P4/P5: no guest input after the frozen verdict; observation-only profile",
+  "result": "FAILED",
+  "report": "evidence/omarchy-profile/worker-cost-r1/desktop/report.json",
+  "reportSha256": "69482a435e023895d5d1aa3a6d689ef89b212faac57bf5748820426cfb693a5b",
+  "failedAt": "2026-09-16T02:20:33.050Z",
+  "captureStartedAt": "2026-09-16T02:20:33.110Z",
+  "sampleStartedAt": "2026-09-16T02:20:33.144Z",
+  "sampleStoppedAt": "2026-09-16T02:21:03.189Z",
+  "rawLines": {
+    "sends": [
+      26029,
+      26076
+    ],
+    "acks": [
+      26077,
+      26107
+    ]
+  },
+  "sent": [
+    {
+      "workerTrafficIndex": 1397,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.124Z",
+        "ms": 184133.88000011444,
+        "worker": 1,
+        "type": "worker-call",
+        "id": 949,
+        "method": "sendTabletEvent",
+        "args": [
+          3,
+          0,
+          18983
+        ],
+        "sent": true
+      }
+    },
+    {
+      "workerTrafficIndex": 1398,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.124Z",
+        "ms": 184133.90000009537,
+        "worker": 1,
+        "type": "worker-call",
+        "id": 950,
+        "method": "sendTabletEvent",
+        "args": [
+          3,
+          1,
+          20326
+        ],
+        "sent": true
+      }
+    },
+    {
+      "workerTrafficIndex": 1399,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.124Z",
+        "ms": 184133.90000009537,
+        "worker": 1,
+        "type": "worker-call",
+        "id": 951,
+        "method": "syncTablet",
+        "args": [],
+        "sent": true
+      }
+    }
+  ],
+  "acknowledged": [
+    {
+      "workerTrafficIndex": 1400,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.160Z",
+        "ms": 184169.7349998951,
+        "worker": 1,
+        "type": "input-result",
+        "id": 949,
+        "method": "sendTabletEvent",
+        "result": true,
+        "error": null
+      }
+    },
+    {
+      "workerTrafficIndex": 1401,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.160Z",
+        "ms": 184169.75999999046,
+        "worker": 1,
+        "type": "input-result",
+        "id": 950,
+        "method": "sendTabletEvent",
+        "result": true,
+        "error": null
+      }
+    },
+    {
+      "workerTrafficIndex": 1402,
+      "event": {
+        "context": "primary",
+        "epoch": "final",
+        "timestamp": "2026-09-16T02:20:33.160Z",
+        "ms": 184169.7650001049,
+        "worker": 1,
+        "type": "input-result",
+        "id": 951,
+        "method": "syncTablet",
+        "result": true,
+        "error": null
+      }
+    }
+  ],
+  "demand": "Keep this negative and contaminated diagnostic intact. Enforce the post-verdict no-input boundary for every guest input channel, including tablet/mouse, then supply a clean bounded observation-only recording. The raw nonce failure, section identity and arithmetic checks remain HELD."
+}

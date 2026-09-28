@@ -1,0 +1,113 @@
+[
+  {
+    "arm": "control",
+    "reportSha256": "65fb5dc0ac51e50702ea0583ea8bdb15f8bab98455c9068b1165581a2c86bdd5",
+    "outcome": "nonce-readback-failed",
+    "trustedPhysicalEvents": 128,
+    "matchedKeyboardRPCs": 256,
+    "completedReads": 12,
+    "pendingReads": 1,
+    "nonceVerified": false,
+    "deadlineAt": "2026-09-16T01:53:12.013Z",
+    "desktopAccepted": false,
+    "freshGuestFrame": false,
+    "startupMs": 127803,
+    "typingMs": 3274,
+    "receivedFrames": [
+      2,
+      2
+    ],
+    "successfulPresents": [
+      2,
+      2
+    ],
+    "runtimePolicy": "repack-off",
+    "runtimeCap": 24,
+    "runtimeRecycling": false,
+    "intervalRetired": 1186452616,
+    "intervalJitRetired": 389397819,
+    "intervalJitShare": 0.3282034307554681,
+    "installs": 13178,
+    "physicalPcRecurrence": 12769,
+    "batchEvictions": 2415,
+    "endBatches": 21,
+    "readExits": [
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      null
+    ],
+    "cleanup": {
+      "startedAt": "2026-09-16T01:53:12.088Z",
+      "timeoutMs": 30000,
+      "closed": true
+    }
+  },
+  {
+    "arm": "candidate",
+    "reportSha256": "33eaa82a64ade55c36efb27aca5ac021a3d028ab77dbdd696b83a4be6d8dc037",
+    "outcome": "nonce-readback-failed",
+    "trustedPhysicalEvents": 128,
+    "matchedKeyboardRPCs": 256,
+    "completedReads": 17,
+    "pendingReads": 1,
+    "nonceVerified": false,
+    "deadlineAt": "2026-09-16T01:56:27.208Z",
+    "desktopAccepted": false,
+    "freshGuestFrame": false,
+    "startupMs": 66718,
+    "typingMs": 2776,
+    "receivedFrames": [
+      2,
+      2
+    ],
+    "successfulPresents": [
+      2,
+      2
+    ],
+    "runtimePolicy": "cap-256",
+    "runtimeCap": 256,
+    "runtimeRecycling": false,
+    "intervalRetired": 1643434261,
+    "intervalJitRetired": 1090246822,
+    "intervalJitShare": 0.6633954566193627,
+    "installs": 13746,
+    "physicalPcRecurrence": 12632,
+    "batchEvictions": 3120,
+    "endBatches": 246,
+    "readExits": [
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      75,
+      null
+    ],
+    "cleanup": {
+      "startedAt": "2026-09-16T01:56:27.261Z",
+      "timeoutMs": 30000,
+      "closed": true
+    }
+  }
+]

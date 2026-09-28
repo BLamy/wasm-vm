@@ -1,0 +1,12 @@
+OMARCHY_RENDERING_PROGRESS {"stage":"goto","at":"2026-09-10T06:30:16.579Z","url":"https://wasm-vm.pages.dev/app?guest=omarchy&desktop=1#ide"}
+OMARCHY_RENDERING_PROGRESS {"stage":"domcontentloaded","at":"2026-09-10T06:30:17.511Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"runtime-hooks-ready","at":"2026-09-10T06:30:18.709Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"desktop-ready","at":"2026-09-10T06:33:09.458Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:34:21.635Z","viewport":"960x600"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:34:21.836Z","viewport":"600x900"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:34:22.038Z","viewport":"1920x1080"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-start","at":"2026-09-10T06:34:22.040Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-domcontentloaded","at":"2026-09-10T06:34:22.323Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-runtime-hooks-ready","at":"2026-09-10T06:34:22.397Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-desktop-ready","at":"2026-09-10T06:36:50.834Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"complete","at":"2026-09-10T06:38:01.498Z","screenshots":5}

@@ -1,0 +1,125 @@
+{
+  "schema": "wasm-vm.omarchy-browser-session.v1",
+  "task": "E5.5-T03a",
+  "taskVerified": false,
+  "startedAt": "2026-09-09T05:14:42.244Z",
+  "options": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "image-sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "manifest-sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+    "out": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2",
+    "keyboard": "auto",
+    "timeout-ms": 2400000,
+    "probe-timeout-ms": 240000,
+    "ram-mib": 2048,
+    "poll-ms": 30000,
+    "port": 0,
+    "shell-namespace": ""
+  },
+  "result": "failed",
+  "publication": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "integrity": {
+      "chunk_count": 16384,
+      "chunk_size": 262144,
+      "ext4_block_size": 4096,
+      "ext4_logical_bytes": 4294967296,
+      "image_len": 4294967296,
+      "image_sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+      "manifest_sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+      "scope": "image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot",
+      "status": "integrity-verified"
+    },
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image"
+    },
+    "bootManifest": {
+      "artifacts": {
+        "kernel": {
+          "url": "/releases/kernel/6.6.63/Image",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        }
+      }
+    },
+    "harnessSha256": "66c8536971220aeccfa1e868cc47e275699c95e5d672c4e0d4aa4002378f7524"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "152.0.7977.84",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "freshContext": true,
+    "serviceWorkers": "block",
+    "httpCacheDisabled": true
+  },
+  "error": "AssertionError [ERR_ASSERTION]: guest worker/presentation error\n+ actual - expected\n\n+ [\n+   'cannot allocate 2048 MiB of guest RAM',\n+   'Error: cannot allocate 2048 MiB of guest RAM\\n' +\n+     '    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:1660:25)\\n' +\n+     '    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1822]:0x14c471\\n' +\n+     '    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[181]:0x200d6\\n' +\n+     '    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1315]:0x125bd5\\n' +\n+     '    at WasmLinux.newChunkedDisk (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:539:26)\\n' +\n+     '    at startLinuxBoot (http://127.0.0.1:61688/loader.js:519:29)\\n' +\n+     '    at async handleBoot (http://127.0.0.1:61688/linux-worker-protocol.js:774:18)'\n+ ]\n- []\n\n    at observeGuest (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:418:12)\n    at async within (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:87:12)\n    at async run (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:520:27)\n    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:618:10",
+  "browserErrors": [],
+  "capture": {
+    "bootStarted": true,
+    "bootState": "error",
+    "frames": 0,
+    "serialBytes": 0,
+    "keys": 0,
+    "errors": [
+      "cannot allocate 2048 MiB of guest RAM",
+      "Error: cannot allocate 2048 MiB of guest RAM\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:1660:25)\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1822]:0x14c471\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[181]:0x200d6\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1315]:0x125bd5\n    at WasmLinux.newChunkedDisk (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:539:26)\n    at startLinuxBoot (http://127.0.0.1:61688/loader.js:519:29)\n    at async handleBoot (http://127.0.0.1:61688/linux-worker-protocol.js:774:18)"
+    ],
+    "imageSha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+    "manifestSha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": false,
+      "sizeMismatch": false,
+      "framesReceived": 0,
+      "successfulPresents": 0,
+      "drawnPresents": 0,
+      "drawnBytes": 0,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 0,
+        "enqueued": 0,
+        "coalesced": 0,
+        "presented": 0,
+        "successfulPresents": 0,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 0,
+        "drawnPresents": 0,
+        "drawnBytes": 0,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": null,
+      "errors": []
+    },
+    "paused": false,
+    "rgbaSha256": "830497acdc4cbdebb0fc5a05f65cb02a183648329f3067ac2ed27fbcb0ea3419",
+    "sampledColors": 1,
+    "stateDigest": null,
+    "scheduler": null,
+    "fetchStats": null
+  },
+  "screenshot": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2/guest.png",
+    "sha256": "a464bdcb19fe96d53d18c0434aef1bbd79a00063b02c2fc03e76d517e4397e5b"
+  },
+  "sourceUnchanged": true,
+  "elapsedMs": 9351
+}

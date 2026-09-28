@@ -1,0 +1,451 @@
+diff --git a/Makefile b/Makefile
+index 6f48cfbc..c51f883f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1740,3 +1740,8 @@ verify-E5_5-T03at-device:
+ verify-E5_5-T03at: verify-E5_5-T03at-device
+ 	E5_DEMO_TASK=E5.5-T03at E5_DEMO_OUT=$(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/demo node tools/verify/e5-t18e-demo-smoke.mjs
+ 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(GPU_TRANSFER_OUT),evidence/omarchy-profile/gpu-transfer-offset-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --gpu-transfer-offset
++
++.PHONY: verify-E5_5-T03au
++verify-E5_5-T03au:
++	node --test tools/verify/omarchy-display-pixel-probe.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
++	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DISPLAY_PIXEL_OUT),evidence/omarchy-profile/display-pixel-boundary-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --display-pixel-probe
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 5b247132..142eb613 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -33,6 +33,7 @@ import { assertPreparedDirectSource, requestPreparedDirectProperties } from "./o
+ import { prepareInputObserver, collectInputObserver, assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
+ import { assertInputKernelProvenance, assertInputKernelSource, requestInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
+ import { assertInputKernelPreparedSource, INPUT_BUFFER_PREPARED_FOOT } from "./omarchy-input-kernel-response-state.mjs";
++import { installDisplayPixelProbe, collectDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+ 
+ const [urlArg, output, mode = "verify"] = process.argv.slice(2);
+ if (urlArg === "--selftest-presentation") {
+@@ -70,9 +71,13 @@ const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
+ const inputObserver = process.env.OMARCHY_INPUT_OBSERVER || null;
+ const inputKernelRecordPath = process.env.OMARCHY_INPUT_KERNEL_RECORD || null;
+ const inputKernelPrepared = process.env.OMARCHY_INPUT_KERNEL_PREPARED === "1";
++const displayPixelProbe = process.env.OMARCHY_DISPLAY_PIXEL_PROBE === "1";
++if (process.env.OMARCHY_DISPLAY_PIXEL_PROBE !== undefined) assert.ok(displayPixelProbe && inputKernelPrepared
++  && urlArg === "local" && inputTrial && preparedDirect && !inputObserver && !workerCost && !failureCheckpoint,
++  "display pixel probe is an isolated local AR diagnostic");
+ if (process.env.OMARCHY_INPUT_KERNEL_PREPARED !== undefined) assert.ok(inputKernelPrepared
+   && urlArg === "local" && inputTrial && preparedDirect && !inputKernelRecordPath
+-  && !inputObserver && !workerCost && !failureCheckpoint, "AR input requires its isolated uninstrumented local trial");
++  && !inputObserver && !workerCost && !failureCheckpoint, "AR input requires its isolated local trial");
+ if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaque-pair"
+   && !inputObserver && !workerCost && !failureCheckpoint, "input-kernel provenance is isolated local preparation");
+ if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
+@@ -470,6 +475,7 @@ if (opaqueFoot) report.opaqueFootRequested = true;
+ if (directOpaque) report.directOpaqueRequested = true;
+ if (preparedDirect) report.preparedDirectRequested = true;
+ if (inputKernelPrepared) report.inputKernelPrepared = true;
++if (displayPixelProbe) report.displayPixelProbeRequested = true;
+ if (inputKernelRecord) report.inputKernel = { provenance: inputKernelRecord,
+   filename: path.resolve(inputKernelRecordPath), sha256: createHash("sha256").update(inputKernelRecordBytes).digest("hex") };
+ if (coldPair) report.progressCaptureErrors = [];
+@@ -498,6 +504,7 @@ if (ownedRecording) {
+     "tools/verify/omarchy-input-kernel-response-state.mjs", "tools/verify/omarchy-input-kernel-response.mjs",
+     "tools/verify/omarchy-input-kernel-response-audit.mjs",
+     "tools/verify/omarchy-gpu-transfer-runtime.mjs", "tools/verify/omarchy-gpu-transfer-runtime.json",
++    "tools/verify/omarchy-display-pixel-probe.mjs",
+     "tools/verify/omarchy-browser-session.mjs", "tools/verify/omarchy-live-recording.mjs",
+     "crates/core/src/dispatch.rs", "crates/core/src/lib.rs", "crates/wasm/src/lib.rs",
+     "crates/core/src/dev/virtio/gpu",
+@@ -575,6 +582,7 @@ const context = await browser.newContext({ viewport: { width: 1280, height: 800
+ context.on("request", request => report.browserRequests.push({ timestamp: new Date().toISOString(),
+   url: request.url(), method: request.method(), resourceType: request.resourceType() }));
+ await context.addInitScript(installWireEvidence);
++if (displayPixelProbe) await context.addInitScript(installDisplayPixelProbe, { enabled: true });
+ const page = await context.newPage();
+ let secondPage = null;
+ let failurePage = page;
+@@ -1539,6 +1547,7 @@ try {
+     report.cleanup = { startedAt: new Date().toISOString(), timeoutMs: trial.cleanupMs, closed: false };
+     try {
+       await withinTrialDeadline(async () => {
++        if (displayPixelProbe) await collectDisplayPixelProbe(page, out, report);
+         await collectWireEvidence(page, "final");
+         const evidence = await page.evaluate(() => window.__omarchyLiveEvidence);
+         report.events = evidence?.events ?? [];
+@@ -1554,7 +1563,7 @@ try {
+           }
+         }
+         await fs.writeFile(path.join(out, "serial.log"), evidence?.serial ?? "");
+-      }, Math.min(cleanupDeadline, Date.now() + 10000), "cleanup evidence");
++      }, Math.min(cleanupDeadline, Date.now() + (displayPixelProbe ? 20000 : 10000)), "cleanup evidence");
+     } catch (error) {
+       report.errors.push(`wire evidence: ${error}`); report.result = "failed"; process.exitCode = 1;
+     }
+diff --git a/tools/verify/omarchy-display-pixel-probe.mjs b/tools/verify/omarchy-display-pixel-probe.mjs
+new file mode 100644
+index 00000000..66e4ad4f
+--- /dev/null
++++ b/tools/verify/omarchy-display-pixel-probe.mjs
+@@ -0,0 +1,174 @@
++// Opt-in evidence only: observe actual display messages without modifying them.
++import assert from "node:assert/strict";
++import fs from "node:fs/promises";
++import path from "node:path";
++import { createHash } from "node:crypto";
++
++export function installDisplayPixelProbe({ enabled = false } = {}) {
++  if (!enabled) return;
++  if (globalThis.__omarchyDisplayPixels) throw Error("display probe already installed");
++  const original = Worker.prototype.postMessage;
++  const seen = new WeakSet(), listeners = [];
++  const probe = globalThis.__omarchyDisplayPixels = {
++    version: 1, diagnosticOnly: true, maxFrames: 8, maxBytesPerFrame: 1280 * 832 * 4,
++    maxEvents: 64, events: [], frames: [], errors: [], sequence: 0, framesSeen: 0, evicted: 0, disposed: false,
++  };
++  const error = value => { if (probe.errors.length < 16) probe.errors.push(String(value)); };
++  const observe = (data, worker) => {
++    if (data?.type !== "display" || probe.disposed) return;
++    try {
++      const frame = data.frame;
++      const row = { sequence: ++probe.sequence, timestamp: new Date().toISOString(),
++        pageMs: performance.now(), worker, type: frame?.type === "clear" ? "clear" : "frame" };
++      if (row.type === "frame") {
++        const width = frame.resourceWidth, height = frame.resourceHeight;
++        const size = width * height * 4;
++        if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width < 1 || height < 1
++          || size > probe.maxBytesPerFrame || !(frame.pixels instanceof ArrayBuffer) || frame.pixels.byteLength !== size)
++          throw Error("display buffer outside diagnostic byte bound");
++        Object.assign(row, { scanout: frame.scanout, format: frame.format,
++          rect: { ...frame.rect }, resourceWidth: width, resourceHeight: height, byteLength: size });
++        // A private copy survives any later transfer, mutation or resource reuse.
++        const bytes = new Uint8Array(frame.pixels.slice(0));
++        probe.framesSeen++;
++        if (probe.frames.length === probe.maxFrames) { probe.frames.shift(); probe.evicted++; }
++        probe.frames.push({ ...row, bytes });
++      }
++      if (probe.events.length === probe.maxEvents) probe.events.shift();
++      probe.events.push(row);
++    } catch (failure) { error(failure); }
++  };
++  const wrapped = function (message, ...rest) {
++    try {
++      if (!seen.has(this) && !probe.disposed) {
++        seen.add(this);
++        if (listeners.length >= 8) error("display worker bound exceeded");
++        else {
++          const worker = listeners.length + 1;
++          const listener = event => observe(event.data, worker);
++          this.addEventListener("message", listener);
++          listeners.push({ worker: this, listener });
++        }
++      }
++    } catch (failure) { error(failure); }
++    return original.call(this, message, ...rest);
++  };
++  Worker.prototype.postMessage = wrapped;
++  probe.dispose = () => {
++    probe.disposed = true;
++    for (const { worker, listener } of listeners) worker.removeEventListener("message", listener);
++    listeners.length = 0;
++    if (Worker.prototype.postMessage === wrapped) Worker.prototype.postMessage = original;
++  };
++}
++
++// Called only after the product capture, inside the existing owned cleanup budget.
++export function readDisplayPixelProbe() {
++  const probe = globalThis.__omarchyDisplayPixels;
++  if (!probe) throw Error("display probe missing");
++  const encode = bytes => {
++    const parts = [];
++    for (let i = 0; i < bytes.length; i += 32768) parts.push(String.fromCharCode(...bytes.subarray(i, i + 32768)));
++    return btoa(parts.join(""));
++  };
++  probe.dispose();
++  const state = globalThis.__presentation.state();
++  const canvas = globalThis.__presentation.readPixels();
++  const snapshot = { version: probe.version, diagnosticOnly: true,
++    maxFrames: probe.maxFrames, maxBytesPerFrame: probe.maxBytesPerFrame, maxEvents: probe.maxEvents,
++    sequence: probe.sequence, framesSeen: probe.framesSeen, evicted: probe.evicted, disposed: probe.disposed,
++    capturedAt: new Date().toISOString(), events: probe.events, errors: probe.errors,
++    frames: probe.frames.map(({ bytes, ...row }) => ({ ...row, base64: encode(bytes) })),
++    canvas: { state, width: state.width, height: state.height, base64: encode(canvas) } };
++  probe.frames.length = 0;
++  return snapshot;
++}
++
++const sha = bytes => createHash("sha256").update(bytes).digest("hex");
++export async function collectDisplayPixelProbe(page, out, report) {
++  const capture = await page.evaluate(readDisplayPixelProbe);
++  const dir = path.join(out, "display-pixels");
++  await fs.mkdir(dir, { recursive: false });
++  for (const [index, row] of [...capture.frames, capture.canvas].entries()) {
++    const bytes = Buffer.from(row.base64, "base64"); delete row.base64;
++    row.file = index === capture.frames.length ? "canvas.rgba" : `frame-${row.sequence}.bgra`;
++    row.size = bytes.length; row.sha256 = sha(bytes);
++    await fs.writeFile(path.join(dir, row.file), bytes);
++  }
++  report.displayPixelProbe = capture;
++}
++
++export function displayFrameRgba(frame, bytes, width, height) {
++  assert.ok([1, 2].includes(frame.format), "unsupported display format in diagnostic");
++  assert.equal(bytes.length, frame.resourceWidth * frame.resourceHeight * 4);
++  const rgba = Buffer.alloc(width * height * 4);
++  for (let i = 3; i < rgba.length; i += 4) rgba[i] = 255;
++  let partialAlphaPixels = 0;
++  for (let y = 0; y < Math.min(height, frame.resourceHeight); y++) {
++    for (let x = 0; x < Math.min(width, frame.resourceWidth); x++) {
++      const src = (y * frame.resourceWidth + x) * 4, dst = (y * width + x) * 4;
++      const alpha = frame.format === 2 ? 255 : bytes[src + 3];
++      if (alpha !== 0 && alpha !== 255) partialAlphaPixels++;
++      rgba[dst] = alpha ? bytes[src + 2] : 0;
++      rgba[dst + 1] = alpha ? bytes[src + 1] : 0;
++      rgba[dst + 2] = alpha ? bytes[src] : 0;
++      rgba[dst + 3] = alpha;
++    }
++  }
++  return { rgba, partialAlphaPixels };
++}
++
++export async function auditDisplayPixelProbe(report, out) {
++  assert.equal(report.displayPixelProbeRequested, true);
++  const capture = report.displayPixelProbe;
++  assert.equal(capture.diagnosticOnly, true); assert.equal(capture.disposed, true);
++  assert.deepEqual(capture.errors, []);
++  assert.equal(capture.maxFrames, 8); assert.equal(capture.maxBytesPerFrame, 1280 * 832 * 4);
++  assert.equal(capture.maxEvents, 64);
++  assert.ok(capture.frames.length > 0 && capture.frames.length <= 8);
++  assert.equal(capture.frames.length + capture.evicted, capture.framesSeen);
++  assert.ok(capture.events.length <= 64);
++  assert.equal(capture.events.at(-1)?.type, "frame", "final event must be a retained frame");
++  assert.equal(capture.frames.at(-1).sequence, capture.sequence, "latest frame missing");
++  assert.equal(capture.events.at(-1).sequence, capture.sequence);
++  assert.equal(capture.canvas.state.backend, "canvas2d");
++  assert.equal(capture.canvas.width, 1280); assert.equal(capture.canvas.height, 800);
++  assert.equal(capture.canvas.state.framesReceived, capture.framesSeen);
++  assert.equal(capture.canvas.state.successfulPresents, capture.framesSeen);
++  assert.equal(capture.canvas.state.scheduler.pending, 0);
++  assert.ok(Date.parse(capture.capturedAt) >= Date.parse(report.trial.responseImageCapturedAt));
++  const load = async row => {
++    assert.match(row.file, /^(?:canvas\.rgba|frame-[1-9][0-9]*\.bgra)$/u);
++    const bytes = await fs.readFile(path.join(out, "display-pixels", row.file));
++    assert.equal(bytes.length, row.size); assert.equal(sha(bytes), row.sha256);
++    return bytes;
++  };
++  const canvas = await load(capture.canvas);
++  assert.equal(canvas.length, 1280 * 800 * 4);
++  const rows = [];
++  let previousRaw = null, previousVisible = null, previousSequence = 0;
++  const changedPixels = (a, b) => {
++    if (!a || a.length !== b.length) return null;
++    let count = 0;
++    for (let i = 0; i < a.length; i += 4) if (a.readUInt32LE(i) !== b.readUInt32LE(i)) count++;
++    return count;
++  };
++  for (const frame of capture.frames) {
++    assert.ok(frame.sequence > previousSequence); previousSequence = frame.sequence;
++    assert.ok(frame.size <= capture.maxBytesPerFrame);
++    const bytes = await load(frame);
++    const { rgba, partialAlphaPixels } = displayFrameRgba(frame, bytes, 1280, 800);
++    rows.push({ sequence: frame.sequence, timestamp: frame.timestamp, scanout: frame.scanout,
++      format: frame.format, rect: frame.rect, resourceWidth: frame.resourceWidth, resourceHeight: frame.resourceHeight,
++      rawSha256: frame.sha256, visibleSha256: sha(rgba), partialAlphaPixels,
++      rawChangedPixels: changedPixels(previousRaw, bytes), visibleChangedPixels: changedPixels(previousVisible, rgba),
++      matchesCanvas: rgba.equals(canvas),
++      afterNonce: Date.parse(frame.timestamp) >= Date.parse(report.keyboard.completedAt) });
++    previousRaw = bytes; previousVisible = rgba;
++  }
++  assert.ok(rows.some(row => row.afterNonce), "no post-nonce frame at the measured boundary");
++  return { diagnosticOnly: true, desktopAcceptance: false, canvasSha256: capture.canvas.sha256,
++    captureAt: capture.capturedAt, evicted: capture.evicted, frames: rows,
++    latestMatchesCanvas: rows.at(-1).matchesCanvas,
++    alphaComparisonExact: rows.at(-1).partialAlphaPixels === 0 };
++}
+diff --git a/tools/verify/omarchy-display-pixel-probe.test.mjs b/tools/verify/omarchy-display-pixel-probe.test.mjs
+new file mode 100644
+index 00000000..47e33e90
+--- /dev/null
++++ b/tools/verify/omarchy-display-pixel-probe.test.mjs
+@@ -0,0 +1,115 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import vm from "node:vm";
++import fs from "node:fs/promises";
++import os from "node:os";
++import path from "node:path";
++import { createHash } from "node:crypto";
++import { installDisplayPixelProbe, readDisplayPixelProbe, displayFrameRgba,
++  collectDisplayPixelProbe, auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
++
++function fixture() {
++  class Worker {
++    listeners = new Set(); calls = [];
++    addEventListener(type, fn) { assert.equal(type, "message"); this.listeners.add(fn); }
++    removeEventListener(type, fn) { assert.equal(type, "message"); this.listeners.delete(fn); }
++    postMessage(...args) { this.calls.push(args); if (this.failure) throw this.failure; return 73; }
++    emit(data) { for (const fn of this.listeners) fn({ data }); }
++  }
++  const original = Worker.prototype.postMessage;
++  const context = vm.createContext({ Worker, ArrayBuffer, Uint8Array, performance,
++    btoa: value => Buffer.from(value, "binary").toString("base64") });
++  const install = enabled => vm.runInContext(`(${installDisplayPixelProbe})(${JSON.stringify({ enabled })})`, context);
++  const frame = () => ({ type: "display", frame: { scanout: null, format: 2,
++    rect: { x: 0, y: 0, width: 1, height: 1 }, resourceWidth: 1, resourceHeight: 1,
++    pixels: Uint8Array.from([3, 5, 7, 11]).buffer } });
++  return { Worker, original, context, install, frame };
++}
++
++test("opt-in observer preserves transport, private ownership and disposal", () => {
++  const f = fixture(); f.install(false);
++  assert.equal(f.Worker.prototype.postMessage, f.original);
++  assert.equal(f.context.__omarchyDisplayPixels, undefined);
++  f.install(true);
++  const worker = new f.Worker(), message = { type: "input" }, transfer = [new ArrayBuffer(4)];
++  assert.equal(worker.postMessage(message, transfer), 73);
++  assert.equal(worker.calls[0][0], message); assert.equal(worker.calls[0][1], transfer);
++  worker.postMessage(message); assert.equal(worker.listeners.size, 1);
++  worker.failure = new Error("native transport failure");
++  assert.throws(() => worker.postMessage(message), error => error === worker.failure);
++  const wire = f.frame(); worker.emit(wire);
++  assert.equal(new Uint8Array(wire.frame.pixels)[3], 11, "original X byte must remain unchanged");
++  wire.frame.rect.x = 9; new Uint8Array(wire.frame.pixels).fill(0);
++  structuredClone(wire.frame.pixels, { transfer: [wire.frame.pixels] });
++  const probe = f.context.__omarchyDisplayPixels;
++  assert.deepEqual([...probe.frames[0].bytes], [3, 5, 7, 11]); assert.equal(probe.frames[0].rect.x, 0);
++  const other = () => {}; worker.listeners.add(other);
++  probe.dispose(); assert.equal(f.Worker.prototype.postMessage, f.original);
++  assert.deepEqual([...worker.listeners], [other]); worker.emit(f.frame()); assert.equal(probe.framesSeen, 1);
++});
++
++test("frame and event rings remain bounded; malformed frames cannot interrupt transport", () => {
++  const f = fixture(); f.install(true); const worker = new f.Worker(); worker.postMessage({});
++  for (let i = 0; i < 80; i++) worker.emit(f.frame());
++  const probe = f.context.__omarchyDisplayPixels;
++  assert.equal(probe.framesSeen, 80); assert.equal(probe.evicted, 72);
++  assert.equal(probe.frames.length, 8); assert.equal(probe.events.length, 64);
++  assert.equal(probe.frames[0].sequence, 73); assert.equal(probe.frames.at(-1).sequence, 80);
++  const invalid = f.frame(); invalid.frame.resourceWidth = 1281; invalid.frame.resourceHeight = 832;
++  worker.emit(invalid); assert.equal(probe.errors.length, 1); assert.equal(probe.framesSeen, 80);
++  for (let i = 0; i < 9; i++) assert.equal(new f.Worker().postMessage({}), 73);
++  assert.ok(probe.errors.some(error => error.includes("worker bound")));
++  probe.dispose();
++});
++
++test("export owns the latest bytes and restores the observer before canvas readback", () => {
++  const f = fixture(); f.install(true); const worker = new f.Worker(); worker.postMessage({}); worker.emit(f.frame());
++  f.context.__presentation = { state: () => ({ width: 1, height: 1 }), readPixels: () => {
++    assert.equal(f.Worker.prototype.postMessage, f.original);
++    return Uint8Array.from([7, 5, 3, 255]);
++  } };
++  const result = vm.runInContext(`(${readDisplayPixelProbe})()`, f.context);
++  assert.equal(result.disposed, true); assert.equal(f.context.__omarchyDisplayPixels.frames.length, 0);
++  assert.deepEqual([...Buffer.from(result.frames[0].base64, "base64")], [3, 5, 7, 11]);
++  assert.deepEqual([...Buffer.from(result.canvas.base64, "base64")], [7, 5, 3, 255]);
++});
++
++test("literal BGRA and BGRX conversion crops the actual top-left viewport", () => {
++  const bytes = Buffer.from([3,5,7,11, 17,19,23,0, 29,31,37,255, 41,43,47,255]);
++  const frame = { format: 2, resourceWidth: 2, resourceHeight: 2 };
++  assert.deepEqual([...displayFrameRgba(frame, bytes, 1, 1).rgba], [7,5,3,255]);
++  const alpha = displayFrameRgba({ ...frame, format: 1 }, bytes, 2, 1);
++  assert.deepEqual([...alpha.rgba], [7,5,3,11, 0,0,0,0]); assert.equal(alpha.partialAlphaPixels, 1);
++  assert.deepEqual([...displayFrameRgba(frame, bytes, 3, 1).rgba], [7,5,3,255,23,19,17,255,0,0,0,255]);
++});
++
++test("saved-byte audit binds latest frame, nonce, presentation completion and file digest", async () => {
++  const out = await fs.mkdtemp(path.join(os.tmpdir(), "display-pixel-test-"));
++  try {
++    const raw = Buffer.alloc(1280 * 800 * 4), canvas = Buffer.alloc(raw.length);
++    for (let i = 3; i < canvas.length; i += 4) canvas[i] = 255;
++    const capture = { version: 1, diagnosticOnly: true, maxFrames: 8, maxBytesPerFrame: 1280*832*4,
++      maxEvents: 64, sequence: 1, framesSeen: 1, evicted: 0, disposed: true,
++      capturedAt: "2026-09-16T00:00:03Z", errors: [], events: [{ sequence: 1, type: "frame" }],
++      frames: [{ sequence: 1, timestamp: "2026-09-16T00:00:02Z", scanout: 0, format: 2,
++        rect: { x: 0, y: 0, width: 1280, height: 800 }, resourceWidth: 1280, resourceHeight: 800,
++        base64: raw.toString("base64") }],
++      canvas: { width: 1280, height: 800, state: { backend: "canvas2d", framesReceived: 1,
++        successfulPresents: 1, scheduler: { pending: 0 } }, base64: canvas.toString("base64") } };
++    const report = { displayPixelProbeRequested: true, trial: { responseImageCapturedAt: "2026-09-16T00:00:03Z" },
++      keyboard: { completedAt: "2026-09-16T00:00:01Z" } };
++    await collectDisplayPixelProbe({ evaluate: async fn => { assert.equal(fn, readDisplayPixelProbe); return capture; } }, out, report);
++    const result = await auditDisplayPixelProbe(report, out);
++    assert.equal(result.latestMatchesCanvas, true); assert.equal(result.desktopAcceptance, false);
++    assert.equal(result.canvasSha256, createHash("sha256").update(canvas).digest("hex"));
++    for (const mutate of [r => { r.displayPixelProbeRequested = false; },
++      r => { r.displayPixelProbe.sequence = 2; }, r => { r.displayPixelProbe.canvas.state.scheduler.pending = 1; },
++      r => { r.displayPixelProbe.canvas.state.successfulPresents = 0; },
++      r => { r.keyboard.completedAt = "2026-09-16T00:00:04Z"; },
++      r => { r.displayPixelProbe.frames[0].sha256 = "0".repeat(64); }]) {
++      const bad = structuredClone(report); mutate(bad); await assert.rejects(auditDisplayPixelProbe(bad, out));
++    }
++    raw[0] = 1; await fs.writeFile(path.join(out, "display-pixels/frame-1.bgra"), raw);
++    await assert.rejects(auditDisplayPixelProbe(report, out));
++  } finally { await fs.rm(out, { recursive: true, force: true }); }
++});
+diff --git a/tools/verify/omarchy-input-kernel-response-audit.mjs b/tools/verify/omarchy-input-kernel-response-audit.mjs
+index 65c46577..bfc08c99 100644
+--- a/tools/verify/omarchy-input-kernel-response-audit.mjs
++++ b/tools/verify/omarchy-input-kernel-response-audit.mjs
+@@ -5,8 +5,9 @@ import { INPUT_BUFFER_PREPARED_FOOT, INPUT_BUFFER_RESPONSE_WASM } from "./omarch
+ import { assertInputKernelNotes, INPUT_BUFFER_NOTES_COMMAND } from "./omarchy-input-kernel-state.mjs";
+ import { assertOriginalInputGeometry } from "./omarchy-compositor-input-capture.mjs";
+ 
+-export function auditInputKernelResponse(report, head, { wasmSha256 = INPUT_BUFFER_RESPONSE_WASM } = {}) {
++export function auditInputKernelResponse(report, head, { wasmSha256 = INPUT_BUFFER_RESPONSE_WASM, displayPixelProbe = false } = {}) {
+   assert.match(wasmSha256, /^[a-f0-9]{64}$/u);
++  assert.equal(report.displayPixelProbeRequested === true, displayPixelProbe);
+   const input = auditInputReport(report, { head, wasmSha256, inputKernelWasmSha256: wasmSha256, arm: "candidate",
+     preparedDirect: true, preparedRecycling: true, inputKernelPrepared: true,
+     startupCommands: [INPUT_BUFFER_NOTES_COMMAND, PREPARED_DIRECT_COMMAND] });
+diff --git a/tools/verify/omarchy-input-kernel-response.mjs b/tools/verify/omarchy-input-kernel-response.mjs
+index 97697d3c..55da654b 100644
+--- a/tools/verify/omarchy-input-kernel-response.mjs
++++ b/tools/verify/omarchy-input-kernel-response.mjs
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env node
+-// One uninstrumented physical-input run on AR's exact verified desktop pair.
++// One physical-input run on AR's exact verified desktop pair; optional pixel diagnostics.
+ import assert from "node:assert/strict";
+ import fs from "node:fs/promises";
+ import { createWriteStream } from "node:fs";
+@@ -12,12 +12,14 @@ import { INPUT_BUFFER_PREPARED_IDENTITIES, INPUT_BUFFER_PREPARED_RECORD_SHA256,
+   INPUT_BUFFER_RESPONSE_WASM } from "./omarchy-input-kernel-response-state.mjs";
+ import { auditInputKernelResponse } from "./omarchy-input-kernel-response-audit.mjs";
+ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
++import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+ 
+-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && process.argv[4] === "--gpu-transfer-offset"),
+-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset]");
++assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe"].includes(process.argv[4])),
++  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe]");
+ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+ const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
+ const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
++const displayPixelProbe = process.argv[4] === "--display-pixel-probe";
+ const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
+ const sha = bytes => createHash("sha256").update(bytes).digest("hex");
+ for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
+@@ -30,6 +32,7 @@ assert.equal(sha(await fs.readFile(preparedRecord)), INPUT_BUFFER_PREPARED_RECOR
+ assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), wasmSha256);
+ await fs.mkdir(out, { recursive: false });
+ const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: false, visualInspectionRequired: true,
++  diagnosticOnly: displayPixelProbe,
+   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
+   wasmSha256, gpuRuntime: gpuRuntime?.record ?? null, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
+   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
+@@ -41,6 +44,7 @@ for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[k
+ Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: "prepared-recycling",
+   OMARCHY_PREPARED_DIRECT: "1", OMARCHY_INPUT_KERNEL_PREPARED: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
+   OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
++if (displayPixelProbe) env.OMARCHY_DISPLAY_PIXEL_PROBE = "1";
+ receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
+ const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
+ const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
+@@ -55,7 +59,8 @@ if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
+ try {
+   const bytes = await fs.readFile(path.join(out, "desktop/report.json")), report = JSON.parse(bytes);
+   receipt.reportSha256 = sha(bytes);
+-  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256 }));
++  Object.assign(receipt, auditInputKernelResponse(report, receipt.head, { wasmSha256, displayPixelProbe }));
++  if (displayPixelProbe) receipt.displayPixels = await auditDisplayPixelProbe(report, path.join(out, "desktop"));
+   receipt.result = report.result;
+   receipt.machineAcceptance = receipt.input.machineAcceptance;
+   assert.equal(receipt.exit.code, receipt.machineAcceptance ? 0 : 1);

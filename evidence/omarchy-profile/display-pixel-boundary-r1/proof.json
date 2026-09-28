@@ -1,0 +1,34 @@
+{
+  "head": "560096cbc640e0523778217c01c7c7ad37780473",
+  "diagnosticOnly": true,
+  "runtime": {
+    "task": "E5.5-T03at",
+    "files": {
+      "crates/core/src/dev/virtio/gpu/resources.rs": {
+        "size": 63306,
+        "sha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f"
+      },
+      "crates/core/src/dev/virtio/gpu/mod.rs": {
+        "size": 169241,
+        "sha256": "035c9ddce5b9bcaadc96257aa067c12fcea50235096660783728e82f59d971bf"
+      },
+      "web/dist/pkg/wasm_vm_wasm_bg.wasm": {
+        "size": 1602266,
+        "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf"
+      }
+    }
+  },
+  "runtimeMatched": true,
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "args": [
+    "make",
+    "verify-E5_5-T03au",
+    "DISPLAY_PIXEL_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/display-pixel-boundary-r1"
+  ],
+  "startedAt": "2026-09-16T23:45:39.800528+00:00",
+  "code": 0,
+  "finishedAt": "2026-09-16T23:48:18.725794+00:00",
+  "logSha256": "732b0bc178a9e41f60574dd3dbd87f93d2c97f556fb87bed8cc774e4c5560c0e"
+}

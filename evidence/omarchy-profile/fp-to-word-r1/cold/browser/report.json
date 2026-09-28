@@ -1,0 +1,589 @@
+{
+  "head": "95c250fe56fb15f28ee022a21a3766176adca054",
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "elfSha256": "00645db64ba22d39876c0db2fe80a05756004ce256e3583efe971338f67bc71f",
+  "words": [
+    8375,
+    805343347,
+    1331315,
+    2216051,
+    8855,
+    4278354579,
+    419431187,
+    172039,
+    4370311,
+    8560903,
+    12755335,
+    3221226835,
+    3222250963,
+    3222369875,
+    3222374099,
+    3489989203,
+    4326099,
+    7669523,
+    4294116115,
+    4261613795,
+    1059443,
+    2108147,
+    805317491,
+    178215,
+    32685095,
+    37924903,
+    38974503,
+    16955395,
+    25344131,
+    33732867,
+    42121603,
+    111
+  ],
+  "attemptedBudget": 4000,
+  "errors": [],
+  "passed": true,
+  "browser": "152.0.7977.84",
+  "runs": [
+    {
+      "jit": false,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 160,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "8000007c",
+        "0",
+        "2000",
+        "0",
+        "0",
+        "0",
+        "80002000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "2",
+        "fffffffffffffffe",
+        "ffffffffffffff00",
+        "ffffffffffffffff",
+        "9",
+        "0",
+        "ffffffff3fc00000",
+        "ffffffffbfc00000",
+        "ffffffff40000000",
+        "ffffffff40800000",
+        "19",
+        "3",
+        "8000000a00006000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8",
+      "stats": {
+        "retired": 4000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 4000,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "compileQueue": {
+          "admitted": 0,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 0,
+          "queueHighWater": 0,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 0,
+          "deduped": 0,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 0,
+          "queueDepth": 0,
+          "queueHighWater": 0,
+          "candidates": 0,
+          "generation": 1
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 0,
+        "discoveryGeneration": 1,
+        "blockEntryHits": 0,
+        "blockBuilds": 0,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 64,
+          "capacity": 65536
+        }
+      }
+    },
+    {
+      "jit": true,
+      "statuses": [
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 256,
+          "kind": "max"
+        },
+        {
+          "retired": 160,
+          "kind": "max"
+        }
+      ],
+      "registers": [
+        "8000007c",
+        "0",
+        "2000",
+        "0",
+        "0",
+        "0",
+        "80002000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "2",
+        "fffffffffffffffe",
+        "ffffffffffffff00",
+        "ffffffffffffffff",
+        "9",
+        "0",
+        "ffffffff3fc00000",
+        "ffffffffbfc00000",
+        "ffffffff40000000",
+        "ffffffff40800000",
+        "19",
+        "3",
+        "8000000a00006000",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "digest": "dc6e4da35c08d6733ee59187153ded08bc05a28b97e119120f38f9301ccc08b8",
+      "stats": {
+        "retired": 4000,
+        "wfi": 0,
+        "exceptions": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "interrupts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "claims": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "storm": false,
+        "wfiReport": null
+      },
+      "jitStats": {
+        "hasExecutor": true,
+        "compiledBlocks": 4,
+        "executedBlocks": 31,
+        "retiredViaJit": 3605,
+        "directChainEntries": 717,
+        "directChainLinks": 686,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 1,
+        "dynamicLinkInstalls": 1,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 31,
+          "stateCopyCalls": 62,
+          "stateCopyBytes": 8624,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 1,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 4000,
+        "jitEngineCalls": 31,
+        "jitLogicalBlocksPerEngineCall": 23.129032258064516,
+        "jitRetiredShare": 0.90125,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 29,
+        "chainMaxDepth": 1,
+        "chainLinksFollowed": 3,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 4,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 2,
+        "jitCacheInstalls": 4,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 2,
+        "jitCacheCodeBytes": 142613,
+        "compileQueue": {
+          "admitted": 4,
+          "droppedBackpressure": 0,
+          "cancelledStale": 0,
+          "popped": 4,
+          "queueHighWater": 2,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 4,
+          "deduped": 57,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 6,
+          "queueDepth": 0,
+          "queueHighWater": 2,
+          "candidates": 0,
+          "generation": 3
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 57,
+        "blockBuilds": 10,
+        "admissionProbe": false,
+        "coldCounterRecycling": {
+          "enabled": false,
+          "epochs": "0",
+          "discardedCounters": "0",
+          "threshold": 1,
+          "capacity": 65536
+        }
+      }
+    }
+  ],
+  "suite": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "capability": "Float-to-word conversions1/1 passing · live in browser",
+  "suiteScreenshotSha256": "bc97a3c71c0704a54f960f49ab0adc79a7c15fad837d2d985c0ee879bdd5ab31",
+  "capabilityInspection": {
+    "description": "Legacy computed capability, container revealed for inspection only",
+    "sha256": "88acf8321b71971f6593cbf6aba0a19553941ea57caa3b1a3e3fcd584f12af0a"
+  },
+  "screenshotSha256": "c2c5ab68efa0cf59e98004eaa3630bcb5476e03fe7e4405ee4fc80f7c48dbf8e"
+}

@@ -14,12 +14,55 @@
 //! persistence of the overlay (IndexedDB/OPFS) is a later task; the overlay is in-memory for now.
 
 use std::cell::RefCell;
+use std::collections::BTreeSet;
 use std::rc::Rc;
 
 use wasm_vm_core::block::{BlockBackend, BlockError, SECTOR_SIZE, check_range};
 use wasm_vm_storage::{
-    BlockCache, ImageManifest, MemOverlay, OverlayBackend, OverlayDisk, OverlayOutcome,
+    BlockCache, ImageManifest, MemOverlay, OVERLAY_BLOCK, OverlayBackend, OverlayDelta,
+    OverlayDisk, OverlayOutcome,
 };
+
+/// Validation failures for the in-memory overlay shipped alongside a warm boot snapshot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum SeededOverlayError {
+    BaseMismatch,
+    ImageLengthMismatch,
+    BlockOutOfBounds { block: u64 },
+    DuplicateBlock { block: u64 },
+}
+
+/// Validate and materialize a parsed overlay delta without consulting or mutating the base cache.
+/// The resulting `MemOverlay` is still attached to the manifest by `ChunkedBackend::with_overlay`
+/// before it can serve any guest I/O.
+pub(crate) fn seeded_overlay(
+    manifest: &ImageManifest,
+    delta: &OverlayDelta,
+) -> Result<MemOverlay, SeededOverlayError> {
+    if delta.base_binding != manifest.base_hash() {
+        return Err(SeededOverlayError::BaseMismatch);
+    }
+    if delta.image_len != manifest.image_len {
+        return Err(SeededOverlayError::ImageLengthMismatch);
+    }
+
+    let index = manifest.index();
+    let mut seen = BTreeSet::new();
+    let mut overlay = MemOverlay::new(manifest);
+    for (block, bytes) in &delta.blocks {
+        let offset = block
+            .checked_mul(OVERLAY_BLOCK as u64)
+            .ok_or(SeededOverlayError::BlockOutOfBounds { block: *block })?;
+        index
+            .locate(offset)
+            .map_err(|_| SeededOverlayError::BlockOutOfBounds { block: *block })?;
+        if !seen.insert(*block) {
+            return Err(SeededOverlayError::DuplicateBlock { block: *block });
+        }
+        overlay.write_block(*block, *bytes);
+    }
+    Ok(overlay)
+}
 
 /// Identity + durability barrier for the one persistent WRITE allowed to wait for host commit.
 /// The virtio service stops consuming fresh chains while this exists, so matching sector/length is
@@ -69,13 +112,23 @@ impl ChunkedBackend<MemOverlay> {
     ) -> ChunkedBackend<MemOverlay> {
         let overlay = MemOverlay::new(manifest);
         // A fresh overlay is bound to exactly this manifest, so `attach` cannot fail here.
-        let disk = OverlayDisk::attach(overlay, manifest)
-            .expect("a fresh overlay binds to the manifest it was created from");
-        ChunkedBackend::from_disk(disk, store)
+        ChunkedBackend::with_overlay(overlay, manifest, store)
+            .expect("a fresh overlay binds to the manifest it was created from")
     }
 }
 
 impl<B: OverlayBackend> ChunkedBackend<B> {
+    /// Attach an already-populated overlay to its exact manifest and build the chunked backend.
+    /// `OverlayDisk::attach` remains the single base-binding check at this seam.
+    pub fn with_overlay(
+        overlay: B,
+        manifest: &ImageManifest,
+        store: Rc<RefCell<BlockCache>>,
+    ) -> Result<ChunkedBackend<B>, wasm_vm_storage::OverlayError> {
+        let disk = OverlayDisk::attach(overlay, manifest)?;
+        Ok(Self::from_disk(disk, store))
+    }
+
     /// Build over an already-attached [`OverlayDisk`] — the durable path passes an `OverlayDisk` over a
     /// `WriteBackOverlay` (loaded from IndexedDB, sharing a persist queue). Capacity is the whole-sector
     /// floor of the overlay's image length.
@@ -232,7 +285,7 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
 mod tests {
     use super::*;
     use sha2::{Digest, Sha256};
-    use wasm_vm_storage::{FORMAT_VERSION, ImageManifest, Layout};
+    use wasm_vm_storage::{FORMAT_VERSION, ImageManifest, Layout, OverlayDelta};
 
     fn sha_hex(bytes: &[u8]) -> String {
         let d = Sha256::digest(bytes);
@@ -278,6 +331,119 @@ mod tests {
     // 16 sectors = 8192 bytes; 4096-byte chunks so chunk `b` == overlay block `b` (2 of each).
     const NSEC: usize = 16;
     const CS: u32 = 4096;
+
+    #[test]
+    fn seeded_delta_blocks_read_without_resident_base_chunks() {
+        let (data, m, store, _) = setup(24, CS);
+        let delta = OverlayDelta {
+            image_len: m.image_len,
+            base_binding: m.base_hash(),
+            generation: 23,
+            blocks: vec![(0, [0xA1; OVERLAY_BLOCK]), (2, [0xC3; OVERLAY_BLOCK])],
+        };
+        let overlay = seeded_overlay(&m, &delta).unwrap();
+        let mut be = ChunkedBackend::with_overlay(overlay, &m, store).unwrap();
+        let mut buf = [0u8; SECTOR_SIZE];
+
+        // Seeded blocks are immediately readable even though no base chunk is resident.
+        be.read(0, &mut buf).unwrap();
+        assert_eq!(buf, [0xA1; SECTOR_SIZE]);
+        be.read(16, &mut buf).unwrap();
+        assert_eq!(buf, [0xC3; SECTOR_SIZE]);
+        // An unseeded block still follows the normal lazy-fetch contract.
+        assert_eq!(
+            be.read(8, &mut buf),
+            Err(BlockError::WouldBlock { chunk: 1 })
+        );
+        assert_eq!(data[0], 0, "fixture base remains the pristine image");
+    }
+
+    #[test]
+    fn seeded_delta_rejects_foreign_length_and_out_of_bounds_blocks() {
+        let (_data, m, _store, _) = setup(NSEC, CS);
+        let mut delta = OverlayDelta {
+            image_len: m.image_len,
+            base_binding: [0x7B; 32],
+            generation: 0,
+            blocks: Vec::new(),
+        };
+        assert!(matches!(
+            seeded_overlay(&m, &delta),
+            Err(SeededOverlayError::BaseMismatch)
+        ));
+
+        delta.base_binding = m.base_hash();
+        delta.image_len += 1;
+        assert!(matches!(
+            seeded_overlay(&m, &delta),
+            Err(SeededOverlayError::ImageLengthMismatch)
+        ));
+
+        delta.image_len = m.image_len;
+        let oob_block = NSEC as u64 / 8;
+        delta.blocks = vec![(oob_block, [0x44; OVERLAY_BLOCK])];
+        assert!(matches!(
+            seeded_overlay(&m, &delta),
+            Err(SeededOverlayError::BlockOutOfBounds { block }) if block == oob_block
+        ));
+    }
+
+    #[test]
+    fn seeded_delta_rejects_duplicate_blocks() {
+        let (_data, m, _store, _) = setup(NSEC, CS);
+        let delta = OverlayDelta {
+            image_len: m.image_len,
+            base_binding: m.base_hash(),
+            generation: 23,
+            blocks: vec![(0, [0x11; OVERLAY_BLOCK]), (0, [0x22; OVERLAY_BLOCK])],
+        };
+
+        assert!(matches!(
+            seeded_overlay(&m, &delta),
+            Err(SeededOverlayError::DuplicateBlock { block }) if block == 0
+        ));
+    }
+
+    #[test]
+    fn seeded_delta_rejects_block_index_multiplication_overflow() {
+        let (_data, m, _store, _) = setup(NSEC, CS);
+        let delta = OverlayDelta {
+            image_len: m.image_len,
+            base_binding: m.base_hash(),
+            generation: 23,
+            blocks: vec![(u64::MAX, [0x33; OVERLAY_BLOCK])],
+        };
+
+        assert!(matches!(
+            seeded_overlay(&m, &delta),
+            Err(SeededOverlayError::BlockOutOfBounds { block }) if block == u64::MAX
+        ));
+    }
+
+    #[test]
+    fn seeded_overlay_writes_are_isolated_from_the_base_cache() {
+        let (data, m, store, _) = setup(NSEC, CS);
+        give(&store, &m, &data, 0, CS as usize);
+        let delta = OverlayDelta {
+            image_len: m.image_len,
+            base_binding: m.base_hash(),
+            generation: 1,
+            blocks: vec![(0, [0xAA; OVERLAY_BLOCK])],
+        };
+        let overlay = seeded_overlay(&m, &delta).unwrap();
+        let mut be = ChunkedBackend::with_overlay(overlay, &m, store.clone()).unwrap();
+
+        let payload = [0x55; SECTOR_SIZE];
+        be.write(1, &payload).unwrap();
+        let mut buf = [0u8; SECTOR_SIZE];
+        be.read(0, &mut buf).unwrap();
+        assert_eq!(buf, [0xAA; SECTOR_SIZE]);
+        be.read(1, &mut buf).unwrap();
+        assert_eq!(buf, payload);
+
+        let cached_base = store.borrow().lookup(0).unwrap().to_vec();
+        assert_eq!(cached_base, data[..CS as usize]);
+    }
 
     #[test]
     fn absent_chunk_parks_then_resident_read_returns_bytes() {

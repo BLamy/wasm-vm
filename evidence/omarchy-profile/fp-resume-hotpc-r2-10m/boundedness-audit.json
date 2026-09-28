@@ -1,0 +1,25 @@
+{
+  "label": "boundedness-only audit for existing hot-PC recording; no rerun",
+  "created_unix": 1789010517.098701,
+  "source_path": "crates/cli/src/boot.rs",
+  "source_sha256": "def00109d1e7c9292641b74a42a0f16fd62d5cd753e640486359e4c19ec144f1",
+  "actual_spawn_provenance": "evidence/omarchy-profile/fp-resume-hotpc-r2-10m/actual-spawn-provenance.json",
+  "provenance_sha256": "c9ac5a6e42d93b556e872daca0e06cb9a5b7f4322bef82a9230dfb667960fe4c",
+  "command_path": "evidence/omarchy-profile/fp-resume-hotpc-r2-10m/command.txt",
+  "command_sha256": "de51b4a1b56478cc385885366167266e5b97ed244efd9dbaee3bfbf289d6c473",
+  "recording_summary_path": "evidence/omarchy-profile/fp-resume-hotpc-r2-10m/diagnostic-summary.json",
+  "recording_summary_sha256": "6d48862dd84d7ee6f6698d069e324ced33ce772c59d49d88e7ad3b27cb4f8478",
+  "recording_evidence_sha256": "656a5e109d053f26e6f7a262e9775172774857878999ce6e1d549465591e76cd",
+  "region_histogram": {
+    "cap": 65536,
+    "observed_distinct": 6055,
+    "dropped_records": 0,
+    "cap_approached": false
+  },
+  "pair_histogram": {
+    "cap": 65536,
+    "observed_distinct": 65536,
+    "dropped_records": 426862
+  },
+  "note": "Existing optimized 10M recording is reused unchanged because the new region cap was not approached. Primary FP/pair counts remain the recorded values; this artifact binds the boundedness-only source change to that exact recording and command."
+}

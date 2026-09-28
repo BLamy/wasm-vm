@@ -1,0 +1,8 @@
+{
+  "workerSummary": "evidence/omarchy-profile/prepared-recycling-input-r1/symbolized/cpu-summary.json",
+  "sha256": "c4e8fe4eabaf91f16e9152cbd9896cc5d203c15b735fe60665ce8756ecfd3545",
+  "independentSummaryMatchesExactly": true,
+  "all11NonCustomSectionsEqual": true,
+  "all1911NamesEqual": true,
+  "profileSha256": "064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9"
+}

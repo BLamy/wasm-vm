@@ -1,0 +1,3 @@
+error: invalid value '513' for '--keyboard-proof-burst-pairs <KEYBOARD_PROOF_BURST_PAIRS>': 513 is not in 1..=512
+
+For more information, try '--help'.

@@ -1,0 +1,59 @@
+{
+  "reportSha256": "6c220572738d7bcb6a7a03c184823a2dbf310dc1f0492a7f66a8262eb455425e",
+  "head": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "nonce": "7afe20eac1469355",
+  "readbackStartedAt": "2026-09-16T00:45:57.719Z",
+  "deadlineAt": "2026-09-16T00:47:57.719Z",
+  "deadlineDurationMs": 120000,
+  "typedTrustedEvents": 128,
+  "focusedCanvasEvents": 128,
+  "workerAcknowledgedKeyboardEvents": 128,
+  "independentReadbackCommands": 13,
+  "readbackExits": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+  ],
+  "pendingReadbackCommands": 1,
+  "nonceReadbackPassed": false,
+  "baselineImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "failureImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "sameImages": true,
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "closed": true,
+  "desktopResponsive": false,
+  "visualObservation": "Both viewed Foot images show only the original prompt and cursor; no typed command, nonce or response appears.",
+  "actualSettings": {
+    "hasExecutor": true,
+    "admissionProbe": false,
+    "coldCounterRecycling": {
+      "enabled": false,
+      "epochs": "0",
+      "discardedCounters": "0",
+      "threshold": 512,
+      "capacity": 65536
+    },
+    "decodedCacheEntries": 4096,
+    "jitResidencyPolicy": "repack-off",
+    "jitResidencyCap": 24
+  },
+  "actualClock": {
+    "mode": "icount",
+    "mtime": "1387662905",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "T03q": "remains gated"
+}

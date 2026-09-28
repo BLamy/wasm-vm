@@ -1,0 +1,12 @@
+{
+  "kind": "verifier-only timestamp assertion correction",
+  "initialAuditExit": 1,
+  "initialAssertion": "prepared screenshot timestamp == preparation visibleAt",
+  "observedScreenshotTimestamp": "2026-09-16T06:38:29.010Z",
+  "observedVisibleAt": "2026-09-16T06:38:29.011Z",
+  "differenceMs": 1,
+  "sourceReason": "Screenshot helper records its own timestamp before resolving; prepareDirectOpaqueDesktop samples Date.now again after awaiting screenshot. Equality is not a contract.",
+  "replacement": "baselineAt <= screenshot timestamp <= visibleAt < unchanged preparation deadline",
+  "acceptanceDeadlineChanged": false,
+  "workerSourceChanged": false
+}

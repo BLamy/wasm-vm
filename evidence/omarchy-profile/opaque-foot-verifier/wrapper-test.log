@@ -1,0 +1,41 @@
+{
+  "productEvidence": false,
+  "sourceSha256": "939d5ac6ca128eeeab18e86725722736633baae0d3a85ec22cbddf8714f6ee74",
+  "cases": [
+    {
+      "name": "negative",
+      "held": true,
+      "failedAsExpected": false,
+      "error": null,
+      "wroteExplicitNonAcceptance": true
+    },
+    {
+      "name": "synthetic-positive",
+      "held": true,
+      "failedAsExpected": false,
+      "error": null,
+      "wroteExplicitNonAcceptance": true
+    },
+    {
+      "name": "watchdog",
+      "held": true,
+      "failedAsExpected": true,
+      "error": "Error: opaque Foot trial did not close normally; UNPROVEN",
+      "wroteExplicitNonAcceptance": false
+    },
+    {
+      "name": "audit-error",
+      "held": true,
+      "failedAsExpected": true,
+      "error": "Error: synthetic raw audit rejection",
+      "wroteExplicitNonAcceptance": false
+    },
+    {
+      "name": "late-fence",
+      "held": true,
+      "failedAsExpected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt))\n",
+      "wroteExplicitNonAcceptance": false
+    }
+  ]
+}

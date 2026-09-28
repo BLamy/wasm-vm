@@ -1,0 +1,34 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=1151596 bytes @ 0x81a00000..0x81b1926c, dtb=2962 bytes @ 0x8fffb468, 256 MiB RAM
+
+=== E2-T25 boot profile ===
+phase              wall_ms   d_wall_ms   d_retired      phase_MIPS
+console-up            8980        8980   272989648           30.40
+init-handoff         11144        2164    35799767           16.54
+busybox-userland     12042         898    16598756           18.48
+total: 12042 ms, 325388171 retired, overall 27.02 MIPS
+
+per-device MMIO accesses:
+  clint                     0  (@ 0x2000000)
+  plic                    332  (@ 0xc000000)
+  goldfish-rtc              9  (@ 0x101000)
+  other                     0  (@ 0x100000)
+  uart16550              4330  (@ 0x10000000)
+  virtio-mmio               3  (@ 0x10001000)
+  virtio-mmio               3  (@ 0x10002000)
+  virtio-mmio               3  (@ 0x10003000)
+  virtio-mmio             153  (@ 0x10004000)
+  virtio-mmio               3  (@ 0x10005000)
+  virtio-mmio               3  (@ 0x10006000)
+  virtio-mmio              79  (@ 0x10007000)
+  virtio-mmio               3  (@ 0x10008000)
+  other                     3  (@ 0x10009000)
+
+PROFILE_JSON {"total_ms":12042,"total_retired":325388171,"overall_mips":27.02,"phases":[{"phase":"console-up","wall_ms":8980,"retired":272989648,"phase_mips":30.40},{"phase":"init-handoff","wall_ms":11144,"retired":308789415,"phase_mips":16.54},{"phase":"busybox-userland","wall_ms":12042,"retired":325388171,"phase_mips":18.48}],"devices":[{"device":"clint","base":"0x2000000","accesses":0},{"device":"plic","base":"0xc000000","accesses":332},{"device":"goldfish-rtc","base":"0x101000","accesses":9},{"device":"other","base":"0x100000","accesses":0},{"device":"uart16550","base":"0x10000000","accesses":4330},{"device":"virtio-mmio","base":"0x10001000","accesses":3},{"device":"virtio-mmio","base":"0x10002000","accesses":3},{"device":"virtio-mmio","base":"0x10003000","accesses":3},{"device":"virtio-mmio","base":"0x10004000","accesses":153},{"device":"virtio-mmio","base":"0x10005000","accesses":3},{"device":"virtio-mmio","base":"0x10006000","accesses":3},{"device":"virtio-mmio","base":"0x10007000","accesses":79},{"device":"virtio-mmio","base":"0x10008000","accesses":3},{"device":"other","base":"0x10009000","accesses":3}]}
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=3144  blocks_executed=30383973  retired_via_jit=301343870
+discovery: nominated=24161 deduped=1701790 excluded=315 dropped_stale=0 dropped_overflow=0 queue_hwm=1102
+chaining: links_made=12598 links_cut=10504 dispatch_entries=2197512 max_chain_depth=32 links_followed=30374857
+cache: modules=223 est_bytes=15435845 installs=17752 retranslations=9615 evictions=3640 flushes=0 generation=3642
+jit_pause: samples=4547 sum_ns=0 max_ns=0 over_target=0
+JIT_STATS_JSON {"blocks_compiled":3144,"blocks_executed":30383973,"retired_via_jit":301343870,"links_made":12598,"dispatch_entries":2197512,"installs":17752,"evictions":3640,"jit_pause_count":4547,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: profile complete (stopped at userland marker)

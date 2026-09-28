@@ -1,0 +1,371 @@
+{
+  "synthetic": true,
+  "noGuestOrBrowser": true,
+  "sourceSha256": "8565e75c7956a56ca51ab93fc70712c5e42f8ef0baa9e9606fca302cf67caa18",
+  "sourceStart": 942,
+  "substitutions": [
+    "import.meta.url -> fixed source URL only"
+  ],
+  "cases": [
+    {
+      "kind": "normal-negative",
+      "error": null,
+      "calls": [
+        [
+          "stat",
+          "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+        ],
+        [
+          "mkdir",
+          "/tmp/verifier-no-real-evidence",
+          {
+            "recursive": false
+          }
+        ],
+        [
+          "spawn",
+          "fixture-node",
+          [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          {
+            "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+            "env": {
+              "PATH": "fixture",
+              "KEEP": "yes",
+              "OMARCHY_CANDIDATE_PAIR_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot",
+              "OMARCHY_CANDIDATE_CHUNKS": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+              "OMARCHY_MODE_PAIR_OUTPUT_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+            },
+            "detached": true,
+            "stdio": [
+              "ignore",
+              "pipe",
+              "pipe",
+              "ipc"
+            ]
+          }
+        ],
+        "owned-watch"
+      ],
+      "saves": [
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.536Z"
+        },
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.536Z",
+          "args": [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          "exit": {
+            "closed": true,
+            "code": 1,
+            "signal": null,
+            "watchdog": null
+          },
+          "finishedAt": "2026-09-16T05:28:01.545Z"
+        },
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.536Z",
+          "args": [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          "exit": {
+            "closed": true,
+            "code": 1,
+            "signal": null,
+            "watchdog": null
+          },
+          "finishedAt": "2026-09-16T05:28:01.545Z",
+          "serial": [],
+          "result": "preparation-failed-input-untested",
+          "usablePair": false
+        }
+      ]
+    },
+    {
+      "kind": "watchdog",
+      "error": "Error: mode preparation did not close normally; no usable pair",
+      "calls": [
+        [
+          "stat",
+          "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+        ],
+        [
+          "mkdir",
+          "/tmp/verifier-no-real-evidence",
+          {
+            "recursive": false
+          }
+        ],
+        [
+          "spawn",
+          "fixture-node",
+          [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          {
+            "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+            "env": {
+              "PATH": "fixture",
+              "KEEP": "yes",
+              "OMARCHY_CANDIDATE_PAIR_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot",
+              "OMARCHY_CANDIDATE_CHUNKS": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+              "OMARCHY_MODE_PAIR_OUTPUT_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+            },
+            "detached": true,
+            "stdio": [
+              "ignore",
+              "pipe",
+              "pipe",
+              "ipc"
+            ]
+          }
+        ],
+        "owned-watch",
+        "unref",
+        "disconnect"
+      ],
+      "saves": [
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.548Z"
+        },
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.548Z",
+          "args": [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          "exit": {
+            "closed": true,
+            "code": 1,
+            "signal": null,
+            "watchdog": {
+              "phase": "synthetic-expiry"
+            }
+          },
+          "finishedAt": "2026-09-16T05:28:01.549Z"
+        }
+      ]
+    },
+    {
+      "kind": "unclosed",
+      "error": "Error: mode preparation did not close normally; no usable pair",
+      "calls": [
+        [
+          "stat",
+          "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+        ],
+        [
+          "mkdir",
+          "/tmp/verifier-no-real-evidence",
+          {
+            "recursive": false
+          }
+        ],
+        [
+          "spawn",
+          "fixture-node",
+          [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          {
+            "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+            "env": {
+              "PATH": "fixture",
+              "KEEP": "yes",
+              "OMARCHY_CANDIDATE_PAIR_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot",
+              "OMARCHY_CANDIDATE_CHUNKS": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+              "OMARCHY_MODE_PAIR_OUTPUT_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+            },
+            "detached": true,
+            "stdio": [
+              "ignore",
+              "pipe",
+              "pipe",
+              "ipc"
+            ]
+          }
+        ],
+        "owned-watch",
+        "unref",
+        "disconnect"
+      ],
+      "saves": [
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.549Z"
+        },
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.549Z",
+          "args": [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          "exit": {
+            "closed": false,
+            "code": 1,
+            "signal": null,
+            "watchdog": null
+          },
+          "finishedAt": "2026-09-16T05:28:01.550Z"
+        }
+      ]
+    },
+    {
+      "kind": "child-error",
+      "error": "Error: mode preparation did not close normally; no usable pair",
+      "calls": [
+        [
+          "stat",
+          "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+        ],
+        [
+          "mkdir",
+          "/tmp/verifier-no-real-evidence",
+          {
+            "recursive": false
+          }
+        ],
+        [
+          "spawn",
+          "fixture-node",
+          [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          {
+            "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+            "env": {
+              "PATH": "fixture",
+              "KEEP": "yes",
+              "OMARCHY_CANDIDATE_PAIR_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot",
+              "OMARCHY_CANDIDATE_CHUNKS": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k",
+              "OMARCHY_MODE_PAIR_OUTPUT_DIR": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+            },
+            "detached": true,
+            "stdio": [
+              "ignore",
+              "pipe",
+              "pipe",
+              "ipc"
+            ]
+          }
+        ],
+        "owned-watch",
+        "unref",
+        "disconnect"
+      ],
+      "saves": [
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.550Z"
+        },
+        {
+          "purpose": "offline-direct-opaque-preparation",
+          "keyboardAcceptance": false,
+          "pairDirectory": "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files",
+          "head": "synthetic-head",
+          "wasmSha256": "69601d539c3977f6b24207459ff5891b61d2c75afddb345da6b86947cb2e9ca5",
+          "startedAt": "2026-09-16T05:28:01.550Z",
+          "args": [
+            "tools/verify/omarchy-desktop-live.mjs",
+            "local",
+            "/tmp/verifier-no-real-evidence/desktop",
+            "direct-opaque-pair"
+          ],
+          "exit": {
+            "closed": true,
+            "code": 1,
+            "signal": null,
+            "watchdog": null,
+            "error": "synthetic child error"
+          },
+          "finishedAt": "2026-09-16T05:28:01.551Z"
+        }
+      ]
+    },
+    {
+      "kind": "wrong-private-path",
+      "error": "AssertionError [ERR_ASSERTION]: private pair must live under target/",
+      "calls": [],
+      "saves": []
+    },
+    {
+      "kind": "existing-pair",
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected rejection.",
+      "calls": [
+        [
+          "stat",
+          "/Users/blamy/Documents/Codex/wasm-vm/target/verifier-no-real-files"
+        ]
+      ],
+      "saves": []
+    },
+    {
+      "kind": "missing-argument",
+      "error": "AssertionError [ERR_ASSERTION]: usage: omarchy-prepare-direct-opaque.mjs NEW_EVIDENCE_DIR NEW_PAIR_DIR",
+      "calls": [],
+      "saves": []
+    }
+  ]
+}

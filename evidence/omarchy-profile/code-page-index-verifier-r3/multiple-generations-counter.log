@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/ba-r2-counter-verifier`
+actual core public invalidation_stats=(2, 4)

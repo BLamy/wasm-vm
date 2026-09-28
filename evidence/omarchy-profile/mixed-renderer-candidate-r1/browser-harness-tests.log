@@ -1,0 +1,34 @@
+✔ generator binds chunkedImage to pretty JSON raw bytes, not canonical identity (229.07975ms)
+✔ generator rejects a mixed RAM/delta pair before rewriting output (327.731208ms)
+✔ prewarm sync proof rejects cross-TTY marker evidence (1.436083ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.476917ms)
+✔ post-marker presentation helper rejects typing frames (290.082333ms)
+✔ candidate diagnostic binds its actual manifest to an immutable alias (409.922ms)
+✔ jit residency flag is strict and exposes only existing A/B policies (505.724541ms)
+✔ jit residency is recorded in the served URL and source receipt (0.23525ms)
+✔ decoded cache entries are strict and forwarded through Omarchy query options (535.697417ms)
+✔ jit threshold is strict and forwarded through the existing query control (679.315584ms)
+✔ diagnostic profiler and clock controls remain capability-gated (0.301625ms)
+✔ diagnostic stats expose the read-only keyboard device counters (2.02975ms)
+✔ diagnostic exec is subshell-wrapped and failures are retained in history (0.209292ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (6.905542ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (5.982792ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (1.603417ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (3.97025ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (1.723334ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (1.400583ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (3.024625ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (1.166458ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (1.111791ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (2.518875ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (3.244167ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.909292ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.660625ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2201.565916

@@ -1,0 +1,10 @@
+{
+  "head": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46",
+  "sourceFiles": 52,
+  "builtArtifacts": 6,
+  "unchangedRecorderFiles": 24,
+  "changedCrateFiles": [
+    "crates/wasm/src/jit_browser.rs",
+    "crates/wasm/tests/jit_fp_direct_imports_verifier.rs"
+  ]
+}

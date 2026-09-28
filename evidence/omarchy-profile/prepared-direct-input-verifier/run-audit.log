@@ -1,0 +1,83 @@
+{
+  "head": "9cc377180921be98f904c3689a1d7c48b9df3947",
+  "reportSha256": "0d4f8f50d2d9e940ce098f744202bcff49ae3c1048b39d692231d1d2c7fa38ea",
+  "configured": true,
+  "properties": [
+    "true",
+    "true",
+    "1",
+    "1",
+    "1",
+    "true",
+    "true",
+    "true",
+    "{",
+    "\"address\": \"0x55555eb73630\",",
+    "\"mapped\": true,",
+    "\"hidden\": false,",
+    "\"visible\": true,",
+    "\"acceptsInput\": true,",
+    "\"at\": [12, 38],",
+    "\"size\": [1256, 750],",
+    "\"workspace\": {",
+    "\"id\": 1,",
+    "\"name\": \"1\"",
+    "},",
+    "\"floating\": false,",
+    "\"monitor\": 0,",
+    "\"class\": \"foot\",",
+    "\"title\": \"omarchy@omarchy-demo:~\",",
+    "\"initialClass\": \"foot\",",
+    "\"initialTitle\": \"foot\",",
+    "\"pid\": 503,",
+    "\"xwayland\": false,",
+    "\"pinned\": false,",
+    "\"pinFullscreened\": false,",
+    "\"fullscreen\": 0,",
+    "\"fullscreenClient\": 0,",
+    "\"fullscreenHandler\": \"default\",",
+    "\"allowedOverFullscreen\": true,",
+    "\"grouped\": [],",
+    "\"tags\": [\"default-opacity*\", \"terminal*\"],",
+    "\"swallowing\": \"0x0\",",
+    "\"focusHistoryID\": 0,",
+    "\"inhibitingIdle\": false,",
+    "\"xdgTag\": \"\",",
+    "\"xdgDescription\": \"\",",
+    "\"contentType\": \"none\",",
+    "\"tearingHint\": false,",
+    "\"stableId\": \"18000000\"",
+    "}"
+  ],
+  "result": "failed",
+  "outcome": "nonce-readback-failed",
+  "keyEvents": 128,
+  "nonceReplies": 0,
+  "images": [
+    {
+      "file": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/latest.png",
+      "size": 17275,
+      "sha256": "d8a2dcbf1c925154e70693c62421487299613348a1558cca9bac6ddbabb8fc41",
+      "capturedAt": "2026-09-16T07:12:03.068Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/desktop.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T07:12:33.140Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/prepared-direct.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T07:12:40.474Z"
+    },
+    {
+      "file": "evidence/omarchy-profile/prepared-direct-input-r1/desktop/failure.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "capturedAt": "2026-09-16T07:14:43.257Z"
+    }
+  ],
+  "cleanupElapsedMs": 173
+}

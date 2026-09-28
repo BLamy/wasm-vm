@@ -1,0 +1,43 @@
+✔ cold then warm boot loads once and reuses verified bytes (16.255166ms)
+✔ a URL change with the same hash is a cache hit, while a different hash misses (1.545208ms)
+✔ a tampered cached entry is evicted exactly and refetched with HTTP cache reload (1.363917ms)
+✔ a corrupt network response is rejected and never cached (0.594209ms)
+✔ non-200 and opaque network responses are rejected without a cache write (0.317ms)
+✔ missing and quota-failing storage gracefully fall back to network (0.8065ms)
+✔ network and cached streams reject overflow and truncation (0.870792ms)
+✔ invalid descriptors are rejected before fetch (0.792791ms)
+✔ concurrent same-hash requests do not share buffers or weaken size validation (0.386583ms)
+✔ a throwing default caches property reports unavailable and still fetches (0.422708ms)
+✔ critic: real IDE listeners keep startup phases and terminal readiness sticky (1130.562334ms)
+✔ critic: randomized chunk boundaries preserve exact hash/size enforcement (16.9865ms)
+✔ critic: stale release hash cannot satisfy a new descriptor (1.848584ms)
+✔ critic: every storage failure keeps network verification and honest provenance (1.034709ms)
+✔ critic: failed corrupt-key deletion cannot bypass refetch verification (1.629125ms)
+✔ critic: queued stale timer callbacks cannot regress terminal lifecycle state (0.215875ms)
+✔ critic: done is terminal against pending waits and late ready until reboot (0.081292ms)
+✔ critic: malformed progress cannot present a completed transfer bar (0.258ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (2.932042ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (1.547125ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.709167ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (1.319875ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.467208ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.384208ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (0.84675ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.701583ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.553792ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.099333ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (1.9735ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.400167ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.334083ms)
+✔ progress labels are human-friendly and unpacking never exposes a stale bar (0.928416ms)
+✔ guest-response feedback is bounded and cancelled by lifecycle edges (0.24125ms)
+✔ desktop readiness is sticky against later generic lifecycle traffic until a new boot (0.10325ms)
+✔ terminal events reject late readiness and progress until a new boot (0.54425ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1276.193333

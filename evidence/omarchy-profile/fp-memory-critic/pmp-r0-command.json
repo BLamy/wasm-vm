@@ -1,0 +1,13 @@
+{
+  "kind": "pre-frozen narrow PMP falsification",
+  "time": "2026-09-15T19:13:09.749420+00:00",
+  "head": "9a9639545842c840322a82deb79874c9960ce492",
+  "sha256": {
+    "crates/jit-translate/src/lib.rs": "55478865657306316de9ad8193a473ff8a4326d7bafc4c7a9fb6d93acc5ddeea",
+    "crates/core/src/hart/mod.rs": "afd114e3ba7968d8ee9efffa807d2cd8fedc8848ce5f8a9db312d46dfbd7d21c",
+    "crates/wasm/src/jit_browser.rs": "2161130897b37eba0f3c32dfcc9117c091a6982e000fe62425ec7d457a027412",
+    "crates/wasm/tests/jit_fp_memory_critic.rs": "66a4e011098101326b41bf86514a09796b750d44f940f41eefe3a16151723a52"
+  },
+  "command": "DEVELOPER_DIR=/Library/Developer/CommandLineTools wasm-pack test --node crates/wasm --test jit_fp_memory_critic -- --nocapture",
+  "expected": "second adjacent word raises LoadAccessFault or StoreAccessFault, tval=0x80004004, PC=0x40002004, retired=1; FP load/store and inherited integer controls"
+}

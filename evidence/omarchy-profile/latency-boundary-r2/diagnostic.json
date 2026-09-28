@@ -1,0 +1,3260 @@
+[
+  {
+    "time": "2026-09-14T03:15:02.801Z",
+    "event": "ready",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    }
+  },
+  {
+    "time": "2026-09-14T03:15:57.101Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 255,
+        "completed": 255,
+        "pending": 0,
+        "averageMs": 60.68145098499223,
+        "maxMs": 369.9100000858307
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1344898082",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 569,
+        "totalSliceMs": 54893.60999917984,
+        "averageSliceMs": 96.47383128151114,
+        "maxSliceMs": 470.3949999809265,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 1
+          },
+          {
+            "leMs": 32,
+            "count": 8
+          },
+          {
+            "leMs": 64,
+            "count": 154
+          },
+          {
+            "leMs": 128,
+            "count": 243
+          },
+          {
+            "leMs": 256,
+            "count": 160
+          },
+          {
+            "leMs": 512,
+            "count": 3
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 473.69999980926514,
+        "requestedInstructions": 284500000,
+        "retiredInstructions": 284487652,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 16,
+        "outputBytes": 2019,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 570,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 129,
+        "executedBlocks": 3572565,
+        "retiredViaJit": 82897572,
+        "directChainEntries": 11235853,
+        "directChainLinks": 7663308,
+        "dynamicLinkAttempts": 2921723,
+        "dynamicLinkHits": 2161997,
+        "dynamicLinkRefusals": 759726,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 89572,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 3572565,
+          "stateCopyCalls": 7145130,
+          "stateCopyBytes": 718518584,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 4500286,
+          "authorityChecks": 7678007,
+          "memorySplitExits": 57685,
+          "deviceBoundaries": 28471,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 284987652,
+        "jitEngineCalls": 3572565,
+        "jitLogicalBlocksPerEngineCall": 3.1450380888801184,
+        "jitRetiredShare": 0.29088127649825335,
+        "chainLinksMade": 796,
+        "chainLinksCut": 770,
+        "chainDispatchEntries": 2154962,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 3121636,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 2934,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 578,
+        "jitCacheInstalls": 2790,
+        "jitCacheRetranslations": 1894,
+        "jitCacheEvictions": 532,
+        "jitCacheBatches": 23,
+        "jitCacheCodeBytes": 1788962,
+        "compileQueue": {
+          "admitted": 9949,
+          "droppedBackpressure": 13783,
+          "cancelledStale": 0,
+          "popped": 4560,
+          "queueHighWater": 256,
+          "queueDepth": 239,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 18582,
+          "deduped": 10600780,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 96,
+          "queueDepth": 0,
+          "queueHighWater": 496,
+          "candidates": 46450,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 20976168,
+        "blockBuilds": 2154207
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:15:57.795Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "before-input.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/before-input.png"
+  },
+  {
+    "time": "2026-09-14T03:15:57.947Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "type",
+      "text": "x",
+      "delay": 100
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-14T03:15:58.366Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 268,
+        "completed": 268,
+        "pending": 0,
+        "averageMs": 60.487089556544575,
+        "maxMs": 369.9100000858307
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1345007455",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 583,
+        "totalSliceMs": 56134.13499879837,
+        "averageSliceMs": 96.28496569262155,
+        "maxSliceMs": 470.3949999809265,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 1
+          },
+          {
+            "leMs": 32,
+            "count": 8
+          },
+          {
+            "leMs": 64,
+            "count": 155
+          },
+          {
+            "leMs": 128,
+            "count": 255
+          },
+          {
+            "leMs": 256,
+            "count": 161
+          },
+          {
+            "leMs": 512,
+            "count": 3
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 473.69999980926514,
+        "requestedInstructions": 291500000,
+        "retiredInstructions": 291487572,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 16,
+        "outputBytes": 2019,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 584,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 135,
+        "executedBlocks": 3713824,
+        "retiredViaJit": 86456364,
+        "directChainEntries": 11808589,
+        "directChainLinks": 8094785,
+        "dynamicLinkAttempts": 2931992,
+        "dynamicLinkHits": 2167396,
+        "dynamicLinkRefusals": 764596,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 90688,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 3713824,
+          "stateCopyCalls": 7427648,
+          "stateCopyBytes": 740750336,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 4690796,
+          "authorityChecks": 8001197,
+          "memorySplitExits": 57706,
+          "deviceBoundaries": 28471,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 291987564,
+        "jitEngineCalls": 3713824,
+        "jitLogicalBlocksPerEngineCall": 3.1796307525612413,
+        "jitRetiredShare": 0.2960960488029552,
+        "chainLinksMade": 846,
+        "chainLinksCut": 815,
+        "chainDispatchEntries": 2215760,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 3255686,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 3020,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 592,
+        "jitCacheInstalls": 2876,
+        "jitCacheRetranslations": 1940,
+        "jitCacheEvictions": 546,
+        "jitCacheBatches": 23,
+        "jitCacheCodeBytes": 2083847,
+        "compileQueue": {
+          "admitted": 10112,
+          "droppedBackpressure": 13840,
+          "cancelledStale": 0,
+          "popped": 4672,
+          "queueHighWater": 256,
+          "queueDepth": 248,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 18773,
+          "deduped": 10772336,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 0,
+          "excluded": 96,
+          "queueDepth": 13,
+          "queueHighWater": 496,
+          "candidates": 46804,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 21257080,
+        "blockBuilds": 2181354
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:15:58.548Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "after-input-immediate.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/after-input-immediate.png"
+  },
+  {
+    "time": "2026-09-14T03:18:18.750Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 928,
+        "completed": 928,
+        "pending": 0,
+        "averageMs": 42.957683188391144,
+        "maxMs": 369.9100000858307
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1361757433",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 2727,
+        "totalSliceMs": 195996.28999710083,
+        "averageSliceMs": 71.87249358162846,
+        "maxSliceMs": 470.3949999809265,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 1
+          },
+          {
+            "leMs": 32,
+            "count": 8
+          },
+          {
+            "leMs": 64,
+            "count": 1464
+          },
+          {
+            "leMs": 128,
+            "count": 1057
+          },
+          {
+            "leMs": 256,
+            "count": 194
+          },
+          {
+            "leMs": 512,
+            "count": 3
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 473.69999980926514,
+        "requestedInstructions": 1363500000,
+        "retiredInstructions": 1363486133,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 16,
+        "outputBytes": 2019,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 2728,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 80,
+        "executedBlocks": 10540762,
+        "retiredViaJit": 585580984,
+        "directChainEntries": 23888383,
+        "directChainLinks": 13347794,
+        "dynamicLinkAttempts": 3086622,
+        "dynamicLinkHits": 2182090,
+        "dynamicLinkRefusals": 904532,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 11,
+        "dynamicLinkInstalls": 97563,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 10540762,
+          "stateCopyCalls": 21081524,
+          "stateCopyBytes": 2507168160,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 6461771,
+          "authorityChecks": 14602388,
+          "memorySplitExits": 59051,
+          "deviceBoundaries": 28490,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 1363986133,
+        "jitEngineCalls": 10540762,
+        "jitLogicalBlocksPerEngineCall": 2.2662861565416237,
+        "jitRetiredShare": 0.429315936454612,
+        "chainLinksMade": 1999,
+        "chainLinksCut": 1976,
+        "chainDispatchEntries": 7044740,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 8432309,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 7611,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 2644,
+        "jitCacheInstalls": 6829,
+        "jitCacheRetranslations": 5018,
+        "jitCacheEvictions": 2429,
+        "jitCacheBatches": 20,
+        "jitCacheCodeBytes": 2346693,
+        "compileQueue": {
+          "admitted": 15533,
+          "droppedBackpressure": 14077,
+          "cancelledStale": 0,
+          "popped": 10193,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 24270,
+          "deduped": 37679317,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 666760,
+          "excluded": 104,
+          "queueDepth": 0,
+          "queueHighWater": 496,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 50671728,
+        "blockBuilds": 4234916
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:18:19.009Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "after-input-window.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/after-input-window.png"
+  },
+  {
+    "time": "2026-09-14T03:18:19.416Z",
+    "event": "process-sample-rpc-before-submit",
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        },
+        {
+          "pid": 503
+        },
+        {
+          "pid": 504
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "startedAt": "2026-09-14T03:18:19.416Z",
+    "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "timeoutMs": 299747
+  },
+  {
+    "time": "2026-09-14T03:19:09.217Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        },
+        {
+          "pid": 503
+        },
+        {
+          "pid": 504
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "actualCommand": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "result": {
+      "status": "sampled",
+      "startedAt": "2026-09-14T03:18:19.163Z",
+      "startedMs": 1789355899163,
+      "timeoutMs": 300000,
+      "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            417,
+            462
+          ]
+        },
+        {
+          "pid": 503,
+          "tids": [
+            503
+          ]
+        },
+        {
+          "pid": 504,
+          "tids": [
+            504
+          ]
+        }
+      ],
+      "limitation": "Read-only sequential proc/host observations; no input-consumption or active-PC proof.",
+      "before": {
+        "startedAt": "2026-09-14T03:18:19.164Z",
+        "completedAt": "2026-09-14T03:18:19.416Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 935,
+            "completed": 935,
+            "pending": 0,
+            "averageMs": 43.03308556067115,
+            "maxMs": 369.9100000858307
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 1,
+            "successfulPresents": 1,
+            "drawnPresents": 1,
+            "drawnBytes": 4096000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 1,
+              "enqueued": 1,
+              "coalesced": 0,
+              "presented": 1,
+              "successfulPresents": 1,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 4096000,
+              "drawnPresents": 1,
+              "drawnBytes": 4096000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 832
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1361819933",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 2735,
+            "totalSliceMs": 196648.39499688148,
+            "averageSliceMs": 71.90069286906088,
+            "maxSliceMs": 470.3949999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 0
+              },
+              {
+                "leMs": 16,
+                "count": 1
+              },
+              {
+                "leMs": 32,
+                "count": 8
+              },
+              {
+                "leMs": 64,
+                "count": 1466
+              },
+              {
+                "leMs": 128,
+                "count": 1062
+              },
+              {
+                "leMs": 256,
+                "count": 195
+              },
+              {
+                "leMs": 512,
+                "count": 3
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 473.69999980926514,
+            "requestedInstructions": 1367500000,
+            "retiredInstructions": 1367486131,
+            "fetchWaits": 0,
+            "fetchRequestedChunks": 0,
+            "fetchWaitTotalMs": 0,
+            "fetchWaitMaxMs": 0,
+            "outputCalls": 16,
+            "outputBytes": 2019,
+            "inputCalls": 3,
+            "inputBytes": 218,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 2736,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 75,
+            "executedBlocks": 10567567,
+            "retiredViaJit": 587609567,
+            "directChainEntries": 23936494,
+            "directChainLinks": 13369101,
+            "dynamicLinkAttempts": 3087126,
+            "dynamicLinkHits": 2182090,
+            "dynamicLinkRefusals": 905036,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 97578,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 10567567,
+              "stateCopyCalls": 21135134,
+              "stateCopyBytes": 2514325800,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 6473166,
+              "authorityChecks": 14630830,
+              "memorySplitExits": 59051,
+              "deviceBoundaries": 28490,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1367986130,
+            "jitEngineCalls": 10567567,
+            "jitLogicalBlocksPerEngineCall": 2.2650903467184076,
+            "jitRetiredShare": 0.4295435122576864,
+            "chainLinksMade": 1999,
+            "chainLinksCut": 1982,
+            "chainDispatchEntries": 7064973,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 8451874,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 7618,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 2650,
+            "jitCacheInstalls": 6836,
+            "jitCacheRetranslations": 5025,
+            "jitCacheEvictions": 2436,
+            "jitCacheBatches": 18,
+            "jitCacheCodeBytes": 2128950,
+            "compileQueue": {
+              "admitted": 15541,
+              "droppedBackpressure": 14077,
+              "cancelledStale": 0,
+              "popped": 10201,
+              "queueHighWater": 256,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 24278,
+              "deduped": 37778622,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 671042,
+              "excluded": 104,
+              "queueDepth": 0,
+              "queueHighWater": 496,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 50772020,
+            "blockBuilds": 4243422
+          }
+        }
+      },
+      "rpc": {
+        "startedAt": "2026-09-14T03:18:19.416Z",
+        "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+        "submittedAt": "2026-09-14T03:18:19.417Z",
+        "timeoutMs": 299746,
+        "raw": {
+          "stdout": "WVMPS boot-before\n450d9a5f-1fc8-440a-9d2a-21bff69195d1\nWVMPS_END 0\nWVMPS uptime-before\n136.44 0.97\nWVMPS_END 0\nWVMPS clock-ticks\n100\nWVMPS_END 0\nWVMPS leader-417-before\n417 (Hyprland) S 367 367 367 0 -1 4194304 60484 5338 1018 0 6349 94 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 0 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-417-stat-before\n417 (Hyprland) S 367 367 367 0 -1 4194304 53409 5338 1014 0 1784 88 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-417-schedstat\n-bash: /proc/417/task/417/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-wchan\nfutex_wait_queue\nWVMPS_END 0\nWVMPS task-417-417-stat-after\n417 (Hyprland) S 367 367 367 0 -1 4194304 53409 5338 1014 0 1784 88 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-462-stat-before\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 4552 3 16 5 20 0 13 0 3695 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-462-schedstat\n-bash: /proc/417/task/462/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-wchan\n0\nWVMPS_END 0\nWVMPS task-417-462-stat-after\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 4552 3 16 5 20 0 13 0 3695 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS leader-417-after\n417 (Hyprland) S 367 367 367 0 -1 4194304 60484 5338 1018 0 6349 94 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 0 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS leader-503-before\n503 (foot) S 417 367 367 0 -1 4194304 6646 1844 58 2 50 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS task-503-503-stat-before\n503 (foot) S 417 367 367 0 -1 4194304 5988 1844 49 2 40 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS task-503-503-schedstat\n-bash: /proc/503/task/503/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-503-503-wchan\ndo_epoll_wait\nWVMPS_END 0\nWVMPS task-503-503-stat-after\n503 (foot) S 417 367 367 0 -1 4194304 5988 1844 49 2 40 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS leader-503-after\n503 (foot) S 417 367 367 0 -1 4194304 6646 1844 58 2 50 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS leader-504-before\n504 (quickshell) S 502 367 367 0 -1 4194304 16398 134124 674 191 921 52 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 0 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS task-504-504-stat-before\n504 (quickshell) S 502 367 367 0 -1 4194304 11696 134124 434 191 279 34 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 1 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS task-504-504-schedstat\n-bash: /proc/504/task/504/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-504-504-wchan\npoll_schedule_timeout.constprop.0\nWVMPS_END 0\nWVMPS task-504-504-stat-after\n504 (quickshell) S 502 367 367 0 -1 4194304 11696 134124 434 191 279 34 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 1 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS leader-504-after\n504 (quickshell) S 502 367 367 0 -1 4194304 16398 134124 674 191 921 52 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 0 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS uptime-after\n136.51 0.97\nWVMPS_END 0\nWVMPS boot-after\n450d9a5f-1fc8-440a-9d2a-21bff69195d1\nWVMPS_END 0\n\n",
+          "exit": 0
+        },
+        "completedAt": "2026-09-14T03:19:08.905Z"
+      },
+      "after": {
+        "startedAt": "2026-09-14T03:19:08.905Z",
+        "completedAt": "2026-09-14T03:19:09.210Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 1157,
+            "completed": 1157,
+            "pending": 0,
+            "averageMs": 45.87043647428165,
+            "maxMs": 369.9100000858307
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 2,
+            "successfulPresents": 2,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 2,
+              "enqueued": 2,
+              "coalesced": 0,
+              "presented": 2,
+              "successfulPresents": 2,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 8192000,
+              "drawnPresents": 2,
+              "drawnBytes": 8192000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1365780678",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 3242,
+            "totalSliceMs": 246282.68499302864,
+            "averageSliceMs": 75.96628161413592,
+            "maxSliceMs": 470.3949999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 0
+              },
+              {
+                "leMs": 16,
+                "count": 3
+              },
+              {
+                "leMs": 32,
+                "count": 8
+              },
+              {
+                "leMs": 64,
+                "count": 1570
+              },
+              {
+                "leMs": 128,
+                "count": 1341
+              },
+              {
+                "leMs": 256,
+                "count": 316
+              },
+              {
+                "leMs": 512,
+                "count": 4
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 473.69999980926514,
+            "requestedInstructions": 1621000000,
+            "retiredInstructions": 1620973821,
+            "fetchWaits": 1,
+            "fetchRequestedChunks": 1,
+            "fetchWaitTotalMs": 14.875,
+            "fetchWaitMaxMs": 14.875,
+            "outputCalls": 95,
+            "outputBytes": 14124,
+            "inputCalls": 4,
+            "inputBytes": 2129,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 3243,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 119,
+            "executedBlocks": 13438630,
+            "retiredViaJit": 663714311,
+            "directChainEntries": 31339022,
+            "directChainLinks": 17900591,
+            "dynamicLinkAttempts": 4846542,
+            "dynamicLinkHits": 3251904,
+            "dynamicLinkRefusals": 1594638,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 1,
+            "dynamicLinkInstalls": 294395,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 13438630,
+              "stateCopyCalls": 26877260,
+              "stateCopyBytes": 3107576928,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 9224635,
+              "authorityChecks": 19726061,
+              "memorySplitExits": 147310,
+              "deviceBoundaries": 56831,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1621473815,
+            "jitEngineCalls": 13438630,
+            "jitLogicalBlocksPerEngineCall": 2.332010182585576,
+            "jitRetiredShare": 0.40932780095496024,
+            "chainLinksMade": 2655,
+            "chainLinksCut": 2633,
+            "chainDispatchEntries": 8918651,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 11065801,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 9976,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 3224,
+            "jitCacheInstalls": 9167,
+            "jitCacheRetranslations": 6873,
+            "jitCacheEvictions": 2975,
+            "jitCacheBatches": 24,
+            "jitCacheCodeBytes": 1961954,
+            "compileQueue": {
+              "admitted": 23157,
+              "droppedBackpressure": 23629,
+              "cancelledStale": 0,
+              "popped": 13791,
+              "queueHighWater": 256,
+              "queueDepth": 240,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 37669,
+              "deduped": 46259831,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 2462933,
+              "excluded": 145,
+              "queueDepth": 9,
+              "queueHighWater": 496,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 66898052,
+            "blockBuilds": 5807700
+          }
+        }
+      },
+      "process": {
+        "bootId": "450d9a5f-1fc8-440a-9d2a-21bff69195d1",
+        "clockTicks": "100",
+        "uptimeBefore": "136.44",
+        "uptimeAfter": "136.51",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1784",
+              "stime": "88",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1784",
+              "stime": "88",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "futex_wait_queue",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-417-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4552",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4552",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-462-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "leaderStarttime": "3846",
+            "statBefore": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "40",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "40",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "do_epoll_wait",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-503-503-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "leaderStarttime": "3872",
+            "statBefore": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "poll_schedule_timeout.constprop.0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-504-504-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          }
+        ]
+      },
+      "finishedMs": 1789355949216,
+      "finishedAt": "2026-09-14T03:19:09.216Z",
+      "elapsedMs": 50053,
+      "deltas": {
+        "available": false,
+        "reason": "no consecutive successful samples"
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:24:13.318Z",
+    "event": "process-sample-rpc-before-submit",
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        },
+        {
+          "pid": 503
+        },
+        {
+          "pid": 504
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "startedAt": "2026-09-14T03:24:13.318Z",
+    "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "timeoutMs": 299602
+  },
+  {
+    "time": "2026-09-14T03:24:48.278Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "process-sample",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            462
+          ]
+        },
+        {
+          "pid": 503
+        },
+        {
+          "pid": 504
+        }
+      ],
+      "timeoutMs": 300000
+    },
+    "actualCommand": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+    "result": {
+      "status": "sampled",
+      "startedAt": "2026-09-14T03:24:12.920Z",
+      "startedMs": 1789356252920,
+      "timeoutMs": 300000,
+      "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+      "targets": [
+        {
+          "pid": 417,
+          "tids": [
+            417,
+            462
+          ]
+        },
+        {
+          "pid": 503,
+          "tids": [
+            503
+          ]
+        },
+        {
+          "pid": 504,
+          "tids": [
+            504
+          ]
+        }
+      ],
+      "limitation": "Read-only sequential proc/host observations; no input-consumption or active-PC proof.",
+      "before": {
+        "startedAt": "2026-09-14T03:24:12.920Z",
+        "completedAt": "2026-09-14T03:24:13.318Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 2566,
+            "completed": 2565,
+            "pending": 1,
+            "averageMs": 42.635654971845895,
+            "maxMs": 369.9100000858307
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 3,
+            "drawnPresents": 3,
+            "drawnBytes": 12288000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 12288000,
+              "drawnPresents": 3,
+              "drawnBytes": 12288000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1398374371",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 7414,
+            "totalSliceMs": 548663.4249937534,
+            "averageSliceMs": 74.00369908197376,
+            "maxSliceMs": 470.3949999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 0
+              },
+              {
+                "leMs": 16,
+                "count": 4
+              },
+              {
+                "leMs": 32,
+                "count": 8
+              },
+              {
+                "leMs": 64,
+                "count": 3170
+              },
+              {
+                "leMs": 128,
+                "count": 3810
+              },
+              {
+                "leMs": 256,
+                "count": 415
+              },
+              {
+                "leMs": 512,
+                "count": 7
+              },
+              {
+                "leMs": 1000,
+                "count": 0
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 473.69999980926514,
+            "requestedInstructions": 3707000000,
+            "retiredInstructions": 3706970148,
+            "fetchWaits": 1,
+            "fetchRequestedChunks": 1,
+            "fetchWaitTotalMs": 14.875,
+            "fetchWaitMaxMs": 14.875,
+            "outputCalls": 97,
+            "outputBytes": 14385,
+            "inputCalls": 4,
+            "inputBytes": 2129,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 7415,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 33,
+            "executedBlocks": 24750937,
+            "retiredViaJit": 1429550762,
+            "directChainEntries": 47032472,
+            "directChainLinks": 22281960,
+            "dynamicLinkAttempts": 5504363,
+            "dynamicLinkHits": 3609840,
+            "dynamicLinkRefusals": 1894523,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 11,
+            "dynamicLinkInstalls": 306755,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 24750937,
+              "stateCopyCalls": 49501874,
+              "stateCopyBytes": 6144554312,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 12442861,
+              "authorityChecks": 31612814,
+              "memorySplitExits": 165428,
+              "deviceBoundaries": 62767,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 3707470148,
+            "jitEngineCalls": 24750937,
+            "jitLogicalBlocksPerEngineCall": 1.9002299589708462,
+            "jitRetiredShare": 0.38558658733130274,
+            "chainLinksMade": 7522,
+            "chainLinksCut": 7517,
+            "chainDispatchEntries": 17079684,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 20367603,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 22586,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 12520,
+            "jitCacheInstalls": 21700,
+            "jitCacheRetranslations": 19016,
+            "jitCacheEvictions": 12117,
+            "jitCacheBatches": 21,
+            "jitCacheCodeBytes": 1925871,
+            "compileQueue": {
+              "admitted": 37734,
+              "droppedBackpressure": 25677,
+              "cancelledStale": 0,
+              "popped": 27722,
+              "queueHighWater": 256,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 53399,
+              "deduped": 101692515,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 8130023,
+              "excluded": 153,
+              "queueDepth": 0,
+              "queueHighWater": 496,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 133506826,
+            "blockBuilds": 9718021
+          }
+        }
+      },
+      "rpc": {
+        "startedAt": "2026-09-14T03:24:13.318Z",
+        "command": "(\nwv_ps_read() {\n  printf 'WVMPS %s\\n' \"$1\"\n  if { while IFS= read -r wv_ps_line || [ -n \"$wv_ps_line\" ]; do printf '%s\\n' \"$wv_ps_line\"; done; } < \"$2\" 2>/dev/null; then\n    printf 'WVMPS_END 0\\n'\n  else printf 'WVMPS_END 1\\n'; fi\n}\nwv_ps_read 'boot-before' '/proc/sys/kernel/random/boot_id'\nwv_ps_read 'uptime-before' '/proc/uptime'\nprintf 'WVMPS clock-ticks\\n'; getconf CLK_TCK; wv_ps_status=$?; printf 'WVMPS_END %s\\n' \"$wv_ps_status\"\nwv_ps_read 'leader-417-before' '/proc/417/stat'\nwv_ps_read 'task-417-417-stat-before' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-417-schedstat' '/proc/417/task/417/schedstat'\nwv_ps_read 'task-417-417-wchan' '/proc/417/task/417/wchan'\nwv_ps_read 'task-417-417-stat-after' '/proc/417/task/417/stat'\nwv_ps_read 'task-417-462-stat-before' '/proc/417/task/462/stat'\nwv_ps_read 'task-417-462-schedstat' '/proc/417/task/462/schedstat'\nwv_ps_read 'task-417-462-wchan' '/proc/417/task/462/wchan'\nwv_ps_read 'task-417-462-stat-after' '/proc/417/task/462/stat'\nwv_ps_read 'leader-417-after' '/proc/417/stat'\nwv_ps_read 'leader-503-before' '/proc/503/stat'\nwv_ps_read 'task-503-503-stat-before' '/proc/503/task/503/stat'\nwv_ps_read 'task-503-503-schedstat' '/proc/503/task/503/schedstat'\nwv_ps_read 'task-503-503-wchan' '/proc/503/task/503/wchan'\nwv_ps_read 'task-503-503-stat-after' '/proc/503/task/503/stat'\nwv_ps_read 'leader-503-after' '/proc/503/stat'\nwv_ps_read 'leader-504-before' '/proc/504/stat'\nwv_ps_read 'task-504-504-stat-before' '/proc/504/task/504/stat'\nwv_ps_read 'task-504-504-schedstat' '/proc/504/task/504/schedstat'\nwv_ps_read 'task-504-504-wchan' '/proc/504/task/504/wchan'\nwv_ps_read 'task-504-504-stat-after' '/proc/504/task/504/stat'\nwv_ps_read 'leader-504-after' '/proc/504/stat'\nwv_ps_read 'uptime-after' '/proc/uptime'\nwv_ps_read 'boot-after' '/proc/sys/kernel/random/boot_id'\n)",
+        "submittedAt": "2026-09-14T03:24:13.325Z",
+        "timeoutMs": 299595,
+        "raw": {
+          "stdout": "WVMPS boot-before\n450d9a5f-1fc8-440a-9d2a-21bff69195d1\nWVMPS_END 0\nWVMPS uptime-before\n139.92 0.97\nWVMPS_END 0\nWVMPS clock-ticks\n100\nWVMPS_END 0\nWVMPS leader-417-before\n417 (Hyprland) S 367 367 367 0 -1 4194304 60536 5338 1018 0 6681 95 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 0 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-417-stat-before\n417 (Hyprland) S 367 367 367 0 -1 4194304 53461 5338 1014 0 1785 89 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-417-schedstat\n-bash: /proc/417/task/417/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-417-wchan\nfutex_wait_queue\nWVMPS_END 0\nWVMPS task-417-417-stat-after\n417 (Hyprland) S 367 367 367 0 -1 4194304 53461 5338 1014 0 1785 89 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 1 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-462-stat-before\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 4884 3 16 5 20 0 13 0 3695 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS task-417-462-schedstat\n-bash: /proc/417/task/462/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-417-462-wchan\n0\nWVMPS_END 0\nWVMPS task-417-462-stat-after\n462 (llvmpipe-0) R 367 367 367 0 -1 4194368 6017 5338 0 0 4884 3 16 5 20 0 13 0 3695 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS leader-417-after\n417 (Hyprland) S 367 367 367 0 -1 4194304 60536 5338 1018 0 6682 95 16 5 20 0 13 0 3468 1604763648 59283 18446744073709551615 93825082269696 93825095492936 140736847021568 0 0 0 16384 16781312 1568 0 0 0 17 0 0 0 0 0 0 93825095499264 93825096460800 93825096519680 140736847022484 140736847022509 140736847022509 140736847024102 0\nWVMPS_END 0\nWVMPS leader-503-before\n503 (foot) S 417 367 367 0 -1 4194304 6646 1844 58 2 50 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS task-503-503-stat-before\n503 (foot) S 417 367 367 0 -1 4194304 5988 1844 49 2 41 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS task-503-503-schedstat\n-bash: /proc/503/task/503/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-503-503-wchan\ndo_epoll_wait\nWVMPS_END 0\nWVMPS task-503-503-stat-after\n503 (foot) S 417 367 367 0 -1 4194304 5988 1844 49 2 41 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS leader-503-after\n503 (foot) S 417 367 367 0 -1 4194304 6646 1844 58 2 50 9 16 1 20 0 1 0 3846 863137792 4076 18446744073709551615 93825734631424 93825735113276 140736464195424 0 0 0 0 4097 84482 1 0 0 17 0 0 0 0 0 0 93825735117064 93825735157496 93825735159808 140736464197387 140736464197392 140736464197392 140736464203754 0\nWVMPS_END 0\nWVMPS leader-504-before\n504 (quickshell) S 502 367 367 0 -1 4194304 16398 134124 674 191 921 52 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 0 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS task-504-504-stat-before\n504 (quickshell) S 502 367 367 0 -1 4194304 11696 134124 434 191 279 34 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 1 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS task-504-504-schedstat\n-bash: /proc/504/task/504/schedstat: No such file or directory\nWVMPS_END 1\nWVMPS task-504-504-wchan\npoll_schedule_timeout.constprop.0\nWVMPS_END 0\nWVMPS task-504-504-stat-after\n504 (quickshell) S 502 367 367 0 -1 4194304 11696 134124 434 191 279 34 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 1 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS leader-504-after\n504 (quickshell) S 502 367 367 0 -1 4194304 16398 134124 674 191 921 52 1176 207 20 0 12 0 3872 372572160 31958 18446744073709551615 93825364029440 93825369557168 140736856321728 0 0 0 0 16781318 1272 0 0 0 17 0 0 0 0 0 0 93825369561552 93825369845032 93825369862144 140736856323738 140736856323780 140736856323780 140736856330212 0\nWVMPS_END 0\nWVMPS uptime-after\n139.98 0.97\nWVMPS_END 0\nWVMPS boot-after\n450d9a5f-1fc8-440a-9d2a-21bff69195d1\nWVMPS_END 0\n\n",
+          "exit": 0
+        },
+        "completedAt": "2026-09-14T03:24:47.877Z"
+      },
+      "after": {
+        "startedAt": "2026-09-14T03:24:47.877Z",
+        "completedAt": "2026-09-14T03:24:48.275Z",
+        "values": {
+          "focus": "ide-display-canvas",
+          "keyboard": {
+            "held": [],
+            "modifierRepairs": 0,
+            "lockRepairs": 0,
+            "pendingLockRepairs": [],
+            "releaseCount": 0,
+            "lastReleaseReason": null,
+            "leds": {
+              "numLock": false,
+              "capsLock": false,
+              "scrollLock": false
+            }
+          },
+          "keyboardFrames": [
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 1,
+              "sync": 0
+            },
+            {
+              "eventType": 1,
+              "code": "KeyX",
+              "evdev": 45,
+              "value": 0,
+              "sync": 0
+            }
+          ],
+          "keyboardDiagnostics": [],
+          "inputDevice": {
+            "pendingEventBudget": 256,
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedFrames": 0,
+            "droppedEvents": 0,
+            "statusEventsServed": 1,
+            "rejectedEvents": 0
+          },
+          "pointerFrames": [],
+          "pointerDiagnostics": [],
+          "cursor": {
+            "mode": "absolute",
+            "pointerLocked": false,
+            "resourceId": 0,
+            "kind": "hidden",
+            "width": 0,
+            "height": 0,
+            "hotX": 0,
+            "hotY": 0,
+            "overlayAttached": false,
+            "hostCursorOwned": false,
+            "hostCursorHidden": false,
+            "updates": 0,
+            "moves": 0,
+            "modeChanges": 0,
+            "transformWrites": 0,
+            "styleWrites": 0,
+            "diagnostics": 0,
+            "reason": "state"
+          },
+          "rpc": {
+            "calls": 2715,
+            "completed": 2715,
+            "pending": 0,
+            "averageMs": 44.67859852775026,
+            "maxMs": 369.9100000858307
+          },
+          "display": {
+            "backend": "canvas2d",
+            "defaultBackend": "canvas2d",
+            "width": 1280,
+            "height": 800,
+            "fixedViewport": true,
+            "sizeMismatch": true,
+            "framesReceived": 3,
+            "successfulPresents": 3,
+            "drawnPresents": 3,
+            "drawnBytes": 12288000,
+            "replayedFrames": 0,
+            "droppedFrames": 0,
+            "contextLosses": 0,
+            "contextRestores": 0,
+            "fallbacks": 0,
+            "listenerCount": 2,
+            "scheduler": {
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "skipped": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "paused": false,
+              "disposed": false,
+              "scheduled": false,
+              "hidden": false,
+              "mode": "raf",
+              "timerMs": 250
+            },
+            "gpu": {
+              "framesReceived": 3,
+              "enqueued": 3,
+              "coalesced": 0,
+              "presented": 3,
+              "successfulPresents": 3,
+              "skipped": 0,
+              "droppedFrames": 0,
+              "overruns": 0,
+              "pending": 0,
+              "maxPending": 1,
+              "uploadedBytes": 12288000,
+              "drawnPresents": 3,
+              "drawnBytes": 12288000,
+              "width": 1280,
+              "height": 800
+            },
+            "latest": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 800
+              },
+              "resourceWidth": 1280,
+              "resourceHeight": 832
+            },
+            "errors": []
+          },
+          "clock": {
+            "mode": "icount",
+            "mtime": "1400577331",
+            "timebaseHz": 10000000,
+            "clockDiv": 64
+          },
+          "scheduler": {
+            "quantum": 500000,
+            "maxQuantum": 500000,
+            "slices": 7696,
+            "totalSliceMs": 583517.7899940014,
+            "averageSliceMs": 75.82091865826422,
+            "maxSliceMs": 585.0199999809265,
+            "sliceHistogram": [
+              {
+                "leMs": 4,
+                "count": 0
+              },
+              {
+                "leMs": 8,
+                "count": 0
+              },
+              {
+                "leMs": 16,
+                "count": 4
+              },
+              {
+                "leMs": 32,
+                "count": 8
+              },
+              {
+                "leMs": 64,
+                "count": 3181
+              },
+              {
+                "leMs": 128,
+                "count": 3958
+              },
+              {
+                "leMs": 256,
+                "count": 535
+              },
+              {
+                "leMs": 512,
+                "count": 9
+              },
+              {
+                "leMs": 1000,
+                "count": 1
+              },
+              {
+                "leMs": null,
+                "count": 0
+              }
+            ],
+            "maxStretchGapMs": 585.375,
+            "requestedInstructions": 3848000000,
+            "retiredInstructions": 3847959598,
+            "fetchWaits": 1,
+            "fetchRequestedChunks": 1,
+            "fetchWaitTotalMs": 14.875,
+            "fetchWaitMaxMs": 14.875,
+            "outputCalls": 164,
+            "outputBytes": 23398,
+            "inputCalls": 5,
+            "inputBytes": 4040,
+            "yieldMode": "scheduler.postTask",
+            "schedulerYields": 7697,
+            "timerYields": 0,
+            "mainThreadYields": 0
+          },
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 98,
+            "executedBlocks": 26720749,
+            "retiredViaJit": 1464250465,
+            "directChainEntries": 51430553,
+            "directChainLinks": 24710240,
+            "dynamicLinkAttempts": 6558675,
+            "dynamicLinkHits": 4152332,
+            "dynamicLinkRefusals": 2406343,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 5,
+            "dynamicLinkInstalls": 471531,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 26720749,
+              "stateCopyCalls": 53441498,
+              "stateCopyBytes": 6550314440,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 13594384,
+              "authorityChecks": 34501852,
+              "memorySplitExits": 218346,
+              "deviceBoundaries": 76251,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 3848459598,
+            "jitEngineCalls": 26720749,
+            "jitLogicalBlocksPerEngineCall": 1.9247421919198449,
+            "jitRetiredShare": 0.3804770266422841,
+            "chainLinksMade": 7942,
+            "chainLinksCut": 7930,
+            "chainDispatchEntries": 18348663,
+            "chainMaxDepth": 128,
+            "chainLinksFollowed": 22264658,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 24125,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 12811,
+            "jitCacheInstalls": 23239,
+            "jitCacheRetranslations": 20452,
+            "jitCacheEvictions": 12411,
+            "jitCacheBatches": 18,
+            "jitCacheCodeBytes": 1593094,
+            "compileQueue": {
+              "admitted": 42729,
+              "droppedBackpressure": 32159,
+              "cancelledStale": 0,
+              "popped": 29973,
+              "queueHighWater": 256,
+              "queueDepth": 241,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 62373,
+              "deduped": 106698896,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 10383608,
+              "excluded": 158,
+              "queueDepth": 0,
+              "queueHighWater": 496,
+              "candidates": 65536,
+              "generation": 5
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 4,
+            "discoveryGeneration": 5,
+            "blockEntryHits": 144476467,
+            "blockBuilds": 10889667
+          }
+        }
+      },
+      "process": {
+        "bootId": "450d9a5f-1fc8-440a-9d2a-21bff69195d1",
+        "clockTicks": "100",
+        "uptimeBefore": "139.92",
+        "uptimeAfter": "139.98",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1785",
+              "stime": "89",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 417,
+              "comm": "Hyprland",
+              "state": "S",
+              "utime": "1785",
+              "stime": "89",
+              "threads": "13",
+              "starttime": "3468",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "futex_wait_queue",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-417-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "leaderStarttime": "3468",
+            "statBefore": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4884",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 462,
+              "comm": "llvmpipe-0",
+              "state": "R",
+              "utime": "4884",
+              "stime": "3",
+              "threads": "13",
+              "starttime": "3695",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-417-462-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "leaderStarttime": "3846",
+            "statBefore": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "41",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 503,
+              "comm": "foot",
+              "state": "S",
+              "utime": "41",
+              "stime": "9",
+              "threads": "1",
+              "starttime": "3846",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "do_epoll_wait",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-503-503-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "leaderStarttime": "3872",
+            "statBefore": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "stat": {
+              "id": 504,
+              "comm": "quickshell",
+              "state": "S",
+              "utime": "279",
+              "stime": "34",
+              "threads": "12",
+              "starttime": "3872",
+              "processor": "0"
+            },
+            "schedstat": null,
+            "wchan": "poll_schedule_timeout.constprop.0",
+            "optionalErrors": {
+              "schedstat": "AssertionError [ERR_ASSERTION]: task-504-504-schedstat: missing/unreadable proc field\n\n1 !== 0\n"
+            }
+          }
+        ]
+      },
+      "finishedMs": 1789356288278,
+      "finishedAt": "2026-09-14T03:24:48.278Z",
+      "elapsedMs": 35358,
+      "deltas": {
+        "available": true,
+        "hostElapsedMs": 339062,
+        "guestElapsedNs": "3470000000",
+        "tasks": [
+          {
+            "pid": 417,
+            "tid": 417,
+            "available": true,
+            "utimeTicks": "1",
+            "stimeTicks": "1",
+            "cpuMs": 20,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 417,
+            "tid": 462,
+            "available": true,
+            "utimeTicks": "332",
+            "stimeTicks": "0",
+            "cpuMs": 3320,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 503,
+            "tid": 503,
+            "available": true,
+            "utimeTicks": "1",
+            "stimeTicks": "0",
+            "cpuMs": 10,
+            "schedstat": null,
+            "schedstatError": null
+          },
+          {
+            "pid": 504,
+            "tid": 504,
+            "available": true,
+            "utimeTicks": "0",
+            "stimeTicks": "0",
+            "cpuMs": 0,
+            "schedstat": null,
+            "schedstatError": null
+          }
+        ],
+        "counters": {
+          "inputDevice": {
+            "pendingEvents": 0,
+            "pendingFrames": 0,
+            "droppedEvents": 0,
+            "droppedFrames": 0,
+            "rejectedEvents": 0
+          },
+          "display": {
+            "framesReceived": 1,
+            "successfulPresents": 1,
+            "replayedFrames": 0
+          },
+          "scheduler": {
+            "retiredInstructions": 2226985777,
+            "slices": 4454
+          }
+        },
+        "gpuFramesPerHostSecond": 0.0029493131049778505,
+        "pendingEventsNetChangePerHostSecond": 0,
+        "limitation": "Sequential observations, not atomic. Backlog changes are not guest-consumption rates; zero schedstat may mean accounting disabled. No current-PC or currently-scheduled-PID claim."
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:25:12.705Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyX",
+          "evdev": 45,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "pointerFrames": [],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 2829,
+        "completed": 2829,
+        "pending": 0,
+        "averageMs": 44.86361965470704,
+        "maxMs": 369.9100000858307
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1402717934",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 7970,
+        "totalSliceMs": 607850.8499929905,
+        "averageSliceMs": 76.26735884479179,
+        "maxSliceMs": 585.0199999809265,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 4
+          },
+          {
+            "leMs": 32,
+            "count": 8
+          },
+          {
+            "leMs": 64,
+            "count": 3215
+          },
+          {
+            "leMs": 128,
+            "count": 4162
+          },
+          {
+            "leMs": 256,
+            "count": 571
+          },
+          {
+            "leMs": 512,
+            "count": 9
+          },
+          {
+            "leMs": 1000,
+            "count": 1
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 585.375,
+        "requestedInstructions": 3985000000,
+        "retiredInstructions": 3984958228,
+        "fetchWaits": 1,
+        "fetchRequestedChunks": 1,
+        "fetchWaitTotalMs": 14.875,
+        "fetchWaitMaxMs": 14.875,
+        "outputCalls": 165,
+        "outputBytes": 23659,
+        "inputCalls": 5,
+        "inputBytes": 4040,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 7971,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 47,
+        "executedBlocks": 27744279,
+        "retiredViaJit": 1507042476,
+        "directChainEntries": 53347397,
+        "directChainLinks": 25603567,
+        "dynamicLinkAttempts": 6874176,
+        "dynamicLinkHits": 4336555,
+        "dynamicLinkRefusals": 2537621,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 6,
+        "dynamicLinkInstalls": 476697,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 27744279,
+          "stateCopyCalls": 55488558,
+          "stateCopyBytes": 6825914384,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 14146449,
+          "authorityChecks": 35976221,
+          "memorySplitExits": 224743,
+          "deviceBoundaries": 77059,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 3985458228,
+        "jitEngineCalls": 27744279,
+        "jitLogicalBlocksPerEngineCall": 1.9228251345079106,
+        "jitRetiredShare": 0.37813530835982956,
+        "chainLinksMade": 8303,
+        "chainLinksCut": 8292,
+        "chainDispatchEntries": 19116353,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 23218005,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 25358,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 13273,
+        "jitCacheInstalls": 24472,
+        "jitCacheRetranslations": 21639,
+        "jitCacheEvictions": 12866,
+        "jitCacheBatches": 21,
+        "jitCacheCodeBytes": 2145907,
+        "compileQueue": {
+          "admitted": 44965,
+          "droppedBackpressure": 33971,
+          "cancelledStale": 0,
+          "popped": 31677,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 65648,
+          "deduped": 110565909,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 11544284,
+          "excluded": 158,
+          "queueDepth": 0,
+          "queueHighWater": 496,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 150702955,
+        "blockBuilds": 11378483
+      }
+    }
+  },
+  {
+    "time": "2026-09-14T03:25:13.298Z",
+    "headed": true,
+    "pageUrl": "http://127.0.0.1:51899/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A51899#ide",
+    "sourceReceipt": {
+      "kernel": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "bootSnapshot": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-ready.snap.gz",
+        "size": 205050833,
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+      },
+      "overlayDelta": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-sdr-r3-snapshot/omarchy-overlay-delta.bin.gz",
+        "size": 1209196,
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+      },
+      "chunkManifest": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      }
+    },
+    "jitResidency": null,
+    "decodedCacheEntries": null,
+    "jitThreshold": null,
+    "profileRequested": false,
+    "controllerCapabilities": {
+      "profileStart": false,
+      "profileStop": false,
+      "profileTop": true,
+      "clockState": true,
+      "clockDividerSelection": true,
+      "clockDividerSetter": false
+    },
+    "request": {
+      "op": "screenshot",
+      "name": "final-process-state.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/latency-boundary-r2/final-process-state.png"
+  }
+]

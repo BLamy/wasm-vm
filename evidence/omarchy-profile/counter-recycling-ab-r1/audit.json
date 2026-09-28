@@ -1,0 +1,118 @@
+{
+  "head": "65903012f592d7625c13d632bbd70e9e859b96aa",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "desktopAcceptance": false,
+  "outcome": "both-startup-failed-input-efficacy-inconclusive",
+  "results": [
+    {
+      "arm": "control",
+      "outcome": "startup-failed-input-not-tested",
+      "desktopReadyMs": 202731.49000000954,
+      "recycling": {
+        "enabled": false,
+        "epochs": "0",
+        "discardedCounters": "0",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "countsDropped": 3623672,
+      "guestRetired": 2233480769,
+      "jitRetiredShare": 0.3980924019319371,
+      "frames": 2,
+      "serial": [
+        {
+          "rid": "mu0xexyy0",
+          "command": "ls -la '/root'",
+          "sentAt": "2026-09-14T07:33:24.732Z",
+          "completedAt": "2026-09-14T07:33:59.265Z",
+          "response": {
+            "stdout": "printf '\\n__WVBEGIN_mu0xfl4c1\\n'; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers; printf '\\n__WVEND_mu0xfl4c1_%s\\n' \"$?\"\nls: cannot open directory '/root': Permission denied\n\n",
+            "exit": 2
+          }
+        },
+        {
+          "rid": "mu0xfl4c1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+          "sentAt": "2026-09-14T07:33:54.732Z",
+          "completedAt": "2026-09-14T07:36:36.086Z",
+          "response": {
+            "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+            "exit": 0
+          }
+        },
+        {
+          "rid": "mu0xjixf2",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+          "sentAt": "2026-09-14T07:36:58.516Z",
+          "completedAt": null,
+          "response": null
+        }
+      ],
+      "opaqueAgentMessages": 348,
+      "servedResponses": 92,
+      "screenshots": {
+        "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+        "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+      },
+      "reportSha256": "de910c4c0dde59e5cc3ac00bd17c2263e748b03cd9b196a11d3fe9aaa75fbaa4"
+    },
+    {
+      "arm": "candidate",
+      "outcome": "startup-failed-input-not-tested",
+      "desktopReadyMs": 217366.06500005722,
+      "recycling": {
+        "enabled": true,
+        "epochs": "2",
+        "discardedCounters": "131072",
+        "threshold": 512,
+        "capacity": 65536
+      },
+      "countsDropped": 0,
+      "guestRetired": 2054980955,
+      "jitRetiredShare": 0.44417483275410696,
+      "frames": 2,
+      "serial": [
+        {
+          "rid": "mu0xma6u0",
+          "command": "ls -la '/root'",
+          "sentAt": "2026-09-14T07:39:07.159Z",
+          "completedAt": "2026-09-14T07:39:45.983Z",
+          "response": {
+            "stdout": "ls: cannot open directory '/root': Permission denied\n\n",
+            "exit": 2
+          }
+        },
+        {
+          "rid": "mu0xmxca1",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers",
+          "sentAt": "2026-09-14T07:39:37.162Z",
+          "completedAt": "2026-09-14T07:42:31.315Z",
+          "response": {
+            "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x55555eda5da0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 504\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x55555ee5f9d0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 504\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n\n",
+            "exit": 0
+          }
+        },
+        {
+          "rid": "mu0xqxij2",
+          "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+          "sentAt": "2026-09-14T07:42:44.011Z",
+          "completedAt": null,
+          "response": null
+        }
+      ],
+      "opaqueAgentMessages": 344,
+      "servedResponses": 92,
+      "screenshots": {
+        "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+        "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+      },
+      "reportSha256": "c5abcbcd06795e8261ab5ed93c1889239ed5c6ee624e0f6b81b8e2b1d12eba02"
+    }
+  ],
+  "limitations": [
+    "No physical key sequence occurred, so neither arm tested the 120-second input acceptance.",
+    "Counter effects do not establish input latency, a cause, or a remedy.",
+    "Opaque agent payloads are disclosed, not independently decoded.",
+    "Main personally viewed both final screenshots; pixels alone do not prove interaction."
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "purpose": "synthetic-source-binding-only",
+  "positiveAccepted": true,
+  "sourceSha256": "1f0f304867d30583e227201b30b78a94b14803ca7499d36b6330f4d0ef52144c",
+  "attacks": [
+    {
+      "name": "different served kernel",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: kernel: wrong input-kernel bytes\n+ actual - expected\n\n+ 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce'\n- '3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d'\n"
+    },
+    {
+      "name": "changed served snapshot",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: bootSnapshot: wrong input-kernel bytes\n+ actual - expected\n\n+ 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'\n- 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\n"
+    },
+    {
+      "name": "changed served delta",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: overlayDelta: wrong input-kernel bytes\n+ actual - expected\n\n+ 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'\n- 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'\n"
+    },
+    {
+      "name": "different served chunks",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: chunkManifest: wrong input-kernel bytes\n+ actual - expected\n\n+ 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'\n- '5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44'\n"
+    },
+    {
+      "name": "wrong served image geometry",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    chunkCount: 16384,\n+   chunkSize: 131072,\n-   chunkSize: 262144,\n    imageLen: 4294967296\n  }\n"
+    },
+    {
+      "name": "failed native capture",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "name": "native input acceptance pollution",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "failed native kernel read",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel notes were not readable\n\n1 !== 0\n"
+    },
+    {
+      "name": "old native notes",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: running kernel is not the verified input-buffer kernel"
+    },
+    {
+      "name": "unbound native head",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^[a-f0-9]{40}$/u. Input:\n\n'HEAD'\n"
+    },
+    {
+      "name": "AJ pair substituted in source and record",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: old-kernel RAM pair is forbidden"
+    },
+    {
+      "name": "R3 pair substituted in source and record",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: old-kernel RAM pair is forbidden"
+    },
+    {
+      "name": "unexpected artifact key overrides pinned kernel",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: native pair must contain only snapshot and delta artifact roles\n+ actual - expected\n\n  [\n    'bootSnapshot',\n+   'kernel',\n    'overlayDelta'\n  ]\n"
+    },
+    {
+      "name": "unexpected artifact key overrides pinned chunks",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: native pair must contain only snapshot and delta artifact roles\n+ actual - expected\n\n  [\n    'bootSnapshot',\n+   'chunkManifest',\n    'overlayDelta'\n  ]\n"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+✔ the actual ready lifecycle is once per authoritative generation and isolates Omarchy (8.03875ms)
+✔ actual RPC gate rejects no-owner/retired work and fences late CLI completion (2.624792ms)
+✔ the authoritative Omarchy key blocks service RPC even when the page is not marked desktop (1.183042ms)
+✔ desktop control entry points remain wired to the existing production bridges (1.002625ms)
+✔ host-only preboot Docker affordance remains available, but an Omarchy owner blocks it (2.086916ms)
+✔ a retired CLI log refresh cannot create a stream for the Omarchy owner (3.304542ms)
+✔ retired catalog/probe/snapshot/container completions cannot repaint a replacement owner (29.713792ms)
+✔ retired container action completion cannot apply to the next session (2.623917ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 313.656125

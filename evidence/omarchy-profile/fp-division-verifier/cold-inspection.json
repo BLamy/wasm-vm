@@ -1,0 +1,28 @@
+{
+  "head": "619a569e4f97ad3d7d68dbf68fb8c3693082da79",
+  "frozenRuntimeHead": "f7bcf1a5dfee5c69e69fbe2994bcb8c754e5d64a",
+  "clone": "/private/tmp/wasm-vm-fp-division-cold-bpv12v0l/repo",
+  "commandsPassed": 4,
+  "pristineBeforeBuild": true,
+  "environmentScrubInspected": true,
+  "sourceHashes": {
+    "tests/support/jit_fp_division_verifier.rs": "031f46b2fdb5fcde0914c259de5e10d6ea19c361bff490dd3ef45394e1785c61",
+    "crates/jit-runtime/tests/fp_division_verifier.rs": "6c87850266f31ff0777e1930775752ed95be6cef617733bf1d360cbc89928a7c",
+    "crates/wasm/tests/jit_fp_division_verifier.rs": "d6935194a253c1821cfd228fcf65f638bda78ded21e145c6366f1e164383a267",
+    "crates/core/src/jit.rs": "fb81d1cdd4dddf41583f7b9f1270c82cc9d7098d9d02ad864e0c10f72d9a10ce",
+    "crates/core/src/softfloat.rs": "45bc63fd2e28da55c2a7b649d521e6ad1494a9d3af22a80101de16b400f9e3dd",
+    "crates/jit-translate/src/lib.rs": "4cb90a7f1679fc808f5bc19af2ac259942bba6cc778682f15fd0d1e165c66025",
+    "crates/jit-runtime/src/lib.rs": "3fc85977c379d4fc0e1e39dbee13c693b913134964591d8267e813338345af07",
+    "crates/wasm/src/jit_browser.rs": "148966dd4910b95ca25444c4c9ce5cc9033ff4a5f59a61273cdffa1b7a008ded"
+  },
+  "frozenRuntimeAndFixturesUnchanged": true,
+  "testTargetsPassed": 6,
+  "testsPassed": 18,
+  "ignored": 0,
+  "allCriticSemanticLinesMatchFrozenRun": true,
+  "matchingDigestLines": 9,
+  "rebuiltWasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "coldReportSha256": "93e09b0e2c9e9af80eb116bb5ed1c06c916e69441af531984ad89eaa72e7b5d8",
+  "coldAcceptanceSha256": "3d18cd4b56464808f0785bd50b15a24ffaabae92787831c5e1fdd93222eb7688",
+  "coldRunnerSha256": "00efdcbb1558d650cdd9cb33f328a79a58a1525273512daac1a71cb3bb2272a6"
+}

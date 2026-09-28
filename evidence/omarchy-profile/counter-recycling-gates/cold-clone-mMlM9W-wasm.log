@@ -1,0 +1,71 @@
+cwd=/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo
+head=d68be8425cae6f8a921b2ecc85d757314a6b09d4
+target=/private/tmp/wasm-vm-t03k-cold.mMlM9W/target
+started_utc=2026-09-14T07:16:06Z
+command: cargo test -p wasm-vm-wasm --lib cold_counter_recycling
+   Compiling unicode-ident v1.0.24
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling rustversion v1.0.22
+   Compiling libc v0.2.186
+   Compiling bumpalo v3.20.3
+   Compiling once_cell v1.21.4
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling log v0.4.33
+   Compiling serde_json v1.0.150
+   Compiling byteorder v1.5.0
+   Compiling heapless v0.9.3
+   Compiling bitflags v2.13.0
+   Compiling proc-macro2 v1.0.106
+   Compiling libm v0.2.16
+   Compiling serde v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling futures-util v0.3.32
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling memchr v2.8.2
+   Compiling hash32 v0.3.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling smoltcp v0.13.1
+   Compiling tinyvec v1.12.0
+   Compiling bitflags v1.3.2
+   Compiling managed v0.8.0
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling nu-ansi-term v0.50.3
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/wasm-emit)
+   Compiling quote v1.0.46
+   Compiling unicode-normalization v0.1.25
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling cpufeatures v0.2.17
+   Compiling getrandom v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/jit-translate)
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling console_error_panic_hook v0.1.7
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/wasm-vm-t03k-cold.mMlM9W/repo/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14m 10s
+     Running unittests src/lib.rs (/private/tmp/wasm-vm-t03k-cold.mMlM9W/target/debug/deps/wasm_vm_wasm-7fc2a5cef18649f1)
+
+running 1 test
+test cold_counter_recycling_tests::cold_counter_recycling_wrapper_selection_and_lossless_stats_fields ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 32 filtered out; finished in 0.00s
+
+exit_code=0
+finished_utc=2026-09-14T07:30:19Z

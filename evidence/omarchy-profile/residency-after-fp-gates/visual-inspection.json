@@ -1,0 +1,25 @@
+{
+  "inspector": "worker/root",
+  "arms": [
+    {
+      "arm": "control",
+      "personallyViewed": true,
+      "genuineTypedResponse": false,
+      "observation": "Both actual images show the original empty Foot prompt and cursor. No typed command appears.",
+      "images": {
+        "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+        "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+      }
+    },
+    {
+      "arm": "candidate",
+      "personallyViewed": true,
+      "genuineTypedResponse": false,
+      "observation": "Both actual images show the original empty Foot prompt and cursor. No typed command appears.",
+      "images": {
+        "desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+        "failure.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+      }
+    }
+  ]
+}

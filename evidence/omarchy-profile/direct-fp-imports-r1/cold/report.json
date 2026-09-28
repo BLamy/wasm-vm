@@ -1,0 +1,61 @@
+{
+  "head": "a3beb0e8dc5da21374a6d59e25658f5db5ce79da",
+  "clone": "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "policy": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG and all CARGO_* unset; trusted PATH; no shell profiles",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "clone",
+        "--quiet",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630/repo"
+      ],
+      "cwd": "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630",
+      "startedAt": "2026-09-16T09:53:16Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:53:18Z"
+    },
+    {
+      "args": [
+        "git",
+        "checkout",
+        "--quiet",
+        "a3beb0e8dc5da21374a6d59e25658f5db5ce79da"
+      ],
+      "cwd": "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630/repo",
+      "startedAt": "2026-09-16T09:53:18Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:53:19Z"
+    },
+    {
+      "args": [
+        "make",
+        "web-dist"
+      ],
+      "cwd": "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630/repo",
+      "startedAt": "2026-09-16T09:53:19Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:53:41Z"
+    },
+    {
+      "args": [
+        "make",
+        "verify-E5_5-T03ao",
+        "DIRECT_FP_BROWSER_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-r1/cold/browser",
+        "DIRECT_FP_BENCH_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-r1/cold/benchmark"
+      ],
+      "cwd": "/private/tmp/wasm-vm-direct-fp-imports-cold-5sgjw630/repo",
+      "startedAt": "2026-09-16T09:53:41Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T09:54:30Z"
+    }
+  ],
+  "pristineBeforeBuild": true,
+  "committedWasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "rebuiltWasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916",
+  "passed": true
+}

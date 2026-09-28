@@ -1,0 +1,10 @@
+# Corrective recording predictions
+
+Recorded at 2026-09-16T02:26:41.316843+00:00 before any corrective guest run. R1 remains intact and refuted for post-verdict tablet input; see `r1-verdict.md`. P1/P2/P3/P6/P7 evidence results carry for the unchanged boundaries and R1 digests; a new run must bind its own raw report/profile and identity receipts.
+
+- P9 — Host-only input fence. The actual existing 128 physical keyboard events (including Enter keyup) finish before the owned page acknowledges host-input exclusion. No remaining planned guest typing is cut off. The existing Enter timestamp immediately anchors the unchanged 120000ms acceptance deadline; fence setup and acknowledgement consume that same budget, never reset or extend it. The fence issues no guest RPC, pause, state write or guest-input flush.
+- P10 — All guest-input channels. After fixed `keyboard.failedAt`, the raw worker traffic contains no sent keyboard, tablet, mouse, input synchronization, agent-input, serial-input or display-change mutation. Earlier queued read replies may finish and cannot revise the failure. A regression explicitly provokes pointer/keyboard ingress, screenshot capture and worker-profiler attachment while the host fence is active and demonstrates no DOM/worker input.
+- P11 — Recording preservation. R1 raw report/profile/image hashes and its failure outcome remain unchanged. The corrected task log names the reason for a second bounded corrective recording. This is the same cap256/recyclingOFF runtime and fixed 30s diagnostic, with no parameter sweep or runtime remedy.
+- P12 — Exact revised capture. All original acceptance/timing/source/symbol/raw-profile predictions continue to apply to R2. Only the corrected no-input boundary is newly under challenge; full runtime gauntlet, cold clone and deployment are not restarted for this harness change.
+
+The earlier novel misattribution attack remains HELD for unchanged strict binder/capture validation. Re-run only if that boundary changes. Any final diagnostic verification must explicitly say that desktop responsiveness remains unsolved.

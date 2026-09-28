@@ -1,0 +1,16 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=16883 bytes @ 0x81a00000..0x81a041f3, dtb=2994 bytes @ 0x8fffb448, 256 MiB RAM
+wasm-vm: keyboard burst proof pairs=255 events=1022
+wasm-vm: keyboard proof injected KEY_A make/break frames
+wasm-vm: keyboard proof pending events=1022
+wasm-vm: keyboard proof pending events=867
+wasm-vm: keyboard proof pending events=774
+wasm-vm: keyboard proof pending events=681
+wasm-vm: keyboard proof pending events=587
+wasm-vm: keyboard proof pending events=494
+wasm-vm: keyboard proof pending events=401
+wasm-vm: keyboard proof pending events=307
+wasm-vm: keyboard proof pending events=213
+wasm-vm: keyboard proof pending events=120
+wasm-vm: keyboard proof pending events=27
+wasm-vm: keyboard proof pending events=0
+wasm-vm: guest exited 0

@@ -1,0 +1,200 @@
+{
+  "outcome": "physical-input-failed",
+  "command": {
+    "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.monitor({ output = \"\", mode = \"640x400@60\", position = \"auto\", scale = 1 })'",
+    "startedAt": "2026-09-15T16:23:17.284Z",
+    "deadlineAtMs": 1789489574624,
+    "requestCount": 1,
+    "status": "command-accepted",
+    "response": {
+      "stdout": "ok\n\n",
+      "exit": 0
+    },
+    "respondedAt": "2026-09-15T16:24:13.946Z",
+    "finishedAt": "2026-09-15T16:24:13.946Z"
+  },
+  "mode": {
+    "mode": {
+      "width": 640,
+      "height": 400,
+      "maxResourceHeight": 448
+    },
+    "deadlineAtMs": 1789489574624,
+    "startedAt": "2026-09-15T16:23:17.237Z",
+    "status": "guest-mode-observed",
+    "requestCount": 1,
+    "before": {
+      "gpu": {
+        "advertisedWidth": 1280,
+        "advertisedHeight": 800,
+        "refreshHz": 60,
+        "pendingEvents": 0,
+        "resourceCount": 4,
+        "resourceBytes": 16875520,
+        "scanoutResource": 3,
+        "scanoutWidth": 1280,
+        "scanoutHeight": 832
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    },
+    "requestedAt": "2026-09-15T16:23:17.257Z",
+    "acknowledged": true,
+    "acknowledgedAt": "2026-09-15T16:23:17.284Z",
+    "after": {
+      "gpu": {
+        "advertisedWidth": 640,
+        "advertisedHeight": 400,
+        "refreshHz": 60,
+        "pendingEvents": 0,
+        "resourceCount": 7,
+        "resourceBytes": 20316160,
+        "scanoutResource": 8,
+        "scanoutWidth": 640,
+        "scanoutHeight": 448
+      },
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "drawnPresents": 4,
+        "drawnBytes": 16384000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 4,
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "successfulPresents": 4,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 16384000,
+          "drawnPresents": 4,
+          "drawnBytes": 16384000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 640,
+            "height": 400
+          },
+          "resourceWidth": 640,
+          "resourceHeight": 448
+        },
+        "errors": []
+      }
+    },
+    "observedAt": "2026-09-15T16:24:34.074Z",
+    "finishedAt": "2026-09-15T16:24:34.074Z"
+  },
+  "input": {
+    "verified": false,
+    "nonce": "314e2f67ea92db03",
+    "guestFile": "/tmp/desktop-keys-1f59a23ab3f367ff",
+    "startedAt": "2026-09-15T16:24:34.124Z",
+    "enteredAtMs": 1789489476902,
+    "typedAt": "2026-09-15T16:24:36.902Z",
+    "typingMs": 2778,
+    "readbackStartedAt": "2026-09-15T16:24:36.902Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-15T16:26:36.902Z",
+    "stage": "readback",
+    "failedAt": "2026-09-15T16:26:36.902Z",
+    "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+    "desktopReadyPageMs": 92940.81500005722,
+    "firstPhysicalKeydownPageMs": 199497.23000001907,
+    "readyToFirstPhysicalKeydownMs": 106556.41499996185
+  },
+  "desktopAcceptance": false
+}

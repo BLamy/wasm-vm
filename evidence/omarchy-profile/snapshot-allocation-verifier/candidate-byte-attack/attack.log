@@ -1,0 +1,9 @@
+seed=0x94f6e651 sections=2 bytes=131171 capacity=131171 framing=exact identities=refused
+seed=0x94f6e651 sections=48 bytes=1338380 capacity=1338380 framing=exact identities=refused
+seed=0x7184331d sections=2 bytes=131171 capacity=131171 framing=exact identities=refused
+seed=0x7184331d sections=48 bytes=976595 capacity=976595 framing=exact identities=refused
+seed=0x63328547 sections=2 bytes=131171 capacity=131171 framing=exact identities=refused
+seed=0x63328547 sections=48 bytes=755751 capacity=755751 framing=exact identities=refused
+seed=0xf1d927b sections=2 bytes=131171 capacity=131171 framing=exact identities=refused
+seed=0xf1d927b sections=48 bytes=752142 capacity=752142 framing=exact identities=refused
+PASS: serializations=192 compared_bytes=102904884 independent_seeds=4

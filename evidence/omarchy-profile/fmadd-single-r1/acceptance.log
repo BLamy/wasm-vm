@@ -1,0 +1,123 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-core --test fp_fmadd_flags
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/fp_fmadd_flags.rs (target/debug/deps/fp_fmadd_flags-ab8a50fc0e834026)
+
+running 1 test
+test independent_fmadd_literal_bits_and_flags ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.24s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_fmadd --test fp_fmadd_verifier -- --nocapture
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.42s
+     Running tests/fp_fmadd.rs (target/debug/deps/fp_fmadd-d33e82509105ab73)
+
+running 3 tests
+FP_FMADD runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test fmadd_native_runloop ... ok
+FP_FMADD CSR/later-fault/invalid-prefix/aliases cases=80
+test fmadd_native_handoff_and_faults ... ok
+FP_FMADD corpus cases=58368 register_flags_fnv=71132465cba70984
+test fmadd_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.77s
+
+     Running tests/fp_fmadd_verifier.rs (target/debug/deps/fp_fmadd_verifier-672e2c0f695e795d)
+
+running 5 tests
+CRITIC_NATIVE_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_native_fmadd_control_and_faults ... ok
+CRITIC_NATIVE_FMADD_LITERALS Receipt { cases: 12250, disabled: 0, digest: 12429612730659881582 }
+test verifier_native_fmadd_literals ... ok
+CRITIC_FMADD_INDICES imports=10 exports=run0:10..run5:15 all_optional_combinations=16 mixed_chain_executed=true integer_imports=5 unsupported_families=15
+test verifier_mixed_optional_indices_and_unrelated_admission ... ok
+CRITIC_NATIVE_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+test verifier_native_fmadd_seeded_aliases_and_illegal ... ok
+CRITIC_FMADD_PURITY cases=20480 legal_helper_calls=10800 illegal_helper_calls=0 import_index=5 exact_masks=true integer_wasm_only=true
+test verifier_generated_fmadd_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 38.49s
+
+wasm-pack test --node crates/wasm --test jit_fp_fmadd --test jit_fp_fmadd_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_fp_fmadd.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_fmadd-6a0efe0ed6a9f17f.wasm)
+running 2 tests
+Invoking test: fmadd_browser_private
+test fmadd_browser_private ... ok
+Invoking test: fmadd_browser_inline
+test fmadd_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1027.71s
+
+     Running tests/jit_fp_fmadd_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_fmadd_verifier-55cd6bf0bb0624f9.wasm)
+running 6 tests
+Invoking test: verifier_shared_fmadd_memory_growth
+CRITIC_FMADD_GROWTH inline=true fault=None pc=000000004000bc18 retired=6 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=true fault=Store pc=000000004000bc04 retired=1 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=true fault=Load pc=000000004000bc10 retired=4 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_shared_fmadd_memory_growth ... ok
+Invoking test: verifier_shared_fmadd
+CRITIC_SHARED_FMADD_LITERALS Receipt { cases: 12250, disabled: 0, digest: 12429612730659881582 }
+CRITIC_SHARED_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+CRITIC_SHARED_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_shared_fmadd ... ok
+Invoking test: verifier_same_module_fmadd_successors
+CRITIC_FMADD_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_FMADD_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=true fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_fmadd_successors ... ok
+Invoking test: verifier_private_fmadd_memory_growth
+CRITIC_FMADD_GROWTH inline=false fault=None pc=000000004000bc18 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=false fault=Store pc=000000004000bc04 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_FMADD_GROWTH inline=false fault=Load pc=000000004000bc10 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_private_fmadd_memory_growth ... ok
+Invoking test: verifier_private_fmadd
+CRITIC_PRIVATE_FMADD_LITERALS Receipt { cases: 12250, disabled: 0, digest: 12429612730659881582 }
+CRITIC_PRIVATE_FMADD_SEEDED Receipt { cases: 6144, disabled: 2976, digest: 14112773340705263440 }
+CRITIC_PRIVATE_FMADD_CONTROL Receipt { cases: 12, disabled: 0, digest: 17336942749834004557 }
+test verifier_private_fmadd ... ok
+Invoking test: verifier_cross_module_fmadd_successors
+CRITIC_FMADD_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_FMADD_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FMADD_CHAIN same=false fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_fmadd_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.23s
+
+node tools/verify/omarchy-fmadd-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-r1/browser
+{"passed":true,"wasmSha256":"0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced","digest":"3510fa25cda976048c595e95ae16fabadebe668f0170d9615ac68c103430003e","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":47,"retiredViaJit":4570,"directChainEntries":1321,"directChainLinks":1274,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":47,"stateCopyCalls":94,"stateCopyBytes":11424,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":5000,"jitEngineCalls":47,"jitLogicalBlocksPerEngineCall":28.106382978723403,"jitRetiredShare":0.914,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":43,"chainMaxDepth":1,"chainLinksFollowed":5,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":2,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":2,"jitCacheCodeBytes":146798,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":43,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":43,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

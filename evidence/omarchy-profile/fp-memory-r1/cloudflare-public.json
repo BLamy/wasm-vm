@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://92ad7b7b.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 1590511,
+    "sha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+    "expectedSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+    "checkedAt": "2026-09-15T19:59:01Z"
+  },
+  {
+    "url": "https://92ad7b7b.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 119440,
+    "sha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42",
+    "expectedSha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42",
+    "checkedAt": "2026-09-15T19:59:02Z"
+  },
+  {
+    "url": "https://92ad7b7b.wasm-vm.pages.dev/roadmap.js",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 49569,
+    "sha256": "8816e4743dd48bd35717c7ccb154da4fb934691f1585b6bff7a812924ccf743e",
+    "expectedSha256": "8816e4743dd48bd35717c7ccb154da4fb934691f1585b6bff7a812924ccf743e",
+    "checkedAt": "2026-09-15T19:59:02Z"
+  },
+  {
+    "url": "https://92ad7b7b.wasm-vm.pages.dev/app.html",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 67244,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "checkedAt": "2026-09-15T19:59:03Z"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 1590511,
+    "sha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+    "expectedSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+    "checkedAt": "2026-09-15T19:59:04Z"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 119440,
+    "sha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42",
+    "expectedSha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42",
+    "checkedAt": "2026-09-15T19:59:04Z"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/roadmap.js",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 49569,
+    "sha256": "8816e4743dd48bd35717c7ccb154da4fb934691f1585b6bff7a812924ccf743e",
+    "expectedSha256": "8816e4743dd48bd35717c7ccb154da4fb934691f1585b6bff7a812924ccf743e",
+    "checkedAt": "2026-09-15T19:59:04Z"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/app.html",
+    "status": 200,
+    "code": 0,
+    "client": "system curl, TLS verification enabled",
+    "size": 67244,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "checkedAt": "2026-09-15T19:59:05Z"
+  }
+]

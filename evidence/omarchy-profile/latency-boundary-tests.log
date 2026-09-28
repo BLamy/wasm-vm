@@ -1,0 +1,35 @@
+✔ candidate diagnostic binds its actual manifest to an immutable alias (4922.3075ms)
+✔ jit residency flag is strict and exposes only existing A/B policies (7874.609125ms)
+✔ jit residency is recorded in the served URL and source receipt (2.316334ms)
+✔ decoded cache entries are strict and forwarded through Omarchy query options (10048.781709ms)
+✔ jit threshold is strict and forwarded through the existing query control (2997.881ms)
+✔ diagnostic profiler and clock controls remain capability-gated (2.435125ms)
+✔ diagnostic stats expose the read-only keyboard device counters (4.809791ms)
+✔ worker CPU profile operation is bounded, file-safe, and targets linux-worker (669.693209ms)
+✔ diagnostic exec is subshell-wrapped and failures are retained in history (1.056417ms)
+✔ wire observer preserves transferred serial bytes and original transport behavior (40.458167ms)
+✔ wire observer distinguishes workers, physical events and actual input acknowledgements (1.481583ms)
+✔ server identities bind exactly the bytes served and their repository path (0.90325ms)
+✔ harness-only: generated command is fixed, shell-valid and bounded to 32 tasks (199.068417ms)
+✔ harness-only: actual builtin reader runs against synthetic host proc files, including absent wchan (262.455542ms)
+✔ harness-only: unsafe IDs, duplicate targets, wrong types and timeouts refuse before callbacks (29.650625ms)
+✔ harness-only: stat parser accepts spaces/parens and preserves large counters exactly (0.6895ms)
+✔ harness-only: real-shaped shell framing preserves raw fields; forged/missing/extra records refuse (2.770625ms)
+✔ harness-only: missing process and optional fields remain explicitly unavailable (0.743625ms)
+✔ harness-only: PID/TID reuse within a probe prevents identity-bound results (5.467625ms)
+✔ harness-only: same-identity deltas separate CPU ticks, guest time and backlog change (42.711791ms)
+✔ harness-only: reuse, boot changes, missing samples and counter resets never bridge identity (44.992375ms)
+✔ harness-only: orchestration records before send and brackets actual raw RPC (66.608417ms)
+✔ harness-only: RPC rejection, missing fields, and post-deadline success remain non-measurements (4.17225ms)
+✔ harness-only: stalled RPC has a bounded timer without launching a guest (2.160209ms)
+✔ harness-only: diagnostic installs observers before navigation and keeps evidence in sidecars (1.863292ms)
+✔ harness-only: actual diagnostic submit guard blocks serial backlog but permits stats until settlement (4.339292ms)
+✔ harness-only: headed boolean changes only selected launch mode; default stays headless (25.215625ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27137.764708

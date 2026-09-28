@@ -1,0 +1,68 @@
+{
+  "submissionSourceHead": "f494ef51de1763d3a7f78d11f96d6afc50fc46e0",
+  "runtimeSourceHead": "357dd1a0f9f984747f3f92ad83b0ae556e6689f5",
+  "artifactHead": "d64b037b362b36490d58b82663a448ac0532b025",
+  "originalAcceptanceHead": "357dd1a0f9f984747f3f92ad83b0ae556e6689f5",
+  "repairHead": "d64b037b362b36490d58b82663a448ac0532b025",
+  "coldHead": "f494ef51de1763d3a7f78d11f96d6afc50fc46e0",
+  "runtimeWasmSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+  "runtimeFiles": {
+    "crates/jit-translate/src/lib.rs": "8780bc7bcfe6e70bee04fb6a3a892fcf69f13684d63d1cf1a8a735a3a345426c",
+    "crates/core/src/jit.rs": "19db210c7d97ad31e166d1f561135b7decdc651bcf97843feb3bb968936d3d1b",
+    "crates/core/src/softfloat.rs": "32da95fe87b74a10879e8729ee4da3f949e376cfdd02df9db4a22521368afe25",
+    "crates/jit-runtime/src/lib.rs": "4c558baefc70dd712ede41d1696feeda06d0cb473867234f0d585f97133c6905",
+    "crates/wasm/src/jit_browser.rs": "be5520ee7f215db4f82e3e08f00b627e6520629462d935d3bde237396f3bbcb5"
+  },
+  "broadCiPassed": false,
+  "originalAffectedAllPassed": false,
+  "scopedRepairsPassed": true,
+  "focusedAcceptancePassed": true,
+  "coldClonePassed": true,
+  "publicBytesMatched": true,
+  "desktopResponsive": false,
+  "completedTests": {
+    "softfloat.log": {
+      "targets": 2,
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    "core-handoff.log": {
+      "targets": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fp-regression.log": {
+      "targets": 4,
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    "native-fp-isa.log": {
+      "targets": 1,
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "wasm-native-lib-final.log": {
+      "targets": 1,
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    "acceptance.log": {
+      "targets": 6,
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "sealedAt": "2026-09-15T22:09:56Z",
+  "notes": [
+    "Original admission-test and missing-roadmap-row failures are retained with scoped repairs.",
+    "The test-only source rebuild changed WASM bytes; current browser, physical, cold and public proof bind the new artifact. No byte-equivalence is claimed.",
+    "Prescribed broad make ci outcomes are retained; no failing gate is relabeled green.",
+    "Physical trial outcome is separate from instruction correctness."
+  ]
+}

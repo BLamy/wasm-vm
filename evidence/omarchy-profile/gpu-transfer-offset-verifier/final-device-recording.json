@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "head": "2e61bf3e971595741c627e8b68fcaee055c27945",
+  "logSha256": "b47f020342ba5126e389f2e49b8f8cc6d893b5231fe7a69495c47097b1f2f66d",
+  "note": "Recorded shadow field is a test oracle; the Rust test asserts actual resource words after recording. Sink CRC and queue responses are actual observations.",
+  "queuedPatterns": [
+    {
+      "line": 60,
+      "pattern": 0,
+      "rect": [
+        0,
+        0,
+        7,
+        5
+      ],
+      "offset": 0,
+      "backingEntries": 1,
+      "requestTypes": [
+        257,
+        262,
+        259,
+        261,
+        260
+      ],
+      "responses": 5,
+      "sinkCrc32": "2d068e19",
+      "shadowWords": 35
+    },
+    {
+      "line": 61,
+      "pattern": 1,
+      "rect": [
+        2,
+        1,
+        3,
+        2
+      ],
+      "offset": 36,
+      "backingEntries": 2,
+      "requestTypes": [
+        257,
+        262,
+        259,
+        261,
+        260
+      ],
+      "responses": 5,
+      "sinkCrc32": "80e3df97",
+      "shadowWords": 35
+    },
+    {
+      "line": 62,
+      "pattern": 2,
+      "rect": [
+        1,
+        0,
+        5,
+        3
+      ],
+      "offset": 4,
+      "backingEntries": 4,
+      "requestTypes": [
+        257,
+        262,
+        259,
+        261,
+        260
+      ],
+      "responses": 5,
+      "sinkCrc32": "cafeb5cb",
+      "shadowWords": 35
+    },
+    {
+      "line": 63,
+      "pattern": 3,
+      "rect": [
+        0,
+        2,
+        7,
+        2
+      ],
+      "offset": 56,
+      "backingEntries": 16,
+      "requestTypes": [
+        257,
+        262,
+        259,
+        261,
+        260
+      ],
+      "responses": 5,
+      "sinkCrc32": "74f3ca70",
+      "shadowWords": 35
+    },
+    {
+      "line": 64,
+      "pattern": 4,
+      "rect": [
+        4,
+        3,
+        3,
+        2
+      ],
+      "offset": 100,
+      "backingEntries": 2,
+      "requestTypes": [
+        257,
+        262,
+        259,
+        261,
+        260
+      ],
+      "responses": 5,
+      "sinkCrc32": "4b09d24f",
+      "shadowWords": 35
+    }
+  ]
+}

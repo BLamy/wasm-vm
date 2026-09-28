@@ -1,0 +1,168 @@
+{
+  "result": "PASS",
+  "url": "http://127.0.0.1:8000/?noAutoBoot=1&testHooks=1",
+  "realVm": true,
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  },
+  "commands": [
+    {
+      "name": "servedSourceHashes",
+      "command": "fetch main.js and guest-rpc.js; SHA-256 in Chromium",
+      "result": {
+        "main": {
+          "url": "http://127.0.0.1:8000/main.js",
+          "sha256": "977c202af7b4eafc90420408bb06a9301c89c61a2017cfb31cdfb117c67444f8"
+        },
+        "guestRpc": {
+          "url": "http://127.0.0.1:8000/guest-rpc.js",
+          "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+        }
+      }
+    },
+    {
+      "name": "runBusybox",
+      "command": "window.wvmDemo.runBusybox()",
+      "result": {
+        "ok": true
+      }
+    },
+    {
+      "name": "isGuestReady",
+      "command": "window.wvmDemo.isGuestReady()",
+      "result": true
+    },
+    {
+      "name": "arithmetic",
+      "command": "run echo RPC_$((6*7))",
+      "result": {
+        "stdout": "RPC_42\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "name": "serialized",
+      "command": "run echo A_$((1+1)); run echo B_$((2+2))",
+      "result": {
+        "a": {
+          "stdout": "A_2\n\n",
+          "exit": 0
+        },
+        "b": {
+          "stdout": "B_4\n\n",
+          "exit": 0
+        }
+      }
+    },
+    {
+      "name": "nonzero",
+      "command": "run false",
+      "result": {
+        "stdout": "\n",
+        "exit": 1
+      }
+    },
+    {
+      "name": "wrongNonceSpoof",
+      "command": "run printf wrong nonce; echo REAL_$((3+4))",
+      "result": {
+        "stdout": "__WVEND_deadbeef_0\nREAL_7\n\n",
+        "exit": 0
+      }
+    },
+    {
+      "name": "stream",
+      "command": "stream emits STREAM_0..; stop after three lines",
+      "result": {
+        "got": [
+          "STREAM_0",
+          "STREAM_1",
+          "STREAM_2"
+        ],
+        "all": [
+          "STREAM_0",
+          "STREAM_1",
+          "STREAM_2"
+        ]
+      }
+    },
+    {
+      "name": "afterStop",
+      "command": "run echo ALIVE_$((5+5))",
+      "result": {
+        "stdout": "ALIVE_10\n\n",
+        "exit": 0
+      }
+    }
+  ],
+  "observations": {
+    "servedSourceHashes": {
+      "main": {
+        "url": "http://127.0.0.1:8000/main.js",
+        "sha256": "977c202af7b4eafc90420408bb06a9301c89c61a2017cfb31cdfb117c67444f8"
+      },
+      "guestRpc": {
+        "url": "http://127.0.0.1:8000/guest-rpc.js",
+        "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+      }
+    },
+    "runBusybox": {
+      "ok": true
+    },
+    "isGuestReady": true,
+    "arithmetic": {
+      "stdout": "RPC_42\n\n",
+      "exit": 0
+    },
+    "serialized": {
+      "a": {
+        "stdout": "A_2\n\n",
+        "exit": 0
+      },
+      "b": {
+        "stdout": "B_4\n\n",
+        "exit": 0
+      }
+    },
+    "nonzero": {
+      "stdout": "\n",
+      "exit": 1
+    },
+    "wrongNonceSpoof": {
+      "stdout": "__WVEND_deadbeef_0\nREAL_7\n\n",
+      "exit": 0
+    },
+    "stream": {
+      "got": [
+        "STREAM_0",
+        "STREAM_1",
+        "STREAM_2"
+      ],
+      "all": [
+        "STREAM_0",
+        "STREAM_1",
+        "STREAM_2"
+      ]
+    },
+    "afterStop": {
+      "stdout": "ALIVE_10\n\n",
+      "exit": 0
+    }
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "servedSourceHashes": {
+    "main": {
+      "url": "http://127.0.0.1:8000/main.js",
+      "sha256": "977c202af7b4eafc90420408bb06a9301c89c61a2017cfb31cdfb117c67444f8"
+    },
+    "guestRpc": {
+      "url": "http://127.0.0.1:8000/guest-rpc.js",
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    }
+  },
+  "screenshot": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/cli-regression-fixed/busybox-rpc-regression.png",
+  "startedAt": "2026-09-10T01:35:44.807Z",
+  "finishedAt": "2026-09-10T01:35:49.890Z"
+}

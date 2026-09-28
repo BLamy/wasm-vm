@@ -1,0 +1,8 @@
+{
+  "correction": "The first synthetic fixture wrote an unused droppedCountsFull field. Set the actual discovery.countsDropped field to zero and repeat the identical bounded false-success attack. The initial result also rejected for absent timely raw nonce.",
+  "scope": "Synthetic verifier fixture only; no product source/evidence change.",
+  "preserved": [
+    "attack-initial.json",
+    "attack-initial.log"
+  ]
+}

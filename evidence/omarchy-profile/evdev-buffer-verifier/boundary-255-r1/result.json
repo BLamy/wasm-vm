@@ -1,0 +1,52 @@
+{
+  "passed": false,
+  "prediction": "1022 exact events; no SYN_DROPPED",
+  "filesBefore": [
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+      "bytes": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+      "bytes": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz",
+      "bytes": 16883,
+      "sha256": "8697951ed69a16357d09e301e02ba6c9bafa7daf2a9f99fae3fc89514a06c63e"
+    }
+  ],
+  "command": [
+    "/Users/blamy/Documents/Codex/wasm-vm/target/release/wasm-vm",
+    "boot",
+    "--kernel",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3/Image",
+    "--initrd",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-r3/guest/initramfs.cpio.gz",
+    "--append",
+    "console=ttyS0 earlycon=sbi rdinit=/init -- burst",
+    "--no-input",
+    "--no-reboot",
+    "--max-instrs",
+    "4000000000",
+    "--block-cache",
+    "--interrupt-batching",
+    "--keyboard-proof",
+    "--keyboard-proof-burst-pairs",
+    "255",
+    "--evidence",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/evdev-buffer-verifier/boundary-255-r1/guest.evidence.txt"
+  ],
+  "environmentKeys": [
+    "DEVELOPER_DIR",
+    "HOME",
+    "PATH",
+    "TMPDIR"
+  ],
+  "startedAtUnixSeconds": 1789558198.7897768,
+  "head": "97743da727ee51eb7326b112c18653ff02941da1",
+  "returncode": 0,
+  "elapsedSeconds": 23.957085371017456
+}

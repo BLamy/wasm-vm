@@ -1,0 +1,30 @@
+node --test tools/verify/omarchy-compositor-input.test.mjs
+✔ literal RV64 events preserve signed values, drops, and incomplete bytes (1.152625ms)
+✔ damage rectangles remain bounded independently of original display dimensions (2.006458ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33.553125
+python3 tools/verify/omarchy-input-observer-build.py evidence/omarchy-profile/compositor-input-r2/build
+{"passed": true, "commands": [["/opt/homebrew/bin/zig", "cc", "-target", "aarch64-linux-musl", "-Os", "-static", "-Wall", "-Wextra", "-Werror", "tools/verify/omarchy-input-observer.c", "-o", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build/observer-aarch64"], ["/opt/homebrew/bin/zig", "cc", "-target", "riscv64-linux-musl", "-Os", "-static", "-Wall", "-Wextra", "-Werror", "tools/verify/omarchy-input-observer.c", "-o", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build/observer-riscv64"], ["/opt/homebrew/bin/zig", "cc", "-target", "aarch64-linux-musl", "-Os", "-static", "-Wall", "-Wextra", "-Werror", "-pthread", "evidence/omarchy-profile/compositor-input-verifier/adversarial-fixture.c", "-o", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build/fixture-aarch64"], ["/opt/homebrew/bin/zig", "cc", "-target", "aarch64-linux-musl", "-Os", "-static", "-Wall", "-Wextra", "-Werror", "-pthread", "evidence/omarchy-profile/compositor-input-verifier/clone-fixture.c", "-o", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build/clone-fixture-aarch64"], ["docker", "run", "--rm", "--network", "none", "--cap-add", "SYS_PTRACE", "--security-opt", "seccomp=unconfined", "-v", "/Users/blamy/Documents/Codex/wasm-vm:/repo:ro", "-v", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build:/output", "mcr.microsoft.com/playwright:v1.62.1-noble", "python3", "/repo/tools/verify/omarchy-input-observer-fixture.py", "/output/observer-aarch64", "/output/fixture-aarch64", "/output/fixture"], ["docker", "run", "--rm", "--network", "none", "--cap-add", "SYS_PTRACE", "--security-opt", "seccomp=unconfined", "-v", "/Users/blamy/Documents/Codex/wasm-vm:/repo:ro", "-v", "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/build:/output", "mcr.microsoft.com/playwright:v1.62.1-noble", "python3", "/repo/tools/verify/omarchy-input-observer-fixture.py", "/output/observer-aarch64", "/output/clone-fixture-aarch64", "/output/clone-fixture", "clone"]], "files": {"tools/verify/omarchy-input-observer.c": {"bytes": 16697, "sha256": "b0d721abda8c550cf29ff0a8e4a7f6cfd857a207fc799e0260e372514255b091"}, "evidence/omarchy-profile/compositor-input-verifier/adversarial-fixture.c": {"bytes": 12450, "sha256": "bb645c536f09d02fbb896074b88b45d0510c1a4d1afc718f8d51ac773d08721c"}, "evidence/omarchy-profile/compositor-input-verifier/clone-fixture.c": {"bytes": 14448, "sha256": "149b0231fe6f16e0789b989516dea288fad08f1d12a99ecca6f0c15f570edc22"}, "evidence/omarchy-profile/compositor-input-r2/build/observer-aarch64": {"bytes": 63024, "sha256": "1e2c0b2c684e552aadbf9237021f29c7e103255647b66c9efca1dc18959f078b"}, "evidence/omarchy-profile/compositor-input-r2/build/observer-riscv64": {"bytes": 53576, "sha256": "10d9e82ce33bb8eafaf55e8aa5e8ee86bd7bdfa4998fd367f374ff70e3ff792d"}, "evidence/omarchy-profile/compositor-input-r2/build/fixture-aarch64": {"bytes": 65768, "sha256": "1b4b4c0e231c96a49b1d10db5e3c69691656942c90b01bd5cde6b2983981ef70"}, "evidence/omarchy-profile/compositor-input-r2/build/clone-fixture-aarch64": {"bytes": 66904, "sha256": "c9cc80e731fe0b5c4655a3c9fd5ac0f4300ae0c0437389ca4cc417850ddd5992"}}, "zigVersion": "0.16.0", "dockerImage": {"name": "mcr.microsoft.com/playwright:v1.62.1-noble", "id": "sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e", "architecture": "arm64"}}
+node tools/verify/omarchy-compositor-input.mjs evidence/omarchy-profile/compositor-input-r2/physical evidence/omarchy-profile/compositor-input-r2/build/observer-riscv64 target/omarchy-direct-opaque-r2
+node:internal/fs/promises:1345
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/physical/desktop/report.json'
+    at async open (node:internal/fs/promises:1345:25)
+    at async Object.readFile (node:internal/fs/promises:1996:14)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-compositor-input.mjs:48:17 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/compositor-input-r2/physical/desktop/report.json'
+}
+
+Node.js v24.20.0
+make: *** [verify-E5_5-T03ap] Error 1

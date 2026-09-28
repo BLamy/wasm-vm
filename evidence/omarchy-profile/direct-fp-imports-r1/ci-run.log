@@ -1,0 +1,3 @@
+ci started
+ci exit=2
+{"head": "8c302e1d6cd084ba1034cfd58c7efb9677dc3e46", "wasmSha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916", "phase": "ci", "commands": [{"label": "ci", "args": ["make", "-k", "ci"], "cwd": "/Users/blamy/Documents/Codex/wasm-vm", "startedAt": "2026-09-16T09:19:42Z", "code": 2, "finishedAt": "2026-09-16T09:50:35Z"}], "allPassed": false}

@@ -1,0 +1,27 @@
+cargo fmt --check
+cargo clippy -p wasm-vm-cli -- -D warnings
+    Checking wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+error[E0432]: unresolved import `wasm_vm_core::dev::virtio::input::keyboard::KEY_B`
+    --> crates/cli/src/boot.rs:1652:69
+     |
+1652 |             use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEY_B};
+     |                                                                     ^^^^^ no `KEY_B` in `dev::virtio::input::keyboard`
+     |
+help: a similar name exists in the module
+     |
+1652 -             use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEY_B};
+1652 +             use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEY_A};
+     |
+
+error: unused variable: `display_metrics`
+   --> crates/cli/src/boot.rs:795:52
+    |
+795 |         let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+    |                                                    ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_display_metrics`
+    |
+    = note: `-D unused-variables` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(unused_variables)]`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `wasm-vm-cli` (bin "wasm-vm") due to 2 previous errors
+make: *** [verify-E5_5-T03aq] Error 101

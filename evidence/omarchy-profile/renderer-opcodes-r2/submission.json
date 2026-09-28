@@ -1,0 +1,12 @@
+{
+  "frozenHead": "7830695acf1e7f2aeb9713ce1b718203818af5b9",
+  "scope": "Incremental parser and recorder proof only; all held R3 runtime evidence remains unchanged.",
+  "commands": [
+    "node --test tools/verify/omarchy-renderer-opcodes.test.mjs",
+    "node evidence/omarchy-profile/renderer-opcodes-critic/count-attacks.mjs"
+  ],
+  "files": {
+    "count-attacks.json": "9d2ea914be7a6fcc45cb0d2a2c9c4802516571371729f97f30572b8aba3397ba",
+    "tests.log": "f98dd80b096b2ea00b22ea628d413f026418e71df1c6570afb1ded80d3e96efd"
+  }
+}

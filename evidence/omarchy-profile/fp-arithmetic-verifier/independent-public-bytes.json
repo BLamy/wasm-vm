@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://52209836.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+    "expectedSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 1597144,
+    "checkedAt": "2026-09-15T21:52:35.024031+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://52209836.wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "e43fb471c88d5c28bfba46db57d6c10e7e215ab2a71ba2ce08b2834c9694cbca",
+    "expectedSha256": "e43fb471c88d5c28bfba46db57d6c10e7e215ab2a71ba2ce08b2834c9694cbca",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 120104,
+    "checkedAt": "2026-09-15T21:52:35.260591+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://52209836.wasm-vm.pages.dev/roadmap.js?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "242dd84a40b0ea836549f5bc0ba32aa427f561a5ff09d3df1e434fafa7e79ed5",
+    "expectedSha256": "242dd84a40b0ea836549f5bc0ba32aa427f561a5ff09d3df1e434fafa7e79ed5",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 50149,
+    "checkedAt": "2026-09-15T21:52:35.431422+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://52209836.wasm-vm.pages.dev/app.html?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 67244,
+    "checkedAt": "2026-09-15T21:52:35.906408+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+    "expectedSha256": "e84c821a12fa5782e229614b9bd3f5a37713e7f3e4d1d38788ac194a7a039db4",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 1597144,
+    "checkedAt": "2026-09-15T21:52:36.349384+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "e43fb471c88d5c28bfba46db57d6c10e7e215ab2a71ba2ce08b2834c9694cbca",
+    "expectedSha256": "e43fb471c88d5c28bfba46db57d6c10e7e215ab2a71ba2ce08b2834c9694cbca",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 120104,
+    "checkedAt": "2026-09-15T21:52:36.613968+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/roadmap.js?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "242dd84a40b0ea836549f5bc0ba32aa427f561a5ff09d3df1e434fafa7e79ed5",
+    "expectedSha256": "242dd84a40b0ea836549f5bc0ba32aa427f561a5ff09d3df1e434fafa7e79ed5",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 50149,
+    "checkedAt": "2026-09-15T21:52:36.843758+00:00",
+    "client": "system curl; TLS verification enabled"
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/app.html?critic=d64b037b362b36490d58b82663a448ac0532b025",
+    "status": 200,
+    "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+    "sourceHead": "d64b037b362b36490d58b82663a448ac0532b025",
+    "bytes": 67244,
+    "checkedAt": "2026-09-15T21:52:37.101608+00:00",
+    "client": "system curl; TLS verification enabled"
+  }
+]

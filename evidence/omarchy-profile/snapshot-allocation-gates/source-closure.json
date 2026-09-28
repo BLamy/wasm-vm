@@ -1,0 +1,43 @@
+{
+  "sourceHead": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "artifactHead": "bb3c13dd6014ca15f29fe897b3ba207d65bc67b8",
+  "changedRuntimeFiles": [
+    "crates/core/src/resume.rs",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "web/dist/roadmap.js",
+    "web/dist/sw.js",
+    "web/roadmap.js"
+  ],
+  "files": [
+    {
+      "path": "crates/core/src/resume.rs",
+      "sha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3"
+    },
+    {
+      "path": "tools/verify/omarchy-snapshot-allocation.mjs",
+      "sha256": "0e17c10459b3154bd7475b75d7347284e2936c64712365eb397e3155ad10909c"
+    },
+    {
+      "path": "web/roadmap.js",
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "sha256": "7277688bd0b13ba6e9598259c359afcd88023506ca5d5e970253d3fbba7596c5"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm.js",
+      "sha256": "b758b2bda682647d927b7b6e882fb83e59f774b8b2dfa339b24dc5a3dcb032ec"
+    },
+    {
+      "path": "web/dist/sw.js",
+      "sha256": "0cae2f657076b8f113e25f40570e6ce807cbfe41cdc2891e2d9f0ca34b4be9d0"
+    }
+  ],
+  "coldBuildWasmMatches": true,
+  "desktopResponsive": false
+}

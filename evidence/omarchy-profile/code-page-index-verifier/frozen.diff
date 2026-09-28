@@ -1,0 +1,411 @@
+diff --git a/crates/core/src/dispatch.rs b/crates/core/src/dispatch.rs
+index bc60096ad..4a1029ca0 100644
+--- a/crates/core/src/dispatch.rs
++++ b/crates/core/src/dispatch.rs
+@@ -16,7 +16,7 @@
+ //! with a page-level has-code bitmap. See E4-T05 for the phased plan.
+ 
+ use crate::decode::Instr;
+-use alloc::collections::{BTreeMap, BTreeSet, VecDeque};
++use alloc::collections::{BTreeMap, VecDeque};
+ use alloc::vec::Vec;
+ 
+ /// Guest page granularity used for block boundaries + code-page keying. 4 KiB — the Sv39
+@@ -125,13 +125,11 @@ pub struct BlockCache {
+     slots: alloc::vec::Vec<Option<DecodedBlock>>,
+     mask: usize,
+     generation: u64,
+-    /// E4-T05 Phase B: the page-level "has-code" set (the E4-T17 SMC precursor). Every physical
+-    /// page frame that has ever held ≥1 inserted block in the CURRENT generation. A store (guest
+-    /// OR device/DMA) whose frame is NOT in this set cannot have hit cached code, so it needs no
+-    /// scan — this is what lets the cache RETAIN blocks across ordinary data stores instead of the
+-    /// Phase-A whole-cache flush. Cleared on a full `flush` (all blocks become invisible anyway);
+-    /// stale membership is only ever a wasted scan (conservative-safe), never a missed flush.
+-    has_code: BTreeSet<u64>,
++    /// E5.5-T03ba: live decoded-cache slots grouped by physical page. A store (guest OR
++    /// device/DMA) whose frame is absent is an O(log n) map miss; a code-page store touches only
++    /// the indexed slots instead of scanning the whole open-addressed table. The index is rebuilt
++    /// incrementally on insert and cleared with the generation on a whole-cache flush.
++    code_slots: BTreeMap<u64, Vec<usize>>,
+     /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
+     /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
+     flushes: u64,
+@@ -167,7 +165,7 @@ impl BlockCache {
+             slots,
+             mask: cap - 1,
+             generation: 1,
+-            has_code: BTreeSet::new(),
++            code_slots: BTreeMap::new(),
+             flushes: 0,
+             blocks_discarded: 0,
+             fence_i_noops: 0,
+@@ -198,30 +196,55 @@ impl BlockCache {
+     /// now invisible, so no frame "has code" until the next insert re-populates it.
+     pub fn flush(&mut self) {
+         self.generation = self.generation.wrapping_add(1);
+-        self.has_code.clear();
++        self.code_slots.clear();
+         self.flushes = self.flushes.saturating_add(1);
+     }
+ 
+-    /// E4-T05 Phase B: page-granular invalidation. Drop every live block whose `page_frame` ==
+-    /// `frame` (self-modifying code / DMA-into-code precursor). Returns `true` iff `frame` was a
+-    /// code page (had ≥1 cached block) — the caller uses that to decide whether an in-flight block
+-    /// cursor may now be stale. A frame with no cached code is an O(1) set-miss: the common case
+-    /// for an ordinary data store, so the cache is retained. When `frame` DID have code, the slot
+-    /// table is scanned once (O(capacity)) and matching blocks are dropped — including any stale
+-    /// (older-generation) leftovers in that frame, which is harmless cleanup.
++    /// E4-T05 Phase B / E5.5-T03ba: page-granular invalidation. Drop every live block whose
++    /// `page_frame` == `frame` (self-modifying code / DMA-into-code precursor). Returns `true` iff
++    /// `frame` was a code page (had ≥1 indexed cached block) — the caller uses that to decide
++    /// whether an in-flight block cursor may now be stale. A frame with no cached code is a map
++    /// miss: the common case for an ordinary data store, so the cache is retained. A hit removes
++    /// only the slots recorded for that page; it never scans unrelated cache entries.
+     pub fn flush_page(&mut self, frame: u64) -> bool {
+-        if !self.has_code.remove(&frame) {
++        let Some(indices) = self.code_slots.remove(&frame) else {
+             return false;
+-        }
+-        for slot in self.slots.iter_mut() {
+-            if slot.as_ref().is_some_and(|b| b.page_frame == frame) {
+-                *slot = None;
++        };
++        for index in indices {
++            if self.slots[index]
++                .as_ref()
++                .is_some_and(|b| b.block_gen == self.generation && b.page_frame == frame)
++            {
++                self.slots[index] = None;
+                 self.blocks_discarded = self.blocks_discarded.saturating_add(1);
+             }
+         }
+         true
+     }
+ 
++    /// Remove one live slot from the page index before replacing it. Stale-generation slots are
++    /// intentionally absent: a whole-cache flush already clears the index and makes those slots
++    /// invisible until an insertion reclaims them.
++    fn unlink_code_slot(&mut self, index: usize) {
++        let Some(frame) = self.slots[index]
++            .as_ref()
++            .filter(|b| b.block_gen == self.generation)
++            .map(|b| b.page_frame)
++        else {
++            return;
++        };
++        let mut empty = false;
++        if let Some(indices) = self.code_slots.get_mut(&frame) {
++            if let Some(position) = indices.iter().position(|&candidate| candidate == index) {
++                indices.swap_remove(position);
++            }
++            empty = indices.is_empty();
++        }
++        if empty {
++            self.code_slots.remove(&frame);
++        }
++    }
++
+     #[inline]
+     fn hash(&self, phys: u64) -> usize {
+         // Fibonacci-ish mix of the physical PC; low bits are always 0/2-aligned so fold the
+@@ -265,22 +288,28 @@ impl BlockCache {
+     /// replacement; correctness is unaffected).
+     pub fn insert(&mut self, mut block: DecodedBlock) {
+         block.block_gen = self.generation;
+-        // Record the block's physical page as "has code" so a later store into it is caught by
+-        // `flush_page` (Phase-B page-granular SMC/DMA invalidation).
+-        self.has_code.insert(block.page_frame);
+         let start = self.hash(block.phys_start);
+-        for i in 0..MAX_PROBE {
+-            let idx = (start + i) & self.mask;
+-            let free = match &self.slots[idx] {
+-                None => true,
+-                Some(b) => b.block_gen != self.generation || b.phys_start == block.phys_start,
+-            };
+-            if free {
+-                self.slots[idx] = Some(block);
+-                return;
+-            }
+-        }
+-        self.slots[start] = Some(block);
++        let index = (0..MAX_PROBE)
++            .find_map(|i| {
++                let idx = (start + i) & self.mask;
++                let free = match &self.slots[idx] {
++                    None => true,
++                    Some(b) => b.block_gen != self.generation || b.phys_start == block.phys_start,
++                };
++                if free { Some(idx) } else { None }
++            })
++            .unwrap_or(start);
++        self.unlink_code_slot(index);
++        self.slots[index] = Some(block);
++        self.code_slots
++            .entry(
++                self.slots[index]
++                    .as_ref()
++                    .expect("inserted block")
++                    .page_frame,
++            )
++            .or_default()
++            .push(index);
+     }
+ }
+ 
+@@ -980,6 +1009,49 @@ impl BlockDiscovery {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn block_cache_page_index_invalidates_only_indexed_live_slots() {
++        let mut cache = BlockCache::with_capacity(64);
++        let page_a = 0x8000_0000;
++        let page_b = page_a + PAGE;
++        let page_c = page_b + PAGE;
++        let ops = block().to_vec();
++
++        cache.insert(DecodedBlock::new(page_a, ops.clone(), 8));
++        cache.insert(DecodedBlock::new(page_a + 16, ops.clone(), 8));
++        cache.insert(DecodedBlock::new(page_b, ops.clone(), 8));
++        assert_eq!(cache.code_slots.get(&(page_a >> 12)).unwrap().len(), 2);
++        assert_eq!(cache.code_slots.get(&(page_b >> 12)).unwrap().len(), 1);
++
++        assert!(cache.flush_page(page_a >> 12));
++        assert!(cache.get(page_a).is_none());
++        assert!(cache.get(page_a + 16).is_none());
++        assert!(cache.get(page_b).is_some());
++        assert_eq!(cache.invalidation_stats(), (0, 2));
++        assert!(
++            !cache.flush_page(page_a >> 12),
++            "page index entry was retired"
++        );
++
++        // Replacing a live slot must unlink the old index entry rather than leave a duplicate
++        // that would make a later page flush report a phantom block.
++        cache.insert(DecodedBlock::new(page_c, ops.clone(), 8));
++        cache.insert(DecodedBlock::new(page_c, ops, 8));
++        assert_eq!(cache.code_slots.get(&(page_c >> 12)).unwrap().len(), 1);
++        assert!(cache.flush_page(page_c >> 12));
++        assert_eq!(cache.invalidation_stats(), (0, 3));
++        assert!(!cache.flush_page(page_c >> 12));
++
++        // A whole-cache generation flush drops the index as well; stale slots cannot be flushed
++        // or counted after a later insertion repopulates a different page.
++        cache.flush();
++        assert!(cache.code_slots.is_empty());
++        assert!(!cache.flush_page(page_b >> 12));
++        cache.insert(DecodedBlock::new(page_b, block().to_vec(), 8));
++        assert!(cache.flush_page(page_b >> 12));
++        assert_eq!(cache.invalidation_stats(), (1, 4));
++    }
++
+     #[test]
+     fn cold_counter_recycling_disabled_parity_including_admission_observer() {
+         let mut control = BlockDiscovery::with_bounds(4, 3);
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 4bb5c2432..637e0e150 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -87,7 +87,7 @@ if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaq
+ if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
+   "compositor observation requires the isolated prepared physical trial");
+ const originalInputPresentation = inputObserver || inputKernelPrepared ? assertOriginalInputGeometry : assertOriginalPresentation;
+-const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
++const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
+ const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+ const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+ if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+@@ -124,7 +124,7 @@ const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, c
+ if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
+   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
+ }
+-if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
++if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+   "residency is isolated from other experiments");
+ if (process.env.OMARCHY_WORKER_COST !== undefined) {
+   assert.ok(workerCost && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate",
+@@ -141,7 +141,7 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
+   "direct opaque requires its isolated fixed residency candidate input trial");
+ }
+ if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
+-  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(trial?.experiment) && trial.arm === "candidate"
++  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment) && trial.arm === "candidate"
+     && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver || inputKernelPrepared) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
+   "prepared direct input requires its isolated fixed residency candidate trial");
+ }
+diff --git a/tools/verify/omarchy-input-audit.mjs b/tools/verify/omarchy-input-audit.mjs
+index 20682c426..e561d203b 100644
+--- a/tools/verify/omarchy-input-audit.mjs
++++ b/tools/verify/omarchy-input-audit.mjs
+@@ -27,7 +27,7 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
+   assert.equal(report.trial.scopedStatus, "");
+   assert.equal(report.trial.arm, arm);
+   const experiment = requestedExperiment ?? (preparedRecycling ? "prepared-recycling" : "residency");
+-  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment));
++  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment));
+   assert.equal(report.trial.experiment, experiment);
+   assert.equal(report.trial.recycling, preparedRecycling);
+   const options = inputTrialOptions({ urlArg: "local", pair: "pinned", chunks: "pinned", arm,
+diff --git a/tools/verify/omarchy-input-kernel-response.mjs b/tools/verify/omarchy-input-kernel-response.mjs
+index 87f67a67e..765d3bdbd 100644
+--- a/tools/verify/omarchy-input-kernel-response.mjs
++++ b/tools/verify/omarchy-input-kernel-response.mjs
+@@ -15,22 +15,26 @@ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
+ import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+ import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
+ 
+-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr"].includes(process.argv[4])),
+-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr]");
++assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr", "--prepared-cap-1024-cache16384-code-page-index"].includes(process.argv[4])),
++  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr|--prepared-cap-1024-cache16384-code-page-index]");
+ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+ const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
+-const gpuRuntime = process.argv[4] ? await loadGpuTransferRuntime(repo) : null;
++const codePageIndex = process.argv[4] === "--prepared-cap-1024-cache16384-code-page-index";
++const gpuRuntime = process.argv[4] && !codePageIndex ? await loadGpuTransferRuntime(repo) : null;
+ const displayLateCache16384 = process.argv[4] === "--display-late-cap-1024-cache16384";
+ const displayLateProbe = displayLateCache16384 || process.argv[4] === "--display-late-probe";
+ const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
+ const preparedCap1024 = process.argv[4] === "--prepared-cap-1024";
+ const preparedCap1024Cache16384NoJalr = process.argv[4] === "--prepared-cap-1024-cache16384-no-jalr";
+-const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr;
+-const experiment = preparedCap1024Cache16384NoJalr ? "prepared-cap-1024-cache16384-no-jalr"
++const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr || codePageIndex;
++const experiment = codePageIndex ? "prepared-cap-1024-cache16384-code-page-index"
++  : preparedCap1024Cache16384NoJalr ? "prepared-cap-1024-cache16384-no-jalr"
+   : preparedCap1024Cache16384 ? "prepared-cap-1024-cache16384"
+   : preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling";
+-const wasmSha256 = gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
+ const sha = bytes => createHash("sha256").update(bytes).digest("hex");
++const wasmPath = path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm");
++const wasmBytes = await fs.readFile(wasmPath);
++const wasmSha256 = codePageIndex ? sha(wasmBytes) : gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
+ for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
+   const bytes = await fs.readFile(path.join(pair, file));
+   assert.equal(bytes.length, INPUT_BUFFER_PREPARED_IDENTITIES[role].size);
+@@ -38,12 +42,14 @@ for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlay
+ }
+ const preparedRecord = path.join(repo, "evidence/omarchy-profile/input-kernel-pair-r1/browser/run.json");
+ assert.equal(sha(await fs.readFile(preparedRecord)), INPUT_BUFFER_PREPARED_RECORD_SHA256);
+-assert.equal(sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm"))), wasmSha256);
++assert.equal(sha(wasmBytes), wasmSha256);
+ await fs.mkdir(out, { recursive: false });
+ const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: false, visualInspectionRequired: true,
+   diagnosticOnly: displayPixelProbe, experiment,
+   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
+-  wasmSha256, gpuRuntime: gpuRuntime?.record ?? null, pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
++  wasmSha256, gpuRuntime: gpuRuntime?.record ?? null,
++  candidateRuntime: codePageIndex ? { task: "E5.5-T03ba", files: { ["web/dist/pkg/wasm_vm_wasm_bg.wasm"]: { size: wasmBytes.length, sha256: wasmSha256 } } } : null,
++  pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
+   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
+   startedAt: new Date().toISOString() };
+ const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
+diff --git a/tools/verify/omarchy-input-trial.mjs b/tools/verify/omarchy-input-trial.mjs
+index a1625606c..1856aa147 100644
+--- a/tools/verify/omarchy-input-trial.mjs
++++ b/tools/verify/omarchy-input-trial.mjs
+@@ -20,7 +20,8 @@ function residencyForArm(arm) {
+ }
+ 
+ function residencyForExperiment(experiment, arm) {
+-  if (["prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment)) {
++  if (["prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr",
++    "prepared-cap-1024-cache16384-code-page-index"].includes(experiment)) {
+     assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
+     return { jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024 };
+   }
+@@ -33,12 +34,12 @@ export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, tim
+   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
+   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
+   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
+-  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment), "unsupported input-trial experiment");
+-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
++  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment), "unsupported input-trial experiment");
++  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
+   return { arm, recycling: experiment !== "residency" && arm === "candidate",
+     ...(experiment !== "recycling" ? { experiment, ...residencyForExperiment(experiment, arm),
+-      ...(experiment === "prepared-cap-1024-cache16384" || experiment === "prepared-cap-1024-cache16384-no-jalr" ? { decodedCacheEntries: 16384 } : {}),
+-      ...(experiment === "prepared-cap-1024-cache16384-no-jalr" ? { jitDynamicChaining: false, jitRegionChaining: true } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
++      ...(experiment === "prepared-cap-1024-cache16384" || experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" ? { decodedCacheEntries: 16384 } : {}),
++      ...(experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" ? { jitDynamicChaining: false, jitRegionChaining: true } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
+     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
+ }
+@@ -51,13 +52,13 @@ export function inputTrialUrl(input, options) {
+   url.searchParams.set("omarchyDivider", "64");
+   url.searchParams.set("jit", "1");
+   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
+-  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) {
++  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) {
+     assert.equal(options.recycling, options.experiment !== "residency", "experiment recycling selection disagrees");
+-    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) assert.equal(options.arm, "candidate");
++    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) assert.equal(options.arm, "candidate");
+     url.searchParams.set("jitResidency", options.jitResidencyPolicy);
+   }
+   if (options.decodedCacheEntries !== undefined) url.searchParams.set("decodedCacheEntries", String(options.decodedCacheEntries));
+-  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr") url.searchParams.set("jalr", "0");
++  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index") url.searchParams.set("jalr", "0");
+   return url;
+ }
+ 
+@@ -81,16 +82,16 @@ export function assertInputTrialRuntime(state, options) {
+     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
+   }
+   assert.equal(jit.decodedCacheEntries, options.decodedCacheEntries ?? 4096);
+-  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)
++  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)
+     ? { jitResidencyPolicy: options.jitResidencyPolicy, jitResidencyCap: options.jitResidencyCap }
+     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
+   if (options.experiment === "residency") assert.equal(options.recycling, false);
+-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr"].includes(options.experiment)) {
++  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) {
+     assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
+   }
+   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
+   assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
+-  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr") {
++  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index") {
+     assert.equal(jit.jitDynamicChaining, false);
+     assert.equal(jit.jitRegionChaining, true);
+   }
+diff --git a/tools/verify/omarchy-input-trial.test.mjs b/tools/verify/omarchy-input-trial.test.mjs
+index a06344ae3..668d3212d 100644
+--- a/tools/verify/omarchy-input-trial.test.mjs
++++ b/tools/verify/omarchy-input-trial.test.mjs
+@@ -15,6 +15,8 @@ const preparedCap1024CacheOptions = arm => inputTrialOptions({ urlArg: "local",
+   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384" });
+ const preparedCap1024CacheNoJalrOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-jalr" });
++const preparedCodePageIndexOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
++  renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-code-page-index" });
+ test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
+   const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
+   assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
+@@ -112,6 +114,27 @@ test("prepared cap-1024 decoded-cache JALR-off candidate changes only jalr", ()
+     const bad = structuredClone(state); bad.jit[key] = value; assert.throws(() => assertInputTrialRuntime(bad, trial));
+   }
+ });
++test("code-page index candidate keeps the exact T03az runtime settings", () => {
++  const trial = preparedCodePageIndexOptions("candidate");
++  assert.deepEqual(trial, { arm: "candidate", recycling: true, experiment: "prepared-cap-1024-cache16384-code-page-index",
++    jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024, decodedCacheEntries: 16384,
++    jitDynamicChaining: false, jitRegionChaining: true,
++    startupMs: 300000, typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
++  assert.throws(() => preparedCodePageIndexOptions("control"));
++  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
++  const url = inputTrialUrl(base, trial);
++  assert.equal(url.searchParams.get("jitResidency"), "cap-1024");
++  assert.equal(url.searchParams.get("decodedCacheEntries"), "16384");
++  assert.equal(url.searchParams.get("jitColdCounterRecycling"), "1");
++  assert.equal(url.searchParams.get("jalr"), "0");
++  const state = { jit: { hasExecutor: true, admissionProbe: false,
++    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
++    decodedCacheEntries: 16384, jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024,
++    jitDynamicChaining: false, jitRegionChaining: true, entryCost: { timingEnabled: false } },
++    clock: { mode: "icount", clockDiv: 64 } };
++  assertInputTrialRuntime(state, trial);
++  assert.deepEqual(url.searchParams.toString(), inputTrialUrl(base, preparedCap1024CacheNoJalrOptions("candidate")).searchParams.toString());
++});
+ test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
+   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
+     typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });

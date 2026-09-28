@@ -1,0 +1,49 @@
+{
+  "head": "83dae1464fb7a18136d6befc464e4820e6fc1ae8",
+  "command": "node tools/verify/omarchy-compositor-mode.mjs evidence/omarchy-profile/compositor-mode-r1",
+  "tests": {
+    "command": "node --test tools/verify/omarchy-compositor-command.test.mjs tools/verify/omarchy-render-mode.test.mjs tools/verify/omarchy-desktop-services.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-live-recording.test.mjs",
+    "passed": 48,
+    "failed": 0
+  },
+  "outcome": "physical-input-failed",
+  "desktopAcceptance": false,
+  "files": {
+    "evidence/omarchy-profile/compositor-mode-r1/compositor-mode.json": {
+      "bytes": 5501,
+      "sha256": "6b9841f4946ab511450fbb5eb2a6f85b665dff21bddc1fa26fff9b0c8e883b8f"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop/desktop.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop/failure.png": {
+      "bytes": 4710,
+      "sha256": "658bf3e9ddc65742c6a9eb38880568a004a89c9a2b94ce4a5d40d2c1d8ce6587"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop/latest.png": {
+      "bytes": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop/report.json": {
+      "bytes": 733098,
+      "sha256": "61023afc22d76b3bff18dc6aef215ea22c5fc4830c288a46e7ebbfda376edc70"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop/serial.log": {
+      "bytes": 1962,
+      "sha256": "b1550dc88c241b8c4c1e6c68b49f83edba951748ea9f03bdf5e541a156fed69a"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/desktop.log": {
+      "bytes": 6105,
+      "sha256": "c64116500cb42c52d7cfb687ba8dca1c703b8e1259da418cc524c9538dcc8921"
+    },
+    "evidence/omarchy-profile/compositor-mode-r1/run.json": {
+      "bytes": 9913,
+      "sha256": "28c870863d6042d9454587695960f60131c5a2de4677d9c2873ebe5a10b9e004"
+    },
+    "evidence/omarchy-profile/compositor-mode-gates/tests.log": {
+      "bytes": 4739,
+      "sha256": "9d7217631a21bc2e49ea8300239dc906aacba74d77c4de19618daa49e1240b6f"
+    }
+  }
+}

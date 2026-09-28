@@ -1,0 +1,66 @@
+{
+ "input-kernel-pair (T03ar, LP1, package desktop)": {
+  "text": "echo e92d5da97258 | tee /tmp/wvm-native-d6c4fd7e",
+  "firstEcho": {
+   "dInstr": 8034988108,
+   "dMs": 277143,
+   "rect": "0,0,1280x800"
+  },
+  "fullEcho": null,
+  "fullEchoAfterLastKey": null,
+  "output": {
+   "dInstr": 7890989602,
+   "dMs": 262576,
+   "rect": "0,0,1280x800"
+  },
+  "nonceOk": true
+ },
+ "responsive r3 (LP1, profile on restored session)": {
+  "text": "echo 98c4a63c5a75 | tee /tmp/wvm-native-f13f8130",
+  "firstEcho": {
+   "dInstr": 175995819,
+   "dMs": 11100,
+   "rect": "0,0,1280x800"
+  },
+  "fullEcho": {
+   "dInstr": 487981277,
+   "dMs": 30311,
+   "rect": "0,0,1280x800"
+  },
+  "fullEchoAfterLastKey": {
+   "dInstr": 346984663,
+   "dMs": 21497,
+   "rect": "0,0,1280x800"
+  },
+  "output": {
+   "dInstr": 343984670,
+   "dMs": 21315,
+   "rect": "0,0,1280x800"
+  },
+  "nonceOk": true
+ },
+ "responsive r4 (LP0, fresh session)": {
+  "text": "echo d5f80c2db615 | tee /tmp/wvm-native-8d9f289c",
+  "firstEcho": {
+   "dInstr": 125998123,
+   "dMs": 6699,
+   "rect": "0,0,1280x800"
+  },
+  "fullEcho": {
+   "dInstr": 187496405,
+   "dMs": 10653,
+   "rect": "0,0,1280x800"
+  },
+  "fullEchoAfterLastKey": {
+   "dInstr": 46498732,
+   "dMs": 2922,
+   "rect": "0,0,1280x800"
+  },
+  "output": {
+   "dInstr": 43498745,
+   "dMs": 2744,
+   "rect": "0,0,1280x800"
+  },
+  "nonceOk": true
+ }
+}

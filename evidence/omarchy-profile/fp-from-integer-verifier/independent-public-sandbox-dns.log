@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-from-integer-verifier/check-public.py", line 31, in <module>
+    rows = list(workers.map(fetch, [(origin, name) for origin in ORIGINS for name in FILES]))
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 608, in result_iterator
+    yield fs.pop().result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 445, in result
+    return self.__get_result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 390, in __get_result
+    raise self._exception
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py", line 52, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-from-integer-verifier/check-public.py", line 24, in fetch
+    assert result.returncode == 0, result.stderr
+AssertionError: curl: (6) Could not resolve host: d3e13537.wasm-vm.pages.dev
+

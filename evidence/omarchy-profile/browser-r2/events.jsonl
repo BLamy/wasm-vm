@@ -1,0 +1,141 @@
+{"hostMs":5800,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:48] \"GET /linux-worker-host.js HTTP/1.1\" 200 -\n"}
+{"hostMs":5805,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:48] \"GET /e5t18a-desktop/manifest.json HTTP/1.1\" 200 -\n"}
+{"hostMs":7261,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /linux-worker-host.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7261,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/presentation.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7261,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/input/keymap.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7272,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /linux-worker-protocol.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7272,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/canvas2d.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7273,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/frame-scheduler.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7273,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/visibility-scheduler.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7273,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/viewport.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7273,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/webgl.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7274,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /src/sink/present-backend.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7278,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /e5t18a-desktop/manifest.json HTTP/1.1\" 200 -\n"}
+{"hostMs":7283,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /linux-worker.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7286,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /loader.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7286,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /linux-worker-protocol.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7288,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /pkg/wasm_vm_wasm.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7288,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /boot-path.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7289,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /overlay-seed-identity.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7289,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /task-quiescence.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7289,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /guest-clock.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7289,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /decoded-cache.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7290,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js HTTP/1.1\" 200 -\n"}
+{"hostMs":7294,"atMs":54.58999991416931,"type":"state","value":"fetching"}
+{"hostMs":7294,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /releases/kernel/6.6.63/Image HTTP/1.1\" 200 -\n"}
+{"hostMs":7297,"atMs":57.739999890327454,"type":"progress","role":"kernel","loaded":2097152,"total":24208896}
+{"hostMs":7297,"atMs":57.80499994754791,"type":"progress","role":"kernel","loaded":2162688,"total":24208896}
+{"hostMs":7297,"atMs":57.83499991893768,"type":"progress","role":"kernel","loaded":2293760,"total":24208896}
+{"hostMs":7297,"atMs":57.84999990463257,"type":"progress","role":"kernel","loaded":2359296,"total":24208896}
+{"hostMs":7298,"atMs":57.87000000476837,"type":"progress","role":"kernel","loaded":2424832,"total":24208896}
+{"hostMs":7298,"atMs":57.894999980926514,"type":"progress","role":"kernel","loaded":2490368,"total":24208896}
+{"hostMs":7298,"atMs":57.919999957084656,"type":"progress","role":"kernel","loaded":2555904,"total":24208896}
+{"hostMs":7298,"atMs":57.9799998998642,"type":"progress","role":"kernel","loaded":2621440,"total":24208896}
+{"hostMs":7298,"atMs":58.014999985694885,"type":"progress","role":"kernel","loaded":2686976,"total":24208896}
+{"hostMs":7298,"atMs":58.03999996185303,"type":"progress","role":"kernel","loaded":2752512,"total":24208896}
+{"hostMs":7298,"atMs":58.049999952316284,"type":"progress","role":"kernel","loaded":2818048,"total":24208896}
+{"hostMs":7299,"atMs":58.08499991893768,"type":"progress","role":"kernel","loaded":2883584,"total":24208896}
+{"hostMs":7299,"atMs":58.12000000476837,"type":"progress","role":"kernel","loaded":2949120,"total":24208896}
+{"hostMs":7299,"atMs":58.13499999046326,"type":"progress","role":"kernel","loaded":3014656,"total":24208896}
+{"hostMs":7299,"atMs":58.144999980926514,"type":"progress","role":"kernel","loaded":3080192,"total":24208896}
+{"hostMs":7299,"atMs":58.1949999332428,"type":"progress","role":"kernel","loaded":3145728,"total":24208896}
+{"hostMs":7299,"atMs":58.204999923706055,"type":"progress","role":"kernel","loaded":3211264,"total":24208896}
+{"hostMs":7299,"atMs":58.24500000476837,"type":"progress","role":"kernel","loaded":3276800,"total":24208896}
+{"hostMs":7299,"atMs":58.269999980926514,"type":"progress","role":"kernel","loaded":3342336,"total":24208896}
+{"hostMs":7299,"atMs":58.294999957084656,"type":"progress","role":"kernel","loaded":3407872,"total":24208896}
+{"hostMs":7299,"atMs":58.37999999523163,"type":"progress","role":"kernel","loaded":3473408,"total":24208896}
+{"hostMs":7299,"atMs":58.389999985694885,"type":"progress","role":"kernel","loaded":3538944,"total":24208896}
+{"hostMs":7299,"atMs":58.394999980926514,"type":"progress","role":"kernel","loaded":3604480,"total":24208896}
+{"hostMs":7299,"atMs":58.40499997138977,"type":"progress","role":"kernel","loaded":3670016,"total":24208896}
+{"hostMs":7299,"atMs":58.42999994754791,"type":"progress","role":"kernel","loaded":3735552,"total":24208896}
+{"hostMs":7299,"atMs":58.454999923706055,"type":"progress","role":"kernel","loaded":3801088,"total":24208896}
+{"hostMs":7299,"atMs":58.47499990463257,"type":"progress","role":"kernel","loaded":3866624,"total":24208896}
+{"hostMs":7300,"atMs":58.50999999046326,"type":"progress","role":"kernel","loaded":3932160,"total":24208896}
+{"hostMs":7300,"atMs":58.5349999666214,"type":"progress","role":"kernel","loaded":3997696,"total":24208896}
+{"hostMs":7300,"atMs":58.58999991416931,"type":"progress","role":"kernel","loaded":4063232,"total":24208896}
+{"hostMs":7301,"atMs":58.63499999046326,"type":"progress","role":"kernel","loaded":4128768,"total":24208896}
+{"hostMs":7301,"atMs":58.64999997615814,"type":"progress","role":"kernel","loaded":4194304,"total":24208896}
+{"hostMs":7301,"atMs":58.96999990940094,"type":"progress","role":"kernel","loaded":4259840,"total":24208896}
+{"hostMs":7301,"atMs":59.00499999523163,"type":"progress","role":"kernel","loaded":4325376,"total":24208896}
+{"hostMs":7301,"atMs":59.014999985694885,"type":"progress","role":"kernel","loaded":4390912,"total":24208896}
+{"hostMs":7301,"atMs":59.044999957084656,"type":"progress","role":"kernel","loaded":4456448,"total":24208896}
+{"hostMs":7301,"atMs":59.079999923706055,"type":"progress","role":"kernel","loaded":4521984,"total":24208896}
+{"hostMs":7301,"atMs":59.109999895095825,"type":"progress","role":"kernel","loaded":4587520,"total":24208896}
+{"hostMs":7301,"atMs":59.169999957084656,"type":"progress","role":"kernel","loaded":4653056,"total":24208896}
+{"hostMs":7301,"atMs":59.22499990463257,"type":"progress","role":"kernel","loaded":4718592,"total":24208896}
+{"hostMs":7301,"atMs":59.239999890327454,"type":"progress","role":"kernel","loaded":4784128,"total":24208896}
+{"hostMs":7302,"atMs":59.264999985694885,"type":"progress","role":"kernel","loaded":4849664,"total":24208896}
+{"hostMs":7302,"atMs":59.27999997138977,"type":"progress","role":"kernel","loaded":4915200,"total":24208896}
+{"hostMs":7302,"atMs":59.389999985694885,"type":"progress","role":"kernel","loaded":4980736,"total":24208896}
+{"hostMs":7302,"atMs":59.41499996185303,"type":"progress","role":"kernel","loaded":5046272,"total":24208896}
+{"hostMs":7303,"atMs":59.42999994754791,"type":"progress","role":"kernel","loaded":5111808,"total":24208896}
+{"hostMs":7303,"atMs":59.52499997615814,"type":"progress","role":"kernel","loaded":5242880,"total":24208896}
+{"hostMs":7303,"atMs":59.53999996185303,"type":"progress","role":"kernel","loaded":5308416,"total":24208896}
+{"hostMs":7303,"atMs":59.549999952316284,"type":"progress","role":"kernel","loaded":5373952,"total":24208896}
+{"hostMs":7303,"atMs":59.6049998998642,"type":"progress","role":"kernel","loaded":5505024,"total":24208896}
+{"hostMs":7305,"atMs":59.669999957084656,"type":"progress","role":"kernel","loaded":5570560,"total":24208896}
+{"hostMs":7305,"atMs":59.68499994277954,"type":"progress","role":"kernel","loaded":5636096,"total":24208896}
+{"hostMs":7305,"atMs":59.71999990940094,"type":"progress","role":"kernel","loaded":5701632,"total":24208896}
+{"hostMs":7305,"atMs":59.77999997138977,"type":"progress","role":"kernel","loaded":5767168,"total":24208896}
+{"hostMs":7305,"atMs":59.794999957084656,"type":"progress","role":"kernel","loaded":5832704,"total":24208896}
+{"hostMs":7305,"atMs":59.89999997615814,"type":"progress","role":"kernel","loaded":5898240,"total":24208896}
+{"hostMs":7305,"atMs":59.91499996185303,"type":"progress","role":"kernel","loaded":6029312,"total":24208896}
+{"hostMs":7305,"atMs":59.954999923706055,"type":"progress","role":"kernel","loaded":6094848,"total":24208896}
+{"hostMs":7305,"atMs":59.97499990463257,"type":"progress","role":"kernel","loaded":6160384,"total":24208896}
+{"hostMs":7305,"atMs":59.984999895095825,"type":"progress","role":"kernel","loaded":6225920,"total":24208896}
+{"hostMs":7305,"atMs":60.02999997138977,"type":"progress","role":"kernel","loaded":6291456,"total":24208896}
+{"hostMs":7305,"atMs":60.08499991893768,"type":"progress","role":"kernel","loaded":6356992,"total":24208896}
+{"hostMs":7305,"atMs":60.12999999523163,"type":"progress","role":"kernel","loaded":6422528,"total":24208896}
+{"hostMs":7305,"atMs":60.14999997615814,"type":"progress","role":"kernel","loaded":6488064,"total":24208896}
+{"hostMs":7305,"atMs":60.27499997615814,"type":"progress","role":"kernel","loaded":6619136,"total":24208896}
+{"hostMs":7305,"atMs":60.294999957084656,"type":"progress","role":"kernel","loaded":6750208,"total":24208896}
+{"hostMs":7305,"atMs":60.30499994754791,"type":"progress","role":"kernel","loaded":6815744,"total":24208896}
+{"hostMs":7305,"atMs":60.3199999332428,"type":"progress","role":"kernel","loaded":6881280,"total":24208896}
+{"hostMs":7305,"atMs":60.329999923706055,"type":"progress","role":"kernel","loaded":6946816,"total":24208896}
+{"hostMs":7305,"atMs":60.33999991416931,"type":"progress","role":"kernel","loaded":7012352,"total":24208896}
+{"hostMs":7305,"atMs":60.34999990463257,"type":"progress","role":"kernel","loaded":7077888,"total":24208896}
+{"hostMs":7305,"atMs":61.125,"type":"progress","role":"kernel","loaded":7733248,"total":24208896}
+{"hostMs":7305,"atMs":61.169999957084656,"type":"progress","role":"kernel","loaded":8388608,"total":24208896}
+{"hostMs":7305,"atMs":61.21999990940094,"type":"progress","role":"kernel","loaded":8978432,"total":24208896}
+{"hostMs":7306,"atMs":61.264999985694885,"type":"progress","role":"kernel","loaded":9568256,"total":24208896}
+{"hostMs":7306,"atMs":61.324999928474426,"type":"progress","role":"kernel","loaded":10223616,"total":24208896}
+{"hostMs":7306,"atMs":61.34999990463257,"type":"progress","role":"kernel","loaded":10485760,"total":24208896}
+{"hostMs":7306,"atMs":61.38499999046326,"type":"progress","role":"kernel","loaded":11010048,"total":24208896}
+{"hostMs":7306,"atMs":61.41499996185303,"type":"progress","role":"kernel","loaded":11337728,"total":24208896}
+{"hostMs":7306,"atMs":61.43499994277954,"type":"progress","role":"kernel","loaded":11534336,"total":24208896}
+{"hostMs":7306,"atMs":61.449999928474426,"type":"progress","role":"kernel","loaded":11665408,"total":24208896}
+{"hostMs":7306,"atMs":61.46499991416931,"type":"progress","role":"kernel","loaded":11763608,"total":24208896}
+{"hostMs":7308,"atMs":61.4799998998642,"type":"progress","role":"kernel","loaded":11862016,"total":24208896}
+{"hostMs":7308,"atMs":61.50999999046326,"type":"progress","role":"kernel","loaded":11927344,"total":24208896}
+{"hostMs":7308,"atMs":61.514999985694885,"type":"progress","role":"kernel","loaded":11927552,"total":24208896}
+{"hostMs":7308,"atMs":61.544999957084656,"type":"progress","role":"kernel","loaded":11943884,"total":24208896}
+{"hostMs":7308,"atMs":62.299999952316284,"type":"progress","role":"kernel","loaded":12582912,"total":24208896}
+{"hostMs":7308,"atMs":62.43499994277954,"type":"progress","role":"kernel","loaded":14368716,"total":24208896}
+{"hostMs":7308,"atMs":62.449999928474426,"type":"progress","role":"kernel","loaded":14680064,"total":24208896}
+{"hostMs":7309,"atMs":62.5,"type":"progress","role":"kernel","loaded":15073280,"total":24208896}
+{"hostMs":7309,"atMs":62.5349999666214,"type":"progress","role":"kernel","loaded":15597568,"total":24208896}
+{"hostMs":7309,"atMs":62.53999996185303,"type":"progress","role":"kernel","loaded":16121856,"total":24208896}
+{"hostMs":7309,"atMs":62.55999994277954,"type":"progress","role":"kernel","loaded":16580608,"total":24208896}
+{"hostMs":7309,"atMs":62.579999923706055,"type":"progress","role":"kernel","loaded":16777216,"total":24208896}
+{"hostMs":7309,"atMs":62.6049998998642,"type":"progress","role":"kernel","loaded":17039360,"total":24208896}
+{"hostMs":7309,"atMs":62.625,"type":"progress","role":"kernel","loaded":17235968,"total":24208896}
+{"hostMs":7309,"atMs":63.324999928474426,"type":"progress","role":"kernel","loaded":18874368,"total":24208896}
+{"hostMs":7309,"atMs":63.4099999666214,"type":"progress","role":"kernel","loaded":20119552,"total":24208896}
+{"hostMs":7309,"atMs":63.46499991416931,"type":"progress","role":"kernel","loaded":20971520,"total":24208896}
+{"hostMs":7309,"atMs":63.49500000476837,"type":"progress","role":"kernel","loaded":21364736,"total":24208896}
+{"hostMs":7309,"atMs":63.52499997615814,"type":"progress","role":"kernel","loaded":21561344,"total":24208896}
+{"hostMs":7309,"atMs":63.53999996185303,"type":"progress","role":"kernel","loaded":21692416,"total":24208896}
+{"hostMs":7309,"atMs":63.67999994754791,"type":"progress","role":"kernel","loaded":22462308,"total":24208896}
+{"hostMs":7309,"atMs":63.68999993801117,"type":"progress","role":"kernel","loaded":22658916,"total":24208896}
+{"hostMs":7309,"atMs":63.70999991893768,"type":"progress","role":"kernel","loaded":22789988,"total":24208896}
+{"hostMs":7309,"atMs":63.71999990940094,"type":"progress","role":"kernel","loaded":22806528,"total":24208896}
+{"hostMs":7309,"atMs":64.06499993801117,"type":"progress","role":"kernel","loaded":23068672,"total":24208896}
+{"hostMs":7309,"atMs":64.11499989032745,"type":"progress","role":"kernel","loaded":23559464,"total":24208896}
+{"hostMs":7309,"atMs":64.20499992370605,"type":"progress","role":"kernel","loaded":23984096,"total":24208896}
+{"hostMs":7309,"atMs":64.23999989032745,"type":"progress","role":"kernel","loaded":24208896,"total":24208896}
+{"hostMs":7311,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /e5t18a-desktop/manifest.json HTTP/1.1\" 200 -\n"}
+{"hostMs":7322,"atMs":83.0699999332428,"type":"state","value":"instantiating"}
+{"hostMs":7323,"type":"server","stream":"stderr","text":"127.0.0.1 - - [09/Sep/2026 01:14:49] \"GET /pkg/wasm_vm_wasm_bg.wasm HTTP/1.1\" 200 -\n"}
+{"hostMs":7337,"atMs":98.12999999523163,"type":"state","value":"error"}
+{"hostMs":7338,"atMs":98.33499991893768,"type":"error","message":"cannot allocate 2048 MiB of guest RAM"}
+{"hostMs":7338,"atMs":98.41999995708466,"type":"error","message":"Error: cannot allocate 2048 MiB of guest RAM\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:1660:25)\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1822]:0x14c471\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[181]:0x200d6\n    at http://127.0.0.1:61688/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1315]:0x125bd5\n    at WasmLinux.newChunkedDisk (http://127.0.0.1:61688/pkg/wasm_vm_wasm.js:539:26)\n    at startLinuxBoot (http://127.0.0.1:61688/loader.js:519:29)\n    at async handleBoot (http://127.0.0.1:61688/linux-worker-protocol.js:774:18)"}

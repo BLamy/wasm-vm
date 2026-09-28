@@ -1,0 +1,80 @@
+{
+  "result": "independent RAM decoding passed",
+  "reportSha256": "e17fbceeeff7377eade034c1a8caea57113809938da7f79a8526d7826740cfe8",
+  "decodedSha256": "b158a0228b537e4cd0db02b086108ead8e6e461f31bbedd53651f733a900b013",
+  "ramSha256": "834cfec184bc7cf36d883765e68712f16e0e131a01e257efd331c62ada0197f4",
+  "compressedSha256": "2f6f442b6f9f24fd38350ef63549e1116cf857d1b00c1ccb840d8f3bd4149e59",
+  "groups": 86,
+  "tasks": 148,
+  "witnesses": 68,
+  "currentTaskMarker": {
+    "task": "0xff60000008033c00",
+    "pid": 462,
+    "tgid": 417,
+    "comm": "llvmpipe-0",
+    "state": 0,
+    "onCpu": 1,
+    "startBoottimeNs": "0x89ab54a08",
+    "utimeNs": "0xb8be9de00",
+    "stimeNs": "0x1e84800"
+  },
+  "targets": [
+    {
+      "pid": 417,
+      "tgid": 417,
+      "state": 8193,
+      "onCpu": 0,
+      "startBoottimeNs": "0x81370c4dc",
+      "contextKind": null,
+      "wait": {
+        "meaning": "saved Linux futex system call; userspace caller and wake dependency not identified",
+        "address": "0x55555efbb948",
+        "operation": "0x189",
+        "expectedValue": "0x0",
+        "word": {
+          "virtual": "0x55555efbb948",
+          "physical": "0x87e2d948",
+          "ramOffset": 132307272,
+          "bytes": "00000000",
+          "value": "0x0",
+          "translation": [
+            {
+              "level": 4,
+              "physical": "0x88314000",
+              "pte": "0x220f0801"
+            },
+            {
+              "level": 3,
+              "physical": "0x883c2550",
+              "pte": "0x2390b401"
+            },
+            {
+              "level": 2,
+              "physical": "0x8e42daa8",
+              "pte": "0x2390fc01"
+            },
+            {
+              "level": 1,
+              "physical": "0x8e43f7b8",
+              "pte": "0x2650e801"
+            },
+            {
+              "level": 0,
+              "physical": "0x9943add8",
+              "pte": "0x21f8b4d7"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pid": 462,
+      "tgid": 417,
+      "state": 0,
+      "onCpu": 1,
+      "startBoottimeNs": "0x89ab54a08",
+      "contextKind": "on-CPU task; saved switch/trap contexts omitted because current registers were not exported",
+      "wait": null
+    }
+  ]
+}

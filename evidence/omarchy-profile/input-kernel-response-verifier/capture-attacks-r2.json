@@ -1,0 +1,38 @@
+{
+  "purpose": "synthetic capture-guard proof; no image/product acceptance",
+  "passed": true,
+  "recordedReport": {
+    "file": "evidence/omarchy-profile/input-kernel-response-r1/desktop/report.json",
+    "sha256": "5a1b0985d5494c36295217a6c0e49510e8ea3bcafda02c07625601c5e963327b"
+  },
+  "auditSha256": "aad3db313e106158e0635acd7e64c5eb466e2d036c9d72bb21d91216298f5bd7",
+  "syntheticControlAccepted": true,
+  "manualVisualInspectionStillRequired": true,
+  "cases": [
+    {
+      "name": "the genuine r1 pre-nonce capture cannot satisfy the new guard",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(report.trial.postNoncePresentationBaselineAt) >= Date.parse(report.keyboard.completedAt))\n"
+    },
+    {
+      "name": "same frame as the post-nonce baseline",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: response image predates nonce execution"
+    },
+    {
+      "name": "received but not presented after nonce",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: response image was not presented after nonce execution"
+    },
+    {
+      "name": "baseline timestamp precedes nonce completion",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(report.trial.postNoncePresentationBaselineAt) >= Date.parse(report.keyboard.completedAt))\n"
+    },
+    {
+      "name": "image timestamp exceeds original20s capture budget",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Date.parse(report.trial.responseImageCapturedAt) <= Date.parse(report.trial.captureDeadlineAt))\n"
+    }
+  ]
+}

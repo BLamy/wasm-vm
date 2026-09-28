@@ -1,0 +1,84 @@
+{
+  "reportSha256": "9fdf9604e54206d87c27c9e6fb40c1d297b8fbb92768aa270edd40913ec2f687",
+  "head": "53a095a485787e4ce6177712830d76728342b083",
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "responsive": false,
+  "startup": {
+    "startedAt": "2026-09-15T23:38:50.616Z",
+    "timeoutMs": 300000,
+    "deadlineAt": "2026-09-15T23:43:50.616Z",
+    "readyProvenAt": "2026-09-15T23:40:57.169Z",
+    "elapsedMs": 126553
+  },
+  "keyboard": {
+    "verified": false,
+    "nonce": "2c6f139f234713fa",
+    "guestFile": "/tmp/desktop-keys-676c79340cb94f81",
+    "startedAt": "2026-09-15T23:40:57.169Z",
+    "enteredAtMs": 1789515659984,
+    "typedAt": "2026-09-15T23:40:59.984Z",
+    "typingMs": 2815,
+    "readbackStartedAt": "2026-09-15T23:40:59.984Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-15T23:42:59.984Z",
+    "stage": "readback",
+    "failedAt": "2026-09-15T23:42:59.988Z",
+    "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+    "desktopReadyPageMs": 103711.55499982834,
+    "firstPhysicalKeydownPageMs": 126553.19499993324,
+    "readyToFirstPhysicalKeydownMs": 22841.640000104904
+  },
+  "eventCount": 128,
+  "trustedEvents": 128,
+  "inputDeviceFinal": {
+    "pendingEventBudget": 256,
+    "pendingEvents": 0,
+    "pendingFrames": 0,
+    "droppedFrames": 0,
+    "droppedEvents": 0,
+    "statusEventsServed": 1,
+    "rejectedEvents": 0
+  },
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "guestRetiredBefore": 1722487868,
+  "guestRetiredAfter": 2962438874,
+  "jitShareAfter": 0.4647125927500234,
+  "guestClockBefore": {
+    "mode": "icount",
+    "mtime": "1367374648",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "guestClockAfter": {
+    "mode": "icount",
+    "mtime": "1386748882",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "completedReadbackCommands": 13,
+  "pendingReadbackCommands": 1,
+  "readbackExits": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+  ],
+  "errors": [],
+  "cleanup": {
+    "startedAt": "2026-09-15T23:43:00.045Z",
+    "timeoutMs": 30000,
+    "closed": true
+  },
+  "sameBaselineAndFailureImage": true
+}

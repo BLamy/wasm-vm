@@ -1,0 +1,273 @@
+diff --git a/crates/jit-translate/src/lib.rs b/crates/jit-translate/src/lib.rs
+index b042f6a6..e28e5896 100644
+--- a/crates/jit-translate/src/lib.rs
++++ b/crates/jit-translate/src/lib.rs
+@@ -845,6 +845,11 @@ fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
+     let mut writes = 0;
+     for op in &block.ops {
+         match op.instr {
++            Flw { rs1, .. } | Fld { rs1, .. } | Fsw { rs1, .. } | Fsd { rs1, .. } => {
++                // The address is an X register; neither the FP destination nor
++                // the FP store source belongs in the integer batch globals.
++                add_register_mask(&mut reads, rs1);
++            }
+             FmvXW { rd, .. } => add_register_mask(&mut writes, rd),
+             FmvWX { rs1, .. } => add_register_mask(&mut reads, rs1),
+             Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
+@@ -1410,7 +1415,7 @@ fn emit_body(
+     let mut fp_checked = false;
+ 
+     for (i, op) in block.ops.iter().enumerate() {
+-        if is_fp_move(&op.instr) && !fp_checked {
++        if is_fp(&op.instr) && !fp_checked {
+             emit_fp_guard(f, &regs, abi, pc, op.raw, i as u64);
+             fp_checked = true;
+         }
+@@ -1952,6 +1957,10 @@ fn supported(instr: &Instr) -> bool {
+             | FsgnjS { .. }
+             | FmvWX { .. }
+             | FmvXW { .. }
++            | Flw { .. }
++            | Fld { .. }
++            | Fsw { .. }
++            | Fsd { .. }
+             | Ecall
+             | Ebreak
+             | Fence { .. }
+@@ -1959,10 +1968,16 @@ fn supported(instr: &Instr) -> bool {
+     )
+ }
+ 
+-fn is_fp_move(instr: &Instr) -> bool {
++fn is_fp(instr: &Instr) -> bool {
+     matches!(
+         instr,
+-        Instr::FsgnjS { .. } | Instr::FmvWX { .. } | Instr::FmvXW { .. }
++        Instr::FsgnjS { .. }
++            | Instr::FmvWX { .. }
++            | Instr::FmvXW { .. }
++            | Instr::Flw { .. }
++            | Instr::Fld { .. }
++            | Instr::Fsw { .. }
++            | Instr::Fsd { .. }
+     )
+ }
+ 
+@@ -2489,11 +2504,82 @@ fn emit_alu(
+             pc,
+             retired_before,
+         ),
+-        // ── stores (side-exit to env.store) ──
+-        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1, pc, retired_before),
+-        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2, pc, retired_before),
+-        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4, pc, retired_before),
+-        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8, pc, retired_before),
++        Flw { rd, rs1, imm } => {
++            emit_load_value(f, regs, abi, rs1, imm, load_kind::LWU, pc, retired_before);
++            box_f32(f);
++            set_freg(f, abi, rd);
++        }
++        Fld { rd, rs1, imm } => {
++            emit_load_value(f, regs, abi, rs1, imm, load_kind::LD, pc, retired_before);
++            set_freg(f, abi, rd);
++        }
++        // ── stores (same checked path for both register banks) ──
++        Sb { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Integer(rs2),
++            imm,
++            1,
++            pc,
++            retired_before,
++        ),
++        Sh { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Integer(rs2),
++            imm,
++            2,
++            pc,
++            retired_before,
++        ),
++        Sw { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Integer(rs2),
++            imm,
++            4,
++            pc,
++            retired_before,
++        ),
++        Sd { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Integer(rs2),
++            imm,
++            8,
++            pc,
++            retired_before,
++        ),
++        Fsw { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Float(rs2),
++            imm,
++            4,
++            pc,
++            retired_before,
++        ),
++        Fsd { rs1, rs2, imm } => emit_store(
++            f,
++            regs,
++            abi,
++            rs1,
++            StoreSource::Float(rs2),
++            imm,
++            8,
++            pc,
++            retired_before,
++        ),
+         // ── M extension: multiply (E4-T13) ──
+         Mul { rd, rs1, rs2 } => {
+             // Low 64 bits of the product; signedness is irrelevant for the low half.
+@@ -2596,6 +2682,23 @@ fn emit_load(
+     kind: i32,
+     pc: u64,
+     retired_before: u64,
++) {
++    emit_load_value(f, regs, abi, rs1, imm, kind, pc, retired_before);
++    set_reg(f, regs, rd);
++}
++
++/// Leave the successfully loaded bits on the stack. The destination is written
++/// only after the access returns, so a fault cannot dirty FS or overwrite an FPR.
++#[allow(clippy::too_many_arguments)]
++fn emit_load_value(
++    f: &mut FuncBuilder,
++    regs: &mut Regs,
++    abi: &Abi,
++    rs1: u8,
++    imm: i64,
++    kind: i32,
++    pc: u64,
++    retired_before: u64,
+ ) {
+     match abi.mem {
+         MemModel::SoftmmuImports => {
+@@ -2608,14 +2711,27 @@ fn emit_load(
+             f.i64_add();
+             f.i32_const(kind);
+             f.call(LOAD_IMPORT);
+-            set_reg(f, regs, rd);
+         }
+         MemModel::InlineTlb | MemModel::InlineTlbLoads => {
+-            emit_load_tlb(f, regs, abi, rd, rs1, imm, kind, pc, retired_before)
++            emit_load_tlb(f, regs, abi, rs1, imm, kind, pc, retired_before)
+         }
+     }
+ }
+ 
++#[derive(Clone, Copy)]
++enum StoreSource {
++    Integer(u8),
++    Float(u8),
++}
++
++fn push_store_source(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, source: StoreSource) {
++    match source {
++        StoreSource::Integer(register) => push_reg(f, regs, abi, register),
++        // Stores transfer raw bits, including malformed boxes and NaN payloads.
++        StoreSource::Float(register) => push_freg(f, abi, register),
++    }
++}
++
+ /// `mem[rs1 + imm] = rs2` (low `width` bytes). Same precise-state discipline as [`emit_load`]:
+ /// writeback + `exit_pc = pc` before the access, so a fault side-exits precisely and any earlier
+ /// committing store (e.g. an MMIO write) is never re-executed.
+@@ -2625,37 +2741,26 @@ fn emit_store(
+     regs: &mut Regs,
+     abi: &Abi,
+     rs1: u8,
+-    rs2: u8,
++    source: StoreSource,
+     imm: i64,
+     width: i32,
+     pc: u64,
+     retired_before: u64,
+ ) {
+     match abi.mem {
+-        MemModel::SoftmmuImports => {
++        MemModel::SoftmmuImports | MemModel::InlineTlbLoads => {
+             writeback(f, regs, abi);
+             write_pc_const(f, regs, abi, pc);
+             record_chain_retired(f, regs, abi, retired_before);
+             push_reg(f, regs, abi, rs1);
+             f.i64_const(imm);
+             f.i64_add();
+-            push_reg(f, regs, abi, rs2);
++            push_store_source(f, regs, abi, source);
+             f.i32_const(width);
+             f.call(STORE_IMPORT);
+         }
+         MemModel::InlineTlb => {
+-            emit_store_tlb(f, regs, abi, rs1, rs2, imm, width, pc, retired_before)
+-        }
+-        MemModel::InlineTlbLoads => {
+-            writeback(f, regs, abi);
+-            write_pc_const(f, regs, abi, pc);
+-            record_chain_retired(f, regs, abi, retired_before);
+-            push_reg(f, regs, abi, rs1);
+-            f.i64_const(imm);
+-            f.i64_add();
+-            push_reg(f, regs, abi, rs2);
+-            f.i32_const(width);
+-            f.call(STORE_IMPORT);
++            emit_store_tlb(f, regs, abi, rs1, source, imm, width, pc, retired_before)
+         }
+     }
+ }
+@@ -2809,7 +2914,6 @@ fn emit_load_tlb(
+     f: &mut FuncBuilder,
+     regs: &mut Regs,
+     abi: &Abi,
+-    rd: u8,
+     rs1: u8,
+     imm: i64,
+     kind: i32,
+@@ -2849,7 +2953,6 @@ fn emit_load_tlb(
+     f.i32_const(kind);
+     f.call(LOAD_IMPORT);
+     f.end();
+-    set_reg(f, regs, rd);
+ }
+ 
+ #[allow(clippy::too_many_arguments)]
+@@ -2858,7 +2961,7 @@ fn emit_store_tlb(
+     regs: &mut Regs,
+     abi: &Abi,
+     rs1: u8,
+-    rs2: u8,
++    source: StoreSource,
+     imm: i64,
+     width: i32,
+     pc: u64,
+@@ -2876,7 +2979,7 @@ fn emit_store_tlb(
+     f.i64_add();
+     f.local_set(va);
+     let sval = f.local(ValType::I64);
+-    push_reg(f, regs, abi, rs2);
++    push_store_source(f, regs, abi, source);
+     f.local_set(sval);
+     // Store uses the WRITE array — a read-only page is never filled here, so its store always misses
+     // to the softmmu, which faults exactly as the interpreter.

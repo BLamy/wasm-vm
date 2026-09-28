@@ -1,0 +1,112 @@
+{
+  "profileSha256": "064a557dcc9cbd8cfc9b3b0361f0ffa069af7160b76574a7f9a289d52a8ed3c9",
+  "nonCustomSections": 11,
+  "names": 1911,
+  "spanUs": 30032554,
+  "totalUs": 30031577,
+  "samples": 20004,
+  "self": [
+    {
+      "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+      "us": 3838447,
+      "percent": 12.781370089223087
+    },
+    {
+      "name": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+      "us": 2472984,
+      "percent": 8.234612521347113
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::flush_page::h7e4f5a8e39056cfd",
+      "us": 1838510,
+      "percent": 6.121922934649752
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h95922160ac631d34",
+      "us": 1166362,
+      "percent": 3.883785390291026
+    },
+    {
+      "name": "wasm_vm_core::mmu::translate_cached::hf2b93220145a733d",
+      "us": 1158330,
+      "percent": 3.8570402080450186
+    },
+    {
+      "name": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+      "us": 1077354,
+      "percent": 3.5874040181106706
+    },
+    {
+      "name": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+      "us": 1001967,
+      "percent": 3.336378239477734
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h090ab5e8d762af0f",
+      "us": 849369,
+      "percent": 2.8282530750882646
+    }
+  ],
+  "inclusive": [
+    {
+      "name": "(root)",
+      "us": 30031577,
+      "percent": 100.0
+    },
+    {
+      "name": "runTick http://127.0.0.1:64328/loader.js",
+      "us": 28329365,
+      "percent": 94.33192602572952
+    },
+    {
+      "name": "runChunk http://127.0.0.1:64328/pkg/wasm_vm_wasm.js",
+      "us": 28308268,
+      "percent": 94.26167663456368
+    },
+    {
+      "name": "js-to-wasm:iid:iii http://127.0.0.1:64328/pkg/wasm_vm_wasm_bg.wasm",
+      "us": 28306932,
+      "percent": 94.25722798373192
+    },
+    {
+      "name": "wasm_vm_wasm::WasmLinux::run_chunk::h07405c1400974665",
+      "us": 28303922,
+      "percent": 94.24720520004661
+    },
+    {
+      "name": "wasmlinux_runChunk multivalue shim",
+      "us": 28303922,
+      "percent": 94.24720520004661
+    },
+    {
+      "name": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+      "us": 27955217,
+      "percent": 93.08607736450203
+    },
+    {
+      "name": "wasm_vm_core::Machine::try_jit_block::h95922160ac631d34",
+      "us": 13419534,
+      "percent": 44.684746325509316
+    },
+    {
+      "name": "<wasm_vm_wasm::jit_browser::BrowserExecutor as wasm_vm_core::jit::CompiledBlockExecutor>::execute_with_budget::h090ab5e8d762af0f",
+      "us": 9180540,
+      "percent": 30.569623433361492
+    },
+    {
+      "name": "wasm-to-js",
+      "us": 7583175,
+      "percent": 25.25067198435833
+    },
+    {
+      "name": "__wbg_invokeJitBlock_99121dda606f7308 http://127.0.0.1:64328/pkg/wasm_vm_wasm.js",
+      "us": 7440852,
+      "percent": 24.77676080746609
+    },
+    {
+      "name": "js-to-wasm:iil:i wasm://wasm/73938e46",
+      "us": 6584109,
+      "percent": 21.923953577263024
+    }
+  ]
+}

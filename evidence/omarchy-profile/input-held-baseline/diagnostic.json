@@ -1,0 +1,832 @@
+[
+  {
+    "time": "2026-09-10T02:37:59.794Z",
+    "request": {
+      "op": "click",
+      "x": 300,
+      "y": 200,
+      "delayMs": 5000
+    },
+    "result": {
+      "clicked": {
+        "x": 300,
+        "y": 200
+      },
+      "delayMs": 5000
+    }
+  },
+  {
+    "time": "2026-09-10T02:38:04.798Z",
+    "request": {
+      "op": "type",
+      "text": "a",
+      "delay": 5000,
+      "enter": false
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:38:04.828Z",
+    "request": {
+      "op": "screenshot",
+      "name": "held-key.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-held-baseline/held-key.png"
+  },
+  {
+    "time": "2026-09-10T02:38:04.889Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 2272,
+        "completed": 2272,
+        "pending": 0,
+        "averageMs": 10.508805016606626,
+        "maxMs": 87.1949999332428
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 8,
+        "successfulPresents": 8,
+        "drawnPresents": 8,
+        "drawnBytes": 32768000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 8,
+          "coalesced": 0,
+          "presented": 8,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 8,
+          "enqueued": 8,
+          "coalesced": 0,
+          "presented": 8,
+          "successfulPresents": 8,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 32768000,
+          "drawnPresents": 8,
+          "drawnBytes": 32768000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1264093193",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 22293,
+        "totalSliceMs": 435205.76500344276,
+        "averageSliceMs": 19.522081595273978,
+        "maxSliceMs": 183.4800000190735,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 2
+          },
+          {
+            "leMs": 8,
+            "count": 12
+          },
+          {
+            "leMs": 16,
+            "count": 4206
+          },
+          {
+            "leMs": 32,
+            "count": 17289
+          },
+          {
+            "leMs": 64,
+            "count": 777
+          },
+          {
+            "leMs": 128,
+            "count": 5
+          },
+          {
+            "leMs": 256,
+            "count": 2
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 1520.2799999713898,
+        "requestedInstructions": 11146500000,
+        "retiredInstructions": 11146468039,
+        "fetchWaits": 37,
+        "fetchRequestedChunks": 39,
+        "fetchWaitTotalMs": 10709.875,
+        "fetchWaitMaxMs": 1445.5600000619888,
+        "outputCalls": 21,
+        "outputBytes": 3165,
+        "inputCalls": 3,
+        "inputBytes": 218,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 22294,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 24,
+        "executedBlocks": 59009126,
+        "retiredViaJit": 3745908072,
+        "directChainEntries": 89000957,
+        "directChainLinks": 29992819,
+        "dynamicLinkAttempts": 6892755,
+        "dynamicLinkHits": 4562304,
+        "dynamicLinkRefusals": 2330451,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 4,
+        "dynamicLinkInstalls": 172692,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 59009126,
+          "stateCopyCalls": 118018252,
+          "stateCopyBytes": 15890036440,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 18964664,
+          "authorityChecks": 67268619,
+          "memorySplitExits": 185213,
+          "deviceBoundaries": 101310,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 11146968039,
+        "jitEngineCalls": 59009126,
+        "jitLogicalBlocksPerEngineCall": 1.5082575024073395,
+        "jitRetiredShare": 0.3360472604652814,
+        "chainLinksMade": 24297,
+        "chainLinksCut": 24293,
+        "chainDispatchEntries": 42506968,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 49886659,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 68554,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 52117,
+        "jitCacheInstalls": 67640,
+        "jitCacheRetranslations": 64067,
+        "jitCacheEvictions": 51303,
+        "jitCacheBatches": 21,
+        "jitCacheCodeBytes": 1642154,
+        "compileQueue": {
+          "admitted": 88968,
+          "droppedBackpressure": 27232,
+          "cancelledStale": 0,
+          "popped": 77817,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 105049,
+          "deduped": 292701020,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 60138768,
+          "excluded": 174,
+          "queueDepth": 0,
+          "queueHighWater": 562,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 390287468,
+        "blockBuilds": 26722445
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T02:39:10.222Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /proc/uptime; cat /proc/interrupts; ps -T -p 439 -o pid,tid,stat,time,comm,wchan; cat /proc/439/maps | tail -30"
+    },
+    "result": {
+      "stdout": "128.56 0.96\n           CPU0       \n 11:      32605  RISC-V INTC   5 Edge      riscv-timer\n 12:          3  SiFive PLIC   4 Edge      virtio3\n 13:          2  SiFive PLIC   5 Edge      virtio4\n 14:          0  SiFive PLIC   6 Edge      virtio5\n 15:       3677  SiFive PLIC  10 Edge      ttyS0\n 16:          2  SiFive PLIC   9 Edge      virtio8\n 17:         14  SiFive PLIC   3 Edge      virtio2\n 18:        118  SiFive PLIC   8 Edge      virtio7\n 19:       7635  SiFive PLIC   1 Edge      virtio0\n 20:         40  SiFive PLIC   2 Edge      virtio1\n 21:          0  SiFive PLIC  11 Edge      101000.rtc\n 22:          3  SiFive PLIC   7 Edge      virtio6\nIPI0:         0  Rescheduling interrupts\nIPI1:         0  Function call interrupts\nIPI2:         0  CPU stop interrupts\nIPI3:         0  CPU stop (for crash dump) interrupts\nIPI4:         0  IRQ work interrupts\nIPI5:         0  Timer broadcast interrupts\n    PID     TID STAT     TIME COMMAND         WCHAN\n    439     439 Sl   00:00:18 Hyprland        futex_wait_queue\n    439     463 Sl   00:00:00 Hyprland        futex_wait_queue\n    439     488 Rl   00:00:38 llvmpipe-0      -\n    439     489 Sl   00:00:00 Hyprland        futex_wait_queue\n    439     490 SNl  00:00:00 Hyprlan:disk$0  futex_wait_queue\n    439     491 SNl  00:00:00 Hyprlan:disk$1  futex_wait_queue\n    439     498 SNl  00:00:00 Hyprlan:disk$2  futex_wait_queue\n    439     503 Sl   00:00:00 pool-spawner    futex_wait_queue\n    439     504 Sl   00:00:00 gmain           poll_schedule_timeout.constprop.0\n    439     505 Sl   00:00:00 dconf worker    poll_schedule_timeout.constprop.0\n    439     506 Sl   00:00:00 gdbus           poll_schedule_timeout.constprop.0\n    439     610 Sl   00:00:00 [pango] fontcon futex_wait_queue\n    439     666 SNl  00:00:00 Hyprlan:disk$3  futex_wait_queue\n7fffbb303000-7fffbb304000 r--p 00022000 fe:00 22636                      /usr/lib/libxcb.so.1.1.0\n7fffbb304000-7fffbb305000 rw-p 00023000 fe:00 22636                      /usr/lib/libxcb.so.1.1.0\n7fffbb305000-7fffbb307000 rw-p 00000000 00:00 0 \n7fffbb307000-7fffbb30f000 r-xp 00000000 fe:00 22561                      /usr/lib/libxcb-errors.so.0.0.0\n7fffbb30f000-7fffbb310000 r--p 00008000 fe:00 22561                      /usr/lib/libxcb-errors.so.0.0.0\n7fffbb310000-7fffbb311000 rw-p 00009000 fe:00 22561                      /usr/lib/libxcb-errors.so.0.0.0\n7fffbb311000-7fffbb314000 r-xp 00000000 fe:00 22594                      /usr/lib/libxcb-res.so.0.0.0\n7fffbb314000-7fffbb315000 r--p 00002000 fe:00 22594                      /usr/lib/libxcb-res.so.0.0.0\n7fffbb315000-7fffbb316000 rw-p 00003000 fe:00 22594                      /usr/lib/libxcb-res.so.0.0.0\n7fffbb316000-7fffbb321000 r-xp 00000000 fe:00 22591                      /usr/lib/libxcb-render.so.0.0.0\n7fffbb321000-7fffbb322000 r--p 0000b000 fe:00 22591                      /usr/lib/libxcb-render.so.0.0.0\n7fffbb322000-7fffbb323000 rw-p 0000c000 fe:00 22591                      /usr/lib/libxcb-render.so.0.0.0\n7fffbb323000-7fffbb329000 r-xp 00000000 fe:00 22615                      /usr/lib/libxcb-xfixes.so.0.0.0\n7fffbb329000-7fffbb32a000 r--p 00006000 fe:00 22615                      /usr/lib/libxcb-xfixes.so.0.0.0\n7fffbb32a000-7fffbb32b000 rw-p 00007000 fe:00 22615                      /usr/lib/libxcb-xfixes.so.0.0.0\n7fffbb32b000-7fffbb32d000 r-xp 00000000 fe:00 22540                      /usr/lib/libxcb-composite.so.0.0.0\n7fffbb32d000-7fffbb32e000 r--p 00001000 fe:00 22540                      /usr/lib/libxcb-composite.so.0.0.0\n7fffbb32e000-7fffbb32f000 rw-p 00002000 fe:00 22540                      /usr/lib/libxcb-composite.so.0.0.0\n7fffbb32f000-7fffbb333000 r-xp 00000000 fe:00 22570                      /usr/lib/libxcb-icccm.so.4.0.0\n7fffbb333000-7fffbb334000 r--p 00004000 fe:00 22570                      /usr/lib/libxcb-icccm.so.4.0.0\n7fffbb334000-7fffbb335000 rw-p 00005000 fe:00 22570                      /usr/lib/libxcb-icccm.so.4.0.0\n7fffbb335000-7fffbb337000 rw-p 00000000 00:00 0 \n7fffbb337000-7fffbb34a000 r--p 00000000 fe:00 493                        /etc/ld.so.cache\n7fffbb34a000-7fffbb34c000 r--p 00000000 00:00 0                          [vvar]\n7fffbb34c000-7fffbb34e000 r-xp 00000000 00:00 0                          [vdso]\n7fffbb34e000-7fffbb374000 r-xp 00000000 fe:00 20118                      /usr/lib/ld-linux-riscv64-lp64d.so.1\n7fffbb374000-7fffbb375000 r--p 00026000 fe:00 20118                      /usr/lib/ld-linux-riscv64-lp64d.so.1\n7fffbb375000-7fffbb376000 rw-p 00027000 fe:00 20118                      /usr/lib/ld-linux-riscv64-lp64d.so.1\n7fffbb376000-7fffbb377000 rw-p 00000000 00:00 0 \n7fffc8e06000-7fffc8e2f000 rw-p 00000000 00:00 0                          [stack]\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:39:10.242Z",
+    "request": {
+      "op": "screenshot",
+      "name": "held-key-later.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-held-baseline/held-key-later.png"
+  },
+  {
+    "time": "2026-09-10T02:41:08.624Z",
+    "request": {
+      "op": "screenshot",
+      "name": "held-key-after-five-minutes.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-held-baseline/held-key-after-five-minutes.png"
+  },
+  {
+    "time": "2026-09-10T02:41:08.667Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 3200,
+        "completed": 3200,
+        "pending": 0,
+        "averageMs": 10.65626093711704,
+        "maxMs": 87.1949999332428
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 11,
+        "successfulPresents": 11,
+        "drawnPresents": 11,
+        "drawnBytes": 45056000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 11,
+          "coalesced": 0,
+          "presented": 11,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 11,
+          "enqueued": 11,
+          "coalesced": 0,
+          "presented": 11,
+          "successfulPresents": 11,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 45056000,
+          "drawnPresents": 11,
+          "drawnBytes": 45056000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 678,
+            "y": 8,
+            "width": 14,
+            "height": 9
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1334038322",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 31246,
+        "totalSliceMs": 617790.3700040579,
+        "averageSliceMs": 19.771822633426932,
+        "maxSliceMs": 183.4800000190735,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 2
+          },
+          {
+            "leMs": 8,
+            "count": 16
+          },
+          {
+            "leMs": 16,
+            "count": 4598
+          },
+          {
+            "leMs": 32,
+            "count": 25596
+          },
+          {
+            "leMs": 64,
+            "count": 1027
+          },
+          {
+            "leMs": 128,
+            "count": 5
+          },
+          {
+            "leMs": 256,
+            "count": 2
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 1520.2799999713898,
+        "requestedInstructions": 15623000000,
+        "retiredInstructions": 15622956276,
+        "fetchWaits": 39,
+        "fetchRequestedChunks": 41,
+        "fetchWaitTotalMs": 11276.50000011921,
+        "fetchWaitMaxMs": 1445.5600000619888,
+        "outputCalls": 33,
+        "outputBytes": 8732,
+        "inputCalls": 4,
+        "inputBytes": 408,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 31247,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "jit": {
+        "hasExecutor": true,
+        "compiledBlocks": 19,
+        "executedBlocks": 79981860,
+        "retiredViaJit": 5013051289,
+        "directChainEntries": 119877268,
+        "directChainLinks": 39896651,
+        "dynamicLinkAttempts": 9969525,
+        "dynamicLinkHits": 6816156,
+        "dynamicLinkRefusals": 3153369,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 7,
+        "dynamicLinkInstalls": 220775,
+        "entryCost": {
+          "timingEnabled": false,
+          "timerReads": 0,
+          "hostEntries": 79981860,
+          "stateCopyCalls": 159963720,
+          "stateCopyBytes": 21602558608,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 26427680,
+          "authorityChecks": 93353694,
+          "memorySplitExits": 255234,
+          "deviceBoundaries": 148801,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 15623456276,
+        "jitEngineCalls": 79981860,
+        "jitLogicalBlocksPerEngineCall": 1.498805704193426,
+        "jitRetiredShare": 0.320866983620059,
+        "chainLinksMade": 33016,
+        "chainLinksCut": 33012,
+        "chainDispatchEntries": 56888764,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 68977750,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 94354,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 73706,
+        "jitCacheInstalls": 93424,
+        "jitCacheRetranslations": 89465,
+        "jitCacheEvictions": 72709,
+        "jitCacheBatches": 18,
+        "jitCacheCodeBytes": 1637357,
+        "compileQueue": {
+          "admitted": 122616,
+          "droppedBackpressure": 38213,
+          "cancelledStale": 0,
+          "popped": 106667,
+          "queueHighWater": 256,
+          "queueDepth": 0,
+          "capacity": 256
+        },
+        "discovery": {
+          "nominated": 144880,
+          "deduped": 410535405,
+          "droppedStale": 0,
+          "droppedOverflow": 0,
+          "countsDropped": 87836557,
+          "excluded": 188,
+          "queueDepth": 0,
+          "queueHighWater": 562,
+          "candidates": 65536,
+          "generation": 5
+        },
+        "decodedCacheEntries": 4096,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 549119961,
+        "blockBuilds": 36602053
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T02:42:16.997Z",
+    "request": {
+      "op": "exec",
+      "command": "id; ls -l /dev/input/event0; command -v libinput; command -v evtest; command -v gdb; dd if=/dev/input/event0 of=/tmp/wvm-physical-keys.bin bs=24 count=6 status=none & printf \"KEY_READER:%s\\n\" \"$!\""
+    },
+    "result": {
+      "stdout": "uid=1000(omarchy) gid=1000(omarchy) groups=1000(omarchy)\ncrw-rw---- 1 root input 13, 64 Sep  9 23:48 /dev/input/event0\n[1] 1677\nKEY_READER:1677\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:42:22.001Z",
+    "request": {
+      "op": "type",
+      "text": "b",
+      "delay": 5000,
+      "enter": false
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T02:42:27.944Z",
+    "request": {
+      "op": "exec",
+      "command": "od -An -tx1 /tmp/wvm-physical-keys.bin; ls -l /tmp/wvm-physical-keys.bin"
+    },
+    "result": {
+      "stdout": "od: /tmp/wvm-physical-keys.bin: No such file or directory\nls: cannot access '/tmp/wvm-physical-keys.bin': No such file or directory\n\n",
+      "exit": 2
+    }
+  },
+  {
+    "time": "2026-09-10T02:44:08.399Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j devices; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -j activewindow; cat /sys/class/tty/tty0/active; loginctl list-sessions --no-pager"
+    },
+    "result": {
+      "stdout": "HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)\n\nHYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)\n\ntty1\nSESSION  UID USER    SEAT  LEADER CLASS   TTY   IDLE SINCE\n      1 1000 omarchy seat0 161    user    tty1  no   -    \n      2 1000 omarchy -     157    user    ttyS0 no   -    \n      3 1000 omarchy -     166    manager -     no   -    \n\n3 sessions listed.\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:45:39.227Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j devices; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow"
+    },
+    "result": {
+      "stdout": "{\n\"mice\": [\n    {\n        \"address\": \"0x555561e90910\",\n        \"name\": \"wasm-vm-virtio-tablet\",\n        \"defaultSpeed\": 0.00000,\n        \"scrollFactor\": -1.00\n    },    {\n        \"address\": \"0x5555622aefc0\",\n        \"name\": \"wasm-vm-virtio-mouse\",\n        \"defaultSpeed\": 0.00000,\n        \"scrollFactor\": -1.00\n    }\n],\n\"keyboards\": [\n    {\n        \"address\": \"0x555561cbec30\",\n        \"name\": \"wasm-vm-virtio-keyboard\",\n        \"rules\": \"\",\n        \"model\": \"\",\n        \"layout\": \"us\",\n        \"variant\": \"\",\n        \"options\": \"compose:caps,shift:both_capslock_cancel\",\n        \"active_layout_index\": 0,\n        \"active_keymap\": \"English (US)\",\n        \"capsLock\": false,\n        \"numLock\": true,\n        \"main\": true\n    }\n],\n\"tablets\": [\n\n],\n\"touch\": [\n\n],\n\"switches\": [\n\n]\n}\n\n{\n    \"address\": \"0x5555620e10a0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 524,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:47:13.543Z",
+    "request": {
+      "op": "exec",
+      "command": "tail -60 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1788997715_202788042/hyprland.log; cat /proc/439/fdinfo/21"
+    },
+    "result": {
+      "stdout": "ERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP → DEBOUNCE_EVENT_OTHERBUTTON → DEBOUNCE_STATE_IS_UP\nERR from aquamarine ]: [libinput] client bug: timer button-debounce-debounce-event1: scheduled expiry is in the past (-882ms), your system is too slow\nDEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP → DEBOUNCE_EVENT_PRESS → DEBOUNCE_STATE_IS_DOWN_WAITING\nERR from aquamarine ]: [libinput] client bug: timer button-debounce-debounce-event1: scheduled expiry is in the past (-695ms), your system is too slow\nDEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_DOWN_WAITING → DEBOUNCE_EVENT_RELEASE → DEBOUNCE_STATE_IS_UP_DELAYING\nDEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP_DELAYING → DEBOUNCE_EVENT_TIMEOUT → DEBOUNCE_STATE_IS_UP\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXTpos:\t0\nflags:\t02104002\nmnt_id:\t113\nino:\t629\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:47:13.565Z",
+    "request": {
+      "op": "screenshot",
+      "name": "held-input-final.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-held-baseline/held-input-final.png"
+  },
+  {
+    "time": "2026-09-10T02:50:27.638Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos; cat /proc/439/task/488/stat; dd if=/dev/input/event0 of=/tmp/keys-second.bin bs=24 count=4 status=none 2>/tmp/keys-dd-error & printf \"READER:%s\\n\" \"$!\""
+    },
+    "result": {
+      "stdout": "300, 200\n488 (llvmpipe-0) R 384 384 384 0 -1 4194368 6016 5349 0 0 6284 2 15 5 20 0 13 0 3723 1600163840 58249 18446744073709551615 93825137414144 93825150637384 140736563701248 0 0 0 1073478399 16781312 1568 0 0 0 -1 0 0 0 0 0 0 93825150643712 93825151605248 93825151664128 140736563702164 140736563702189 140736563702189 140736563703782 0\n[1] 1739\nREADER:1739\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T02:50:36.638Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /tmp/keys-dd-error; ls -l /tmp/keys-second.bin"
+    },
+    "result": {
+      "stdout": "dd: failed to open '/dev/input/event0': Permission denied\nls: cannot access '/tmp/keys-second.bin': No such file or directory\n\n",
+      "exit": 2
+    }
+  },
+  {
+    "time": "2026-09-10T02:50:36.660Z",
+    "request": {
+      "op": "screenshot",
+      "name": "held-input-after-thirteen-minutes.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-held-baseline/held-input-after-thirteen-minutes.png"
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "commit": "18d14adb68627864a102616bbad7e61fcfab1649",
+  "deployment": "27385178",
+  "unchangedRuntimeHead": "408422d4b319f8267071d0bd47d46c90a81e1af3",
+  "files": [
+    {
+      "name": "loader.js",
+      "url": "https://wasm-vm.pages.dev/loader.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546242",
+      "status": 200,
+      "bytes": 79246,
+      "sha256": "26a4c9fa0284a99c39e2bd2f3f6457b77aebb4724e026bad2a2dc7d7f1d0d6a3"
+    },
+    {
+      "name": "ide.js",
+      "url": "https://wasm-vm.pages.dev/ide.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546410",
+      "status": 200,
+      "bytes": 133580,
+      "sha256": "afe853ea07d6ba97487f011de68197eb53d9d549a0781e569c08d577c8983e93"
+    },
+    {
+      "name": "boot-asset-cache.js",
+      "url": "https://wasm-vm.pages.dev/boot-asset-cache.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546467",
+      "status": 200,
+      "bytes": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe"
+    },
+    {
+      "name": "omarchy-startup-state.js",
+      "url": "https://wasm-vm.pages.dev/omarchy-startup-state.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546510",
+      "status": 200,
+      "bytes": 4109,
+      "sha256": "fb80a37bc3c1d1c5fce23716dac25e04dee7bc6a43c8c77ec3c62ad0a29c2ac8"
+    },
+    {
+      "name": "sw.js",
+      "url": "https://wasm-vm.pages.dev/sw.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546555",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "96e2e8f78aa90a6b6e5ce8284b59a50d23351d4d088deb3880ea43f2592855ae"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546600",
+      "status": 200,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "name": "roadmap.js",
+      "url": "https://wasm-vm.pages.dev/roadmap.js?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546891",
+      "status": 200,
+      "bytes": 49063,
+      "sha256": "05c00a984a464245146a6496483dd97f5ecfca7843e6bb4d90db1f626af31272"
+    },
+    {
+      "name": "tasks.json",
+      "url": "https://wasm-vm.pages.dev/tasks.json?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044546956",
+      "status": 200,
+      "bytes": 3254218,
+      "sha256": "a7f7e7b058d41c3b6bbe346dd2d55286c86d648add1ee0293bcc705dc4b701a9"
+    },
+    {
+      "name": "app.html",
+      "url": "https://wasm-vm.pages.dev/app.html?metadata-proof=18d14adb68627864a102616bbad7e61fcfab1649-1789044547451",
+      "status": 200,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    }
+  ],
+  "status": "passed"
+}

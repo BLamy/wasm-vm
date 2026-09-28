@@ -1,0 +1,67 @@
+{
+  "task": "E5.5-T03p",
+  "actualHead": "8bb65d19ed814fcc3d0892a2c8a0a208e5aeec30",
+  "incrementalHead": "4e3362245ec831d1142b39821628a224eb840efe",
+  "commands": [
+    {
+      "command": "node --test tools/verify/omarchy-render-mode.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-desktop-services.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-live-recording.test.mjs",
+      "log": "tests.log",
+      "passed": 41,
+      "exitCode": 0
+    },
+    {
+      "command": "node tools/verify/omarchy-render-budget.mjs evidence/omarchy-profile/render-budget-r1",
+      "exitCode": 0,
+      "nestedRecorderExitCode": 1,
+      "outcome": "mode-not-observed-input-not-tested"
+    },
+    {
+      "command": "node --test tools/verify/omarchy-render-mode.test.mjs tools/verify/omarchy-live-recording.test.mjs tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-user-input.test.mjs",
+      "log": "incremental.log",
+      "passed": 22,
+      "exitCode": 0
+    }
+  ],
+  "files": {
+    "evidence/omarchy-profile/render-budget-r1/render-budget.json": {
+      "bytes": 2576,
+      "sha256": "c363b8b395b0d6f34de87bba5a24c4642e43ebab15209373fd0489d0bbb3063d"
+    },
+    "evidence/omarchy-profile/render-budget-r1/run.json": {
+      "bytes": 3495,
+      "sha256": "d77c05d48d3db9a5545dc1230e23fe009faa767bb620a1254cb5e869e03b3c9e"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop.log": {
+      "bytes": 2565,
+      "sha256": "8690446aae973baa24074303e00b0bf868153c1919cda25338e161f5a76b45e6"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop/desktop.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop/report.json": {
+      "bytes": 488152,
+      "sha256": "b72dd44055d7d583307e6cbccf5de2f3fbffcb1ade8eb203ecf7dd49614d1eb4"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop/serial.log": {
+      "bytes": 410,
+      "sha256": "bdc67d31bec64aef3603f0eb9dda59f511323ff8073d97f111ad7586bbafa3a7"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop/latest.png": {
+      "bytes": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    "evidence/omarchy-profile/render-budget-r1/desktop/failure.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/render-budget-gates/tests.log": {
+      "bytes": 4075,
+      "sha256": "f1c08b9460681b324afacf1f429ac16bbe32a609503d6fb32cea4d56f7a8fd26"
+    },
+    "evidence/omarchy-profile/render-budget-gates/incremental.log": {
+      "bytes": 2265,
+      "sha256": "f08ab330f7b7f9102f6b94fe4719225b8b2c99a8559ca60a117dfc2511ce27e6"
+    }
+  }
+}

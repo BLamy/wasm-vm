@@ -1,0 +1,237 @@
+cargo fmt --all --check
+cargo clippy -p wasm-vm-core -p wasm-vm-wasm --all-targets -- -D warnings
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 09s
+cargo test -p wasm-vm-core --features gpu-trace --lib dev::virtio::gpu -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-d41d3c5e347db272)
+
+running 80 tests
+test dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... ok
+test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+AT literal offset=24 rect=Rect { x: 1, y: 1, width: 3, height: 2 } pixels=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, a5000006, a5000007, a5000008, 00000000, 00000000, a500000b, a500000c, a500000d, 00000000, 00000000, 00000000, 0test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... 0000000, 00000000, 00000000]
+ok
+AT literal offset=4 rect=Rect { x: 2, y: 2, width: 2, test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+height: 2 } pixels=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, a5000001, a5000002, 00000000, 00000000, 00000000, a5000006, a5000007, 00000000]
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... AT literal offset=48 rect=Rect { x: 0, y: 0, width: 3, height: 2 } pixels=[a500000c, a500000d, a500000e, 00000000, 00ok
+00test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok0000, a5000011, a5000012, a5000013, 00000000, 00000000, 00000000, 00000000, 00000000, 0000000
+0, 00test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+000000, 00000000, 00000000, 00000000, 00000000, 00000000]test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+
+test dev::virtio::gpu::resources::tests::gpu_transfer_short_final_row_rejects_before_any_pixels_or_damage_change ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+E5-T22e verifier latched=false: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+E5-T22e verifier latched=true: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+AT queued pattern=0 requests=[[01, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00], [06, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 00, 00, 06, 80, 00, 00, 00, 00, 8c, 00, 00, 00, 00, 00, 00, 00], [03, 01, 00, test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00], [05, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+0, 00, 01, 00, 00, 00, 00, 00, 00, 00], [04, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00]] trace=[CommandTraceRecord { sequence: 0, command_type: 257, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 1, used_idx: 1, used_head: 0, response_len: 24 }, CommandTraceRecord { sequence: 1, command_type: 262, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 2, used_idx: 2, used_head: 2, response_len: 24 }, CommandTraceRecord { sequence: 2, command_type: 259, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 3, used_idx: 3, used_head: 4, response_len: 24 }, CommandTraceRecord { sequence: 3, command_type: 261, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 4, used_idx: 4, used_head: 6, response_len: 24 }, CommandTraceRecord { sequence: 4, command_type: 260, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 5, used_idx: 5, used_head: 8, response_len: 24 }] shadow=[11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344, 11223344] sink=[FlushRecord { scanout: Some(0), rect: Recttest dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+ { x: 0, y: 0, width: 7, height: 5 }, resource_width: 7, resource_height: 5, crc32: 755404313 }]
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+AT queued pattern=1 requests=[[01, 01, 00, 00, 0test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+0, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00], [06, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 02, 00, 00, 00, 00, 00, 06, 80, 00, 00, 00, 00, 11, 00, 00, 00, 00, 00, 00, 00, 11, 00, 06, 80, 00, 00, 00, 00, 7b, 00, 00, 00, 00, 00, 00, 00], [03, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+00, 00, 00, 00, 01, 00, 00, 00], [05, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 02, 00, 00, 00, 01, 00, 00, 00, 03, 00, 00, 00, 02, 00, 00, 00, 24, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00], [04, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 02, 00, 00, 00, 01, 00, 00, 00, 03, 00, 00, 00, 02, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00]] trace=[CommandTraceRecord { sequence: 0, command_type: 257, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 1, used_idx: 1, used_head: 0, response_len: 24 }, CommandTraceRecord { sequence: 1, command_type: 262, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 2, used_idx: 2, used_head: 2, response_len: 24 }, CommandTraceRecord { sequence: 2, command_type: 259, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 3, used_idx: 3, used_head: 4, response_len: 24 }, CommandTraceRecord { sequence: 3, command_type: 261, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 4, used_idx: 4, used_head: 6, response_len: 24 }, CommandTraceRecord { sequence: 4, command_type: 260, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 5, used_idx: 5, used_head: 8, response_len: 24 }] shadow=[00000000, 00000000, 00000000, 00000000, 00000000, 00000test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+000, 00000000, 00000000, 00000000, ff00ff00, ff0000ff, ff00ff00, 00000000, 00000000, 00000000, 00000000, ff0000ff, ff00ff00, ff0000ff, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+000000, 00000000, 0000000test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+0, 00000000, 00000000, 00000000] sink=[FlushRecord { scanout: Some(0), rect: Rect { x: 2, y: 1, width: 3, height: 2 }, resource_width: 7, resource_height: 5, crc32: 2162417559 }]
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+AT queued pattern=2 requests=[[01, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00], [06, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 04, 00, 00, 00, 00, 00, 06, 80, 00, 00, 00, 00, 07, 00, 00, 00, 00, 00, 00, 00, 07, 00, 06, 80, 00, 00, 00, 00, 0d, 00, 00, 00, 00, 00, 00, 00, 14, 00, 06, 80, 00, 00, 00, 00, 1d, 00, 00, 00, 00, 00, 00, 00, 31, 00, 06, 80, 00, 00, 00, 00, 5b, 00, 00, 00, 00, 00, 00, 00], [03, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00], [05, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 05, 00, 00, 00, 03, 00, 00, 00, 04, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00], [04, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 05, 00, 00, 00, 03, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00]] trace=[CommandTraceRecord { sequence: 0, command_type: 257, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 1, used_idx: 1, used_head: 0, response_len: 24 }, CommandTraceRecord { sequence: 1, command_type: 262, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 2, used_idx: 2, used_head: 2, response_len: 24 }, CommandTraceRecord { sequence: 2, command_type: 259, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 3, used_idx: 3, used_head: 4, response_len: 24 }, CommandTraceRecord { sequence: 3, command_type: 261, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 4, used_idx: 4, used_head: 6, response_len: 24 }, CommandTraceRecord { sequence: 4, command_type: 260, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 5, used_idx: 5, used_head: 8, response_len: 24 }] shadow=[00000000, 10190001, 10320002, 104b0003, 10640004, 107d0005, 00000000, 00000000, 10192702, 10322703, 104b2704, 10642705, 107d2706, 00000000, 00000000, 10194e03, 10324e04, 104b4e05, 10644e06, 107d4e07, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000] sink=[FlushRecord { scanout: Some(0), rect: Rect { x: 1, y: 0, width: 5, height: 3 }, resource_width: 7, resource_height: 5, crc32: 3405690315 }]
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+AT queued pattern=3 requests=[[01, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00], [06, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 10, 00, 00, 00, 00, 00, 06, 80, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00, 01, 00, 06, 80, 00, 00, 00, 00, 02, 00, 00, 00, 00, 00, 00, 00, 03, 00, 06, 80, 00, 00, 00, 00, 03, 00, 00, 00, 00, 00, 00, 00, 06, 00, 06, 80, 00, 00, 00, 00, 04, 00, 00, 00, 00, 00, 00, 00, 0a, 00, 06, 80, 00, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 0f, 00, 06, 80, 00, 00, 00, 00, 06, 00, 00, 00, 00, 00, 00, 00, 15, 00, 06, 80, 00, 00, 00, 00, 07, 00, 00, 00, 00, 00, 00, 00, 1c, 00, 06, 80, 00, 00, 00, 00, 08, 00, 00, 00, 00, 00, 00, 00, 24, 00, 06, 80, 00, 00, 00, 00, 09, 00, 00, 00, 00, 00, 00, 00, 2d, 00, 06, 80, 00, 00, 00, 00, 0a, 00, 00, 00, 00, 00, 00, 00, 37, test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok00
+, 06, 80, 00, 00, 00, 00, 0b, 00, 00, 00, 00, 00, 00, 00, 42, 00, 06, 80, 00, 00, 00, 00, 0c, 00, 00, 00, 00, 00, 00, 00, 4e, 00, 06, 80, 00, 00, 00, 00, 0d, 00, 00, 00, 00, 00, 00, 00, 5b, 00, 06, 80, 00, 00, 00, 00, 0e, 00, 00, 00, 00, 00, 00, 00, 69, 00, 06, 80, 00, 00, 00, 00, 0f, 00, 00, 00, 00, 00, 00, 00, 78, 00, 06, 80, 00, 00, 00, 00, 14, 00, 00, 00, 00, 00, 00, 00], [03, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00], [05, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 02, 00, 00, 00, 07, 00, 00, 00, 02, 00, 00, 00, 38, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00], [04, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 02, 00, 00, 00, 07, 00, 00, 00, 02, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00]] trace=[CommandTraceRecord { sequence: 0, command_type: 257, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 1, used_idx: 1, used_head: 0, response_len: 24 }, CommandTraceRecord { sequence: 1, command_type: 262, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 2, used_idx: 2, used_head: 2, response_len: 24 }, CommandTraceRecord { sequence: 2, command_type: 259, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 3, used_idx: 3, used_head: 4, response_len: 24 }, CommandTraceRecord { sequence: 3, command_type: 261, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 4, used_idx: 4, used_head: 6, response_len: 24 }, CommandTraceRecord { sequence: 4, command_type: 260, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 5, used_idx: 5, used_head: 8, response_len: 24 }] shadow=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00123456, 00123456, ffffff00, 00123456, ffffff00, 00123456, 00123456, 00123456, 00123456, 00123456, ffffff00, 00123456, 00123456, 00123456, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000] sink=[FlushRecord { scanout: Some(0), rect: Rect { x: 0, y: 2, width: 7, height: 2 }, resource_width: 7, resource_height: 5, crc32: 1962134128 }]
+AT queued pattern=4 requests=[[01, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 01, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00], [06, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 02, 00, 00, 00, 00, 00, 06, 80, 00, 00, 00, 00, 40, 00, 00, 00, 00, 00, 00, 00, 40, 00, 06, 80, 00, 00, 00, 00, 4c, 00, 00, 00, 00, 00, 00, 00], [03, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 07, 00, 00, 00, 05, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00], [05, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 04, 00, 00, 00, 03, 00, 00, 00, 03, 00, 00, 00, 02, 00, 00, 00, 64, 00, 00, 00, 00, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00], [04, 01, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 04, 00, 00, 00, 03, 00, 00, 00, 03, 00, 00, 00, 02, 00, 00, 00, 01, 00, 00, 00, 00, 00, 00, 00]] trace=[CommandTraceRecord { sequence: 0, command_type: 257, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 1, used_idx: 1, used_head: 0, response_len: 24 }, CommandTraceRecord { sequence: 1, command_type: 262, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 2, used_idx: 2, used_head: 2, response_len: 24 }, CommandTraceRecord { sequence: 2, command_type: 259, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 3, used_idx: 3, used_head: 4, response_len: 24 }, CommandTraceRecord { sequence: 3, command_type: 261, response_type: 4352, scanout: None, resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 4, used_idx: 4, used_head: 6, response_len: 24 }, CommandTraceRecord { sequence: 4, command_type: 260, response_type: 4352, scanout: Some(0), resource_id: Some(1), resource_width: Some(7), resource_height: Some(5), avail_idx: 5, used_idx: 5, used_head: 8, response_len: 24 }] shadow=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 55000081, 550000b0, 55000163, 00000000, 00000000, 00000000, 00000000, 55000098, 550000a9, 5500017a] sink=[FlushRecord { scanout: Some(0), rect: Rect { x: 4, y: 3, width: 3, height: 2 }, resource_width: 7, resource_height: 5, crc32: 1258934863 }]
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+1280x800 transfer: 171.596334ms
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 276 filtered out; finished in 0.55s
+
+cargo test -p wasm-vm-core --test virtio_gpu_machine
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.77s
+     Running tests/virtio_gpu_machine.rs (target/debug/deps/virtio_gpu_machine-b10e1707e62783ac)
+
+running 4 tests
+test gpu_falls_back_to_slot_six_without_replacing_an_existing_optional_device ... ok
+test gpu_uses_the_remaining_optional_slot_and_machine_boundary_drains_controlq ... ok
+test gpu_cursorq_sequence_matches_wasm_through_machine_boundary ... ok
+test gpu_cursor_plane_integration_preserves_pixels_and_transform_only_moves ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.31s
+wasm-pack test --node crates/wasm --test gpu_protocol
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 49.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/gpu_protocol.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-8ed9e588f4d12e67.wasm)
+running 6 tests
+test gpu_wire_fixture_is_little_endian_on_wasm32 ... ok
+test gpu_transfer_source_offset_is_independent_of_destination_on_wasm32 ... ok
+test gpu_mmio_identity_and_config_on_wasm32 ... ok
+test gpu_flush_golden_crc_fixtures_on_wasm32 ... ok
+test gpu_edid_resize_fixture_on_wasm32 ... ok
+test gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.06s
+
+[WARN]: ⚠️   failed to get wasm-pack version
+node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.51725ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.111ms)
+✔ post-marker presentation helper rejects typing frames (105.804666ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.154125ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.1535ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.101208ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.144333ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.5285ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.719333ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.173417ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.273625ms)
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (126.634709ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (2.725667ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.261709ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.299791ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.261333ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.088875ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.143459ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.670541ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (2.008875ms)
+✔ AT runtime selection binds both corrected sources and the exact built WASM (3.361625ms)
+✔ AS admits only verified AR bytes and leaves old AJ source guards intact (0.436542ms)
+✔ AR properties must name its exact restored Foot; the AJ default stays unchanged (0.865084ms)
+✔ prepared selection accepts only the verified pair while original R3 guards stay exact (1.5595ms)
+✔ one read-only batch checks eight saved properties and the exact restored Foot (0.956208ms)
+✔ missing property, altered active Foot, write acknowledgment or exit0 error text fails closed (0.747125ms)
+✔ expired or late property replies do not renew startup or admit input (0.444625ms)
+✔ prepared audit rejects forged, duplicate, late and mutating raw property commands (3.295542ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (17.054958ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (15.517542ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (16.526625ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (67.963583ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (76.559584ms)
+✔ synthetic AR input checks loaded kernel before properties and keeps uninstrumented original deadlines (52.876292ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (6.808ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.080875ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (10.4995ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (48.598042ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (11.432333ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 38
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 369.333
+
+✖ failing tests:
+
+test at tools/verify/omarchy-desktop-live.test.mjs:155:1
+✖ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (126.634709ms)
+  AssertionError [ERR_ASSERTION]: node:net:2302
+        const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                      ^
+  
+  Error: listen EPERM: operation not permitted 127.0.0.1
+      at Server.setupListenHandle [as _listen2] (node:net:2302:21)
+      at listenInCluster (node:net:2433:12)
+      at node:net:2662:7
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    code: 'EPERM',
+    errno: -1,
+    syscall: 'listen',
+    address: '127.0.0.1'
+  }
+  
+  Node.js v24.20.0
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.test.mjs:171:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+make: *** [verify-E5_5-T03at-device] Error 1

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/direct-fp-imports-verifier/audit-benchmark.py", line 77, in <module>
+    assert run['registers'] == expected_registers, (run['arm'], run['registers'], expected_registers)
+AssertionError: ('baseline', ['800000ac', '0', '2000', '0', '0', '0', '80002000', '0', '0', '0', '0', '4', '0', '0', 'ffffffff3f800000', 'ffffffff41000000', 'ffffffff3ec00000', 'ffffffff40800000', 'ffffffff41000000', 'ffffffff3f800000', 'ffffffff3f800000', '0', '2', '8000000a00006000', '0', '0', '0', '0', '0', '0', '0', '0', '0'], ['800000ac', '0', '2000', '0', '0', '0', '80002000', '0', '0', '0', '0', '4', '0', '0', 'ffffffff3f800000', 'ffffffff41000000', 'ffffffff3ec00000', 'ffffffff40800000', 'ffffffff41000000', 'ffffffff3f800000', 'ffffffff3f800000', '0', '2', '8000000000006000', '0', '0', '0', '0', '0', '0', '0', '0', '0'])

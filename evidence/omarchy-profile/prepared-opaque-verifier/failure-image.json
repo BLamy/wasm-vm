@@ -1,0 +1,17 @@
+{
+  "path": "evidence/omarchy-profile/prepared-opaque-r1/desktop/failure.png",
+  "size": 10726,
+  "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+  "width": 1280,
+  "height": 800,
+  "pixels": 1024000,
+  "maximumRGBChannel": 255,
+  "minimumAlpha": 255,
+  "colors": 413,
+  "entirelyBlack": false,
+  "rawPixelSha256": "50c62bb0e9bcbaba0efa00008caebf795a859fa4d03ddbcd54ac6786c8210597",
+  "terminalRoi": null,
+  "brightPixels": null,
+  "brightColors": null,
+  "nonblank": null
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-verifier/audit-run.py", line 347, in <module>
+    main()
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-verifier/audit-run.py", line 275, in main
+    summary = inspect_arm(r, 'candidate', run['head'])
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/prepared-recycling-verifier/audit-run.py", line 171, in inspect_arm
+    assert requests and requests[0]['command'] == COMMAND
+AssertionError

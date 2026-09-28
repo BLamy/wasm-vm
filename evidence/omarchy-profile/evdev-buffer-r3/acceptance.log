@@ -1,0 +1,109 @@
+cargo fmt --check
+cargo clippy -p wasm-vm-cli --features gpu-trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s
+cargo test -p wasm-vm-cli --features gpu-trace --bin wasm-vm cli_config_tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/main.rs (target/debug/deps/wasm_vm-83d3b380d548ac64)
+
+running 3 tests
+test boot::cli_config_tests::icount_divider_rejects_zero ... ok
+test boot::cli_config_tests::icount_divider_defaults_to_ten_and_accepts_omarchy_sixty_four ... ok
+test boot::cli_config_tests::keyboard_burst_proof_is_opt_in_and_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 57 filtered out; finished in 0.00s
+
+cargo build --release -p wasm-vm-cli --features gpu-trace --bin wasm-vm
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.07s
+python3 tools/build-omarchy-input-kernel.py target/omarchy-input-kernel-r3
+wasm-vm-omarchy-input-0102b731c4a44bd6
+{
+  "passed": true,
+  "image": "sha256:e8d02030be71b3eada014b615269d0a9e8eb93ace68fb2a8f9097c9467c109e1",
+  "volume": "wasm-vm-omarchy-input-0102b731c4a44bd6",
+  "baseline": {
+    "Image": {
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "System.map": {
+      "bytes": 2416519,
+      "sha256": "902e3241fbf86bad7f1b45b62cdfbaf2777dd1c53097296f5bdbd0124ec03290"
+    },
+    "config": {
+      "bytes": 113911,
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+    }
+  },
+  "tarball": {
+    "bytes": 140405280,
+    "sha256": "d1054ab4803413efe2850f50f1a84349c091631ec50a1cf9e891d1b1f9061835"
+  },
+  "patch": {
+    "bytes": 257,
+    "sha256": "d7323d359a7b45c625b67444a3b9d3e391f137102f73821d0b82121adffc6fc6"
+  },
+  "configFragment": {
+    "bytes": 3240,
+    "sha256": "52e31f126083809c1c4ba46552814b1d431ac84403dd94b67d591029fa4186d9"
+  },
+  "commands": [
+    [
+      "docker",
+      "run",
+      "--rm",
+      "--network",
+      "none",
+      "--ulimit",
+      "nofile=1048576:1048576",
+      "-v",
+      "wasm-vm-omarchy-input-0102b731c4a44bd6:/build",
+      "-v",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/kernel-build/linux-6.6.63.tar.xz:/src/linux.tar.xz:ro",
+      "-v",
+      "/Users/blamy/Documents/Codex/wasm-vm/configs/omarchy-evdev-buffer.patch:/src/buffer.patch:ro",
+      "-v",
+      "/Users/blamy/Documents/Codex/wasm-vm/configs/wasm-vm.config:/src/wasm-vm.config:ro",
+      "-v",
+      "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r3:/out",
+      "-e",
+      "KBUILD_BUILD_TIMESTAMP=Thu Nov 14 2024",
+      "sha256:e8d02030be71b3eada014b615269d0a9e8eb93ace68fb2a8f9097c9467c109e1",
+      "bash",
+      "/out/build.sh"
+    ]
+  ],
+  "head": "97743da727ee51eb7326b112c18653ff02941da1",
+  "artifacts": {
+    "Image": {
+      "bytes": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "System.map": {
+      "bytes": 2416519,
+      "sha256": "0d41b2aa48bea3396aa6719991e69c89c47eb7331a11762d4e5a6b6ec28cbfad"
+    },
+    "config": {
+      "bytes": 113911,
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+    },
+    "evdev.c": {
+      "bytes": 33211,
+      "sha256": "148e37958785cd09a3c5f881a85e567c9a166ff76bc85665d71bf3afd32f5404"
+    },
+    "evdev.original.c": {
+      "bytes": 33209,
+      "sha256": "b5d436fbe355b563f5dc40854bc3cc65e11c8fef348b0200463d736a726ffe56"
+    },
+    "compiler.txt": {
+      "bytes": 250,
+      "sha256": "11300ff195c3f3c53d38e10e6df36585d66317b8228a860f89f3e23a3b4d61cb"
+    }
+  },
+  "cleanup": {
+    "returncode": 0,
+    "stdout": "wasm-vm-omarchy-input-0102b731c4a44bd6\n",
+    "stderr": ""
+  }
+}
+python3 tools/verify/omarchy-evdev-burst.py evidence/omarchy-profile/evdev-buffer-r3/guest target/omarchy-input-kernel-r3
+{"passed": true, "runs": [{"name": "baseline-legacy", "passed": true, "elapsedSeconds": 11.078519821166992}, {"name": "baseline-burst", "passed": true, "elapsedSeconds": 11.057504892349243}, {"name": "candidate-legacy", "passed": true, "elapsedSeconds": 11.016485214233398}, {"name": "candidate-burst", "passed": true, "elapsedSeconds": 14.226539850234985}, {"name": "candidate-overflow", "passed": true, "elapsedSeconds": 11.276581764221191}]}

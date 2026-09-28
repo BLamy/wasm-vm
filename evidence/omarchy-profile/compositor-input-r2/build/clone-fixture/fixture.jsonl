@@ -1,0 +1,17 @@
+{"type":"READY","pid":7,"mainTid":7,"workerTid":9,"dataFd":3,"readvFd":5,"workerFd":7,"gateFd":9,"reuseSourceFd":11}
+{"type":"read-result","name":"clone-short-24","tid":12,"fd":13,"requested":96,"returned":24,"errno":0,"hex":"0100000000000000020000000000000001001e0001000000"}
+{"type":"CLONE_READY","pid":7,"cloneTid":12,"cloneFd":13}
+{"type":"fd-identity","name":"before-reuse","fd":3,"dev":14,"inode":484033,"rdev":0,"mode":4480,"isFifo":true}
+{"type":"read-result","name":"main-short-24","tid":7,"fd":3,"requested":96,"returned":24,"errno":0,"hex":"0100000000000000020000000000000001001e0001000000"}
+{"type":"read-result","name":"main-eagain","tid":7,"fd":3,"requested":96,"returned":-1,"errno":11,"hex":""}
+{"type":"read-result","name":"main-readv-48-split-7-41","tid":7,"fd":5,"requested":72,"returned":48,"errno":0,"hex":"0300000000000000040000000000000000000300000000000500000000000000060000000000000001001e00ffffffff"}
+{"type":"read-result","name":"worker-partial-25","tid":9,"fd":7,"requested":96,"returned":25,"errno":0,"hex":"0500000000000000060000000000000001001e00ffffffffa5"}
+{"type":"read-result","name":"worker-eagain","tid":9,"fd":7,"requested":96,"returned":-1,"errno":11,"hex":""}
+{"type":"read-result","name":"main-interleaved-blocking-24","tid":7,"fd":9,"requested":96,"returned":24,"errno":0,"hex":"070000000000000008000000000000000000000000000000"}
+{"type":"fd-identity","name":"after-reuse","fd":3,"dev":14,"inode":484037,"rdev":0,"mode":4480,"isFifo":true}
+{"type":"read-result","name":"main-reused-non-input-24","tid":7,"fd":3,"requested":96,"returned":24,"errno":0,"hex":"030000000000000004000000000000000000030000000000"}
+{"type":"READY_TO_DETACH","pid":7,"mainTid":7,"workerTid":9,"ok":true}
+{"type":"clone-post-detach-progress","tid":12}
+{"type":"worker-post-detach-progress","tid":9}
+{"type":"CLONE_DETACHED","tid":12,"tracerPid":0}
+{"type":"DETACHED","pid":7,"mainTracerPid":0,"workerTracerPid":0,"ok":true}

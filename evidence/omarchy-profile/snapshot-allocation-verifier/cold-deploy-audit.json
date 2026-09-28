@@ -1,0 +1,70 @@
+{
+  "auditedAt": "2026-09-16T06:22:15.135992+00:00",
+  "sourceHead": "512ba6acc9b0293d04d96115372ddef2b1cccfab",
+  "artifactHead": "bb3c13dd6014ca15f29fe897b3ba207d65bc67b8",
+  "unchangedRuntimeClosure": true,
+  "metadataOnlyChanges": [
+    "web/dist/artifacts-alpine.json",
+    "web/dist/artifacts-node-alpine.json",
+    "web/dist/artifacts-omarchy.json",
+    "web/dist/artifacts.json"
+  ],
+  "coldClonePassed": true,
+  "coldSuiteVisuallyInspected": true,
+  "bothDeploymentOriginsMatchFinalHead": true,
+  "desktopResponsive": false,
+  "pending": [
+    "broad gauntlet classification",
+    "worker submission seal"
+  ],
+  "files": {
+    "evidence/omarchy-profile/snapshot-allocation-gates/source-closure.json": {
+      "bytes": 1355,
+      "sha256": "fb93e83defa7e59a869f0b825aadb4fa23b7a801c3e643ae1ef5eff18527c9d6"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/report.json": {
+      "bytes": 2734,
+      "sha256": "f119f5e28ffcdc3daf329a0a4286a0bafd8766641d282739cba133cccdb9c69a"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser/report.json": {
+      "bytes": 6351,
+      "sha256": "16b857995c0047d7421db398043714f5d58bb948a3b28c0e50cd93e3e06af02e"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-verifier/r3-byte-oracle.json": {
+      "bytes": 2669,
+      "sha256": "a73dad7579a68cbf7bc98ec156a4944de2026773b9b94e7a71ef54f194d9f0ca"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/clone.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/checkout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/build.log": {
+      "bytes": 4915,
+      "sha256": "92ebd61f3e9c73ae24b284cbe5c106eb34bf34e1f6126a69618e325ec0c49782"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/native.log": {
+      "bytes": 4038,
+      "sha256": "589dd738065e164a9bc9ec4d5b4e63c16b5eb1fe53dbaaa2ce4ac6b17ea138a9"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser.log": {
+      "bytes": 3365,
+      "sha256": "21130f79fd6791bd93b50ac4f5cbc45fcd5f1e11d8d9e6d86536933772a062a1"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/cold/browser/suite.png": {
+      "bytes": 50242,
+      "sha256": "cc9b988227b387ef25621cb1c1690fccee5e7ff358eb6d922c87dacd4037d9e0"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/public.json": {
+      "bytes": 1711,
+      "sha256": "001103b54964517869ef4bf448a31bbf4bf1400668c441a6abbec20b44dfaa8b"
+    },
+    "evidence/omarchy-profile/snapshot-allocation-gates/deploy.log": {
+      "bytes": 4218,
+      "sha256": "7950a297ff9f15710e00bc55a753618d8e048440d6f74d346a0253b5e88e0d7c"
+    }
+  }
+}

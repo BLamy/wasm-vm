@@ -1,0 +1,34 @@
+✔ cold then warm boot loads once and reuses verified bytes (15.812542ms)
+✔ a URL change with the same hash is a cache hit, while a different hash misses (1.365416ms)
+✔ a tampered cached entry is evicted exactly and refetched with HTTP cache reload (1.244167ms)
+✔ a corrupt network response is rejected and never cached (0.562625ms)
+✔ non-200 and opaque network responses are rejected without a cache write (0.432166ms)
+✔ missing and quota-failing storage gracefully fall back to network (0.719417ms)
+✔ network and cached streams reject overflow and truncation (0.834375ms)
+✔ invalid descriptors are rejected before fetch (0.795208ms)
+✔ concurrent same-hash requests do not share buffers or weaken size validation (0.692292ms)
+✔ a throwing default caches property reports unavailable and still fetches (0.477834ms)
+✔ freshDesktop rejects a missing RAM/delta pair instead of cold-falling back (3.183666ms)
+✔ Omarchy production resolution rejects a missing or malformed immutable descriptor (1.508417ms)
+✔ Omarchy immutable chunk manifest hash mismatch fails closed (0.496541ms)
+✔ Omarchy hashes corrupt raw manifest bytes before decoding (0.996375ms)
+✔ Omarchy rejects a BOM even when the decoded manifest text is equivalent (0.548208ms)
+✔ Omarchy validates an explicitly empty manifest base instead of falling back (0.440166ms)
+✔ Omarchy uses the descriptor for persistent and noSnapshot diagnostics (0.827792ms)
+✔ Alpine-style chunked caller remains on its explicit imageManifestUrl (0.369625ms)
+✔ freshDesktop rejects an overlay-delta integrity mismatch instead of cold-falling back (0.409458ms)
+✔ freshDesktop rejects a RAM snapshot coherence mismatch instead of cold-falling back (1.157042ms)
+✔ freshDesktop rejects RAM snapshot fetch and integrity failures instead of cold-falling back (1.67075ms)
+✔ freshDesktop rejects persistent mode before any asset fetch (0.37425ms)
+✔ persistent caller reaches the persistent constructor branch (runtime sentinel) (0.44475ms)
+✔ progress labels are human-friendly and unpacking never exposes a stale bar (1.060208ms)
+✔ guest-response feedback is bounded and cancelled by lifecycle edges (0.255333ms)
+✔ desktop readiness is sticky against later generic lifecycle traffic until a new boot (0.101333ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 67.792959

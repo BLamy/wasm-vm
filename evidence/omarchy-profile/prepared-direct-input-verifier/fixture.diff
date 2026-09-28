@@ -1,0 +1,92 @@
+diff --git a/tools/verify/omarchy-desktop-live.test.mjs b/tools/verify/omarchy-desktop-live.test.mjs
+index 5e741781..1d46fd6c 100644
+--- a/tools/verify/omarchy-desktop-live.test.mjs
++++ b/tools/verify/omarchy-desktop-live.test.mjs
+@@ -205,7 +205,7 @@ test("harness-only actual cold orchestration inspects storage before app and ret
+     setViewportSize() { assert.fail("cold-pair entered resize/input path"); },
+   };
+   const bindings = {
+-    coldPair: true, inputTrial: false, opaqueFoot: false, directOpaque: false, modePair: false, ownedRecording: false,
++    coldPair: true, inputTrial: false, opaqueFoot: false, directOpaque: false, preparedDirect: false, modePair: false, ownedRecording: false,
+     coldDeadline: null, coldStartupMs: 5400000, COLD_BLANK_PATH, page, report, url,
+     URL, Date, assert, remainingStartupMs, assertColdRestore,
+     assertEmptyOriginStorage(state, origin) { assertEmptyOriginStorage(state, origin); trace.push("empty-origin"); },
+diff --git a/tools/verify/omarchy-user-input.test.mjs b/tools/verify/omarchy-user-input.test.mjs
+index a78ee9e3..5f2bbacc 100644
+--- a/tools/verify/omarchy-user-input.test.mjs
++++ b/tools/verify/omarchy-user-input.test.mjs
+@@ -7,6 +7,7 @@ import { physicalStroke } from "./omarchy-browser-session.mjs";
+ import { assertInputTrialRuntime, inputTrialOptions } from "./omarchy-input-trial.mjs";
+ import { OPAQUE_FOOT_COMMAND, requestOpaqueFoot, assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
+ import { DIRECT_OPAQUE_COMMAND, requestDirectOpaque } from "./omarchy-direct-opaque-command.mjs";
++import { PREPARED_DIRECT_COMMAND, requestPreparedDirectProperties } from "./omarchy-prepared-direct-state.mjs";
+ 
+ const source = readFileSync(new URL("./omarchy-desktop-live.mjs", import.meta.url), "utf8");
+ const trialSource = readFileSync(new URL("./omarchy-input-trial.mjs", import.meta.url), "utf8");
+@@ -29,11 +30,11 @@ const actualHelpers = [
+ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false,
+   wrongNonce = false, lateReadback = false, stalePresentation = false,
+   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
+-  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false } = {}) {
++  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false } = {}) {
+   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
+   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
+   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
+-    arm: opaqueFoot || directOpaque ? "candidate" : "control", experiment: opaqueFoot || directOpaque ? "residency" : "recycling", renderer: null, lp: null });
++    arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control", experiment: opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling", renderer: null, lp: null });
+   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
+   let randomCall = 0;
+   const epoch = now, readyMs = 5;
+@@ -95,14 +96,14 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+   const state = { presentation: before, clock: { mode: "icount", clockDiv: 64 },
+     jit: { hasExecutor: true, admissionProbe: false,
+       coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
+-      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque ? 256 : 24, entryCost: { timingEnabled: false } } };
++      decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque || preparedDirect ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque || preparedDirect ? 256 : 24, entryCost: { timingEnabled: false } } };
+   const bindings = {
+     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
+     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
+-    coldPair: false, workerCost: false, opaqueFoot, directOpaque, modePair: false, ownedRecording: mode === "input-trial",
++    coldPair: false, workerCost: false, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
+     coldDeadline: null, trialCaptureDeadline: null, mode,
+     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
+-    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, assertOriginalPresentation,
++    physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, requestPreparedDirectProperties, assertOriginalPresentation,
+     fenceWorkerCostInput: async () => { trace.push("input-fence"); return { synthetic: true }; },
+     randomBytes: () => Buffer.from((randomCall++ ? "b" : "a").repeat(16), "hex"),
+     assertRealOmarchyLayout: async () => { trace.push("layout"); },
+@@ -120,6 +121,10 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+         assert.equal(keys.length,0); return { exit:0, stdout: badOpaque ? "ok\nIPC timeout" :
+           [...Array(8).fill("ok"),"true","true","1","1","1","true","true","true",
+             JSON.stringify({class:"foot",mapped:true,hidden:false,address:"0x123",at:[12,38],size:[1256,750]})].join("\n\n\n") }; }
++      if (command === PREPARED_DIRECT_COMMAND) { trace.push("saved-property-read");
++        assert.equal(keys.length,0); return {exit:0,stdout:badOpaque ? "IPC timeout" :
++          ["true","true","1","1","1","true","true","true", JSON.stringify({class:"foot",mapped:true,
++            hidden:false,visible:true,acceptsInput:true,address:"0x55555eb73630",pid:503,at:[12,38],size:[1256,750]})].join("\n\n\n")}; }
+       if (command.endsWith("-j clients")) return { exit: 0, stdout: JSON.stringify(missingFoot ? [] :
+         [{ class: "foot", mapped: true, hidden: false, size: [1280, 800], address: "0x123" }]) };
+       if (command.endsWith("-j activewindow")) return { exit: 0, stdout: JSON.stringify({ address: wrongActive ? "0x456" : "0x123" }) };
+@@ -181,6 +186,23 @@ test("synthetic actual direct-property branch reads all values before keys and f
+   assert.equal(bad.keys.length,0);assert.equal(bad.report.result,undefined);
+ });
+ 
++test("synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines", async () => {
++  const f=fixture({preparedDirect:true}); assert.equal(await f.run(),null);
++  assert.equal(f.report.preparedDirect.status,"properties-confirmed");
++  assert.equal(f.report.result,"input-trial-physical-nonce-and-fresh-presentation");
++  const order=["saved-property-read","prepared-direct.png","key","input-fence","readback","desktop-keyboard.png"];
++  for(let i=1;i<order.length;i++) assert.ok(f.trace.indexOf(order[i-1])<f.trace.indexOf(order[i]));
++  assert.equal(f.commands.filter(command=>command===PREPARED_DIRECT_COMMAND).length,1);
++  assert.ok(!f.commands.includes(DIRECT_OPAQUE_COMMAND));
++  assert.equal(f.report.startup.timeoutMs,300000);
++  assert.equal(Date.parse(f.report.keyboard.deadlineAt),f.report.keyboard.enteredAtMs+120000);
++  for(const mutation of [{badOpaque:true},{lateReadback:true},{stalePresentation:true}]) {
++    const bad=fixture({preparedDirect:true,...mutation}); assert.ok(await bad.run());
++    assert.equal(bad.report.result,undefined);
++    if(mutation.badOpaque) assert.equal(bad.keys.length,0);
++  }
++});
++
+ test("synthetic capture and verify retain actual mapped-Foot and active-window checks before keys", async () => {
+   for (const mode of ["capture", "verify"]) {
+     const f = fixture({ mode, stopAtFirstKey: true });

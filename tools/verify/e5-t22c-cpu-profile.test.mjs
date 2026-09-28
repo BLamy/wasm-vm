@@ -23,6 +23,8 @@ test("diagnostic profiler samples the exact owned worker, not the page",async()=
     await page.waitForFunction(()=>typeof window.result==="number");
     const result=await profiler.stop();
     assert.equal(result.url,url+"/worker.js");assert.ok(result.profile.samples.length>10);
+    assert.equal(result.target.type,"worker");assert.equal(result.target.url,url+"/worker.js");
+    assert.ok(result.target.targetId);
     assert.ok(result.profile.nodes.some(n=>n.callFrame.functionName==="cpuProbe"&&n.hitCount>0));
   } finally {await profiler?.close();await browser.close();await new Promise(resolve=>server.close(resolve));}
 });

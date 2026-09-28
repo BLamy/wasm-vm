@@ -1,0 +1,34 @@
+{
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5.5-t03w-wrong-golden-k_u9jui_",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e5.5-t03w-wrong-golden-k_u9jui_/Cargo.toml",
+    "--test",
+    "fp_arithmetic_verifier",
+    "verifier_native_literal_arithmetic_goldens",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "expected_changed_only": "FADD.S(+1,+2^-24), RNE result changed from 0x3f800000 to 0x3f800001",
+  "original_sha256": "45a1cd7affca31ce44a386f2c5e842c8345f4b283aaa97bf2a73946883162641",
+  "mutated_sha256": "f2c299db090e4d6d7766ca6f0808e3330f92fa097676361036eb19f1fbcb0549",
+  "runs": [
+    {
+      "case": "wrong",
+      "exit_code": 101,
+      "expected_exit_code": 101,
+      "seconds": 17.223942084
+    },
+    {
+      "case": "restored",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 10.243531167
+    }
+  ],
+  "shared_test_unchanged": true
+}

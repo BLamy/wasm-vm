@@ -1,0 +1,350 @@
+diff --git a/crates/core/src/lib.rs b/crates/core/src/lib.rs
+index 94170dcf..e770a61c 100644
+--- a/crates/core/src/lib.rs
++++ b/crates/core/src/lib.rs
+@@ -4437,6 +4437,7 @@ impl Machine {
+                         // are published into the source/edge-local slot when the successor arrives;
+                         // this removes the hash/key probe and keeps invalidation source-local.
+                         if edge.is_none()
++                            && self.executor.as_ref().is_some_and(|e| e.dynamic_chaining())
+                             && let Some(e) = self.executor.as_mut()
+                         {
+                             e.link_dynamic_target(next_virtual, next_phys);
+diff --git a/crates/core/tests/dynamic_link_publication.rs b/crates/core/tests/dynamic_link_publication.rs
+new file mode 100644
+index 00000000..a9340d9d
+--- /dev/null
++++ b/crates/core/tests/dynamic_link_publication.rs
+@@ -0,0 +1,134 @@
++//! E5.5-T03bb — the disabled dynamic-link option must not publish unused targets.
++
++use std::cell::RefCell;
++use std::rc::Rc;
++
++use wasm_vm_core::Machine;
++use wasm_vm_core::bus::Bus;
++use wasm_vm_core::bus::mmap::DRAM_BASE;
++use wasm_vm_core::dispatch::DecodedBlock;
++use wasm_vm_core::hart::Hart;
++use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode, JitExit};
++use wasm_vm_core::mmio::SystemBus;
++
++const CALLER: u64 = DRAM_BASE;
++const TARGET: u64 = DRAM_BASE + 4;
++
++fn jalr(rd: u32, rs1: u32) -> u32 {
++    (rs1 << 15) | (rd << 7) | 0b1100111
++}
++
++fn jal(rd: u32) -> u32 {
++    (rd << 7) | 0b1101111
++}
++
++struct Probe {
++    links: Rc<RefCell<Vec<(u64, u64)>>>,
++    chaining: bool,
++    dynamic_chaining: bool,
++}
++
++impl CompiledBlockExecutor for Probe {
++    fn install(&mut self, _block: &DecodedBlock) {}
++
++    fn is_compiled(&self, _phys_pc: u64) -> bool {
++        true
++    }
++
++    fn execute(
++        &mut self,
++        _phys_pc: u64,
++        _hart: &mut Hart,
++        _bus: &mut SystemBus,
++    ) -> Option<JitExit> {
++        Some(JitExit {
++            code: ExitCode::BranchTaken,
++            next_pc: TARGET,
++            exit_info: 0,
++            trap: None,
++            retired: 1,
++        })
++    }
++
++    fn invalidate_all(&mut self) {}
++
++    fn invalidate_page(&mut self, _frame: u64) {}
++
++    fn compiled_count(&self) -> usize {
++        2
++    }
++
++    fn executed_blocks(&self) -> u64 {
++        0
++    }
++
++    fn retired_via_jit(&self) -> u64 {
++        0
++    }
++
++    fn set_chaining(&mut self, on: bool) {
++        self.chaining = on;
++    }
++
++    fn chaining(&self) -> bool {
++        self.chaining
++    }
++
++    fn chain_depth_budget(&self) -> u32 {
++        128
++    }
++
++    fn set_dynamic_chaining(&mut self, on: bool) {
++        self.dynamic_chaining = on;
++    }
++
++    fn dynamic_chaining(&self) -> bool {
++        eprintln!("dynamic_chaining getter -> {}", self.dynamic_chaining);
++        self.dynamic_chaining
++    }
++
++    fn link_dynamic_target(&mut self, virtual_pc: u64, phys_pc: u64) {
++        self.links.borrow_mut().push((virtual_pc, phys_pc));
++    }
++}
++
++fn dynamic_publications(enabled: bool) -> Vec<(u64, u64)> {
++    let links = Rc::new(RefCell::new(Vec::new()));
++    let mut machine = Machine::new(64 * 1024);
++    machine.bus_mut().store32(CALLER, jalr(0, 1)).unwrap();
++    machine.bus_mut().store32(TARGET, jal(0)).unwrap();
++    machine.hart_mut().regs.write(1, TARGET);
++    machine.hart_mut().regs.pc = CALLER;
++    machine.set_executor(Box::new(Probe {
++        links: Rc::clone(&links),
++        chaining: false,
++        dynamic_chaining: true,
++    }));
++    machine.set_block_cache(true);
++    machine.set_interrupt_batching(true);
++    machine.set_hotness_threshold(1);
++    machine.set_chaining(true);
++    machine.set_dynamic_chaining(enabled);
++    machine.set_jit(true);
++    let _ = machine.run(1); // decode/nominate the dynamic caller before the compiled probe run
++    machine.hart_mut().regs.pc = CALLER;
++    let _ = machine.run(4);
++    let _ = machine.take_executor();
++    Rc::try_unwrap(links).unwrap().into_inner()
++}
++
++#[test]
++fn disabled_dynamic_chaining_skips_publication_but_enabled_publishes() {
++    let disabled = dynamic_publications(false);
++    let enabled = dynamic_publications(true);
++    assert!(disabled.is_empty(), "disabled path published {disabled:?}");
++    assert!(
++        !enabled.is_empty(),
++        "enabled path did not publish a dynamic target"
++    );
++    assert!(
++        enabled
++            .iter()
++            .all(|&(virtual_pc, phys_pc)| { virtual_pc == TARGET && phys_pc == TARGET })
++    );
++}
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index 637e0e15..fd1d875c 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -87,7 +87,7 @@ if (inputKernelRecordPath) assert.ok(urlArg === "local" && mode === "direct-opaq
+ if (inputObserver) assert.ok(inputTrial && preparedDirect && !workerCost && !failureCheckpoint,
+   "compositor observation requires the isolated prepared physical trial");
+ const originalInputPresentation = inputObserver || inputKernelPrepared ? assertOriginalInputGeometry : assertOriginalPresentation;
+-const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
++const preparedRecycling = ["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT);
+ const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+ const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+ if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+@@ -124,7 +124,7 @@ const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, c
+ if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
+   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
+ }
+-if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
++if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+   "residency is isolated from other experiments");
+ if (process.env.OMARCHY_WORKER_COST !== undefined) {
+   assert.ok(workerCost && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate",
+@@ -141,7 +141,7 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
+   "direct opaque requires its isolated fixed residency candidate input trial");
+ }
+ if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
+-  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(trial?.experiment) && trial.arm === "candidate"
++  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(trial?.experiment) && trial.arm === "candidate"
+     && !opaqueFoot && !directOpaque && Boolean(workerCost || inputObserver || inputKernelPrepared) === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
+   "prepared direct input requires its isolated fixed residency candidate trial");
+ }
+diff --git a/tools/verify/omarchy-input-audit.mjs b/tools/verify/omarchy-input-audit.mjs
+index e561d203..e6d21057 100644
+--- a/tools/verify/omarchy-input-audit.mjs
++++ b/tools/verify/omarchy-input-audit.mjs
+@@ -27,7 +27,7 @@ export function auditInputReport(report, { head, wasmSha256, arm, startupCommand
+   assert.equal(report.trial.scopedStatus, "");
+   assert.equal(report.trial.arm, arm);
+   const experiment = requestedExperiment ?? (preparedRecycling ? "prepared-recycling" : "residency");
+-  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment));
++  assert.ok(["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(experiment));
+   assert.equal(report.trial.experiment, experiment);
+   assert.equal(report.trial.recycling, preparedRecycling);
+   const options = inputTrialOptions({ urlArg: "local", pair: "pinned", chunks: "pinned", arm,
+diff --git a/tools/verify/omarchy-input-kernel-response.mjs b/tools/verify/omarchy-input-kernel-response.mjs
+index 765d3bdb..efb03eb4 100644
+--- a/tools/verify/omarchy-input-kernel-response.mjs
++++ b/tools/verify/omarchy-input-kernel-response.mjs
+@@ -15,26 +15,28 @@ import { loadGpuTransferRuntime } from "./omarchy-gpu-transfer-runtime.mjs";
+ import { auditDisplayPixelProbe } from "./omarchy-display-pixel-probe.mjs";
+ import { auditLateDisplay, DISPLAY_LATE_MS } from "./omarchy-display-late-probe.mjs";
+ 
+-assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr", "--prepared-cap-1024-cache16384-code-page-index"].includes(process.argv[4])),
+-  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr|--prepared-cap-1024-cache16384-code-page-index]");
++assert.ok(process.argv.length === 4 || (process.argv.length === 5 && ["--gpu-transfer-offset", "--display-pixel-probe", "--display-late-probe", "--prepared-cap-1024", "--prepared-cap-1024-cache16384", "--display-late-cap-1024-cache16384", "--prepared-cap-1024-cache16384-no-jalr", "--prepared-cap-1024-cache16384-code-page-index", "--prepared-cap-1024-cache16384-no-dynamic-publication"].includes(process.argv[4])),
++  "usage: omarchy-input-kernel-response.mjs NEW_OUTPUT_DIR VERIFIED_AR_PAIR_DIR [--gpu-transfer-offset|--display-pixel-probe|--display-late-probe|--prepared-cap-1024|--prepared-cap-1024-cache16384|--display-late-cap-1024-cache16384|--prepared-cap-1024-cache16384-no-jalr|--prepared-cap-1024-cache16384-code-page-index|--prepared-cap-1024-cache16384-no-dynamic-publication]");
+ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+ const [out, pair] = process.argv.slice(2, 4).map(file => path.resolve(file));
+ const codePageIndex = process.argv[4] === "--prepared-cap-1024-cache16384-code-page-index";
+-const gpuRuntime = process.argv[4] && !codePageIndex ? await loadGpuTransferRuntime(repo) : null;
++const noDynamicPublication = process.argv[4] === "--prepared-cap-1024-cache16384-no-dynamic-publication";
++const gpuRuntime = process.argv[4] && !codePageIndex && !noDynamicPublication ? await loadGpuTransferRuntime(repo) : null;
+ const displayLateCache16384 = process.argv[4] === "--display-late-cap-1024-cache16384";
+ const displayLateProbe = displayLateCache16384 || process.argv[4] === "--display-late-probe";
+ const displayPixelProbe = displayLateProbe || process.argv[4] === "--display-pixel-probe";
+ const preparedCap1024 = process.argv[4] === "--prepared-cap-1024";
+ const preparedCap1024Cache16384NoJalr = process.argv[4] === "--prepared-cap-1024-cache16384-no-jalr";
+-const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr || codePageIndex;
+-const experiment = codePageIndex ? "prepared-cap-1024-cache16384-code-page-index"
++const preparedCap1024Cache16384 = displayLateCache16384 || process.argv[4] === "--prepared-cap-1024-cache16384" || preparedCap1024Cache16384NoJalr || codePageIndex || noDynamicPublication;
++const experiment = noDynamicPublication ? "prepared-cap-1024-cache16384-no-dynamic-publication"
++  : codePageIndex ? "prepared-cap-1024-cache16384-code-page-index"
+   : preparedCap1024Cache16384NoJalr ? "prepared-cap-1024-cache16384-no-jalr"
+   : preparedCap1024Cache16384 ? "prepared-cap-1024-cache16384"
+   : preparedCap1024 ? "prepared-cap-1024" : "prepared-recycling";
+ const sha = bytes => createHash("sha256").update(bytes).digest("hex");
+ const wasmPath = path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm");
+ const wasmBytes = await fs.readFile(wasmPath);
+-const wasmSha256 = codePageIndex ? sha(wasmBytes) : gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
++const wasmSha256 = codePageIndex || noDynamicPublication ? sha(wasmBytes) : gpuRuntime?.wasmSha256 ?? INPUT_BUFFER_RESPONSE_WASM;
+ for (const [role, file] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
+   const bytes = await fs.readFile(path.join(pair, file));
+   assert.equal(bytes.length, INPUT_BUFFER_PREPARED_IDENTITIES[role].size);
+@@ -48,7 +50,7 @@ const receipt = { kind: "input-buffer-physical-response", desktopAcceptance: fal
+   diagnosticOnly: displayPixelProbe, experiment,
+   head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
+   wasmSha256, gpuRuntime: gpuRuntime?.record ?? null,
+-  candidateRuntime: codePageIndex ? { task: "E5.5-T03ba", files: { ["web/dist/pkg/wasm_vm_wasm_bg.wasm"]: { size: wasmBytes.length, sha256: wasmSha256 } } } : null,
++  candidateRuntime: codePageIndex || noDynamicPublication ? { task: noDynamicPublication ? "E5.5-T03bb" : "E5.5-T03ba", files: { ["web/dist/pkg/wasm_vm_wasm_bg.wasm"]: { size: wasmBytes.length, sha256: wasmSha256 } } } : null,
+   pairDirectory: pair, pairIdentities: INPUT_BUFFER_PREPARED_IDENTITIES,
+   preparedRecord: { filename: preparedRecord, sha256: INPUT_BUFFER_PREPARED_RECORD_SHA256 },
+   startedAt: new Date().toISOString() };
+diff --git a/tools/verify/omarchy-input-trial.mjs b/tools/verify/omarchy-input-trial.mjs
+index 1856aa14..f99fa555 100644
+--- a/tools/verify/omarchy-input-trial.mjs
++++ b/tools/verify/omarchy-input-trial.mjs
+@@ -21,7 +21,7 @@ function residencyForArm(arm) {
+ 
+ function residencyForExperiment(experiment, arm) {
+   if (["prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr",
+-    "prepared-cap-1024-cache16384-code-page-index"].includes(experiment)) {
++    "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(experiment)) {
+     assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
+     return { jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024 };
+   }
+@@ -34,12 +34,12 @@ export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, tim
+   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
+   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
+   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
+-  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment), "unsupported input-trial experiment");
+-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
++  assert.ok(["recycling", "residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(experiment), "unsupported input-trial experiment");
++  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(experiment)) assert.equal(arm, "candidate", `${experiment} has one fixed candidate`);
+   return { arm, recycling: experiment !== "residency" && arm === "candidate",
+     ...(experiment !== "recycling" ? { experiment, ...residencyForExperiment(experiment, arm),
+-      ...(experiment === "prepared-cap-1024-cache16384" || experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" ? { decodedCacheEntries: 16384 } : {}),
+-      ...(experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" ? { jitDynamicChaining: false, jitRegionChaining: true } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
++      ...(experiment === "prepared-cap-1024-cache16384" || experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" || experiment === "prepared-cap-1024-cache16384-no-dynamic-publication" ? { decodedCacheEntries: 16384 } : {}),
++      ...(experiment === "prepared-cap-1024-cache16384-no-jalr" || experiment === "prepared-cap-1024-cache16384-code-page-index" || experiment === "prepared-cap-1024-cache16384-no-dynamic-publication" ? { jitDynamicChaining: false, jitRegionChaining: true } : {}) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
+     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
+ }
+@@ -52,13 +52,13 @@ export function inputTrialUrl(input, options) {
+   url.searchParams.set("omarchyDivider", "64");
+   url.searchParams.set("jit", "1");
+   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
+-  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) {
++  if (["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(options.experiment)) {
+     assert.equal(options.recycling, options.experiment !== "residency", "experiment recycling selection disagrees");
+-    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) assert.equal(options.arm, "candidate");
++    if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(options.experiment)) assert.equal(options.arm, "candidate");
+     url.searchParams.set("jitResidency", options.jitResidencyPolicy);
+   }
+   if (options.decodedCacheEntries !== undefined) url.searchParams.set("decodedCacheEntries", String(options.decodedCacheEntries));
+-  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index") url.searchParams.set("jalr", "0");
++  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index" || options.experiment === "prepared-cap-1024-cache16384-no-dynamic-publication") url.searchParams.set("jalr", "0");
+   return url;
+ }
+ 
+@@ -82,16 +82,16 @@ export function assertInputTrialRuntime(state, options) {
+     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
+   }
+   assert.equal(jit.decodedCacheEntries, options.decodedCacheEntries ?? 4096);
+-  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)
++  const residency = ["residency", "prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(options.experiment)
+     ? { jitResidencyPolicy: options.jitResidencyPolicy, jitResidencyCap: options.jitResidencyCap }
+     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
+   if (options.experiment === "residency") assert.equal(options.recycling, false);
+-  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index"].includes(options.experiment)) {
++  if (["prepared-recycling", "prepared-cap-1024", "prepared-cap-1024-cache16384", "prepared-cap-1024-cache16384-no-jalr", "prepared-cap-1024-cache16384-code-page-index", "prepared-cap-1024-cache16384-no-dynamic-publication"].includes(options.experiment)) {
+     assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
+   }
+   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
+   assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
+-  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index") {
++  if (options.experiment === "prepared-cap-1024-cache16384-no-jalr" || options.experiment === "prepared-cap-1024-cache16384-code-page-index" || options.experiment === "prepared-cap-1024-cache16384-no-dynamic-publication") {
+     assert.equal(jit.jitDynamicChaining, false);
+     assert.equal(jit.jitRegionChaining, true);
+   }
+diff --git a/tools/verify/omarchy-input-trial.test.mjs b/tools/verify/omarchy-input-trial.test.mjs
+index 668d3212..bd84f592 100644
+--- a/tools/verify/omarchy-input-trial.test.mjs
++++ b/tools/verify/omarchy-input-trial.test.mjs
+@@ -17,6 +17,8 @@ const preparedCap1024CacheNoJalrOptions = arm => inputTrialOptions({ urlArg: "lo
+   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-jalr" });
+ const preparedCodePageIndexOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+   renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-code-page-index" });
++const preparedNoDynamicPublicationOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
++  renderer: null, lp: null, experiment: "prepared-cap-1024-cache16384-no-dynamic-publication" });
+ test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
+   const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
+   assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
+@@ -135,6 +137,25 @@ test("code-page index candidate keeps the exact T03az runtime settings", () => {
+   assertInputTrialRuntime(state, trial);
+   assert.deepEqual(url.searchParams.toString(), inputTrialUrl(base, preparedCap1024CacheNoJalrOptions("candidate")).searchParams.toString());
+ });
++test("disabled dynamic-publication candidate keeps the exact JALR-off runtime settings", () => {
++  const trial = preparedNoDynamicPublicationOptions("candidate");
++  const jalrOff = preparedCap1024CacheNoJalrOptions("candidate");
++  assert.deepEqual(trial, { ...jalrOff, experiment: "prepared-cap-1024-cache16384-no-dynamic-publication" });
++  assert.throws(() => preparedNoDynamicPublicationOptions("control"));
++  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
++  const url = inputTrialUrl(base, trial);
++  assert.equal(url.searchParams.get("jitResidency"), "cap-1024");
++  assert.equal(url.searchParams.get("decodedCacheEntries"), "16384");
++  assert.equal(url.searchParams.get("jitColdCounterRecycling"), "1");
++  assert.equal(url.searchParams.get("jalr"), "0");
++  assert.deepEqual([...url.searchParams.entries()], [...inputTrialUrl(base, jalrOff).searchParams.entries()]);
++  const state = { jit: { hasExecutor: true, admissionProbe: false,
++    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
++    decodedCacheEntries: 16384, jitResidencyPolicy: "cap-1024", jitResidencyCap: 1024,
++    jitDynamicChaining: false, jitRegionChaining: true, entryCost: { timingEnabled: false } },
++    clock: { mode: "icount", clockDiv: 64 } };
++  assertInputTrialRuntime(state, trial);
++});
+ test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
+   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
+     typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });

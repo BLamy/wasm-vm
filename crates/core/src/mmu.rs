@@ -128,8 +128,23 @@ pub fn translate_cached(
     access: Access,
     eff: Priv,
 ) -> Result<u64, Trap> {
+    translate_cached_slot(csr, tlb, bus, va, access, eff).map(|(pa, _)| pa)
+}
+
+/// [`translate_cached`], also returning where the translation came from: the architectural TLB
+/// slot that holds it after this call, [`crate::tlb::IDENTITY_SLOT`] for an identity access (Bare
+/// satp / M-mode), or [`crate::tlb::NO_SLOT`] when the TLB is disabled. The softmmu fast path keys
+/// its entries on this so a fast entry lives exactly as long as the architectural entry.
+pub(crate) fn translate_cached_slot(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    access: Access,
+    eff: Priv,
+) -> Result<(u64, u16), Trap> {
     let Some((levels, sign_bit, mode)) = mode_params(csr, eff) else {
-        return Ok(va);
+        return Ok((va, crate::tlb::IDENTITY_SLOT));
     };
     // Canonical check BEFORE the TLB so a non-canonical VA faults and can never alias a cached
     // page (the VPN tag would otherwise collide with a legitimately mapped page).
@@ -144,14 +159,15 @@ pub fn translate_cached(
     let vpn = va >> 12;
     // The mode tag ensures a Sv39-tagged entry is never served after a switch to Sv48 (or back).
     if let Some(hit) = tlb.lookup(vpn, asid, mode) {
-        return finish_leaf(csr, va, access, eff, hit.pte, hit.level as usize);
+        return finish_leaf(csr, va, access, eff, hit.pte, hit.level as usize)
+            .map(|pa| (pa, hit.slot));
     }
     // Miss → a real walk. A walk fault is NOT cached (no negative caching → re-walks).
     let (pte, level) = walk_leaf(csr, bus, va, access, eff, levels)?;
     let pa = finish_leaf(csr, va, access, eff, pte, level)?;
     // Cache only on full success: guarantees A=1 and a permitted, well-formed leaf.
-    tlb.fill(vpn, asid, pte, level as u8, pte & PTE_G != 0, mode);
-    Ok(pa)
+    let slot = tlb.fill_slot(vpn, asid, pte, level as u8, pte & PTE_G != 0, mode);
+    Ok((pa, slot))
 }
 
 /// The memory-touching part of translation: walk `levels` levels (Sv39 → 3, Sv48 → 4) top-down

@@ -1,0 +1,5 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=16883 bytes @ 0x81a00000..0x81a041f3, dtb=2986 bytes @ 0x8fffb450, 256 MiB RAM
+wasm-vm: keyboard proof injected KEY_A make/break frames
+wasm-vm: keyboard proof pending events=4
+wasm-vm: keyboard proof pending events=0
+wasm-vm: guest exited 0

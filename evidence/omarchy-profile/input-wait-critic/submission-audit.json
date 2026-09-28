@@ -1,0 +1,52 @@
+{
+  "result": "final source and submission digest audit passed",
+  "sourceHead": "15cdf96484680ac2c19fd65baa5f648f6558303f",
+  "workerSubmissionHead": "425634d302bdee7fc86c005c1bda120c35ecb964",
+  "evidenceFilesChecked": 29,
+  "sourceFiles": {
+    "tools/verify/omarchy-desktop-live.mjs": {
+      "bytes": 79373,
+      "sha256": "3ac1b4724d52c83c6244ecc9b608f478954fd9263fb35eb3147c523368a1c6ab"
+    },
+    "tools/verify/omarchy-desktop-services.mjs": {
+      "bytes": 5736,
+      "sha256": "a93d597e86029d2d82d32a3636d67bf95630a36ee74f27d915aa5f110a60b0db"
+    },
+    "tools/verify/omarchy-failure-checkpoint.mjs": {
+      "bytes": 12648,
+      "sha256": "14f3aeec604386fa15e4748f56986a4104660f046f9c0b323de4004003860a54"
+    },
+    "tools/verify/omarchy-failure-checkpoint.test.mjs": {
+      "bytes": 4555,
+      "sha256": "7411fc5068d7d6a75faf01d58ce2a5ae0717b39ffa3de5a8d3781825e8c228f0"
+    },
+    "tools/verify/omarchy-failure-transport.test.mjs": {
+      "bytes": 3425,
+      "sha256": "c34b8c63fc8f1683593f0643951fd9de2f09f60ce111b278f603daa15345d550"
+    },
+    "tools/verify/omarchy-input-wait-inspect.mjs": {
+      "bytes": 3384,
+      "sha256": "ce29492a41d70ae7aacc5d681ac4836249d7c069181da22a1441bb68ac217ced"
+    },
+    "tools/verify/omarchy-input-wait.mjs": {
+      "bytes": 1512,
+      "sha256": "4f31fbaccec21335a9a10580976eb56dd07a4cbc07770c93c90534fd23a6781b"
+    },
+    "tools/verify/omarchy-owned-trial.mjs": {
+      "bytes": 3788,
+      "sha256": "07be829a35c6453d1af1a231f66c6c38f13e2e51fef619419c8540862a75aaf8"
+    },
+    "tools/verify/omarchy-owned-trial.test.mjs": {
+      "bytes": 4474,
+      "sha256": "09f5e8c20e42a16ea159593592e8810a809b00d8b05b399bf1b1f1d434771c38"
+    },
+    "tools/verify/omarchy-paused-ram.test.mjs": {
+      "bytes": 2639,
+      "sha256": "aceec46c9c93ded5e695e00e21d191165b2226e63e5bb7b8334c5abc2f87d965"
+    },
+    "tools/verify/omarchy-wait-checkpoint.mjs": {
+      "bytes": 20741,
+      "sha256": "af97fbadc536b8f18a7417cdd5f86d84b033ee435941d9178240db8fa8471d9a"
+    }
+  }
+}

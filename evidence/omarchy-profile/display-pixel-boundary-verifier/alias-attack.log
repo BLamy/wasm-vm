@@ -1,0 +1,70 @@
+{
+  "held": true,
+  "fixtureOnly": true,
+  "literal": {
+    "literalOracle": "held",
+    "bytes": 16,
+    "sha256": "4d765b07e89e552fac50d26caa98561c2368728e78057ee13c1115ba037214e8"
+  },
+  "wrapperOrders": [
+    {
+      "order": "wire-then-pixels",
+      "held": true,
+      "noForwardingDuplication": true,
+      "wireSurvivesDisposal": true
+    },
+    {
+      "order": "pixels-then-wire",
+      "held": true,
+      "noForwardingDuplication": true,
+      "wireSurvivesDisposal": true
+    }
+  ],
+  "originalMessageAndTransferIdentity": true,
+  "originalTransferDetached": true,
+  "originalPixelMutationAndDetachIsolated": true,
+  "originalMetadataMutationIsolated": true,
+  "rawSha256": "21f82df2afcbc38e3780316968c1661cf72f8030a26097ea4b3be48b8be3102b",
+  "exact": {
+    "equal": true,
+    "changedBytes": 0,
+    "changedPixels": 0,
+    "first": null,
+    "bounds": null,
+    "leftSha256": "4d765b07e89e552fac50d26caa98561c2368728e78057ee13c1115ba037214e8",
+    "rightSha256": "4d765b07e89e552fac50d26caa98561c2368728e78057ee13c1115ba037214e8"
+  },
+  "mutated": {
+    "equal": false,
+    "changedBytes": 1,
+    "changedPixels": 1,
+    "first": {
+      "byte": 0,
+      "left": 0,
+      "right": 1
+    },
+    "bounds": {
+      "minX": 0,
+      "minY": 0,
+      "maxX": 0,
+      "maxY": 0
+    },
+    "leftSha256": "9061ad525e3e1b3aee57c385d36a3d8b79850a2cd2b72fc880ff04e999d542e8",
+    "rightSha256": "4d765b07e89e552fac50d26caa98561c2368728e78057ee13c1115ba037214e8"
+  },
+  "cap": {
+    "framesSeen": 80,
+    "retained": 8,
+    "evicted": 72,
+    "events": 64,
+    "clearRecorded": true,
+    "errorCount": 16,
+    "error": "Error: display buffer outside diagnostic byte bound"
+  },
+  "observerAttachmentFailurePreservesTransport": true,
+  "cleanup": {
+    "listenersRemoved": true,
+    "originalTransportRestored": true,
+    "retainedFramesCleared": true
+  }
+}

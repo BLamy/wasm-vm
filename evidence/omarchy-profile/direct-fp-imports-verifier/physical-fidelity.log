@@ -1,0 +1,10 @@
+{
+  "head": "a3beb0e8dc5da21374a6d59e25658f5db5ce79da",
+  "frames": [
+    2,
+    3
+  ],
+  "intervalRetired": 3544856799,
+  "intervalJitRetired": 2539095415,
+  "physicalOutcome": "nonce-readback-failed"
+}

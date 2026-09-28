@@ -1,0 +1,19 @@
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+error[E0432]: unresolved import `wasm_vm_core::trace::VecSink`
+   --> crates/core/tests/support/plic_sparse_cases.rs:8:5
+    |
+  8 | use wasm_vm_core::trace::VecSink;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `VecSink` in `trace`
+    |
+note: found an item that was configured out
+   --> crates/core/src/trace.rs:190:12
+    |
+188 | #[cfg(feature = "trace")]
+    |       ----------------- the item is gated behind the `trace` feature
+189 | #[derive(Default)]
+190 | pub struct VecSink {
+    |            ^^^^^^^
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `wasm-vm-core` (test "plic_sparse") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

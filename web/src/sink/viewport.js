@@ -25,6 +25,33 @@ export function viewportPixelMode(cssWidth, cssHeight, dpr) {
   return { width, height, dpr, cssWidth: width / dpr, cssHeight: height / dpr };
 }
 
+/**
+ * Pick a bounded desktop scanout for a responsive browser surface.
+ *
+ * A desktop canvas is often shown in a narrow or high-DPR browser pane. Mirroring that pane
+ * directly into the guest can request pathological modes such as 2200x2162, which makes a cold
+ * graphical boot spend its whole budget copying an oversized framebuffer. Keep the guest's
+ * 16:10 desktop mode bounded, then scale it to the available CSS box. Input remains normalized
+ * against the canvas rectangle, so the CSS scaling is transparent to the guest.
+ */
+export function desktopViewportPixelMode(cssWidth, cssHeight, dpr, {
+  maxWidth = 1280,
+  maxHeight = 800,
+} = {}) {
+  if (![cssWidth, cssHeight, dpr, maxWidth, maxHeight].every(Number.isFinite) ||
+      cssWidth < 0 || cssHeight < 0 || dpr <= 0 ||
+      !Number.isInteger(maxWidth) || !Number.isInteger(maxHeight) ||
+      maxWidth < DISPLAY_MIN_WIDTH || maxHeight < DISPLAY_MIN_HEIGHT ||
+      maxWidth > DISPLAY_MAX_DIMENSION || maxHeight > DISPLAY_MAX_DIMENSION) {
+    throw new RangeError("desktop viewport dimensions and limits must be finite and positive");
+  }
+  if (cssWidth === 0 || cssHeight === 0) return null;
+  const aspectRatio = maxWidth / maxHeight;
+  const fitWidth = Math.min(cssWidth, cssHeight * aspectRatio);
+  const fitHeight = fitWidth / aspectRatio;
+  return { width: maxWidth, height: maxHeight, dpr: 1, cssWidth: fitWidth, cssHeight: fitHeight };
+}
+
 /** Native-pixel top-left fit. Input has already passed the full-resource frame validator. */
 export function fitFrameToViewport(frame, width, height) {
   checkedDisplaySize(width, height);
@@ -54,6 +81,7 @@ export class DisplayViewportController {
     ResizeObserverClass = globalThis.ResizeObserver,
     matchMedia = globalThis.matchMedia?.bind(globalThis),
     getDpr = () => globalThis.devicePixelRatio || 1,
+    modeForRect = viewportPixelMode,
     setTimer = globalThis.setTimeout.bind(globalThis), clearTimer = globalThis.clearTimeout.bind(globalThis),
     testDebounceMs = undefined,
   } = {}) {
@@ -62,11 +90,13 @@ export class DisplayViewportController {
       throw new TypeError("viewport requires a container, presentation, ResizeObserver and matchMedia");
     }
     if (testDebounceMs !== undefined && testDebounceMs !== 0) throw new RangeError("only the explicit zero-delay test hook is supported");
+    if (typeof modeForRect !== "function") throw new TypeError("viewport modeForRect must be a function");
     this.container = container;
     this.presentation = presentation;
     this._controller = controller;
     this._onState = onState;
     this._getDpr = getDpr;
+    this._modeForRect = modeForRect;
     this._matchMedia = matchMedia;
     this._setTimer = setTimer;
     this._clearTimer = clearTimer;
@@ -123,14 +153,20 @@ export class DisplayViewportController {
   measure() {
     if (this._disposed) return null;
     const rect = this.container.getBoundingClientRect();
-    const next = viewportPixelMode(rect.width, rect.height, this._getDpr());
+    const next = this._modeForRect(rect.width, rect.height, this._getDpr());
     if (!next) {
       this._clearPending();
       this._desired = null;
       this._notify();
       return null;
     }
-    if (this._desired && ["width", "height", "dpr"].every((key) => this._desired[key] === next[key])) return next;
+    if (this._desired && ["width", "height", "dpr"].every((key) => this._desired[key] === next[key])) {
+      // A capped desktop backing stays 1280×800 while the browser window can still grow/shrink.
+      // Resize its CSS projection without clearing the guest pixels or emitting another hotplug.
+      this._desired = { ...this._desired, cssWidth: next.cssWidth, cssHeight: next.cssHeight };
+      this.applyCanvasStyle();
+      return next;
+    }
     this._desired = { ...next, sequence: ++this._sequence };
     this._error = null;
     this.presentation.setViewport(next.width, next.height);

@@ -1,0 +1,75 @@
+{
+  "baselineHead": "04ea9fe4",
+  "logicParity": true,
+  "files": [
+    {
+      "baselinePath": "tools/verify/omarchy-fmadd-browser.mjs",
+      "candidatePath": "tools/verify/omarchy-direct-fp-browser.mjs",
+      "baselineSha256": "b404222e47e9d34cf9db93eb5c5a5a3087d71f0f9401725da9033d378f25b934",
+      "candidateSha256": "04c483dc082d54019ec8504768b2f288e5bffd801519ab8187d2553a99f72858",
+      "changes": [
+        [
+          "compiled FMADD.S loop",
+          "direct imported FP loop"
+        ],
+        [
+          "evidence/omarchy-profile/fmadd-browser",
+          "evidence/omarchy-profile/direct-fp-browser"
+        ],
+        [
+          "bounded FMADD fixture",
+          "bounded direct-import FP fixture"
+        ],
+        [
+          "E5.5-T03an",
+          "E5.5-T03ao"
+        ]
+      ]
+    },
+    {
+      "baselinePath": "tools/verify/omarchy-fmadd-input.mjs",
+      "candidatePath": "tools/verify/omarchy-direct-fp-input.mjs",
+      "baselineSha256": "db88a67bf15a46b6846cbf68cdd963b5044b4cd0d5ee68e8b750247fd09b73ad",
+      "candidateSha256": "6b4cb59fe3851753e7ed4029f2b229b96079a554653db5bd113c5527567d63d0",
+      "changes": [
+        [
+          "One existing recycling option; preserve the input verdict before optional host profiling.",
+          "Direct FP imports on the unchanged prepared pair and physical input contract."
+        ],
+        [
+          "FMADD_WASM",
+          "DIRECT_FP_WASM"
+        ],
+        [
+          "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+          "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+        ],
+        [
+          "omarchy-fmadd-input.mjs",
+          "omarchy-direct-fp-input.mjs"
+        ],
+        [
+          "frozen FMADD runtime",
+          "frozen direct-import runtime"
+        ],
+        [
+          "prepared-pair-fmadd-single-runtime",
+          "prepared-pair-direct-fp-imports-runtime"
+        ]
+      ]
+    },
+    {
+      "baselinePath": "tools/verify/omarchy-desktop-live.mjs",
+      "candidatePath": "tools/verify/omarchy-desktop-live.mjs",
+      "baselineSha256": "dcbd738f6d18cd02a6417fe858d2dc152ed692d2151dcbdcf4633c67ff8af413",
+      "candidateSha256": "4c4b53fafac66799407bd1eff8fb5e828c05fb0de8cd77719861ade11ccbb79e",
+      "changes": [
+        [
+          "\"tools/verify/omarchy-fmadd-input.mjs\",",
+          "\"tools/verify/omarchy-fmadd-input.mjs\", \"tools/verify/omarchy-direct-fp-input.mjs\","
+        ]
+      ]
+    }
+  ],
+  "claim": "all browser arithmetic/ISA assertions and all physical pair/cap/recycling/deadline/input/readback/cleanup controls retained byte-for-byte apart from explicit labels and candidate WASM pin"
+}

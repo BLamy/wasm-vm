@@ -1,0 +1,10 @@
+   Compiling from-int-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-fp-from-int-sabotage-obcmov2j)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.64s
+     Running tests/fp_from_integer_verifier.rs (target/debug/deps/fp_from_integer_verifier-9c95b173713681c6)
+
+running 1 test
+CRITIC_NATIVE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+test verifier_native_conversion_literals ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.83s
+

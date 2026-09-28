@@ -1,0 +1,19 @@
+[serve-dev] Traceback (most recent call last):
+  File "<stdin>", line 128, in <module>
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 452, in __init__
+[serve-dev]     self.server_bind()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 138, in server_bind
+[serve-dev]     socketserver.TCPServer.server_bind(self)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 466, in server_bind
+[serve-dev]     self.socket.bind(self.server_address)
+OSError: [Errno 48] Address already in use
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: owned dev server did not become ready
+    at ensureServer (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:72:48)
+    at async run (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:84:3)
+    at async file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-cli-regression.mjs:220:3
+
+Node.js v24.20.0

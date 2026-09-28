@@ -32,19 +32,21 @@
 //! The browser executor mirrors this contract with `WebAssembly.Module`; both executors expose the
 //! same bounded host-side chaining and cache-lifecycle interface.
 
+use std::cell::Cell;
 use std::collections::hash_map::RandomState;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::hash::{BuildHasher, Hasher};
 
 use anyhow::anyhow;
-use jit_translate::{Abi, translate_batch};
+use jit_translate::{Abi, block_uses_fp, first_untranslated, is_translatable, translate_batch};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
 
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
-    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
+    EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, TranslationCoverage,
+    commit_module_state, prepare_module_state,
 };
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
@@ -129,6 +131,56 @@ impl BuildHasher for JitBuildHasher {
 
 type JitMap<K, V> = HashMap<K, V, JitBuildHasher>;
 
+thread_local! {
+    /// Flag mailbox between `env.fp_op64` and the immediately following `env.fp_flags` call. A
+    /// 64-bit FP result and its five flag bits do not fit one wasm `i64` return; the generated code
+    /// always issues the two calls back to back on the calling thread, so a per-thread cell is
+    /// exact (and parallel test threads cannot observe one another's flags).
+    static FP_OP64_FLAGS: Cell<u8> = const { Cell::new(0) };
+}
+
+/// Diagnostic translation-coverage ledger (never architectural).
+#[derive(Default)]
+struct CoverageLedger {
+    full_blocks: u64,
+    partial_blocks: u64,
+    rejected_blocks: u64,
+    partial_exits: u64,
+    first_unsupported: BTreeMap<&'static str, u64>,
+}
+
+impl CoverageLedger {
+    fn note_translation(&mut self, block: &DecodedBlock) {
+        match first_untranslated(block) {
+            None => self.full_blocks += 1,
+            Some((index, name)) => {
+                if index == 0 {
+                    self.rejected_blocks += 1;
+                } else {
+                    self.partial_blocks += 1;
+                }
+                *self.first_unsupported.entry(name).or_default() += 1;
+            }
+        }
+    }
+
+    fn snapshot(&self) -> TranslationCoverage {
+        let mut first_unsupported: Vec<_> = self
+            .first_unsupported
+            .iter()
+            .map(|(&name, &count)| (name, count))
+            .collect();
+        first_unsupported.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(b.0)));
+        TranslationCoverage {
+            full_blocks: self.full_blocks,
+            partial_blocks: self.partial_blocks,
+            rejected_blocks: self.rejected_blocks,
+            partial_exits: self.partial_exits,
+            first_unsupported,
+        }
+    }
+}
+
 /// Store data: raw pointers to the live guest state, valid only for the duration of one `run` call
 /// (set immediately before, cleared immediately after — the module never escapes the call, so the
 /// pointers never dangle). `trapped` records whether a load/store import hit a bus fault.
@@ -168,6 +220,9 @@ struct Compiled {
     /// invalidation touching ANY member, the WHOLE batch is retired (the documented option — no stale
     /// intra-batch direct call can survive because the module is dropped atomically).
     batch_id: u32,
+    /// Whether this block's generated code can touch FP state (`jit_translate::block_uses_fp`).
+    /// Blocks that cannot skip the FPR-image / FP-control transfer entirely.
+    uses_fp: bool,
 }
 
 /// E4-T19 instance-registry entry: one live WASM Module/Instance holding `members.len()` compiled
@@ -184,12 +239,32 @@ struct Batch {
     /// batch makes the registry's eviction unit real on native: dropping a batch releases its
     /// instances instead of leaving every evicted module resident in one process-long store.
     store: Store<HostCtx>,
+    /// The `FRegs` mutation stamp the FPR image in this batch's (shared, private) state memory
+    /// currently mirrors, so an FP block re-entering the batch skips the 256-byte FPR copy while
+    /// the hart's FP registers are unchanged. Host-only cache; `None` forces a full copy.
+    fp_image: Option<(u64, u64)>,
 }
 
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond the emitted code bytes — dominated by
 /// the module's one-page (64 KiB) `CpuState` linear memory plus wasmtime instance metadata. A coarse
 /// but consistent native estimate; the browser cross-check (performance.memory) is dev debt.
 const INSTANCE_OVERHEAD_BYTES: u64 = 64 * 1024;
+
+/// Native default translation-cache budget. The shared [`JitCacheBudget::DEFAULT`] (256 modules /
+/// 32 MiB estimated) is sized for the browser's per-instance engine cliff. Native wasmtime has no
+/// such cliff, and at that cap real boots thrash the batch LRU: steady-state compilation trickles
+/// in as small modules (~12 blocks each), so ~250 modules hold only ~3-4k hot blocks and evicted
+/// hot blocks are recompiled over and over (busybox boot: 11k retranslations; Alpine: 253k,
+/// ~92% of all installs). The estimate charges each module its full 64 KiB state memory although
+/// only the handoff page is ever touched, so the byte budget is scaled with the module count.
+/// Eviction policy and every eviction obligation are unchanged; this only moves the high-water
+/// marks. The JIT is timing-transparent, so no guest-visible behaviour depends on these numbers.
+pub const NATIVE_JIT_BUDGET: JitCacheBudget = JitCacheBudget {
+    code_bytes: 512 * 1024 * 1024,
+    max_batches: 4096,
+    table_slots: 4096 * 128,
+    metadata_bytes: 64 * 1024 * 1024,
+};
 
 /// E4-T19 default batching K (`docs/jit-architecture.md` §7 D9/D10: ~64 blocks/module). UA-probed in
 /// the browser; the native default and the single override knob ([`WasmtimeExecutor::set_batch_size`])
@@ -205,9 +280,6 @@ const STUB: u32 = u32::MAX;
 pub struct WasmtimeExecutor {
     engine: Engine,
     linker: Linker<HostCtx>,
-    /// Reused transport buffer spanning `[abi::XREG_BASE, abi::HANDOFF_END)`, transferred with one
-    /// direct fixed-memory slice copy in each direction per committed compiled exit.
-    handoff: CpuStateHandoff,
     blocks: JitMap<u64, Compiled>,
     executed_blocks: u64,
     retired_via_jit: u64,
@@ -262,6 +334,8 @@ pub struct WasmtimeExecutor {
     /// Physical entry PCs evicted since the last [`Self::take_evicted`] drain — fed back to block
     /// discovery so an evicted-but-hot block is re-nominated (E4-T20 AC3).
     newly_evicted: Vec<u64>,
+    /// Translation-coverage diagnostics (`--jit` stats).
+    coverage: CoverageLedger,
 }
 
 impl Default for WasmtimeExecutor {
@@ -408,11 +482,69 @@ impl WasmtimeExecutor {
                 },
             )
             .expect("register env.sc");
+        linker
+            .func_wrap("env", "fp_arith_s", |a: i32, b: i32, mul: i32, rm: i32| {
+                wasm_vm_core::jit::fp_arith_s(a as u32, b as u32, mul != 0, rm as u8) as i64
+            })
+            .expect("register env.fp_arith_s");
+        linker
+            .func_wrap("env", "fp_from_int_s", |value: i64, width: i32, rm: i32| {
+                wasm_vm_core::jit::fp_from_int_s(value as u64, width as u8, rm as u8) as i64
+            })
+            .expect("register env.fp_from_int_s");
+        linker
+            .func_wrap(
+                "env",
+                "fp_to_word_s",
+                |bits: i32, unsigned: i32, rm: i32| {
+                    wasm_vm_core::jit::fp_to_word_s(bits as u32, unsigned != 0, rm as u8) as i64
+                },
+            )
+            .expect("register env.fp_to_word_s");
+        linker
+            .func_wrap("env", "fp_div_s", |a: i32, b: i32, rm: i32| {
+                wasm_vm_core::jit::fp_div_s(a as u32, b as u32, rm as u8) as i64
+            })
+            .expect("register env.fp_div_s");
+        linker
+            .func_wrap("env", "fp_fmadd_s", |a: i32, b: i32, c: i32, rm: i32| {
+                wasm_vm_core::jit::fp_fmadd_s(a as u32, b as u32, c as u32, rm as u8) as i64
+            })
+            .expect("register env.fp_fmadd_s");
+        // Generic F/D helpers (full F/D coverage). Pure functions of their operands; the 64-bit
+        // form parks its flags in the per-thread mailbox read by `env.fp_flags`.
+        linker
+            .func_wrap(
+                "env",
+                "fp_op32",
+                |op: i32, a: i64, b: i64, c: i64, rm: i32| -> i64 {
+                    wasm_vm_core::jit::fp_op32(op as u32, a as u64, b as u64, c as u64, rm as u8)
+                        as i64
+                },
+            )
+            .expect("register env.fp_op32");
+        linker
+            .func_wrap(
+                "env",
+                "fp_op64",
+                |op: i32, a: i64, b: i64, c: i64, rm: i32| -> i64 {
+                    let (bits, flags) = wasm_vm_core::jit::fp_op64(
+                        op as u32, a as u64, b as u64, c as u64, rm as u8,
+                    );
+                    FP_OP64_FLAGS.with(|mailbox| mailbox.set(flags));
+                    bits as i64
+                },
+            )
+            .expect("register env.fp_op64");
+        linker
+            .func_wrap("env", "fp_flags", || -> i32 {
+                i32::from(FP_OP64_FLAGS.with(Cell::get))
+            })
+            .expect("register env.fp_flags");
         let registry_hasher = JitBuildHasher::default();
         WasmtimeExecutor {
             engine,
             linker,
-            handoff: CpuStateHandoff::default(),
             blocks: JitMap::with_hasher(registry_hasher.clone()),
             executed_blocks: 0,
             retired_via_jit: 0,
@@ -429,7 +561,7 @@ impl WasmtimeExecutor {
             batch_size: DEFAULT_BATCH_SIZE,
             batches: JitMap::with_hasher(registry_hasher),
             next_batch_id: 0,
-            budget: JitCacheBudget::DEFAULT,
+            budget: NATIVE_JIT_BUDGET,
             policy: EvictPolicy::default(),
             clock: 0,
             generation: 0,
@@ -439,6 +571,7 @@ impl WasmtimeExecutor {
             retranslations: 0,
             installs: 0,
             newly_evicted: Vec::new(),
+            coverage: CoverageLedger::default(),
         }
     }
 
@@ -681,9 +814,19 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn install_batch(&mut self, blocks: &[DecodedBlock], intra: &[[Option<usize>; 2]]) {
         debug_assert_eq!(blocks.len(), intra.len());
-        // Drop already-compiled members (dedup) and re-index the intra edges onto the kept set.
+        // Drop already-compiled members (dedup) and blocks whose first op cannot be translated,
+        // then re-index the intra edges onto the kept set. Filtering the untranslatable members
+        // up front keeps the rest of the group in ONE module instead of failing the whole batch
+        // into one-block modules (the batch registry is the eviction unit).
         let keep: Vec<usize> = (0..blocks.len())
             .filter(|&i| !self.blocks.contains_key(&blocks[i].phys_start))
+            .filter(|&i| {
+                let translatable = is_translatable(&blocks[i]);
+                if !translatable {
+                    self.coverage.note_translation(&blocks[i]);
+                }
+                translatable
+            })
             .collect();
         if keep.is_empty() {
             return;
@@ -754,6 +897,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 self.retranslations += 1;
             }
             self.installs += 1;
+            self.coverage.note_translation(b);
             let nslots = Self::nslots_for(b);
             let (table_index, slot_base) = self.alloc_block(b.phys_start, nslots);
             self.blocks.insert(
@@ -766,6 +910,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     slot_base,
                     nslots,
                     batch_id,
+                    uses_fp: block_uses_fp(b),
                 },
             );
             members.push(b.phys_start);
@@ -781,6 +926,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 est_bytes,
                 last_tick: self.clock,
                 store,
+                fp_image: None,
             },
         );
     }
@@ -806,23 +952,34 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let compiled = self.blocks.get(&phys_pc)?;
-        let run = compiled.run.clone();
-        let mem = compiled.mem;
-        let batch_id = compiled.batch_id;
+        // Borrow the registries field-by-field so the compiled entry is called in place (no
+        // per-dispatch `TypedFunc` clone, whose type-registration refcount churn showed up in
+        // profiles) while its batch's store is borrowed mutably.
+        let Self {
+            blocks,
+            batches,
+            clock,
+            executed_blocks,
+            coverage,
+            ..
+        } = self;
+        let compiled = blocks.get(&phys_pc)?;
+        let batch = batches.get_mut(&compiled.batch_id)?;
         // E4-T20: stamp the batch-LRU clock at this dispatch entry (chained execution updates the
         // owning batch's tick lazily, on each re-entry through `execute`).
-        self.clock = self.clock.wrapping_add(1);
-        if let Some(b) = self.batches.get_mut(&batch_id) {
-            b.last_tick = self.clock;
-        }
-        // One direct fixed-memory slice copy transfers all integer registers plus the guest VIRTUAL
-        // entry PC. Under paging `phys_pc` differs from this virtual PC; generated code derives every
-        // guest-visible address from the value in the handoff.
-        self.handoff.prepare(hart);
-        let batch = self.batches.get_mut(&batch_id)?;
-        mem.data_mut(&mut batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize]
-            .copy_from_slice(self.handoff.as_bytes());
+        *clock = clock.wrapping_add(1);
+        batch.last_tick = *clock;
+        let mem = compiled.mem;
+        let uses_fp = compiled.uses_fp;
+        // Marshal the integer registers and the guest VIRTUAL entry PC (plus, for FP blocks, the
+        // FP control word and — only when changed — the FPR image) straight into the batch's
+        // private state memory. Under paging `phys_pc` differs from this virtual PC; generated
+        // code derives every guest-visible address from the value in the state memory.
+        prepare_module_state(
+            mem.data_mut(&mut batch.store),
+            hart,
+            uses_fp.then_some(&mut batch.fp_image),
+        );
         // Present the live guest to the load/store imports for the duration of the call.
         {
             let ctx = batch.store.data_mut();
@@ -830,7 +987,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             ctx.bus = bus as *mut SystemBus;
             ctx.trap = None;
         }
-        let call = run.call(&mut batch.store, 0);
+        let call = compiled.run.call(&mut batch.store, 0);
         // Clear the pointers before doing anything else (they must never outlive the borrows), and
         // take the precise trap (if a load/store faulted) out of the context.
         let fault = {
@@ -857,35 +1014,39 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     // closed without committing the module's register image.
                     panic!("unexpected compiled-block engine trap after dispatch: {error}");
                 };
-                self.handoff.as_mut_bytes().copy_from_slice(
-                    &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+                let exit = commit_module_state(
+                    mem.data(&batch.store),
+                    hart,
+                    uses_fp.then_some(&mut batch.fp_image),
                 );
-                self.handoff.commit_registers(hart);
-                let faulting_pc = self.handoff.exit_pc();
-                self.executed_blocks += 1;
+                *executed_blocks += 1;
                 return Some(JitExit {
                     code: ExitCode::Trap,
-                    next_pc: faulting_pc,
+                    next_pc: exit.next_pc,
                     exit_info: trap.cause as u64,
                     trap: Some(trap),
                     retired: 0,
                 });
             }
         };
-        // One direct fixed-memory slice copy returns dirty registers and the frozen exit header.
-        self.handoff.as_mut_bytes().copy_from_slice(
-            &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+        // Commit the returned registers (and, for FP blocks, the executed FPR writes and flags)
+        // straight from the state memory and read the frozen exit header.
+        let exit = commit_module_state(
+            mem.data(&batch.store),
+            hart,
+            uses_fp.then_some(&mut batch.fp_image),
         );
-        self.handoff.commit_registers(hart);
-        let next_pc = self.handoff.exit_pc();
-        let exit_info = self.handoff.exit_info();
         // The return value is the authoritative exit code; `exit_reason` in memory mirrors it.
-        debug_assert_eq!(code, self.handoff.exit_reason());
-        self.executed_blocks += 1;
+        debug_assert_eq!(code, exit.reason);
+        *executed_blocks += 1;
+        let code = ExitCode::from_i32(code);
+        if code == ExitCode::CallInterp {
+            coverage.partial_exits += 1;
+        }
         Some(JitExit {
-            code: ExitCode::from_i32(code),
-            next_pc,
-            exit_info,
+            code,
+            next_pc: exit.next_pc,
+            exit_info: exit.exit_info,
             trap: None,
             retired: 0,
         })
@@ -970,6 +1131,10 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         self.retired_via_jit
     }
 
+    fn translation_coverage(&self) -> TranslationCoverage {
+        self.coverage.snapshot()
+    }
+
     fn note_jit_retired(&mut self, retired: u64) {
         self.retired_via_jit = self.retired_via_jit.wrapping_add(retired);
     }
@@ -990,6 +1155,12 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn chain_depth_budget(&self) -> u32 {
         self.chain_depth_budget
+    }
+
+    /// One block per call: the native executor never chains inside a module, so it ignores the
+    /// direct-chain fuel and the core need not compute it per host entry.
+    fn uses_direct_chain_fuel(&self) -> bool {
+        false
     }
 
     fn link_edge(&mut self, from_phys: u64, edge: u8, to_phys: u64) {
@@ -1396,6 +1567,7 @@ mod tests {
                 slot_base,
                 nslots: 1,
                 batch_id,
+                uses_fp: true,
             },
         );
         executor.batches.insert(
@@ -1405,6 +1577,7 @@ mod tests {
                 est_bytes: bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES,
                 last_tick: executor.clock,
                 store,
+                fp_image: None,
             },
         );
     }

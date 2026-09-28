@@ -1,0 +1,34 @@
+{
+  "head": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "carriedSeals": [
+    {
+      "path": "evidence/omarchy-profile/prepared-recycling-gates/sha256.txt",
+      "sha256": "f0ad60cfc8edde45bf80076e6eb2649e81bc291d2d0faea7b95112c8fb6d5dd0",
+      "files": 32
+    },
+    {
+      "path": "evidence/omarchy-profile/prepared-recycling-verifier/sha256.txt",
+      "sha256": "b7e0be1d94f52d8ea37932ab78622880003c7d16bd6d02fdbaa78fa9e7cfecfa",
+      "files": 38
+    }
+  ],
+  "unchangedRecorderFiles": 24,
+  "dependencyAndSnapshotBoundaryUnchanged": true,
+  "noNewTestOnlyRuntimeOrIgnore": true,
+  "independentNativeRuntimeMatchesFrozen": true,
+  "sabotageWitnessAndAssertionUnchanged": true,
+  "pair": [
+    {
+      "name": "omarchy-ready.snap.gz",
+      "size": 207172408,
+      "sha256": "989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75"
+    },
+    {
+      "name": "omarchy-overlay-delta.bin.gz",
+      "size": 1232847,
+      "sha256": "4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972"
+    }
+  ],
+  "wasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "runtimeDiffSha256": "e871aa6b4b0edb97cdbe77cba09f41ba05de5541a37322f10892eb0066e185ed"
+}

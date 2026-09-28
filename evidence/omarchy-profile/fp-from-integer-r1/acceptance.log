@@ -1,0 +1,111 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_from_integer --test fp_from_integer_verifier -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running tests/fp_from_integer.rs (target/debug/deps/fp_from_integer-b5d7d2f21caafbd4)
+
+running 3 tests
+FP_FROM_INT runloop FS-off/invalid-rm prefix=1 bytes=2 later-fault-flags=3
+test from_integer_native_runloop ... ok
+FP_FROM_INT CSR/source-update/later-fault/invalid-prefix cases=384
+test from_integer_native_handoff_and_faults ... ok
+FP_FROM_INT corpus cases=21504 register_flags_fnv=55175ee7c3836290
+test from_integer_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.21s
+
+     Running tests/fp_from_integer_verifier.rs (target/debug/deps/fp_from_integer_verifier-67e5884b32d05f97)
+
+running 5 tests
+CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 unsupported_families=6
+test verifier_mixed_conversion_arithmetic_function_indices ... ok
+CRITIC_NATIVE_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_native_conversion_control_and_faults ... ok
+CRITIC_NATIVE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+test verifier_native_conversion_literals ... ok
+CRITIC_NATIVE_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+test verifier_native_conversion_seeded_aliases_and_illegal ... ok
+CRITIC_FROM_INT_PURITY cases=3072 legal_helper_calls=1620 illegal_helper_calls=0 import_index=5 integer_wasm_only=true
+test verifier_generated_conversion_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.11s
+
+wasm-pack test --node crates/wasm --test jit_fp_from_integer --test jit_fp_from_integer_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running tests/jit_fp_from_integer.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer-b81a6ce18aad00aa.wasm)
+running 2 tests
+Invoking test: from_integer_browser_private
+test from_integer_browser_private ... ok
+Invoking test: from_integer_browser_inline
+test from_integer_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 25.04s
+
+     Running tests/jit_fp_from_integer_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_from_integer_verifier-bce268b8315f4cd6.wasm)
+running 6 tests
+Invoking test: verifier_shared_conversion_memory_growth
+CRITIC_FROM_INT_GROWTH inline=true fault=None pc=0000000040009c18 retired=6 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=true fault=Store pc=0000000040009c04 retired=1 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=true fault=Load pc=0000000040009c10 retired=4 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_shared_conversion_memory_growth ... ok
+Invoking test: verifier_shared_conversion
+CRITIC_SHARED_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+CRITIC_SHARED_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+CRITIC_SHARED_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_shared_conversion ... ok
+Invoking test: verifier_same_module_conversion_successors
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_conversion_successors ... ok
+Invoking test: verifier_private_conversion_memory_growth
+CRITIC_FROM_INT_GROWTH inline=false fault=None pc=0000000040009c18 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=false fault=Store pc=0000000040009c04 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+CRITIC_FROM_INT_GROWTH inline=false fault=Load pc=0000000040009c10 retired=0 writes=1 bytes_grown=65536 flags_before=9 flags_after=17
+test verifier_private_conversion_memory_growth ... ok
+Invoking test: verifier_private_conversion
+CRITIC_PRIVATE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+CRITIC_PRIVATE_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+CRITIC_PRIVATE_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_private_conversion ... ok
+Invoking test: verifier_cross_module_conversion_successors
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=09
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=5 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_FROM_INT_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_conversion_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.53s
+
+node tools/verify/omarchy-fp-from-integer-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-from-integer-r1/browser
+{"passed":true,"wasmSha256":"0ce4a5a304d82574b5f4118725bcffc2547121605e49304d280153eae4a5d312","digest":"5df84ec4c17598ab2c56293bb5b78338947ce9991af18e0ef795aa4a07d2df44","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":30,"retiredViaJit":3611,"directChainEntries":1469,"directChainLinks":1439,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":30,"stateCopyCalls":60,"stateCopyBytes":6304,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":4000,"jitEngineCalls":30,"jitLogicalBlocksPerEngineCall":48.96666666666667,"jitRetiredShare":0.90275,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":25,"chainMaxDepth":1,"chainLinksFollowed":6,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":3,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":3,"jitCacheCodeBytes":208207,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":103,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":103,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

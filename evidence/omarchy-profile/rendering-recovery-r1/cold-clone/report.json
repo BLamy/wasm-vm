@@ -1,0 +1,3700 @@
+{
+  "schema": "wasm-vm.omarchy-rendering-recovery.v1",
+  "result": "rendering-recovery-only",
+  "guestInteractivityVerified": false,
+  "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+  "startedAt": "2026-09-10T06:21:34.046Z",
+  "screenshots": [
+    {
+      "name": "desktop-initial.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "name": "desktop-960x600.png",
+      "sha256": "c4b5bcb99dc3128579c0847289be0f164bed9bac4f835a58c34d488ee728d5c7",
+      "viewport": {
+        "width": 960,
+        "height": 600,
+        "name": "960x600"
+      }
+    },
+    {
+      "name": "desktop-600x900.png",
+      "sha256": "406cda33e04527d15c940507c117c9330a5e04c314deb0ce8a27c6e4559f421a",
+      "viewport": {
+        "width": 600,
+        "height": 900,
+        "name": "600x900"
+      }
+    },
+    {
+      "name": "desktop-1920x1080.png",
+      "sha256": "4eb985843ec4c3da315e37e806eb3586bf59ce291c45f5b0f680025bda5d650a",
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "name": "1920x1080"
+      }
+    },
+    {
+      "name": "desktop-reloaded.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ],
+  "viewports": [
+    {
+      "viewport": {
+        "width": 960,
+        "height": 600,
+        "name": "960x600"
+      },
+      "observation": {
+        "label": "viewport-960x600",
+        "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 0,
+        "canvas": {
+          "width": 960,
+          "height": 600,
+          "left": 0,
+          "top": 0,
+          "right": 960,
+          "bottom": 600,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ],
+          "activeExecution": {
+            "version": "347161e9e2b8",
+            "cache": "wasm-vm-shell-347161e9e2b8",
+            "scriptURL": "http://127.0.0.1:64573/sw.js"
+          }
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 600,
+        "height": 900,
+        "name": "600x900"
+      },
+      "observation": {
+        "label": "viewport-600x900",
+        "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 3,
+        "canvas": {
+          "width": 600,
+          "height": 375,
+          "left": 0,
+          "top": 262.5,
+          "right": 600,
+          "bottom": 637.5,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ],
+          "activeExecution": {
+            "version": "347161e9e2b8",
+            "cache": "wasm-vm-shell-347161e9e2b8",
+            "scriptURL": "http://127.0.0.1:64573/sw.js"
+          }
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "name": "1920x1080"
+      },
+      "observation": {
+        "label": "viewport-1920x1080",
+        "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 6,
+        "canvas": {
+          "width": 1728,
+          "height": 1080,
+          "left": 96,
+          "top": 0,
+          "right": 1824,
+          "bottom": 1080,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ],
+          "activeExecution": {
+            "version": "347161e9e2b8",
+            "cache": "wasm-vm-shell-347161e9e2b8",
+            "scriptURL": "http://127.0.0.1:64573/sw.js"
+          }
+        }
+      }
+    }
+  ],
+  "responseHashes": [
+    {
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "document",
+        "frameUrl": "about:blank",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:64573/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": "*/*"
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "document",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:64573/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": "*/*"
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "explicitProvenance": true
+    }
+  ],
+  "sourceAndArtifactResponses": [
+    {
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "document",
+        "frameUrl": "about:blank",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:64573/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "document",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:64573/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:64573/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:64573/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:64573/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    }
+  ],
+  "observations": [
+    {
+      "progress": {
+        "stage": "goto",
+        "at": "2026-09-10T06:21:35.724Z",
+        "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide"
+      }
+    },
+    {
+      "progress": {
+        "stage": "domcontentloaded",
+        "at": "2026-09-10T06:21:35.840Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "runtime-hooks-ready",
+        "at": "2026-09-10T06:21:36.073Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "desktop-ready",
+        "at": "2026-09-10T06:22:35.731Z"
+      }
+    },
+    {
+      "label": "initial",
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0,
+        "right": 1280,
+        "bottom": 800,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ],
+        "activeExecution": {
+          "version": "347161e9e2b8",
+          "cache": "wasm-vm-shell-347161e9e2b8",
+          "scriptURL": "http://127.0.0.1:64573/sw.js"
+        }
+      }
+    },
+    {
+      "phase": "initial",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "evidenceKind": "read-only actual input-device counters; not interaction proof"
+    },
+    {
+      "serviceWorkerContentSha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "label": "viewport-960x600",
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 960,
+        "height": 600,
+        "left": 0,
+        "top": 0,
+        "right": 960,
+        "bottom": 600,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ],
+        "activeExecution": {
+          "version": "347161e9e2b8",
+          "cache": "wasm-vm-shell-347161e9e2b8",
+          "scriptURL": "http://127.0.0.1:64573/sw.js"
+        }
+      }
+    },
+    {
+      "label": "viewport-960x600",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 240,
+          "y": 150,
+          "expected": 8192,
+          "before": 0,
+          "after": 1,
+          "frame": {
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 480,
+          "y": 300,
+          "expected": 16384,
+          "before": 1,
+          "after": 2,
+          "frame": {
+            "sequence": 2,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 720,
+          "y": 450,
+          "expected": 24575,
+          "before": 2,
+          "after": 3,
+          "frame": {
+            "sequence": 3,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:22:37.631Z",
+        "viewport": "960x600"
+      }
+    },
+    {
+      "label": "viewport-600x900",
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 3,
+      "canvas": {
+        "width": 600,
+        "height": 375,
+        "left": 0,
+        "top": 262.5,
+        "right": 600,
+        "bottom": 637.5,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ],
+        "activeExecution": {
+          "version": "347161e9e2b8",
+          "cache": "wasm-vm-shell-347161e9e2b8",
+          "scriptURL": "http://127.0.0.1:64573/sw.js"
+        }
+      }
+    },
+    {
+      "label": "viewport-600x900",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 150,
+          "y": 356.25,
+          "expected": 8192,
+          "before": 3,
+          "after": 4,
+          "frame": {
+            "sequence": 4,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 300,
+          "y": 450,
+          "expected": 16384,
+          "before": 4,
+          "after": 5,
+          "frame": {
+            "sequence": 5,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 450,
+          "y": 543.75,
+          "expected": 24575,
+          "before": 5,
+          "after": 6,
+          "frame": {
+            "sequence": 6,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:22:37.825Z",
+        "viewport": "600x900"
+      }
+    },
+    {
+      "label": "viewport-1920x1080",
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 6,
+      "canvas": {
+        "width": 1728,
+        "height": 1080,
+        "left": 96,
+        "top": 0,
+        "right": 1824,
+        "bottom": 1080,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ],
+        "activeExecution": {
+          "version": "347161e9e2b8",
+          "cache": "wasm-vm-shell-347161e9e2b8",
+          "scriptURL": "http://127.0.0.1:64573/sw.js"
+        }
+      }
+    },
+    {
+      "label": "viewport-1920x1080",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 528,
+          "y": 270,
+          "expected": 8192,
+          "before": 6,
+          "after": 7,
+          "frame": {
+            "sequence": 7,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 960,
+          "y": 540,
+          "expected": 16384,
+          "before": 7,
+          "after": 8,
+          "frame": {
+            "sequence": 8,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 1392,
+          "y": 810,
+          "expected": 24575,
+          "before": 8,
+          "after": 9,
+          "frame": {
+            "sequence": 9,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:22:38.100Z",
+        "viewport": "1920x1080"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-start",
+        "at": "2026-09-10T06:22:38.102Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-domcontentloaded",
+        "at": "2026-09-10T06:22:38.141Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-runtime-hooks-ready",
+        "at": "2026-09-10T06:22:38.194Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-desktop-ready",
+        "at": "2026-09-10T06:23:37.096Z"
+      }
+    },
+    {
+      "label": "reload",
+      "url": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0,
+        "right": 1280,
+        "bottom": 800,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ],
+        "activeExecution": {
+          "version": "347161e9e2b8",
+          "cache": "wasm-vm-shell-347161e9e2b8",
+          "scriptURL": "http://127.0.0.1:64573/sw.js"
+        }
+      }
+    },
+    {
+      "phase": "reload",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "evidenceKind": "read-only actual input-device counters; not interaction proof"
+    },
+    {
+      "progress": {
+        "stage": "complete",
+        "at": "2026-09-10T06:23:38.547Z",
+        "screenshots": 5
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFailures": [
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "phase": "initial",
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "failure": "net::ERR_ABORTED",
+      "resolution": "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "phase": "initial",
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "failure": "net::ERR_ABORTED",
+      "resolution": "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "phase": "reload",
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "failure": "net::ERR_ABORTED",
+      "resolution": "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "phase": "reload",
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "failure": "net::ERR_ABORTED",
+      "resolution": "observer transfer unavailable; separate worker completion + integrity-passed restore + full-byte provenance recorded"
+    }
+  ],
+  "errors": [],
+  "provenanceFetches": [
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "at": "2026-09-10T06:22:35.839Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "initial",
+      "assetRole": "kernel",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "bytes": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+      "at": "2026-09-10T06:22:35.993Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "initial",
+      "assetRole": "ram",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "at": "2026-09-10T06:22:36.000Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "initial",
+      "assetRole": "delta",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "at": "2026-09-10T06:22:37.320Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "initial",
+      "assetRole": "baseManifest",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "at": "2026-09-10T06:22:37.322Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "initial",
+      "assetRole": "workerScript",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "at": "2026-09-10T06:23:37.202Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "reload",
+      "assetRole": "kernel",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "bytes": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+      "at": "2026-09-10T06:23:37.373Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "reload",
+      "assetRole": "ram",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "at": "2026-09-10T06:23:37.377Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "reload",
+      "assetRole": "delta",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "at": "2026-09-10T06:23:38.506Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "reload",
+      "assetRole": "baseManifest",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "at": "2026-09-10T06:23:38.508Z",
+      "origin": "http://127.0.0.1:64573",
+      "phase": "reload",
+      "assetRole": "workerScript",
+      "provenanceFetch": true,
+      "evidenceKind": "independent contemporaneous full-byte fetch; not the worker transfer"
+    }
+  ],
+  "observerLimitations": [
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": "*/*"
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "request": {
+        "method": "GET",
+        "resourceType": "script",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": "*/*"
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    },
+    {
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "request": {
+        "method": "GET",
+        "resourceType": "fetch",
+        "frameUrl": "http://127.0.0.1:64573/app.html?guest=omarchy&desktop=1#ide",
+        "range": null,
+        "cacheControl": null,
+        "accept": null
+      },
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+      "observerLimitation": "inspector body unavailable; not a captured worker-byte hash"
+    }
+  ],
+  "workerCompletions": [
+    {
+      "phase": "initial",
+      "workerURL": "http://127.0.0.1:64573/linux-worker.js",
+      "resources": [
+        {
+          "name": "http://127.0.0.1:64573/artifacts-omarchy.json",
+          "entryType": "resource",
+          "startTime": 10.980000019073486,
+          "duration": 0.36500000953674316,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "cache-storage",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "application/json",
+          "contentEncoding": "",
+          "workerStart": 11.025000095367432,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 11.050000071525574,
+          "domainLookupStart": 11.050000071525574,
+          "domainLookupEnd": 11.050000071525574,
+          "connectStart": 11.050000071525574,
+          "secureConnectionStart": 0,
+          "connectEnd": 11.050000071525574,
+          "requestStart": 11.050000071525574,
+          "responseStart": 11.325000047683716,
+          "firstInterimResponseStart": 11.325000047683716,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 11.34500002861023,
+          "transferSize": 0,
+          "encodedBodySize": 861,
+          "decodedBodySize": 861,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+          "entryType": "resource",
+          "startTime": 11.840000033378601,
+          "duration": 12.835000038146973,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 11.880000114440918,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 11.910000085830688,
+          "domainLookupStart": 11.910000085830688,
+          "domainLookupEnd": 11.910000085830688,
+          "connectStart": 11.910000085830688,
+          "secureConnectionStart": 0,
+          "connectEnd": 11.910000085830688,
+          "requestStart": 12.09500002861023,
+          "responseStart": 18.450000047683716,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 18.450000047683716,
+          "responseEnd": 24.675000071525574,
+          "transferSize": 24209196,
+          "encodedBodySize": 24208896,
+          "decodedBodySize": 24208896,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+          "entryType": "resource",
+          "startTime": 26.44000005722046,
+          "duration": 396.835000038147,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 26.510000109672546,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 26.56000006198883,
+          "domainLookupStart": 0,
+          "domainLookupEnd": 0,
+          "connectStart": 0,
+          "secureConnectionStart": 0,
+          "connectEnd": 0,
+          "requestStart": 0,
+          "responseStart": 0,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 423.27500009536743,
+          "transferSize": 0,
+          "encodedBodySize": 0,
+          "decodedBodySize": 0,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+          "entryType": "resource",
+          "startTime": 436.0050001144409,
+          "duration": 3.819999933242798,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "cache",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 436.085000038147,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 436.1600000858307,
+          "domainLookupStart": 436.1600000858307,
+          "domainLookupEnd": 436.1600000858307,
+          "connectStart": 436.1600000858307,
+          "secureConnectionStart": 0,
+          "connectEnd": 436.1600000858307,
+          "requestStart": 436.1600000858307,
+          "responseStart": 437.92000007629395,
+          "firstInterimResponseStart": 437.92000007629395,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 439.8250000476837,
+          "transferSize": 0,
+          "encodedBodySize": 1566204,
+          "decodedBodySize": 1566204,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+          "entryType": "resource",
+          "startTime": 441.42000007629395,
+          "duration": 1.3849999904632568,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 441.5,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 441.5500000715256,
+          "domainLookupStart": 441.5500000715256,
+          "domainLookupEnd": 441.5500000715256,
+          "connectStart": 441.5500000715256,
+          "secureConnectionStart": 0,
+          "connectEnd": 441.5500000715256,
+          "requestStart": 441.75,
+          "responseStart": 442.51000010967255,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 442.51000010967255,
+          "responseEnd": 442.8050000667572,
+          "transferSize": 1209496,
+          "encodedBodySize": 1209196,
+          "decodedBodySize": 1209196,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+          "entryType": "resource",
+          "startTime": 561.4800000190735,
+          "duration": 62.295000076293945,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 561.5600000619888,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 561.6300001144409,
+          "domainLookupStart": 561.6300001144409,
+          "domainLookupEnd": 561.6300001144409,
+          "connectStart": 561.6300001144409,
+          "secureConnectionStart": 0,
+          "connectEnd": 561.6300001144409,
+          "requestStart": 561.8650000095367,
+          "responseStart": 589.5500000715256,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 589.5500000715256,
+          "responseEnd": 623.7750000953674,
+          "transferSize": 205051133,
+          "encodedBodySize": 205050833,
+          "decodedBodySize": 205050833,
+          "responseStatus": 200,
+          "serverTiming": []
+        }
+      ],
+      "evidenceKind": "actual-worker resource timings plus fail-closed restore; not captured response bodies"
+    },
+    {
+      "phase": "reload",
+      "workerURL": "http://127.0.0.1:64573/linux-worker.js",
+      "resources": [
+        {
+          "name": "http://127.0.0.1:64573/artifacts-omarchy.json",
+          "entryType": "resource",
+          "startTime": 7.950000047683716,
+          "duration": 0.33500003814697266,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "cache-storage",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "application/json",
+          "contentEncoding": "",
+          "workerStart": 7.995000004768372,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 8.03000009059906,
+          "domainLookupStart": 8.03000009059906,
+          "domainLookupEnd": 8.03000009059906,
+          "connectStart": 8.03000009059906,
+          "secureConnectionStart": 0,
+          "connectEnd": 8.03000009059906,
+          "requestStart": 8.03000009059906,
+          "responseStart": 8.270000100135803,
+          "firstInterimResponseStart": 8.270000100135803,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 8.285000085830688,
+          "transferSize": 0,
+          "encodedBodySize": 861,
+          "decodedBodySize": 861,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/kernel/6.6.63/Image",
+          "entryType": "resource",
+          "startTime": 8.770000100135803,
+          "duration": 8.254999995231628,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 8.800000071525574,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 8.825000047683716,
+          "domainLookupStart": 8.825000047683716,
+          "domainLookupEnd": 8.825000047683716,
+          "connectStart": 8.825000047683716,
+          "secureConnectionStart": 0,
+          "connectEnd": 8.825000047683716,
+          "requestStart": 9.045000076293945,
+          "responseStart": 12.410000085830688,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 12.410000085830688,
+          "responseEnd": 17.02500009536743,
+          "transferSize": 24209196,
+          "encodedBodySize": 24208896,
+          "decodedBodySize": 24208896,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+          "entryType": "resource",
+          "startTime": 18.97000002861023,
+          "duration": 0.4700000286102295,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 19.045000076293945,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 19.110000014305115,
+          "domainLookupStart": 0,
+          "domainLookupEnd": 0,
+          "connectStart": 0,
+          "secureConnectionStart": 0,
+          "connectEnd": 0,
+          "requestStart": 0,
+          "responseStart": 0,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 19.44000005722046,
+          "transferSize": 0,
+          "encodedBodySize": 0,
+          "decodedBodySize": 0,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm",
+          "entryType": "resource",
+          "startTime": 32.06000006198883,
+          "duration": 0.7000000476837158,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "cache-storage",
+          "nextHopProtocol": "",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 32.135000109672546,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 32.19000005722046,
+          "domainLookupStart": 32.19000005722046,
+          "domainLookupEnd": 32.19000005722046,
+          "connectStart": 32.19000005722046,
+          "secureConnectionStart": 0,
+          "connectEnd": 32.19000005722046,
+          "requestStart": 32.19000005722046,
+          "responseStart": 32.6450001001358,
+          "firstInterimResponseStart": 32.6450001001358,
+          "finalResponseHeadersStart": 0,
+          "responseEnd": 32.760000109672546,
+          "transferSize": 0,
+          "encodedBodySize": 1566204,
+          "decodedBodySize": 1566204,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+          "entryType": "resource",
+          "startTime": 36.11500000953674,
+          "duration": 1.2750000953674316,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 36.175000071525574,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 36.21000003814697,
+          "domainLookupStart": 36.21000003814697,
+          "domainLookupEnd": 36.21000003814697,
+          "connectStart": 36.21000003814697,
+          "secureConnectionStart": 0,
+          "connectEnd": 36.21000003814697,
+          "requestStart": 36.425000071525574,
+          "responseStart": 37.105000019073486,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 37.105000019073486,
+          "responseEnd": 37.390000104904175,
+          "transferSize": 1209496,
+          "encodedBodySize": 1209196,
+          "decodedBodySize": 1209196,
+          "responseStatus": 200,
+          "serverTiming": []
+        },
+        {
+          "name": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-ready.snap.gz",
+          "entryType": "resource",
+          "startTime": 128.04000008106232,
+          "duration": 54.5349999666214,
+          "navigationId": 0,
+          "initiatorType": "fetch",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "",
+          "contentEncoding": "",
+          "workerStart": 128.12000000476837,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 128.19000005722046,
+          "domainLookupStart": 128.19000005722046,
+          "domainLookupEnd": 128.19000005722046,
+          "connectStart": 128.19000005722046,
+          "secureConnectionStart": 0,
+          "connectEnd": 128.19000005722046,
+          "requestStart": 128.42500007152557,
+          "responseStart": 149.63500010967255,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 149.63500010967255,
+          "responseEnd": 182.57500004768372,
+          "transferSize": 205051133,
+          "encodedBodySize": 205050833,
+          "decodedBodySize": 205050833,
+          "responseStatus": 200,
+          "serverTiming": []
+        }
+      ],
+      "evidenceKind": "actual-worker resource timings plus fail-closed restore; not captured response bodies"
+    }
+  ],
+  "expectedBuild": {
+    "version": "347161e9e2b8",
+    "serviceWorkerSha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+  },
+  "bootManifestDescriptor": {
+    "responseUrl": "http://127.0.0.1:64573/artifacts-omarchy.json",
+    "responseSha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+    "responseSize": 861,
+    "artifacts": {
+      "kernel": {
+        "url": "releases/kernel/6.6.63/Image",
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "size": 24208896
+      },
+      "bootSnapshot": {
+        "url": "releases/boot-snapshot/omarchy-ready.snap.gz",
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+        "size": 205050833
+      },
+      "overlayDelta": {
+        "url": "releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196
+      }
+    },
+    "immutableBaseManifest": {
+      "key": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "size": 1097812
+    }
+  },
+  "identity": {
+    "initialServiceWorker": {
+      "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+      "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+      "cacheKeys": [
+        "wasm-vm-shell-347161e9e2b8"
+      ],
+      "buildVersions": [
+        "347161e9e2b8"
+      ],
+      "activeExecution": {
+        "version": "347161e9e2b8",
+        "cache": "wasm-vm-shell-347161e9e2b8",
+        "scriptURL": "http://127.0.0.1:64573/sw.js"
+      }
+    },
+    "initialEssentialResponses": {
+      "http://127.0.0.1:64573/app.html:source": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "http://127.0.0.1:64573/artifacts-omarchy.json:artifact": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+      "http://127.0.0.1:64573/guest-rpc.js:source": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "http://127.0.0.1:64573/ide.js:source": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c",
+      "http://127.0.0.1:64573/linux-worker-protocol.js:source": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "http://127.0.0.1:64573/loader.js:source": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7",
+      "http://127.0.0.1:64573/main.js:source": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm:wasm": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "http://127.0.0.1:64573/roadmap.js:source": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b",
+      "http://127.0.0.1:64573/src/sink/viewport.js:source": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "http://127.0.0.1:64573/sw.js:source": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    "reloadServiceWorker": {
+      "controllerScriptURL": "http://127.0.0.1:64573/sw.js",
+      "registrationActiveURL": "http://127.0.0.1:64573/sw.js",
+      "cacheKeys": [
+        "wasm-vm-shell-347161e9e2b8"
+      ],
+      "buildVersions": [
+        "347161e9e2b8"
+      ],
+      "activeExecution": {
+        "version": "347161e9e2b8",
+        "cache": "wasm-vm-shell-347161e9e2b8",
+        "scriptURL": "http://127.0.0.1:64573/sw.js"
+      }
+    },
+    "reloadEssentialResponses": {
+      "http://127.0.0.1:64573/app.html:source": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "http://127.0.0.1:64573/artifacts-omarchy.json:artifact": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+      "http://127.0.0.1:64573/guest-rpc.js:source": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "http://127.0.0.1:64573/ide.js:source": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c",
+      "http://127.0.0.1:64573/linux-worker-protocol.js:source": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "http://127.0.0.1:64573/loader.js:source": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7",
+      "http://127.0.0.1:64573/main.js:source": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "http://127.0.0.1:64573/pkg/wasm_vm_wasm_bg.wasm:wasm": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "http://127.0.0.1:64573/roadmap.js:source": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b",
+      "http://127.0.0.1:64573/src/sink/viewport.js:source": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "http://127.0.0.1:64573/sw.js:source": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    "serviceWorkerContentSha256": {
+      "initial": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad",
+      "reload": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    }
+  },
+  "assetResponseKinds": [
+    "baseManifest",
+    "delta"
+  ],
+  "assetMatches": [
+    {
+      "role": "baseManifest",
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "bytes": 1097812,
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "role": "delta",
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "bytes": 1209196,
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "role": "baseManifest",
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "bytes": 1097812,
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "role": "delta",
+      "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "bytes": 1209196,
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:64573/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    }
+  ],
+  "status": "passed",
+  "finishedAt": "2026-09-10T06:23:38.623Z"
+}

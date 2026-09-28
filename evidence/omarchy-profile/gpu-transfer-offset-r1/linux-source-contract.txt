@@ -1,0 +1,18 @@
+115: 	struct virtio_gpu_object *bo =
+116: 		gem_to_virtio_gpu_obj(state->fb->obj[0]);
+117: 	struct virtio_gpu_object_array *objs;
+118: 	uint32_t w = rect->x2 - rect->x1;
+119: 	uint32_t h = rect->y2 - rect->y1;
+120: 	uint32_t x = rect->x1;
+121: 	uint32_t y = rect->y1;
+122: 	uint32_t off = x * state->fb->format->cpp[0] +
+123: 		y * state->fb->pitches[0];
+124:
+125: 	objs = virtio_gpu_array_alloc(1);
+126: 	if (!objs)
+127: 		return;
+128: 	virtio_gpu_array_add_obj(objs, &bo->base.base);
+129:
+130: 	virtio_gpu_cmd_transfer_to_host_2d(vgdev, off, w, h, x, y,
+131: 					   objs, NULL);
+132: }

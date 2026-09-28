@@ -1,0 +1,31 @@
+{
+  "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4",
+  "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/chunked",
+  "integrity": {
+    "chunk_count": 16384,
+    "chunk_size": 262144,
+    "ext4_block_size": 4096,
+    "ext4_logical_bytes": 4294967296,
+    "image_len": 4294967296,
+    "image_sha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5",
+    "manifest_sha256": "a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb",
+    "scope": "image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot",
+    "status": "integrity-verified"
+  },
+  "kernel": {
+    "url": "releases/kernel/6.6.63/Image",
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+    "size": 24208896,
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image"
+  },
+  "bootManifest": {
+    "artifacts": {
+      "kernel": {
+        "url": "/releases/kernel/6.6.63/Image",
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "size": 24208896
+      }
+    }
+  },
+  "harnessSha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+}

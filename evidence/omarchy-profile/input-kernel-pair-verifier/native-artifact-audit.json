@@ -1,0 +1,59 @@
+{
+  "nativeHead": "c2cbcfd0d0d8b18ccc0d109363eca370c2dbf847",
+  "durationSeconds": 3660.4157989025116,
+  "returncode": 0,
+  "watchdog": null,
+  "ownGroupGoneNow": true,
+  "baseBinding": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "snapshotHeaderHex": "57564d524553553101000000302e302e310000000000000000000000000000000000000000000000000000005f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d440000000000000000",
+  "generation": 0,
+  "deltaBlocks": 2712,
+  "deltaRawBytes": 11130109,
+  "deltaRawSha256": "7f0539627bcf2eba55933af398e3f37ff600bd2a6a39fe2e3262e8bdee0092d3",
+  "hashes": {
+    "inputs.kernel": {
+      "size": 24208896,
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d"
+    },
+    "inputs.baseImage": {
+      "size": 4294967296,
+      "sha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c"
+    },
+    "inputs.cli": {
+      "size": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    },
+    "inputs.chunkManifest": {
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    "inputs.wasm": {
+      "size": 1602331,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    "artifacts.bootSnapshot": {
+      "size": 201704786,
+      "sha256": "413b49b0d9220d8b43fc258760f60430923a604e436d3aede44791076f2d6b2b"
+    },
+    "artifacts.overlayDelta": {
+      "size": 1233174,
+      "sha256": "96837e2d6fc893fb329ec698d985c7f190d3f95d268a903ef62ba20a2e8578eb"
+    },
+    "evidence/omarchy-profile/input-kernel-pair-r1/native/boot.stdout.log": {
+      "size": 104553,
+      "sha256": "25ff25f23106ec415ce3ed71b76ecf6fdb16be5153ac2ca459dbdd0e487afa4c"
+    },
+    "evidence/omarchy-profile/input-kernel-pair-r1/native/pipeline.stderr.log": {
+      "size": 418,
+      "sha256": "9fd750dd1a8b7d8dcf0f1f49cc9e3164a79b0af01c210418784041cce9bf698c"
+    },
+    "evidence/omarchy-profile/input-kernel-pair-r1/native/pipeline.stdout.log": {
+      "size": 105318,
+      "sha256": "d8f237c25a3b644da0838007c0781078a5e67b0a2c250d6275476242a32df560"
+    },
+    "evidence/omarchy-profile/input-kernel-pair-r1/native/run.json": {
+      "size": 2532,
+      "sha256": "6b21acf1b7398e9655ee8f9f3bc90f2eb7bc3c238cd30cd372b9263d8cee5629"
+    }
+  }
+}

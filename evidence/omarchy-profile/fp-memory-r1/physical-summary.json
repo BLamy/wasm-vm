@@ -1,0 +1,62 @@
+{
+  "reportSha256": "a3c17936df0ef95af2df6ba2632f7055a1f2da13f8d8683c84eab5c5ca7833f1",
+  "head": "7048847fb542d66618b836b965b94c8c9db771d5",
+  "wasmSha256": "1f989758c67c9dfdf514d2e03c0e4fa2cadb15a2dc0a465f5cb538661446473b",
+  "responsive": false,
+  "keyboard": {
+    "verified": false,
+    "nonce": "eba522b58571f6cf",
+    "guestFile": "/tmp/desktop-keys-b3134c81519631ec",
+    "startedAt": "2026-09-15T19:31:48.432Z",
+    "enteredAtMs": 1789500711262,
+    "typedAt": "2026-09-15T19:31:51.262Z",
+    "typingMs": 2830,
+    "readbackStartedAt": "2026-09-15T19:31:51.262Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-15T19:33:51.262Z",
+    "stage": "readback",
+    "failedAt": "2026-09-15T19:33:51.263Z",
+    "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+    "desktopReadyPageMs": 117777.84500002861,
+    "firstPhysicalKeydownPageMs": 130564.45000004768,
+    "readyToFirstPhysicalKeydownMs": 12786.605000019073
+  },
+  "eventCount": 128,
+  "trustedEvents": 128,
+  "inputDeviceFinal": {
+    "pendingEventBudget": 256,
+    "pendingEvents": 0,
+    "pendingFrames": 0,
+    "droppedFrames": 0,
+    "droppedEvents": 0,
+    "statusEventsServed": 1,
+    "rejectedEvents": 0
+  },
+  "framesBefore": 2,
+  "framesAfter": 2,
+  "guestRetiredBefore": 1561987987,
+  "guestRetiredAfter": 2791439201,
+  "jitShareAfter": 0.3803986522864626,
+  "guestClockBefore": {
+    "mode": "icount",
+    "mtime": "1364866837",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "guestClockAfter": {
+    "mode": "icount",
+    "mtime": "1384077012",
+    "timebaseHz": 10000000,
+    "clockDiv": 64
+  },
+  "completedReadbackCommands": 13,
+  "errors": [],
+  "cleanup": {
+    "startedAt": "2026-09-15T19:33:51.316Z",
+    "timeoutMs": 30000,
+    "closed": true
+  },
+  "visualInspection": "failure.png shows the actual Foot shell prompt with no typed text; presentation remains at two frames.",
+  "pendingReadbackCommands": 1
+}

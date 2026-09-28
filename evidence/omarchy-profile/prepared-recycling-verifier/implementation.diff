@@ -1,0 +1,481 @@
+diff --git a/evidence/omarchy-profile/prepared-recycling-gates/bind-names.mjs b/evidence/omarchy-profile/prepared-recycling-gates/bind-names.mjs
+new file mode 100644
+index 00000000..8b7aeee9
+--- /dev/null
++++ b/evidence/omarchy-profile/prepared-recycling-gates/bind-names.mjs
+@@ -0,0 +1,8 @@
++import { readFile, writeFile } from "node:fs/promises";
++import { bindNames } from "../../../tools/verify/e5-t22c-symbolize-cpu.mjs";
++const binding = bindNames(await readFile("web/dist/pkg/wasm_vm_wasm_bg.wasm"),
++  await readFile("target/omarchy-prepared-recycling-symbols/named.wasm"));
++await writeFile(new URL("./name-binding.json", import.meta.url), JSON.stringify({ ...binding,
++  names: Object.fromEntries(binding.names) }, null, 2) + "\n");
++console.log(JSON.stringify({ releaseSha256: binding.releaseSha256, namedSha256: binding.namedSha256,
++  names: binding.names.size, sections: binding.sections.length }));
+diff --git a/evidence/omarchy-profile/prepared-recycling-gates/freeze.py b/evidence/omarchy-profile/prepared-recycling-gates/freeze.py
+new file mode 100644
+index 00000000..3aa754cf
+--- /dev/null
++++ b/evidence/omarchy-profile/prepared-recycling-gates/freeze.py
+@@ -0,0 +1,56 @@
++"""Pin this harness, the verified pair, and unchanged runtime before navigation."""
++from pathlib import Path
++import hashlib, json, os, re, subprocess, time
++
++out=Path(__file__).resolve().parent
++repo=out.parents[2]
++env=dict(os.environ,DEVELOPER_DIR='/Library/Developer/CommandLineTools')
++def git(*args): return subprocess.check_output(['git',*args],cwd=repo,env=env)
++def sha(data): return hashlib.sha256(data).hexdigest()
++assert not git('diff','--name-only','88212705','--','crates','web').strip()
++assert not git('status','--short','--','crates','web').strip()
++entries=['tools/verify/omarchy-prepared-recycling-input.mjs','tools/verify/omarchy-desktop-live.mjs']
++seen=set()
++def visit(name):
++    if name in seen: return
++    seen.add(name)
++    data=(repo/name).read_bytes()
++    assert data==git('show','HEAD:'+name),name
++    # Static local imports constitute this recorder's module closure. Dynamic
++    # imports in the existing CPU-profile helper are inspected separately.
++    for spec in re.findall(r'(?:from\s*|import\s*)[\'\"]([^\'\"]+)[\'\"]',data.decode()):
++        if not spec.startswith('.'): continue
++        p=(repo/name).parent/spec
++        if 'node_modules' in p.parts: continue
++        visit(str(p.resolve().relative_to(repo)))
++for entry in entries: visit(entry)
++for p in [out/'record.py',out/'freeze.py']:
++    assert p.read_bytes()==git('show','HEAD:'+str(p.relative_to(repo)))
++assert not git('status','--short','--',*sorted(seen)).strip()
++seals=['prepared-direct-opaque-gates-r2','prepared-direct-opaque-verifier-r2',
++       'snapshot-allocation-gates','snapshot-allocation-verifier', 'prepared-direct-input-gates']
++carried=[]
++for name in seals:
++    index=out.parent/name/'sha256.txt'
++    for line in index.read_text().splitlines():
++        h,p=line.split('  ',1); assert sha((repo/p).read_bytes())==h,p
++    carried.append(dict(path=str(index.relative_to(repo)),sha256=sha(index.read_bytes()),files=len(index.read_text().splitlines())))
++for name,base in [('prepared-direct-input-verifier',out.parent/'prepared-direct-input-verifier'),
++                  ('worker-cost-gates-r2',out.parent), ('worker-cost-verifier',out.parent/'worker-cost-verifier'),
++                  ('admission-after-fp-gates',out.parent)]:
++    index=out.parent/name/'sha256.txt'
++    for line in index.read_text().splitlines():
++        h,p=line.split('  ',1); assert sha((base/p).read_bytes())==h,p
++    carried.append(dict(path=str(index.relative_to(repo)),sha256=sha(index.read_bytes()),files=len(index.read_text().splitlines())))
++pair=repo/'target/omarchy-direct-opaque-r2'
++pins={'omarchy-ready.snap.gz':(207172408,'989dff1cad261ab6e53e1dea8f57cb12866d2a236b5366f114102744553d4e75'),
++      'omarchy-overlay-delta.bin.gz':(1232847,'4fde816771e4fcfe085b492b6321302e945c58145c5c16f0c91e02ac94d10972')}
++for name,(size,h) in pins.items():
++    data=(pair/name).read_bytes(); assert len(data)==size and sha(data)==h,name
++wasm=sha((repo/'web/dist/pkg/wasm_vm_wasm_bg.wasm').read_bytes())
++assert wasm=='8230800b2ed4fe92ed0647d871d6c548fe824f3a550b09ca4a9b4941bc220ca4'
++receipt=dict(head=git('rev-parse','HEAD').decode().strip(),frozenAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
++    runtimeUnchangedFrom='88212705',wasmSha256=wasm,pairPins=pins,carried=carried,
++    files=[dict(path=p,sha256=sha((repo/p).read_bytes())) for p in sorted(seen)])
++(out/'frozen.json').write_text(json.dumps(receipt,indent=2)+'\n')
++print(json.dumps(receipt,indent=2))
+diff --git a/evidence/omarchy-profile/prepared-recycling-gates/record.py b/evidence/omarchy-profile/prepared-recycling-gates/record.py
+new file mode 100644
+index 00000000..d1472da0
+--- /dev/null
++++ b/evidence/omarchy-profile/prepared-recycling-gates/record.py
+@@ -0,0 +1,35 @@
++"""Affected checks for recycling on the verified prepared checkpoint; no synthetic guest acceptance."""
++from pathlib import Path
++import hashlib, json, os, subprocess, time
++
++out = Path(__file__).resolve().parent
++repo = out.parents[2]
++env = dict(os.environ, DEVELOPER_DIR='/Library/Developer/CommandLineTools')
++commands = [
++    ('affected-harness', ['/Users/blamy/.nvm/versions/node/v24.20.0/bin/node', '--test',
++        'tools/verify/omarchy-prepared-direct.test.mjs',
++        'tools/verify/omarchy-direct-opaque-preparation.test.mjs',
++        'tools/verify/omarchy-direct-opaque.test.mjs',
++        'tools/verify/omarchy-opaque-preparation.test.mjs',
++        'tools/verify/omarchy-mode-preparation.test.mjs', 'tools/verify/omarchy-mode-capture.test.mjs',
++        'tools/verify/omarchy-opaque-foot.test.mjs', 'tools/verify/omarchy-input-trial.test.mjs',
++        'tools/verify/omarchy-worker-cost.test.mjs', 'web/tests/omarchy-cold-counter-recycling.test.mjs',
++        'tools/verify/omarchy-owned-trial.test.mjs', 'tools/verify/omarchy-user-input.test.mjs',
++        'tools/verify/omarchy-desktop-live.test.mjs']),
++    ('runner-syntax', ['/Users/blamy/.nvm/versions/node/v24.20.0/bin/node', '--check', 'tools/verify/omarchy-prepared-recycling-input.mjs']),
++    ('recorder-syntax', ['/Users/blamy/.nvm/versions/node/v24.20.0/bin/node', '--check', 'tools/verify/omarchy-desktop-live.mjs']),
++]
++receipt = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo, env=env, text=True).strip(),
++           'wasmSha256': hashlib.sha256((repo/'web/dist/pkg/wasm_vm_wasm_bg.wasm').read_bytes()).hexdigest(), 'commands': []}
++def save():
++    (out/'commands.json').write_text(json.dumps(receipt, indent=2)+'\n')
++for label, args in commands:
++    row = {'label': label, 'args': args, 'startedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
++    receipt['commands'].append(row); save()
++    with (out/(label+'.log')).open('w') as log:
++        result = subprocess.run(args, cwd=repo, env=env, stdout=log, stderr=subprocess.STDOUT)
++    row.update(code=result.returncode, finishedAt=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())); save()
++    print(label, result.returncode, flush=True)
++receipt['allPassed'] = all(row['code'] == 0 for row in receipt['commands']); save()
++if not receipt['allPassed']:
++    raise SystemExit(1)
+diff --git a/evidence/omarchy-profile/prepared-recycling-gates/symbols.py b/evidence/omarchy-profile/prepared-recycling-gates/symbols.py
+new file mode 100644
+index 00000000..04fded1d
+--- /dev/null
++++ b/evidence/omarchy-profile/prepared-recycling-gates/symbols.py
+@@ -0,0 +1,28 @@
++"""Recover debug names from the existing AL build; never rebuild or alter the release."""
++from pathlib import Path
++import hashlib, json, os, subprocess, time
++out=Path(__file__).resolve().parent
++repo=out.parents[2]
++env=dict(os.environ,DEVELOPER_DIR='/Library/Developer/CommandLineTools')
++raw=repo/'target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm'
++named=repo/'target/omarchy-prepared-recycling-symbols'
++named.mkdir(exist_ok=False)
++bindgen='/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen'
++opt='/Users/blamy/Library/Caches/.wasm-pack/wasm-opt-50385c9e73ccee70/bin/wasm-opt'
++sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
++receipt={'raw':{'path':str(raw.relative_to(repo)),'sha256':sha(raw)},'commands':[]}
++commands=[('bindgen-version',[bindgen,'--version']),('wasmopt-version',[opt,'--version']),
++ ('bindgen',[bindgen,'--target','web','--out-dir',str(named),'--out-name','wasm_vm_wasm',str(raw)]),
++ ('named-companion',[opt,'-O','-g',str(named/'wasm_vm_wasm_bg.wasm'),'-o',str(named/'named.wasm')]),
++ ('binding',['/Users/blamy/.nvm/versions/node/v24.20.0/bin/node',str(out/'bind-names.mjs')])]
++for label,args in commands:
++ row={'label':label,'args':args,'startedAt':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
++ receipt['commands'].append(row)
++ with (out/(label+'.log')).open('w') as log:
++  result=subprocess.run(args,cwd=repo,env=env,stdout=log,stderr=subprocess.STDOUT)
++ row.update(code=result.returncode,finishedAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
++ (out/'symbol-build.json').write_text(json.dumps(receipt,indent=2)+'\n')
++ assert result.returncode==0,label
++receipt['named']={'path':str((named/'named.wasm').relative_to(repo)),'sha256':sha(named/'named.wasm')}
++(out/'symbol-build.json').write_text(json.dumps(receipt,indent=2)+'\n')
++print('Existing AL executable sections bound to current names',flush=True)
+diff --git a/tools/verify/omarchy-desktop-live.mjs b/tools/verify/omarchy-desktop-live.mjs
+index e2e33f68..860eee15 100644
+--- a/tools/verify/omarchy-desktop-live.mjs
++++ b/tools/verify/omarchy-desktop-live.mjs
+@@ -64,6 +64,7 @@ const workerCost = process.env.OMARCHY_WORKER_COST === "1";
+ const opaqueFoot = process.env.OMARCHY_OPAQUE_FOOT === "1";
+ const directOpaque = process.env.OMARCHY_DIRECT_OPAQUE === "1";
+ const preparedDirect = process.env.OMARCHY_PREPARED_DIRECT === "1";
++const preparedRecycling = process.env.OMARCHY_INPUT_TRIAL_EXPERIMENT === "prepared-recycling";
+ const renderBudget = process.env.OMARCHY_RENDER_BUDGET === "640x400";
+ const compositorMode = process.env.OMARCHY_COMPOSITOR_MODE === "640x400";
+ if (process.env.OMARCHY_COMPOSITOR_MODE !== undefined) {
+@@ -100,10 +101,10 @@ const trial = inputTrial ? inputTrialOptions({ urlArg, pair: candidatePairEnv, c
+ if (!inputTrial) for (const key of ["OMARCHY_INPUT_TRIAL_ARM", "OMARCHY_INPUT_TRIAL_EXPERIMENT"]) {
+   assert.equal(process.env[key], undefined, `${key} requires input-trial mode`);
+ }
+-if (trial?.experiment === "residency") assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
++if (["residency", "prepared-recycling"].includes(trial?.experiment)) assert.ok(!failureCheckpoint && !renderBudget && !compositorMode,
+   "residency is isolated from other experiments");
+ if (process.env.OMARCHY_WORKER_COST !== undefined) {
+-  assert.ok(workerCost && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate",
++  assert.ok(workerCost && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate",
+     "worker cost requires the fixed residency candidate input trial");
+ }
+ if (process.env.OMARCHY_OPAQUE_FOOT !== undefined) {
+@@ -117,10 +118,11 @@ if (process.env.OMARCHY_DIRECT_OPAQUE !== undefined) {
+   "direct opaque requires its isolated fixed residency candidate input trial");
+ }
+ if (process.env.OMARCHY_PREPARED_DIRECT !== undefined) {
+-  assert.ok(preparedDirect && inputTrial && trial?.experiment === "residency" && trial.arm === "candidate"
+-    && !opaqueFoot && !directOpaque && !workerCost && !failureCheckpoint && !renderBudget && !compositorMode,
++  assert.ok(preparedDirect && inputTrial && ["residency", "prepared-recycling"].includes(trial?.experiment) && trial.arm === "candidate"
++    && !opaqueFoot && !directOpaque && workerCost === preparedRecycling && !failureCheckpoint && !renderBudget && !compositorMode,
+   "prepared direct input requires its isolated fixed residency candidate trial");
+ }
++if (preparedRecycling) assert.ok(preparedDirect && workerCost, "prepared recycling requires the exact prepared trial and post-verdict recorder");
+ let modePairOutput = null;
+ if (modePair) {
+   assert.equal(urlArg, "local"); assert.ok(candidatePairEnv && candidateChunksEnv);
+@@ -455,6 +457,7 @@ if (ownedRecording) {
+     "tools/verify/omarchy-direct-opaque.mjs", "tools/verify/omarchy-direct-opaque-command.mjs",
+     "tools/verify/omarchy-input-audit.mjs",
+     "tools/verify/omarchy-prepared-direct-state.mjs", "tools/verify/omarchy-prepared-direct-input.mjs",
++    "tools/verify/omarchy-prepared-recycling-input.mjs",
+     "tools/verify/omarchy-direct-opaque-preparation.mjs", "tools/verify/omarchy-prepare-direct-opaque.mjs",
+     "tools/verify/omarchy-opaque-preparation.mjs", "tools/verify/omarchy-prepare-opaque.mjs",
+     "tools/verify/e5-t22c-cpu-profile.mjs",
+@@ -1317,7 +1320,8 @@ async function runLive() {
+     if (workerCost) report.workerCostInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     if (opaqueFoot) report.opaqueFootInputFence = await fenceWorkerCostInput(page, report.keyboard);
+     if (directOpaque) report.directOpaqueInputFence = await fenceWorkerCostInput(page, report.keyboard);
+-    if (preparedDirect) report.preparedDirectInputFence = await fenceWorkerCostInput(page, report.keyboard);
++    if (preparedDirect) report.preparedDirectInputFence = workerCost
++      ? report.workerCostInputFence : await fenceWorkerCostInput(page, report.keyboard);
+     report.keyboard.stage = "post-enter-focus";
+     if (inputTrial) await withinTrialDeadline(() => assertCanvasFocus(page, "physical-keyboard-after-enter", keyboardUrl),
+       report.keyboard.enteredAtMs + trial.readbackMs, "post-enter focus/readback");
+diff --git a/tools/verify/omarchy-input-audit.mjs b/tools/verify/omarchy-input-audit.mjs
+index 18141963..350bc55d 100644
+--- a/tools/verify/omarchy-input-audit.mjs
++++ b/tools/verify/omarchy-input-audit.mjs
+@@ -9,16 +9,20 @@ const at = value => { const n = Date.parse(value); assert.ok(Number.isFinite(n),
+ const success = "input-trial-physical-nonce-and-fresh-presentation";
+ const layers = "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers";
+ 
+-export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false }) {
++export function auditInputReport(report, { head, wasmSha256, arm, startupCommands = [], preparedDirect = false,
++  preparedRecycling = false }) {
+   assert.equal(typeof preparedDirect, "boolean");
++  assert.equal(typeof preparedRecycling, "boolean");
++  if (preparedRecycling) assert.equal(preparedDirect, true);
+   assert.equal(report.preparedDirectRequested === true, preparedDirect);
+   assert.equal(report.trial.head, head, "wrong source head");
+   assert.equal(report.trial.scopedStatus, "");
+   assert.equal(report.trial.arm, arm);
+-  assert.equal(report.trial.experiment, "residency");
+-  assert.equal(report.trial.recycling, false);
++  const experiment = preparedRecycling ? "prepared-recycling" : "residency";
++  assert.equal(report.trial.experiment, experiment);
++  assert.equal(report.trial.recycling, preparedRecycling);
+   const options = inputTrialOptions({ urlArg: "local", pair: "pinned", chunks: "pinned", arm,
+-    renderer: null, lp: null, experiment: "residency" });
++    renderer: null, lp: null, experiment });
+   assert.equal(report.trial.jitResidencyPolicy, options.jitResidencyPolicy);
+   assert.equal(report.trial.jitResidencyCap, options.jitResidencyCap);
+   for (const [key, value] of Object.entries({ startupMs: 300000, typingMs: 60000,
+diff --git a/tools/verify/omarchy-input-trial.mjs b/tools/verify/omarchy-input-trial.mjs
+index 0c7711b3..4d66ef35 100644
+--- a/tools/verify/omarchy-input-trial.mjs
++++ b/tools/verify/omarchy-input-trial.mjs
+@@ -25,9 +25,10 @@ export function inputTrialOptions({ urlArg, pair, chunks, arm, renderer, lp, tim
+   assert.ok(["control", "candidate"].includes(arm), "input-trial requires explicit control or candidate arm");
+   assert.ok(!renderer && lp === null, "input-trial carries R3 renderer evidence; no new renderer probes");
+   assert.equal(timeout, undefined, "input-trial startup deadline is fixed; no timeout override");
+-  assert.ok(["recycling", "residency"].includes(experiment), "unsupported input-trial experiment");
+-  return { arm, recycling: experiment === "recycling" && arm === "candidate",
+-    ...(experiment === "residency" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
++  assert.ok(["recycling", "residency", "prepared-recycling"].includes(experiment), "unsupported input-trial experiment");
++  if (experiment === "prepared-recycling") assert.equal(arm, "candidate", "prepared recycling has one fixed candidate");
++  return { arm, recycling: experiment !== "residency" && arm === "candidate",
++    ...(experiment !== "recycling" ? { experiment, ...residencyForArm(arm) } : {}), startupMs: INPUT_TRIAL_STARTUP_MS,
+     typingMs: INPUT_TRIAL_TYPING_MS, readbackMs: INPUT_TRIAL_READBACK_MS,
+     captureMs: INPUT_TRIAL_CAPTURE_MS, cleanupMs: INPUT_TRIAL_CLEANUP_MS };
+ }
+@@ -40,8 +41,9 @@ export function inputTrialUrl(input, options) {
+   url.searchParams.set("omarchyDivider", "64");
+   url.searchParams.set("jit", "1");
+   url.searchParams.set("jitColdCounterRecycling", options.recycling ? "1" : "0");
+-  if (options.experiment === "residency") {
+-    assert.equal(options.recycling, false, "residency keeps recycling off");
++  if (["residency", "prepared-recycling"].includes(options.experiment)) {
++    assert.equal(options.recycling, options.experiment === "prepared-recycling", "experiment recycling selection disagrees");
++    if (options.experiment === "prepared-recycling") assert.equal(options.arm, "candidate");
+     url.searchParams.set("jitResidency", residencyForArm(options.arm).jitResidencyPolicy);
+   }
+   return url;
+@@ -67,9 +69,12 @@ export function assertInputTrialRuntime(state, options) {
+     assert.ok(BigInt(jit.coldCounterRecycling[key]) <= 0xffffffffffffffffn);
+   }
+   assert.equal(jit.decodedCacheEntries, 4096);
+-  const residency = options.experiment === "residency" ? residencyForArm(options.arm)
++  const residency = ["residency", "prepared-recycling"].includes(options.experiment) ? residencyForArm(options.arm)
+     : { jitResidencyPolicy: "repack-off", jitResidencyCap: 24 };
+   if (options.experiment === "residency") assert.equal(options.recycling, false);
++  if (options.experiment === "prepared-recycling") {
++    assert.equal(options.arm, "candidate"); assert.equal(options.recycling, true);
++  }
+   assert.equal(jit.jitResidencyPolicy, residency.jitResidencyPolicy);
+   assert.equal(jit.jitResidencyCap, residency.jitResidencyCap);
+   assert.equal(jit.entryCost?.timingEnabled, false);
+diff --git a/tools/verify/omarchy-input-trial.test.mjs b/tools/verify/omarchy-input-trial.test.mjs
+index 7694a379..787e75c7 100644
+--- a/tools/verify/omarchy-input-trial.test.mjs
++++ b/tools/verify/omarchy-input-trial.test.mjs
+@@ -7,6 +7,38 @@ import { inputTrialOptions, inputTrialUrl, assertInputTrialSource, assertInputTr
+ const options = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm, renderer: null, lp: null });
+ const residencyOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
+   renderer: null, lp: null, experiment: "residency" });
++const preparedRecyclingOptions = arm => inputTrialOptions({ urlArg: "local", pair: "pair", chunks: "chunks", arm,
++  renderer: null, lp: null, experiment: "prepared-recycling" });
++test("prepared recycling has one fixed candidate differing from AK only in the existing boolean", () => {
++  const trial = preparedRecyclingOptions("candidate"), control = residencyOptions("candidate");
++  assert.deepEqual(trial, { ...control, experiment: "prepared-recycling", recycling: true });
++  assert.throws(() => preparedRecyclingOptions("control"));
++  const base = "http://127.0.0.1:9876/app.html?guest=omarchy&desktop=1#ide";
++  const candidateUrl = inputTrialUrl(base, trial), controlUrl = inputTrialUrl(base, control);
++  assert.equal(candidateUrl.searchParams.get("jitResidency"), "cap-256");
++  assert.equal(candidateUrl.searchParams.get("jitColdCounterRecycling"), "1");
++  candidateUrl.searchParams.set("jitColdCounterRecycling", "0");
++  assert.equal(candidateUrl.href, controlUrl.href);
++  assert.throws(() => inputTrialUrl(base, { ...trial, recycling: false }));
++  assert.throws(() => inputTrialUrl(base, { ...trial, arm: "control" }));
++});
++test("prepared recycling rejects drift in the actual runtime policy", () => {
++  const trial = preparedRecyclingOptions("candidate");
++  const state = { jit: { hasExecutor: true, admissionProbe: false,
++    coldCounterRecycling: { enabled: true, epochs: "1", discardedCounters: "65536", threshold: 512, capacity: 65536 },
++    decodedCacheEntries: 4096, jitResidencyPolicy: "cap-256", jitResidencyCap: 256,
++    entryCost: { timingEnabled: false } }, clock: { mode: "icount", clockDiv: 64 } };
++  assertInputTrialRuntime(state, trial);
++  for (const mutate of [
++    s => { s.jit.coldCounterRecycling.enabled = false; },
++    s => { s.jit.coldCounterRecycling.threshold = 1; },
++    s => { s.jit.coldCounterRecycling.capacity = 131072; },
++    s => { s.jit.jitResidencyCap = 24; },
++    s => { s.jit.jitResidencyPolicy = "repack-off"; },
++    s => { s.jit.decodedCacheEntries = 16384; },
++    s => { s.clock.clockDiv = 1; },
++  ]) { const bad = structuredClone(state); mutate(bad); assert.throws(() => assertInputTrialRuntime(bad, trial)); }
++});
+ test("trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning", () => {
+   assert.deepEqual(options("candidate"), { arm: "candidate", recycling: true, startupMs: 300000,
+     typingMs: 60000, readbackMs: 120000, captureMs: 20000, cleanupMs: 30000 });
+diff --git a/tools/verify/omarchy-prepared-recycling-input.mjs b/tools/verify/omarchy-prepared-recycling-input.mjs
+new file mode 100644
+index 00000000..10a1440a
+--- /dev/null
++++ b/tools/verify/omarchy-prepared-recycling-input.mjs
+@@ -0,0 +1,92 @@
++#!/usr/bin/env node
++// One existing recycling option; preserve the input verdict before optional host profiling.
++import assert from "node:assert/strict";
++import fs from "node:fs/promises";
++import { createWriteStream } from "node:fs";
++import { spawn, execFileSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { fileURLToPath } from "node:url";
++import path from "node:path";
++import { watchOwnedTrial } from "./omarchy-owned-trial.mjs";
++import { auditInputReport } from "./omarchy-input-audit.mjs";
++import { PREPARED_DIRECT_COMMAND, PREPARED_DIRECT_IDENTITIES, PREPARED_DIRECT_WASM,
++  auditPreparedDirect } from "./omarchy-prepared-direct-state.mjs";
++import { WORKER_COST_CAPTURE_MS, validateWorkerCostProfile, workerCostInputVerdict,
++  auditWorkerCostInput } from "./omarchy-worker-cost-capture.mjs";
++import { assertOriginalPresentation } from "./omarchy-opaque-foot-command.mjs";
++
++const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
++assert.ok(process.argv[2] && process.argv[3], "usage: omarchy-prepared-recycling-input.mjs NEW_OUTPUT_DIR VERIFIED_PAIR_DIR");
++const out = path.resolve(process.argv[2]), pair = path.resolve(process.argv[3]);
++const sha = bytes => createHash("sha256").update(bytes).digest("hex");
++for (const [role, filename] of [["bootSnapshot", "omarchy-ready.snap.gz"], ["overlayDelta", "omarchy-overlay-delta.bin.gz"]]) {
++  const bytes = await fs.readFile(path.join(pair, filename));
++  assert.equal(bytes.length, PREPARED_DIRECT_IDENTITIES[role].size);
++  assert.equal(sha(bytes), PREPARED_DIRECT_IDENTITIES[role].sha256);
++}
++const wasmSha256 = sha(await fs.readFile(path.join(repo, "web/dist/pkg/wasm_vm_wasm_bg.wasm")));
++assert.equal(wasmSha256, PREPARED_DIRECT_WASM, "trial requires verified AL runtime");
++await fs.mkdir(out, { recursive: false });
++const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim();
++const receipt = { purpose: "prepared-pair-existing-recycling-candidate", acceptanceClaim: false, head,
++  wasmSha256, pairDirectory: pair, pairIdentities: PREPARED_DIRECT_IDENTITIES, startedAt: new Date().toISOString() };
++const save = () => fs.writeFile(path.join(out, "run.json"), JSON.stringify(receipt, null, 2) + "\n");
++await save();
++const env = { ...process.env };
++for (const key of Object.keys(env)) if (key.startsWith("OMARCHY_")) delete env[key];
++Object.assign(env, { OMARCHY_INPUT_TRIAL_ARM: "candidate", OMARCHY_INPUT_TRIAL_EXPERIMENT: "prepared-recycling",
++  OMARCHY_WORKER_COST: "1",
++  OMARCHY_PREPARED_DIRECT: "1", OMARCHY_CANDIDATE_PAIR_DIR: pair,
++  OMARCHY_CANDIDATE_CHUNKS: path.join(repo, "target/omarchy-profile-chunks-sdr-r3-256k") });
++receipt.args = ["tools/verify/omarchy-desktop-live.mjs", "local", path.join(out, "desktop"), "input-trial"];
++const log = createWriteStream(path.join(out, "desktop.log"), { flags: "wx" });
++const child = spawn(process.execPath, receipt.args, { cwd: repo, env, detached: true, stdio: ["ignore", "pipe", "pipe", "ipc"] });
++child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
++receipt.exit = await watchOwnedTrial(child, { postVerdictCaptureMs: WORKER_COST_CAPTURE_MS });
++child.stdout.unpipe(log); child.stderr.unpipe(log); await new Promise(resolve => log.end(resolve));
++receipt.finishedAt = new Date().toISOString(); await save();
++if (!receipt.exit.closed || receipt.exit.watchdog || receipt.exit.error) {
++  child.unref(); child.stdout.destroy(); child.stderr.destroy(); if (child.connected) child.disconnect();
++  throw Error("prepared input trial did not close normally; UNPROVEN");
++}
++const bytes = await fs.readFile(path.join(out, "desktop/report.json"));
++const report = JSON.parse(bytes);
++try {
++  receipt.reportSha256 = sha(bytes);
++  receipt.input = auditInputReport(report, { head, wasmSha256, arm: "candidate", preparedDirect: true, preparedRecycling: true,
++    startupCommands: [PREPARED_DIRECT_COMMAND] });
++  receipt.configuration = auditPreparedDirect(report);
++  for (const row of report.observations.filter(row => row.runtime)) assertOriginalPresentation(row.runtime.presentation);
++  if (report.keyboard?.typedAt) {
++    const fence = report.preparedDirectInputFence;
++    assert.equal(fence.method, "Input.setIgnoreInputEvents"); assert.equal(fence.ignore, true);
++    assert.ok(Date.parse(fence.startedAt) >= report.keyboard.enteredAtMs);
++    assert.ok(Date.parse(fence.acknowledgedAt) >= Date.parse(fence.startedAt));
++    assert.ok(Date.parse(fence.acknowledgedAt) < Date.parse(report.keyboard.deadlineAt));
++    assert.ok(report.inputEvents.every(row => Date.parse(row.timestamp) <= Date.parse(fence.startedAt)));
++  }
++  receipt.result = report.result;
++  if (report.result === "input-trial-physical-nonce-and-fresh-presentation") {
++    assert.equal(report.workerCost?.status, "skipped-input-passed");
++  } else if (report.trial.outcome === "nonce-readback-failed") {
++    const capture = report.workerCost;
++    assert.equal(capture?.status, "captured");
++    assert.deepEqual(capture.inputVerdict, JSON.parse(workerCostInputVerdict(report)));
++    assert.ok(Date.parse(capture.startedAt) >= Date.parse(report.keyboard.failedAt));
++    assert.equal(capture.timeoutMs, WORKER_COST_CAPTURE_MS);
++    // The unchanged recorder samples its deadline just after startedAt.
++    const deadlineSample = Date.parse(capture.deadlineAt) - WORKER_COST_CAPTURE_MS;
++    assert.ok(deadlineSample >= Date.parse(capture.startedAt));
++    assert.ok(deadlineSample <= Date.parse(capture.sampleStartedAt));
++    assert.ok(Date.parse(capture.finishedAt) <= Date.parse(capture.deadlineAt));
++    assert.equal(capture.failureImageSha256, sha(await fs.readFile(path.join(out, "desktop/failure.png"))));
++    const profileBytes = await fs.readFile(path.join(out, "desktop/worker-cpu.json"));
++    assert.equal(sha(profileBytes), capture.sha256); assert.equal(profileBytes.length, capture.bytes);
++    receipt.profile = validateWorkerCostProfile(JSON.parse(profileBytes), new URL("./linux-worker.js", report.url).href);
++    receipt.postVerdictInput = auditWorkerCostInput(report);
++  } else assert.equal(report.workerCost, undefined, "profiling requires a completed failed physical trial");
++  receipt.desktopAcceptance = false; // Worker and fresh critic must personally inspect the real image.
++  receipt.visualInspectionRequired = true;
++} catch (error) { receipt.auditError = String(error); throw error; }
++finally { await save(); }
++console.log(JSON.stringify(receipt, null, 2));
+diff --git a/tools/verify/omarchy-user-input.test.mjs b/tools/verify/omarchy-user-input.test.mjs
+index 5f2bbacc..2be9828b 100644
+--- a/tools/verify/omarchy-user-input.test.mjs
++++ b/tools/verify/omarchy-user-input.test.mjs
+@@ -30,11 +30,14 @@ const actualHelpers = [
+ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false,
+   wrongNonce = false, lateReadback = false, stalePresentation = false,
+   missingFoot = false, wrongActive = false, stopAtFirstKey = false,
+-  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false } = {}) {
++  lateTyping = false, opaqueFoot = false, badOpaque = false, directOpaque = false, preparedDirect = false,
++  preparedRecycling = false } = {}) {
+   const trace = [], commands = [], keys = [], screenshots = [], deadlines = [];
+   const report = { errors: [], observations: [], trial: {}, inputEvents: [] };
+   const trial = inputTrialOptions({ urlArg: "local", pair: "fixture", chunks: "fixture",
+-    arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control", experiment: opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling", renderer: null, lp: null });
++    arm: opaqueFoot || directOpaque || preparedDirect ? "candidate" : "control",
++    experiment: preparedRecycling ? "prepared-recycling" : opaqueFoot || directOpaque || preparedDirect ? "residency" : "recycling",
++    renderer: null, lp: null });
+   let now = Date.now(), focus = "", entered = false, typed = "", shift = false;
+   let randomCall = 0;
+   const epoch = now, readyMs = 5;
+@@ -95,12 +98,12 @@ function fixture({ mode = "input-trial", missingReady = false, lostFocus = false
+   };
+   const state = { presentation: before, clock: { mode: "icount", clockDiv: 64 },
+     jit: { hasExecutor: true, admissionProbe: false,
+-      coldCounterRecycling: { enabled: false, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
++      coldCounterRecycling: { enabled: trial.recycling, epochs: "0", discardedCounters: "0", threshold: 512, capacity: 65536 },
+       decodedCacheEntries: 4096, jitResidencyPolicy: opaqueFoot || directOpaque || preparedDirect ? "cap-256" : "repack-off", jitResidencyCap: opaqueFoot || directOpaque || preparedDirect ? 256 : 24, entryCost: { timingEnabled: false } } };
+   const bindings = {
+     assert, URL, Date: Clock, setTimeout, clearTimeout, process: { send() {}, env: {} },
+     console: { log() {}, warn() {} }, page, report, url, trial, inputTrial: mode === "input-trial",
+-    coldPair: false, workerCost: false, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
++    coldPair: false, workerCost: preparedRecycling, opaqueFoot, directOpaque, preparedDirect, modePair: false, ownedRecording: mode === "input-trial",
+     coldDeadline: null, trialCaptureDeadline: null, mode,
+     expectedRenderer: mode === "input-trial" ? null : "llvmpipe", prewarmTimeoutMs: 3600000,
+     physicalStroke, assertInputTrialRuntime, requestOpaqueFoot, requestDirectOpaque, requestPreparedDirectProperties, assertOriginalPresentation,
+@@ -203,6 +206,22 @@ test("synthetic prepared-pair path reads saved settings once and preserves physi
+   }
+ });
+ 
++test("synthetic prepared recycling reuses one post-Enter fence and retains the input deadline", async () => {
++  const f = fixture({ preparedDirect: true, preparedRecycling: true });
++  assert.equal(await f.run(), null);
++  assert.equal(f.report.result, "input-trial-physical-nonce-and-fresh-presentation");
++  assert.equal(f.commands.filter(command => command === PREPARED_DIRECT_COMMAND).length, 1);
++  assert.equal(f.trace.filter(step => step === "input-fence").length, 1);
++  assert.strictEqual(f.report.preparedDirectInputFence, f.report.workerCostInputFence);
++  assert.equal(Date.parse(f.report.keyboard.deadlineAt), f.report.keyboard.enteredAtMs + 120000);
++  assert.equal(f.trial.jitResidencyCap, 256);
++  assert.equal(f.trial.recycling, true);
++  for (const mutation of [{ badOpaque: true }, { lateReadback: true }, { wrongNonce: true }, { stalePresentation: true }]) {
++    const bad = fixture({ preparedDirect: true, preparedRecycling: true, ...mutation });
++    assert.ok(await bad.run()); assert.equal(bad.report.result, undefined);
++  }
++});
++
+ test("synthetic capture and verify retain actual mapped-Foot and active-window checks before keys", async () => {
+   for (const mode of ["capture", "verify"]) {
+     const f = fixture({ mode, stopAtFirstKey: true });

@@ -1,0 +1,49 @@
+node --test tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-prepared-direct.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs
+✔ prewarm sync proof rejects cross-TTY marker evidence (0.514125ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.101334ms)
+✔ post-marker presentation helper rejects typing frames (95.54725ms)
+✔ candidate mode is explicitly local-only and hash-bound (0.153209ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.151792ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.098ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.144083ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (0.483541ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (0.661458ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.167041ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.272666ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (199.737292ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (3.445667ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.409833ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.34025ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.291ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.092167ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.16075ms)
+✔ actual direct-pair route fences before navigation and never enters physical input (0.67775ms)
+✔ input-kernel preparation rejects old running notes before properties and syncs before export (1.8825ms)
+✔ AS admits only verified AR bytes and leaves old AJ source guards intact (1.545292ms)
+✔ AR properties must name its exact restored Foot; the AJ default stays unchanged (1.322292ms)
+✔ prepared selection accepts only the verified pair while original R3 guards stay exact (1.516333ms)
+✔ one read-only batch checks eight saved properties and the exact restored Foot (0.890333ms)
+✔ missing property, altered active Foot, write acknowledgment or exit0 error text fails closed (0.798541ms)
+✔ expired or late property replies do not renew startup or admit input (0.483291ms)
+✔ prepared audit rejects forged, duplicate, late and mutating raw property commands (3.361208ms)
+✔ synthetic actual input-trial reaches physical keys without mapped-client/active-window RPCs (16.509416ms)
+✔ synthetic actual opaque branch verifies properties before keys and fences after Enter (14.549709ms)
+✔ synthetic actual direct-property branch reads all values before keys and fences after Enter (16.386834ms)
+✔ synthetic prepared-pair path reads saved settings once and preserves physical-only nonce/deadlines (63.98125ms)
+✔ synthetic prepared recycling reuses one post-Enter fence and retains the input deadline (76.773833ms)
+✔ synthetic AR input checks loaded kernel before properties and keeps uninstrumented original deadlines (82.91975ms)
+✔ synthetic capture and verify retain actual mapped-Foot and active-window checks before keys (4.002708ms)
+✔ synthetic missing application readiness or lost canvas focus forbids any key (1.141291ms)
+✔ synthetic actual nonce reader rejects mismatched bytes in a successful RPC response (11.39325ms)
+✔ synthetic late typing/readback and stale presentation cannot publish success (50.612208ms)
+✔ synthetic timing observation uses same-page actual recorded event fields, not probe completion (12.365833ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 408.559042
+node tools/verify/omarchy-input-kernel-response.mjs evidence/omarchy-profile/input-kernel-response-r1 target/omarchy-input-kernel-prepared-pair-r1
+{"result":"input-trial-physical-nonce-and-fresh-presentation","machineAcceptance":true,"desktopAcceptance":false,"visualInspectionRequired":true}

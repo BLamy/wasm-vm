@@ -1,0 +1,85 @@
+{
+  "purpose": "synthetic explicit AR guard attacks; not desktop acceptance",
+  "passed": true,
+  "controls": [
+    "AR source accepted",
+    "AR Foot explicitly accepted",
+    "unchanged AJ Foot accepted"
+  ],
+  "checked": {
+    "omarchy-input-kernel-response-state.mjs": "6535d97757ed4e78bf7b94c803c83e385c8c7023bb9b223c77af2f61f11fca90",
+    "omarchy-prepared-direct-state.mjs": "1d413cfb3ec960fa894867d0023de1b4c9ed92c5f74191c09a4563d6e1e6474d"
+  },
+  "cases": [
+    {
+      "name": "kernel size",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: kernel: not verified AR size\n+ actual - expected\n\n+ 24208897\n- 24208896\n         ^\n"
+    },
+    {
+      "name": "kernel sha256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: kernel: not verified AR bytes\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d'\n"
+    },
+    {
+      "name": "chunkManifest size",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: chunkManifest: not verified AR size\n+ actual - expected\n\n+ 1097813\n- 1097812\n        ^\n"
+    },
+    {
+      "name": "chunkManifest sha256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: chunkManifest: not verified AR bytes\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44'\n"
+    },
+    {
+      "name": "bootSnapshot size",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: bootSnapshot: not verified AR size\n+ actual - expected\n\n+ 205400327\n- 205400326\n          ^\n"
+    },
+    {
+      "name": "bootSnapshot sha256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: bootSnapshot: not verified AR bytes\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8'\n"
+    },
+    {
+      "name": "overlayDelta size",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: overlayDelta: not verified AR size\n+ actual - expected\n\n+ 1285560\n- 1285559\n       ^\n"
+    },
+    {
+      "name": "overlayDelta sha256",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: overlayDelta: not verified AR bytes\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- '1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c'\n"
+    },
+    {
+      "name": "AR pair through unchanged AJ default",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: kernel: not verified AJ R2 bytes\n+ actual - expected\n\n+ '3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d'\n- 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce'\n"
+    },
+    {
+      "name": "AR Foot through unchanged AJ default",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '0x55558518d650'\n- '0x55555eb73630'\n         ^\n"
+    },
+    {
+      "name": "AJ address with AR pid",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '0x55555eb73630'\n- '0x55558518d650'\n         ^\n"
+    },
+    {
+      "name": "AJ pid with AR address",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n503 !== 473\n"
+    },
+    {
+      "name": "hidden AR Foot",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "AR Foot rejecting input",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n"
+    }
+  ]
+}

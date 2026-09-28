@@ -1,0 +1,24 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling from-int-critic-sabotage v0.0.0 (/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-fp-from-int-sabotage-obcmov2j)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.37s
+     Running tests/fp_from_integer_verifier.rs (target/debug/deps/fp_from_integer_verifier-9c95b173713681c6)
+
+running 1 test
+
+thread 'verifier_native_conversion_literals' (26057166) panicked at tests/../support.rs:285:29:
+assertion `left == right` failed: CRITIC_FCVT_POSITIVE_HALF_GOLDEN
+  left: 18446744070681264128
+ right: 18446744070681264129
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test verifier_native_conversion_literals ... FAILED
+
+failures:
+
+failures:
+    verifier_native_conversion_literals
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--test fp_from_integer_verifier`

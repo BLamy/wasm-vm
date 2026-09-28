@@ -1,0 +1,13 @@
+OMARCHY_RENDERING_PROGRESS {"stage":"goto","at":"2026-09-10T06:15:54.633Z","url":"http://127.0.0.1:64214/app.html?guest=omarchy&desktop=1#ide"}
+OMARCHY_RENDERING_PROGRESS {"stage":"domcontentloaded","at":"2026-09-10T06:15:54.757Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"runtime-hooks-ready","at":"2026-09-10T06:15:54.962Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"desktop-ready","at":"2026-09-10T06:16:55.988Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:16:56.850Z","viewport":"960x600"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:16:57.031Z","viewport":"600x900"}
+OMARCHY_RENDERING_PROGRESS {"stage":"viewport-captured","at":"2026-09-10T06:16:57.234Z","viewport":"1920x1080"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-start","at":"2026-09-10T06:16:57.236Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-domcontentloaded","at":"2026-09-10T06:16:57.280Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-runtime-hooks-ready","at":"2026-09-10T06:16:57.387Z"}
+OMARCHY_RENDERING_PROGRESS {"stage":"reload-desktop-ready","at":"2026-09-10T06:17:54.690Z"}
+AssertionError [ERR_ASSERTION]: unclassified request failure: {"url":"http://127.0.0.1:64214/releases/boot-snapshot/omarchy-overlay-delta.bin.gz","phase":"initial","request":{"method":"GET","resourceType":"fetch","frameUrl":"http://127.0.0.1:64214/app.html?guest=omarchy&desktop=1#ide","range":null,"cacheControl":null,"accept":null},"failure":"net::ERR_ABORTED"}
+    at main (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-rendering-recovery.mjs:591:14)

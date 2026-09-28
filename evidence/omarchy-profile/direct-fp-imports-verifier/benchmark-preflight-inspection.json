@@ -1,0 +1,226 @@
+{
+  "reportPath": "evidence/omarchy-profile/direct-fp-imports-r1/benchmark-preflight/report.json",
+  "reportSha256": "b7bf69e1f6dc4c19361eb7523ce07f103dc4840a0a94d81d3c9a3a593075db6a",
+  "elfSha256": "0bab8b3db0163f99a56f020576eb56f9ed5355b1379b948e7ffa7854e673a263",
+  "independentRamSha256": "c55029e8cbc137ddab4624cc75bfd853a46c1d385f29b173028ac388de31fd94",
+  "independentRegisters": [
+    "800000ac",
+    "0",
+    "2000",
+    "0",
+    "0",
+    "0",
+    "80002000",
+    "0",
+    "0",
+    "0",
+    "0",
+    "4",
+    "0",
+    "0",
+    "ffffffff3f800000",
+    "ffffffff41000000",
+    "ffffffff3ec00000",
+    "ffffffff40800000",
+    "ffffffff41000000",
+    "ffffffff3f800000",
+    "ffffffff3f800000",
+    "0",
+    "2",
+    "8000000a00006000",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  "helperOccurrencesFromOpcodes": {
+    "fp_arith_s": 50000,
+    "fp_from_int_s": 50000,
+    "fp_to_word_s": 50000,
+    "fp_div_s": 50000,
+    "fp_fmadd_s": 200000
+  },
+  "compiledCoverage": [
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "baseline",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    },
+    {
+      "arm": "candidate",
+      "compiledRetirements": 499760,
+      "helperCompiledLowerBounds": {
+        "fp_arith_s": 49695,
+        "fp_from_int_s": 49695,
+        "fp_to_word_s": 49695,
+        "fp_div_s": 49695,
+        "fp_fmadd_s": 199695
+      }
+    }
+  ],
+  "times": {
+    "baseline": [
+      23.384999990463257,
+      22.43499994277954,
+      22.90499997138977,
+      22.22000002861023,
+      22.755000114440918
+    ],
+    "candidate": [
+      13.764999866485596,
+      13.47000002861023,
+      13.639999866485596,
+      13.894999980926514,
+      13.56499981880188
+    ]
+  },
+  "medians": {
+    "baseline": 22.755000114440918,
+    "candidate": 13.639999866485596
+  },
+  "candidateRatio": 0.5994286881075116,
+  "claim": "bounded mixed-FP import benchmark only; not desktop responsiveness"
+}

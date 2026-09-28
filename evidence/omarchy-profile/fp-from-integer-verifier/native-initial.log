@@ -1,0 +1,29 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.90s
+     Running tests/fp_from_integer_verifier.rs (target/debug/deps/fp_from_integer_verifier-67e5884b32d05f97)
+
+running 5 tests
+CRITIC_FROM_INT_INDICES imports=7 exports=run0:7,run1:8,run2:9,run3:10 actual_integer_conversion_arithmetic_conversion_chain=true integer_imports=5 unsupported_families=6
+test verifier_mixed_conversion_arithmetic_function_indices ... ok
+
+thread 'verifier_generated_conversion_helper_counts_and_purity' (26051383) panicked at crates/jit-runtime/tests/fp_from_integer_verifier.rs:282:29:
+assertion `left == right` failed
+  left: 4294968072
+ right: 9223372036854776584
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test verifier_generated_conversion_helper_counts_and_purity ... FAILED
+CRITIC_NATIVE_FROM_INT_CONTROL Receipt { cases: 12, illegal: 0, digest: 5904181122689446553 }
+test verifier_native_conversion_control_and_faults ... ok
+CRITIC_NATIVE_FROM_INT_LITERALS Receipt { cases: 12672, illegal: 0, digest: 11332523716468034169 }
+test verifier_native_conversion_literals ... ok
+CRITIC_NATIVE_FROM_INT_SEEDED Receipt { cases: 3584, illegal: 1736, digest: 8412752937936467894 }
+test verifier_native_conversion_seeded_aliases_and_illegal ... ok
+
+failures:
+
+failures:
+    verifier_generated_conversion_helper_counts_and_purity
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+
+error: test failed, to rerun pass `-p wasm-vm-jit-runtime --test fp_from_integer_verifier`

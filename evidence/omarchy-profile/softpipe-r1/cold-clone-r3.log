@@ -1,0 +1,31 @@
+Cloning into '/private/tmp/wasm-vm-t03f-proof-r3.tX330C/repo'...
+done.
+HEAD is now at b94a1626 test(omarchy): reject the recorded evdev event type
+COLD_PROOF_DIR=/private/tmp/wasm-vm-t03f-proof-r3.tX330C
+node --check tools/verify/omarchy-software-renderer-measurement.mjs
+node --test tools/verify/omarchy-software-renderer-measurement.test.mjs tools/verify/omarchy-softpipe-candidate.test.mjs
+✔ plans exactly two bounded equal-length renderer substitutions (1.323ms)
+✔ parses the actual debugfs bmap bare-integer stdout strictly (0.253917ms)
+✔ stream-independent diff oracle accepts only the planned ranges (0.771208ms)
+✔ rejects an ambiguous renderer string (0.153125ms)
+✔ rejects multi-block or out-of-bounds allocation (0.146209ms)
+✔ rejects undeclared files, incomplete inspection sets, and a wrong base (0.261333ms)
+✔ T03f harness pins the separate cold record configuration (1.523792ms)
+✔ T03f replays every sent/result probe from its recorded serial offset (0.762916ms)
+✔ T03f rejects a CoreDumping or generic Aquamarine observation as negative proof (0.482333ms)
+✔ T03f does not accept self-asserted positive renderer/input evidence (0.141167ms)
+✔ frozen receipt rejects duplicate files, moved ranges, and altered inode metadata (0.630208ms)
+✔ actual negative needs unique environment, matching boot, successful probes, and terminal ordering (14.213625ms)
+✔ offline Make acceptance never reseals or records its evidence (0.304083ms)
+✔ observer-issued ABRT with valid serial framing cannot establish a spontaneous crash (10.647ms)
+✔ observer whitelist rejects alternate mutators, shell composition, and unframed input (0.7185ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78.568125
+node tools/verify/omarchy-software-renderer-measurement.mjs verify "evidence/omarchy-profile/softpipe-r1/cold-wasm"
+E5T03F_VERIFY={"result":"verified","runId":"cold-wasm-d3c1a6b179ab5d93","outcome":{"kind":"same-pid-terminal-crash","pid":486},"probes":{"sent":62,"results":61,"outstanding":1},"imageSha256":"c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5","manifestSha256":"a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb","candidateChangedBytes":8}

@@ -194,6 +194,11 @@ impl CompileQueue {
         self.jobs.is_empty()
     }
 
+    /// Diagnostic exact-identity membership, without refreshing priorities or touching order.
+    pub fn contains_request(&self, request: &TranslationRequest) -> bool {
+        self.jobs.iter().any(|job| &job.req == request)
+    }
+
     /// The bound.
     pub fn cap(&self) -> usize {
         self.cap
@@ -213,6 +218,33 @@ mod tests {
     use super::*;
     use crate::dispatch::TerminatorKind;
     use alloc::vec;
+
+    #[test]
+    fn admission_probe_compile_membership_is_exact_and_read_only() {
+        let mut q = CompileQueue::with_cap(2);
+        let request = req(0x8000_0000, 7, &[0x13, 0, 0, 0]);
+        q.push(CompileJob {
+            req: request.clone(),
+            hotness: 64,
+        });
+        let before = q.stats();
+        assert!(q.contains_request(&request));
+        for field in 0..5 {
+            let mut changed = request.clone();
+            match field {
+                0 => changed.phys_pc += 2,
+                1 => changed.generation += 1,
+                2 => changed.code_bytes[0] ^= 1,
+                3 => changed.op_lens[0] = 2,
+                _ => changed.terminator = TerminatorKind::Wfi,
+            }
+            assert!(!q.contains_request(&changed));
+        }
+        assert_eq!(q.stats(), before);
+        assert_eq!(q.len(), 1);
+        assert_eq!(q.pop_hottest().unwrap().req, request);
+        assert!(!q.contains_request(&request));
+    }
 
     fn req(phys: u64, generation: u64, bytes: &[u8]) -> TranslationRequest {
         TranslationRequest {

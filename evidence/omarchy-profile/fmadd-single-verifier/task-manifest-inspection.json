@@ -1,0 +1,94 @@
+{
+  "entries": 512,
+  "added": 14,
+  "changedExisting": 3,
+  "rows": [
+    {
+      "id": "E5.5-T03aa",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ab",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ac",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ad",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ae",
+      "status": "blocked",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03af",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ag",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ah",
+      "status": "blocked",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ai",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03aj",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03ak",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03al",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03am",
+      "status": "verified",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03an",
+      "status": "in-progress",
+      "new": true
+    },
+    {
+      "id": "E5.5-T03q",
+      "status": "pending",
+      "new": false
+    },
+    {
+      "id": "E5.5-T03y",
+      "status": "verified",
+      "new": false
+    },
+    {
+      "id": "E5.5-T03z",
+      "status": "verified",
+      "new": false
+    }
+  ],
+  "sourceAndDistEqual": true,
+  "statusesMatchFrozenTaskFiles": true
+}

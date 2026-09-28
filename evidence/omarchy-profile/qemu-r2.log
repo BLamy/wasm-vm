@@ -1,0 +1,367 @@
+
+OpenSBI v1.8.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name               : riscv-virtio,qemu
+Platform Features           : medeleg
+Platform HART Count         : 1
+Platform HART Protection    : pmp
+Platform IPI Device         : aclint-mswi
+Platform Timer Device       : aclint-mtimer @ 10000000Hz
+Platform Console Device     : uart8250
+Platform HSM Device         : ---
+Platform PMU Device         : ---
+Platform Reboot Device      : syscon-reboot
+Platform Shutdown Device    : syscon-poweroff
+Platform Suspend Device     : ---
+Platform CPPC Device        : ---
+Firmware Base               : 0x80000000
+Firmware Size               : 321 KB
+Firmware RW Offset          : 0x40000
+Firmware RW Size            : 65 KB
+Firmware Heap Offset        : 0x47000
+Firmware Heap Size          : 37 KB (total), 0 KB (reserved), 12 KB (used), 23 KB (free)
+Firmware Scratch Size       : 4096 B (total), 1464 B (used), 2632 B (free)
+Runtime SBI Version         : 3.0
+Standard SBI Extensions     : time,rfnc,ipi,base,hsm,srst,pmu,dbcn,fwft,legacy,dbtr,sse
+Experimental SBI Extensions : none
+
+Domain0 Name                : root
+Domain0 Boot HART           : 0
+Domain0 HARTs               : 0*
+Domain0 Region00            : 0x0000000080040000-0x000000008005ffff M: (F,R,W) S/U: ()
+Domain0 Region01            : 0x0000000080000000-0x000000008003ffff M: (F,R,X) S/U: ()
+Domain0 Region02            : 0x0000000000100000-0x0000000000100fff M: (I,R,W) S/U: (R,W)
+Domain0 Region03            : 0x0000000010000000-0x0000000010000fff M: (I,R,W) S/U: (R,W)
+Domain0 Region04            : 0x0000000002000000-0x000000000200ffff M: (I,R,W) S/U: ()
+Domain0 Region05            : 0x000000000c400000-0x000000000c5fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region06            : 0x000000000c000000-0x000000000c3fffff M: (I,R,W) S/U: (R,W)
+Domain0 Region07            : 0x0000000000000000-0xffffffffffffffff M: () S/U: (R,W,X)
+Domain0 Next Address        : 0x0000000080200000
+Domain0 Next Arg1           : 0x00000000ffe00000
+Domain0 Next Mode           : S-mode
+Domain0 SysReset            : yes
+Domain0 SysSuspend          : yes
+
+Boot HART ID                : 0
+Boot HART Domain            : root
+Boot HART Priv Version      : v1.12
+Boot HART Base ISA          : rv64imafdch
+Boot HART ISA Extensions    : sstc,zicntr,zihpm,zicboz,zicbom,sdtrig,svadu
+Boot HART PMP Count         : 16
+Boot HART PMP Granularity   : 2 bits
+Boot HART PMP Address Bits  : 54
+Boot HART MHPM Info         : 16 (0x0007fff8)
+Boot HART Debug Triggers    : 2 triggers
+Boot HART MIDELEG           : 0x0000000000001666
+Boot HART MEDELEG           : 0x0000000000f4b509
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] random: crng init done
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v3.0 detected
+[    0.000000] SBI implementation ID=0x1 Version=0x10008
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] Kernel command line: console=ttyS0 earlycon=sbi root=/dev/vda rw rootwait loglevel=6 systemd.show_status=1
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000080000000   (2048 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.064106] audit: type=2000 audit(0.052:1): state=initialized audit_enabled=0 res=1
+[    0.090039] cpu0: rdtime lacks granularity needed to measure unaligned access speed
+[    0.478582] SCSI subsystem initialized
+[    0.528494] NFS: Registering the id_resolver key type
+[    0.529278] Key type id_resolver registered
+[    0.529537] Key type id_legacy registered
+[    0.717920] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    0.738330] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    0.738812] syscon-poweroff: probe of poweroff failed with error -16
+[    0.756157] Bridge firewalling registered
+[    0.757503] Key type dns_resolver registered
+P+q6E616D65\[18t[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[38;2;23;147;209mArch Linux[0m[0;1;39m![0m
+
+]3008;start=5f7d34d9df644f37bdf5fb1714143549;user=root;hostname=omarchy-demo;machineid=06b4f72af8174ee99a0c512c680bc630;bootid=69f1d5efab41483990bb4b09f9349f71;pid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/dirmngr[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-browser[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-extra[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/gpg-agent-ssh[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/keyboxd[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/modprobe[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mSlice /system/serial-getty[0m.
+[[0;32m  OK  [0m] Created slice [0;1;39mUser and Session Slice[0m.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Wall Directory Watch[0m.
+         Expecting device [0;1;39m/dev/ttyS0[0m...
+[[0;32m  OK  [0m] Reached target [0;1;39mImage Downloads[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Integrity Protected Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSlice Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSwaps[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Verity Protected Volumes[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDevice-mapper event daemon FIFOs[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mQuery the User Interactively for a Password[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mProcess Core Dump Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mCredential Encryption/Decryption[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mFactory Reset Management[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mHostname Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Socket (/dev/log)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Sockets[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mConsole Output Muting Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Repartitioning Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple Block Device Backed Storage Provider[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSimple File System Backed Storage Provider[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Control Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Kernel Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mudev Varlink Socket[0m.
+         Mounting [0;1;39mHuge Pages File System[0m...
+         Mounting [0;1;39mPOSIX Message Queue File System[0m...
+         Mounting [0;1;39mKernel Debug File System[0m...
+         Mounting [0;1;39mTemporary Directory /tmp[0m...
+         Starting [0;1;39mLoad Kernel Module configfs[0m...
+         Starting [0;1;39mLoad Kernel Module fuse[0m...
+         Starting [0;1;39mJournal Service[0m...
+         Starting [0;1;39mRemount Root and Kernel File Systems[0m...
+         Starting [0;1;39mApply Kernel Variables[0m...
+         Starting [0;1;39mCreate Static Device Nodes in /dev gracefully[0m...
+         Starting [0;1;39mLoad udev Rules from Credentials[0m...
+         Starting [0;1;39mColdplug All udev Devices[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+[[0;32m  OK  [0m] Mounted [0;1;39mHuge Pages File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mPOSIX Message Queue File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mKernel Debug File System[0m.
+[[0;32m  OK  [0m] Mounted [0;1;39mTemporary Directory /tmp[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module configfs[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad Kernel Module fuse[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mApply Kernel Variables[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad udev Rules from Credentials[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mRemount Root and Kernel File Systems[0m.
+         Starting [0;1;39mLoad/Save OS Random Seed[0m...
+[    5.397786] loadkeys[84]: memfd_create() called without MFD_EXEC or MFD_NOEXEC_SEAL set
+[[0;32m  OK  [0m] Started [0;1;39mJournal Service[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mLoad/Save OS Random Seed[0m.
+         Starting [0;1;39mFlush Journal to Persistent Storage[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev gracefully[0m.
+         Starting [0;1;39mJournal Log Access Socket[0m...
+         Starting [0;1;39mCreate Static Device Nodes in /dev[0m...
+[[0;32m  OK  [0m] Listening on [0;1;39mJournal Log Access Socket[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mFlush Journal to Persistent Storage[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate Static Device Nodes in /dev[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPreparation for Local File Systems[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal File Systems[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mBoot Loader Control Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mDisk Image Download Service Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mSystem Extension Image Management[0m.
+         Starting [0;1;39mTell Plymouth To Write Out Runtime Data[0m...
+         Starting [0;1;39mCreate System Files and Directories[0m...
+         Starting [0;1;39mRule-based Manager for Device Events and Files[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mTell Plymouth To Write Out Runtime Data[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRule-based Manager for Device Events and Files[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mCreate System Files and Directories[0m.
+         Starting [0;1;39mRecord System Boot/Shutdown in UTMP[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mRecord System Boot/Shutdown in UTMP[0m.
+[[0;32m  OK  [0m] Finished [0;1;39mColdplug All udev Devices[0m.
+         Starting [0;1;39mShow Plymouth Boot Screen[0m...
+[[0;32m  OK  [0m] Started [0;1;39mShow Plymouth Boot Screen[0m.
+[[0;32m  OK  [0m] Started [0;1;39mForward Password Requests to Plymouth Directory Watch[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mLocal Encrypted Volumes[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mPath Units[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSystem Initialization[0m.
+[[0;32m  OK  [0m] Started [0;1;39mRefresh existing PGP keys of archlinux-keyring regularly[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily verification of password and group files[0m.
+[[0;32m  OK  [0m] Started [0;1;39mDaily Cleanup of Temporary Directories[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mTimer Units[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mD-Bus System Message Bus Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mAuthorization Manager Agent Helper[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mOpenSSH Server Socket…temd-ssh-generator, AF_UNIX Local)[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mUser Login Management Varlink Socket[0m.
+[[0;32m  OK  [0m] Listening on [0;1;39mVirtual Machine and C…tainer Registration Service Socket[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mSocket Units[0m.
+         Starting [0;1;39mD-Bus System Message Bus[0m...
+[[0;32m  OK  [0m] Found device [0;1;39m/dev/ttyS0[0m.
+[[0;32m  OK  [0m] Started [0;1;39mD-Bus System Message Bus[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mBasic System[0m.
+         Starting [0;1;39mNetwork Manager[0m...
+         Starting [0;1;39mUser Login Management[0m...
+[[0m[0;31m*     [0m] (1 of 2) A start job is running for… Login Management (11s / 1min 38s)
+M[K[[0;1;31m*[0m[0;31m*    [0m] (1 of 2) A start job is running for… Login Management (11s / 1min 38s)
+M[K[[0;31m*[0;1;31m*[0m[0;31m*   [0m] (1 of 2) A start job is running for… Login Management (12s / 1min 38s)
+M[K[[0;32m  OK  [0m] Started [0;1;39mUser Login Management[0m.
+[K[[0;32m  OK  [0m] Stopped [0;1;39mVirtual Console Setup[0m.
+         Stopping [0;1;39mVirtual Console Setup[0m...
+         Starting [0;1;39mVirtual Console Setup[0m...
+         Starting [0;1;39mHostname Service[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mVirtual Console Setup[0m.
+[[0;32m  OK  [0m] Started [0;1;39mHostname Service[0m.
+[[0;32m  OK  [0m] Started [0;1;39mNetwork Manager[0m.
+[[0;32m  OK  [0m] Reached target [0;1;39mNetwork[0m.
+         Starting [0;1;39mPermit User Sessions[0m...
+[[0;32m  OK  [0m] Finished [0;1;39mPermit User Sessions[0m.
+         Starting [0;1;39mHold until boot process finishes up[0m...
+         Starting [0;1;39mTerminate Plymouth Boot Screen[0m...
+[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J7[32766;32766H[6n8]3008;start=9d8e201e81284bdea84c63615ba5d1d9;user=root;hostname=omarchy-demo;machineid=06b4f72af8174ee99a0c512c680bc630;bootid=69f1d5efab41483990bb4b09f9349f71;pid=167;comm=(agetty);servicename=serial-getty@ttyS0.service;invocationid=92b8c5f01bed4a84992dc953de9cae9b;type=service\P+q6E616D65\
+Arch Linux 6.6.63 (ttyS0)
+
+omarchy-demo login: omarchy (automatic login)
+
+Omarchy RISC-V browser demo candidate
+Optional applications and toolchains are not bundled.
+No personal accounts, credentials or VM session state were imported.
+Desktop/browser verification is recorded separately.
+]3008;start=af5eafaf72f5498ea56850bf1d3d5dad;user=root;hostname=omarchy-demo;machineid=06b4f72af8174ee99a0c512c680bc630;bootid=69f1d5efab41483990bb4b09f9349f71;pid=167;comm=login;targetuser=omarchy;sessionid=1;type=session\]3008;start=dc87f885-96c1-4842-b5b9-eb39c345ccb7;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ export SYSTEMD_PAGER=cat; id; pgrep -a Hyprland; pgrep -a quickshell; pgrep -a foot; hyprctl -i 0 configerrors; hyprctl -i 0 clients; systemctl --no-pager --failed; systemctl --user --no-pager --failed; cat ~/.local/state/wasm-vm/omarchy-demo-session-v1
+[?2004l]3008;start=e6775df5-71dc-4776-82cd-ae8f636c7773;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=command;cwd=/home/omarchy\uid=1000(omarchy) gid=1000(omarchy) groups=1000(omarchy)
+267 Hyprland --watchdog-fd 4
+304 quickshell -n -p /usr/share/omarchy/shell
+303 foot
+no such instance
+
+no such instance
+
+[4m [0m[4m [0m[4mUNIT[0m[4m [0m[4mLOAD[0m[4m [0m[4mACTIVE[0m[4m [0m[4mSUB[0m[4m [0m[4mDESCRIPTION[0m
+
+0 loaded units listed.
+[4m [0m[4m [0m[4mUNIT                       [0m[4m [0m[4mLOAD  [0m[4m [0m[4mACTIVE[0m[4m [0m[4mSUB   [0m[4m [0m[4mDESCRIPTION                  [0m
+[0;1;31m●[0m [0;1;31mxdg-document-portal.service[0m loaded [0;1;31mfailed[0m [0;1;31mfailed[0m flatpak document portal serv…
+
+[0;38:5:245mLegend: LOAD   → Reflects whether the unit definition was properly loaded.[0m
+[0;38:5:245m        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.[0m
+[0;38:5:245m        SUB    → The low-level unit activation state, values depend on unit type.[0m
+
+1 loaded units listed.
+wasm-vm omarchy demo session v1
+]3008;end=e6775df5-71dc-4776-82cd-ae8f636c7773;exit=success\]3008;start=dc87f885-96c1-4842-b5b9-eb39c345ccb7;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ printf 'XDG=%s\n' "$XDG_RUNTIME_DIR"; ls /run/user/1000/hypr; hyprctl instances; pgrep -a Hyprland; cat ~/.local/state/wasm-vm/omarchy-demo-session-v1; journalctl --user -b --no-pager -p warning -n 25
+[?2004l]3008;start=8c78ba61-063a-46d0-a85d-44f7a6cf7459;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=command;cwd=/home/omarchy\XDG=/run/user/1000
+efb50993780079460b0cbed1363e2166a2de1d9f_1788929940_2097761222
+instance efb50993780079460b0cbed1363e2166a2de1d9f_1788929940_2097761222:
+	time: 1788929940
+	pid: 267
+	wl socket: wayland-1
+
+
+
+267 Hyprland --watchdog-fd 4
+wasm-vm omarchy demo session v1
+Sep 09 04:59:08 omarchy-demo systemd[174]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mxdg-document-portal.service: Failed with result 'exit-code'.[0m
+Sep 09 04:59:08 omarchy-demo /usr/lib/xdg-desktop-portal[325]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mDocument portal fuse mount point unknown: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name is not activatable[0m
+Sep 09 04:59:23 omarchy-demo /usr/lib/xdg-desktop-portal[325]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mFailed connect to PipeWire: Couldn't connect to PipeWire[0m
+]3008;end=8c78ba61-063a-46d0-a85d-44f7a6cf7459;exit=success\]3008;start=dc87f885-96c1-4842-b5b9-eb39c345ccb7;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ hyprctl -i 0 clients; hyprctl -i 0 configerrors; journalctl --user -b -u xdg-document-portal --no-pager; ls -l /dev/fuse /usr/bin/fusermount3; systemctl --user show-environment | sed -n '/DISPLAY\|HYPR\|QT_\|GALLIUM/p'; pgrep -a foot
+[?2004l]3008;start=692319e7-c43a-4489-9165-414d521db231;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=command;cwd=/home/omarchy\Window 5555842174b0 -> omarchy@omarchy-demo:~:
+	mapped: 1
+	hidden: 0
+	visible: 1
+	acceptsInput: 1
+	at: 12,38
+	size: 1256,750
+	workspace: 1 (1)
+	floating: 0
+	monitor: 0
+	class: foot
+	title: omarchy@omarchy-demo:~
+	initialClass: foot
+	initialTitle: foot
+	pid: 303
+	xwayland: 0
+	pinned: 0
+	pinFullscreened: 0
+	fullscreen: 0
+	fullscreenClient: 0
+	fullscreenHandler: default
+	allowedOverFullscreen: 1
+	grouped: 0
+	tags: default-opacity*, terminal*
+	swallowing: 0
+	focusHistoryID: 0
+	inhibitingIdle: 0
+	xdgTag: 
+	xdgDescription: 
+	contentType: none
+	tearingHint: 0
+	stableID: 18000000
+
+
+
+
+Sep 09 04:59:08 omarchy-demo systemd[174]: Starting flatpak document portal service...
+Sep 09 04:59:08 omarchy-demo systemd[174]: Started flatpak document portal service.
+Sep 09 04:59:08 omarchy-demo xdg-document-portal[335]: fuse: device /dev/fuse not found. Kernel module not loaded?
+Sep 09 04:59:08 omarchy-demo xdg-document-portal[335]: error: fuse init failed: Can't mount path /run/user/1000/doc
+Sep 09 04:59:08 omarchy-demo systemd[174]: [0;1;39m[0;1;31m[0;1;39mxdg-document-portal.service: Main process exited, code=exited, status=6/NOTCONFIGURED[0m
+Sep 09 04:59:08 omarchy-demo systemd[174]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mxdg-document-portal.service: Failed with result 'exit-code'.[0m
+ls: cannot access '/dev/fuse': No such file or directory
+-rwsr-xr-x 1 root root 39120 Sep  9 03:28 /usr/bin/fusermount3
+QT_IM_MODULE=fcitx
+GALLIUM_DRIVER=llvmpipe
+QT_QUICK_BACKEND=software
+DISPLAY=:0
+HYPRLAND_INSTANCE_SIGNATURE=efb50993780079460b0cbed1363e2166a2de1d9f_1788929940_2097761222
+QT_QPA_PLATFORMTHEME=gtk3
+UWSM_FINALIZE_VARNAMES=$'HYPRLAND_INSTANCE_SIGNATURE HYPRLAND_CMD HYPRCURSOR_THEME HYPRCURSOR_SIZE XCURSOR_SIZE XCURSOR_THEME'
+UWSM_WAIT_VARNAMES=HYPRLAND_INSTANCE_SIGNATURE
+WAYLAND_DISPLAY=wayland-1
+303 foot
+]3008;end=692319e7-c43a-4489-9165-414d521db231;exit=success\]3008;start=dc87f885-96c1-4842-b5b9-eb39c345ccb7;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ test ! -e ~/.local/state/omarchy/done/finalize-user; printf 'UPSTREAM_FINALIZE_ABSENT=%s\n' "$?"; test ! -e ~/.local/state/omarchy/done/first-run-user; printf 'UPSTREAM_FIRST_RUN_ABSENT=%s\n' "$?"; hyprctl -i 0 monitors -j; systemctl show serial-getty@hvc0.service -p LoadState -p ActiveState; journalctl --user -b --no-pager | grep -Ei 'fcitx|not found|No such file|Failed to execute' | tail -15
+[?2004l]3008;start=f121340e-6424-4317-b926-ca07ab6ab69f;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=command;cwd=/home/omarchy\UPSTREAM_FINALIZE_ABSENT=0
+UPSTREAM_FIRST_RUN_ABSENT=0
+[{
+    "id": 0,
+    "name": "Virtual-1",
+    "description": "Red Hat Inc. QEMU Monitor",
+    "make": "Red Hat, Inc.",
+    "model": "QEMU Monitor",
+    "serial": "",
+    "width": 1280,
+    "height": 800,
+    "physicalWidth": 320,
+    "physicalHeight": 200,
+    "refreshRate": 74.99400,
+    "x": 0,
+    "y": 0,
+    "activeWorkspace": {
+        "id": 1,
+        "name": "1"
+    },
+    "specialWorkspace": {
+        "id": 0,
+        "name": ""
+    },
+    "reserved": [0, 26, 0, 0],
+    "scale": 1,
+    "transform": 0,
+    "focused": true,
+    "dpmsStatus": true,
+    "vrr": false,
+    "solitary": "0",
+    "solitaryBlockedBy": ["WINDOWED","CANDIDATE"],
+    "activelyTearing": false,
+    "tearingBlockedBy": ["NOT_TORN","USER","CANDIDATE"],
+    "directScanoutTo": "0",
+    "directScanoutBlockedBy": ["USER","SW","CANDIDATE"],
+    "disabled": false,
+    "currentFormat": "XRGB8888",
+    "mirrorOf": "none",
+    "availableModes": ["1280x800@74.99Hz","5120x2160@50.00Hz","4096x2160@50.00Hz","3840x2160@60.00Hz","3840x2160@59.94Hz","3840x2160@50.00Hz","1920x1440@60.00Hz","2560x1080@50.00Hz","1856x1392@59.99Hz","1792x1344@60.00Hz","2048x1152@60.00Hz","1920x1200@59.88Hz","1920x1080@60.00Hz","1920x1080@50.00Hz","1600x1200@60.00Hz","1680x1050@59.95Hz","1400x1050@59.98Hz","1280x1024@60.02Hz","1440x900@59.89Hz","1280x960@60.00Hz","1360x768@60.02Hz","1280x768@59.87Hz","1024x768@60.00Hz","800x600@60.32Hz","640x480@60.00Hz","640x480@59.94Hz"],
+    "colorManagementPreset": "srgb",
+    "sdrBrightness": 1,
+    "sdrSaturation": 1,
+    "sdrMinLuminance": 0.2,
+    "sdrMaxLuminance": 80,
+    "hardwareCursorsInUse": true
+}]
+LoadState=masked
+ActiveState=inactive
+Sep 09 04:59:08 omarchy-demo xdg-document-portal[335]: fuse: device /dev/fuse not found. Kernel module not loaded?
+]3008;end=f121340e-6424-4317-b926-ca07ab6ab69f;exit=success\]3008;start=dc87f885-96c1-4842-b5b9-eb39c345ccb7;machineid=06b4f72af8174ee99a0c512c680bc630;user=omarchy;hostname=omarchy-demo;bootid=69f1d5ef-ab41-4839-90bb-4b09f9349f71;pid=00000000000000000183;type=shell;cwd=/home/omarchy\[?2004h[omarchy@omarchy-demo ~]$ qemu-system-riscv64: terminating on signal 15 from pid 77320 (<unknown process>)

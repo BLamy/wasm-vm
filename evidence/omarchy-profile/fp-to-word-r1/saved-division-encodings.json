@@ -1,0 +1,28 @@
+{
+  "source": "target/omarchy-user-symbols/renderer-page.bin",
+  "sha256": "68e042889bbbe68b7fb56eb2bca604d2b79f384620da6d33a1e3b1bb6b680f9b",
+  "bytes": 4096,
+  "method": "Sequential 16/32-bit parcel scan of the saved renderer page, static encodings only; not a dynamic retirement or timing measurement.",
+  "encodings": [
+    {
+      "offset": 1762,
+      "word": "19d2fed3",
+      "rm": 7
+    },
+    {
+      "offset": 1870,
+      "word": "1892f4d3",
+      "rm": 7
+    },
+    {
+      "offset": 1952,
+      "word": "1932f9d3",
+      "rm": 7
+    },
+    {
+      "offset": 2028,
+      "word": "1902f853",
+      "rm": 7
+    }
+  ]
+}

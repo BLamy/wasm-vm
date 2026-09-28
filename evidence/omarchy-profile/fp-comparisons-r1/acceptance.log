@@ -1,0 +1,106 @@
+cargo fmt --all --check
+cargo test -p wasm-vm-jit-translate --test differential fp_ops_are_unsupported
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.57s
+     Running tests/differential.rs (target/debug/deps/differential-4beb98fc58a0b674)
+
+running 1 test
+test fp_ops_are_unsupported ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-jit-runtime --test fp_comparisons --test fp_comparisons_verifier -- --nocapture
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.04s
+     Running tests/fp_comparisons.rs (target/debug/deps/fp_comparisons-ba991415e9420539)
+
+running 3 tests
+FP_COMPARE runloop prefixes=1 FS-off-prefix-bytes=2 later-fault-flags=18
+test comparisons_native_runloop ... ok
+FP_COMPARE handoff/fault/same-source cases=80 expected_flags=18
+test comparisons_native_handoff_and_faults ... ok
+FP_COMPARE corpus cases=7648 register_flags_fnv=5d33ab4828b8874f
+test comparisons_native_corpus ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.14s
+
+     Running tests/fp_comparisons_verifier.rs (target/debug/deps/fp_comparisons_verifier-073b91c4b53e5e62)
+
+running 3 tests
+CRITIC_NATIVE_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+test verifier_native_literal_comparison_goldens ... ok
+CRITIC_NATIVE_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_native_control_handoff_and_faults ... ok
+CRITIC_NATIVE_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+test verifier_native_seeded_comparisons_and_fs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
+
+wasm-pack test --node crates/wasm --test jit_fp_comparisons --test jit_fp_comparisons_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.19s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/jit_fp_comparisons.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons-2cabeaf3666bd552.wasm)
+running 2 tests
+Invoking test: comparisons_browser_private
+test comparisons_browser_private ... ok
+Invoking test: comparisons_browser_inline
+test comparisons_browser_inline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 10.58s
+
+     Running tests/jit_fp_comparisons_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm)
+running 6 tests
+Invoking test: verifier_shared_comparisons
+CRITIC_SHARED_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+CRITIC_SHARED_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+CRITIC_SHARED_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_shared_comparisons ... ok
+Invoking test: verifier_shared_comparison_flags_survive_growth
+CRITIC_GROWTH inline=true fault=None pc=0000000040006014 retired=5 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=true fault=Store pc=0000000040006004 retired=1 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=true fault=Load pc=000000004000600c retired=3 writes=1 flags_before=19 flags_after=2
+test verifier_shared_comparison_flags_survive_growth ... ok
+Invoking test: verifier_same_module_comparison_successors
+CRITIC_CHAIN same=true fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=true fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=true fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=11
+CRITIC_CHAIN same=true fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=true fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=true fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=11
+test verifier_same_module_comparison_successors ... ok
+Invoking test: verifier_private_comparisons
+CRITIC_PRIVATE_GOLDENS Receipt { cases: 2016, disabled: 0, digest: 4642228140795119653 }
+CRITIC_PRIVATE_SEEDED Receipt { cases: 4608, disabled: 1152, digest: 5348346956590961504 }
+CRITIC_PRIVATE_CONTROL Receipt { cases: 10, disabled: 0, digest: 14645582373884930759 }
+test verifier_private_comparisons ... ok
+Invoking test: verifier_private_comparison_flags_survive_growth
+CRITIC_GROWTH inline=false fault=None pc=0000000040006014 retired=0 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=false fault=Store pc=0000000040006004 retired=0 writes=1 flags_before=19 flags_after=2
+CRITIC_GROWTH inline=false fault=Load pc=000000004000600c retired=0 writes=1 flags_before=19 flags_after=2
+test verifier_private_comparison_flags_survive_growth ... ok
+Invoking test: verifier_cross_module_comparison_successors
+CRITIC_CHAIN same=false fault=false budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=false fault=false budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=false fault=false budget=6 retired=6 entries=2 links=1 pc=0000000080000018 flags=11
+CRITIC_CHAIN same=false fault=true budget=2 retired=0 entries=0 links=0 pc=0000000080000000 flags=01
+CRITIC_CHAIN same=false fault=true budget=3 retired=3 entries=1 links=0 pc=000000008000000c flags=11
+CRITIC_CHAIN same=false fault=true budget=6 retired=4 entries=2 links=1 pc=0000000080000010 flags=11
+test verifier_cross_module_comparison_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.93s
+
+node tools/verify/omarchy-fp-comparisons-browser.mjs /Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-comparisons-r1/acceptance-browser
+{"passed":true,"wasmSha256":"4e1dae976924fb1857a70fc1a8ec357e18475e15f4a8f74ef2980838d0a089dd","digest":"02de371a30fadf1337684a3e37cdeef855f7783c15e77632fe6e6b05b3cc565e","jitStats":{"hasExecutor":true,"compiledBlocks":4,"executedBlocks":31,"retiredViaJit":3621,"directChainEntries":1115,"directChainLinks":1084,"dynamicLinkAttempts":0,"dynamicLinkHits":0,"dynamicLinkRefusals":0,"dynamicLinkRetargets":0,"dynamicLinkLiveEntries":1,"dynamicLinkInstalls":1,"entryCost":{"timingEnabled":false,"timerReads":0,"hostEntries":31,"stateCopyCalls":62,"stateCopyBytes":5424,"stateCopyNs":0,"engineEntryNs":0,"indirectTableDispatches":0,"authorityChecks":1,"memorySplitExits":0,"deviceBoundaries":0,"deviceBoundaryNs":0},"jitRegionChaining":true,"jitDynamicChaining":true,"guestRetired":4000,"jitEngineCalls":31,"jitLogicalBlocksPerEngineCall":35.96774193548387,"jitRetiredShare":0.90525,"chainLinksMade":0,"chainLinksCut":0,"chainDispatchEntries":28,"chainMaxDepth":1,"chainLinksFollowed":4,"jitResidencyPolicy":"repack-off","jitResidencyCap":24,"jitSubmittedMembers":4,"jitCompilePauseNs":0,"jitCompilePauseMaxNs":0,"jitCompilePauseSamples":2,"jitCacheInstalls":4,"jitCacheRetranslations":0,"jitCacheEvictions":0,"jitCacheBatches":2,"jitCacheCodeBytes":139972,"compileQueue":{"admitted":4,"droppedBackpressure":0,"cancelledStale":0,"popped":4,"queueHighWater":2,"queueDepth":0,"capacity":256},"discovery":{"nominated":4,"deduped":63,"droppedStale":0,"droppedOverflow":0,"countsDropped":0,"excluded":6,"queueDepth":0,"queueHighWater":2,"candidates":0,"generation":3},"decodedCacheEntries":4096,"decodedBlocksDiscarded":0,"decodedCacheFlushes":2,"discoveryGeneration":3,"blockEntryHits":63,"blockBuilds":10,"admissionProbe":false,"coldCounterRecycling":{"enabled":false,"epochs":"0","discardedCounters":"0","threshold":1,"capacity":65536}}}

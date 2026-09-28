@@ -1,0 +1,15 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: identity substitution accepted at source guard
+    at file:///Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-kernel-pair-verifier/source-provenance-attack.mjs:44:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

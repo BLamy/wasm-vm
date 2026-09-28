@@ -89,6 +89,16 @@ pub trait NetBackend {
     /// Readiness callback: does [`Self::rx`] have a frame ready right now? Lets the run loop
     /// service the receiveq for asynchronously-arriving frames without popping a descriptor.
     fn rx_ready(&self) -> bool;
+    /// Cheap quiescence indicator for the run loop's device-fabric fast path. `true` promises
+    /// that [`Self::poll`] would do nothing and [`Self::rx_ready`] is `false`, and that both stay
+    /// so until the device hands this backend a frame ([`Self::tx`], only ever reached from a
+    /// guest queue kick — itself an MMIO access the run loop observes) or the host calls into the
+    /// backend between run calls. The run loop then skips the whole device pass for boundaries
+    /// that would repeat the same no-op poll. The default `false` keeps a backend polled at every
+    /// boundary, which is always correct (event-driven backends must keep it).
+    fn idle(&self) -> bool {
+        false
+    }
 }
 
 /// Host-side control handle for a virtio-net backend that can be replaced at a run boundary.
@@ -149,6 +159,10 @@ impl NetBackend for SwitchableNetBackend {
     fn rx_ready(&self) -> bool {
         self.inner.borrow().rx_ready()
     }
+
+    fn idle(&self) -> bool {
+        self.inner.borrow().idle()
+    }
 }
 
 /// The v1 loopback backend: echoes every transmitted frame back to the guest with src/dst MAC
@@ -194,6 +208,11 @@ impl NetBackend for LoopbackBackend {
     }
     fn rx_ready(&self) -> bool {
         !self.staged.is_empty()
+    }
+    /// Loopback is synchronous (no-op `poll`): with nothing staged there is nothing to deliver
+    /// until the guest transmits again.
+    fn idle(&self) -> bool {
+        self.staged.is_empty()
     }
 }
 
@@ -283,6 +302,9 @@ impl<B: NetBackend> NetBackend for PcapBackend<B> {
     }
     fn rx_ready(&self) -> bool {
         self.inner.rx_ready()
+    }
+    fn idle(&self) -> bool {
+        self.inner.idle()
     }
 }
 
@@ -498,13 +520,17 @@ fn service_rx(
 /// views, drain tx then rx, and raise the used-ring interrupt if buffers were used and the
 /// driver did not suppress it. Ring [`Violation`]s degrade the slot via `protocol_violation`
 /// and drop the ring views (blk pattern).
+///
+/// Returns `true` iff this boundary was IDLE: no kick was pending and the backend reported
+/// [`NetBackend::idle`] (so its skipped `poll` was a no-op and nothing was ready). Every other
+/// path — including any backend that does not report idleness — returns `false`.
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     rx_vq: &mut Option<Virtqueue>,
     tx_vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<NetState>>,
     bus: &mut SystemBus,
-) {
+) -> bool {
     {
         let mut st = state.borrow_mut();
         if st.reset_pending {
@@ -512,13 +538,18 @@ pub fn service(
             *rx_vq = None;
             *tx_vq = None;
         }
+        // An idle backend's `poll` is a no-op and it has nothing ready: the early return below
+        // would be taken anyway.
+        if !st.kicked && st.backend.idle() {
+            return true;
+        }
         // Event-driven backends (for example browser WebSockets) receive work independently of a
         // guest kick. Advance them before testing readiness so their newly-produced frame can wake
         // the receiveq on this same instruction boundary.
         st.backend.poll();
         // Proceed on a kick OR when the backend has an async rx frame to deliver.
         if !st.kicked && !st.backend.rx_ready() {
-            return;
+            return false;
         }
         st.kicked = false;
     }
@@ -532,14 +563,14 @@ pub fn service(
     if !rx_qs.ready || !tx_qs.ready {
         *rx_vq = None;
         *tx_vq = None;
-        return;
+        return false;
     }
     if rx_vq.is_none() {
         match Virtqueue::new(&rx_qs, 256) {
             Ok(q) => *rx_vq = Some(q),
             Err(_) => {
                 slot.borrow_mut().protocol_violation();
-                return;
+                return false;
             }
         }
     }
@@ -548,7 +579,7 @@ pub fn service(
             Ok(q) => *tx_vq = Some(q),
             Err(_) => {
                 slot.borrow_mut().protocol_violation();
-                return;
+                return false;
             }
         }
     }
@@ -562,7 +593,7 @@ pub fn service(
             slot.borrow_mut().protocol_violation();
             *rx_vq = None;
             *tx_vq = None;
-            return;
+            return false;
         }
     }
     match service_rx(rx_vq.as_mut().expect("just built"), state, bus) {
@@ -571,7 +602,7 @@ pub fn service(
             slot.borrow_mut().protocol_violation();
             *rx_vq = None;
             *tx_vq = None;
-            return;
+            return false;
         }
     }
 
@@ -582,6 +613,51 @@ pub fn service(
         if rx_irq || tx_irq {
             slot.borrow_mut().raise_used_irq();
         }
+    }
+    false
+}
+
+#[cfg(test)]
+mod idle_tests {
+    use super::{LoopbackBackend, NetBackend, NetBackendHandle, PcapBackend};
+
+    /// `idle` is exactly "no-op poll and nothing ready": a loopback is idle only while nothing is
+    /// staged, and the switchable/pcap adapters report their inner backend's state, including
+    /// across a host-side replacement.
+    #[test]
+    fn idle_tracks_staged_frames_through_adapters() {
+        let (mut switchable, handle) =
+            NetBackendHandle::new(Box::new(PcapBackend::new(LoopbackBackend::new())));
+        assert!(switchable.idle() && !switchable.rx_ready());
+        switchable.tx(&[0u8; 14]);
+        switchable.tx(&[1u8; 14]);
+        assert!(!switchable.idle() && switchable.rx_ready());
+        assert!(switchable.rx().is_some());
+        assert!(!switchable.idle(), "one frame still staged");
+        assert!(switchable.rx().is_some());
+        assert!(switchable.idle() && !switchable.rx_ready());
+        let mut staged = LoopbackBackend::new();
+        staged.tx(&[2u8; 14]);
+        handle.replace(Box::new(staged));
+        assert!(
+            !switchable.idle(),
+            "the replacement's staged frame is visible"
+        );
+        struct Polled;
+        impl NetBackend for Polled {
+            fn tx(&mut self, _: &[u8]) {}
+            fn rx(&mut self) -> Option<Vec<u8>> {
+                None
+            }
+            fn rx_ready(&self) -> bool {
+                false
+            }
+        }
+        handle.replace(Box::new(Polled));
+        assert!(
+            !switchable.idle(),
+            "a backend that does not opt in is always polled"
+        );
     }
 }
 

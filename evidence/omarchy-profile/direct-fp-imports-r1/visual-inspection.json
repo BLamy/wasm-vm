@@ -1,0 +1,19 @@
+{
+  "builtImagesInspected": true,
+  "coldImagesInspected": true,
+  "physicalImagesInspected": true,
+  "typedCommandAndReturnedPrompt": false,
+  "builtNotes": "Personally inspected real suite127/0, live fused-capability pip, and AO task in-progress on built page. No desktop claim.",
+  "images": {
+    "browser/suite.png": "9c0dc4ad49c1b1a91a3643aea63503e6fdd45f9f2f872ad6c97df9ae3544071a",
+    "browser/capability-inspection.png": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+    "browser/built-page.png": "db64ac70c4dea61a68483cf49558973ac766be68270659612faaa503cb7d1721",
+    "cold/browser/suite.png": "9a84e0f4bf5ac775d9c5579bec39f0fcf43cd093ac0a5c39bff0515cbd690baf",
+    "cold/browser/capability-inspection.png": "38fd80461f65b748e2c3c351dbf28e9bfd2731a539a95487ec0db6f28d3da66f",
+    "cold/browser/built-page.png": "db64ac70c4dea61a68483cf49558973ac766be68270659612faaa503cb7d1721",
+    "physical-input/desktop/desktop.png": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+    "physical-input/desktop/failure.png": "3977a9bd9fd46d708229c964e4b55ce3398c9449de71a8ae565455839cfeceeb"
+  },
+  "coldNotes": "Personally inspected fresh cold-build suite127/0, live capability, and AO in-progress task.",
+  "physicalNotes": "Personally inspected baseline and fresh failure images. Both show the empty Foot prompt; no typed command or returned result. Images differ and frames advanced2\u21923; this is not responsive input."
+}

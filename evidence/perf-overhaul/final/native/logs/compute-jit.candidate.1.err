@@ -1,0 +1,12 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=1151596 bytes @ 0x81a00000..0x81b1926c, dtb=2962 bytes @ 0x8fffb468, 256 MiB RAM
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=11002  blocks_executed=70611133  retired_via_jit=479211422
+discovery: nominated=16533 deduped=2650955 excluded=114 dropped_stale=0 dropped_overflow=0 queue_hwm=1096
+chaining: links_made=9067 links_cut=309 dispatch_entries=4247775 max_chain_depth=32 links_followed=70412198
+cache: modules=1850 est_bytes=124198852 installs=11457 retranslations=0 evictions=0 flushes=0 generation=2
+jit_pause: samples=3513 sum_ns=0 max_ns=0 over_target=0
+coverage: retired_via_jit=479211422 retired_total=505071664 jit_pct=94.88%  translations: full=11342 partial=115 rejected=0 partial_exits=180686
+first_untranslated_op: csr:sstatus=98 csr:time=9 sfence.vma=3 csr:sie=2 csr:sscratch=2 sret=1
+partial_resume: rebuilds=0 failures=0
+JIT_STATS_JSON {"blocks_compiled":11002,"blocks_executed":70611133,"retired_via_jit":479211422,"retired_total":505071664,"blocks_full":11342,"blocks_partial":115,"blocks_rejected":0,"partial_exits":180686,"links_made":9067,"dispatch_entries":4247775,"installs":11457,"evictions":0,"jit_pause_count":3513,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: guest exited 0

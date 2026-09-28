@@ -1,0 +1,20 @@
+
+running 1 test
+test block_cache_page_index_invalidates_only_indexed_live_slots ... FAILED
+
+failures:
+
+---- block_cache_page_index_invalidates_only_indexed_live_slots stdout ----
+
+thread 'block_cache_page_index_invalidates_only_indexed_live_slots' (28549734) panicked at evidence/omarchy-profile/code-page-index-verifier-r3/worker-test-sabotage.rs:323:9:
+assertion `left == right` failed
+  left: (1, 1)
+ right: (1, 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    block_cache_page_index_invalidates_only_indexed_live_slots
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

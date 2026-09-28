@@ -1,0 +1,14 @@
+{
+  "mode": "publish",
+  "result": "failed",
+  "error": "public GET timed out for chunked-omarchy/chunks/ac0e63acb7b768986aabebe6fdf841bf6707a752280146d0c0c465a00a294e51.bin",
+  "manifestPath": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+  "manifestSha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+  "imageSha256": "2b4143df63085141f7cf017ed2d11c9808bd38dd30925bc86c4a15b4a64cf83c",
+  "imageLength": 4294967296,
+  "provenance": {
+    "scriptPath": "/Users/blamy/Documents/Codex/wasm-vm/tools/publish-omarchy-chunks.mjs",
+    "scriptSha256": "7d6554c37c5b8b0b49673676c82ce407fa2ef787537712190e873ef46b1c644a",
+    "frozenHead": "2eca1b1d1be54895cf1d70a62580b2f247bd695a"
+  }
+}

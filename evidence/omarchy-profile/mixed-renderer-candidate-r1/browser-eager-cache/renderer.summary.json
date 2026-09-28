@@ -1,0 +1,415 @@
+{
+  "schema": "wasm-vm.omarchy-input-diagnostic.cpu-profile-summary.v1",
+  "filename": "renderer.cpuprofile",
+  "durationMs": 10000,
+  "target": {
+    "targetId": "F50405435E63B1E12E224757347F57BB",
+    "type": "worker",
+    "url": "http://127.0.0.1:61645/linux-worker.js",
+    "title": "wasm-vm-linux"
+  },
+  "nodeCount": 265,
+  "sampleCount": 6750,
+  "self": [
+    {
+      "functionName": "wasm-function[183]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 167341,
+      "selfSamples": 1735,
+      "selfTimeUs": 2572313
+    },
+    {
+      "functionName": "wasm-function[175]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 53093,
+      "selfSamples": 999,
+      "selfTimeUs": 1481364
+    },
+    {
+      "functionName": "wasm-function[235]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 496470,
+      "selfSamples": 648,
+      "selfTimeUs": 961877
+    },
+    {
+      "functionName": "wasm-function[1394]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1255451,
+      "selfSamples": 328,
+      "selfTimeUs": 502452
+    },
+    {
+      "functionName": "wasm-function[286]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 601890,
+      "selfSamples": 295,
+      "selfTimeUs": 434137
+    },
+    {
+      "functionName": "wasm-function[503]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 867559,
+      "selfSamples": 200,
+      "selfTimeUs": 299090
+    },
+    {
+      "functionName": "wasm-function[761]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1059048,
+      "selfSamples": 165,
+      "selfTimeUs": 246266
+    },
+    {
+      "functionName": "wasm-function[503]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 867559,
+      "selfSamples": 126,
+      "selfTimeUs": 185579
+    },
+    {
+      "functionName": "wasm-function[503]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 867559,
+      "selfSamples": 118,
+      "selfTimeUs": 176791
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 97,
+      "selfTimeUs": 142945
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 87,
+      "selfTimeUs": 129161
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 80,
+      "selfTimeUs": 118263
+    },
+    {
+      "functionName": "wasm-function[286]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 601890,
+      "selfSamples": 73,
+      "selfTimeUs": 107390
+    },
+    {
+      "functionName": "wasm-function[193]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 289475,
+      "selfSamples": 67,
+      "selfTimeUs": 100205
+    },
+    {
+      "functionName": "wasm-function[469]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 842724,
+      "selfSamples": 64,
+      "selfTimeUs": 94685
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 63,
+      "selfTimeUs": 93049
+    },
+    {
+      "functionName": "wasm-function[366]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 735776,
+      "selfSamples": 56,
+      "selfTimeUs": 83378
+    },
+    {
+      "functionName": "wasm-function[500]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 865592,
+      "selfSamples": 56,
+      "selfTimeUs": 82973
+    },
+    {
+      "functionName": "wasm-function[215]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 417796,
+      "selfSamples": 51,
+      "selfTimeUs": 76132
+    },
+    {
+      "functionName": "wasm-function[394]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 766098,
+      "selfSamples": 47,
+      "selfTimeUs": 70277
+    },
+    {
+      "functionName": "wasm-function[175]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 53093,
+      "selfSamples": 45,
+      "selfTimeUs": 66264
+    },
+    {
+      "functionName": "wasm-function[232]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 484623,
+      "selfSamples": 40,
+      "selfTimeUs": 60165
+    },
+    {
+      "functionName": "wasm-function[186]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 200206,
+      "selfSamples": 40,
+      "selfTimeUs": 58691
+    },
+    {
+      "functionName": "wasm-function[199]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 320663,
+      "selfSamples": 38,
+      "selfTimeUs": 56022
+    },
+    {
+      "functionName": "wasm-function[683]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1007654,
+      "selfSamples": 36,
+      "selfTimeUs": 53363
+    },
+    {
+      "functionName": "wasm-function[175]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 53093,
+      "selfSamples": 36,
+      "selfTimeUs": 53215
+    },
+    {
+      "functionName": "wasm-function[286]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 601890,
+      "selfSamples": 35,
+      "selfTimeUs": 51697
+    },
+    {
+      "functionName": "wasm-function[184]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 176479,
+      "selfSamples": 34,
+      "selfTimeUs": 50541
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 34,
+      "selfTimeUs": 50210
+    },
+    {
+      "functionName": "wasm-function[190]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 245301,
+      "selfSamples": 33,
+      "selfTimeUs": 49104
+    },
+    {
+      "functionName": "wasm-function[435]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 802444,
+      "selfSamples": 31,
+      "selfTimeUs": 46756
+    },
+    {
+      "functionName": "wasm-function[503]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 867559,
+      "selfSamples": 32,
+      "selfTimeUs": 46474
+    },
+    {
+      "functionName": "wasm-function[683]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1007654,
+      "selfSamples": 31,
+      "selfTimeUs": 46200
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 30,
+      "selfTimeUs": 44615
+    },
+    {
+      "functionName": "wasm-function[760]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1058707,
+      "selfSamples": 29,
+      "selfTimeUs": 42653
+    },
+    {
+      "functionName": "wasm-function[683]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1007654,
+      "selfSamples": 29,
+      "selfTimeUs": 42435
+    },
+    {
+      "functionName": "wasm-function[377]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 747258,
+      "selfSamples": 28,
+      "selfTimeUs": 41284
+    },
+    {
+      "functionName": "wasm-function[1394]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1255451,
+      "selfSamples": 28,
+      "selfTimeUs": 40990
+    },
+    {
+      "functionName": "wasm-function[484]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 852952,
+      "selfSamples": 27,
+      "selfTimeUs": 40132
+    },
+    {
+      "functionName": "wasm-function[760]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1058707,
+      "selfSamples": 26,
+      "selfTimeUs": 38487
+    },
+    {
+      "functionName": "wasm-function[269]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 574009,
+      "selfSamples": 22,
+      "selfTimeUs": 32511
+    },
+    {
+      "functionName": "wasm-function[760]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1058707,
+      "selfSamples": 21,
+      "selfTimeUs": 31537
+    },
+    {
+      "functionName": "wasm-function[655]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 994575,
+      "selfSamples": 22,
+      "selfTimeUs": 31517
+    },
+    {
+      "functionName": "wasm-function[760]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1058707,
+      "selfSamples": 20,
+      "selfTimeUs": 30097
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 20,
+      "selfTimeUs": 29810
+    },
+    {
+      "functionName": "wasm-function[563]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 911470,
+      "selfSamples": 19,
+      "selfTimeUs": 28691
+    },
+    {
+      "functionName": "wasm-function[298]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 631388,
+      "selfSamples": 19,
+      "selfTimeUs": 28237
+    },
+    {
+      "functionName": "wasm-function[247]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 529353,
+      "selfSamples": 18,
+      "selfTimeUs": 26790
+    },
+    {
+      "functionName": "wasm-function[683]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 1007654,
+      "selfSamples": 18,
+      "selfTimeUs": 26481
+    },
+    {
+      "functionName": "wasm-function[291]",
+      "url": "http://127.0.0.1:61645/pkg/wasm_vm_wasm_bg.wasm",
+      "lineNumber": 0,
+      "columnNumber": 618027,
+      "selfSamples": 16,
+      "selfTimeUs": 24032
+    }
+  ]
+}

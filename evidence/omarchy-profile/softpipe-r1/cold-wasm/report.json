@@ -1,0 +1,241 @@
+{
+  "schema": "wasm-vm.omarchy-browser-session.v1",
+  "task": "E5.5-T03a",
+  "taskVerified": false,
+  "startedAt": "2026-09-10T13:30:55.321Z",
+  "options": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4",
+    "image-sha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/chunked",
+    "manifest-sha256": "a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb",
+    "out": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/cold-wasm",
+    "timeout-ms": 5400000,
+    "ram-mib": 1024,
+    "icount-divider": 64,
+    "bootargs": "root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0",
+    "control-stdin": true,
+    "keyboard": "none",
+    "poll-ms": 30000,
+    "probe-timeout-ms": 120000,
+    "port": 0,
+    "shell-namespace": ""
+  },
+  "result": "failed",
+  "publication": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/omarchy-profile-softpipe.ext4",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-softpipe-r1/chunked",
+    "integrity": {
+      "chunk_count": 16384,
+      "chunk_size": 262144,
+      "ext4_block_size": 4096,
+      "ext4_logical_bytes": 4294967296,
+      "image_len": 4294967296,
+      "image_sha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5",
+      "manifest_sha256": "a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb",
+      "scope": "image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot",
+      "status": "integrity-verified"
+    },
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image"
+    },
+    "bootManifest": {
+      "artifacts": {
+        "kernel": {
+          "url": "/releases/kernel/6.6.63/Image",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        }
+      }
+    },
+    "harnessSha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "152.0.7977.84",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "freshContext": true,
+    "serviceWorkers": "block",
+    "httpCacheDisabled": true
+  },
+  "error": "Error: diagnostic stopped by operator; not an acceptance pass\n    at file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:597:30\n    at Interface.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:609:11)\n    at Interface.emit (node:events:514:28)\n    at [_onLine] [as _onLine] (node:internal/readline/interface:474:12)\n    at [_normalWrite] [as _normalWrite] (node:internal/readline/interface:669:18)\n    at ReadStream.ondata (node:internal/readline/interface:268:23)\n    at ReadStream.emit (node:events:514:28)\n    at addChunk (node:internal/streams/readable:567:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:518:3)\n    at Readable.push (node:internal/streams/readable:398:5)",
+  "browserErrors": [],
+  "capture": {
+    "bootStarted": true,
+    "bootState": "booting",
+    "frames": 408,
+    "serialBytes": 116181,
+    "keys": 0,
+    "errors": [],
+    "imageSha256": "c8b59adc0f26e10a3de6f7dbeea8f0e4f1445087e47fbc6f6cc449869e43e6d5",
+    "manifestSha256": "a1fcff5b192b316a10d48c41397974ab4f561ea57caaf95e4f406b3d54b867eb",
+    "presentation": {
+      "backend": "canvas2d",
+      "defaultBackend": "canvas2d",
+      "width": 1280,
+      "height": 800,
+      "fixedViewport": false,
+      "sizeMismatch": false,
+      "framesReceived": 408,
+      "successfulPresents": 408,
+      "drawnPresents": 408,
+      "drawnBytes": 45081408,
+      "replayedFrames": 0,
+      "droppedFrames": 0,
+      "contextLosses": 0,
+      "contextRestores": 0,
+      "fallbacks": 0,
+      "listenerCount": 2,
+      "scheduler": null,
+      "gpu": {
+        "framesReceived": 408,
+        "enqueued": 408,
+        "coalesced": 0,
+        "presented": 408,
+        "successfulPresents": 408,
+        "skipped": 0,
+        "droppedFrames": 0,
+        "overruns": 0,
+        "pending": 0,
+        "maxPending": 0,
+        "uploadedBytes": 45081408,
+        "drawnPresents": 408,
+        "drawnBytes": 45081408,
+        "width": 1280,
+        "height": 800
+      },
+      "latest": {
+        "rect": {
+          "x": 0,
+          "y": 14,
+          "width": 8,
+          "height": 2
+        },
+        "resourceWidth": 1280,
+        "resourceHeight": 800
+      },
+      "errors": []
+    },
+    "paused": true,
+    "rgbaSha256": "70413c3bb0ac73e8985c08e7496f461772864c69eb920c4d0217a7daaeedf56a",
+    "sampledColors": 2,
+    "stateDigest": "444fface33168192651b46af89999d22240257b747191bcfe8163aa7da495d37",
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 82519,
+      "totalSliceMs": 2702488.9800025225,
+      "averageSliceMs": 32.749899780687144,
+      "maxSliceMs": 763.0950000286102,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 567
+        },
+        {
+          "leMs": 8,
+          "count": 389
+        },
+        {
+          "leMs": 16,
+          "count": 3971
+        },
+        {
+          "leMs": 32,
+          "count": 36431
+        },
+        {
+          "leMs": 64,
+          "count": 40078
+        },
+        {
+          "leMs": 128,
+          "count": 742
+        },
+        {
+          "leMs": 256,
+          "count": 211
+        },
+        {
+          "leMs": 512,
+          "count": 115
+        },
+        {
+          "leMs": 1000,
+          "count": 15
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 768.5900000333786,
+      "requestedInstructions": 41259500000,
+      "retiredInstructions": 41258061657,
+      "fetchWaits": 1229,
+      "fetchRequestedChunks": 1349,
+      "fetchWaitTotalMs": 6257.829998612404,
+      "fetchWaitMaxMs": 95.37999999523163,
+      "outputCalls": 806,
+      "outputBytes": 116181,
+      "inputCalls": 64,
+      "inputBytes": 16225,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 82520,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "fetchStats": {
+      "fetches": 1470,
+      "bytes": 385351680,
+      "error": null,
+      "cache": {
+        "hits": 171395523,
+        "misses": 244510798,
+        "evictions": 446,
+        "residentBytes": 268435456,
+        "budgetBytes": 268435456
+      },
+      "prefetch": {
+        "issued": 121,
+        "used": 71,
+        "profileEntries": 0,
+        "accuracyPct": 58
+      }
+    },
+    "guestClockState": {
+      "mode": "icount",
+      "mtime": "1486531422",
+      "timebaseHz": 10000000,
+      "clockDiv": 64
+    },
+    "icountDividerSelection": {
+      "requested": 64,
+      "before": {
+        "mode": "icount",
+        "clockDiv": 10,
+        "timebaseHz": 10000000,
+        "mtime": "0"
+      },
+      "after": {
+        "mode": "icount",
+        "clockDiv": 64,
+        "timebaseHz": 10000000,
+        "mtime": "0"
+      }
+    }
+  },
+  "screenshot": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/cold-wasm/guest.png",
+    "sha256": "0d462e9383c68586effb38220c9b1bcd32e4d0cb0e1c3a6301d1f89dc660a672"
+  },
+  "sourceUnchanged": true,
+  "serial": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/softpipe-r1/cold-wasm/serial.log",
+    "bytes": 116181,
+    "sha256": "c04e692a0f41a7371a674adac01607697665f91422d2b42c717b1e8bb484233d"
+  },
+  "elapsedMs": 2727258
+}

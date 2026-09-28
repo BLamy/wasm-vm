@@ -1,0 +1,37 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.40s
+     Running tests/fp_division_flags.rs (target/debug/deps/fp_division_flags-8cd6f826f2334e8c)
+
+running 1 test
+DIVISION_FLAG_MISMATCH a=00ffffff b=40000000 rm=0 actual=00800000/01 expected=00800000/03
+DIVISION_FLAG_MISMATCH a=00ffffff b=40000000 rm=3 actual=00800000/01 expected=00800000/03
+DIVISION_FLAG_MISMATCH a=00ffffff b=40000000 rm=4 actual=00800000/01 expected=00800000/03
+DIVISION_FLAG_MISMATCH a=80ffffff b=40000000 rm=0 actual=80800000/01 expected=80800000/03
+DIVISION_FLAG_MISMATCH a=80ffffff b=40000000 rm=2 actual=80800000/01 expected=80800000/03
+DIVISION_FLAG_MISMATCH a=80ffffff b=40000000 rm=4 actual=80800000/01 expected=80800000/03
+DIVISION_FLAG_MISMATCH a=7f7fffff b=3f000000 rm=1 actual=7f7fffff/01 expected=7f7fffff/05
+DIVISION_FLAG_MISMATCH a=7f7fffff b=3f000000 rm=2 actual=7f7fffff/01 expected=7f7fffff/05
+DIVISION_FLAG_MISMATCH a=ff7fffff b=3f000000 rm=1 actual=ff7fffff/01 expected=ff7fffff/05
+DIVISION_FLAG_MISMATCH a=ff7fffff b=3f000000 rm=3 actual=ff7fffff/01 expected=ff7fffff/05
+DIVISION_FLAG_MISMATCH a=7f7fffff b=3f7fffff rm=1 actual=7f7fffff/01 expected=7f7fffff/05
+DIVISION_FLAG_MISMATCH a=7f7fffff b=3f7fffff rm=2 actual=7f7fffff/01 expected=7f7fffff/05
+DIVISION_FLAG_MISMATCH a=ff7fffff b=3f7fffff rm=1 actual=ff7fffff/01 expected=ff7fffff/05
+DIVISION_FLAG_MISMATCH a=ff7fffff b=3f7fffff rm=3 actual=ff7fffff/01 expected=ff7fffff/05
+DIVISION_FLAG_MISMATCH a=7f7fffff b=00000001 rm=1 actual=7f7fffff/01 expected=7f7fffff/05
+DIVISION_FLAG_MISMATCH a=7f7fffff b=00000001 rm=2 actual=7f7fffff/01 expected=7f7fffff/05
+
+thread 'division_literal_boundary_flags' (26266745) panicked at crates/core/tests/fp_division_flags.rs:74:5:
+assertion `left == right` failed: independent literal division boundary flags
+  left: 16
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test division_literal_boundary_flags ... FAILED
+
+failures:
+
+failures:
+    division_literal_boundary_flags
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test fp_division_flags`

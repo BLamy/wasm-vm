@@ -1,0 +1,42 @@
+{
+  "reportSha256": "bbf79415de6f4d93e38e74d510cd209ca934cbe6167d84edcfacd317abcf6dc4",
+  "startupMs": 38002,
+  "typingMs": 2689,
+  "enteredAt": "2026-09-16T07:35:39.736Z",
+  "deadlineAt": "2026-09-16T07:37:39.736Z",
+  "failedAt": "2026-09-16T07:37:39.739Z",
+  "frameCounts": [
+    2,
+    3
+  ],
+  "guestRetired": 3382363807,
+  "jitRetired": 2275188610,
+  "jitShare": 0.6726622976781398,
+  "recyclingEpochs": [
+    "3",
+    "6"
+  ],
+  "countsDropped": [
+    0,
+    0
+  ],
+  "singleWorker": 1,
+  "noMutatingInputAfterFenceAcknowledgment": true,
+  "profileStartedAt": "2026-09-16T07:37:39.809Z",
+  "profileStoppedAt": "2026-09-16T07:38:09.837Z",
+  "profileFinishedAt": "2026-09-16T07:38:09.847Z",
+  "cleanup": {
+    "startedAt": "2026-09-16T07:38:09.847Z",
+    "timeoutMs": 30000,
+    "closed": true,
+    "clientClosed": true
+  },
+  "childExit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "parentFinishedAt": "2026-09-16T07:38:10.008Z",
+  "scope": "Measured interval counters and separate post-verdict cost sample do not establish responsiveness, causation, or a performance benefit."
+}

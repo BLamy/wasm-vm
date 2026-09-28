@@ -1,0 +1,167 @@
+{
+  "task": "E5.5-T03o",
+  "submissionHead": "15cdf96484680ac2c19fd65baa5f648f6558303f",
+  "actualCaptureHead": "8edd458702ce3bbebfe60a1e36fd7973e70d7778",
+  "pauseDeadlineFixHead": "df7c982e",
+  "scope": "RAM-only failed-input diagnostic; desktop acceptance remains failed",
+  "commands": [
+    {
+      "command": "node --test tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-desktop-services.test.mjs tools/verify/omarchy-failure-checkpoint.test.mjs tools/verify/omarchy-failure-transport.test.mjs tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-owned-trial.test.mjs tools/verify/omarchy-user-input.test.mjs",
+      "log": "tests-r3.log",
+      "head": "8edd458702ce3bbebfe60a1e36fd7973e70d7778",
+      "exitCode": 0,
+      "passed": 47
+    },
+    {
+      "command": "node tools/verify/omarchy-input-wait.mjs evidence/omarchy-profile/input-wait-r3",
+      "head": "8edd458702ce3bbebfe60a1e36fd7973e70d7778",
+      "exitCode": 0,
+      "nestedDesktopExitCode": 1
+    },
+    {
+      "command": "node tools/verify/omarchy-input-wait-inspect.mjs evidence/omarchy-profile/input-wait-r3 evidence/omarchy-profile/input-wait-inspected-r3",
+      "head": "df7c982e",
+      "exitCode": 0
+    },
+    {
+      "command": "node --test tools/verify/omarchy-failure-checkpoint.test.mjs tools/verify/omarchy-owned-trial.test.mjs tools/verify/omarchy-paused-ram.test.mjs",
+      "head": "15cdf96484680ac2c19fd65baa5f648f6558303f",
+      "log": "incremental-final.log",
+      "exitCode": 0,
+      "passed": 15
+    },
+    {
+      "command": "node --test tools/verify/omarchy-failure-transport.test.mjs",
+      "sourceIdenticalToHead": "15cdf96484680ac2c19fd65baa5f648f6558303f",
+      "log": "cleanup-real-chrome.log",
+      "exitCode": 0,
+      "passed": 1,
+      "testDurationMs": 35107.688084,
+      "processDurationMs": 46253.265291,
+      "clientAndServerCloseLessThanMs": 5000
+    }
+  ],
+  "limitations": [
+    "The actual r3 recorder idled136.207s after writing its report. The final client-close fix has incremental synthetic real-Chrome evidence; the unchanged actual guest RAM and input evidence carry forward.",
+    "The RAM gzip is local replay evidence, excluded from Git; committed receipts pin raw and compressed digests.",
+    "No current CPU/device or reusable disk/snapshot pair is claimed. Same wait address at two endpoints does not prove continuous waiting."
+  ],
+  "files": {
+    "evidence/omarchy-profile/input-wait-r1/desktop/desktop.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r1/desktop/failure.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r1/desktop/latest.png": {
+      "bytes": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    "evidence/omarchy-profile/input-wait-r1/desktop/report.json": {
+      "bytes": 651684,
+      "sha256": "e3480205f49e538bbc3381c5cd6f75ef752bec32b21a1a614929f6ef9cb6380d"
+    },
+    "evidence/omarchy-profile/input-wait-r1/desktop/serial.log": {
+      "bytes": 2574,
+      "sha256": "f4e033234caf73c8cc1852750c13647a33f58832c90f8f74a8fd9c737a7b9c4c"
+    },
+    "evidence/omarchy-profile/input-wait-r1/desktop.log": {
+      "bytes": 4760,
+      "sha256": "a61e87a59a4aa2dbed4c59e4116cb48fd340eb9dcabbbb8477e98a302973a63d"
+    },
+    "evidence/omarchy-profile/input-wait-r1/run.json": {
+      "bytes": 13455,
+      "sha256": "bf5a97df3b18b2a19c3d90ef21ffe89881588030767a677fa4eb426a43af20a3"
+    },
+    "evidence/omarchy-profile/input-wait-r2/desktop/desktop.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r2/desktop/failure.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r2/desktop/latest.png": {
+      "bytes": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    "evidence/omarchy-profile/input-wait-r2/desktop/report.json": {
+      "bytes": 118262,
+      "sha256": "b14ee3b80cdda996b92d45acec8f49f57898ab27bd792154bcf49e6faf22b66d"
+    },
+    "evidence/omarchy-profile/input-wait-r2/desktop.log": {
+      "bytes": 4760,
+      "sha256": "278923f5b3954e0000d97df807a293af2b44d48d003c0301a7b049f7aac8a987"
+    },
+    "evidence/omarchy-profile/input-wait-r2/run.json": {
+      "bytes": 741,
+      "sha256": "ceb015d2870916d45c0861862fb87a10483788629a370f573e135ac2e90fe4c9"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/checkpoint-progress.json": {
+      "bytes": 2434,
+      "sha256": "f982b40400a205565d98456f53a1949a88445aefa88787d547c200370d56c1ca"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/desktop.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/failure.png": {
+      "bytes": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/latest.png": {
+      "bytes": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/report.json": {
+      "bytes": 712980,
+      "sha256": "e17fbceeeff7377eade034c1a8caea57113809938da7f79a8526d7826740cfe8"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop/serial.log": {
+      "bytes": 2554,
+      "sha256": "ad63a9824daeb1c8832318f04c7cc6abf5674d77c22d7eee660921d3a9f712b9"
+    },
+    "evidence/omarchy-profile/input-wait-r3/desktop.log": {
+      "bytes": 4760,
+      "sha256": "a9bd223dd0230d346fe9ce8edd0c68e9ca87ed4529cfa87f2dbb0712c06bf7cc"
+    },
+    "evidence/omarchy-profile/input-wait-r3/ram-capture.json": {
+      "bytes": 361,
+      "sha256": "69bded33f3b6710c2f5335aee8bf2ce596a37ac998080391c44db987264ab6dd"
+    },
+    "evidence/omarchy-profile/input-wait-r3/run.json": {
+      "bytes": 13455,
+      "sha256": "5618b56e3d71cd3671a1df5a4709f7d7818e9d90c45687273b60ea63099c9eec"
+    },
+    "evidence/omarchy-profile/input-wait-gates/cleanup-real-chrome.log": {
+      "bytes": 220,
+      "sha256": "21680577e5f73d58f20352690a4ef24d8db7eeab2be68c6a0794fb34e73a7359"
+    },
+    "evidence/omarchy-profile/input-wait-gates/incremental-final.log": {
+      "bytes": 1503,
+      "sha256": "c7fdf4e0741b2ee47cd2986876c95b0c7a424837d2ca709a50a5cf9c61d28d4e"
+    },
+    "evidence/omarchy-profile/input-wait-gates/pause-deadline-tests.log": {
+      "bytes": 733,
+      "sha256": "f7b3eb45e55770b1bd6013fa2d128aff399e8c3e1fabad48deba6964fe112342"
+    },
+    "evidence/omarchy-profile/input-wait-gates/ram-reader-tests.log": {
+      "bytes": 961,
+      "sha256": "1069445351c391c38fcbc67b6dcc9fc6503b6dc5908ed4ababaf705b8124e7a5"
+    },
+    "evidence/omarchy-profile/input-wait-gates/tests-r3.log": {
+      "bytes": 4603,
+      "sha256": "28822af778088a66900209cfa7131ebf362dcf40f779747ef75828e4a1675fa8"
+    },
+    "evidence/omarchy-profile/input-wait-gates/tests.log": {
+      "bytes": 4410,
+      "sha256": "9761bea8ae6f75ee9460771c1192ff1aed67472034a2935da2368d9b34133bb7"
+    },
+    "evidence/omarchy-profile/input-wait-inspected-r3/checkpoint.json": {
+      "bytes": 163241,
+      "sha256": "b158a0228b537e4cd0db02b086108ead8e6e461f31bbedd53651f733a900b013"
+    }
+  }
+}

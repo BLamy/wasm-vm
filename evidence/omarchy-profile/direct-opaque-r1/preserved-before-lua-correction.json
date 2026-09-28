@@ -1,0 +1,62 @@
+{
+  "frozenHead": "f55923bda86172359f73db8ea998692ceb155fae",
+  "files": [
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/affected-harness.log",
+      "sha256": "dfddcc6e9bdda4773405e8dd56a84e76968ab7e0e1393a3a25c7de87695e116f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/commands.json",
+      "sha256": "d453946d47267caadfd7d6dba5dc1985f61f2d0f651d771b40d8a55ae2deb5f3"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/freeze.py",
+      "sha256": "c2bd112a9d12e4b0c355759f38291f3e5f8748648d7e066b893c436cd2a3733b"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/frozen.json",
+      "sha256": "3f6396378165b0718043d346fdf6fe37362cda2abd06faa2009b93f27ce52e8d"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/record.py",
+      "sha256": "5715ebc6919ef1c18d96f96b7fad224d5829946bf14b786f232c33dc8e0b5977"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/recorder-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-gates/runner-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop/desktop.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop/latest.png",
+      "sha256": "f410ff2c59bbba780638688eeee23f6d82e0093dcced2faee523a5da35b8b14f"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop/report.json",
+      "sha256": "edf2736a39f59d2035d8e9f0607e031b1cdefe9fba9e305e734b9c13eed63411"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop/serial.log",
+      "sha256": "e8afb79a69b77face744d1d32c6d33d8640680595270e21ef3d76865b9d4389e"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/desktop.log",
+      "sha256": "69a648c355ebca7479b96ec5e04bcdbd28914d1af67f19ca81bb1c9f2a7db7b4"
+    },
+    {
+      "path": "evidence/omarchy-profile/direct-opaque-r1/run.json",
+      "sha256": "dbbf8569f3d140bb26c5652fd4bfb7353c37a1188c49fc11f8e18be3644f00e3"
+    }
+  ],
+  "reason": "Real guest rejects legacy dispatch in Lua config. No keyboard input; defaults unchanged. Correct only the fixed dispatcher syntax for R2."
+}

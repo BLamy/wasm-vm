@@ -1,0 +1,23 @@
+{
+  "scratch": "/private/tmp/wasm-vm-fmadd-critic-ksb1kt6_",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/private/tmp/wasm-vm-fmadd-critic-ksb1kt6_/Cargo.toml",
+    "--",
+    "--nocapture"
+  ],
+  "mutation": "One isolated fused-cancellation result changed from a8800000 to 00000000",
+  "original_support_sha256": "d4200d3c4e67f15dfbf60d0bc1c6a221bac5fe291e0c71b46e6d209f24f10e8c",
+  "mutant_support_sha256": "91a933ec22fc907ce023933d73da8ad37f1edfff8fdb4540e72f5374c48bb64f",
+  "wrapper_sha256": "26877625a0af723a9cdd67fd1179beb44b41e3db33e1222ea8cb620b6df6c33a",
+  "restored_support_sha256": "d4200d3c4e67f15dfbf60d0bc1c6a221bac5fe291e0c71b46e6d209f24f10e8c",
+  "mutant_exit": 101,
+  "restored_exit": 0,
+  "logs": {
+    "sabotage-mutant.log": "b91395f7b3c974c0dc9f29641eb45b3211d081e988a66de7532410fcb4b50b36",
+    "sabotage-restored.log": "f4e39b26b08fb28a0b7a583e8b30ac7ff3c5724a0bfdb9e71430fffad93985ec"
+  }
+}

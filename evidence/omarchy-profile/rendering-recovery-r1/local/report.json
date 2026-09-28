@@ -1,0 +1,2092 @@
+{
+  "schema": "wasm-vm.omarchy-rendering-recovery.v1",
+  "result": "rendering-recovery-only",
+  "guestInteractivityVerified": false,
+  "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+  "startedAt": "2026-09-10T06:03:29.234Z",
+  "screenshots": [
+    {
+      "name": "desktop-initial.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "name": "desktop-960x600.png",
+      "sha256": "c4b5bcb99dc3128579c0847289be0f164bed9bac4f835a58c34d488ee728d5c7",
+      "viewport": {
+        "width": 960,
+        "height": 600,
+        "name": "960x600"
+      }
+    },
+    {
+      "name": "desktop-600x900.png",
+      "sha256": "406cda33e04527d15c940507c117c9330a5e04c314deb0ce8a27c6e4559f421a",
+      "viewport": {
+        "width": 600,
+        "height": 900,
+        "name": "600x900"
+      }
+    },
+    {
+      "name": "desktop-1920x1080.png",
+      "sha256": "4eb985843ec4c3da315e37e806eb3586bf59ce291c45f5b0f680025bda5d650a",
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "name": "1920x1080"
+      }
+    },
+    {
+      "name": "desktop-reloaded.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    },
+    {
+      "name": "failure.png",
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/rendering-recovery-r1/local/failure.png",
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ],
+  "viewports": [
+    {
+      "viewport": {
+        "width": 960,
+        "height": 600,
+        "name": "960x600"
+      },
+      "observation": {
+        "label": "viewport-960x600",
+        "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 0,
+        "canvas": {
+          "width": 960,
+          "height": 600,
+          "left": 0,
+          "top": 0,
+          "right": 960,
+          "bottom": 600,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ]
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 600,
+        "height": 900,
+        "name": "600x900"
+      },
+      "observation": {
+        "label": "viewport-600x900",
+        "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 3,
+        "canvas": {
+          "width": 600,
+          "height": 375,
+          "left": 0,
+          "top": 262.5,
+          "right": 600,
+          "bottom": 637.5,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ]
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "name": "1920x1080"
+      },
+      "observation": {
+        "label": "viewport-1920x1080",
+        "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+        "e2eShowall": false,
+        "visiblePanels": [
+          "panel-ide"
+        ],
+        "restoredFromBootSnapshot": true,
+        "desktopReadyEvents": 1,
+        "presentation": {
+          "backend": "canvas2d",
+          "defaultBackend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "fixedViewport": true,
+          "sizeMismatch": true,
+          "framesReceived": 2,
+          "successfulPresents": 2,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "replayedFrames": 0,
+          "droppedFrames": 0,
+          "contextLosses": 0,
+          "contextRestores": 0,
+          "fallbacks": 0,
+          "listenerCount": 2,
+          "scheduler": {
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "skipped": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "paused": false,
+            "disposed": false,
+            "scheduled": false,
+            "hidden": false,
+            "mode": "raf",
+            "timerMs": 250
+          },
+          "gpu": {
+            "framesReceived": 2,
+            "enqueued": 2,
+            "coalesced": 0,
+            "presented": 2,
+            "successfulPresents": 2,
+            "skipped": 0,
+            "droppedFrames": 0,
+            "overruns": 0,
+            "pending": 0,
+            "maxPending": 1,
+            "uploadedBytes": 8192000,
+            "drawnPresents": 2,
+            "drawnBytes": 8192000,
+            "width": 1280,
+            "height": 800
+          },
+          "latest": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "resourceWidth": 1280,
+            "resourceHeight": 832
+          },
+          "errors": []
+        },
+        "pointerFrames": 6,
+        "canvas": {
+          "width": 1728,
+          "height": 1080,
+          "left": 96,
+          "top": 0,
+          "right": 1824,
+          "bottom": 1080,
+          "backingWidth": 1280,
+          "backingHeight": 800
+        },
+        "pixelVariety": {
+          "colors": 61,
+          "visible": 33031
+        },
+        "serviceWorker": {
+          "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+          "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+          "cacheKeys": [
+            "wasm-vm-shell-347161e9e2b8"
+          ],
+          "buildVersions": [
+            "347161e9e2b8"
+          ]
+        }
+      }
+    }
+  ],
+  "responseHashes": [
+    {
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:63440/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:63440/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): No resource with given identifier found"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/kernel/6.6.63/Image",
+      "status": 200,
+      "kind": "kernel",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "status": 200,
+      "kind": "ram",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bodyError": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    }
+  ],
+  "sourceAndArtifactResponses": [
+    {
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:63440/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "initial",
+      "fromServiceWorker": false,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "initial",
+      "fromServiceWorker": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/ide.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 133149,
+      "sha256": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/main.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 148354,
+      "sha256": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/roadmap.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 48915,
+      "sha256": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b"
+    },
+    {
+      "url": "http://127.0.0.1:63440/guest-rpc.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/src/sink/viewport.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "http://127.0.0.1:63440/loader.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 78394,
+      "sha256": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7"
+    },
+    {
+      "url": "http://127.0.0.1:63440/linux-worker-protocol.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e"
+    },
+    {
+      "url": "http://127.0.0.1:63440/artifacts-omarchy.json",
+      "status": 200,
+      "kind": "artifact",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 861,
+      "sha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a"
+    },
+    {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "status": 200,
+      "kind": "candidate-manifest",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bytes": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "assetRole": "baseManifest",
+      "expected": {
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+        "size": 1097812,
+        "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "kind": "wasm",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 1566204,
+      "sha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "status": 200,
+      "kind": "delta",
+      "phase": "reload",
+      "fromServiceWorker": false,
+      "bytes": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+      "assetRole": "delta",
+      "expected": {
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196,
+        "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-overlay-delta.bin.gz"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "explicitFetch": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "url": "http://127.0.0.1:63440/sw.js",
+      "status": 200,
+      "kind": "source",
+      "phase": "reload",
+      "fromServiceWorker": true,
+      "bytes": 5053,
+      "sha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    }
+  ],
+  "observations": [
+    {
+      "progress": {
+        "stage": "goto",
+        "at": "2026-09-10T06:03:30.778Z",
+        "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide"
+      }
+    },
+    {
+      "progress": {
+        "stage": "domcontentloaded",
+        "at": "2026-09-10T06:03:31.116Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "runtime-hooks-ready",
+        "at": "2026-09-10T06:03:31.361Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "desktop-ready",
+        "at": "2026-09-10T06:04:31.121Z"
+      }
+    },
+    {
+      "label": "initial",
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0,
+        "right": 1280,
+        "bottom": 800,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ]
+      }
+    },
+    {
+      "serviceWorkerContentSha256": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    {
+      "label": "viewport-960x600",
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 960,
+        "height": 600,
+        "left": 0,
+        "top": 0,
+        "right": 960,
+        "bottom": 600,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ]
+      }
+    },
+    {
+      "label": "viewport-960x600",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 240,
+          "y": 150,
+          "expected": 8192,
+          "before": 0,
+          "after": 1,
+          "frame": {
+            "sequence": 1,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 480,
+          "y": 300,
+          "expected": 16384,
+          "before": 1,
+          "after": 2,
+          "frame": {
+            "sequence": 2,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 720,
+          "y": 450,
+          "expected": 24575,
+          "before": 2,
+          "after": 3,
+          "frame": {
+            "sequence": 3,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:04:31.448Z",
+        "viewport": "960x600"
+      }
+    },
+    {
+      "label": "viewport-600x900",
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 3,
+      "canvas": {
+        "width": 600,
+        "height": 375,
+        "left": 0,
+        "top": 262.5,
+        "right": 600,
+        "bottom": 637.5,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ]
+      }
+    },
+    {
+      "label": "viewport-600x900",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 150,
+          "y": 356.25,
+          "expected": 8192,
+          "before": 3,
+          "after": 4,
+          "frame": {
+            "sequence": 4,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 300,
+          "y": 450,
+          "expected": 16384,
+          "before": 4,
+          "after": 5,
+          "frame": {
+            "sequence": 5,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 450,
+          "y": 543.75,
+          "expected": 24575,
+          "before": 5,
+          "after": 6,
+          "frame": {
+            "sequence": 6,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:04:31.631Z",
+        "viewport": "600x900"
+      }
+    },
+    {
+      "label": "viewport-1920x1080",
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 6,
+      "canvas": {
+        "width": 1728,
+        "height": 1080,
+        "left": 96,
+        "top": 0,
+        "right": 1824,
+        "bottom": 1080,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ]
+      }
+    },
+    {
+      "label": "viewport-1920x1080",
+      "pointerProof": "physical Playwright mouse movement only; guest processing not asserted",
+      "points": [
+        {
+          "normalized": 0.25,
+          "x": 528,
+          "y": 270,
+          "expected": 8192,
+          "before": 6,
+          "after": 7,
+          "frame": {
+            "sequence": 7,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 8192
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 8192
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 8192,
+              "y": 8192
+            }
+          }
+        },
+        {
+          "normalized": 0.5,
+          "x": 960,
+          "y": 540,
+          "expected": 16384,
+          "before": 7,
+          "after": 8,
+          "frame": {
+            "sequence": 8,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 16384
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 16384
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 16384,
+              "y": 16384
+            }
+          }
+        },
+        {
+          "normalized": 0.75,
+          "x": 1392,
+          "y": 810,
+          "expected": 24575,
+          "before": 8,
+          "after": 9,
+          "frame": {
+            "sequence": 9,
+            "device": "tablet",
+            "mode": "absolute",
+            "events": [
+              {
+                "eventType": 3,
+                "code": 0,
+                "value": 24575
+              },
+              {
+                "eventType": 3,
+                "code": 1,
+                "value": 24575
+              }
+            ],
+            "sync": 0,
+            "source": "pointermove",
+            "coordinates": {
+              "x": 24575,
+              "y": 24575
+            }
+          }
+        }
+      ]
+    },
+    {
+      "progress": {
+        "stage": "viewport-captured",
+        "at": "2026-09-10T06:04:31.851Z",
+        "viewport": "1920x1080"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-start",
+        "at": "2026-09-10T06:04:31.854Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-domcontentloaded",
+        "at": "2026-09-10T06:04:31.880Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-runtime-hooks-ready",
+        "at": "2026-09-10T06:04:31.951Z"
+      }
+    },
+    {
+      "progress": {
+        "stage": "reload-desktop-ready",
+        "at": "2026-09-10T06:05:31.403Z"
+      }
+    },
+    {
+      "label": "reload",
+      "url": "http://127.0.0.1:63440/app.html?guest=omarchy&desktop=1#ide",
+      "e2eShowall": false,
+      "visiblePanels": [
+        "panel-ide"
+      ],
+      "restoredFromBootSnapshot": true,
+      "desktopReadyEvents": 1,
+      "presentation": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "pointerFrames": 0,
+      "canvas": {
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0,
+        "right": 1280,
+        "bottom": 800,
+        "backingWidth": 1280,
+        "backingHeight": 800
+      },
+      "pixelVariety": {
+        "colors": 61,
+        "visible": 33031
+      },
+      "serviceWorker": {
+        "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+        "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+        "cacheKeys": [
+          "wasm-vm-shell-347161e9e2b8"
+        ],
+        "buildVersions": [
+          "347161e9e2b8"
+        ]
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFailures": [
+    {
+      "url": "http://127.0.0.1:63440/releases/kernel/6.6.63/Image",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/kernel/6.6.63/Image",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "errors": [
+    "response body http://127.0.0.1:63440/linux-worker.js: response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+    "response body http://127.0.0.1:63440/releases/kernel/6.6.63/Image: response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+    "response body http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz: response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+    "response body http://127.0.0.1:63440/linux-worker.js: response.body: Protocol error (Network.getResponseBody): No resource with given identifier found",
+    "response body http://127.0.0.1:63440/releases/kernel/6.6.63/Image: response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+    "response body http://127.0.0.1:63440/releases/boot-snapshot/omarchy-ready.snap.gz: response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+    "AssertionError [ERR_ASSERTION]: kernel response did not match boot-manifest digest and size\n    at main (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-rendering-recovery.mjs:445:14)"
+  ],
+  "bootManifestDescriptor": {
+    "responseUrl": "http://127.0.0.1:63440/artifacts-omarchy.json",
+    "responseSha256": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+    "responseSize": 861,
+    "artifacts": {
+      "kernel": {
+        "url": "releases/kernel/6.6.63/Image",
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "size": 24208896
+      },
+      "bootSnapshot": {
+        "url": "releases/boot-snapshot/omarchy-ready.snap.gz",
+        "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5",
+        "size": 205050833
+      },
+      "overlayDelta": {
+        "url": "releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+        "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da",
+        "size": 1209196
+      }
+    },
+    "immutableBaseManifest": {
+      "key": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "size": 1097812
+    }
+  },
+  "identity": {
+    "initialServiceWorker": {
+      "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+      "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+      "cacheKeys": [
+        "wasm-vm-shell-347161e9e2b8"
+      ],
+      "buildVersions": [
+        "347161e9e2b8"
+      ]
+    },
+    "initialEssentialResponses": {
+      "http://127.0.0.1:63440/app.html:source": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "http://127.0.0.1:63440/artifacts-omarchy.json:artifact": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+      "http://127.0.0.1:63440/guest-rpc.js:source": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "http://127.0.0.1:63440/ide.js:source": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c",
+      "http://127.0.0.1:63440/linux-worker-protocol.js:source": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "http://127.0.0.1:63440/loader.js:source": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7",
+      "http://127.0.0.1:63440/main.js:source": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm:wasm": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "http://127.0.0.1:63440/roadmap.js:source": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b",
+      "http://127.0.0.1:63440/src/sink/viewport.js:source": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "http://127.0.0.1:63440/sw.js:source": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    "reloadServiceWorker": {
+      "controllerScriptURL": "http://127.0.0.1:63440/sw.js",
+      "registrationActiveURL": "http://127.0.0.1:63440/sw.js",
+      "cacheKeys": [
+        "wasm-vm-shell-347161e9e2b8"
+      ],
+      "buildVersions": [
+        "347161e9e2b8"
+      ]
+    },
+    "reloadEssentialResponses": {
+      "http://127.0.0.1:63440/app.html:source": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "http://127.0.0.1:63440/artifacts-omarchy.json:artifact": "430a207f534977e08d9e46fbbba08de9611daadcf4635a399b1d64bedaa8375a",
+      "http://127.0.0.1:63440/guest-rpc.js:source": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "http://127.0.0.1:63440/ide.js:source": "acf87490a24579990c63a4269eeea1c205e91e1bc3fc347d48e0dea0718b050c",
+      "http://127.0.0.1:63440/linux-worker-protocol.js:source": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "http://127.0.0.1:63440/loader.js:source": "0b31fd8b140fcf0bb0c7e9a0a709426c580076f5655ae75cc302076e69067af7",
+      "http://127.0.0.1:63440/main.js:source": "a9892121acc2072668c0150419e9f2fc91e4bd991886757c0d8d27e58ef63757",
+      "http://127.0.0.1:63440/pkg/wasm_vm_wasm_bg.wasm:wasm": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+      "http://127.0.0.1:63440/roadmap.js:source": "153d7bae5b2d138d1e98617d53560fc9f82db7f27928bd3dbb221b1e2486e47b",
+      "http://127.0.0.1:63440/src/sink/viewport.js:source": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "http://127.0.0.1:63440/sw.js:source": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    },
+    "serviceWorkerContentSha256": {
+      "initial": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad",
+      "reload": "d16015b8f4466a91a3c0e66dac0fe7fbfb08abf497920482c1fa741f578b32ad"
+    }
+  },
+  "assetResponseKinds": [
+    "baseManifest",
+    "delta"
+  ],
+  "status": "failed",
+  "finishedAt": "2026-09-10T06:05:31.580Z"
+}

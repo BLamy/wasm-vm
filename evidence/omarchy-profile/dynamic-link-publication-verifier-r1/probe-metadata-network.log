@@ -1,0 +1,36 @@
+Error: `cargo metadata` exited with an error:     Updating crates.io index
+error: failed to get `wasm-bindgen` as a dependency of package `bb-browser-publication-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/dynamic-link-publication-verifier-r1/browser-probe)`
+
+Caused by:
+  failed to load source for dependency `wasm-bindgen`
+
+Caused by:
+  unable to update registry `crates-io`
+
+Caused by:
+  download of config.json failed
+
+Caused by:
+  curl failed
+
+Caused by:
+  [6] Couldn't resolve host name (Could not resolve host: index.crates.io)
+
+Caused by: `cargo metadata` exited with an error:     Updating crates.io index
+error: failed to get `wasm-bindgen` as a dependency of package `bb-browser-publication-verifier v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/dynamic-link-publication-verifier-r1/browser-probe)`
+
+Caused by:
+  failed to load source for dependency `wasm-bindgen`
+
+Caused by:
+  unable to update registry `crates-io`
+
+Caused by:
+  download of config.json failed
+
+Caused by:
+  curl failed
+
+Caused by:
+  [6] Couldn't resolve host name (Could not resolve host: index.crates.io)
+

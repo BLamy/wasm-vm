@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-09-16T01:54:54.581Z",
+  "attack": "Favorable forged control receipt with cap-256 in its raw runtime observation",
+  "preserved": "Declared control arm, repack-off label, URL, source, WASM, raw inputs and serial wire",
+  "originalReportSha256": "65fb5dc0ac51e50702ea0583ea8bdb15f8bab98455c9068b1165581a2c86bdd5",
+  "auditSourceSha256": "7874c15e3ae0416fb269451e3d1046f03fd503e87534d901a554e1f0b9bf1524",
+  "guardSourceSha256": "d255b57b497e35275458d48a63fd064af7fc6083d0b8618a53ed3895c2a74301",
+  "originalAcceptance": false,
+  "originalCap": 24,
+  "expectedCap": 24,
+  "alteredObservedCap": 256,
+  "rejected": true,
+  "reason": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n256 !== 24\n",
+  "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n256 !== 24\n\n    at assertInputTrialRuntime (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-input-trial.mjs:74:10)\n    at auditReport (file:///Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-gates/audit.mjs:36:35)\n    at file:///Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/residency-after-fp-verifier/attack-offline-audit.mjs:26:7",
+  "inMemoryOnly": true,
+  "originalReportUnchanged": true,
+  "browsersLaunched": 0,
+  "guestRuns": 0
+}

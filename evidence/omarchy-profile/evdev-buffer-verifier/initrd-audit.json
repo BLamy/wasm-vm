@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "entries": [
+    {
+      "name": "dev",
+      "mode": "0o40755",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "dev/console",
+      "mode": "0o20600",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "init",
+      "mode": "0o100755",
+      "bytes": 26120,
+      "sha256": "dc02be6636bc3e8175d613cb8f5cdfccd9004d13704b9c2c58097b64541c424a"
+    },
+    {
+      "name": "TRAILER!!!",
+      "mode": "0o0",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "initrdSha256": "8697951ed69a16357d09e301e02ba6c9bafa7daf2a9f99fae3fc89514a06c63e",
+  "readerSha256": "dc02be6636bc3e8175d613cb8f5cdfccd9004d13704b9c2c58097b64541c424a",
+  "architecture": "ELF64 little-endian RISC-V (243)"
+}

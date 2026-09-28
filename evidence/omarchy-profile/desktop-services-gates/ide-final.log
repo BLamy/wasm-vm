@@ -1,0 +1,36 @@
+✔ the actual ready lifecycle is once per authoritative generation and isolates Omarchy (23.042583ms)
+✔ actual RPC gate rejects no-owner/retired work and fences late CLI completion (5.987459ms)
+✔ the authoritative Omarchy key blocks service RPC even when the page is not marked desktop (0.944958ms)
+✔ desktop control entry points remain wired to the existing production bridges (0.98975ms)
+✔ host-only preboot Docker affordance remains available, but an Omarchy owner blocks it (0.686667ms)
+✔ a retired CLI log refresh cannot create a stream for the Omarchy owner (4.549625ms)
+✖ retired catalog/probe/snapshot/container completions cannot repaint a replacement owner (25.506708ms)
+✔ retired container action completion cannot apply to the next session (19.541959ms)
+ℹ Error: Test "retired container action completion cannot apply to the next session" at web/tests/omarchy-desktop-services.test.mjs:438:1 generated asynchronous activity after the test ended. This activity created the error "Error: retired action" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 774.228959
+
+✖ failing tests:
+
+test at web/tests/omarchy-desktop-services.test.mjs:393:1
+✖ retired catalog/probe/snapshot/container completions cannot repaint a replacement owner (25.506708ms)
+  AssertionError [ERR_ASSERTION]: save completion repainted replacement owner
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/web/tests/omarchy-desktop-services.test.mjs:424:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

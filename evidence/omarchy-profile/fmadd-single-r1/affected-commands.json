@@ -1,0 +1,250 @@
+{
+  "head": "618286f3b1431990bbeddb9ef40d894b67be0605",
+  "wasmSha256": "0f9b1213fa160f31d4f35503f6b35b4caf7193668eac3c369ac4a75611b6fced",
+  "phase": "affected",
+  "commands": [
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:10Z"
+    },
+    {
+      "label": "core-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "fp_fmadd_flags",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:12Z"
+    },
+    {
+      "label": "native-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_fmadd",
+        "--test",
+        "fp_fmadd_verifier",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer_verifier",
+        "--test",
+        "fp_to_word_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:12Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:16Z"
+    },
+    {
+      "label": "wasm-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--test",
+        "jit_fp_fmadd",
+        "--test",
+        "jit_fp_fmadd_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:16Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:19Z"
+    },
+    {
+      "label": "software-fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "softfloat",
+        "--test",
+        "fp_arithmetic_flags",
+        "--test",
+        "fp_division_flags",
+        "--test",
+        "fp_fmadd_flags",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:19Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:33Z"
+    },
+    {
+      "label": "core-handoff",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace",
+        "--lib",
+        "jit::tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:10:36Z"
+    },
+    {
+      "label": "fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_moves",
+        "--test",
+        "fp_memory",
+        "--test",
+        "fp_comparisons",
+        "--test",
+        "fp_arithmetic",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer",
+        "--test",
+        "fp_from_integer_verifier",
+        "--test",
+        "fp_to_word",
+        "--test",
+        "fp_to_word_verifier",
+        "--test",
+        "fp_division",
+        "--test",
+        "fp_division_verifier",
+        "--test",
+        "precise_traps",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:10:36Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:11:50Z"
+    },
+    {
+      "label": "native-fp-isa",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "jit_execution",
+        "fp_suites_verdict_identical_under_jit",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:11:50Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:12:04Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:12:04Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:12:10Z"
+    },
+    {
+      "label": "recorder-harness",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-worker-cost.test.mjs",
+        "tools/verify/omarchy-prepared-direct.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs",
+        "tools/verify/omarchy-desktop-live.test.mjs"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:12:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:12:10Z"
+    },
+    {
+      "label": "no-host-float",
+      "args": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:12:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:12:10Z"
+    },
+    {
+      "label": "acceptance",
+      "args": [
+        "make",
+        "verify-E5_5-T03an",
+        "FP_FMADD_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fmadd-single-r1/browser"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-16T08:12:10Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T08:30:34Z"
+    }
+  ],
+  "allPassed": true
+}

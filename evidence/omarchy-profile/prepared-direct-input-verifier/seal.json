@@ -1,0 +1,8 @@
+{
+  "files": 35,
+  "indexSha256": "2e7b6941e36c164915d517f8c8bd4c3311bed2ba81fd14ef3978272686abc0ff",
+  "frozenHead": "9cc377180921be98f904c3689a1d7c48b9df3947",
+  "productAcceptance": false,
+  "verdict": "verified bounded negative diagnostic only",
+  "scope": "Verifier artifacts only; no implementation, runtime, or actual evidence edited."
+}

@@ -1,0 +1,4 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2922 bytes @ 0xbfffb490, 1024 MiB RAM
+wasm-vm: snapshot (888671256 bytes) written to /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T//omarchy-snapshot.vU1EdD/omarchy-ready.snap at trigger "WVM_OMARCHY_DESKTOP_READY"
+wasm-vm: snapshot complete — exiting
+overlay-delta: 2712 dirty 4KiB blocks / 11108352 bytes

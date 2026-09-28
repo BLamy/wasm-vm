@@ -1,0 +1,145 @@
+{
+  "passed": true,
+  "head": "3055f67a5d768ab34f93d7de291bed713cbb5e9f",
+  "reportSha256": "365b017269a72cfc2f047f786e2ecd2b50543790247e0b6193866fae0dfdaeb7",
+  "proofLogSha256": "77713f93cf1724fcde3c9166f66403d1263d15fc21944f7df1d50388a0d4460e",
+  "carried": [
+    {
+      "file": "tools/verify/omarchy-display-pixel-probe.mjs",
+      "size": 9216,
+      "sha256": "c7418e0640265d4e29e9c49891bce6a67bb1aeb40a8e584989d2b213e288aa0f",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "tools/verify/omarchy-owned-trial.mjs",
+      "size": 4305,
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "tools/verify/omarchy-input-trial.mjs",
+      "size": 5778,
+      "sha256": "df81c486611439d28979ba7827ce0aa0f30a2dcb7f0de12114bec50d471c9cd7",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "tools/verify/omarchy-gpu-transfer-runtime.json",
+      "size": 523,
+      "sha256": "19815628e024bea7bb1ca59c4b0b1546f893b040f1a57f023b7f956a36a00547",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "tools/verify/omarchy-input-kernel-response-state.mjs",
+      "size": 1408,
+      "sha256": "6535d97757ed4e78bf7b94c803c83e385c8c7023bb9b223c77af2f61f11fca90",
+      "unchangedFromAu": true
+    },
+    {
+      "file": "evidence/omarchy-profile/display-pixel-boundary-verifier/independent-pixels.mjs",
+      "size": 2750,
+      "sha256": "5ff512f25b054d6de2fece077c5a8504359582b847705dfbf1c5f3aae77b049c",
+      "unchangedFromAu": true
+    }
+  ],
+  "helpers": 47,
+  "commonInputAudit": true,
+  "lateAudit": true,
+  "observerAudit": true,
+  "continuationMessages": 625,
+  "continuationKinds": [
+    "worker-call:keyboardLedState"
+  ],
+  "originalCaptureFinalReadOnlyCalls": [
+    {
+      "method": "inputDeviceStats",
+      "timestamp": "2026-09-17T00:09:27.537Z"
+    },
+    {
+      "method": "jitStats",
+      "timestamp": "2026-09-17T00:09:27.537Z"
+    },
+    {
+      "method": "schedulerStats",
+      "timestamp": "2026-09-17T00:09:27.537Z"
+    },
+    {
+      "method": "guestClockState",
+      "timestamp": "2026-09-17T00:09:27.537Z"
+    }
+  ],
+  "noContinuationStimuli": true,
+  "originalImageAt": "2026-09-17T00:09:27.537Z",
+  "retainedFrames": [
+    {
+      "sequence": 7,
+      "timestamp": "2026-09-17T00:10:00.352Z",
+      "afterEnterMs": 132851,
+      "afterNonceMs": 49178,
+      "scanout": 0,
+      "rawSha256": "7c330b9ee04ce462d49215419827e41546aa4add2a355b2c81bdc686fe57daab"
+    },
+    {
+      "sequence": 8,
+      "timestamp": "2026-09-17T00:10:16.742Z",
+      "afterEnterMs": 149241,
+      "afterNonceMs": 65568,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 9,
+      "timestamp": "2026-09-17T00:10:34.079Z",
+      "afterEnterMs": 166578,
+      "afterNonceMs": 82905,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 10,
+      "timestamp": "2026-09-17T00:10:51.710Z",
+      "afterEnterMs": 184209,
+      "afterNonceMs": 100536,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 11,
+      "timestamp": "2026-09-17T00:11:08.698Z",
+      "afterEnterMs": 201197,
+      "afterNonceMs": 117524,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 12,
+      "timestamp": "2026-09-17T00:11:26.204Z",
+      "afterEnterMs": 218703,
+      "afterNonceMs": 135030,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 13,
+      "timestamp": "2026-09-17T00:11:46.222Z",
+      "afterEnterMs": 238721,
+      "afterNonceMs": 155048,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    },
+    {
+      "sequence": 14,
+      "timestamp": "2026-09-17T00:12:03.260Z",
+      "afterEnterMs": 255759,
+      "afterNonceMs": 172086,
+      "scanout": 0,
+      "rawSha256": "8d6793f4825cd9010f9948a6536f1258dfd67c4032ccb73408ec839901490e79"
+    }
+  ],
+  "lateDisplayAcceptance": false
+}

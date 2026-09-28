@@ -1841,36 +1841,20 @@ fn a_extension_randomized() {
     }
 }
 
-// ── E4-T15: F/D floating-point side-exit-all policy ─────────────────────────
-//
-// The measured decision (docs/jit-fp-policy.md, evidence/e4-t15/fp-share.md): FP is vanishingly
-// rare (0.0004% of a Linux boot, 0 FP-compute ops; CoreMark/Dhrystone hot loops are 0% FP), so
-// every F/D op SIDE-EXITS to the interpreter's proven softfloat rather than being translated to
-// wasm f32/f64 (whose NaN payloads are engine-nondeterministic and whose fflags/rounding would risk
-// divergence). This is enforced structurally: `translate_block` must report ANY block containing an
-// F/D op as `Unsupported`, so the caller keeps the whole block in the interpreter. FP correctness is
-// then identical to the interpreter BY CONSTRUCTION (there is no second FP implementation).
+// Full F/D coverage: every F/D operation (the E4-T15 "unsupported" families included) now
+// translates, alone or buried among integer ops. The only untranslatable ops are block-ending
+// system instructions; a block containing one compiles its prefix and exits precisely
+// (`ExitCode::CallInterp`) at that op, while a block that STARTS with one is still rejected.
+// Exact per-op semantics are proven against the interpreter in
+// `crates/jit-runtime/tests/fp_full_lockstep.rs`.
 #[test]
-fn fp_ops_are_unsupported() {
-    use jit_translate::TranslateError;
+fn fp_ops_translate_and_system_ops_split_blocks() {
+    use jit_translate::{TranslateError, first_untranslated, is_translatable, translated_len};
     use wasm_vm_core::decode::{FpArithOp, FpCmpOp, FpFusedOp, FpIntWidth, FpSgnjOp, Instr::*};
 
-    // One representative of every F and D op family — load/store, arith, sqrt, fused, sgnj, minmax,
-    // compare, class, both move directions, every convert. If translation ever silently starts
-    // accepting one of these, this list breaks and forces a re-justification against the policy.
     let fp_ops = [
-        Flw {
-            rd: 1,
-            rs1: 2,
-            imm: 0,
-        },
-        Fsw {
-            rs1: 2,
-            rs2: 1,
-            imm: 0,
-        },
         FpArithS {
-            op: FpArithOp::Add,
+            op: FpArithOp::Sub,
             rd: 1,
             rs1: 2,
             rs2: 3,
@@ -1882,18 +1866,12 @@ fn fp_ops_are_unsupported() {
             rm: 7,
         },
         FpFusedS {
-            op: FpFusedOp::Madd,
+            op: FpFusedOp::Msub,
             rd: 1,
             rs1: 2,
             rs2: 3,
             rs3: 4,
             rm: 7,
-        },
-        FsgnjS {
-            op: FpSgnjOp::J,
-            rd: 1,
-            rs1: 2,
-            rs2: 3,
         },
         FminmaxS {
             is_max: false,
@@ -1901,36 +1879,18 @@ fn fp_ops_are_unsupported() {
             rs1: 2,
             rs2: 3,
         },
-        FpCmpS {
-            op: FpCmpOp::Eq,
-            rd: 1,
-            rs1: 2,
-            rs2: 3,
-        },
         FclassS { rd: 1, rs1: 2 },
-        FmvXW { rd: 1, rs1: 2 },
-        FmvWX { rd: 1, rs1: 2 },
         FcvtToIntS {
-            width: FpIntWidth::W,
+            width: FpIntWidth::L,
             rd: 1,
             rs1: 2,
             rm: 7,
         },
-        FcvtFromIntS {
+        FcvtFromIntD {
             width: FpIntWidth::W,
             rd: 1,
             rs1: 2,
             rm: 7,
-        },
-        Fld {
-            rd: 1,
-            rs1: 2,
-            imm: 0,
-        },
-        Fsd {
-            rs1: 2,
-            rs2: 1,
-            imm: 0,
         },
         FpArithD {
             op: FpArithOp::Div,
@@ -1997,15 +1957,11 @@ fn fp_ops_are_unsupported() {
         },
     ];
     for instr in fp_ops {
-        // A block that is JUST the FP op must be rejected…
         let solo = make_block(&[instr]);
-        assert_eq!(
-            translate_block(&solo, &Abi::FROZEN),
-            Err(TranslateError::Unsupported),
-            "FP op {instr:?} must side-exit (Unsupported), never translate"
+        assert!(
+            translate_block(&solo, &Abi::FROZEN).is_ok(),
+            "FP op {instr:?} must translate"
         );
-        // …and so must a block where the FP op is buried among translatable integer ops — the WHOLE
-        // block side-exits to the interpreter, not just the FP instruction.
         let mixed = make_block(&[
             Addi {
                 rd: 5,
@@ -2020,9 +1976,70 @@ fn fp_ops_are_unsupported() {
             },
         ]);
         assert_eq!(
-            translate_block(&mixed, &Abi::FROZEN),
-            Err(TranslateError::Unsupported),
-            "a block containing FP op {instr:?} must side-exit entirely"
+            translated_len(&mixed),
+            3,
+            "{instr:?} buried among integer ops"
         );
+        assert!(translate_block(&mixed, &Abi::FROZEN).is_ok());
+    }
+
+    let system_ops = [
+        (
+            Csrrs {
+                rd: 5,
+                rs1: 0,
+                csr: 0x100,
+            },
+            "csr:sstatus",
+        ),
+        (
+            Csrrw {
+                rd: 0,
+                rs1: 5,
+                csr: 0x180,
+            },
+            "csr:satp",
+        ),
+        (
+            Csrrsi {
+                rd: 5,
+                uimm: 0,
+                csr: 0xc01,
+            },
+            "csr:time",
+        ),
+        (Mret, "mret"),
+        (Sret, "sret"),
+        (Wfi, "wfi"),
+        (SfenceVma { rs1: 0, rs2: 0 }, "sfence.vma"),
+    ];
+    for (instr, name) in system_ops {
+        let solo = make_block(&[instr]);
+        assert!(!is_translatable(&solo), "{instr:?} alone cannot translate");
+        assert_eq!(
+            translate_block(&solo, &Abi::FROZEN),
+            Err(TranslateError::Unsupported),
+            "a block starting with {instr:?} is rejected"
+        );
+        assert_eq!(first_untranslated(&solo), Some((0, name)));
+        let prefixed = make_block(&[
+            Addi {
+                rd: 5,
+                rs1: 0,
+                imm: 1,
+            },
+            FpArithD {
+                op: FpArithOp::Add,
+                rd: 1,
+                rs1: 2,
+                rs2: 3,
+                rm: 0,
+            },
+            instr,
+        ]);
+        assert!(is_translatable(&prefixed));
+        assert_eq!(translated_len(&prefixed), 2);
+        assert_eq!(first_untranslated(&prefixed), Some((2, name)));
+        assert!(translate_block(&prefixed, &Abi::FROZEN).is_ok());
     }
 }

@@ -1,0 +1,36 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (11.912791ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.495958ms)
+✔ post-marker presentation helper rejects typing frames (7334.448833ms)
+✔ candidate mode is explicitly local-only and hash-bound (25.348458ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (9.508209ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (4.997875ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (11.751958ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (45.06625ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (3.404083ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.639208ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (2.700459ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (14631.802375ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (275.462167ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (45.865542ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (90.811375ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (32.362333ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (6.347208ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (96.483167ms)
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (87.884417ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (1.936625ms)
+✔ all four R3 source bindings and image layout must match (24.847875ms)
+✔ actual runtime must match the selected arm with observer/timing off (63.105875ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (148.01375ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (23.55075ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (49.352375ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (107.152375ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (0.511333ms)
+✔ future/invalid navigation cannot extend setup (74.93725ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32608.324541

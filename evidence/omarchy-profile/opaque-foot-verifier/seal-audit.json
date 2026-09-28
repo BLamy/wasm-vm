@@ -1,0 +1,21 @@
+{
+  "workerSeals": [
+    {
+      "directory": "opaque-foot-gates",
+      "indexSha256": "09dde7caab1023dfe531cce991e6fe873e587d5413bee6dec98b97821b5cc432",
+      "filesVerified": 14
+    },
+    {
+      "directory": "opaque-foot-gates-r2",
+      "indexSha256": "4d5bc22a99cf407a23ce30da34cdae4ec2033982437461d56ef4677fbb139a0a",
+      "filesVerified": 24
+    }
+  ],
+  "workerClaimSha256": "96746b2e281ee5bd87efbf06d7c77c3cca4f8771044a89b104245ac2ea4f738b",
+  "auditCorrectionHead": "ed7edad7e1bdfa627809c93dc11a4838311180b5",
+  "onlyAuditorAndTestsChanged": true,
+  "originalReproductionsPreserved": true,
+  "fixedAttackRejected": true,
+  "desktopSolved": false,
+  "releaseEligible": false
+}

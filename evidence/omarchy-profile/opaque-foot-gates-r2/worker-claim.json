@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-09-16T04:12:28.000620+00:00",
+  "scope": "negative configuration diagnostic; all three runs stopped before physical input",
+  "desktopSolved": false,
+  "releaseEligible": false,
+  "r2r3GuestHead": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+  "auditCorrectionHead": "ed7edad7e1bdfa627809c93dc11a4838311180b5",
+  "auditCorrectionCommand": "node --test tools/verify/omarchy-opaque-foot.test.mjs tools/verify/omarchy-user-input.test.mjs",
+  "auditCorrectionResult": "12 passed, 0 failed; executed afterall guests closed",
+  "runs": [
+    {
+      "run": 1,
+      "head": "94647c4993b062961b26e82bc2c8484431fe8c05",
+      "reportSha256": "9127ede20f15a37205ecb896cfff9cf2b9ed68bc08cf4ddd7f76df12cbaa8b72",
+      "result": "failed",
+      "startup": {
+        "startedAt": "2026-09-16T03:53:52.927Z",
+        "timeoutMs": 300000,
+        "deadlineAt": "2026-09-16T03:58:52.927Z"
+      },
+      "configuration": {
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r --batch 'eval hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true }); getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+        "requestCount": 1,
+        "startedAt": "2026-09-16T03:54:55.292Z",
+        "deadlineAtMs": 1789531132927,
+        "status": "configuration-failed",
+        "response": {
+          "stdout": "ok\n\n\nfalse\n\n\nfalse\n\n\n0.985\n\n",
+          "exit": 0
+        },
+        "respondedAt": "2026-09-16T03:56:01.415Z",
+        "error": "AssertionError [ERR_ASSERTION]: Hyprland did not confirm opaque/RGBX\n+ actual - expected\n\n  [\n    'ok',\n+   'false',\n+   'false'\n-   'true',\n-   'true'\n  ]\n",
+        "finishedAt": "2026-09-16T03:56:01.416Z"
+      },
+      "keyboardTested": false,
+      "exit": {
+        "code": 1,
+        "signal": null,
+        "closed": true,
+        "watchdog": null
+      },
+      "cleanup": {
+        "startedAt": "2026-09-16T03:56:01.471Z",
+        "timeoutMs": 30000,
+        "closed": true,
+        "clientClosed": true
+      },
+      "finalImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personalInspection": "Same empty Foot prompt; no typed command or response"
+    },
+    {
+      "run": 2,
+      "head": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+      "reportSha256": "8252db4688dd509e5afc797ed900eb1ea1f47d20e8597127fb98e44878795d9c",
+      "result": "failed",
+      "startup": {
+        "startedAt": "2026-09-16T03:58:24.613Z",
+        "timeoutMs": 300000,
+        "deadlineAt": "2026-09-16T04:03:24.613Z"
+      },
+      "configuration": {
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+        "requestCount": 1,
+        "startedAt": "2026-09-16T04:02:12.592Z",
+        "deadlineAtMs": 1789531404613,
+        "status": "configuration-failed",
+        "error": "Error: opaque Foot startup: deadline exceeded (UNPROVEN)",
+        "finishedAt": "2026-09-16T04:03:24.616Z"
+      },
+      "keyboardTested": false,
+      "exit": {
+        "code": 1,
+        "signal": null,
+        "closed": true,
+        "watchdog": null
+      },
+      "cleanup": {
+        "startedAt": "2026-09-16T04:03:24.764Z",
+        "timeoutMs": 30000,
+        "closed": true,
+        "clientClosed": true
+      },
+      "finalImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personalInspection": "Same empty Foot prompt; no typed command or response"
+    },
+    {
+      "run": 3,
+      "head": "20737fb7bd9051286629beafc2a4f15ae839ee64",
+      "reportSha256": "4a83b9cf1a4ed360a0d0ab2e98c431019bc97df103a7724b631b6d24f8748db9",
+      "result": "failed",
+      "startup": {
+        "startedAt": "2026-09-16T04:05:07.629Z",
+        "timeoutMs": 300000,
+        "deadlineAt": "2026-09-16T04:10:07.629Z"
+      },
+      "configuration": {
+        "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+        "requestCount": 1,
+        "startedAt": "2026-09-16T04:06:45.551Z",
+        "deadlineAtMs": 1789531807629,
+        "status": "configuration-failed",
+        "error": "Error: opaque Foot startup: deadline exceeded (UNPROVEN)",
+        "finishedAt": "2026-09-16T04:10:07.633Z"
+      },
+      "keyboardTested": false,
+      "exit": {
+        "code": 1,
+        "signal": null,
+        "closed": true,
+        "watchdog": null
+      },
+      "cleanup": {
+        "startedAt": "2026-09-16T04:10:07.714Z",
+        "timeoutMs": 30000,
+        "closed": true,
+        "clientClosed": true
+      },
+      "finalImageSha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "personalInspection": "Same empty Foot prompt; no typed command or response"
+    }
+  ],
+  "auditCorrectionFiles": {
+    "tools/verify/omarchy-input-audit.mjs": "17aeff63db4441fc45b996af66f8102cde630b9b7b04f14b045f679b4f74e38f",
+    "tools/verify/omarchy-opaque-foot.test.mjs": "3f5296553f882054fdb9b1e78bcf76d5fe32ab5c1e288280859b6fbda2d34d4b"
+  }
+}

@@ -1,0 +1,292 @@
+OMARCHY_OPAQUE_PREPARATION {"at":"2026-09-16T04:25:10.587Z","brightPixels":192,"brightColors":16,"nonblank":true,"frames":5}
+{
+  "noGuestOrBrowser": true,
+  "sourceSha256": "7cbc9f3deaa19517052d813d94eb28f1820a7480e6882b9511f2f78c79e84f83",
+  "prediction": "Frame 5 painted during the configuration query cannot pass the post-confirmation frame gate; actual callback frame 6 may pass as synthetic harness coverage.",
+  "stale": {
+    "synthetic": true,
+    "fresh": false,
+    "captures": [],
+    "calls": [
+      "opaque-preparation-before",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+      "post-window-baseline",
+      "real-callback-native-pixels"
+    ],
+    "elapsedMs": 152,
+    "receipt": {
+      "purpose": "offline-opaque-preparation-no-input",
+      "startedAt": "2026-09-16T04:25:10.573Z",
+      "deadlineAt": "2026-09-16T04:25:10.723Z",
+      "status": "preparation-failed-input-untested",
+      "keyboardTested": false,
+      "runtimeBefore": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 4,
+          "successfulPresents": 4,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "foot": {
+        "address": "verifier-synthetic-foot",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "presentationBaseline": {
+        "backend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "latest": {
+          "resourceWidth": 1280,
+          "resourceHeight": 832,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          }
+        }
+      },
+      "baselineAt": "2026-09-16T04:25:10.576Z",
+      "lastPixels": {
+        "state": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 5,
+          "successfulPresents": 5,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        },
+        "pixels": {
+          "brightPixels": 192,
+          "brightColors": 16,
+          "nonblank": true
+        }
+      },
+      "error": "Error: opaque preparation: wait for visible Foot: deadline exceeded (UNPROVEN)",
+      "finishedAt": "2026-09-16T04:25:10.725Z"
+    }
+  },
+  "positiveControl": {
+    "synthetic": true,
+    "fresh": true,
+    "captures": [
+      "prepared-desktop.png",
+      "synthetic-export"
+    ],
+    "calls": [
+      "opaque-preparation-before",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -r eval 'hl.window_rule({ match = { class = \"^foot$\" }, opacity = \"1.0 override 1.0 override 1.0 override\", opaque = true, force_rgbx = true })' && XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 --batch 'getprop active opaque; getprop active force_rgbx; getprop active opacity'",
+      "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow",
+      "post-window-baseline",
+      "real-callback-native-pixels",
+      "opaque-preparation-ready"
+    ],
+    "elapsedMs": 3,
+    "receipt": {
+      "purpose": "offline-opaque-preparation-no-input",
+      "startedAt": "2026-09-16T04:25:10.725Z",
+      "deadlineAt": "2026-09-16T04:25:10.875Z",
+      "status": "pair-captured-input-untested",
+      "keyboardTested": false,
+      "runtimeBefore": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 4,
+          "successfulPresents": 4,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "foot": {
+        "address": "verifier-synthetic-foot",
+        "class": "foot",
+        "mapped": true,
+        "hidden": false,
+        "at": [
+          12,
+          38
+        ],
+        "size": [
+          1256,
+          750
+        ]
+      },
+      "presentationBaseline": {
+        "backend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "framesReceived": 5,
+        "successfulPresents": 5,
+        "latest": {
+          "resourceWidth": 1280,
+          "resourceHeight": 832,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 800
+          }
+        }
+      },
+      "baselineAt": "2026-09-16T04:25:10.726Z",
+      "lastPixels": {
+        "state": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 6,
+          "successfulPresents": 6,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        },
+        "pixels": {
+          "brightPixels": 192,
+          "brightColors": 16,
+          "nonblank": true
+        }
+      },
+      "runtimeAfter": {
+        "jit": {
+          "hasExecutor": true,
+          "admissionProbe": false,
+          "coldCounterRecycling": {
+            "enabled": false,
+            "threshold": 512,
+            "capacity": 65536,
+            "epochs": "0",
+            "discardedCounters": "0"
+          },
+          "decodedCacheEntries": 4096,
+          "jitResidencyPolicy": "cap-256",
+          "jitResidencyCap": 256,
+          "entryCost": {
+            "timingEnabled": false,
+            "timerReads": 0
+          }
+        },
+        "clock": {
+          "mode": "icount",
+          "clockDiv": 64
+        },
+        "presentation": {
+          "backend": "canvas2d",
+          "width": 1280,
+          "height": 800,
+          "framesReceived": 6,
+          "successfulPresents": 6,
+          "latest": {
+            "resourceWidth": 1280,
+            "resourceHeight": 832,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            }
+          }
+        }
+      },
+      "visibleAt": "2026-09-16T04:25:10.728Z",
+      "exportStartedAt": "2026-09-16T04:25:10.728Z",
+      "exportDeadlineAt": "2026-09-16T04:28:10.728Z",
+      "exportFinishedAt": "2026-09-16T04:25:10.728Z",
+      "finishedAt": "2026-09-16T04:25:10.728Z"
+    }
+  }
+}

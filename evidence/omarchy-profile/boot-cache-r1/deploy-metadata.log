@@ -1,0 +1,34 @@
+[deploy] staging and validating artifact manifests …
+[deploy] shipped busybox-ready.snap.gz on Pages
+[deploy] shipped alpine-ready.snap.gz on Pages
+[deploy] shipped alpine-overlay-delta.bin.gz on Pages
+[deploy] shipped node-alpine-overlay-delta.bin.gz on Pages
+[deploy] shipped omarchy-overlay-delta.bin.gz on Pages
+[artifact-check] skipped remote artifacts.json:kernel -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[artifact-check] skipped remote artifacts.json:initramfs -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz
+[artifact-check] skipped remote artifacts-alpine.json:kernel -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[artifact-check] skipped remote artifacts-alpine.json:rootfs -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4
+[artifact-check] skipped remote artifacts-node-alpine.json:kernel -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[artifact-check] skipped remote artifacts-node-alpine.json:rootfs -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4
+[artifact-check] skipped remote artifacts-node-alpine.json:bootSnapshot -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz
+[artifact-check] skipped remote artifacts-omarchy.json:kernel -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[artifact-check] skipped remote artifacts-omarchy.json:bootSnapshot -> https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5/releases/boot-snapshot/omarchy-ready.snap.gz
+[artifact-check] exact artifacts.json:bootSnapshot (11530215 bytes, 4263563b0d04342dc052c019cd6e3ab265e9e3234f8f7e7086755533e85a3098)
+[artifact-check] exact artifacts-alpine.json:bootSnapshot (16260246 bytes, 6d97bafb03ac907acfc863c491912bf318113057360c6ba9d401141bb9042095)
+[artifact-check] exact artifacts-alpine.json:overlayDelta (104 bytes, b7c2d27ec91c6404fdbadd4d98fed63b255d48ecd87629df7d6ed65369f80204)
+[artifact-check] exact artifacts-node-alpine.json:overlayDelta (83 bytes, 5cde58396fb1e3fb2edf0c26137fad336fe202fb3d71685c80d7f63f3f87f072)
+[artifact-check] exact artifacts-omarchy.json:overlayDelta (1209196 bytes, 1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da)
+[deploy] R2 already exact: sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image
+[deploy] R2 already exact: sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz
+[deploy] R2 already exact: sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4
+[deploy] R2 already exact: sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz
+curl: (28) Operation too slow. Less than 1024 bytes/sec transferred the last 30 seconds
+
+ ⛅️ wrangler 4.130.0
+────────────────────
+Resource location: remote 
+
+Creating object "sha256/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5/releases/boot-snapshot/omarchy-ready.snap.gz" in bucket "wasm-vm".
+Upload complete.
+curl: (28) Operation too slow. Less than 1024 bytes/sec transferred the last 30 seconds
+[deploy] ERROR: public R2 verification failed for sha256/2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5/releases/boot-snapshot/omarchy-ready.snap.gz

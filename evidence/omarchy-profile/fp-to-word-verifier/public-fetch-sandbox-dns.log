@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-to-word-verifier/audit-public.py", line 31, in <module>
+    assert response.returncode == 0, response.stderr
+AssertionError: curl: (6) Could not resolve host: f8fc09fa.wasm-vm.pages.dev
+

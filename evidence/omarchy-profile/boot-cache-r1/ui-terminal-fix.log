@@ -1,0 +1,3 @@
+OMARCHY DESKTOP UI REGRESSION — synthetic events, no guest boot, not desktop-rendering proof
+NOTE: panel selection is mocked for DOM visibility; no desktop guest is started
+PASS: desktop surface, lifecycle latch/reset, readiness hide, exit route, and normal editor routes

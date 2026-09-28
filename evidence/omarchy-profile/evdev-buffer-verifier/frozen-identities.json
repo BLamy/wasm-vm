@@ -1,0 +1,50 @@
+{
+  "head": "97743da727ee51eb7326b112c18653ff02941da1",
+  "files": [
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1602331,
+      "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+    },
+    {
+      "path": "releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "path": "releases/kernel/6.6.63/config",
+      "bytes": 113911,
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d"
+    },
+    {
+      "path": "configs/omarchy-evdev-buffer.patch",
+      "bytes": 257,
+      "sha256": "d7323d359a7b45c625b67444a3b9d3e391f137102f73821d0b82121adffc6fc6"
+    },
+    {
+      "path": "tools/build-omarchy-input-kernel.py",
+      "bytes": 4839,
+      "sha256": "15eb48880d14f2a9980ce910696d1de976e7c7be4539d74b7b789a0b922467c6"
+    },
+    {
+      "path": "tools/verify/omarchy-evdev-burst-init.c",
+      "bytes": 4119,
+      "sha256": "e6124f60e50ccfdd86faadd822f1e3c19de21a2a8d77b9e3a01676238d896ebe"
+    },
+    {
+      "path": "tools/verify/omarchy-evdev-burst.py",
+      "bytes": 6018,
+      "sha256": "7d5f36d62cf07767f8feb22c4db3cf00ded11e6780d1eca598f0771f9b74f1a3"
+    },
+    {
+      "path": "crates/cli/src/boot.rs",
+      "bytes": 106122,
+      "sha256": "eb4999091f937578694422831e8ee58ebea95294ea40f6e0e79dc9a93326da00"
+    },
+    {
+      "path": "target/release/wasm-vm",
+      "bytes": 17157320,
+      "sha256": "26da1d510aa43241e7f5322be176706aacef3c9986c128deb20c32155fe00ce4"
+    }
+  ]
+}

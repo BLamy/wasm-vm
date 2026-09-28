@@ -1,0 +1,16 @@
+{
+  "wasm": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/web/dist/pkg/wasm_vm_wasm_bg.wasm",
+    "bytes": 1602331,
+    "sha256": "36b4f1ccf9e1437f687eae552aca3290fab7c555dfd7fa9fac6cc3862d87a916"
+  },
+  "verifierSourceSha256": "0ac8b08bf56d981e6a0f80cccf54e2032abbfeacfaba1ddb4535f22564a0fa18",
+  "literal": {
+    "cases": 22,
+    "digest": "f5c775ff0b743b09"
+  },
+  "correctTypes": 5,
+  "rejectedTypes": 22,
+  "actualProductionRawExports": true,
+  "noGuestContext": true
+}

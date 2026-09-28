@@ -1,0 +1,27 @@
+{
+  "purpose": "synthetic positive-branch coverage and bounded late-readback rejection",
+  "productEvidence": false,
+  "sourceFixture": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/worker-cost-r2/desktop/report.json",
+  "sourceFixtureSha256": "41102dded7b6d44f18318381351e2d7280ca47983d1af1debd9bd621532c2555",
+  "helperSha256": "4933a5eea14f1435a2c6f000210e893c1920dc1c3721d7fda19c16e08a951d60",
+  "positiveControl": {
+    "acceptedAsMachineOnly": true,
+    "visualInspectionStillRequired": true,
+    "nonceReplies": 1
+  },
+  "lateWireAttack": {
+    "summaryCompletedAt": "2026-09-16T02:35:41.471Z",
+    "deadlineAt": "2026-09-16T02:37:41.466Z",
+    "rawWireCompletedAt": "2026-09-16T02:37:41.467Z",
+    "rejected": true,
+    "error": "AssertionError [ERR_ASSERTION]: no timely nonce on the raw wire"
+  },
+  "stalePresentationRejected": true,
+  "missingPhysicalAttack": {
+    "removedTypedAt": true,
+    "removedDomKeyEvents": true,
+    "removedKeyboardCallsAndAcks": true,
+    "acceptedAsMachine": true,
+    "error": null
+  }
+}

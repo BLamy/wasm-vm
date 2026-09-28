@@ -1,0 +1,391 @@
+[
+  {
+    "time": "2026-09-10T01:51:29.707Z",
+    "request": {
+      "op": "exec",
+      "command": "id; ls -l /dev/input/event*; command -v evtest; command -v libinput; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow; ps -eo pid,ppid,stat,wchan,args | grep -E 'foot|bash|Hyprland|quickshell'"
+    },
+    "result": {
+      "stdout": "uid=1000(omarchy) gid=1000(omarchy) groups=1000(omarchy)\ncrw-rw---- 1 root input 13, 64 Sep  9 23:48 /dev/input/event0\ncrw-rw---- 1 root input 13, 65 Sep  9 23:48 /dev/input/event1\ncrw-rw---- 1 root input 13, 66 Sep  9 23:48 /dev/input/event2\n{\n    \"address\": \"0x5555620e10a0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [1256, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 524,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n}\n    161     159 S    -      /usr/lib/sddm/sddm-helper --socket /tmp/sddm-auth-120e029f-ae1a-4ac7-97ca-3be29c36fc6e --id 1 --start uwsm start -e -D Hyprland hyprland.desktop --user omarchy --autologin\n    176     157 Ss   do_wai -bash\n    439     384 Sl   futex_ Hyprland --watchdog-fd 4\n    523     439 S    do_wai /bin/bash /usr/share/omarchy/bin/omarchy-launch-shell\n    524     439 S    do_epo foot\n    525     523 Sl   poll_s quickshell -n -p /usr/share/omarchy/shell\n    775     524 Ss+  poll_s /bin/bash\n   1513    1172 S    pipe_r /bin/bash /usr/share/omarchy/shell/plugins/clipboard/capture.sh text\n   1533    1513 S    do_wai /bin/bash /usr/share/omarchy/shell/plugins/clipboard/capture.sh text\n   1569    1173 S    pipe_r /bin/bash /usr/share/omarchy/shell/plugins/clipboard/capture.sh image/png\n   1583    1569 S    do_wai /bin/bash /usr/share/omarchy/shell/plugins/clipboard/capture.sh image/png\n   1652     176 S+   pipe_r grep -E foot|bash|Hyprland|quickshell\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T01:51:29.740Z",
+    "request": {
+      "op": "click",
+      "x": 300,
+      "y": 200
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T01:51:31.249Z",
+    "request": {
+      "op": "type",
+      "text": "abc",
+      "delay": 500,
+      "enter": true
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T01:51:45.483Z",
+    "request": {
+      "op": "exec",
+      "command": "cat /proc/interrupts; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos"
+    },
+    "result": {
+      "stdout": "           CPU0       \n 11:      28310  RISC-V INTC   5 Edge      riscv-timer\n 12:          5  SiFive PLIC   4 Edge      virtio3\n 13:          1  SiFive PLIC   5 Edge      virtio4\n 14:          0  SiFive PLIC   6 Edge      virtio5\n 15:       3817  SiFive PLIC  10 Edge      ttyS0\n 16:          2  SiFive PLIC   9 Edge      virtio8\n 17:         14  SiFive PLIC   3 Edge      virtio2\n 18:        111  SiFive PLIC   8 Edge      virtio7\n 19:       7522  SiFive PLIC   1 Edge      virtio0\n 20:         37  SiFive PLIC   2 Edge      virtio1\n 21:          0  SiFive PLIC  11 Edge      101000.rtc\n 22:          3  SiFive PLIC   7 Edge      virtio6\nIPI0:         0  Rescheduling interrupts\nIPI1:         0  Function call interrupts\nIPI2:         0  CPU stop interrupts\nIPI3:         0  CPU stop (for crash dump) interrupts\nIPI4:         0  IRQ work interrupts\nIPI5:         0  Timer broadcast interrupts\n640, 400\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T01:51:45.507Z",
+    "request": {
+      "op": "screenshot",
+      "name": "keys.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-diagnostic-r2/keys.png"
+  },
+  {
+    "time": "2026-09-10T01:51:57.101Z",
+    "request": {
+      "op": "click",
+      "x": 640,
+      "y": 13
+    },
+    "result": "sent"
+  },
+  {
+    "time": "2026-09-10T01:52:36.000Z",
+    "request": {
+      "op": "exec",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers; cat /proc/uptime; ls -l /proc/439/fd; cat /proc/775/syscall; cat /proc/524/syscall; cat /proc/439/syscall"
+    },
+    "result": {
+      "stdout": "{\n\"Virtual-1\": {\n    \"levels\": {\n\n        \"0\": [\n                {\n                    \"address\": \"0x555561f50400\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 800,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-background\",\n                    \"pid\": 525\n                }\n        ],\n        \"1\": [\n],\n        \"2\": [\n                {\n                    \"address\": \"0x5555623545a0\",\n                    \"x\": 0,\n                    \"y\": 0,\n                    \"w\": 1280,\n                    \"h\": 26,\n                    \"alpha\": 1,\n                    \"namespace\": \"omarchy-bar\",\n                    \"pid\": 525\n                }\n        ],\n        \"3\": [\n]\n    }\n}\n}\n\n113.87 0.96\ntotal 0\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 0 -> /dev/null\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 1 -> 'socket:[4974]'\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 10 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 11 -> 'socket:[5114]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 12 -> 'socket:[5114]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 13 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 14 -> 'socket:[5148]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 15 -> 'anon_inode:[pidfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 16 -> 'socket:[5152]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 17 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 18 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 19 -> 'socket:[5153]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 2 -> 'socket:[4974]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 20 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 21 -> /dev/input/event0\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 22 -> /dev/input/event1\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 23 -> /dev/input/event2\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 24 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 25 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 26 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 27 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 28 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 29 -> /run/user/1000/wayland-1.lock\nl-wx------ 1 omarchy omarchy 64 Sep  9 23:49 3 -> /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1788997715_202788042/hyprland.log\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 30 -> 'socket:[5209]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 31 -> 'socket:[5209]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 32 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 33 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 34 -> '/memfd:allocation fd (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 35 -> /dev/dri/renderD128\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 36 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 37 -> 'socket:[5249]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 38 -> 'socket:[5249]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 39 -> 'anon_inode:[eventfd]'\nl-wx------ 1 omarchy omarchy 64 Sep  9 23:49 4 -> 'pipe:[5101]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 40 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 41 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 42 -> 'socket:[5250]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 43 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 44 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 45 -> 'socket:[5286]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 46 -> 'socket:[5287]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 47 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 48 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 49 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 5 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 50 -> /dev/dri/renderD128\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 51 -> '/dev/shm/ecacc37e-e797-4f61-a38f-3bbc6d8fdc93 (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 52 -> 'anon_inode:[timerfd]'\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 53 -> anon_inode:inotify\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 54 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 55 -> /dev/dri/card0\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 56 -> 'socket:[5148]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 57 -> 'socket:[5152]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 58 -> 'anon_inode:[eventpoll]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 59 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 6 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:48 60 -> 'socket:[5841]'\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 61 -> '/dev/shm/99845d2c-957d-44c4-8c79-41354152508c (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 62 -> 'socket:[5828]'\nlr-x------ 1 omarchy omarchy 64 Sep  9 23:49 63 -> '/dev/shm/45f18607-3932-4d55-844a-2ab9d737f8af (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 64 -> 'socket:[5829]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 65 -> 'socket:[5830]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 66 -> 'socket:[5831]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 67 -> 'socket:[5828]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 68 -> 'socket:[5830]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 69 -> 'socket:[5833]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 7 -> 'anon_inode:[eventfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 70 -> 'socket:[7717]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 71 -> 'socket:[5833]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 72 -> 'socket:[5841]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 73 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 74 -> 'socket:[5863]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 75 -> 'socket:[5863]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 76 -> /dmabuf:\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 77 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 78 -> 'socket:[6021]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 79 -> 'socket:[6021]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 8 -> 'anon_inode:[signalfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 80 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 81 -> '/memfd:wayland-cursor (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 82 -> 'socket:[7488]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 83 -> 'socket:[7488]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 84 -> 'socket:[6670]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 85 -> '/memfd:foot-wayland-shm-buffer-pool (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 86 -> 'socket:[6670]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 87 -> 'socket:[7717]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 88 -> 'socket:[7719]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 89 -> 'socket:[7719]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 9 -> 'anon_inode:[timerfd]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 92 -> '/memfd:wayland-shm (deleted)'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 93 -> 'socket:[8295]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 94 -> 'socket:[8295]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 95 -> 'socket:[8297]'\nlrwx------ 1 omarchy omarchy 64 Sep  9 23:49 96 -> 'socket:[8297]'\n72 0x1 0x7fffd930ea28 0x0 0x0 0x0 0x7fffd930e978 0x7fffd930e950 0x7fffb6feb4bc\n22 0x3 0x7ffff5088e60 0xa 0xffffffffffffffff 0x555573f5c568 0x8 0x7ffff5088e00 0x7fffbe080bd8\n98 0x555562220688 0x189 0x0 0x0 0x0 0xffffffff 0x7fffc8e2c5e0 0x7fffb9ad5bd8\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T01:52:36.020Z",
+    "request": {
+      "op": "screenshot",
+      "name": "clock.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-diagnostic-r2/clock.png"
+  },
+  {
+    "time": "2026-09-10T01:52:36.022Z",
+    "request": {
+      "op": "stats"
+    },
+    "result": {
+      "focus": "ide-display-canvas",
+      "keyboard": {
+        "held": [],
+        "modifierRepairs": 0,
+        "lockRepairs": 0,
+        "pendingLockRepairs": [],
+        "releaseCount": 0,
+        "lastReleaseReason": null,
+        "leds": {
+          "numLock": false,
+          "capsLock": false,
+          "scrollLock": false
+        }
+      },
+      "keyboardFrames": [
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyA",
+          "evdev": 30,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyB",
+          "evdev": 48,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "KeyC",
+          "evdev": 46,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "keyboardDiagnostics": [],
+      "pointerFrames": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 7680
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 8192
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 7680,
+            "y": 8192
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 4,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 16384
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 532
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 16384,
+            "y": 532
+          }
+        },
+        {
+          "sequence": 5,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 6,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ],
+      "pointerDiagnostics": [],
+      "cursor": {
+        "mode": "absolute",
+        "pointerLocked": false,
+        "resourceId": 0,
+        "kind": "hidden",
+        "width": 0,
+        "height": 0,
+        "hotX": 0,
+        "hotY": 0,
+        "overlayAttached": false,
+        "hostCursorOwned": false,
+        "hostCursorHidden": false,
+        "updates": 0,
+        "moves": 0,
+        "modeChanges": 0,
+        "transformWrites": 0,
+        "styleWrites": 0,
+        "diagnostics": 0,
+        "reason": "state"
+      },
+      "rpc": {
+        "calls": 670,
+        "completed": 670,
+        "pending": 0,
+        "averageMs": 11.073320895878236,
+        "maxMs": 115.13499999046326
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 41,
+            "y": 8,
+            "width": 9,
+            "height": 10
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      }
+    }
+  },
+  {
+    "time": "2026-09-10T01:53:50.215Z",
+    "request": {
+      "op": "exec",
+      "command": "ps -eo pid,ppid,pcpu,stat,etimes,time,comm --sort=-pcpu | head -25; cat /proc/uptime; XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos; tail -c 3000 /run/user/1000/hypr/*/hyprland.log"
+    },
+    "result": {
+      "stdout": "    PID    PPID %CPU STAT ELAPSED     TIME COMMAND\n    439     384 53.8 Sl        79 00:00:42 Hyprland\n   1689     176 37.5 R+         0 00:00:00 ps\n    525     523 13.0 Sl        75 00:00:09 quickshell\n   1690     176 12.5 S+         0 00:00:00 head\n    166       1 10.4 Ss        98 00:00:10 systemd\n      1       0  5.3 Ss       114 00:00:06 systemd\n    384     166  1.7 Ssl       82 00:00:01 start-hyprland\n    192     161  1.7 Ss+       93 00:00:01 sh\n   1102       1  1.1 Ssl       30 00:00:00 polkitd\n    725     439  1.0 S         63 00:00:00 Xwayland\n    103       1  0.8 Ss       109 00:00:00 systemd-udevd\n    593     166  0.8 Ssl       72 00:00:00 xdg-desktop-por\n    524     439  0.7 S         75 00:00:00 foot\n    176     157  0.7 Ss        93 00:00:00 bash\n    842     166  0.4 Ssl       53 00:00:00 xdg-desktop-por\n    116       1  0.4 Ssl      106 00:00:00 NetworkManager\n     72       1  0.3 Ss       110 00:00:00 systemd-journal\n    566     166  0.3 Ssl       73 00:00:00 xdg-desktop-por\n    118       1  0.3 Ss       106 00:00:00 systemd-logind\n    775     524  0.2 Ss+       57 00:00:00 bash\n   1569    1173  0.2 S          7 00:00:00 capture.sh\n    115     114  0.2 S        106 00:00:00 dbus-broker\n   1513    1172  0.2 S          9 00:00:00 capture.sh\n     14       2  0.1 S        114 00:00:00 ksoftirqd/0\n114.36 0.96\n640, 12\nT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: [EGL] Command eglQueryDeviceStringEXT errored out with EGL_BAD_PARAMETER (0x12300): eglQueryDeviceStringEXT\nERR from aquamarine ]: CDRMRenderer(drm): Can't create renderer, no matching devices found\nERR from aquamarine ]: drm: initMgpu: no renderer\nERR from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit\nDEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T01:54:43.913Z",
+    "request": {
+      "op": "exec",
+      "command": "ps -T -p 439 -o pid,tid,pcpu,stat,time,wchan:25,comm; cat /proc/uptime"
+    },
+    "result": {
+      "stdout": "    PID     TID %CPU STAT     TIME WCHAN                     COMMAND\n    439     439 22.4 Sl   00:00:18 futex_wait_queue          Hyprland\n    439     463  0.0 Sl   00:00:00 futex_wait_queue          Hyprland\n    439     488 33.7 Rl   00:00:27 -                         llvmpipe-0\n    439     489  0.0 Sl   00:00:00 futex_wait_queue          Hyprland\n    439     490  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$0\n    439     491  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$1\n    439     498  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$2\n    439     503  0.0 Sl   00:00:00 futex_wait_queue          pool-spawner\n    439     504  0.0 Sl   00:00:00 poll_schedule_timeout.con gmain\n    439     505  0.0 Sl   00:00:00 poll_schedule_timeout.con dconf worker\n    439     506  0.0 Sl   00:00:00 poll_schedule_timeout.con gdbus\n    439     610  0.0 Sl   00:00:00 futex_wait_queue          [pango] fontcon\n    439     666  0.0 SNl  00:00:00 futex_wait_queue          Hyprlan:disk$3\n118.35 0.96\n\n",
+      "exit": 0
+    }
+  },
+  {
+    "time": "2026-09-10T01:55:02.315Z",
+    "request": {
+      "op": "screenshot",
+      "name": "last.png"
+    },
+    "result": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/input-diagnostic-r2/last.png"
+  }
+]

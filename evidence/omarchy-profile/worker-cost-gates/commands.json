@@ -1,0 +1,84 @@
+{
+  "head": "3cb109d87f1bf08ad0ba6c6122ff0e884d4d3030",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "commands": [
+    {
+      "label": "recorder",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-worker-cost.test.mjs",
+        "tools/verify/e5-t22c-symbolize-cpu.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-desktop-services.test.mjs",
+        "tools/verify/omarchy-latency-receipt.test.mjs",
+        "web/tests/omarchy-cold-counter-recycling.test.mjs",
+        "web/tests/e5-t26f-jit-residency.test.mjs",
+        "web/tests/omarchy-desktop-readiness.test.mjs",
+        "web/tests/omarchy-desktop-services.test.mjs",
+        "web/tests/omarchy-desktop-agent-session.test.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:31Z"
+    },
+    {
+      "label": "real-worker-profiler",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--test",
+        "tools/verify/e5-t22c-cpu-profile.test.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:31Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:33Z"
+    },
+    {
+      "label": "cost-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-worker-cost.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:33Z"
+    },
+    {
+      "label": "recycling-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-recycling-ab.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:33Z"
+    },
+    {
+      "label": "residency-runner-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-residency-ab.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:33Z"
+    },
+    {
+      "label": "recorder-syntax",
+      "args": [
+        "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+        "--check",
+        "tools/verify/omarchy-desktop-live.mjs"
+      ],
+      "startedAt": "2026-09-16T02:16:33Z",
+      "code": 0,
+      "finishedAt": "2026-09-16T02:16:33Z"
+    }
+  ],
+  "allPassed": true
+}

@@ -1,0 +1,36 @@
+✖ input-kernel preparation rejects old running notes before properties and syncs before export (2.756ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.098333
+
+✖ failing tests:
+
+test at tools/verify/omarchy-desktop-live.test.mjs:393:1
+✖ input-kernel preparation rejects old running notes before properties and syncs before export (2.756ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'fence',
+      'navigate',
+  -   'sha256sum /sys/kernel/notes',
+      'properties',
+      'sync',
+      'capture'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-desktop-live.test.mjs:426:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'fence', 'navigate', 'properties', 'sync', 'capture' ],
+    expected: [ 'fence', 'navigate', 'sha256sum /sys/kernel/notes', 'properties', 'sync', 'capture' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

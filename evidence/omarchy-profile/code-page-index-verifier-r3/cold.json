@@ -1,0 +1,171 @@
+{
+  "head": "ff39120a385d31efcbb5021fced43b4bede8fa9f",
+  "clone": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "sharedImmutableGitObjectsOnly": true,
+  "freshBuildDirectory": true,
+  "startedAt": "2026-09-17T04:03:55.638266+00:00",
+  "steps": [
+    {
+      "name": "clone",
+      "args": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/Users/blamy/Documents/Codex/wasm-vm",
+        "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "code": 0,
+      "seconds": 0.154249417,
+      "log": "cold-clone.log",
+      "sha256": "7e43030116578546e718c64e591987b13c9c0d50237405b7ab01005b8bd82483"
+    },
+    {
+      "name": "checkout",
+      "args": [
+        "git",
+        "checkout",
+        "--detach",
+        "ff39120a385d31efcbb5021fced43b4bede8fa9f"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 3.803082,
+      "log": "cold-checkout.log",
+      "sha256": "aa58503679c984b51924a552a6a50b3ccb9810769a7ee52efb59fe8de7281ba7"
+    },
+    {
+      "name": "npm",
+      "args": [
+        "npm",
+        "ci",
+        "--offline",
+        "--ignore-scripts",
+        "--include=dev",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo/web",
+      "code": 0,
+      "seconds": 0.9272913750000003,
+      "log": "cold-npm.log",
+      "sha256": "f58b3afb998151224892128ad08aa98de32bf65d57fcf53e89340f34e3279220"
+    },
+    {
+      "name": "fmt",
+      "args": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 1.7040707919999996,
+      "log": "cold-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 2.9633072499999997,
+      "log": "cold-clippy.log",
+      "sha256": "d8952edb42a4376157e922e62fb55829c8996d63d5b9b8c00b4498ee44a71ee4"
+    },
+    {
+      "name": "core",
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 12.306409665999999,
+      "log": "cold-core.log",
+      "sha256": "58b0376c291b94f8d2135d88d4f03a05211d38dd26ef82b03dc3cf9b73bd8848"
+    },
+    {
+      "name": "capacity",
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "decoded_cache_capacity_tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 0.09463000000000221,
+      "log": "cold-capacity.log",
+      "sha256": "0d7ed9ebbe6fef8865335868341212e2c9551d853334c005b204894eb19ef637"
+    },
+    {
+      "name": "wasm",
+      "args": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--lib"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 12.104153959000001,
+      "log": "cold-wasm.log",
+      "sha256": "1289f09a63f75bf3fccf328e48a0553840ad86a4727b67d706b7ad5ce30bcce0"
+    },
+    {
+      "name": "node",
+      "args": [
+        "node",
+        "--test",
+        "tools/verify/omarchy-input-kernel-response.test.mjs",
+        "tools/verify/omarchy-input-trial.test.mjs",
+        "tools/verify/omarchy-user-input.test.mjs",
+        "tools/verify/omarchy-desktop-live.test.mjs",
+        "tools/verify/omarchy-owned-trial.test.mjs"
+      ],
+      "cwd": "/private/tmp/wasm-vm-ba-r3-cold-r1duufdz/repo",
+      "code": 0,
+      "seconds": 0.5083236250000027,
+      "log": "cold-node.log",
+      "sha256": "9e6ace4be2c3f2dfa9cb0572b6b83da5ba4ba48d81df4cfa897757456b1b7198"
+    }
+  ],
+  "pristineBefore": true,
+  "trackedStatusAfter": "",
+  "finishedAt": "2026-09-17T04:04:30.786723+00:00",
+  "passed": true
+}

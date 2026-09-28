@@ -1,0 +1,8 @@
+{
+  "spawn_status": 102,
+  "signal": null,
+  "error": null,
+  "started": "2026-09-10T03:13:35.536Z",
+  "finished": "2026-09-10T03:13:39.936Z",
+  "outcome": "MaxInstrs expected"
+}

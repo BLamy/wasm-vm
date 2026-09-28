@@ -1,0 +1,136 @@
+{
+  "head": "94647c4993b062961b26e82bc2c8484431fe8c05",
+  "verifiedParent": "53103e762c6c4003a5976bfa90131a03702fd2e7",
+  "frozenAt": "2026-09-16T03:53:44Z",
+  "files": [
+    {
+      "path": "crates/core/src/jit.rs",
+      "sha256": "fb81d1cdd4dddf41583f7b9f1270c82cc9d7098d9d02ad864e0c10f72d9a10ce",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/core/src/dispatch.rs",
+      "sha256": "2d0e0b36f084f4b495fb6bb08184f2a488c3762c7328bbd61e4fec10b27b2d2c",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "sha256": "7245c9fe1814d67eda6b9311dadf9784bbe973322aff89ba06c0f6e6cc557ca0",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "crates/wasm/src/jit_browser.rs",
+      "sha256": "148966dd4910b95ca25444c4c9ce5cc9033ff4a5f59a61273cdffa1b7a008ded",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/main.js",
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+      "unchangedFromVerified": true
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.mjs",
+      "sha256": "d255b57b497e35275458d48a63fd064af7fc6083d0b8618a53ed3895c2a74301",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.mjs",
+      "sha256": "fcb5b04c402654a4634461c2db7256086415b874397b147ad5741dd42676cd82",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.mjs",
+      "sha256": "6904fd446adef5b247ea9fd1338ddad36b67f3c4836880872bdde46b8f7faec8",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-mode-preparation.mjs",
+      "sha256": "a9a622f5b7a220334af14bff94b19b770bb2b99207723edbeb0d32b3f6d2bc73",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-prepare-mode.mjs",
+      "sha256": "26f09dae1a2bfacac7725e9b3f229cf80155d7f755b9df49798b4350ebb8cbbc",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-render-mode.mjs",
+      "sha256": "2c168dcbc9ca92584e104bec4e65998d43ad844ee0c06654d4695707d1edab80",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-compositor-command.mjs",
+      "sha256": "03618e89cca383e0f9d775c35a1587beccbbb8a9556c0f4b7de73d44b88de366",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot.mjs",
+      "sha256": "939d5ac6ca128eeeab18e86725722736633baae0d3a85ec22cbddf8714f6ee74",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot-command.mjs",
+      "sha256": "4d532446589ada5872db3901f37f50739a79229b43e943da6a20fa4fa1e7ee72",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-input-audit.mjs",
+      "sha256": "4933a5eea14f1435a2c6f000210e893c1920dc1c3721d7fda19c16e08a951d60",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-opaque-foot.test.mjs",
+      "sha256": "6a47b7f8ea977f7755c6f86d9dec45790ea53eb107908bca585eab3d5f06eb0f",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-input-trial.test.mjs",
+      "sha256": "d2cea16fbf048f32d2827174701df81c130652c55af663374617a012cff7fae8",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-mode-preparation.browser.test.mjs",
+      "sha256": "6b9be3f4e03bb2c834ea62a7d73881aa4a00df31aa109315ab2e8a601f28e824",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-owned-trial.test.mjs",
+      "sha256": "8cfbb6f9be21341c5647224a3868b845e1df7157ec65852bfb9ca36d8582a0fb",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-user-input.test.mjs",
+      "sha256": "762a37d0a331c832dc1fd15eb9a3a77226141d2ae52a613f7f8e595519adc78c",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "tools/verify/omarchy-desktop-live.test.mjs",
+      "sha256": "9f7cf4e6ba9dbbb183bbfd0457a256d51adba6c7d208bc0cd6c3cefcb977f4cf",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "evidence/omarchy-profile/opaque-foot-gates/record.py",
+      "sha256": "724c85ab549fa02c65953cd028278d061b0d75bede94dcc05e7e3e9530cdb56c",
+      "unchangedFromVerified": false
+    },
+    {
+      "path": "evidence/omarchy-profile/opaque-foot-gates/freeze.py",
+      "sha256": "77eb8f24018daea2278ca8b3164cdf8a666210b2fa7ce9ce2a8607f9caba97f6",
+      "unchangedFromVerified": false
+    }
+  ],
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "priorDivisionIndexSha256": "da8b6685880651034ec46f81a030ba2dcb516d8c1eb5fba551bb7158829e902a",
+  "priorDivisionEvidenceFiles": 69,
+  "otherBudgets": {
+    "code_bytes": 33554432,
+    "table_slots": 32768,
+    "metadata_bytes": 8388608
+  },
+  "budgetProof": "Unchanged selector assigns only max_batches; unchanged BrowserExecutor defaults and JitCacheBudget::DEFAULT supply all other budgets. These are source-bound values, not new runtime observations."
+}

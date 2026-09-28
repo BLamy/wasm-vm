@@ -28,6 +28,9 @@ import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
+import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
+import { applyAdmissionProbe } from "./admission-probe.js";
+import { applyColdCounterRecycling, isLoopbackOrigin } from "./cold-counter-recycling.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -184,6 +187,10 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T02 chunked mode: URL of the image manifest.json produced by `wasm-vm chunk`. `baseUrl`
     // (the directory chunks live under) defaults to the manifest's directory.
     imageManifestUrl = "./releases/chunked-alpine/manifest.json",
+    // Omarchy production passes only its asset base. Resolve the immutable manifest descriptor from
+    // the boot manifest already fetched below, so persist/noSnapshot diagnostics cannot race a second
+    // metadata fetch or fall back to the mutable candidate key.
+    requestImageManifestBaseUrl = null,
     // E3-T03 boot-profile URL (ordered chunk indices to prefetch up front); missing → readahead-only.
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
@@ -195,6 +202,9 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
     // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
     persist = false,
+    // A demo desktop always starts from the shipped RAM+disk pair in memory. No shared writer
+    // lock, durable user overlay, or long cold boot on the next visit.
+    freshDesktop = false,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -247,6 +257,10 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T38: one explicit live-module screen per boot. `repack-off` is the current conservative
     // single-pass batcher; the cap variants change only the live batch budget.
     jitResidency = undefined,
+    // T03j: default-off bounded admission observation; not performance profiling.
+    jitAdmissionProbe = false,
+    // T03k: default-off local-only bounded cold-counter recycling trial.
+    jitColdCounterRecycling = false,
     profile = undefined,
     // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
     // slice until the owner explicitly resumes it. Production callers leave this false.
@@ -269,6 +283,30 @@ export async function startLinuxBoot(opts = {}) {
     // changes device configuration; permission and host capture belong to later slices.
     enableMic = false,
   } = opts;
+  const resolveOmarchyChunkedImage = (manifest, requestImageManifestBaseUrl) => {
+    const descriptor = manifest?.chunkedImage;
+    if (!descriptor || typeof descriptor !== "object" || Array.isArray(descriptor)) {
+      throw new Error("Omarchy chunked image descriptor is missing");
+    }
+    const key = descriptor.key;
+    const sha256 = descriptor.sha256;
+    const size = descriptor.size;
+    const keyMatch = typeof key === "string"
+      ? key.match(/^chunked-omarchy\/manifest-([0-9a-f]{64})\.json$/u)
+      : null;
+    if (!keyMatch || typeof sha256 !== "string" || !/^[0-9a-f]{64}$/u.test(sha256) || keyMatch[1] !== sha256) {
+      throw new Error("Omarchy chunked image descriptor is invalid");
+    }
+    if (!Number.isSafeInteger(size) || size <= 0) throw new Error("Omarchy chunked image descriptor size is invalid");
+    if (typeof requestImageManifestBaseUrl !== "string" || !requestImageManifestBaseUrl.trim()) {
+      throw new Error("Omarchy chunked image manifest base URL is missing");
+    }
+    return {
+      url: `${requestImageManifestBaseUrl.replace(/\/+$/u, "")}/${key}`,
+      sha256,
+      size,
+    };
+  };
   let outputCalls = 0;
   let outputBytes = 0;
   const emitOutput = (bytes) => {
@@ -284,13 +322,34 @@ export async function startLinuxBoot(opts = {}) {
   // Disk/chunked modes leave bootargs empty so WasmLinux supplies `root=/dev/vda rw …`.
   const bootargs = opts.bootargs ?? (mode === "initramfs" ? "console=ttyS0 earlycon=sbi" : "");
   const role = mode === "disk" ? "rootfs" : "initramfs";
-  const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
+  const requestedImageManifestUrl = imageManifestUrl;
+  let resolvedImageManifestUrl = requestedImageManifestUrl;
+  let baseUrl = opts.baseUrl ?? null;
 
   try {
+    if (typeof jitAdmissionProbe !== "boolean") throw new TypeError("jitAdmissionProbe must be boolean");
+    if (jitAdmissionProbe && jit !== true) throw new Error("jitAdmissionProbe requires explicit JIT");
     validateDecodedCacheEntries(decodedCacheEntries);
+    if (typeof jitColdCounterRecycling !== "boolean") {
+      throw new TypeError("jitColdCounterRecycling must be boolean");
+    }
+    if (jitColdCounterRecycling && jit !== true) {
+      throw new Error("jitColdCounterRecycling requires explicit JIT");
+    }
+    if (jitColdCounterRecycling && !isLoopbackOrigin(globalThis.location)) {
+      throw new Error("jitColdCounterRecycling is restricted to a loopback origin");
+    }
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
+    if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
+      throw new Error("fresh desktop requires an ephemeral chunked warm boot");
+    }
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
+    const omarchyImage = requestImageManifestBaseUrl != null
+      ? resolveOmarchyChunkedImage(manifest, requestImageManifestBaseUrl)
+      : null;
+    if (omarchyImage) resolvedImageManifestUrl = omarchyImage.url;
+    if (!baseUrl) baseUrl = resolvedImageManifestUrl.replace(/[^/]*$/, "");
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
     // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
@@ -298,6 +357,9 @@ export async function startLinuxBoot(opts = {}) {
     // chance to restore, so a reload never holds both whole snapshot representations needlessly.
     const bootSnap = manifest.artifacts?.bootSnapshot;
     const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
+    if (freshDesktop && (!bootSnap || !overlayDeltaEntry)) {
+      throw new Error("Omarchy desktop snapshot is not published; please try again after deployment");
+    }
     // The exact RAM+disk pair identity is also the durable-overlay namespace. This keeps a new
     // shipped warm image independent from the legacy per-base DB (and every older snapshot), even
     // when a RAM-only release changes while its disk delta happens to remain byte-identical.
@@ -306,19 +368,50 @@ export async function startLinuxBoot(opts = {}) {
       : null;
     let alpineRamBlob = null;
     let alpineOverlaySeeded = false;
+    // Cache immutable release bytes, never the mutable RAM/disk of a running guest. This
+    // cache survives shell upgrades and fresh sessions; each read still verifies its hash.
+    const readBootAsset = async (name, entry) => {
+      if (!omarchyImage) return fetchWithProgress(entry.url, (l, t) => onProgress(name, l, t));
+      let phase = `${name}: downloading`;
+      let cacheUnavailable = false;
+      return fetchVerifiedBootAsset({ ...entry, role: name }, {
+        onCacheStatus: ({ source }) => {
+          if (source === "unavailable") cacheUnavailable = true;
+          phase = source === "cache" ? `${name}: reading cache`
+            : `${name}: downloading${cacheUnavailable ? " (cache unavailable)" : ""}`;
+          onProgress(phase, 0, entry.size);
+        },
+        onProgress: (loaded, total) => onProgress(phase, loaded, total),
+      });
+    };
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
     // modes; in chunked mode it is NOT — only the image manifest is fetched now, and its chunks are
     // pulled lazily during boot by WasmLinux.fetchPending.
-    const kernel = await fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t));
+    const kernel = await readBootAsset("kernel", km);
     let secondaryBytes = null;
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
     if (isChunked) {
       // The chunked image manifest (JSON text handed to wasm as-is). Clear error if the local-only
       // asset is missing rather than a cryptic parse failure later.
-      imageManifestText = await fetchAsset(imageManifestUrl, "chunked image manifest");
+      if (omarchyImage) {
+        // Hash the bytes as received. Decoding first can erase a BOM or replace malformed UTF-8,
+        // allowing bytes other than the publisher-verified immutable object to reach the VM.
+        const imageManifestBytes = await readBootAsset("chunkManifest", omarchyImage);
+        const imageManifestSha = await sha256hex(imageManifestBytes);
+        if (imageManifestBytes.byteLength !== omarchyImage.size || imageManifestSha !== omarchyImage.sha256) {
+          throw new Error("Omarchy chunked image manifest integrity check failed");
+        }
+        try {
+          imageManifestText = new TextDecoder("utf-8", { fatal: true }).decode(imageManifestBytes);
+        } catch {
+          throw new Error("Omarchy chunked image manifest is not valid UTF-8");
+        }
+      } else {
+        imageManifestText = await fetchAsset(resolvedImageManifestUrl, "chunked image manifest");
+      }
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
       if (bootProfileUrl) {
@@ -416,7 +509,16 @@ export async function startLinuxBoot(opts = {}) {
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
-    if (usePersist) {
+    if (freshDesktop) {
+      onState("restoring");
+      const dgz = await readBootAsset("overlayDelta", overlayDeltaEntry);
+      if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("desktop overlay delta integrity check failed");
+      onProgress("overlayDelta: unpacking", null, null);
+      const delta = await gunzip(dgz);
+      machine = WasmLinux.newChunkedDiskSeeded(ramMib, kernel, imageManifestText, baseUrl,
+        cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic, delta);
+      alpineOverlaySeeded = true;
+    } else if (usePersist) {
       // E3-T09 single-writer discipline: exactly one tab may open the overlay writable. The
       // exclusive Web Lock (auto-released on tab close/crash — no heartbeats) is acquired
       // BEFORE the writable store opens; a second tab probes with ifAvailable (queueing would
@@ -475,7 +577,7 @@ export async function startLinuxBoot(opts = {}) {
       if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
         try {
           onState("restoring");
-          const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+          const dgz = await readBootAsset("overlayDelta", overlayDeltaEntry);
           if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
           const deltaBytes = await gunzip(dgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes, overlaySeedIdentity);
@@ -706,10 +808,12 @@ export async function startLinuxBoot(opts = {}) {
     if (!restoredFromStoredSnapshot && alpineOverlaySeeded && bootSnap && opts.bootSnapshot !== false) {
       try {
         onState("restoring");
-        const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+        const rgz = await readBootAsset("bootSnapshot", bootSnap);
         if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+        if (omarchyImage) onProgress("bootSnapshot: unpacking", null, null);
         alpineRamBlob = await gunzip(rgz);
       } catch (e) {
+        if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM fallback fetch failed, cold booting:", e?.message || e);
         alpineRamBlob = null;
         onState("booting");
@@ -743,9 +847,11 @@ export async function startLinuxBoot(opts = {}) {
           restoredFromBootSnapshot = true;
           onState("restored");
         } else {
+          if (freshDesktop) throw new Error(`Omarchy desktop snapshot is not coherent: ${decision}`);
           console.warn(`wasm-vm: Alpine boot snapshot not coherent (${decision}) — cold booting`);
         }
       } catch (e) {
+        if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM restore failed, cold booting:", e?.message || e);
         restoredFromBootSnapshot = false;
       }
@@ -801,6 +907,8 @@ export async function startLinuxBoot(opts = {}) {
     // All initial resume candidates are settled; selection must survive restore and precede execution.
     applyDecodedCacheEntries(machine, decodedCacheEntries);
     const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
+    if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
+    if (jitColdCounterRecycling) applyColdCounterRecycling(machine, jitColdCounterRecycling);
 
     // No resume candidate was coherent, so this machine is about to execute its cold guest boot.
     // Persistent resume success intentionally reaches the scheduler without a booting state.
@@ -1109,6 +1217,9 @@ export async function startLinuxBoot(opts = {}) {
       // after focus recovery without reading or mutating guest state through an ad-hoc path.
       keyboardLedState: () => (
         typeof machine.keyboardLedState === "function" ? machine.keyboardLedState() : null
+      ),
+      inputDeviceStats: () => (
+        typeof machine.inputDeviceStats === "function" ? machine.inputDeviceStats() : null
       ),
       stop: async () => {
         finish("stopped");

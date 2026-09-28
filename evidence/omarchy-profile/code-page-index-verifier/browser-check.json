@@ -1,0 +1,22 @@
+{
+  "head": "e92f702d573e8dcb4bb7b10fd06459ccc9178324",
+  "reportSha256": "b5922879a2e113022b4b5a67420c0e896c789a4e7750b790e76e7efcbfe79bdd",
+  "wasmSha256": "3da4b21591b9e816e68361ca743ecaaffe4f0681f4cbe364feeb359c1682976b",
+  "helperCount": 47,
+  "gitResources": 67,
+  "nonce": "e834cbb919b48075",
+  "rawFenceId": "mu4yrhys29",
+  "nonceElapsedMs": 82097,
+  "trustedEvents": 128,
+  "matchedKeyboardCalls": 128,
+  "budgets": {
+    "startupMs": 300000,
+    "typingMs": 60000,
+    "readbackMs": 120000,
+    "captureMs": 20000,
+    "cleanupMs": 30000
+  },
+  "imageSha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24",
+  "desktopAcceptance": false,
+  "personalImageReview": "Old empty prompt; no typed command or returned prompt."
+}

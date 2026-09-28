@@ -1,0 +1,42 @@
+{
+  "source": "evidence/omarchy-profile/fp-division-r1/physical-input/desktop/report.json",
+  "sha256": "6c220572738d7bcb6a7a03c184823a2dbf310dc1f0492a7f66a8262eb455425e",
+  "intervalRetired": 1311948497,
+  "intervalJitRetired": 428254746,
+  "firstDiscovery": {
+    "nominated": 40327,
+    "deduped": 18372381,
+    "droppedStale": 0,
+    "droppedOverflow": 0,
+    "countsDropped": 10348545,
+    "excluded": 105,
+    "queueDepth": 0,
+    "queueHighWater": 481,
+    "candidates": 65536,
+    "generation": 5
+  },
+  "lastDiscovery": {
+    "nominated": 140100,
+    "deduped": 54538948,
+    "droppedStale": 0,
+    "droppedOverflow": 0,
+    "countsDropped": 27786503,
+    "excluded": 192,
+    "queueDepth": 55,
+    "queueHighWater": 481,
+    "candidates": 65535,
+    "generation": 5
+  },
+  "lastColdCounterRecycling": {
+    "enabled": false,
+    "epochs": "0",
+    "discardedCounters": "0",
+    "threshold": 512,
+    "capacity": 65536
+  },
+  "lastCompiledBlocks": 118,
+  "lastCacheInstalls": 37140,
+  "lastCacheEvictions": 8988,
+  "note": "Interval arithmetic from recorded counters only; no causal or speedup claim.",
+  "intervalJitShare": 0.32642649233508747
+}

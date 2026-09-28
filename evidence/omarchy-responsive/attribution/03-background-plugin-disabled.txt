@@ -1,0 +1,105 @@
+### command (run2/004.cmd)
+export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 OMARCHY_PATH=/usr/share/omarchy; date; cat /proc/uptime; OMARCHY_SHELL_IPC_TIMEOUT=120s omarchy-shell shell setPluginEnabled omarchy.background false; echo rc=$?; date; cat /proc/uptime
+
+### output
+# host_ms=35746 at=311.148s status=0
+Thu Sep 10 02:22:43 UTC 2026
+152.84 0.97
+ok
+rc=0
+Thu Sep 10 02:22:44 UTC 2026
+153.70 0.97
+
+
+### command (run2/005.cmd)
+sh /tmp/snap.sh > /tmp/a; cat /proc/uptime; sleep 2; cat /proc/uptime; sh /tmp/snap.sh > /tmp/b; awk "NR==FNR{a[\$1]=\$3;next}{d=\$3-a[\$1]; if(d>0) print d, \$1, \$2}" /tmp/a /tmp/b | sort -rn | head -6; L=$(ls /run/user/1000/hypr/*/hyprland.log); wc -l $L; grep -n "02:22:4\|02:22:5\|02:23" $L | grep -v -e eglQuery -e "Supported EGL" -e "no matching" -e initMgpu -e CConfigWatcher | cut -c1-140 | tail -40
+
+### output
+# host_ms=86826 at=554.787s status=0
+162.53 0.97
+164.59 2.02
+95 417 Hyprland
+13 462 llvmpipe-0
+2 1800 sh
+1 470 Hyprlan:disk$2
+1 1802 awk
+1 14 ksoftirqd/0
+479 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log
+421:DEBUG @ 02:22:44.770229700 ]: renderer: making a snapshot of layer 55555eda5da0
+422:DEBUG @ 02:22:44.778092200 ]: Framebuffer "layer snapshot" created, status 36053
+423:DEBUG @ 02:22:44.778143300 ]: renderer: cleared a snapshot of layer 55555eda5da0
+424:DEBUG @ 02:22:44.778160600 ]: renderer: rendered a snapshot of layer 55555eda5da0
+425:DEBUG @ 02:22:47.161785100 ]: renderer: made a snapshot of layer 55555eda5da0
+426:DEBUG @ 02:22:47.161825100 ]: Damage: Monitor Virtual-1
+427:DEBUG @ 02:22:47.161842800 ]: Damage: Monitor Virtual-1
+428:DEBUG @ 02:22:47.161857700 ]: Damage: Monitor Virtual-1
+429:DEBUG @ 02:22:47.161884700 ]: Damage: Box: xy: 0, 0 wh: 1280, 800
+430:DEBUG @ 02:22:47.161906700 ]: Damage: Box: xy: 0, 0 wh: 1280, 800
+431:DEBUG @ 02:22:47.161976900 ]: [CPrimarySelectionProtocol] CPrimarySelectionProtocol::updateSelection: cannot send selection to a client 
+432:DEBUG @ 02:22:47.162008200 ]: Damage: Monitor Virtual-1
+433:DEBUG @ 02:22:47.162048900 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+434:DEBUG @ 02:22:47.162098000 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+435:DEBUG @ 02:22:47.162131200 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+436:DEBUG @ 02:22:47.162162100 ]: Damage: Monitor Virtual-1
+437:DEBUG @ 02:22:47.162199600 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+438:DEBUG @ 02:22:47.162243000 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+439:DEBUG @ 02:22:47.162270400 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+440:DEBUG @ 02:22:47.162291400 ]: Damage: Box: xy: 0, 0 wh: 1280, 800
+441:DEBUG @ 02:22:47.162306100 ]: CWLSurface 55555e804070 called destroy()
+442:DEBUG @ 02:22:47.162373800 ]: Damage: Monitor Virtual-1
+443:DEBUG @ 02:22:47.162408500 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+444:DEBUG @ 02:22:47.162455000 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+445:DEBUG @ 02:22:47.162485000 ]: Damage: Window (omarchy@omarchy-demo:~): xy: 8, 34 wh: 1264, 758
+446:DEBUG @ 02:22:47.162521700 ]: Cleanup: removed 1 fadeouts
+447:DEBUG @ 02:22:47.170462400 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+453:ERR @ 02:22:48.780216400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+454:DEBUG @ 02:22:49.371624800 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+455:DEBUG @ 02:22:49.371652000 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+461:ERR @ 02:22:50.171610800 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+462:DEBUG @ 02:22:50.765882900 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+463:DEBUG @ 02:22:50.765909300 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+469:ERR @ 02:22:51.596218200 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+470:DEBUG @ 02:22:51.596256800 ]: cursorImage request: shape 9 -> text
+471:DEBUG @ 02:22:52.192105700 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+472:DEBUG @ 02:22:52.192133800 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+478:ERR @ 02:22:54.345367500 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+479:DEBUG @ 02:22:54.363786600 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+480:DEBUG @ 02:22:54.363813500 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+
+
+### command (run2/008.cmd)
+L=$(ls /run/user/1000/hypr/*/hyprland.log); wc -l $L; tail -n +478 $L | grep -v -e eglQuery -e "Supported EGL" -e "no matching" -e initMgpu -e CConfigWatcher | cut -c1-140 | head -60; ps -u 1000 -o pid,etime,args | grep -i -E "screensaver|lock" | head
+
+### output
+# host_ms=19167 at=776.191s status=0
+534 /run/user/1000/hypr/efb50993780079460b0cbed1363e2166a2de1d9f_1789006846_448860177/hyprland.log
+ERR @ 02:22:54.345367500 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:22:54.363786600 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:22:54.363813500 ]: Damage: Surface (extents): xy: 0, 0 wh: 1280, 26
+ERR @ 02:22:54.420591400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:22:59.922308800 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:22:59.922338700 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:22:59.930509600 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:22:59.985908400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:23:59.925928500 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:23:59.925957000 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:23:59.934128500 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:23:59.984395700 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:24:59.926003400 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:24:59.926034700 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:24:59.934161700 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:24:59.984436700 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:25:59.926590700 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:25:59.926621900 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:25:59.934755600 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:25:59.989032500 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:26:59.926834400 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:26:59.926865400 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:26:59.934993300 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+ERR @ 02:26:59.989299400 from aquamarine ]: drm: Failed to update renderer state for Virtual-1 on applyCommit
+DEBUG @ 02:27:59.926969400 ]: Damage: Box: xy: 0, 0 wh: 1280, 26
+DEBUG @ 02:27:59.927000300 ]: Damage: Surface (extents): xy: 591, 8 wh: 98, 11
+DEBUG @ 02:27:59.935199900 ]: Framebuffer "Monitor Virtual-1 workbuffer" created, status 36053
+   1983       00:00 grep -i -E screensaver|lock
+
+

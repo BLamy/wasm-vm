@@ -1,0 +1,13 @@
+{"kind": "target-ready", "pid": 7, "tids": [7, 9, 10]}
+{"kind": "progress", "tid": 7, "iteration": 1}
+{"kind": "progress", "tid": 9, "iteration": 1}
+{"kind": "progress", "tid": 10, "iteration": 1}
+{"kind": "progress", "tid": 7, "iteration": 2}
+{"kind": "progress", "tid": 9, "iteration": 2}
+{"kind": "progress", "tid": 10, "iteration": 2}
+{"kind": "progress", "tid": 9, "iteration": 3}
+{"kind": "progress", "tid": 7, "iteration": 3}
+{"kind": "progress", "tid": 10, "iteration": 3}
+{"kind": "progress", "tid": 10, "iteration": 4}
+{"kind": "progress", "tid": 9, "iteration": 4}
+{"kind": "progress", "tid": 7, "iteration": 4}

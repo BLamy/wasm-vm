@@ -1,0 +1,15 @@
+HELD counter differential cap=1 seed=297 operations=100000
+HELD counter differential cap=1 seed=29164 operations=100000
+HELD counter differential cap=1 seed=24301 operations=100000
+HELD counter differential cap=2 seed=297 operations=100000
+HELD counter differential cap=2 seed=29164 operations=100000
+HELD counter differential cap=2 seed=24301 operations=100000
+HELD counter differential cap=8 seed=297 operations=100000
+HELD counter differential cap=8 seed=29164 operations=100000
+HELD counter differential cap=8 seed=24301 operations=100000
+HELD counter differential cap=64 seed=297 operations=100000
+HELD counter differential cap=64 seed=29164 operations=100000
+HELD counter differential cap=64 seed=24301 operations=100000
+HELD counter differential cap=16384 seed=297 operations=100000
+HELD counter differential cap=16384 seed=29164 operations=100000
+HELD counter differential cap=16384 seed=24301 operations=100000

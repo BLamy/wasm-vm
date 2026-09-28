@@ -1,0 +1,18 @@
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.80s
+     Running tests/fp_division_verifier.rs (target/debug/deps/fp_division_verifier-0856e053b9558d34)
+
+running 5 tests
+CRITIC_NATIVE_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_native_division_control_and_faults ... ok
+CRITIC_NATIVE_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+test verifier_native_division_literals ... ok
+CRITIC_DIVISION_INDICES imports=9 exports=run0:9,run1:10,run2:11,run3:12,run4:13 all_optional_combinations=8 mixed_chain_executed=true integer_imports=5 unsupported_families=9
+test verifier_mixed_optional_indices_and_integer_behavior ... ok
+CRITIC_NATIVE_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+test verifier_native_division_seeded_aliases_and_illegal ... ok
+CRITIC_DIVISION_PURITY cases=1536 legal_helper_calls=810 illegal_helper_calls=0 import_index=5 exact_masks=true integer_wasm_only=true
+test verifier_generated_division_helper_counts_and_purity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.00s
+

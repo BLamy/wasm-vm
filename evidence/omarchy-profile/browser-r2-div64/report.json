@@ -1,0 +1,72 @@
+{
+  "schema": "wasm-vm.omarchy-browser-session.v1",
+  "task": "E5.5-T03a",
+  "taskVerified": false,
+  "startedAt": "2026-09-09T05:35:37.967Z",
+  "options": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "image-sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "manifest-sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+    "out": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2-div64",
+    "ram-mib": 1024,
+    "icount-divider": 64,
+    "keyboard": "auto",
+    "timeout-ms": 2400000,
+    "probe-timeout-ms": 240000,
+    "poll-ms": 30000,
+    "port": 0,
+    "shell-namespace": ""
+  },
+  "result": "failed",
+  "publication": {
+    "image": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-r2.ext4",
+    "chunks": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-r2-256k",
+    "integrity": {
+      "chunk_count": 16384,
+      "chunk_size": 262144,
+      "ext4_block_size": 4096,
+      "ext4_logical_bytes": 4294967296,
+      "image_len": 4294967296,
+      "image_sha256": "47584cba39876ee958ea8fa39d3432488277d230abb2997b5999e54b8defe13e",
+      "manifest_sha256": "ec1bc2601b104cfb6d6875c091377ccfd0654d5b6aab71c6a08ae37263f1c391",
+      "scope": "image/chunk integrity and ext4 superblock bounds only; not sanitization or browser boot",
+      "status": "integrity-verified"
+    },
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896,
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image"
+    },
+    "bootManifest": {
+      "artifacts": {
+        "kernel": {
+          "url": "/releases/kernel/6.6.63/Image",
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "size": 24208896
+        }
+      }
+    },
+    "harnessSha256": "4761ea45dea5432dee64f867808e83d2e42e18cff3226a03ec75ac219d436417"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "152.0.7977.84",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "freshContext": true,
+    "serviceWorkers": "block",
+    "httpCacheDisabled": true
+  },
+  "error": "page.evaluate: Target page, context or browser has been closed\n    at evaluate (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:434:45)\n    at probe (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:440:11)\n    at observeGuest (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:473:29)\n    at async within (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:95:12)\n    at async run (/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:561:27)\n    at /Users/blamy/Documents/Codex/wasm-vm/async file:/Users/blamy/Documents/Codex/wasm-vm/tools/verify/omarchy-browser-session.mjs:702:10",
+  "browserErrors": [],
+  "captureError": "Error: page.evaluate: Target page, context or browser has been closed",
+  "screenshotError": "Error: locator.screenshot: Target page, context or browser has been closed",
+  "sourceUnchanged": true,
+  "serial": {
+    "path": "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/browser-r2-div64/serial.log",
+    "bytes": 41250,
+    "sha256": "f199911eca227b42fdf76da985f6e97a87a7dae7141cfb742aad049171ddb5b6"
+  },
+  "elapsedMs": 1198322
+}

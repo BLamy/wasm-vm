@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "head": "31acd7e82171ec5b4db5be3d671a02211d490c26",
+  "checkedAt": "2026-09-16T23:30:44.567851+00:00",
+  "checks": [
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "exactCommittedBytes": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/artifacts-omarchy.json",
+      "status": 200,
+      "size": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "exactCommittedBytes": true
+    },
+    {
+      "url": "https://6d0d0ece.wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "size": 51836,
+      "sha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "exactCommittedBytes": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "size": 1602266,
+      "sha256": "7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf",
+      "exactCommittedBytes": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json",
+      "status": 200,
+      "size": 1175,
+      "sha256": "f9167b5f37964ffc614e3c5dc4bce99f2bf8a804a226fb02181c6a42761203e0",
+      "exactCommittedBytes": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "size": 51836,
+      "sha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "exactCommittedBytes": true
+    }
+  ],
+  "claim": "Corrected GPU runtime served; desktop response still unresolved and old public defaults retained."
+}

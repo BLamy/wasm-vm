@@ -1,0 +1,47 @@
+{
+  "purpose": "post-verdict-worker-cost",
+  "acceptanceClaim": false,
+  "head": "3cb109d87f1bf08ad0ba6c6122ff0e884d4d3030",
+  "wasmSha256": "1bc7285239db053abdaaafe4c5869a5a2495c7c149d01a239ec020e1fedbf88d",
+  "startedAt": "2026-09-16T02:17:27.255Z",
+  "args": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "local",
+    "/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/worker-cost-r1/desktop",
+    "input-trial"
+  ],
+  "exit": {
+    "code": 1,
+    "signal": null,
+    "closed": true,
+    "watchdog": null
+  },
+  "finishedAt": "2026-09-16T02:21:03.475Z",
+  "inputResult": "failed",
+  "keyboard": {
+    "verified": false,
+    "nonce": "c68d6a02319f0402",
+    "guestFile": "/tmp/desktop-keys-8ae298beabe5ca58",
+    "startedAt": "2026-09-16T02:18:30.277Z",
+    "enteredAtMs": 1789525113048,
+    "typedAt": "2026-09-16T02:18:33.048Z",
+    "typingMs": 2771,
+    "readbackStartedAt": "2026-09-16T02:18:33.048Z",
+    "readbackTimeoutMs": 120000,
+    "deadlineMs": 120000,
+    "deadlineAt": "2026-09-16T02:20:33.048Z",
+    "stage": "readback",
+    "failedAt": "2026-09-16T02:20:33.050Z",
+    "error": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)",
+    "desktopReadyPageMs": 45482.734999895096,
+    "firstPhysicalKeydownPageMs": 61287.05500006676,
+    "readyToFirstPhysicalKeydownMs": 15804.320000171661
+  },
+  "profile": {
+    "durationMs": 30029.444,
+    "samples": 20002,
+    "nodes": 2934,
+    "sampledUs": 30029316
+  },
+  "result": "post-verdict CPU sample captured; desktop acceptance remains failed"
+}

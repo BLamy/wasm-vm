@@ -1,0 +1,60 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/wasm)
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.74s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/jit_fp_division_verifier.rs (/Users/blamy/Documents/Codex/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_division_verifier-16dca927e10c195e.wasm)
+running 6 tests
+Invoking test: verifier_shared_division_memory_growth
+CRITIC_DIVISION_GROWTH inline=true fault=None pc=000000004000b818 retired=6 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=true fault=Store pc=000000004000b804 retired=1 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=true fault=Load pc=000000004000b810 retired=4 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_shared_division_memory_growth ... ok
+Invoking test: verifier_shared_division
+CRITIC_SHARED_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+CRITIC_SHARED_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+CRITIC_SHARED_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_shared_division ... ok
+Invoking test: verifier_same_module_division_successors
+CRITIC_DIVISION_CHAIN same=true fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_DIVISION_CHAIN same=true fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=true fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_same_module_division_successors ... ok
+Invoking test: verifier_private_division_memory_growth
+CRITIC_DIVISION_GROWTH inline=false fault=None pc=000000004000b818 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=false fault=Store pc=000000004000b804 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+CRITIC_DIVISION_GROWTH inline=false fault=Load pc=000000004000b810 retired=0 writes=1 bytes_grown=65536 flags_after_clear=16
+test verifier_private_division_memory_growth ... ok
+Invoking test: verifier_private_division
+CRITIC_PRIVATE_DIVISION_LITERALS Receipt { cases: 11328, disabled: 0, digest: 13921326542630639717 }
+CRITIC_PRIVATE_DIVISION_SEEDED Receipt { cases: 3072, disabled: 1488, digest: 11762350621951788834 }
+CRITIC_PRIVATE_DIVISION_CONTROL Receipt { cases: 12, disabled: 0, digest: 18234555522940624504 }
+test verifier_private_division ... ok
+Invoking test: verifier_cross_module_division_successors
+CRITIC_DIVISION_CHAIN same=false fault=false budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=false budget=7 retired=7 entries=2 links=1 pc=000000008000001c flags=09
+CRITIC_DIVISION_CHAIN same=false fault=true budget=1 retired=0 entries=0 links=0 pc=0000000080000000 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=2 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=6 retired=2 entries=1 links=0 pc=0000000080000008 flags=08
+CRITIC_DIVISION_CHAIN same=false fault=true budget=7 retired=4 entries=2 links=1 pc=0000000080000010 flags=09
+test verifier_cross_module_division_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 3.85s
+

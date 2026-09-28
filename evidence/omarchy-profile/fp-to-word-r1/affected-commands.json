@@ -1,0 +1,182 @@
+{
+  "head": "53a095a485787e4ce6177712830d76728342b083",
+  "wasmSha256": "7feb3179f4088b4c9ef3f69c23804ff0d9691f412b7270c66f61bbd85dc5a6b9",
+  "phase": "affected",
+  "commands": [
+    {
+      "label": "clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:32:54Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:32:54Z"
+    },
+    {
+      "label": "native-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_to_word",
+        "--test",
+        "fp_to_word_verifier",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:32:54Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:32:55Z"
+    },
+    {
+      "label": "wasm-test-clippy",
+      "args": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--test",
+        "jit_fp_to_word",
+        "--test",
+        "jit_fp_to_word_verifier",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:32:55Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:32:56Z"
+    },
+    {
+      "label": "core-handoff",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace",
+        "--lib",
+        "jit::tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:32:56Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:33:05Z"
+    },
+    {
+      "label": "fp-regression",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "fp_moves",
+        "--test",
+        "fp_memory",
+        "--test",
+        "fp_comparisons",
+        "--test",
+        "fp_arithmetic",
+        "--test",
+        "fp_arithmetic_verifier",
+        "--test",
+        "fp_from_integer",
+        "--test",
+        "fp_from_integer_verifier",
+        "--test",
+        "precise_traps",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:33:05Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:34:48Z"
+    },
+    {
+      "label": "native-fp-isa",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "jit_execution",
+        "fp_suites_verdict_identical_under_jit",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:34:48Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:35:18Z"
+    },
+    {
+      "label": "wasm-native-lib",
+      "args": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:35:18Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:35:30Z"
+    },
+    {
+      "label": "no-host-float",
+      "args": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:35:30Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:35:30Z"
+    },
+    {
+      "label": "acceptance",
+      "args": [
+        "make",
+        "verify-E5_5-T03y",
+        "FP_TO_WORD_OUT=/Users/blamy/Documents/Codex/wasm-vm/evidence/omarchy-profile/fp-to-word-r1/browser"
+      ],
+      "cwd": "/Users/blamy/Documents/Codex/wasm-vm",
+      "startedAt": "2026-09-15T23:35:30Z",
+      "code": 0,
+      "finishedAt": "2026-09-15T23:37:58Z"
+    }
+  ],
+  "allPassed": true
+}

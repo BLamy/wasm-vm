@@ -1,0 +1,24 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 17 tests
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 337 filtered out; finished in 0.01s
+

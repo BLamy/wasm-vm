@@ -1,0 +1,23 @@
+✔ service-isolated startup failure is retained without claiming input acceptance (16.146125ms)
+✔ rejects unsolicited agent frames, hidden Explorer and Docker calls (47.513083ms)
+✔ does not accept a success label without physical input, timing and fresh frames (68.582ms)
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (244.835458ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (52.225625ms)
+✔ all four R3 source bindings and image layout must match (15.399583ms)
+✔ actual runtime must match the selected arm with observer/timing off (151.406792ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (33.78375ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (32.765708ms)
+✔ owned watchdog caps setup and navigation once, and normal close cancels timers (25.177583ms)
+✔ stalled owned browser/recorder is killed and missing close settles as unconfirmed (49.888875ms)
+✔ already exited browser is not killed; watchdog intervention never looks like a normal pass (26.911291ms)
+✔ future/invalid navigation cannot extend setup (0.258042ms)
+✔ recorder exit cannot orphan its browser or kill an already-exited recorder group (0.353333ms)
+✔ exit before stdio close never sends a later watchdog signal to the exited recorder (0.291667ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5459.835959

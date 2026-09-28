@@ -1,0 +1,242 @@
+{
+  "head": "81cab94ea874e2f177d1005887e2adf2435e3777",
+  "wasmSha256": "9405d6c38be9a170ef5a2e5e0bacdcbec6deace7de48c8e002bc3caea76dfb2b",
+  "reportSha256": "00ee2657553d1e9111f3f4e535a2534267b6fdf6d9724a826ce6690d994438d2",
+  "receiptSha256": "4342868fbd2de53ec2ac71e9c49842273d19d4be34c406ef5b660107abe5ef98",
+  "evidenceIntegrityVerified": true,
+  "recordedResult": "failed",
+  "recordedOutcome": "nonce-readback-failed",
+  "serviceIsolation": true,
+  "delivery": {
+    "attempted": true,
+    "chainValidated": true,
+    "domEvents": 128,
+    "acknowledgementMeaning": "RPC returned true without throwing; inject_event acceptance and guest consumption are NOT proven",
+    "firstKeyPageMs": 231458.22499990463,
+    "readyToFirstKeyMs": 19958.799999952316,
+    "calls": 256
+  },
+  "queueCounters": [
+    {
+      "label": "physical-keyboard-before",
+      "timestamp": "2026-09-14T09:21:35.295Z",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      }
+    },
+    {
+      "label": "input-trial-failure",
+      "timestamp": "2026-09-14T09:23:38.901Z",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      }
+    }
+  ],
+  "queueDeltas": {
+    "droppedFrames": 0,
+    "droppedEvents": 0,
+    "rejectedEvents": 0
+  },
+  "readback": {
+    "attempted": true,
+    "declared": 8,
+    "sent": 8,
+    "requests": [
+      {
+        "timestamp": "2026-09-14T09:21:38.838Z",
+        "timeoutMs": 119994,
+        "remainingAtRecordedTimestampMs": 119994,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:21:49.177Z",
+        "timeoutMs": 109655,
+        "remainingAtRecordedTimestampMs": 109655,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:22:06.485Z",
+        "timeoutMs": 92347,
+        "remainingAtRecordedTimestampMs": 92347,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:22:23.202Z",
+        "timeoutMs": 75630,
+        "remainingAtRecordedTimestampMs": 75630,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:22:39.858Z",
+        "timeoutMs": 58974,
+        "remainingAtRecordedTimestampMs": 58974,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:22:56.986Z",
+        "timeoutMs": 41846,
+        "remainingAtRecordedTimestampMs": 41846,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:23:16.085Z",
+        "timeoutMs": 22747,
+        "remainingAtRecordedTimestampMs": 22747,
+        "nominalRpcEndPastOuterDeadlineMs": 0
+      },
+      {
+        "timestamp": "2026-09-14T09:23:36.018Z",
+        "timeoutMs": 2815,
+        "remainingAtRecordedTimestampMs": 2814,
+        "nominalRpcEndPastOuterDeadlineMs": 1
+      }
+    ],
+    "responses": [
+      {
+        "rid": "mu11a4uz1",
+        "sentAt": "2026-09-14T09:21:38.843Z",
+        "completedAt": "2026-09-14T09:21:48.173Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11acu32",
+        "sentAt": "2026-09-14T09:21:49.179Z",
+        "completedAt": "2026-09-14T09:22:05.479Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11aq6v3",
+        "sentAt": "2026-09-14T09:22:06.487Z",
+        "completedAt": "2026-09-14T09:22:22.199Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11b3384",
+        "sentAt": "2026-09-14T09:22:23.204Z",
+        "completedAt": "2026-09-14T09:22:38.853Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11bfxy5",
+        "sentAt": "2026-09-14T09:22:39.862Z",
+        "completedAt": "2026-09-14T09:22:55.982Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11bt5t6",
+        "sentAt": "2026-09-14T09:22:56.994Z",
+        "completedAt": "2026-09-14T09:23:15.080Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11c7wb7",
+        "sentAt": "2026-09-14T09:23:16.091Z",
+        "completedAt": "2026-09-14T09:23:35.013Z",
+        "response": {
+          "stdout": "\n",
+          "exit": 75
+        }
+      },
+      {
+        "rid": "mu11cn9x8",
+        "sentAt": "2026-09-14T09:23:36.022Z",
+        "completedAt": null,
+        "response": null
+      }
+    ],
+    "nonceConfirmedByDeadline": false,
+    "completedLate": false,
+    "full120sElapsed": true,
+    "observedElapsedMs": 120002,
+    "reportedStage": "readback",
+    "reportedError": "Error: physical keyboard:readback: deadline exceeded (UNPROVEN)"
+  },
+  "frames": [
+    {
+      "label": "physical-keyboard-before",
+      "timestamp": "2026-09-14T09:21:35.295Z",
+      "framesReceived": 2,
+      "successfulPresents": 2,
+      "pending": 0,
+      "retiredInstructions": 1533988011
+    },
+    {
+      "label": "input-trial-failure",
+      "timestamp": "2026-09-14T09:23:38.901Z",
+      "framesReceived": 2,
+      "successfulPresents": 2,
+      "pending": 0,
+      "retiredInstructions": 2191961748
+    }
+  ],
+  "frameDeltas": {
+    "framesReceived": 0,
+    "successfulPresents": 0,
+    "retiredInstructions": 657973737
+  },
+  "freshPresentation": false,
+  "screenshots": {
+    "latest.png": {
+      "size": 29102,
+      "sha256": "fb4bf668c7cb100dde837d4144e76cd9da59b498788da3beac789c147760fb55",
+      "timestamp": "2026-09-14T09:21:05.033Z"
+    },
+    "desktop.png": {
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "timestamp": "2026-09-14T09:21:35.197Z"
+    },
+    "failure.png": {
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f",
+      "timestamp": "2026-09-14T09:23:39.005Z"
+    }
+  },
+  "limitsMs": {
+    "startup": 300000,
+    "typing": 60000,
+    "readback": 120000,
+    "capture": 20000,
+    "cleanup": 30000
+  },
+  "servedResponses": 95,
+  "browserRequests": 86,
+  "desktopAcceptance": false,
+  "independentVisualReviewRequired": true,
+  "limitations": [
+    "Trusted DOM/evdev/true RPC acknowledgements establish the host RPC chain, not inject_event acceptance or guest/compositor consumption.",
+    "Queue counters are observations, not proof that Linux/Foot consumed the command.",
+    "Fresh frame counts and PNG hashes do not prove a visible application response; main/Blue must inspect PNGs.",
+    "This post-run integrity audit does not change the recorded result, establish a cause, or promote usability."
+  ]
+}

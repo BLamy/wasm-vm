@@ -1,0 +1,13 @@
+{
+  "schema": "wasm-vm.omarchy-softpipe.selected-symbols.v1",
+  "releaseSha256": "c48e9c2d9ec550c7daf4875716fef1dc729072fdfc91b805394d379bee4b9305",
+  "namedSha256": "954f5edfda14dd461ddf615f557a0a3116b88bdb28148dd841c70b4cd5162c57",
+  "exactSectionBound": true,
+  "selected": {
+    "175": "wasm_vm_core::hart::Hart::execute::hd1da7e6748700a68",
+    "183": "wasm_vm_core::Machine::run::hb3a70af4514667f1",
+    "286": "wasm_vm_core::Machine::next_micro_op::h12a59264ce5c0708",
+    "503": "wasm_vm_core::dispatch::BlockCache::get::hbf5b755754df63bf",
+    "1394": "__udivti3"
+  }
+}

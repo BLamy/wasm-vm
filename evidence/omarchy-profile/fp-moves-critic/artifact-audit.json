@@ -1,0 +1,333 @@
+{
+  "runtimeHead": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+  "auditHead": "2987f02611826382bf10250323da8a559e64c31b",
+  "wasm": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+  "browser": [
+    {
+      "folder": "browser",
+      "head": "c7a3c38b84d462eba585c9f7081c70c88cdd2534",
+      "retired": 4000,
+      "jitRetired": 3639,
+      "directChainLinks": 884,
+      "digest": "2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661",
+      "suite": {
+        "metric-pass": "127",
+        "metric-fail": "0",
+        "metric-done": "127"
+      },
+      "capability": "Single-precision FP moves1/1 passing · live in browser"
+    },
+    {
+      "folder": "browser-r2",
+      "head": "c07f562afb6038d2b6fe20d4aa907a444f969d9e",
+      "retired": 4000,
+      "jitRetired": 3639,
+      "directChainLinks": 884,
+      "digest": "2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661",
+      "suite": {
+        "metric-pass": "127",
+        "metric-fail": "0",
+        "metric-done": "127"
+      },
+      "capability": "Single-precision FP moves1/1 passing · live in browser"
+    },
+    {
+      "folder": "cold/browser",
+      "head": "b4b7c70da8b28a274cfd53860a6723480deee7ff",
+      "retired": 4000,
+      "jitRetired": 3639,
+      "directChainLinks": 884,
+      "digest": "2292761e0dadbc7ba225714d941fed3c585352ccd3b6912882818ae22b213661",
+      "suite": {
+        "metric-pass": "127",
+        "metric-fail": "0",
+        "metric-done": "127"
+      },
+      "capability": "Single-precision FP moves1/1 passing · live in browser"
+    }
+  ],
+  "cold": {
+    "head": "b4b7c70da8b28a274cfd53860a6723480deee7ff",
+    "pristineBeforeBuild": true,
+    "rebuiltWasm": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40",
+    "passed": true
+  },
+  "published": [
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "client": "system curl, TLS verification enabled",
+      "size": 1590113,
+      "sha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40"
+    },
+    {
+      "url": "https://2a2104a3.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "client": "system curl, TLS verification enabled",
+      "size": 1590113,
+      "sha256": "55557d7a158bb274d214692a76a2a876bbe56ecd7798cbc9adfcbb4bfc9a0c40"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "size": 119440,
+      "sha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42",
+      "expectedSha256": "04d63f6f88745ca4f50785b85aab7d658b16d9fa9b426e4e638dc9b80547ad42"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "size": 49315,
+      "sha256": "dfde7f8ed50bc06f386b2b429d4e8acab8c6fd728615f73d6e212feca3c3245f",
+      "expectedSha256": "dfde7f8ed50bc06f386b2b429d4e8acab8c6fd728615f73d6e212feca3c3245f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/app.html",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "expectedSha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6"
+    }
+  ],
+  "performance": {
+    "host": "Apple M4 Max",
+    "order": [
+      "baseline",
+      "candidate",
+      "candidate",
+      "baseline"
+    ],
+    "mips": [
+      26,
+      25.7,
+      25.8,
+      25.4
+    ],
+    "floor": 15,
+    "allPassed": true
+  },
+  "negativeControl": {
+    "head": "ecb958dc95a3800cd858bac0a09237a25ef536ba",
+    "passed": false,
+    "jitRetired": 441,
+    "correctGuestState": true
+  },
+  "helpersVerified": [
+    "tools/verify/omarchy-desktop-live.mjs",
+    "tools/verify/omarchy-input-trial.mjs",
+    "tools/verify/omarchy-recycling-ab.mjs",
+    "tools/verify/omarchy-desktop-services.mjs",
+    "tools/verify/omarchy-failure-checkpoint.mjs",
+    "tools/verify/omarchy-input-wait.mjs",
+    "tools/verify/omarchy-render-mode.mjs",
+    "tools/verify/omarchy-render-budget.mjs",
+    "tools/verify/omarchy-compositor-command.mjs",
+    "tools/verify/omarchy-compositor-mode.mjs",
+    "tools/verify/omarchy-owned-trial.mjs",
+    "tools/verify/omarchy-browser-session.mjs",
+    "tools/verify/omarchy-live-recording.mjs"
+  ],
+  "sourceArtifacts": [
+    {
+      "name": "chunkManifest",
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+    },
+    {
+      "name": "kernel",
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "name": "bootSnapshot",
+      "size": 205050833,
+      "sha256": "2231a21eb8ebc8d3965d1352a3523501faebc87bda31e2c8dc184320219235f5"
+    },
+    {
+      "name": "overlayDelta",
+      "size": 1209196,
+      "sha256": "1f56d0bd44c945fab3ec1c201d04f39dd3f590320f54c8d2224446ebffb7e7da"
+    }
+  ],
+  "physical": {
+    "head": "6910e7952ef215463de9982d20c42fa26869cbfb",
+    "trustedTransitions": 128,
+    "acknowledgements": 256,
+    "typedText": "printf 'e37cfe7e316c23e8' > /tmp/desktop-keys-ff13ff801bbf7950\n",
+    "serialNonceAbsent": true,
+    "readbacksCompletedAbsent": 13,
+    "readbacksIncomplete": 1,
+    "enteredAt": "2026-09-15T17:45:39.762Z",
+    "failedAt": "2026-09-15T17:47:39.762Z",
+    "deadlineMs": 120000,
+    "desktopAcceptance": false,
+    "manifestSha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+  },
+  "artifactFiles": [
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser/fp-moves.elf",
+      "size": 4196,
+      "sha256": "5c1d23a991c0e9deb58d857b951f5caa72bec9a19fb398f2151c7f003e5a5b2c"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser/built-page.png",
+      "size": 197885,
+      "sha256": "4bd2ee6eb76589db54436ee167050308f6ed6d571732996d8ebba5a0b1a70fb7"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser/report.json",
+      "size": 11756,
+      "sha256": "49aef6832b099ee35e54766009c93fbc8d1a65670c64908381ec810f9fc8e095"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser-r2/fp-moves.elf",
+      "size": 4196,
+      "sha256": "5c1d23a991c0e9deb58d857b951f5caa72bec9a19fb398f2151c7f003e5a5b2c"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser-r2/built-page.png",
+      "size": 280558,
+      "sha256": "01fee19c9b2caedfd823bcccce0999e1385b8b980a173ca5e40f6814b6bee908"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser-r2/suite.png",
+      "size": 50182,
+      "sha256": "f485f2dead18c254d49b2561768b66030329b715b983117a8ff0908fbb88fb81"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser-r2/capability-inspection.png",
+      "size": 5646,
+      "sha256": "765c119f591f76bebb19c1a24cb86b7a504cf1f4ad574f9af69d0e200ce187c1"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/browser-r2/report.json",
+      "size": 12054,
+      "sha256": "6b1d8f7777744b54c30ecd394b32cdb8f6073864ab7f750ad6483259c495d786"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/browser/fp-moves.elf",
+      "size": 4196,
+      "sha256": "5c1d23a991c0e9deb58d857b951f5caa72bec9a19fb398f2151c7f003e5a5b2c"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/browser/built-page.png",
+      "size": 280558,
+      "sha256": "01fee19c9b2caedfd823bcccce0999e1385b8b980a173ca5e40f6814b6bee908"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/browser/suite.png",
+      "size": 50152,
+      "sha256": "87191f6fa2a7ee29b52c2264f5bc1ab46106c14a054cd3556af6606776358af0"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/browser/capability-inspection.png",
+      "size": 5646,
+      "sha256": "765c119f591f76bebb19c1a24cb86b7a504cf1f4ad574f9af69d0e200ce187c1"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/browser/report.json",
+      "size": 12054,
+      "sha256": "ff70843c7e99ea202afff3d93fc6286a4ca52f18616948e57374ea90bfd974d4"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/report.json",
+      "size": 1787,
+      "sha256": "044e1007b803f164777799bf9bf6dc42521b7f1135d65483b94a0afe2d5d9e06"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/runner.py",
+      "size": 2277,
+      "sha256": "495050bba47c191775f7a25706bd77e3926ce61fccbcf55b3c365abcf4a529c1"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/acceptance.log",
+      "size": 15864,
+      "sha256": "c85c33a39fdc8d6efbe6d7e8e56786e204c92488a7078edb79a86fdad9963224"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cold/build.log",
+      "size": 4913,
+      "sha256": "e7a3345fccdb00567c0a340796cc3aabb2832e4ea056a8aca5ff66697193cd69"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cloudflare-public.json",
+      "size": 1327,
+      "sha256": "6130cae9035eba29fd732660c03380f02fc880ce0064775c519aaed672cdf4d7"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/cloudflare-deploy.log",
+      "size": 4219,
+      "sha256": "aa88d55d076fb03357761ae26d2cbcaa7ecf7955262a60fee0347e6275a9198b"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/old-bundle-negative-control/report.json",
+      "size": 11596,
+      "sha256": "39a2cbe8ab58c38806af28d737fc092476b1a907145236ba280b04dac1fb9f20"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-comparison-0-baseline.log",
+      "size": 197,
+      "sha256": "d1e729bea70b4f707fe4eac4955d9dad4d666612c87f8bbba2b1bd066f5badd2"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-comparison-1-candidate.log",
+      "size": 197,
+      "sha256": "3df2a5627af8b6803bd0371f0077a938935c44b07a5e2454b8431023e18c1ee2"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-comparison-2-candidate.log",
+      "size": 197,
+      "sha256": "923f18f02e3c16f308e60ab5554334f4b34aa5aaa0f0b5672b37578f0209eee6"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-comparison-3-baseline.log",
+      "size": 197,
+      "sha256": "9f9dbfd4531a764c601ddbeed15c537ffc4e38b82e5595d79fc1e70947421471"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-comparison.json",
+      "size": 2679,
+      "sha256": "d53545fd3cf6fa4bb4b1e5eb762d8fba0943f1b44c3641bd0c5ce99c2d8e5114"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/perf-compare.py",
+      "size": 2066,
+      "sha256": "50b3cd3f328827d4f90ced68cd1b38516ac493896feff05d47a2e412080ecb1d"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/admission-fixture.log",
+      "size": 654,
+      "sha256": "b7c31f65a48f340bacf5e5943b5c086d4e625d13ca63a64470408d4910e4af65"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/admission-fixture-format.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/native-remaining.log",
+      "size": 29704,
+      "sha256": "c7311c3d49a1f818acc072d5baeca95979f20263249859210bdd8b1315869156"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/physical-input-r2/run.json",
+      "size": 9174,
+      "sha256": "529a59af1d84a1e45029eaa8d9c65d88261d1530b5fed65a30dae2b0e0971682"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/report.json",
+      "size": 629182,
+      "sha256": "22326ca952e9a9a2a8112010e8d4fa8382d5e86e1bc65fc0c04e3b90f8b4a519"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/serial.log",
+      "size": 1532,
+      "sha256": "6a38a3c54f9f49b204053a9244f6340671e91ae47969c5650b4071082645c3d3"
+    },
+    {
+      "path": "evidence/omarchy-profile/fp-moves-r1/physical-input-r2/desktop/failure.png",
+      "size": 10726,
+      "sha256": "97fc180d4d35c68ca5941dc591afb315220550165469f3c4ead7827989cc2f3f"
+    }
+  ]
+}

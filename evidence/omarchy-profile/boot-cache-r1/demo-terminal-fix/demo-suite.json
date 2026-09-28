@@ -1,0 +1,80 @@
+{
+  "url": "http://127.0.0.1:60211/app.html?noAutoBoot=1",
+  "browser": "152.0.7977.84",
+  "metrics": {
+    "metric-pass": "126",
+    "metric-fail": "0",
+    "metric-done": "126"
+  },
+  "detail": "E5.5-T03e\nIN PROGRESS\n✕ Close\nCache immutable Omarchy boot bytes and report actual restore phases\nEpic\nE5.5 — 5.5\nStatus\nin progress\nEstimate\nS\nDepends on\nE5.5-T03c\nVERIFICATION LOG — EVIDENCE\n### 2026-09-10 — worker — selected from explicit user repair request\n\nLive production HEAD checks found the 205,050,833-byte RAM snapshot has no\nCache-Control header, while the kernel is immutable-cacheable. The service\nworker excludes R2 and release bytes; the loader uses only ordinary HTTP cache\nbehavior for every launch. The serial output handler replaces restore status\nwith \"boot continues\" and retains the previous transfer's completed bar.\nImplementation and recorded browser proof are pending.\nADVERSARIAL VERIFICATION\nA fresh verifier attacks stale hashes, corrupted/truncated/oversized bodies,\nstorage failure, repeated reloads, deployment-version cache independence,\ncross-session state leakage and false progress/readiness claims. Preserve the\nunchanged guest-input acceptance; this task does not mark T03d complete.\nsource: tasks/epic-5.5-omarchy/E5.5-T03e-immutable-boot-cache.md",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:60211/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:60211/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:60211/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:60211/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "a69a5f8895f922021ee3a61233a5c652cdb195d4b36497285d80f9874d78c38b"
+}

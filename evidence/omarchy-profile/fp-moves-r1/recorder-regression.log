@@ -1,0 +1,35 @@
+✔ prewarm sync proof rejects cross-TTY marker evidence (1.106208ms)
+✔ prewarm clear proof requires a new real frame and focused Foot (0.22775ms)
+✔ post-marker presentation helper rejects typing frames (223.7995ms)
+✔ candidate mode is explicitly local-only and hash-bound (2.672625ms)
+✔ renderer proof binds current Hyprland PID and instance before physical input (0.304417ms)
+✔ LP0 is configuration-only evidence and is checked before physical input (0.200125ms)
+✔ actual built recording covers served resources and pre-send RPCs, even timed-out ones (0.273542ms)
+✔ renderer log parser accepts the real DEBUG suffix labels (1.330292ms)
+✔ renderer log parser rejects wrong, missing, ambiguous, and misleading records (1.656459ms)
+✔ nonce readback caps every guest RPC by the remaining 120-second deadline (0.3585ms)
+✔ unlogged baseline worker evidence is explicitly weaker than a GL label (0.585625ms)
+✔ harness-only cold local HTTP selftest serves kernel/chunks and refuses snapshot routes without a browser (415.020292ms)
+✔ harness-only actual cold orchestration inspects storage before app and returns after pair without input (6.102625ms)
+✔ harness-only capture selects exact overlay when both overlay and snapshot databases exist (1.908834ms)
+✔ harness-only cold progress TimeoutError is recorded before startup continues to mandatory desktop capture (0.680166ms)
+✔ harness-only progress catch propagates non-Playwright errors and verify-mode timeouts (0.598125ms)
+✔ harness-only final desktop TimeoutError remains fatal after a tolerated progress timeout (0.206041ms)
+✔ harness-only screenshot helper forwards the supplied timeout and keeps the 20-second default (0.336708ms)
+✔ service-isolated startup failure is retained without claiming input acceptance (2.169958ms)
+✔ rejects unsolicited agent frames, hidden Explorer and Docker calls (1.969584ms)
+✔ does not accept a success label without physical input, timing and fresh frames (4.662792ms)
+✔ trial is local, explicit, fixed-budget and does not accept renderer/timeout tuning (3.217917ms)
+✔ arm URLs have exactly one policy difference and forbid inherited query tuning (0.912042ms)
+✔ all four R3 source bindings and image layout must match (0.7315ms)
+✔ actual runtime must match the selected arm with observer/timing off (4.914667ms)
+✔ deadline accounts for queue delay and rejects late completion without starting expired work (5.959083ms)
+✔ real recorder retains physical-only writing, fixed deadlines, fresh presentation and owned shutdown (1.755333ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 883.968917

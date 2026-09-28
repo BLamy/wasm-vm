@@ -1,0 +1,16 @@
+[package]
+name = "bb-browser-publication-verifier"
+version = "0.0.0"
+edition = "2024"
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "lib.rs"
+[[test]]
+name = "boundary"
+path = "boundary.rs"
+[workspace]
+[dependencies]
+wasm-vm-core = { path = "../../../../crates/core", features = ["trace"] }
+wasm-vm-wasm = { path = "../../../../crates/wasm" }
+wasm-bindgen = "0.2"
+wasm-bindgen-test = "0.3"

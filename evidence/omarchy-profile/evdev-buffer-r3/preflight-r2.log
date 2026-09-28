@@ -1,0 +1,37 @@
+cargo fmt --check
+cargo clippy -p wasm-vm-cli --features gpu-trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+cargo test -p wasm-vm-cli --features gpu-trace --bin wasm-vm cli_config_tests
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.89s
+     Running unittests src/main.rs (target/debug/deps/wasm_vm-83d3b380d548ac64)
+
+running 3 tests
+test boot::cli_config_tests::icount_divider_rejects_zero ... ok
+test boot::cli_config_tests::icount_divider_defaults_to_ten_and_accepts_omarchy_sixty_four ... ok
+test boot::cli_config_tests::keyboard_burst_proof_is_opt_in_and_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 57 filtered out; finished in 0.01s
+
+cargo build --release -p wasm-vm-cli --features gpu-trace --bin wasm-vm
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/Documents/Codex/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/jit-runtime)
+   Compiling wasm-vm-cli v0.0.1 (/Users/blamy/Documents/Codex/wasm-vm/crates/cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 9.44s
+python3 tools/build-omarchy-input-kernel.py target/omarchy-input-kernel-r2
+wasm-vm-omarchy-input-a2aa959300234ada
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/wasm-vm/tools/build-omarchy-input-kernel.py", line 84, in <module>
+    main()
+  File "/Users/blamy/Documents/Codex/wasm-vm/tools/build-omarchy-input-kernel.py", line 65, in main
+    subprocess.run(command, check=True, timeout=1800, stdout=log, stderr=subprocess.STDOUT)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['docker', 'run', '--rm', '--network', 'none', '--ulimit', 'nofile=1048576:1048576', '-v', 'wasm-vm-omarchy-input-a2aa959300234ada:/build', '-v', '/Users/blamy/Documents/Codex/wasm-vm/target/kernel-build/linux-6.6.63.tar.xz:/src/linux.tar.xz:ro', '-v', '/Users/blamy/Documents/Codex/wasm-vm/configs/omarchy-evdev-buffer.patch:/src/buffer.patch:ro', '-v', '/Users/blamy/Documents/Codex/wasm-vm/configs/wasm-vm.config:/src/wasm-vm.config:ro', '-v', '/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-r2:/out', '-e', 'KBUILD_BUILD_TIMESTAMP=Thu Nov 14 2024', 'sha256:e8d02030be71b3eada014b615269d0a9e8eb93ace68fb2a8f9097c9467c109e1', 'bash', '/out/build.sh']' returned non-zero exit status 127.
+make: *** [verify-E5_5-T03aq] Error 1
