@@ -1,0 +1,11 @@
+{
+  "head": "0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98",
+  "command": [
+    "cargo",
+    "check",
+    "-p",
+    "wasm-vm-wvseccomp",
+    "--all-features"
+  ],
+  "exitCode": 101
+}
