@@ -1,0 +1,38 @@
+✖ identical browser bytes cannot pass the speed gate even with favorable timing noise (0.941542ms)
+✔ matching arms with an off-by-one clock still fail the independent retirement oracle (2.098375ms)
+✔ matching arms cannot substitute an armed executor for compiled retirements (2.18475ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.447667
+
+✖ failing tests:
+
+test at tools/verify/clock-fast-path-benchmark.test.mjs:25:1
+✖ identical browser bytes cannot pass the speed gate even with favorable timing noise (0.941542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   acceptanceHeld: true,
+  -   acceptanceHeld: false,
+      cachedDivider64Speedup: 1.5,
+      decision: 'unchanged-runtime-control'
+    }
+  
+      at TestContext.<anonymous> (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/clock-verifier-attacks-9jun32n7/sabotage/tools/verify/clock-fast-path-benchmark.test.mjs:30:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { cachedDivider64Speedup: 1.5, decision: 'unchanged-runtime-control', acceptanceHeld: true },
+    expected: { cachedDivider64Speedup: 1.5, decision: 'unchanged-runtime-control', acceptanceHeld: false },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

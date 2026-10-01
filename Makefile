@@ -1770,6 +1770,7 @@ verify-E5_5-T03ax:
 verify-E5.5-T03bd:
 	cargo fmt --all --check
 	node --check tools/verify/clock-fast-path-benchmark.mjs
+	node --test tools/verify/clock-fast-path-benchmark.test.mjs
 	cargo clippy -p wasm-vm-core --lib --test clock_advance --example clock_loop_probe --features trace -- -D warnings
 	cargo test -p wasm-vm-core --lib clock_advance_tests
 	cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture

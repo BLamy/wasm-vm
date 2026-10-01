@@ -112,3 +112,28 @@ fn clock_accounting_is_inert_without_clint_or_in_wall_mode() {
     assert_eq!(wall.tick_accum, 63);
     assert_eq!(clint.borrow().mtime, 17);
 }
+
+#[test]
+fn clock_extremes_match_verifier_fixed_predictions() {
+    let mut m = Machine::new(4096);
+    let clint = m.enable_clint(64);
+    m.tick_accum = u64::MAX;
+    clint.borrow_mut().mtime = u64::MAX - 1;
+    m.advance_clock_by(u64::MAX);
+    assert_eq!(m.tick_accum, 62);
+    assert_eq!(clint.borrow().mtime, 576_460_752_303_423_485);
+
+    m.clock_div = u64::MAX;
+    m.tick_accum = u64::MAX;
+    clint.borrow_mut().mtime = u64::MAX;
+    m.advance_clock();
+    assert_eq!(m.tick_accum, 1);
+    assert_eq!(clint.borrow().mtime, 0);
+
+    m.clock_div = 0;
+    m.tick_accum = u64::MAX;
+    clint.borrow_mut().mtime = u64::MAX;
+    m.advance_clock_by(u64::MAX);
+    assert_eq!(m.tick_accum, 0);
+    assert_eq!(clint.borrow().mtime, u64::MAX - 2);
+}

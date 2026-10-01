@@ -1,0 +1,131 @@
+cargo fmt --all --check
+node --check tools/verify/clock-fast-path-benchmark.mjs
+node --test tools/verify/clock-fast-path-benchmark.test.mjs
+✔ identical browser bytes cannot pass the speed gate even with favorable timing noise (0.544958ms)
+✔ matching arms with an off-by-one clock still fail the independent retirement oracle (2.378ms)
+✔ matching arms cannot substitute an armed executor for compiled retirements (2.209417ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.639958
+cargo clippy -p wasm-vm-core --lib --test clock_advance --example clock_loop_probe --features trace -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+cargo test -p wasm-vm-core --lib clock_advance_tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 5 tests
+test clock_advance_tests::clock_extremes_match_verifier_fixed_predictions ... ok
+test clock_advance_tests::clock_accounting_is_inert_without_clint_or_in_wall_mode ... ok
+test clock_advance_tests::single_retirements_match_wide_oracle_across_ticks_and_invalid_phases ... ok
+test clock_advance_tests::clock_spans_match_wide_oracle_including_overflow_and_mtime_wrap ... ok
+test clock_advance_tests::clock_spans_match_wide_oracle_across_varied_schedules ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 376 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/clock_advance.rs (target/debug/deps/clock_advance-41e5cfed8eb6772e)
+
+running 1 test
+clock-guest div=1 phase=0 start=0 cached=false batched=false trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=0 cached=true batched=false trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=0 cached=true batched=true trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=false batched=false trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=true batched=false trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=true batched=true trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=0 cached=false batched=false trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=0 cached=true batched=false trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=0 cached=true batched=true trace=30360956ab4dfce5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=false batched=false trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=true batched=false trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1 phase=0 start=18446744073709551614 cached=true batched=true trace=f41e948d9a68ab65 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=0 cached=false batched=false trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=0 cached=true batched=false trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=0 cached=true batched=true trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=18446744073709551614 cached=false batched=false trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=18446744073709551614 cached=true batched=false trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=0 start=18446744073709551614 cached=true batched=true trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=0 cached=false batched=false trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=0 cached=true batched=false trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=0 cached=true batched=true trace=d629ad8723d984e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=18446744073709551614 cached=false batched=false trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=18446744073709551614 cached=true batched=false trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=3 phase=2 start=18446744073709551614 cached=true batched=true trace=ede028c10ff37365 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=0 cached=false batched=false trace=6ac9193e7a059deb state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=0 cached=true batched=false trace=6ac9193e7a059deb state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=0 cached=true batched=true trace=6ac9193e7a059deb state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=18446744073709551614 cached=false batched=false trace=5d7c6463cd3e2747 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=18446744073709551614 cached=true batched=false trace=5d7c6463cd3e2747 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=0 start=18446744073709551614 cached=true batched=true trace=5d7c6463cd3e2747 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=0 cached=false batched=false trace=cd1dd37da4996ea2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=0 cached=true batched=false trace=cd1dd37da4996ea2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=0 cached=true batched=true trace=cd1dd37da4996ea2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=18446744073709551614 cached=false batched=false trace=66fb077867457da2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=18446744073709551614 cached=true batched=false trace=66fb077867457da2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=10 phase=9 start=18446744073709551614 cached=true batched=true trace=66fb077867457da2 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=0 cached=false batched=false trace=e6904b7d4f345c88 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=0 cached=true batched=false trace=e6904b7d4f345c88 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=0 cached=true batched=true trace=e6904b7d4f345c88 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=18446744073709551614 cached=false batched=false trace=5b9dc6657f23c88c state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=18446744073709551614 cached=true batched=false trace=5b9dc6657f23c88c state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=0 start=18446744073709551614 cached=true batched=true trace=5b9dc6657f23c88c state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=0 cached=false batched=false trace=a87900f0e1b65c6d state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=0 cached=true batched=false trace=a87900f0e1b65c6d state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=0 cached=true batched=true trace=a87900f0e1b65c6d state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=18446744073709551614 cached=false batched=false trace=760f2b9ee7306535 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=18446744073709551614 cached=true batched=false trace=760f2b9ee7306535 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=64 phase=63 start=18446744073709551614 cached=true batched=true trace=760f2b9ee7306535 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=0 cached=false batched=false trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=0 cached=true batched=false trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=0 cached=true batched=true trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=18446744073709551614 cached=false batched=false trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=18446744073709551614 cached=true batched=false trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=0 start=18446744073709551614 cached=true batched=true trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=0 cached=false batched=false trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=0 cached=true batched=false trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=0 cached=true batched=true trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=18446744073709551614 cached=false batched=false trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=18446744073709551614 cached=true batched=false trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=1024 phase=1023 start=18446744073709551614 cached=true batched=true trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=0 cached=false batched=false trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=0 cached=true batched=false trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=0 cached=true batched=true trace=5af8bd202230a9e5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=18446744073709551614 cached=false batched=false trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=18446744073709551614 cached=true batched=false trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=0 start=18446744073709551614 cached=true batched=true trace=aa7970de4bccdfe5 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=0 cached=false batched=false trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=0 cached=true batched=false trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=0 cached=true batched=true trace=fb0044eeb4205f76 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=18446744073709551614 cached=false batched=false trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=18446744073709551614 cached=true batched=false trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+clock-guest div=18446744073709551615 phase=18446744073709551614 start=18446744073709551614 cached=true batched=true trace=c0294a3bbfa58ab6 state=c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4
+test guest_rdtime_split_budgets_and_resume_match_independent_clock_oracle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+wasm-pack test --node crates/wasm --test clock_advance
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/clock_advance.rs (/private/tmp/wasm-vm-current-speed-work/target/wasm32-unknown-unknown/debug/deps/clock_advance-61765801e69930c6.wasm)
+running 1 test
+test core_clock_advance::guest_rdtime_split_budgets_and_resume_match_independent_clock_oracle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.17s
+
