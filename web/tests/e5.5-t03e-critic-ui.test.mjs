@@ -45,7 +45,19 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
   const dispatch = (type, detail) => page.evaluate(({ type, detail }) => {
     window.dispatchEvent(new CustomEvent(type, { detail }));
   }, { type, detail });
-  const state = () => page.evaluate(() => ({
+  await page.evaluate(() => {
+    window.__criticPointerTargets = [];
+    for (const type of ["pointerdown", "pointerup", "click"]) document.addEventListener(type, (event) => {
+      window.__criticPointerTargets.push({ type, trusted: event.isTrusted, target: event.target?.id,
+        overlay: Boolean(event.target?.closest?.("#omarchy-boot-overlay")) });
+    }, true);
+  });
+  const state = () => page.evaluate(() => {
+    const canvas = document.querySelector("#ide-display-canvas");
+    const rect = canvas.getBoundingClientRect();
+    const canvasCenter = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    const hit = document.elementFromPoint(canvasCenter.x, canvasCenter.y);
+    return {
     status: document.querySelector("#omarchy-boot-status")?.textContent,
     desktop: document.querySelector("#omarchy-desktop-status")?.textContent,
     overlayHidden: document.querySelector("#omarchy-boot-overlay")?.hidden,
@@ -54,11 +66,16 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
       ? getComputedStyle(document.querySelector("#omarchy-boot-overlay")).pointerEvents
       : null,
     canvasTabIndex: document.querySelector("#ide-display-canvas")?.tabIndex,
+    focus: document.activeElement?.id,
+    canvasCenter,
+    canvasHitTarget: hit?.id || null,
+    canvasHitOverlay: Boolean(hit?.closest("#omarchy-boot-overlay")),
     progressHidden: document.querySelector("#omarchy-boot-progress")?.hidden,
     progressValue: document.querySelector("#omarchy-boot-progress")?.value,
     progressMax: document.querySelector("#omarchy-boot-progress")?.max,
     log: document.querySelector("#omarchy-boot-log")?.textContent,
-  }));
+    };
+  });
 
   await dispatch("wvm:guest-booting");
   await dispatch("wvm:guest-progress", {
@@ -95,7 +112,14 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
   assert.equal(interactive.overlayInteractive, "true");
   assert.equal(interactive.overlayPointerEvents, "none");
   assert.equal(interactive.canvasTabIndex, 0);
+  assert.equal(interactive.focus, "ide-display-canvas");
+  assert.equal(interactive.canvasHitTarget, "ide-display-canvas");
+  assert.equal(interactive.canvasHitOverlay, false);
   assert.match(interactive.status, /keyboard and pointer enabled/);
+  await page.mouse.click(interactive.canvasCenter.x, interactive.canvasCenter.y);
+  const pointerTargets = await page.evaluate(() => window.__criticPointerTargets);
+  assert.deepEqual(pointerTargets.map((event) => event.type), ["pointerdown", "pointerup", "click"]);
+  assert.ok(pointerTargets.every((event) => event.trusted && event.target === "ide-display-canvas" && !event.overlay));
   await dispatch("wvm:desktop-ready");
   const ready = await state();
   assert.equal(ready.status, interactive.status);
@@ -122,6 +146,9 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
   assert.equal(done.status, "Guest finished; desktop readiness is not confirmed.");
   assert.equal(done.desktop, "desktop · Guest finished; desktop readiness is not confirmed.");
   assert.equal(done.overlayHidden, false);
+  assert.equal(done.overlayInteractive, null);
+  assert.equal(done.overlayPointerEvents, "auto");
+  assert.equal(done.canvasHitOverlay, true);
   assert.equal(done.progressHidden, true);
   for (const [type, detail] of [
     ["wvm:desktop-ready", undefined],
@@ -135,6 +162,9 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
   const rebooting = await state();
   assert.equal(rebooting.status, "Booting Omarchy…");
   assert.equal(rebooting.overlayHidden, false);
+  assert.equal(rebooting.overlayInteractive, null);
+  assert.equal(rebooting.overlayPointerEvents, "auto");
+  assert.equal(rebooting.canvasHitOverlay, true);
   assert.equal(rebooting.progressHidden, true);
   await dispatch("wvm:guest-progress", { phase: "kernel: downloading", loaded: 25, total: 100 });
   assert.equal((await state()).progressHidden, false, "new boot did not clear done latch");
@@ -143,10 +173,15 @@ test("critic: real IDE listeners keep startup phases and terminal readiness stic
     { type: "wvm:guest-error", detail: { message: "critic error" }, status: "Boot error: critic error" },
     { type: "wvm:guest-halted", detail: { message: "critic halt" }, status: "Guest halted: critic halt" },
   ]) {
+    await dispatch("wvm:guest-ready");
+    assert.equal((await state()).canvasHitTarget, "ide-display-canvas");
     await dispatch(terminal.type, terminal.detail);
     const terminalState = await state();
     assert.equal(terminalState.status, terminal.status);
     assert.equal(terminalState.overlayHidden, false);
+    assert.equal(terminalState.overlayInteractive, null);
+    assert.equal(terminalState.overlayPointerEvents, "auto");
+    assert.equal(terminalState.canvasHitOverlay, true);
     assert.equal(terminalState.progressHidden, true);
     assert.equal(terminalState.progressValue, 0);
     assert.equal(terminalState.progressMax, 1);
