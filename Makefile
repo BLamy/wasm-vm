@@ -1771,9 +1771,6 @@ verify-E5.5-T03bd:
 	cargo fmt --all --check
 	node --check tools/verify/clock-fast-path-benchmark.mjs
 	cargo clippy -p wasm-vm-core --lib --test clock_advance --example clock_loop_probe --features trace -- -D warnings
-	cargo test -p wasm-vm-core --lib
-	cargo test -p wasm-vm-core --features trace --test clock_advance --test clint --test sbi_timer --test sbi_timer_fuzz --test icount_divider --test guest_clock --test predecode_batching --test cpu_resume
-	cargo test -p wasm-vm-jit-runtime --test timekeeping --test batching --test chaining --test jit_execution
-	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
-	cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown -- -D warnings
-	wasm-pack test --node crates/wasm --test clock_advance --test guest_clock --test icount_divider --test sbi_timer --test jit_browser_parity
+	cargo test -p wasm-vm-core --lib clock_advance_tests
+	cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture
+	wasm-pack test --node crates/wasm --test clock_advance

@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 340,
-    "total": 518
+    "verified": 350,
+    "total": 528
   },
   "epics": [
     {
@@ -60,7 +60,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-09-16"
+    "end": "2026-10-01"
   },
   "tasks": [
     {
@@ -15550,13 +15550,6 @@
           ]
         },
         {
-          "date": "2026-08-29",
-          "commits": 1,
-          "labels": [
-            "On codex/verification-debt-e4-t19: WIP E4-T34 direct-chain prototype — not acceptance evidence"
-          ]
-        },
-        {
           "date": "2026-08-30",
           "commits": 4,
           "labels": [
@@ -15594,7 +15587,7 @@
       ],
       "firstActivity": "2026-08-10",
       "lastActivity": "2026-09-02",
-      "commitCount": 21
+      "commitCount": 20
     },
     {
       "id": "E4-T35",
@@ -23119,7 +23112,7 @@
       "epicKey": "5.5",
       "title": "Correct GPU 2D transfer source offsets",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5.5-T03as"
       ],
@@ -23130,14 +23123,16 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-16 — worker activation\n\nAS critic commit27e31ea3 verifies physical execution and the negative visual\nmeasurement. Activate only the existing transfer source-address boundary. Q\nremains gated on a real physical and visible response with unchanged deadlines.\n\n### 2026-09-16 — planned from AS visual failure and source comparison\n\nASr2 reportSHA97252137eed0cc5a4eae2e477e733a5d3f42dd0ad3e911358d8afd6b51afb174:\nnonce arrives89.104s after Enter; subsequent frame4→5 has terminal damage\nrect10,36,1260,754, yet the real PNG remains an empty prompt. Kernel input loss\nis repaired; visible response is not. Reference implementation:\nhttps://raw.githubusercontent.com/qemu/qemu/v9.2.0/hw/display/virtio-gpu.c\nand the pinned local Linux6.6.63 tarball. No new rendering feature is proposed.",
+      "verificationLog": "### 2026-09-16 — fresh verifier — VERDICT: verified (GPU contract; visible response remains FAILED)\n\nVerified only the submitted source-offset correction and preserved negative\nmeasurement, not desktop responsiveness. Full report and changed-hunk ledger:\n`evidence/omarchy-profile/gpu-transfer-offset-verifier/VERDICT.md` and\n`coverage.md`. The 35-file verifier seal SHA256 is\n`7e542258f5416a5027d514fad8451b6040087c3536fe6b56e136d9be3232799b`. Worker 44-file seal verified independently.\n\nP1–P7 HELD at runtime head `2e61bf3e` / submission `31acd7e8`: Linux/QEMU source\ncontract, literal words, all actual queued request/response bytes and five CRCs,\nWASM test, original full transfers, frozen gates and pristine-clone rebuild.\nIndependent six-case attack plus three new SG seeds ×256 partitions covers\nunaligned offset 3, discontiguous SG/page crossings, exact tail, destination\ndamage and rejection without partial mutation. Restoring the old arithmetic\nin the completed scratch clone makes the worker literal, actual queue and\ncritic probes fail at the predicted wrong words/InvalidParameter; restored\ncontrols pass and all tracked clone bytes are clean. Twenty-six runtime/default\nidentity mutations reject. Both complete acceptance recordings pass affected\n80/4/6/39 tests and the real built 127/0 ISA suite with zero errors. Inherited\nAO broad-gauntlet failures remain explicitly unclaimed.\n\nP8 HELD: each actual report binds 45 helpers, 96 served rows, 67 git-backed assets,\nexact AR/AQ inputs and WASM `7d7b3000…`; 128 trusted keys and 256 ordered acknowledgments;\n27 independent reads, one nonce, no pending read. Raw nonce completion is\n87.920s/90.369s after Enter, with original 300/60/120/20/30s budgets and normal\n0.166s/0.162s cleanup. Post-nonce frame 4→5 arrives within capture 15.963s/16.455s.\n\nP9 FAILED as positive responsiveness: personally viewed the real empty prompt;\nfinal and cold PNG bytes are identical to the AS failure, SHA `431be977…` . The\nworker's narrowed claim preserves this negative. Q depends on AU and retains\nthe separate requirement for uninstrumented physical AND visible success.\nNo scanout-cause claim is made. Six fresh public-byte checks independently bind\nthe corrected runtime, old default artifacts and honest partial roadmap on\n6d0d0ece.wasm-vm.pages.dev and wasm-vm.pages.dev. No semantic proof gap remains\nfor the one GPU correction; responsiveness remains unsolved.\n\nSUITE: retain the committed literal/queued/WASM regressions and verify target;\ncritic probe and scratch-only sabotage runner remain reproducible sealed evidence.\n\n### 2026-09-16 — worker — source-offset correction; visible response still FAILS\n\nFrozen implementation and recorder: `2e61bf3e971595741c627e8b68fcaee055c27945`.\nEvidence: `evidence/omarchy-profile/gpu-transfer-offset-r1/`, sealed by\n`sha256.txt`. Runtime manifest: `tools/verify/omarchy-gpu-transfer-runtime.json`.\nThe 1,602,266-byte WASM has SHA256\n`7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf`.\n\nBefore the production change, `cargo test -p wasm-vm-core --lib gpu_transfer_\n-- --nocapture` failed both corrected Linux-style calls: source offset 24\ncopied word 12 where literal word 6 was expected; the queued source offset 4\ncopied word 2 where word 1 was expected. The old log and pinned Linux driver\nexcerpt are retained. Production now uses the provided offset once and keeps\ndestination geometry, validation, damage, guest memory and scanout policy.\n\nCommands: `make web-dist`; `python3\nevidence/omarchy-profile/gpu-transfer-offset-r1/run-proof.py`; then the same\nscript with `--cold`. Both recorded invocations of `make verify-E5_5-T03at`\npass format, strict affected Clippy, 80 GPU tests including 30,000 model cases,\n4 actual Machine queue tests, WASM build and 6 WASM GPU tests, 39 recorder tests,\nand the real built browser's 127/0 ISA suite with zero errors. The queued\nfive-pattern recording preserves request bytes, command events, shadows and\nsink CRCs. New literal tests cover independent source/destination offsets,\ndiscontiguous SG and physical page crossings, exact tail and atomic rejection.\nAn initial sandbox-only localhost EPERM is preserved in development-gates.log;\nthe frozen local-server checks pass with the required host permission.\n\nThe one pristine clone at\n`/private/tmp/wasm-vm-gpu-transfer-cold-3on0fu4z/repo` started clean, scrubbed\nRUSTFLAGS/RUSTDOCFLAGS/RUST_LOG/CARGO_* and rebuilt the exact committed WASM.\nOnly the three pinned guest artifact directories were copied. Its complete\nacceptance repeats the physical browser proof; no compiler output was copied.\nInherited unrelated broad-gauntlet failures remain those recorded in AO's\n`direct-fp-imports-r1/ci.log`; this claim does not mark the broad workspace green.\n\nPhysical execution passes in 87.921 seconds (nonce `160cbfd4ae8e0c08`) and\n90.370 seconds in the clone (nonce `6adf405f616e1efe`), with 27 independent\nreads each and all 128 trusted key events acknowledged. Both use unchanged\nAR/AQ bytes, original timing budgets, original geometry and no profiler/input\nobserver. Post-nonce frame 4→5 is captured after 15.963/16.455 seconds.\nBoth personally inspected PNGs STILL SHOW ONLY THE OLD EMPTY PROMPT and have\nSHA256 `431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`.\nReport hashes: `9267a589a00aedba038dc9a3b36ad9b823e002a94530073c438c590a38c2eb19`\nand `99249c0d6ed8f4d901ceff13f9cd4876e8f05d676de9639dc2175ec805c61c4d`.\nBoth browsers close normally with zero errors. `IMAGE-REVIEW.md` explicitly\nrejects a responsiveness claim; machine/frame counters do not override images.\n\nAGENTS step 3c publication: `bash tools/deploy-cloudflare.sh` published only\nthis corrected runtime with existing default artifacts and an honest partial\nroadmap row at <https://6d0d0ece.wasm-vm.pages.dev>. `check-public.py` verifies\n12 exact served-byte checks across that URL and <https://wasm-vm.pages.dev>;\n`public.json` records the hashes. Python urllib received HTTP403, so the same\npublic checks used the repository's curl transport successfully. No GitHub\npush, merge or Actions run occurred. The deployment's URL-only manifest\nrewrites preserve artifact bytes and are included in the submission.\n\nClaim: the existing GPU source addressing contract is corrected and proven;\nthe actual desktop remains visually unresponsive. AU measures worker display\npixels against the actual canvas next. Q now depends on AU and still requires\na later uninstrumented physical AND visible pass before responsive publication.\n\n### 2026-09-16 — worker activation\n\nAS critic commit27e31ea3 verifies physical execution and the negative visual\nmeasurement. Activate only the existing transfer source-address boundary. Q\nremains gated on a real physical and visible response with unchanged deadlines.\n\n### 2026-09-16 — planned from AS visual failure and source comparison\n\nASr2 reportSHA97252137eed0cc5a4eae2e477e733a5d3f42dd0ad3e911358d8afd6b51afb174:\nnonce arrives89.104s after Enter; subsequent frame4→5 has terminal damage\nrect10,36,1260,754, yet the real PNG remains an empty prompt. Kernel input loss\nis repaired; visible response is not. Reference implementation:\nhttps://raw.githubusercontent.com/qemu/qemu/v9.2.0/hw/display/virtio-gpu.c\nand the pinned local Linux6.6.63 tarball. No new rendering feature is proposed.",
       "adversarial": "A fresh critic predicts the literal copied pixels from Linux/QEMU's source\naddressing contract, independently attacks SG boundaries and large offsets,\nsabotage-checks sensitivity to the old extra-origin arithmetic, and audits\nchanged-hunk coverage. Independently review actual physical-only nonce,\noriginal deadlines and real screenshot. Any unbound-scanout issue is a separate\nfollow-up unless evidence makes it necessary; do not broaden this task.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03at-gpu-transfer-offset.md",
       "activity": [
         {
           "date": "2026-09-16",
-          "commits": 2,
+          "commits": 4,
           "labels": [
+            "Verify GPU source offsets and preserve failed desktop response",
+            "evidence: prove GPU offset fix and retain failed desktop display gate",
             "task: activate GPU transfer source-offset correction",
             "evidence: prove physical command execution and preserve stale display finding"
           ]
@@ -23145,7 +23140,240 @@
       ],
       "firstActivity": "2026-09-16",
       "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03au",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Locate stale desktop pixels at the worker display boundary",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03at"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — worker activation\n\nAT was independently verified at 376e0992 for its source-offset correction and\nnegative visual result. Keep that runtime unchanged and measure its actual\ndisplay-buffer delivery and canvas contents before choosing another remedy.\n\n### 2026-09-16 — planned from AT's negative actual response\n\nAT frozen2e61bf3e, WASM7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf.\nThe actual PNG SHA431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24\nstill shows only the empty old prompt despite nonce160cbfd4ae8e0c08 and a later\npresented frame4→5. The GPU source-offset fix does not explain the residual\nstale image; observe the next display boundary without guessing a remedy.\n\n### 2026-09-16 — worker submission\n\nFrozen source `560096cbc640e0523778217c01c7c7ad37780473`. Command:\n`DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 evidence/omarchy-profile/display-pixel-boundary-r1/run-proof.py`\nrecords `make verify-E5_5-T03au`: 39 affected tests and the real diagnostic pass.\nAT runtime and AR artifact identities remain exact; no runtime or guest changes.\nThe first sandbox selftest attempt encountered its existing local listener EPERM;\nthe authorized local run passed. Runtime gates and cold-clone evidence are carried\nfrom AT because this diff changes only the recording harness.\n\nThe physical nonce `31f4b69996bdd329` succeeded in 90.187 seconds. The post-nonce\nframe 5 is byte-identical to frame 4, and its normalized visible bytes exactly\nmatch the actual canvas. All five frames were bound to scanout 0, with no loss,\neviction, error or pending presentation. The actual PNG remains the old empty\nprompt (`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`),\nwhich the worker personally viewed. Browser canvas loss and null scanout traffic\nare excluded for this run; late guest rendering versus earlier stale pixels is\nnot yet distinguished. This is a diagnostic claim, never responsive acceptance.\n\nEvidence: `evidence/omarchy-profile/display-pixel-boundary-r1/`, including\n`proof.json`, `acceptance.log`, `response/run.json`, `response/desktop/report.json`,\nraw frame and canvas bytes, original PNGs/serial, and `IMAGE-REVIEW.md`.\nFrozen evidence seal: 18 files, `sha256.txt` SHA256 `ff5d594636dd2763736ca334c9021b371638c1d1a2ad71ea3e0249aa7c0ccf88`.\n\n### 2026-09-16 — independent verifier — VERDICT: verified\n\n- P1 provenance — HELD. Frozen `560096cb` helper closure (46 files), all 96\n  served rows and 67 git-backed resources match; AR artifacts and AT WASM remain\n  exact. Independently checked every file in the worker's 18-file seal.\n- P2/P3/P7 observation — HELD. Independent alias/detach/metadata and both wrapper\n  order attacks preserve original messages, transfer lists, native behavior and\n  private copies. Eight-frame/64-event/16-error caps hold. Latest-frame removal,\n  clear, pending present and digest substitution are rejected. Actual cleanup\n  takes 764 ms within 30 seconds. All five probe tests pass independently; the\n  recorded acceptance has 39 passing affected tests.\n- P4/P5/P6 measurement — HELD. Raw fence `mu4r3yby29` independently confirms nonce\n  `31f4b69996bdd329` at 90.187 seconds after Enter; 128 trusted events/256 acks.\n  Actual frame 5 at 23:48:17.791Z is post-nonce, scanout 0, format 2. Independent\n  byte normalization/cropping matches canvas exactly, SHA256\n  `8938e2a32c3293dfef777fa2389fd331784dd77b9dd489ecf1d786f276ca92c4`.\n  Frames 4 and 5 have identical raw bytes `c40efc5e5c8d199a4ab1e8c8f7015bc4b64a6a93c35340f13db5ea1ec725495b`.\n- P8 visible result — HELD as negative. I personally viewed the actual final\n  PNG: old empty prompt, no typed command or later prompt; SHA256 `431be977…`\n  matches AT. This verifies a diagnostic, **not desktop responsiveness**. Stale\n  pixels are already present at worker delivery; later guest rendering versus\n  an earlier stale source is not distinguished. Q remains gated.\n- COVERAGE/SUITE: every changed harness hunk is exercised or narrowly waived in\n  `evidence/omarchy-profile/display-pixel-boundary-verifier/VERDICT.md`. Retain the\n  five observer tests and `make verify-E5_5-T03au`; unchanged AT runtime evidence\n  carries forward. No cold clone or unrelated runtime suite is required.\n\nVerifier evidence: `evidence/omarchy-profile/display-pixel-boundary-verifier/`.\nPredictions precede pixel inspection; `recording-check.json:275` cites nonce\nprovenance and `:608` the decisive frame comparison. Full commands, mutation\nresults, source hashes and independently checked worker seal are recorded there.",
+      "adversarial": "A fresh critic predicts the wire/canvas relation before reading pixels, attacks\none bounded dropped/mutated/aliased-frame fixture, verifies source/artifact\nidentity, nonce provenance, bounds and cleanup, and personally views the real\ndesktop. Reject any fabricated pixels, new input channel or diagnostic result\npresented as a responsiveness pass. No cold clone is required for this local\nmeasurement-only claim.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03au-display-pixel-boundary.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify stale pixels at worker display boundary",
+            "test(omarchy): submit stale frame boundary recording",
+            "task: measure the stale desktop pixel boundary",
+            "evidence: prove GPU offset fix and retain failed desktop display gate"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03av",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Distinguish late terminal rendering from sustained stale output",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03au"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — planned from AU's measured boundary\n\nAU frozen source 560096cb: five bound scanout 0 frames. Frame 4 and post-nonce\nframe 5 have identical raw SHA256 c40efc5e5c8d199a4ab1e8c8f7015bc4b64a6a93c35340f13db5ea1ec725495b.\nThe canvas matches their normalized pixels exactly. The command executes in\n90.187 seconds, but the actual PNG is the old empty prompt. This diagnostic\ntests later visibility without altering that failed product result.\n\n### 2026-09-16 — worker activation\n\nAU independently verified at 556d4d3e. Preserve its exact runtime and original\nnegative image, and observe only bounded later delivery.\n\n### 2026-09-16 — worker — implemented diagnostic recording\n\nFrozen source `3055f67a5d768ab34f93d7de291bed713cbb5e9f`. Command:\n`DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 evidence/omarchy-profile/display-late-response-r1/run-proof.py`\nrecords `make verify-E5_5-T03av` with the exact AT WASM\n`7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf` and the\nunchanged AR pair. The affected acceptance run passes 51/51 tests and the\nphysical trial closes normally. The worker evidence is sealed by\n`evidence/omarchy-profile/display-late-response-r1/sha256.txt` (seal SHA\n`5f82cf6bfa6a95d058cbe065069f0fe6311a14ecf03fb0d0d449f4fe582f17f0`).\n\nThe independent nonce `8cba0584ecd1cdbb` completes in 83.672 seconds after\nEnter, and the unchanged original capture at 100.036 seconds still shows the\nempty prompt (`431be977…`). The fixed continuation starts 4 ms later and runs\n160.247 seconds. Sequence 8 first changes the terminal-content pixels at\n149.241 seconds after Enter; the +80/+120/+160 second screenshots show the\ntyped command and returned prompt. Every saved Worker buffer equals the\ncorresponding canvas and screenshot; no input, serial command or readiness\noperation occurs during continuation. This is a late-rendering diagnostic,\nnot responsive-desktop acceptance.\n\n### 2026-09-16 — independent verifier — VERDICT: verified\n\nThe fresh critic wrote predictions before reading the pixels, independently\nreplayed the source/runtime and pixel audits, personally inspected all five\nreal PNGs, and ran the three-mode checkpoint attack. Provenance, original\nbudgets, physical nonce, one absolute 180-second continuation deadline,\ncleanup, no-new-stimulus isolation, bounded frame ownership and all five\nWorker→canvas→PNG comparisons are **HELD**. The focused local harness passes\n51/51; the checkpoint attack rejects pending, present-count and deadline\noverrun mutations. Independent supplemental evidence records 625 continuation\n`keyboardLedState` polls and no serial/input stimulus after the original\ncapture. Verifier evidence is sealed by\n`evidence/omarchy-profile/display-late-response-verifier/sha256.txt` (seal SHA\n`92751fcf2144c791e0ccdff778e6625eb762bbfc877f621225df0c3d9bfb8229`).\n\nThe verdict is limited to the diagnostic observation: guest output eventually\nreaches the Worker and canvas, while the original product screenshot remains\nstale. It does not identify the exact upstream execution/compositor cause or\nunlock T03q. Keep the release task gated on an uninstrumented physical and\nvisible response inside the original deadline. Full predictions, independent\nhashes, raw-byte comparisons, image review, attack results and coverage are in\n`evidence/omarchy-profile/display-late-response-verifier/VERDICT.md`.",
+      "adversarial": "A fresh critic predicts before viewing pixels, audits unchanged runtime/artifact\nand input identities, attacks a late/mismatched frame checkpoint, verifies the\nabsolute diagnostic deadline and cleanup, and personally views the real images.\nCarry AU's unchanged observer proofs. No cold clone or runtime rebuild is needed\nfor this local harness-only timing observation.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03av-display-late-response.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 2,
+          "labels": [
+            "Verify late Omarchy display response",
+            "task(omarchy): measure bounded late display response"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-16",
       "commitCount": 2
+    },
+    {
+      "id": "E5.5-T03aw",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test the existing cap-1024 JIT residency on the responsive desktop path",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03av"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-16 — activated from AV's measured execution cost\n\nAV is independently verified at `25877f6b`. The unchanged cap-256 run eventually\nchanges terminal pixels at 149.241 seconds after Enter and records substantial\nresidency churn. `cap-1024` is already implemented in the production WASM\npolicy surface; this task tests that existing option as the smallest measured\nexecution remedy before considering a new runtime change. T03q remains gated.\n\n### 2026-09-17 — worker — cap-1024 candidate is negative\n\nCommit `96a4c890e5d01b4110f2ea65ff28f3012a93056e`. Ran the exact acceptance\ncommand from the frozen committed head:\n\n```text\nDEVELOPER_DIR=/Library/Developer/CommandLineTools \\\nCAP1024_OUT=evidence/omarchy-profile/residency-cap1024-r2 \\\nmake verify-E5_5-T03aw\n```\n\nThe deterministic gate passed 54/54. The physical run used the exact AR\nprepared pair, AT WASM `7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf`,\nfixed `cap-1024` plus recycling, and the unchanged 300/60/120/20/30 second\nbudgets. It verified nonce `f8530c0500d5c5c5`, 128 trusted keyboard events,\nand readback at `2026-09-17T01:59:40.646Z` (73.923 seconds after Enter).\nThe candidate nevertheless failed the product gate: the post-input screenshot\n`response/desktop/desktop-keyboard.png` at\n`2026-09-17T01:59:56.828Z` has SHA-256\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`, the same\nempty-prompt image as the stale baseline, with no visible typed terminal\nresponse. `run.json` records `machineAcceptance: true` and\n`desktopAcceptance: false`.\n\nThe runtime did exercise the selected existing policy: guest retired\n6,502,869,868 instructions, cache evictions rose from 850 to 5,510,\nretranslations reached 14,551, and compile-queue backpressure drops reached\n26,662. These counters improve the cap-256 comparison only as diagnostics;\nthey do not satisfy the visual acceptance criterion. Evidence:\n`evidence/omarchy-profile/residency-cap1024-r2/response/run.json`,\n`evidence/omarchy-profile/residency-cap1024-r2/response/desktop/report.json`,\n`evidence/omarchy-profile/residency-cap1024-r2/response/desktop/desktop-keyboard.png`,\nand `evidence/omarchy-profile/residency-cap1024-r2/response/desktop/serial.log`.\n\n### 2026-09-17 — independent verifier — VERDICT: verified (negative trial)\n\nIndependently audited frozen implementation `96a4c890` and worker submission\n`fc9f242e`. All seven predictions held. Exact AR/AT identities, 47 helper hashes,\n96 served resources and the cap-1024/recycling runtime agree; the only URL policy\nchange is cap-256→cap-1024. Raw fence `mu4vt9ew29` reconstructs the physically typed\nnonce at 73.922 seconds after Enter (recorder 73.923); 128 trusted events have 256\nsuccessful keyboard/sync acknowledgements. No serial nonce injection, extra\nphysical input, late continuation or readiness/profiling route occurred.\n\nI personally inspected the actual PNG at 90.105 seconds after Enter: the prompt\nis still empty. Its 10908 bytes and SHA-256 `431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`\nexactly match the stale baseline. The unchanged phase deadlines and 177ms cleanup\nhold. Eleven forged-evidence cases reject. All 54 affected deterministic tests\npass with localhost access; the initial sandbox-only HTTP EPERM is retained as\nenvironment evidence. r1 stopped before browser launch on dirty-source guards.\n\nEvidence and full hunk coverage:\n`evidence/omarchy-profile/residency-cap1024-verifier/VERDICT.md`,\n`PREDICTIONS.md`, `audit.mjs`, `audit.json`, `audit.log`, and\n`focused-tests-localhost.log` in that directory. The report SHA-256 is\n`da00d983b75d6e7f83c04ba3b38d743a01a24f7bc65c8602ce5d28b5af656a19`;\n`audit.json` seals all eight worker files. Commands are recorded in the verdict.\nNo implementation edits or additional browser boots were needed. This verifies\nthe negative experiment only: desktop responsiveness remains unsolved and T03q\nstill requires a positive uninstrumented physical-plus-visible response.",
+      "adversarial": "A fresh critic predicts the cap and recycling policy before reading the run,\nchecks that no other URL/runtime setting changes, reconstructs the physical\nnonce from raw wire evidence, attacks a forged cap-1024 success receipt, and\npersonally inspects the real screenshot. Carry forward AV's late-rendering\nfinding and the exact AT/AR identities. No cold clone or runtime rebuild is\nneeded because this slice changes only local harness selection and existing\noption validation.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03aw-residency-cap1024.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 3,
+          "labels": [
+            "Verify negative cap-1024 desktop trial",
+            "task: record cap-1024 negative desktop trial",
+            "task: test cap-1024 Omarchy residency"
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-17",
+      "commitCount": 3
+    },
+    {
+      "id": "E5.5-T03ax",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test cap-1024 residency with the existing 16384-entry decoded cache",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03aw"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — coordinator — pending measured follow-up\n\nT03aw's cap-1024 candidate reduced cache evictions from 6,955 to 5,510 and\nretranslations from 27,232 to 14,551 at the same roughly 6.5 billion guest\nretirements, but its post-input PNG remained the exact empty prompt. The same\nrun rebuilt 22,868,554 decoded blocks with the fixed 4096-entry cache. This\nslice tests the existing 16384-entry decoded-cache capacity alongside that\nmeasured residency option; it does not promote a default or authorize Q.\n\n### 2026-09-17 — worker — cap-1024 plus decoded-cache-16384 candidate is negative\n\nCommit `9c63ad84b442d62f15ace9b90475552e6b6c0c92`. Ran the exact acceptance\ncommand from the frozen committed head:\n\n```text\nDEVELOPER_DIR=/Library/Developer/CommandLineTools \\\nDECODED_CACHE_OUT=evidence/omarchy-profile/residency-decoded-cache16384-r1 \\\nmake verify-E5_5-T03ax\n```\n\nThe deterministic gate passed 55/55 with loopback access. The physical run\nused the exact AR prepared pair, AT WASM\n`7d7b300003cf68076c28958694062dacf3c879efe921bc631bade568ee143bdf`,\n`jitResidency=cap-1024`, recycling enabled, `decodedCacheEntries=16384`, and\nthe unchanged 300/60/120/20/30 second budgets. It verified nonce\n`cfbffea436913f37`, 128 trusted keyboard events, and readback at\n`2026-09-17T02:20:31.870Z` (64.349 seconds after Enter). The candidate still\nfailed the product gate: the post-input screenshot\n`response/desktop/desktop-keyboard.png` at `2026-09-17T02:20:46.433Z`\nhas SHA-256\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`, the\nsame empty-prompt image as the stale baseline, with no visible typed terminal\nresponse. `run.json` records `machineAcceptance: true` and\n`desktopAcceptance: false`.\n\nAt the final runtime observation (6,410,377,466 guest instructions), the\nselected decoded cache was 16,384 entries, decoded `blockBuilds` were\n9,233,356, JIT cache evictions were 6,227, retranslations 24,513, and compile\nqueue backpressure drops 13,667. The lower decoded-build count is diagnostic\nonly and does not satisfy the visual acceptance criterion. Evidence:\n`evidence/omarchy-profile/residency-decoded-cache16384-r1/response/run.json`,\n`evidence/omarchy-profile/residency-decoded-cache16384-r1/response/desktop/report.json`,\n`evidence/omarchy-profile/residency-decoded-cache16384-r1/response/desktop/desktop-keyboard.png`,\nand `evidence/omarchy-profile/residency-decoded-cache16384-r1/response/desktop/serial.log`.\n\n### 2026-09-17 — independent verifier — VERDICT: verified (negative trial)\n\nAudited frozen implementation `9c63ad84` and submission `9e610792` without\nimplementation edits. All seven predictions held. Both actual runtime samples\nshow cap-1024, recycling enabled and 16384 decoded entries; this cache parameter\nis the sole URL policy change from AW. Independently checked all 47 helper\nhashes, 96 served rows and exact AT/AR/AQ/R3 artifact identities. AW's original\n4096-entry report still passes the current auditor unchanged.\n\nRaw fence `mu4wk2yt27` proves the physically typed nonce at 64.348 seconds after\nEnter (recorder 64.349), with 128 trusted events and 256 successful acknowledgements.\nNo nonce injection, extra physical input or diagnostic continuation occurred.\nThe unchanged phase deadlines hold, including 166ms cleanup. I personally\ninspected the screenshot at 78.912 seconds after Enter: it is still the empty\nprompt, byte-identical to the stale baseline SHA-256\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`.\n\nAll 55 affected tests passed with localhost access. Thirteen forged-evidence\nattacks reject, including false 16384 metadata over actual 4096 runtime and\npromotion of the machine pass to visible success. Full predictions, hunk\ncoverage, commands and the eight-file worker seal are in\n`evidence/omarchy-profile/residency-decoded-cache16384-verifier/VERDICT.md`,\n`PREDICTIONS.md`, `audit.mjs`, `audit.json`, `audit.log`, and\n`focused-tests-localhost.log` in that directory. Report SHA-256:\n`baa3b655acdf55180d3a19a079d312e3d2a408b4f3e4182032ec78c5548ff03e`.\nThis verifies the bounded negative experiment only. Desktop responsiveness\nremains unsolved; Q still needs positive uninstrumented physical-plus-visible proof.",
+      "adversarial": "A fresh critic predicts the cap, recycling and decoded-cache settings before\nreading the run, checks that no other URL/runtime setting changes, reconstructs\nthe physical nonce from raw wire evidence, attacks a forged success receipt, and\npersonally inspects the real screenshot. Carry forward T03aw's exact AT/AR\nidentities and negative visual result. No cold clone or runtime rebuild is\nneeded because this slice changes only local harness selection and existing\noption validation.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ax-residency-decoded-cache16384.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify negative decoded-cache desktop trial",
+            "task: record decoded cache negative trial",
+            "task: activate decoded cache follow-up",
+            "task: plan decoded cache follow-up"
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-17",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03ay",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Measure late visible response after the expanded decoded cache",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ax"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — worker — implemented\n\nCommit `f89062c7` adds the explicit `--display-late-cap-1024-cache16384`\nrecorder option. The focused harness gate passed 59/59 with loopback access:\n\n```sh\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node --test \\\n  tools/verify/omarchy-display-late-probe.test.mjs \\\n  tools/verify/omarchy-input-kernel-response.test.mjs \\\n  tools/verify/omarchy-input-trial.test.mjs \\\n  tools/verify/omarchy-user-input.test.mjs \\\n  tools/verify/omarchy-desktop-live.test.mjs \\\n  tools/verify/omarchy-owned-trial.test.mjs\n```\n\nThe frozen physical run was:\n\n```sh\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node \\\n  tools/verify/omarchy-input-kernel-response.mjs \\\n  evidence/omarchy-profile/residency-decoded-cache16384-late-r5 \\\n  target/omarchy-input-kernel-prepared-pair-r1 \\\n  --display-late-cap-1024-cache16384\n```\n\nIt reached the independently acknowledged nonce at 67.556 seconds after Enter\nand produced a fresh post-nonce frame within the unchanged product gate, but the\nproduct screenshot remained the empty prompt. The bounded continuation then\ncaptured the first changed Worker/canvas/image at `+80,000 ms` after the product\ncapture (95.034 seconds after nonce completion). Manual review shows the actual\ntyped command and returned shell prompt in that checkpoint; the `+40,000 ms`\ncheckpoint is still stale. Worker and canvas bytes match at every checkpoint.\nThe run therefore proves a later guest/display response while preserving the\nnegative product result; it does not prove desktop responsiveness or authorize\nT03q.\n\nEvidence is sealed in\n`evidence/omarchy-profile/residency-decoded-cache16384-late-r5/RESULT.md`,\n`IMAGE-REVIEW.md`, `desktop/report.json` (SHA-256\n`f1b74d8d1577b4816f989054b5d6ecfb9587babb25bdc4833c47d0f3c6b1b3c4`), and\n`run.json` (SHA-256\n`e290a069d5cce71849d99ef96d37b6bc522c5c8623910577ca331379979cbdc2`).\n\n### 2026-09-17 — independent verifier — VERDICT: verified (diagnostic only)\n\nPredictions preceded opening the recording. The exact frozen option at\n`f89062c7` selects AX's cap-1024/recycling/16384 configuration and retains exact\nAT/AR/AQ/R3 identities. Independently checked 47 helper hashes, 96 served rows,\nall five Worker/canvas/PNG checkpoints, all eight retained frame hashes and\nthe final canvas. Every checkpoint has zero differing Worker→canvas and\nPNG→canvas pixels. The focused gate passes 59/59; eight forged reports and\nthree independent checkpoint attacks reject.\n\nThe raw physical nonce fence `mu4x2gh028` completes at 67.556 seconds after\nEnter, backed by 128 trusted keys and 256 true acknowledgements. The product\nimage at 82.577 seconds remains the empty prompt. Original phase deadlines\nremain unchanged. The continuation lasts 160.258 seconds within one 180-second\nallowance and sends only 630 existing LED read calls, with no new input,\nconfiguration writes or readiness events. Owned cleanup takes 1.142 seconds.\n\nI personally inspected all five PNGs. +0/+40 seconds are blank; +80/+120/+160\nshow the exact command and returned prompt. Retained frame 8 is a 221-pixel\ncursor change at Enter+125.837 seconds. Frame 10 adds 3022 terminal pixels at\nEnter+155.838 seconds and matches the first changed checkpoint, captured at\nEnter+162.592 seconds. No retained pixel evidence shows terminal output within\n120 seconds; earlier evicted frames prevent a universal continuous-coverage\nclaim. The original desktop acceptance remains negative, and Q is not promoted.\n\nThe worker corrected its counter prose: the last JIT sample is at product\ncapture, not continuation end. Raw report/receipt hashes remain unchanged.\nFull citations, retained-frame limitations, hunk coverage, commands and worker\nfile seals are in\n`evidence/omarchy-profile/residency-decoded-cache16384-late-verifier/VERDICT.md`,\n`PREDICTIONS.md`, `audit.json`, `audit.log`, and `checkpoint-attack.json`.",
+      "adversarial": "A fresh critic compares the candidate URL against the verified AW 4,096-entry\nbaseline and AX 16,384-entry trial, checks the physical nonce independently,\nverifies that the continuation sends no input, and hashes every Worker/canvas\ncheckpoint. It must reject a late screenshot presented as product success, a\nframe-count-only claim, a forged nonce, or a continuation that changes the\nruntime or deadline. It must inspect the first changed pixels and record whether\nthey contain the actual returned terminal prompt.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ay-late-cache16384-response.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 5,
+          "labels": [
+            "Verify bounded late decoded-cache response",
+            "task: record late decoded-cache response trial",
+            "test(omarchy): add late decoded-cache probe",
+            "task: activate late cache response diagnostic"
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-17",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03az",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Test cap-1024 decoded-cache execution without dynamic JALR chaining",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ay"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — worker — implemented; bounded trial remains negative\n\nCommit `5fe078326662f22ece9451123cb54387b1ff2b05` adds the isolated\n`--prepared-cap-1024-cache16384-no-jalr` recorder path and checks that its URL\ndiffers from AX only by `jalr=0`. The focused harness gate passed 56/56 with\nloopback access:\n\n```sh\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node --test \\\n  tools/verify/omarchy-input-trial.test.mjs \\\n  tools/verify/omarchy-input-kernel-response.test.mjs \\\n  tools/verify/omarchy-user-input.test.mjs \\\n  tools/verify/omarchy-desktop-live.test.mjs \\\n  tools/verify/omarchy-owned-trial.test.mjs\n```\n\nThe frozen physical run was:\n\n```sh\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node \\\n  tools/verify/omarchy-input-kernel-response.mjs \\\n  evidence/omarchy-profile/jalr-off-r1 \\\n  target/omarchy-input-kernel-prepared-pair-r1 \\\n  --prepared-cap-1024-cache16384-no-jalr\n```\n\nThe candidate runtime proved cap-1024 residency, recycling enabled, 16,384\ndecoded entries, `jitDynamicChaining: false`, `jitRegionChaining: true`,\nICount64/divider 64, and the unchanged 300/60/120/20/30-second budgets. The\nindependent physical nonce `7dd0ac2ffe349859` completed at\n`2026-09-17T02:57:33.467Z` within its 120-second deadline, and the recorder\ncaptured a fresh post-nonce presentation inside the unchanged 20-second\nwindow. The product result is still negative: the real\n`desktop/desktop-keyboard.png` is the exact empty-prompt baseline\n(`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`) with no\ntyped command or returned prompt. `machineAcceptance` is true only for the\nnonce/frame fence; `desktopAcceptance` is false.\n\nEvidence is sealed in\n`evidence/omarchy-profile/jalr-off-r1/RESULT.md`, `IMAGE-REVIEW.md`,\n`desktop/report.json` (SHA-256\n`4abcfd8abd5537cff214089b77e6bbe81932987edc4d6315f0bea2e7f5b2c2a4`), and\n`run.json`. This trial does not promote T03q. A fresh verifier must check the\nruntime policy, exact URL delta, physical nonce, and the manually inspected\nnegative PNG before the next bounded remedy is planned.\n\n### 2026-09-17 — independent verifier — VERDICT: verified (negative trial)\n\nAudited frozen implementation `5fe07832` and submission `901f917e` without\nimplementation edits. Predictions preceded runtime/image inspection. Both\nruntime samples prove dynamic chaining false, region chaining true, cap-1024,\nrecycling, 16384 decoded entries, icount divider 64 and unchanged geometry and\nquantum. The sole URL delta from AX is `jalr=0`. All 47 helper hashes, 96 served\nrows and exact AT/AR/AQ/R3 identities match. AX's original audit still passes.\n\nThe raw nonce fence `mu4xvow229` completes at 76.840 seconds after Enter\n(recorder 76.843), with 128 trusted events and 256 true acknowledgements.\nNo serial nonce injection or extra physical/diagnostic input occurs. All\noriginal phase budgets hold, including 195ms cleanup. I personally inspected\nthe PNG at 91.877 seconds after Enter: it is the empty prompt, byte-identical\nto baseline SHA-256\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`.\n\nAll 56 focused tests pass with localhost access. Seventeen bounded forgeries\nreject, including restored `jalr=1`, `region=0`, dynamic-on runtime beneath\nunchanged receipt metadata, nonce/deadline drift and false image success.\nFull predictions, hunk coverage, citations, commands and the ten-file worker\nseal are in `evidence/omarchy-profile/jalr-off-verifier/VERDICT.md`,\n`PREDICTIONS.md`, `audit.mjs`, `audit.json`, `audit.log` and\n`focused-tests-localhost.log`. Report SHA-256 remains\n`4abcfd8abd5537cff214089b77e6bbe81932987edc4d6315f0bea2e7f5b2c2a4`.\nThis verifies the bounded negative trial only. Desktop responsiveness remains\nunsolved and T03q is not promoted.",
+      "adversarial": "A fresh critic compares the complete URL and runtime settings with AX, rejects\n`region=0`, recycling/cap/cache/divider drift, untrusted or forged nonce data,\nand a frame-count-only claim. It personally inspects the response PNG, checks\nthat no diagnostic or late continuation creates input, and runs one bounded\nattack that restores `jalr=1` or changes the candidate runtime while retaining\nthe receipt metadata.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03az-jalr-off-trial.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 4,
+          "labels": [
+            "Verify negative dynamic JALR-off desktop trial",
+            "task: record dynamic jalr-off trial",
+            "task: activate dynamic JALR trial",
+            "task: plan dynamic JALR trial"
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-17",
+      "commitCount": 4
     },
     {
       "id": "E5.5-T03b",
@@ -23182,6 +23410,166 @@
       "firstActivity": "2026-09-10",
       "lastActivity": "2026-09-10",
       "commitCount": 2
+    },
+    {
+      "id": "E5.5-T03ba",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Remove decoded-cache page-scan cost from the Omarchy hot path",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03az"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — worker — candidate recorded as negative\n\n- Implementation head: `3c0bc3e5` (`perf(core): index decoded code-page slots`); the\n  candidate-trial identity harness was committed at `e92f702d`.\n- Deterministic gates: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --lib`\n  (`357 passed`); `cargo test -p wasm-vm-core --lib decoded_cache_capacity_tests`\n  (`8 passed`); `cargo clippy -p wasm-vm-core --lib -- -D warnings`;\n  `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown --lib`; and the focused\n  Node suite (`57 passed, 0 failed`, with the loopback bind requiring the approved\n  escalated rerun).\n- Physical command:\n  `DEVELOPER_DIR=/Library/Developer/CommandLineTools node tools/verify/omarchy-input-kernel-response.mjs evidence/omarchy-profile/code-page-index-r1 target/omarchy-input-kernel-prepared-pair-r1 --prepared-cap-1024-cache16384-code-page-index`.\n- Evidence: [run receipt](../../evidence/omarchy-profile/code-page-index-r1/run.json),\n  [desktop report](../../evidence/omarchy-profile/code-page-index-r1/desktop/report.json),\n  and [final product image](../../evidence/omarchy-profile/code-page-index-r1/desktop/desktop-keyboard.png).\n  The receipt binds the exact candidate WASM (`3da4b21591b9e816e68361ca743ecaaffe4f0681f4cbe364feeb359c1682976b`,\n  1,604,455 bytes), the fixed cap-1024/recycling/16,384-entry/ICount64 runtime, and\n  the independently generated nonce `e834cbb919b48075`. The physical sequence was\n  trusted and read back, with fresh presentation advancing from 3 to 5 frames;\n  `machineAcceptance` is true.\n- Product result: `desktop-keyboard.png` has SHA256\n  `431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`, exactly the\n  stale empty-prompt baseline. The terminal prompt and typed command are not visible\n  in the original product window, so this is a verified negative experiment and does\n  not unlock T03q.\n\nStatus remains `implemented` pending a fresh critic session.\n\n### 2026-09-17 — worker — corrected counter parity, physical trial still negative\n\n- The first implementation was refuted by the fresh critic at `0a5970cc` because\n  a stale-generation same-page reinsertion changed the public discard counter from\n  `(1,2)` to `(1,1)`. The correction is committed at `0e3c0641` and carries stale\n  page counts across a generation flush; the promoted core test now asserts the\n  exact `(1,2)` parity case without restoring a capacity scan.\n- Corrected deterministic gates: `cargo fmt --all -- --check`; `cargo test -p\n  wasm-vm-core --lib` (`357 passed`); `cargo test -p wasm-vm-core --lib\n  decoded_cache_capacity_tests` (`8 passed`); `cargo clippy -p wasm-vm-core --lib\n  -- -D warnings`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown\n  --lib`; the critic's actual-core public counter probe (`actual core public\n  invalidation_stats=(1, 2)`); and the focused Node suite (`57 passed, 0 failed`).\n- Corrected physical command:\n  `DEVELOPER_DIR=/Library/Developer/CommandLineTools node tools/verify/omarchy-input-kernel-response.mjs evidence/omarchy-profile/code-page-index-r2 target/omarchy-input-kernel-prepared-pair-r1 --prepared-cap-1024-cache16384-code-page-index`.\n  The receipt binds head `0e3c0641` and WASM\n  `1e475d3874972a5f111e458d3b3f742f6ff2b279620fa5a21af218c914072ca1` (1,615,054\n  bytes), with the unchanged runtime, pair and 300/60/120/20/30-second budgets.\n- Evidence: [corrected run receipt](../../evidence/omarchy-profile/code-page-index-r2/run.json),\n  [desktop report](../../evidence/omarchy-profile/code-page-index-r2/desktop/report.json),\n  and [failure image](../../evidence/omarchy-profile/code-page-index-r2/desktop/failure.png).\n  The 128-key physical sequence was accepted by the browser, but the guest nonce\n  was not read back by the fixed 120-second deadline (`machineAcceptance: false`).\n  The captured image remains the empty-prompt SHA256\n  `431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`.\n\nStatus remains `implemented` pending a fresh critic session for the corrected head.\n\n### 2026-09-17 — independent verifier — VERDICT: refuted\n\n- P3 unchanged discard counters — FAILED. At capacity64: insert A=0x80000000,\n  flush generation, insert B=0x80000002 on the same page/different hash slot,\n  then flush_page(0x80000). Baseline `b5308fc4` returns invalidation_stats `(1,2)`;\n  candidate `e92f702d` returns `(1,1)`. Rechecked through the actual core public\n  API (`evidence/omarchy-profile/code-page-index-verifier/public-counter/main.rs:14`),\n  which fails the baseline-parity assertion with exit101. Exact-source baseline\n  and candidate probes reproduce the same difference. Changed generation/index\n  handling in `crates/core/src/dispatch.rs:196` and `:216` stops counting stale\n  slots that the previous page flush counted. Preserve the task's required public\n  counter behavior without reintroducing a capacity scan, add this regression,\n  and record the corrected runtime.\n- HELD: target-page retention, same-page replacement, invalidate/reinsert,\n  generation clearing, forged other-page index and missing-index/no-fallback\n  checks. Three independent seeds across five capacities cover150000 operations;\n  both bounded sabotage tests fail as intended. Eight actual-core capacity/SMC\n  guest-trace tests and the new actual-core index test pass.\n- HELD: frozen47-helper/67-deployed-resource identity and exact T03az runtime\n  settings. Independent nonce `e834cbb919b48075` succeeds in82.097seconds. I\n  personally viewed the actual final PNG: old empty prompt, same `431be977…`\n  digest; no returned prompt within the product window. T03q remains gated.\n- COVERAGE/SUITE: full predictions, commands, logs and narrow coverage analysis\n  are in `evidence/omarchy-profile/code-page-index-verifier/VERDICT.md`. No\n  implementation was edited. Carry unchanged held results forward; stop at the\n  counter refutation before final cold-clone verification or deployment.\n\n### 2026-09-17 — incremental verifier — VERDICT: refuted (corrected head)\n\n- Original `(1,2)` public-counter reproduction — HELD at `0e3c0641`.\n- Multiple-generation counter parity — FAILED. Capacity8, operations:\n  insert0x800060e2; flush; insert0x8000605e; flush_page0x80006;\n  insert0x80006062; flush; insert0x8000608e; insert0x800010ec;\n  flush_page0x80006. Baseline returns `(2,4)`, corrected candidate `(2,3)`.\n  Differential seed24301 reduced31885 operations to these9; actual-core public\n  executable independently fails the parity assertion at\n  `evidence/omarchy-profile/code-page-index-verifier-r2/public-counter/main.rs:19`.\n  `counter-state.log:17` shows replacement of an already-counted generation1 slot\n  decrementing the count belonging to a different generation2 slot. Preserve\n  historical slot ownership across consumption/replacement without a capacity\n  scan, add this regression, and rerun affected proof.\n- HELD: bounded index/forged/missing/reinsertion attacks, target-predicate\n  sabotage, eight actual-core guest-trace capacity tests and the updated index\n  test. Carry unchanged earlier held evidence forward.\n- HELD negative browser result:47 helper/67 deployed-resource identity checks,\n  exact corrected WASM/settings.128 trusted events;40 readbacks exit75,1 pending,\n  no nonce success before the fixed deadline. I personally viewed `failure.png`:\n  same stale empty prompt (`431be977…`). No responsiveness pass; Q remains gated.\n- Full source-bound report, exact state trace, reduced counterexample and commands:\n  `evidence/omarchy-profile/code-page-index-verifier-r2/VERDICT.md`. Stop before\n  final cold-clone/deployment work on this refuted head. No implementation edits.\n\n### 2026-09-17 — worker — corrected indexed ownership and recorded a third physical trial\n\n- Reworked `BlockCache` at `ff39120a` (`fix(core): retain indexed stale page slots`). The\n  page index now stores a generation plus every physical slot index. `flush()` only bumps the\n  generation; `flush_page()` accepts the current-generation membership and clears the indexed\n  slots, including older-generation blocks that the legacy scan would count. Replacements unlink\n  exactly one slot while retaining empty current-generation page membership, preserving the\n  legacy `flush_page` return value after eviction. No capacity scan or JIT/input policy changed.\n- Deterministic evidence: [core tests](../../evidence/omarchy-profile/code-page-index-r3/worker/core-lib.log)\n  (`357 passed`), [capacity tests](../../evidence/omarchy-profile/code-page-index-r3/worker/decoded-capacity.log)\n  (`8 passed`), [fmt](../../evidence/omarchy-profile/code-page-index-r3/worker/fmt.log),\n  [clippy](../../evidence/omarchy-profile/code-page-index-r3/worker/clippy.log),\n  [wasm check](../../evidence/omarchy-profile/code-page-index-r3/worker/wasm-check.log),\n  and the actual-core [public counter probe](../../evidence/omarchy-profile/code-page-index-r3/worker/public-counter.log)\n  (`(2,4)`). The promoted test covers the reduced nine-operation multiple-generation case and\n  the evicted-page membership case. A separate five-seed, five-capacity differential against the\n  legacy implementation completed 500,000 operations with matching counters and return values.\n- The pre-commit hook rebuilt `web/dist`; the exact candidate wasm is recorded in\n  [wasm.sha256](../../evidence/omarchy-profile/code-page-index-r3/worker/wasm.sha256):\n  `4e7f87b37ed522a3c1e07514c10eab2585608c85f09864853da0e99adf5f96c1` (1,605,064 bytes).\n- Physical command:\n  `DEVELOPER_DIR=/Library/Developer/CommandLineTools node tools/verify/omarchy-input-kernel-response.mjs evidence/omarchy-profile/code-page-index-r3 target/omarchy-input-kernel-prepared-pair-r1 --prepared-cap-1024-cache16384-code-page-index`.\n  The [receipt](../../evidence/omarchy-profile/code-page-index-r3/run.json) binds head `ff39120a`,\n  the candidate wasm, the unchanged cap-1024/recycling/16,384-entry/ICount64 runtime, and nonce\n  `289fb5bca5ef6124`. Physical input was trusted (128 events), the nonce read back in 77.8 seconds,\n  and the frame count advanced from 3 to 5.\n- Product result: [desktop-keyboard.png](../../evidence/omarchy-profile/code-page-index-r3/desktop/desktop-keyboard.png)\n  is still the exact stale empty-prompt image (`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`).\n  `machineAcceptance` is true and `desktopAcceptance` is false, so this remains a verified-negative\n  candidate and T03q stays gated pending fresh critic review.\n\nStatus remains `implemented` pending a fresh critic session for `ff39120a`.\n\n### 2026-09-17 — incremental verifier — VERDICT: verified (R3)\n\n- Verified implementation `ff39120a`; submission `fd0cc60a` changes only task\n  metadata after that runtime head. Both actual-core counter reproductions now\n  pass: `(1, 2)` and `(2, 4)`. The earlier refutations are resolved.\n- HELD: 1,500,000 baseline differential operations preserve counters and page\n  membership; 150,000 independently checked physical-slot operations preserve\n  exact ownership across generations. Same-page replacement, target-only\n  invalidation, reinsertion, stale generations, evicted membership, forged\n  other-page/out-of-range indices, and a missing entry pass. Both verifier\n  sabotage mutations fail as intended. No capacity-scan fallback is present.\n- HELD final clean clone at exact `ff39120a`: scrubbed environment and fresh\n  build/npm directories; formatting, strict core clippy, 357 core tests, eight\n  guest-trace/capacity tests, WASM target check, and 57 harness tests all pass.\n  The hostile SMC trace remains `568b64d33599f3f5` with 20 retired instructions.\n- HELD physical evidence: 47 helper and 67 deployed-resource identities match\n  frozen source and WASM `4e7f87b37ed522a3c1e07514c10eab2585608c85f09864853da0e99adf5f96c1`.\n  Runtime and original deadlines are unchanged. Independent nonce\n  `289fb5bca5ef6124` succeeds in 77,796 ms after 128 trusted physical events.\n  I personally inspected the actual final PNG: the same stale empty prompt\n  (`431be977…`). `machineAcceptance` is true, `desktopAcceptance` is false.\n  Desktop responsiveness is unresolved and T03q remains gated.\n- Coverage, precise log points, source/receipt hashes, commands, and clean-clone\n  evidence are in [R3 verifier verdict](../../evidence/omarchy-profile/code-page-index-verifier-r3/VERDICT.md).\n  Preserve the expanded counter regression and existing guest-trace tests. No\n  implementation code was edited by the verifier; no deployment claim is made.\n- Verifier evidence seal: 33 files; `sha256.txt` SHA256\n  `4f60b7c91ba2b4dfbc0b5c7bd7d3c0e86e0fe68646d22c22efb396fa4d1979b5`.\n  Task policy passes and the queue is rebuilt with T03ba verified.",
+      "adversarial": "A fresh critic compares the changed cache code and the exact T03az runtime\nsettings, predicts that a non-code-page store performs no slot walk, and predicts\nthat a code-page store removes only the indexed target slots. It must exercise a\nsame-page replacement, an invalidation followed by reinsertion, a stale\ngeneration flush, and a forged page index entry or missing index entry. It must\nreject any implementation that silently falls back to a full-capacity scan, drops\nblocks from another page, changes `blocks_discarded`, or calls the physical trial\nsuccessful from a frame count alone. The verifier must inspect the real PNG and\nkeep T03q gated unless the returned prompt is visible inside the original product\nwindow.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03ba-code-page-index.md",
+      "activity": [
+        {
+          "date": "2026-09-16",
+          "commits": 8,
+          "labels": [
+            "evidence: record corrected page-index trial",
+            "Refute stale slot counter ownership across generations",
+            "evidence: record corrected code-page trial",
+            "Refute decoded page index discard counter parity"
+          ]
+        },
+        {
+          "date": "2026-09-17",
+          "commits": 1,
+          "labels": [
+            "verify(core): confirm code-page index counter parity"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-16",
+      "lastActivity": "2026-09-17",
+      "commitCount": 9
+    },
+    {
+      "id": "E5.5-T03bb",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Skip disabled dynamic-link publication in the Omarchy hot path",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03ba"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — coordinator — planned from T03ba R3 evidence\n\nT03ba is verified as a correct decoded-cache page-index optimization at\n`a4857fd218c89f4806b080cc69058810bceee9d7`, but its exact physical candidate\nstill shows the stale empty prompt after a successful nonce at 77.796 seconds.\nThe same receipt reports `jitDynamicChaining: false`, zero generated dynamic\nattempts/hits/refusals, and `dynamicLinkInstalls: 14592706`. This task isolates\nthat unused disabled-path publication before another broad runtime change.\n\n### 2026-09-17 — coordinator — activated\n\nThe task is the single active lane after T03ba's fresh critic verdict. The\nimplementation will first guard the outer dynamic-target publication on the\nexecutor's existing `dynamic_chaining()` state, then exercise both option\nvalues in deterministic tests before recording the unchanged physical trial.\n\n### 2026-09-17 — worker — implemented; product gate remains negative\n\nImplementation is committed at `0d061fb4` (`perf(core): skip disabled dynamic-link publication`)\nand the frozen-trial identity at `bd25d454` (`test(omarchy): add disabled dynamic-link trial identity`).\n`Machine::try_jit_block` now calls `link_dynamic_target` only when the resolved\nedge is absent **and** the executor reports `dynamic_chaining() == true`.\nStatic edges, ordinary dispatch, and the dynamic-on path remain unchanged. The\nfocused regression in `crates/core/tests/dynamic_link_publication.rs` drives a\nJALR successor through the fake compiled executor and proves an empty\npublication list with dynamic chaining disabled and a target-only publication\nwith it enabled.\n\nDeterministic gates passed, with raw output retained under\n`evidence/omarchy-profile/dynamic-link-publication-r1/worker/`:\n\n- `cargo fmt --check` (`fmt.log`)\n- `cargo test -p wasm-vm-core --lib` (`core-lib.log`, 357 passed)\n- `cargo test -p wasm-vm-core --test decoded_cache_capacity` (`decoded-capacity.log`, 8 passed)\n- `cargo test -p wasm-vm-core --test dynamic_link_publication` (`dynamic-publication.log`, 1 passed)\n- `cargo clippy -p wasm-vm-core --all-targets -- -D warnings` (`clippy.log`)\n- `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown` (`wasm-check.log`)\n- focused Omarchy Node harness (`node-focused.log`, 58 passed)\n\nThe exact frozen physical candidate was recorded with:\n\n```text\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node tools/verify/omarchy-input-kernel-response.mjs \\\n  evidence/omarchy-profile/dynamic-link-publication-physical-r2 \\\n  target/omarchy-input-kernel-prepared-pair-r1 \\\n  --prepared-cap-1024-cache16384-no-dynamic-publication\n```\n\nThe receipt is `evidence/omarchy-profile/dynamic-link-publication-physical-r2/run.json`\nand binds head `bd25d4546153b0d4d106960eb62f302a341c17da` plus WASM SHA-256\n`f09e025172e4a426f45133b57fe3bdb59a4cebb5637396840c3fcbc6c63b9918`.\nThe candidate reports `jitDynamicChaining: false`, zero dynamic attempts,\nhits, refusals, and **zero `dynamicLinkInstalls`** both before and after the\ninput interval; the prior T03ba run had 14,592,706 installs. Static chain\nexecution remains active (`chainLinksFollowed` rises from 31,815,972 to\n174,679,732), and the interval retires 3,987,340,064 guest instructions with\n89.72% JIT share.\n\nThe product criterion is still unproven and therefore negative: nonce\n`626cd9269cfacea8` was typed at `2026-09-17T04:26:39.011Z`, but all 40 bounded\nreadbacks returned exit 75 and no nonce reply arrived before the fixed\n`2026-09-17T04:28:39.011Z` deadline. Machine and desktop acceptance are false;\n`desktop/failure.png` has SHA-256\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24` and shows\nthe unchanged empty Omarchy/Foot prompt with no typed command visible. The\ncompact committed receipt is `evidence/omarchy-profile/dynamic-link-publication-r1/physical-summary.json`.\nThis optimization removes the disabled-path mutation work, but desktop\nresponsiveness remains unsolved and T03q must stay gated.\n\n### 2026-09-17 — fresh verifier — VERDICT: verified\n\n- Verified worker submission `d35217b4`, runtime guard `0d061fb4`, and frozen\n  physical source `bd25d454`. Native publication regression passes; removing\n  only the new guard in an isolated sabotage clone makes it fail with an\n  actual disabled-path publication.\n- Real browser-executor probes pass for three seeds across off → on → off → on.\n  Initial disabled execution has zero installs/live entries and active static\n  chaining; later enabled execution records guarded hits; disabling again\n  preserves the dynamic state. Across 180 run boundaries and 51,900 candidate\n  instructions, registers, PC, sampled RAM, retirement/cycle counters, and\n  `mstatus` match the interpreter. Three forged-authority cases refuse target\n  entry and safely rearm after target invalidation/reinstall.\n- Exact clean-clone checks pass: formatting, 357 core tests, eight capacity\n  tests, publication regression, WASM target check, 38 browser JIT parity tests\n  (one unchanged unrelated stress ignore), and 58 harness tests. Strict\n  all-target clippy requires the existing example's explicit `trace` feature;\n  affected library/new-test clippy also passes with default features. The\n  original default all-target failure is retained and explained in the report.\n- Independently bound 47 helpers, 67 deployed resources, candidate WASM and\n  original runtime/deadlines. Both physical observations have zero dynamic\n  installs/attempts/hits/refusals while static links advance. Nonce\n  `626cd9269cfacea8` has no successful raw readback: 40 completed reads return\n  75, one is pending at 120,000 ms. I personally inspected `failure.png`:\n  unchanged stale empty prompt (`431be977…`). Machine and desktop acceptance\n  remain false; desktop responsiveness is unresolved and T03q stays gated.\n- Precise predictions, log points, probe/setup corrections, source/receipt\n  hashes, clean-clone commands and retained tests are in the\n  [verifier verdict](../../evidence/omarchy-profile/dynamic-link-publication-verifier-r1/VERDICT.md).\n  No working implementation was edited by the verifier.\n- Evidence seal: 39 files; `sha256.txt` SHA256\n  `9da3fdbdfcb6ae09b658f1d7ee3a237e7c3a25578b039d18cea0fe449359e879`.\n  Task policy passes and the queue is rebuilt with T03bb verified.",
+      "adversarial": "A fresh critic compares dynamic-on and dynamic-off publication counts, verifies\nthat a later dynamic-on toggle still publishes and hits safely, and runs one\nbounded virtual-to-physical remap or authority-change case. It checks that static\nedges still chain, dynamic-off execution remains guest-equivalent to the\ninterpreter, and no disabled-path map/table mutation is hidden behind a counter.\nThe critic independently reconstructs the physical nonce/readback and inspects\nthe actual response image; counters alone cannot open T03q.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03bb-dynamic-link-publication.md",
+      "activity": [
+        {
+          "date": "2026-09-17",
+          "commits": 4,
+          "labels": [
+            "verify(core): prove disabled dynamic publication boundary",
+            "evidence: record dynamic-link publication trial",
+            "task: activate disabled dynamic-link publication trial",
+            "task: plan disabled dynamic-link publication trial"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-17",
+      "lastActivity": "2026-09-17",
+      "commitCount": 4
+    },
+    {
+      "id": "E5.5-T03bc",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Keep Omarchy input usable while desktop readiness is pending",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5.5-T03c",
+        "E5.5-T03as"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-17 — coordinator — planned from the live interaction failure\n\nThe current Omarchy run accepts keyboard transitions and eventually presents\nthe resulting shell text, but the startup overlay remains a full-screen\n`pointer-events:auto` layer while the compositor probe is slow. This task\nisolates the browser interaction gate so the real canvas can receive pointer\nevents as soon as `wvm:guest-ready` fires. The strict desktop readiness probe,\nguest runtime and physical nonce deadline remain unchanged.\n\n### 2026-09-17 — worker — IMPLEMENTED (pending fresh verifier)\n\nThe browser gate is implemented in `web/ide.js` and covered by the real-surface\nregression in `web/tests/e5.5-t03e-critic-ui.test.mjs`. The `wvm:guest-ready`\nphase now changes the full-screen card into a compact status strip with\n`pointer-events: none`, focuses `#ide-display-canvas`, and leaves the blocking\noverlay for booting, error, halted, and terminal states. `wvm:desktop-ready`\nstill hides the overlay and reports the existing readiness text.\n\nCommands and results:\n\n```text\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node --test \\\n  web/tests/omarchy-startup-state.test.mjs web/tests/omarchy-desktop-readiness.test.mjs \\\n  web/tests/omarchy-seeded-loader.test.mjs web/tests/keyboard-bridge.test.mjs \\\n  web/tests/pointer.test.mjs web/tests/e5.5-t03e-critic.test.mjs\n# 47 passed, 0 failed\n\nDEVELOPER_DIR=/Library/Developer/CommandLineTools node --test \\\n  web/tests/e5.5-t03e-critic-ui.test.mjs web/tests/omarchy-startup-state.test.mjs\n# 5 passed, 0 failed\n\nmake web-dist\nE5_DEMO_TASK=E5.5-T03bc E5_DEMO_OUT=evidence/omarchy-profile/interactive-startup-gate-demo \\\n  node tools/verify/e5-t18e-demo-smoke.mjs\n# 127 passed, 0 failed; zero console and HTTP errors\n```\n\nThe fresh physical trial is recorded under\n`evidence/omarchy-profile/interactive-startup-gate-r1/`. A real canvas click\nproduced three tablet frames (`diagnostic.json` entry 3), and the real canvas\naccepted 128 keyboard transitions with zero dropped or rejected events. The\n30-second screenshot is hash-bound as\n`2b9c0a0815e29d5e5385df5ae68cc08539c6919c559d951b6da658db280be155`; the\n120-second screenshot is\n`431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24`.\nThose images still show the old shell prompt, so this evidence proves the\nstartup hit-target change only and explicitly leaves the separate guest /\ncompositor response failure unresolved.\n\nThe built page was published with `bash tools/deploy-cloudflare.sh`; the\ndeployment completed at `https://9cc8b2fd.wasm-vm.pages.dev` and production is\n`https://wasm-vm.pages.dev/`. A live smoke against the production URL passed\n127/127 with zero console and HTTP errors using the existing visible\n`E5-T18e` roadmap entry. The new task is intentionally not asserted as a\nroadmap capability because this slice proves the interaction gate, not desktop\nresponsiveness.\n\n### 2026-10-01 — fresh verifier — VERDICT: verified\n\nVERDICT: verified\n\nReviewed `5fd9d412..82978509` in a fresh session. P1–P6, coverage, mock/environment\naudit, exact commands, and limitations are recorded in\n`evidence/omarchy-profile/interactive-startup-gate-verifier/verdict.md`.\n\n- P1/P2 — HELD. The built IDE produces a visible 520 × 49.875 status strip with\n  `pointer-events:none`; computed canvas centre and a strip-covered canvas point\n  receive trusted input. Blocking overlay clicks are not canvas input\n  (`ui-attack.ndjson:3,4,7,11,16`).\n- P3/P4 — HELD. Error, halted, late done and new boot restore the blocking\n  overlay; late readiness cannot resurrect it. Desktop-ready remains strict\n  and preserves the existing readiness text (`ui-attack.ndjson:6-19`;\n  unchanged `web/main.js:1948-1962`).\n- P5 — HELD with a claim correction. The worker's trial contains 76 keyboard\n  transitions, not 128, plus three tablet frames and later real presentations\n  with zero replay/drops/rejections. PNG hashes and all four guest artifact\n  receipts match (`physical-audit.json`). The old prompt remains visible.\n- P6 — HELD after a narrow source-bound replacement trial at\n  `82978509130946ea316c98a15298a7b01cdd7c05`. Original source/wire receipts were\n  missing; new `physical-r1/identities.json` and `wire.json` bind exact served\n  IDE/main/WASM and controller/helper bytes to real canvas input. Three tablet\n  frames and two trusted KeyA transitions precede a 1-to-2 increase in actual\n  received/successful presentations, with zero replay/drops/rejections\n  (`physical-controller.ndjson:7,14,17,23`). Real after-screenshot SHA-256 is\n  `6b9db69994a23bb044ecca68922dd0d607d189f660b695b51fa86174ef73ee67`; it still\n  shows the old prompt. The recorder saved final receipts but exceeded the\n  owned controller's 15-second shutdown budget. Its raw exit-1 result is\n  preserved as a harness-teardown limitation outside the gate claim.\n\n`cargo fmt --all --check`, the focused 48-test suite, and the affected\n`make web-build` passed. Computed canvas hit/focus, trusted click and blocking\nterminal/error/new-boot assertions were promoted into the existing real-IDE\ntest and passed 1/1. The local/live one-load demo receipts under `demo-local/`\nand `demo-live/` each show 127 passed, 0 failed and zero console/page/HTTP errors.\nExact commands are in the verifier record. No runtime/browser implementation\nchanged and no deployment or merge was performed. Earlier negative physical/\nvisible desktop responsiveness results carry forward unchanged.",
+      "adversarial": "A fresh critic checks the computed hit target rather than only the DOM flag,\nattacks an error and a late terminal event, and verifies that an overlay click\ncannot be mistaken for guest input. It carries the existing physical/visible\nnegative evidence forward and does not promote the nonblocking gate to a\nresponsiveness claim.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03bc-interactive-startup-gate.md",
+      "activity": [
+        {
+          "date": "2026-09-17",
+          "commits": 3,
+          "labels": [
+            "docs(omarchy): record live interaction gate proof",
+            "fix(omarchy): keep startup canvas interactive",
+            "task(omarchy): activate nonblocking startup gate"
+          ]
+        },
+        {
+          "date": "2026-10-01",
+          "commits": 2,
+          "labels": [
+            "verify(omarchy): prove interactive startup gate",
+            "verify(omarchy): prove interactive startup gate"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-17",
+      "lastActivity": "2026-10-01",
+      "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03bd",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Record guest-clock optimization candidates against current main",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03bb",
+        "E5.5-T03bc"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-10-01 — worker — baseline corrected and candidates rejected\n\nThe original experiment against older checkout `82978509` was superseded before\nsubmission or deployment. The stack was rebased in\n`/tmp/wasm-vm-current-speed-work` onto current main\n`0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98`, preserving the original checkout's\nunrelated work. Current baseline\n`8dfc18861db716c8f96e40bb6e270bf38e89510e` has production clock functions identical\nto main, with only the new test-module declaration in core.\n\nNative release/trace rlib SHA256\n`0bc05d399cb856cbc88d81f727a9563fca082e7a4ef85b32386e1556ebb906dd`.\nProduction WASM SHA256\n`f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516`.\nRebuilding the unchanged baseline reproduced this WASM byte-for-byte.\n\nFour candidates were rejected: sub-tick/exact-tick division shortcuts,\npower-of-two plus span shortcuts, conditional mtime stores, and a minimal\npower-of-two bulk path. Their browser cached-divider-64 speedup ratios were\n0.994932, 0.978888, 0.975533 and 0.996641 respectively (less than 1 is slower).\nAll reported state comparisons held. No additional emulator speedup is claimed.\nWith runtime changes discarded, risk is medium for the retained measurement and\nregression harness; the earlier high-risk runtime proposal is not being shipped.",
+      "adversarial": "A fresh critic predicts concrete tick/phase values before checking fixtures,\nindependently recounts paired timing/state receipts and verifies the final\nruntime diff and WASM identity. Attack overflow, the largest divider, restored\nphase, mtime wrap and no-op modes. Invent one bounded attack on the measurement\nharness, and confirm an identical-binary control cannot be called an optimization.\nPromote the useful tests/trace; no rejected code is implementation evidence.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03bd-clock-fast-path.md",
+      "activity": [
+        {
+          "date": "2026-10-01",
+          "commits": 4,
+          "labels": [
+            "task: activate deterministic clock fast path",
+            "task: plan deterministic clock fast path",
+            "task: activate deterministic clock fast path",
+            "task: plan deterministic clock fast path"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-01",
+      "lastActivity": "2026-10-01",
+      "commitCount": 4
     },
     {
       "id": "E5.5-T03c",
@@ -23753,7 +24141,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E5.5-T03at"
+        "E5.5-T03az"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -23763,7 +24151,7 @@
       "criteriaTotal": 0,
       "criteriaDone": 0,
       "verificationLog": "",
-      "adversarial": "A fresh critic verifies actual guest dimensions rather than advertised mode or\ncanvas size, independent nonce creation and visible response; tests one bounded\nviewport/pointer case; and checks the final served artifact identity. Keep all\nPRs open. No Epic 6 GPU/JIT expansion or GitHub Actions.\n\n### 2026-09-16 — next measured remedy\n\nAP proves actual compositor input synchronization loss, not responsiveness.\nAQ tests a bounded larger guest evdev buffer against the baseline; AR creates a\nfresh new-kernel paired desktop; AS must prove uninstrumented physical nonce and\nvisible returned prompt by the unchanged deadline. Negative results keep this\npublication task pending.\n\nAS proves physical execution at84.792s and89.104s, but both real terminal images\nremain empty. Even the corrected post-nonce frame check produces a stale image.\nAT addresses a concrete existing GPU source-offset mismatch with Linux/QEMU;\nits runtime correction must also prove physical and visible response before Q.",
+      "adversarial": "A fresh critic verifies actual guest dimensions rather than advertised mode or\ncanvas size, independent nonce creation and visible response; tests one bounded\nviewport/pointer case; and checks the final served artifact identity. Keep all\nPRs open. No Epic 6 GPU/JIT expansion or GitHub Actions.\n\n### 2026-09-16 — next measured remedy\n\nAP proves actual compositor input synchronization loss, not responsiveness.\nAQ tests a bounded larger guest evdev buffer against the baseline; AR creates a\nfresh new-kernel paired desktop; AS must prove uninstrumented physical nonce and\nvisible returned prompt by the unchanged deadline. Negative results keep this\npublication task pending.\n\nAS proves physical execution at84.792s and89.104s, but both real terminal images\nremain empty. Even the corrected post-nonce frame check produces a stale image.\nAT addresses a concrete existing GPU source-offset mismatch with Linux/QEMU;\nits runtime correction must also prove physical and visible response before Q.\n\nAT's corrected runtime still yields the identical stale PNG after a successful\n87.921second physical command and post-nonce frame. AU measures actual worker\npixel buffers against the canvas. Diagnostic completion alone cannot start Q;\npublication still requires a later uninstrumented physical and visible pass.\n\nAU proves the browser paints the exact stale Worker pixels. AV observes bounded\nlater rendering without input or configuration changes. Late diagnostic output\nstill cannot unlock Q; the original physical and visible response gate remains.\nT03aw now tests the existing cap-1024 residency policy against the measured\ncap-256 execution churn before any new runtime remedy is selected.\n\nT03ax next tests the existing 16384-entry decoded cache together with that\nmeasured cap-1024 policy. Q remains gated on an uninstrumented physical and\nvisible response at the original deadline.\n\nT03ax also leaves the product screenshot stale at 78.912 seconds despite a\n64.349-second physical nonce. T03ay measures the bounded later Worker/display\nresponse without changing the original acceptance window before another runtime\nremedy is selected.\n\nT03ay retains only a cursor change at Enter+125.837 seconds and the terminal\ntext at Enter+155.838 seconds. T03az tests the existing dynamic-JALR switch\nagainst that measured execution delay while keeping every other setting fixed.",
       "file": "tasks/epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md",
       "activity": [
         {
@@ -23778,18 +24166,18 @@
         },
         {
           "date": "2026-09-16",
-          "commits": 9,
+          "commits": 15,
           "labels": [
-            "evidence: prove physical command execution and preserve stale display finding",
-            "Plan input retention remedy and activate bounded kernel slice",
-            "Verify direct FP imports and plan guest input tracing",
-            "Verify FMADD and plan direct pure-helper imports"
+            "task: plan dynamic JALR trial",
+            "task: plan late cache response diagnostic",
+            "task: plan decoded cache follow-up",
+            "task: test cap-1024 Omarchy residency"
           ]
         }
       ],
       "firstActivity": "2026-09-15",
       "lastActivity": "2026-09-16",
-      "commitCount": 24
+      "commitCount": 30
     },
     {
       "id": "E5.5-T03r",

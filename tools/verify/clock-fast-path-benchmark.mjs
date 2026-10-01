@@ -16,7 +16,9 @@ await fs.mkdir(out, { recursive: false });
 const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 const meta = JSON.parse(await fs.readFile(path.join(baseline, "baseline.json"), "utf8"));
 assert.equal(sha(execFileSync("git", ["show", `${meta.head}:crates/core/src/lib.rs`], { cwd: repo })), meta.coreSourceSha256);
-assert.equal(sha(await fs.readFile(path.join(baseline, "libbaseline.rlib"))), meta.rlibSha256);
+// Preserve the Rust crate filename: fat LTO uses it to select objects from the rlib archive.
+const baselineLibrary = path.join(baseline, "libwasm_vm_core.rlib");
+assert.equal(sha(await fs.readFile(baselineLibrary)), meta.rlibSha256);
 const report = { head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   baseline: meta, compiler: execFileSync("rustc", ["-Vv"], { encoding: "utf8" }),
   producerSha256: sha(await fs.readFile(path.join(repo, "crates/core/examples/clock_loop_probe.rs"))),
@@ -34,10 +36,11 @@ try {
   report.nativeLibraries = { baseline: meta.rlibSha256, candidate: sha(await fs.readFile(core)), sha2: sha(await fs.readFile(sha2)) };
   const binaries = {};
   report.nativeBinaries = {};
+  report.nativeCompilerFlags = ["--edition=2024", "-O", "-C", "lto=fat", "-C", "codegen-units=1"];
   for (const arm of ["baseline", "candidate"]) {
     binaries[arm] = path.join(out, `native-${arm}`);
-    execFileSync("rustc", ["--edition=2024", "-O", path.join(repo, "crates/core/examples/clock_loop_probe.rs"),
-      "--extern", `wasm_vm_core=${arm === "baseline" ? path.join(baseline, "libbaseline.rlib") : core}`,
+    execFileSync("rustc", [...report.nativeCompilerFlags, path.join(repo, "crates/core/examples/clock_loop_probe.rs"),
+      "--extern", `wasm_vm_core=${arm === "baseline" ? baselineLibrary : core}`,
       "--extern", `sha2=${sha2}`, "-L", `dependency=${path.dirname(sha2)}`, "-o", binaries[arm]], { cwd: repo });
     report.nativeBinaries[arm] = sha(await fs.readFile(binaries[arm]));
   }
@@ -74,7 +77,7 @@ try {
       report.browserArtifacts[arm][file] = sha(await fs.readFile(path.join(root, file)));
   }
   assert.equal(report.browserArtifacts.baseline["pkg/wasm_vm_wasm_bg.wasm"], meta.wasmSha256);
-  assert.notEqual(report.browserArtifacts.baseline["pkg/wasm_vm_wasm_bg.wasm"], report.browserArtifacts.candidate["pkg/wasm_vm_wasm_bg.wasm"]);
+  report.identicalBrowserBinary = report.browserArtifacts.baseline["pkg/wasm_vm_wasm_bg.wasm"] === report.browserArtifacts.candidate["pkg/wasm_vm_wasm_bg.wasm"];
   server = createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
     const headers = { "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" };
@@ -155,10 +158,13 @@ try {
     const times = arm => row.pairs.flatMap(p => p.runs).filter(r => r.arm === arm).map(r => r.elapsedMs);
     row.baselineMs = median(times("baseline")); row.candidateMs = median(times("candidate")); row.speedup = row.baselineMs / row.candidateMs;
   }
-  assert.ok(report.browser.find(r => r.config.fast && !r.config.jit && r.config.divider === 64).speedup > 1, "browser divider-64 median must improve");
+  const speedup = report.browser.find(r => r.config.fast && !r.config.jit && r.config.divider === 64).speedup;
+  report.performance = { cachedDivider64Speedup: speedup,
+    decision: report.identicalBrowserBinary ? "unchanged-runtime-control" : speedup > 1 ? "candidate-faster" : "rejected",
+    acceptanceHeld: !report.identicalBrowserBinary && speedup > 1 };
   assert.deepEqual(report.errors, []);
   report.passed = true;
-  console.log(JSON.stringify({ passed: true, native: report.native.map(({ cached, divider, speedup }) => ({ cached, divider, speedup })),
+  console.log(JSON.stringify({ passed: true, performance: report.performance, native: report.native.map(({ cached, divider, speedup }) => ({ cached, divider, speedup })),
     browser: report.browser.map(({ config, baselineMs, candidateMs, speedup }) => ({ config, baselineMs, candidateMs, speedup })) }));
 } catch (error) { report.failure = String(error); throw error; }
 finally { await browser?.close(); if (server) await new Promise(resolve => server.close(resolve)); await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n"); }

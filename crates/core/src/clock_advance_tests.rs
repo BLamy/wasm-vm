@@ -2,6 +2,32 @@
 use super::*;
 
 #[test]
+fn single_retirements_match_wide_oracle_across_ticks_and_invalid_phases() {
+    let mut m = Machine::new(4096);
+    let clint = m.enable_clint(64);
+    for divisor in [0, 1, 2, 3, 10, 64, 1024, 1 << 63, u64::MAX] {
+        for initial_phase in [0, 1, divisor.saturating_sub(1), u64::MAX] {
+            for initial_time in [0u64, u64::MAX - 1, u64::MAX] {
+                m.clock_div = divisor;
+                m.tick_accum = initial_phase;
+                clint.borrow_mut().mtime = initial_time;
+                let mut expected_phase = initial_phase;
+                let mut expected_time = initial_time;
+                for _ in 0..129 {
+                    let total = u128::from(expected_phase) + 1;
+                    let denominator = u128::from(divisor.max(1));
+                    expected_phase = (total % denominator) as u64;
+                    expected_time = expected_time.wrapping_add((total / denominator) as u64);
+                    m.advance_clock();
+                    assert_eq!(m.tick_accum, expected_phase);
+                    assert_eq!(clint.borrow().mtime, expected_time);
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn clock_spans_match_wide_oracle_including_overflow_and_mtime_wrap() {
     for divisor in [0, 1, 2, 3, 10, 64, 1024, 1 << 63, u64::MAX] {
         let mut m = Machine::new(4096);
