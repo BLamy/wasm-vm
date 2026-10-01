@@ -1,0 +1,10 @@
+{
+  "deployedHead": "b2e8468ea3efa485153300407d8176cedff76e17",
+  "files": {
+    "cloudflare-deploy.log": "d7797f7293469c7c11312c1d26640a2a29d1fb04c0e0987fb7790182a3b196ce",
+    "publication.json": "0c5a8e63791d5e0bda4f0d8f88a926cfa822e4f960b2cb8877fbb0ae0a8b4232",
+    "live-demo.log": "ad262b2458155f229c08397f20e082c79207b2e9359bf63f3a6f6e41ba4312c3",
+    "live-demo/demo-suite.json": "42d4a87073a24be23428dd65df689347d9a46044cde76317eb6a83aac99536d2",
+    "live-demo/demo-suite.png": "f610d0a0fff3a12ac5d2e20bc3bbc64e8bb86c597885babb2816414d0190d1e2"
+  }
+}

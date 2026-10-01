@@ -1,0 +1,20 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'b8673242b63ce169ea5be87d99bb70a99c5bea53f979645bf164f5c4ec4d07a7'
+- '0bc05d399cb856cbc88d81f727a9563fca082e7a4ef85b32386e1556ebb906dd'
+
+    at file:///private/tmp/wasm-vm-current-speed-work/tools/verify/clock-fast-path-benchmark.mjs:21:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'b8673242b63ce169ea5be87d99bb70a99c5bea53f979645bf164f5c4ec4d07a7',
+  expected: '0bc05d399cb856cbc88d81f727a9563fca082e7a4ef85b32386e1556ebb906dd',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

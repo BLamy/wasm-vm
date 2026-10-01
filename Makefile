@@ -1765,3 +1765,13 @@ verify-E5_5-T03aw:
 verify-E5_5-T03ax:
 	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DECODED_CACHE_OUT),evidence/omarchy-profile/residency-decoded-cache16384-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024-cache16384
+
+.PHONY: verify-E5.5-T03bd
+verify-E5.5-T03bd:
+	cargo fmt --all --check
+	node --check tools/verify/clock-fast-path-benchmark.mjs
+	node --test tools/verify/clock-fast-path-benchmark.test.mjs
+	cargo clippy -p wasm-vm-core --lib --test clock_advance --example clock_loop_probe --features trace -- -D warnings
+	cargo test -p wasm-vm-core --lib clock_advance_tests
+	cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture
+	wasm-pack test --node crates/wasm --test clock_advance

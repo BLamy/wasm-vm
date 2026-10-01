@@ -1,0 +1,35 @@
+[
+  {
+    "attack": "preserved rlib altered before timing",
+    "prediction": "exit 1 at library SHA admission before native/compiler/browser receipts",
+    "held": true,
+    "command": [
+      "node",
+      "/private/tmp/wasm-vm-current-speed-work/tools/verify/clock-fast-path-benchmark.mjs",
+      "NEW_OUTPUT",
+      "TAMPERED_BASELINE"
+    ],
+    "sourceSha256": "01b174897db7ce605ba384fb44bc7db0ac250f1ebb01c166ac2c34ab7772df6f",
+    "expectedLibrarySha256": "0bc05d399cb856cbc88d81f727a9563fca082e7a4ef85b32386e1556ebb906dd",
+    "alteredLibrarySha256": "b8673242b63ce169ea5be87d99bb70a99c5bea53f979645bf164f5c4ec4d07a7",
+    "exitCode": 1,
+    "log": "baseline-tamper.log"
+  },
+  {
+    "attack": "isolated copy loses identical-byte acceptance guard",
+    "prediction": "noise test fails, two independent receipt attacks still pass",
+    "held": true,
+    "command": [
+      "node",
+      "--test",
+      "tools/verify/clock-fast-path-benchmark.test.mjs"
+    ],
+    "sourceSha256": "01b174897db7ce605ba384fb44bc7db0ac250f1ebb01c166ac2c34ab7772df6f",
+    "testSha256": "b8bd1c0c2c3d9a8c547feceb49110b824d3cf33de9012030fc695ffc32a81fd8",
+    "alteredSourceSha256": "685cfc1a3ba8129f3dc5755da94882a64560588a896127981984b690e3830c47",
+    "exitCode": 1,
+    "passedTests": 2,
+    "failedTests": 1,
+    "log": "control-sabotage.log"
+  }
+]

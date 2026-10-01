@@ -1,0 +1,17 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-current-speed-work/crates/core)
+    Finished `release` profile [optimized + debuginfo] target(s) in 5.59s
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: browser divider-64 median must improve
+    at file:///private/tmp/wasm-vm-current-speed-work/tools/verify/clock-fast-path-benchmark.mjs:161:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

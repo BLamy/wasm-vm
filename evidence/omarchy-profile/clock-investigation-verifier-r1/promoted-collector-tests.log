@@ -1,0 +1,11 @@
+✔ identical browser bytes cannot pass the speed gate even with favorable timing noise (0.693208ms)
+✔ matching arms with an off-by-one clock still fail the independent retirement oracle (2.412ms)
+✔ matching arms cannot substitute an armed executor for compiled retirements (2.484042ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.798709

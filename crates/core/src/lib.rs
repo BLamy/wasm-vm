@@ -5762,6 +5762,9 @@ mod pmp_audit_tests;
 mod decoded_cache_capacity_tests;
 
 #[cfg(all(test, not(feature = "zicsr-stub")))]
+mod clock_advance_tests;
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
 mod partial_resume_tests;
 
 #[cfg(test)]
