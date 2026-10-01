@@ -1,0 +1,1458 @@
+{
+  "headed": false,
+  "head": "82978509130946ea316c98a15298a7b01cdd7c05",
+  "scopedStatus": "",
+  "harness": [
+    {
+      "path": "tools/verify/omarchy-input-diagnostic.mjs",
+      "size": 29631,
+      "sha256": "c643e6ff56637beb51423c282a74bcf8910ae392bf3726f9e5a36a30b30fb176"
+    },
+    {
+      "path": "tools/verify/omarchy-process-sample.mjs",
+      "size": 14014,
+      "sha256": "8743d35e481f21291ce346cbe297a0193f80ff1d9ed84ada892fe23078751a9e"
+    },
+    {
+      "path": "tools/verify/omarchy-live-recording.mjs",
+      "size": 3900,
+      "sha256": "e69245f453e7ec4ca8ba821075f0c5500ed0e736e102c58010e118de2925d8db"
+    },
+    {
+      "path": "tools/verify/omarchy-browser-session.mjs",
+      "size": 47036,
+      "sha256": "f9967cc75edceae78d0e3cf65d8b8fbc7bcb8f5fa34173d8065d8bee8c9fe1f8"
+    }
+  ],
+  "resourceIdentities": [
+    {
+      "pathname": "/app.html",
+      "method": "GET",
+      "status": 200,
+      "size": 67244,
+      "sha256": "587d2406d7b67cf733f871f9ae674269f1072e9e018931236cfb88c8a105abd6",
+      "repoPath": "web/dist/app.html",
+      "timestamp": "2026-10-01T20:26:08.562Z"
+    },
+    {
+      "pathname": "/vendor/xterm/xterm.css",
+      "method": "GET",
+      "status": 200,
+      "size": 5559,
+      "sha256": "ba8e6985669488981ccf40c0cefe3aba80722cb6c92de7ad628b0bd717faf2b6",
+      "repoPath": "web/dist/vendor/xterm/xterm.css",
+      "timestamp": "2026-10-01T20:26:08.569Z"
+    },
+    {
+      "pathname": "/vendor/xterm/xterm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 289441,
+      "sha256": "1f991ac3b4b283ebf96e60ae23a00a52765dd3a2e46fa6fdda9f1aab032f7495",
+      "repoPath": "web/dist/vendor/xterm/xterm.js",
+      "timestamp": "2026-10-01T20:26:08.569Z"
+    },
+    {
+      "pathname": "/vendor/xterm/addon-fit.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1497,
+      "sha256": "bdaefa370b1bfc42ee88d46fe6072400902a4d4b2d45cd93438dda9b23c97089",
+      "repoPath": "web/dist/vendor/xterm/addon-fit.js",
+      "timestamp": "2026-10-01T20:26:08.569Z"
+    },
+    {
+      "pathname": "/tabs.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2616,
+      "sha256": "469b2a604cf324fefadbb8be3e19e171951c4ee930d6b51c073c9827c08722bd",
+      "repoPath": "web/dist/tabs.js",
+      "timestamp": "2026-10-01T20:26:08.570Z"
+    },
+    {
+      "pathname": "/ide.js",
+      "method": "GET",
+      "status": 200,
+      "size": 141029,
+      "sha256": "858336325308fc146b605a281920cb468c2b5969a25aaac39e5244d77ad013a8",
+      "repoPath": "web/dist/ide.js",
+      "timestamp": "2026-10-01T20:26:08.570Z"
+    },
+    {
+      "pathname": "/docs-mount.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1291,
+      "sha256": "8e2e988bddc36af623154a826d068e0127458d4bbe4d8fc8c60f2426e122c745",
+      "repoPath": "web/dist/docs-mount.js",
+      "timestamp": "2026-10-01T20:26:08.570Z"
+    },
+    {
+      "pathname": "/omarchy-startup-state.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4109,
+      "sha256": "fb80a37bc3c1d1c5fce23716dac25e04dee7bc6a43c8c77ec3c62ad0a29c2ac8",
+      "repoPath": "web/dist/omarchy-startup-state.js",
+      "timestamp": "2026-10-01T20:26:08.603Z"
+    },
+    {
+      "pathname": "/coi-serviceworker-register.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2991,
+      "sha256": "86c5571dc7e1088c3938073e6edc913423030a6dcc90060780278d69f0c8cb4c",
+      "repoPath": "web/dist/coi-serviceworker-register.js",
+      "timestamp": "2026-10-01T20:26:08.603Z"
+    },
+    {
+      "pathname": "/cpu-isolation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 5756,
+      "sha256": "b4a675d7a5f622d92fa486ae7d4bc0556130f99855772984fe05a0eeff6a092d",
+      "repoPath": "web/dist/cpu-isolation.js",
+      "timestamp": "2026-10-01T20:26:08.604Z"
+    },
+    {
+      "pathname": "/main.js",
+      "method": "GET",
+      "status": 200,
+      "size": 149578,
+      "sha256": "91d3c7c88a87b5ea4bc7508f9b8f6c55dc25b090f4059acf5ed724175468ccab",
+      "repoPath": "web/dist/main.js",
+      "timestamp": "2026-10-01T20:26:08.607Z"
+    },
+    {
+      "pathname": "/riscv-tests.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3087,
+      "sha256": "444101ff3f82a222368b662065d93969aeddaa991151b69cbe03c04dc39886b5",
+      "repoPath": "web/dist/riscv-tests.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 119569,
+      "sha256": "5b1a819f9734a0acf22f6f5b1f9f701cd25cdf3d754fc01450a8af516e386a34",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/roadmap.js",
+      "method": "GET",
+      "status": 200,
+      "size": 51836,
+      "sha256": "b813790152a909ecbc62e4aea483c5c11e450bc27659bb366f00b727ad764622",
+      "repoPath": "web/dist/roadmap.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/linux-worker-host.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3208,
+      "sha256": "fb6e9b2c0517e463e75c534dc12792ded532ca1050139fc0346cf08e7df52d82",
+      "repoPath": "web/dist/linux-worker-host.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/loader.js",
+      "method": "GET",
+      "status": 200,
+      "size": 80430,
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb",
+      "repoPath": "web/dist/loader.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/overlay-reset-target.js",
+      "method": "GET",
+      "status": 200,
+      "size": 540,
+      "sha256": "2aee312f3dae8544ef21eb284231cc79384260b5484a698d69d24b1549cad098",
+      "repoPath": "web/dist/overlay-reset-target.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/terminal.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11452,
+      "sha256": "fca4f0c080aad34b5d38121ffe9160275869a279f98fa28a20f6ea1c27b55eae",
+      "repoPath": "web/dist/terminal.js",
+      "timestamp": "2026-10-01T20:26:08.611Z"
+    },
+    {
+      "pathname": "/file-transfer.js",
+      "method": "GET",
+      "status": 200,
+      "size": 26272,
+      "sha256": "d0eed6ba7f0594a166cee9aea832550575709e07a11100504bf7c5c41ff7e646",
+      "repoPath": "web/dist/file-transfer.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/guest-rpc.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3995,
+      "sha256": "4851b80caaa3e40cf139064f3a548875626114457ff80d6fda2657b43e6f5a9c",
+      "repoPath": "web/dist/guest-rpc.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/boot-progress.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4127,
+      "sha256": "5e1e5155623204b2e106b3c05087e2188f2341769e05388e9dd272044aa2359e",
+      "repoPath": "web/dist/boot-progress.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/input/keyboard.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6948,
+      "sha256": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+      "repoPath": "web/dist/src/input/keyboard.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/input/held-keys.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4516,
+      "sha256": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a",
+      "repoPath": "web/dist/src/input/held-keys.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/input/capture.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11472,
+      "sha256": "ae0a676d181ec9118118378e5767f755ae89ff8890f60ef9bd45a4f6ed70f369",
+      "repoPath": "web/dist/src/input/capture.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/input/reconciliation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6655,
+      "sha256": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+      "repoPath": "web/dist/src/input/reconciliation.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/audio/autoplay.js",
+      "method": "GET",
+      "status": 200,
+      "size": 10547,
+      "sha256": "d6f9982a0310c16a67a9c58d0b65f20c214e35429eb60c286766cfafc6ffa9c2",
+      "repoPath": "web/dist/src/audio/autoplay.js",
+      "timestamp": "2026-10-01T20:26:08.612Z"
+    },
+    {
+      "pathname": "/src/audio/sink.js",
+      "method": "GET",
+      "status": 200,
+      "size": 12043,
+      "sha256": "1eb73a14bb3b3308e61a793c84d963ac75204c3f03dcb9d2ed220473081f6417",
+      "repoPath": "web/dist/src/audio/sink.js",
+      "timestamp": "2026-10-01T20:26:08.613Z"
+    },
+    {
+      "pathname": "/src/audio/capture-ring.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3268,
+      "sha256": "d9d1bcd50e2c7d6b6019aa15e77d4a9e01edd1167929f096c47c7b7c5eed1176",
+      "repoPath": "web/dist/src/audio/capture-ring.js",
+      "timestamp": "2026-10-01T20:26:08.614Z"
+    },
+    {
+      "pathname": "/src/audio/microphone.js",
+      "method": "GET",
+      "status": 200,
+      "size": 16079,
+      "sha256": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+      "repoPath": "web/dist/src/audio/microphone.js",
+      "timestamp": "2026-10-01T20:26:08.614Z"
+    },
+    {
+      "pathname": "/src/input/pointer.js",
+      "method": "GET",
+      "status": 200,
+      "size": 24902,
+      "sha256": "b5442e60b877e36077ee451eeec6da46da97b246d97afa8a9c94ea4e4cb231d5",
+      "repoPath": "web/dist/src/input/pointer.js",
+      "timestamp": "2026-10-01T20:26:08.614Z"
+    },
+    {
+      "pathname": "/src/sink/presentation.js",
+      "method": "GET",
+      "status": 200,
+      "size": 22791,
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819",
+      "repoPath": "web/dist/src/sink/presentation.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/src/sink/viewport.js",
+      "method": "GET",
+      "status": 200,
+      "size": 11016,
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8",
+      "repoPath": "web/dist/src/sink/viewport.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/src/sink/cursor-controller.js",
+      "method": "GET",
+      "status": 200,
+      "size": 15467,
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0",
+      "repoPath": "web/dist/src/sink/cursor-controller.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/desktop-agent-session.js",
+      "method": "GET",
+      "status": 200,
+      "size": 5113,
+      "sha256": "98bd5cabd71e0483b15f5e00816675b5377ef633a69e71838d14a1d3efeca798",
+      "repoPath": "web/dist/desktop-agent-session.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/cold-counter-recycling.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1614,
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "repoPath": "web/dist/cold-counter-recycling.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/desktop-restore.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3896,
+      "sha256": "49a1c6e2104b821ce983a447e7d126909a18482288ff5386929bc742c5c46151",
+      "repoPath": "web/dist/desktop-restore.js",
+      "timestamp": "2026-10-01T20:26:08.615Z"
+    },
+    {
+      "pathname": "/omarchy-desktop-readiness.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1256,
+      "sha256": "8c534fe9093db5945f5bec0d6fc06ec4a92a4b8342c6d6f47543e9f2355aaa56",
+      "repoPath": "web/dist/omarchy-desktop-readiness.js",
+      "timestamp": "2026-10-01T20:26:08.617Z"
+    },
+    {
+      "pathname": "/linux-worker-protocol.js",
+      "method": "GET",
+      "status": 200,
+      "size": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "repoPath": "web/dist/linux-worker-protocol.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/boot-path.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "repoPath": "web/dist/boot-path.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/overlay-seed-identity.js",
+      "method": "GET",
+      "status": 200,
+      "size": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "repoPath": "web/dist/overlay-seed-identity.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/task-quiescence.js",
+      "method": "GET",
+      "status": 200,
+      "size": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86",
+      "repoPath": "web/dist/task-quiescence.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/guest-clock.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133",
+      "repoPath": "web/dist/guest-clock.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/decoded-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "repoPath": "web/dist/decoded-cache.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/boot-asset-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "repoPath": "web/dist/boot-asset-cache.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/admission-probe.js",
+      "method": "GET",
+      "status": 200,
+      "size": 819,
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "repoPath": "web/dist/admission-probe.js",
+      "timestamp": "2026-10-01T20:26:08.618Z"
+    },
+    {
+      "pathname": "/osc52.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6183,
+      "sha256": "89132eee9f4ca5ca1cc45596518b4cef77ee7bb8f773ac37cf98839fbeb3e18c",
+      "repoPath": "web/dist/osc52.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/paste.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2256,
+      "sha256": "9cd015e36130f8b4bcb18a91b8cc06f32a2199ce32527abf65bb433bafeaeff7",
+      "repoPath": "web/dist/paste.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "status": 200,
+      "size": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "repoPath": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/progress.js",
+      "method": "GET",
+      "status": 200,
+      "size": 8163,
+      "sha256": "871b963702d62708622f41a3131003feb670c9e07a160de02ee37b89b5e97167",
+      "repoPath": "web/dist/progress.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/input/keymap.js",
+      "method": "GET",
+      "status": 200,
+      "size": 13680,
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada",
+      "repoPath": "web/dist/src/input/keymap.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/audio/ring.js",
+      "method": "GET",
+      "status": 200,
+      "size": 12823,
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893",
+      "repoPath": "web/dist/src/audio/ring.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/audio/worklet.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4123,
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+      "repoPath": "web/dist/src/audio/worklet.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/audio/capture-worklet.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4322,
+      "sha256": "1254466ad6982f51b14c48e265b42a555daf95791ad1d349120d702562d3698a",
+      "repoPath": "web/dist/src/audio/capture-worklet.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/sink/canvas2d.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3751,
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936",
+      "repoPath": "web/dist/src/sink/canvas2d.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/sink/webgl.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9381,
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4",
+      "repoPath": "web/dist/src/sink/webgl.js",
+      "timestamp": "2026-10-01T20:26:08.619Z"
+    },
+    {
+      "pathname": "/src/sink/frame-scheduler.js",
+      "method": "GET",
+      "status": 200,
+      "size": 6059,
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d",
+      "repoPath": "web/dist/src/sink/frame-scheduler.js",
+      "timestamp": "2026-10-01T20:26:08.620Z"
+    },
+    {
+      "pathname": "/src/sink/visibility-scheduler.js",
+      "method": "GET",
+      "status": 200,
+      "size": 5475,
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80",
+      "repoPath": "web/dist/src/sink/visibility-scheduler.js",
+      "timestamp": "2026-10-01T20:26:08.620Z"
+    },
+    {
+      "pathname": "/src/sink/cursor.js",
+      "method": "GET",
+      "status": 200,
+      "size": 16477,
+      "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b",
+      "repoPath": "web/dist/src/sink/cursor.js",
+      "timestamp": "2026-10-01T20:26:08.620Z"
+    },
+    {
+      "pathname": "/desktop-agent-bridge.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2993,
+      "sha256": "95ead26788572195db822ffdfe7853ca6cbaf29f4397357d46ef24d63e6fa338",
+      "repoPath": "web/dist/desktop-agent-bridge.js",
+      "timestamp": "2026-10-01T20:26:08.621Z"
+    },
+    {
+      "pathname": "/agent-channel.js",
+      "method": "GET",
+      "status": 200,
+      "size": 39591,
+      "sha256": "2bd1a2ed1a4afa7bc3ca514afb333b851db76425cc7383462102fae392705ac1",
+      "repoPath": "web/dist/agent-channel.js",
+      "timestamp": "2026-10-01T20:26:08.621Z"
+    },
+    {
+      "pathname": "/src/sink/present-backend.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4367,
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7",
+      "repoPath": "web/dist/src/sink/present-backend.js",
+      "timestamp": "2026-10-01T20:26:08.621Z"
+    },
+    {
+      "pathname": "/tasks.json",
+      "method": "GET",
+      "status": 200,
+      "size": 3679609,
+      "sha256": "8466ff58ca0acc8a927b39edef47a46ed4c5167cc92a44e1606fec46d8bf7775",
+      "repoPath": "web/dist/tasks.json",
+      "timestamp": "2026-10-01T20:26:08.624Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1605093,
+      "sha256": "f09e025172e4a426f45133b57fe3bdb59a4cebb5637396840c3fcbc6c63b9918",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-10-01T20:26:08.737Z"
+    },
+    {
+      "pathname": "/assets/hello.elf",
+      "method": "GET",
+      "status": 200,
+      "size": 5536,
+      "sha256": "d562f9ec53be1727d7f4a0cf0f114d282cb18a414f2747579d50836d97373f92",
+      "repoPath": "web/dist/assets/hello.elf",
+      "timestamp": "2026-10-01T20:26:08.759Z"
+    },
+    {
+      "pathname": "/artifacts-alpine.json",
+      "method": "GET",
+      "status": 200,
+      "size": 774,
+      "sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+      "repoPath": "web/dist/artifacts-alpine.json",
+      "timestamp": "2026-10-01T20:26:08.768Z"
+    },
+    {
+      "pathname": "/artifacts-node-alpine.json",
+      "method": "GET",
+      "status": 200,
+      "size": 795,
+      "sha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857",
+      "repoPath": "web/dist/artifacts-node-alpine.json",
+      "timestamp": "2026-10-01T20:26:08.769Z"
+    },
+    {
+      "pathname": "/artifacts-omarchy.json",
+      "method": "GET",
+      "status": 200,
+      "size": 733,
+      "sha256": "4eb08409697e928016119f7ebb24262210b5764d241962691de0b340d1e6c9aa",
+      "repoPath": null,
+      "timestamp": "2026-10-01T20:26:08.769Z"
+    },
+    {
+      "pathname": "/linux-worker.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "repoPath": "web/dist/linux-worker.js",
+      "timestamp": "2026-10-01T20:26:09.174Z"
+    },
+    {
+      "pathname": "/loader.js",
+      "method": "GET",
+      "status": 200,
+      "size": 80430,
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb",
+      "repoPath": "web/dist/loader.js",
+      "timestamp": "2026-10-01T20:26:09.178Z"
+    },
+    {
+      "pathname": "/linux-worker-protocol.js",
+      "method": "GET",
+      "status": 200,
+      "size": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "repoPath": "web/dist/linux-worker-protocol.js",
+      "timestamp": "2026-10-01T20:26:09.178Z"
+    },
+    {
+      "pathname": "/boot-path.js",
+      "method": "GET",
+      "status": 200,
+      "size": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "repoPath": "web/dist/boot-path.js",
+      "timestamp": "2026-10-01T20:26:09.180Z"
+    },
+    {
+      "pathname": "/overlay-seed-identity.js",
+      "method": "GET",
+      "status": 200,
+      "size": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "repoPath": "web/dist/overlay-seed-identity.js",
+      "timestamp": "2026-10-01T20:26:09.180Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "status": 200,
+      "size": 119569,
+      "sha256": "5b1a819f9734a0acf22f6f5b1f9f701cd25cdf3d754fc01450a8af516e386a34",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/task-quiescence.js",
+      "method": "GET",
+      "status": 200,
+      "size": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86",
+      "repoPath": "web/dist/task-quiescence.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/guest-clock.js",
+      "method": "GET",
+      "status": 200,
+      "size": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133",
+      "repoPath": "web/dist/guest-clock.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/decoded-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "repoPath": "web/dist/decoded-cache.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/boot-asset-cache.js",
+      "method": "GET",
+      "status": 200,
+      "size": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "repoPath": "web/dist/boot-asset-cache.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/cold-counter-recycling.js",
+      "method": "GET",
+      "status": 200,
+      "size": 1614,
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "repoPath": "web/dist/cold-counter-recycling.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/admission-probe.js",
+      "method": "GET",
+      "status": 200,
+      "size": 819,
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "repoPath": "web/dist/admission-probe.js",
+      "timestamp": "2026-10-01T20:26:09.181Z"
+    },
+    {
+      "pathname": "/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "status": 200,
+      "size": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "repoPath": "web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "timestamp": "2026-10-01T20:26:09.182Z"
+    },
+    {
+      "pathname": "/artifacts-omarchy.json",
+      "method": "GET",
+      "status": 200,
+      "size": 733,
+      "sha256": "4eb08409697e928016119f7ebb24262210b5764d241962691de0b340d1e6c9aa",
+      "repoPath": null,
+      "timestamp": "2026-10-01T20:26:09.185Z"
+    },
+    {
+      "pathname": "/candidate/kernel",
+      "method": "GET",
+      "status": 200,
+      "size": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "repoPath": "releases/kernel/6.6.63/Image",
+      "timestamp": "2026-10-01T20:26:09.199Z"
+    },
+    {
+      "pathname": "/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "method": "GET",
+      "status": 200,
+      "size": 1097812,
+      "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "repoPath": "target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+      "timestamp": "2026-10-01T20:26:09.244Z"
+    },
+    {
+      "pathname": "/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "status": 200,
+      "size": 1605093,
+      "sha256": "f09e025172e4a426f45133b57fe3bdb59a4cebb5637396840c3fcbc6c63b9918",
+      "repoPath": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "timestamp": "2026-10-01T20:26:09.259Z"
+    },
+    {
+      "pathname": "/candidate/overlay-delta",
+      "method": "GET",
+      "status": 200,
+      "size": 1285559,
+      "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c",
+      "repoPath": "target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+      "timestamp": "2026-10-01T20:26:09.262Z"
+    },
+    {
+      "pathname": "/candidate/boot-snapshot",
+      "method": "GET",
+      "status": 200,
+      "size": 205400326,
+      "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8",
+      "repoPath": "target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+      "timestamp": "2026-10-01T20:26:09.447Z"
+    },
+    {
+      "pathname": "/src/audio/worklet.js",
+      "method": "GET",
+      "status": 200,
+      "size": 4123,
+      "sha256": "8e1c3f0d6b05c6a800d78e9912e987a6adc994a7eaa5dbb0916ab7cfa2440b21",
+      "repoPath": "web/dist/src/audio/worklet.js",
+      "timestamp": "2026-10-01T20:26:12.401Z"
+    },
+    {
+      "pathname": "/src/audio/ring.js",
+      "method": "GET",
+      "status": 200,
+      "size": 12823,
+      "sha256": "1f56f0b5736c5ea7246b9b92517126171157ad05b949f5650da656dac2895893",
+      "repoPath": "web/dist/src/audio/ring.js",
+      "timestamp": "2026-10-01T20:26:12.401Z"
+    },
+    {
+      "pathname": "/chunked-omarchy/chunks/dc15c9c3a63c943fcd68efa9530429c41aae450f8bfe852c0a5f12b032921623.bin",
+      "method": "GET",
+      "status": 200,
+      "size": 262144,
+      "sha256": "dc15c9c3a63c943fcd68efa9530429c41aae450f8bfe852c0a5f12b032921623",
+      "repoPath": "target/omarchy-profile-chunks-sdr-r3-256k/chunks/dc15c9c3a63c943fcd68efa9530429c41aae450f8bfe852c0a5f12b032921623.bin",
+      "timestamp": "2026-10-01T20:26:32.223Z"
+    }
+  ],
+  "browserRequests": [
+    {
+      "timestamp": "2026-10-01T20:26:08.561Z",
+      "url": "http://127.0.0.1:55783/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-256&decodedCacheEntries=16384&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A55783",
+      "method": "GET",
+      "resourceType": "document"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/vendor/xterm/xterm.css",
+      "method": "GET",
+      "resourceType": "stylesheet"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/vendor/xterm/xterm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/vendor/xterm/addon-fit.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/tabs.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/ide.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.570Z",
+      "url": "http://127.0.0.1:55783/docs-mount.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.603Z",
+      "url": "http://127.0.0.1:55783/omarchy-startup-state.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.603Z",
+      "url": "http://127.0.0.1:55783/coi-serviceworker-register.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.603Z",
+      "url": "http://127.0.0.1:55783/cpu-isolation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.607Z",
+      "url": "http://127.0.0.1:55783/main.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/riscv-tests.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/roadmap.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/loader.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/linux-worker-host.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/overlay-reset-target.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/terminal.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/file-transfer.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/boot-progress.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/guest-rpc.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.610Z",
+      "url": "http://127.0.0.1:55783/src/input/keyboard.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/input/capture.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/input/held-keys.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/input/reconciliation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/audio/autoplay.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/audio/sink.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/audio/capture-ring.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/audio/microphone.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/input/pointer.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/sink/presentation.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/sink/viewport.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/src/sink/cursor-controller.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/desktop-agent-session.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/desktop-restore.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/cold-counter-recycling.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.611Z",
+      "url": "http://127.0.0.1:55783/omarchy-desktop-readiness.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.613Z",
+      "url": "http://127.0.0.1:55783/linux-worker-protocol.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/boot-path.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/overlay-seed-identity.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/task-quiescence.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/guest-clock.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/decoded-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/boot-asset-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/admission-probe.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/osc52.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/paste.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.614Z",
+      "url": "http://127.0.0.1:55783/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.615Z",
+      "url": "http://127.0.0.1:55783/progress.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.615Z",
+      "url": "http://127.0.0.1:55783/src/input/keymap.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.617Z",
+      "url": "http://127.0.0.1:55783/src/audio/ring.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/audio/worklet.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/audio/capture-worklet.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/sink/canvas2d.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/sink/webgl.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/sink/frame-scheduler.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/sink/visibility-scheduler.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/src/sink/cursor.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/desktop-agent-bridge.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.618Z",
+      "url": "http://127.0.0.1:55783/agent-channel.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.621Z",
+      "url": "http://127.0.0.1:55783/src/sink/present-backend.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.737Z",
+      "url": "http://127.0.0.1:55783/tasks.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.737Z",
+      "url": "http://127.0.0.1:55783/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.759Z",
+      "url": "http://127.0.0.1:55783/assets/hello.elf",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.767Z",
+      "url": "http://127.0.0.1:55783/artifacts-alpine.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.769Z",
+      "url": "http://127.0.0.1:55783/artifacts-node-alpine.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:08.770Z",
+      "url": "http://127.0.0.1:55783/artifacts-omarchy.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.173Z",
+      "url": "http://127.0.0.1:55783/linux-worker.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.178Z",
+      "url": "http://127.0.0.1:55783/loader.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.178Z",
+      "url": "http://127.0.0.1:55783/linux-worker-protocol.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/pkg/wasm_vm_wasm.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/boot-path.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/overlay-seed-identity.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/task-quiescence.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/guest-clock.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/decoded-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/boot-asset-cache.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/admission-probe.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.180Z",
+      "url": "http://127.0.0.1:55783/cold-counter-recycling.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.182Z",
+      "url": "http://127.0.0.1:55783/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "method": "GET",
+      "resourceType": "script"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.185Z",
+      "url": "http://127.0.0.1:55783/artifacts-omarchy.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.190Z",
+      "url": "http://127.0.0.1:55783/candidate/kernel",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.243Z",
+      "url": "http://127.0.0.1:55783/chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.258Z",
+      "url": "http://127.0.0.1:55783/pkg/wasm_vm_wasm_bg.wasm",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.262Z",
+      "url": "http://127.0.0.1:55783/candidate/overlay-delta",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:09.363Z",
+      "url": "http://127.0.0.1:55783/candidate/boot-snapshot",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "timestamp": "2026-10-01T20:26:32.222Z",
+      "url": "http://127.0.0.1:55783/chunked-omarchy/chunks/dc15c9c3a63c943fcd68efa9530429c41aae450f8bfe852c0a5f12b032921623.bin",
+      "method": "GET",
+      "resourceType": "fetch"
+    }
+  ],
+  "errors": [],
+  "ready": {
+    "startedAt": "2026-10-01T20:26:12.046Z",
+    "pageUrl": "http://127.0.0.1:55783/app.html?guest=omarchy&desktop=1&omarchyDivider=64&jit=1&jitResidency=cap-256&decodedCacheEntries=16384&omarchyAssetBase=http%3A%2F%2F127.0.0.1%3A55783#ide",
+    "restoredFromBootSnapshot": true,
+    "storedSnapshotRestoreEvidence": {
+      "attempted": false,
+      "decision": null,
+      "overlayGeneration": null
+    },
+    "clock": {
+      "mode": "icount",
+      "mtime": "1244199801",
+      "timebaseHz": 10000000,
+      "clockDiv": 64
+    },
+    "jit": {
+      "hasExecutor": true,
+      "compiledBlocks": 31,
+      "executedBlocks": 6575,
+      "retiredViaJit": 117674,
+      "directChainEntries": 23966,
+      "directChainLinks": 17391,
+      "dynamicLinkAttempts": 3915,
+      "dynamicLinkHits": 619,
+      "dynamicLinkRefusals": 3296,
+      "dynamicLinkRetargets": 0,
+      "dynamicLinkLiveEntries": 0,
+      "dynamicLinkInstalls": 247,
+      "entryCost": {
+        "timingEnabled": false,
+        "timerReads": 0,
+        "hostEntries": 6575,
+        "stateCopyCalls": 13150,
+        "stateCopyBytes": 1482592,
+        "stateCopyNs": 0,
+        "engineEntryNs": 0,
+        "indirectTableDispatches": 2102,
+        "authorityChecks": 7220,
+        "memorySplitExits": 234,
+        "deviceBoundaries": 0,
+        "deviceBoundaryNs": 0
+      },
+      "jitRegionChaining": true,
+      "jitDynamicChaining": true,
+      "guestRetired": 1999672,
+      "jitEngineCalls": 6575,
+      "jitLogicalBlocksPerEngineCall": 3.645019011406844,
+      "jitRetiredShare": 0.05884665085073952,
+      "chainLinksMade": 4,
+      "chainLinksCut": 0,
+      "chainDispatchEntries": 4973,
+      "chainMaxDepth": 4,
+      "chainLinksFollowed": 6136,
+      "jitResidencyPolicy": "cap-256",
+      "jitResidencyCap": 256,
+      "jitSubmittedMembers": 31,
+      "jitCompilePauseNs": 0,
+      "jitCompilePauseMaxNs": 0,
+      "jitCompilePauseSamples": 12,
+      "jitCacheInstalls": 31,
+      "jitCacheRetranslations": 0,
+      "jitCacheEvictions": 0,
+      "jitCacheBatches": 12,
+      "jitCacheCodeBytes": 856642,
+      "compileQueue": {
+        "admitted": 39,
+        "droppedBackpressure": 0,
+        "cancelledStale": 0,
+        "popped": 31,
+        "queueHighWater": 16,
+        "queueDepth": 8,
+        "capacity": 256
+      },
+      "discovery": {
+        "nominated": 56,
+        "deduped": 6552,
+        "droppedStale": 0,
+        "droppedOverflow": 0,
+        "countsDropped": 0,
+        "excluded": 1,
+        "queueDepth": 17,
+        "queueHighWater": 17,
+        "candidates": 13543,
+        "generation": 6
+      },
+      "decodedCacheEntries": 16384,
+      "decodedBlocksDiscarded": 0,
+      "decodedCacheFlushes": 0,
+      "discoveryGeneration": 6,
+      "blockEntryHits": 303568,
+      "blockBuilds": 15165,
+      "admissionProbe": false,
+      "coldCounterRecycling": {
+        "enabled": false,
+        "epochs": "0",
+        "discardedCounters": "0",
+        "threshold": 512,
+        "capacity": 65536
+      }
+    },
+    "completedAt": "2026-10-01T20:26:12.145Z"
+  },
+  "collectedAt": "2026-10-01T20:26:32.727Z"
+}

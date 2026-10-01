@@ -1,0 +1,1193 @@
+{
+  "diagnostic": {
+    "path": "evidence/omarchy-profile/interactive-startup-gate-r1/diagnostic.json",
+    "sha256": "304c3fe0dcfd6bcbfaddf6be7978bbb5185a3b184215bed1689a4fd35a885715",
+    "entries": 16
+  },
+  "files": [
+    "evidence/omarchy-profile/interactive-startup-gate-r1/diagnostic.json",
+    "evidence/omarchy-profile/interactive-startup-gate-r1/interactive-after-120s.png",
+    "evidence/omarchy-profile/interactive-startup-gate-r1/interactive-after-30s.png"
+  ],
+  "tempDirs": [
+    {
+      "path": "/private/tmp/omarchy-interactive-gate-1789625618",
+      "exists": false,
+      "files": []
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "evidence/omarchy-profile/interactive-startup-gate-r1/interactive-after-30s.png",
+      "size": 10912,
+      "sha256": "2b9c0a0815e29d5e5385df5ae68cc08539c6919c559d951b6da658db280be155"
+    },
+    {
+      "file": "evidence/omarchy-profile/interactive-startup-gate-r1/interactive-after-120s.png",
+      "size": 10908,
+      "sha256": "431be977157bf77dcd21ca8bf3b640bce9e02dc8c54f09a30d58af78a8195b24"
+    }
+  ],
+  "assetReceipts": [
+    {
+      "role": "kernel",
+      "receipt": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/releases/kernel/6.6.63/Image",
+        "size": 24208896,
+        "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+      },
+      "exists": true,
+      "actualSize": 24208896,
+      "actualSha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "matches": true
+    },
+    {
+      "role": "bootSnapshot",
+      "receipt": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-ready.snap.gz",
+        "size": 205400326,
+        "sha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8"
+      },
+      "exists": true,
+      "actualSize": 205400326,
+      "actualSha256": "265551f8ff8bed6bd5c0d775852c72c81cf448d4ecdc3f1b89f56fdbf60a0cd8",
+      "matches": true
+    },
+    {
+      "role": "overlayDelta",
+      "receipt": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-input-kernel-prepared-pair-r1/omarchy-overlay-delta.bin.gz",
+        "size": 1285559,
+        "sha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c"
+      },
+      "exists": true,
+      "actualSize": 1285559,
+      "actualSha256": "1b6b6598373a65b97bfe564ea023cd78938e84f15bbe4f9c04b87625371cfa4c",
+      "matches": true
+    },
+    {
+      "role": "chunkManifest",
+      "receipt": {
+        "filename": "/Users/blamy/Documents/Codex/wasm-vm/target/omarchy-profile-chunks-sdr-r3-256k/manifest.json",
+        "size": 1097812,
+        "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44"
+      },
+      "exists": true,
+      "actualSize": 1097812,
+      "actualSha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+      "matches": true
+    }
+  ],
+  "samples": [
+    {
+      "entry": 0,
+      "line": 2,
+      "time": "2026-09-17T06:13:43.922Z",
+      "event": "ready",
+      "request": null,
+      "result": null
+    },
+    {
+      "entry": 1,
+      "line": 43,
+      "time": "2026-09-17T06:13:50.951Z",
+      "event": null,
+      "request": {
+        "op": "screenshot",
+        "name": "interactive-before.png"
+      },
+      "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-before.png"
+    },
+    {
+      "entry": 2,
+      "line": 88,
+      "time": "2026-09-17T06:13:50.976Z",
+      "event": null,
+      "request": {
+        "op": "click",
+        "x": 400,
+        "y": 300
+      }
+    },
+    {
+      "entry": 3,
+      "line": 140,
+      "time": "2026-09-17T06:13:51.031Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1247285605",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 0,
+      "keyboardFramesTail": [],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 4,
+      "line": 512,
+      "time": "2026-09-17T06:13:57.500Z",
+      "event": null,
+      "request": {
+        "op": "type",
+        "text": "echo INTERACTIVE_GATE",
+        "enter": true,
+        "delay": 80
+      },
+      "result": "sent"
+    },
+    {
+      "entry": 5,
+      "line": 559,
+      "time": "2026-09-17T06:13:57.683Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 1,
+        "successfulPresents": 1,
+        "drawnPresents": 1,
+        "drawnBytes": 4096000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 1,
+          "enqueued": 1,
+          "coalesced": 0,
+          "presented": 1,
+          "successfulPresents": 1,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 4096000,
+          "drawnPresents": 1,
+          "drawnBytes": 4096000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1280,
+            "height": 832
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1249309038",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 76,
+      "keyboardFramesTail": [
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 6,
+      "line": 1464,
+      "time": "2026-09-17T06:14:39.666Z",
+      "event": null,
+      "request": {
+        "op": "screenshot",
+        "name": "interactive-after-30s.png"
+      },
+      "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-30s.png"
+    },
+    {
+      "entry": 7,
+      "line": 1509,
+      "time": "2026-09-17T06:14:39.759Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 2,
+        "successfulPresents": 2,
+        "drawnPresents": 2,
+        "drawnBytes": 8192000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 2,
+          "enqueued": 2,
+          "coalesced": 0,
+          "presented": 2,
+          "successfulPresents": 2,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 8192000,
+          "drawnPresents": 2,
+          "drawnBytes": 8192000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 685,
+            "y": 8,
+            "width": 7,
+            "height": 9
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1269207407",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 76,
+      "keyboardFramesTail": [
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 8,
+      "line": 2414,
+      "time": "2026-09-17T06:15:18.726Z",
+      "event": null,
+      "request": {
+        "op": "screenshot",
+        "name": "interactive-after-60s.png"
+      },
+      "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-60s.png"
+    },
+    {
+      "entry": 9,
+      "line": 2459,
+      "time": "2026-09-17T06:15:18.914Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 3,
+        "successfulPresents": 3,
+        "drawnPresents": 3,
+        "drawnBytes": 12288000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 3,
+          "enqueued": 3,
+          "coalesced": 0,
+          "presented": 3,
+          "successfulPresents": 3,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 12288000,
+          "drawnPresents": 3,
+          "drawnBytes": 12288000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 682,
+            "height": 56
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1284605828",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 76,
+      "keyboardFramesTail": [
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 10,
+      "line": 3364,
+      "time": "2026-09-17T06:16:02.403Z",
+      "event": null,
+      "request": {
+        "op": "screenshot",
+        "name": "interactive-after-90s.png"
+      },
+      "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-90s.png"
+    },
+    {
+      "entry": 11,
+      "line": 3409,
+      "time": "2026-09-17T06:16:02.689Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "drawnPresents": 4,
+        "drawnBytes": 16384000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 4,
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "successfulPresents": 4,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 16384000,
+          "drawnPresents": 4,
+          "drawnBytes": 16384000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 1260,
+            "height": 782
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1304113609",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 76,
+      "keyboardFramesTail": [
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 12,
+      "line": 4314,
+      "time": "2026-09-17T06:16:40.412Z",
+      "event": null,
+      "request": {
+        "op": "screenshot",
+        "name": "interactive-after-120s.png"
+      },
+      "result": "/private/tmp/omarchy-interactive-gate-1789625618/interactive-after-120s.png"
+    },
+    {
+      "entry": 13,
+      "line": 4359,
+      "time": "2026-09-17T06:16:40.524Z",
+      "event": null,
+      "request": {
+        "op": "stats"
+      },
+      "focus": "ide-display-canvas",
+      "inputDevice": {
+        "pendingEventBudget": 256,
+        "pendingEvents": 0,
+        "pendingFrames": 0,
+        "droppedFrames": 0,
+        "droppedEvents": 0,
+        "statusEventsServed": 1,
+        "rejectedEvents": 0
+      },
+      "display": {
+        "backend": "canvas2d",
+        "defaultBackend": "canvas2d",
+        "width": 1280,
+        "height": 800,
+        "fixedViewport": true,
+        "sizeMismatch": true,
+        "framesReceived": 4,
+        "successfulPresents": 4,
+        "drawnPresents": 4,
+        "drawnBytes": 16384000,
+        "replayedFrames": 0,
+        "droppedFrames": 0,
+        "contextLosses": 0,
+        "contextRestores": 0,
+        "fallbacks": 0,
+        "listenerCount": 2,
+        "scheduler": {
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "skipped": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "paused": false,
+          "disposed": false,
+          "scheduled": false,
+          "hidden": false,
+          "mode": "raf",
+          "timerMs": 250
+        },
+        "gpu": {
+          "framesReceived": 4,
+          "enqueued": 4,
+          "coalesced": 0,
+          "presented": 4,
+          "successfulPresents": 4,
+          "skipped": 0,
+          "droppedFrames": 0,
+          "overruns": 0,
+          "pending": 0,
+          "maxPending": 1,
+          "uploadedBytes": 16384000,
+          "drawnPresents": 4,
+          "drawnBytes": 16384000,
+          "width": 1280,
+          "height": 800
+        },
+        "latest": {
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 1260,
+            "height": 782
+          },
+          "resourceWidth": 1280,
+          "resourceHeight": 832
+        },
+        "errors": []
+      },
+      "clock": {
+        "mode": "icount",
+        "mtime": "1314652662",
+        "timebaseHz": 10000000,
+        "clockDiv": 64
+      },
+      "keyboardFramesCount": 76,
+      "keyboardFramesTail": [
+        {
+          "eventType": 1,
+          "code": "ShiftLeft",
+          "evdev": 42,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "pointerFramesCount": 3,
+      "pointerFramesTail": [
+        {
+          "sequence": 1,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 3,
+              "code": 0,
+              "value": 10240
+            },
+            {
+              "eventType": 3,
+              "code": 1,
+              "value": 12288
+            }
+          ],
+          "sync": 0,
+          "source": "pointermove",
+          "coordinates": {
+            "x": 10240,
+            "y": 12288
+          }
+        },
+        {
+          "sequence": 2,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 1
+            }
+          ],
+          "sync": 0,
+          "source": "pointerdown",
+          "button": 0,
+          "evdev": 272
+        },
+        {
+          "sequence": 3,
+          "device": "tablet",
+          "mode": "absolute",
+          "events": [
+            {
+              "eventType": 1,
+              "code": 272,
+              "value": 0
+            }
+          ],
+          "sync": 0,
+          "source": "pointerup",
+          "button": 0,
+          "evdev": 272
+        }
+      ]
+    },
+    {
+      "entry": 14,
+      "line": 5264,
+      "time": "2026-09-17T06:17:00.224Z",
+      "event": "process-sample-rpc-before-submit",
+      "request": {
+        "op": "process-sample",
+        "targets": [
+          {
+            "pid": 417,
+            "tids": [
+              462
+            ]
+          }
+        ],
+        "timeoutMs": 300000
+      },
+      "result": null
+    },
+    {
+      "entry": 15,
+      "line": 5283,
+      "time": "2026-09-17T06:17:11.266Z",
+      "event": null,
+      "request": {
+        "op": "process-sample",
+        "targets": [
+          {
+            "pid": 417,
+            "tids": [
+              462
+            ]
+          }
+        ],
+        "timeoutMs": 300000
+      }
+    }
+  ]
+}
