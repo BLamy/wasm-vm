@@ -33,6 +33,8 @@ fn main() {
         hart.regs.jit_version(),
         iterations * u64::from(mask >> 1 != 0)
     );
+    // Preserve every bit when the benchmark JSON is parsed by JavaScript.
+    let words = words.map(|word| format!("{word:016x}"));
     println!(
         "{{\"mask\":{mask},\"iterations\":{iterations},\"seconds\":{seconds},\"version\":{},\"words\":{words:?}}}",
         hart.regs.jit_version()

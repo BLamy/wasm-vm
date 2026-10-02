@@ -62,7 +62,15 @@ numbers do not describe the restored final production implementation.
   evidence of an optimization. The baseline directory contains `baseline.json`,
   the preserved core rlib and `pkg/`; it came from the preceding clock investigation.
   This benchmark's timing decision is recorded separately from deterministic
-  state correctness.
+  state correctness. Native word previews are now hexadecimal strings so JSON
+  parsing preserves all 64 bits. Historical reports used numeric previews; the
+  Rust producer asserted exact values before printing, and fixture digests retain
+  full precision. The earlier BusyBox experiment also recorded one generic 404
+  in each arm's first sample; it is not a zero-console-error demo proof.
+
+The fresh critic also promoted 5,952 independent rotated-mask/complement cases,
+including repeated same-value commits, and confirmed the new high-register
+regression detects an intentionally dropped bit 31.
 
 The [selection manifest](../../evidence/omarchy-profile/sparse-handoff-final/selection.json)
 links exact raw reports and digests. Historical candidate source/harness copies
