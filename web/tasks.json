@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 352,
-    "total": 529
+    "total": 530
   },
   "epics": [
     {
@@ -60,7 +60,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-10-01"
+    "end": "2026-10-02"
   },
   "tasks": [
     {
@@ -23605,6 +23605,39 @@
       "firstActivity": "2026-10-01",
       "lastActivity": "2026-10-01",
       "commitCount": 5
+    },
+    {
+      "id": "E5.5-T03bf",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Increase cached interpreter throughput with a compact integer executor",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03be"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-10-02 — worker — activated\n\nSelected this narrow task for the user's explicit MIPS priority ahead of the\npublication queue. No other task occupies the active lane. Work is isolated in\nthe mips-throughput checkout above the latest open stack layer, preserving the\nuser's unrelated local edits. Parent runtime already includes the September\nperformance overhaul; no comparison to an obsolete pre-overhaul binary counts.",
+      "adversarial": "A fresh verifier records predictions before inspecting evidence and checks the\ndiff against all opcode, capture and fallback paths. Attack division by zero,\nsigned MIN/-1, high products, W sign extension, shift masking, x0, split budgets,\ntraps after integer prefixes and code invalidation. Independently recalculate\ntiming ratios and compare artifact hashes. Invent one bounded attack and sabotage\none new regression test. Only the verifier may set verified; leave PRs open.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03bf-integer-replay.md",
+      "activity": [
+        {
+          "date": "2026-10-02",
+          "commits": 1,
+          "labels": [
+            "task(perf): start compact integer replay optimization"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-02",
+      "lastActivity": "2026-10-02",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T03c",
