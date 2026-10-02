@@ -112,6 +112,7 @@ export const ROADMAP = [
     blurb: "Fast interpreter and bounded JIT paths are proven; the whole-machine worker is the demo default, with JIT enabled on isolated pages. Strict restored-Node acceleration remains E4-T34 work.",
     caps: [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
+      { name: "Compact cached integer execution", status: "partial", group: "rv64ui-p", evidence: "E5.5-T03bf: shared integer semantics remove general-executor overhead from cached replay. Literal arithmetic, guest trace/state and paired native/browser throughput evidence; independent verification in progress." },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
       { name: "Single-precision FP moves", status: "partial", group: "rv64uf-p", filter: ["move"], evidence: "Live ISA move suite; E5.5-T03t adds integer-only JIT moves with separate native/browser state proof. Desktop response remains unresolved." },
       { name: "Floating-point memory transfers", status: "partial", group: "rv64u", filter: ["ldst"], evidence: "Live F/D memory suites; E5.5-T03u adds checked JIT FP transfers, exact faults and page permissions. Desktop response remains unresolved." },

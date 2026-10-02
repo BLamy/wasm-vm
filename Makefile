@@ -9,6 +9,12 @@
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
+# E5.5-T03bf: shared literal-oracle fixtures run on both native and wasm engines.
+.PHONY: verify-E5.5-T03bf
+verify-E5.5-T03bf:
+	cargo test -p wasm-vm-core --features trace --test integer_replay -- --nocapture
+	wasm-pack test --node crates/wasm --test integer_replay
+
 fmt:
 	cargo fmt --all --check
 
