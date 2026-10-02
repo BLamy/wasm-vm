@@ -77,5 +77,7 @@ links exact raw reports and digests. Historical candidate source/harness copies
 are evidence only; they are not compiled into the emulator. The worker and fresh
 critic record final-head gates, environment limitations, novel attacks and
 publication in the [task](../../tasks/epic-5.5-omarchy/E5.5-T03be-jit-sparse-handoff.md).
-The wasm/Node fault fixtures and the production Chrome workload tests are named
-separately; no Node-only result is described as an in-browser fault recording.
+The fresh critic additionally ran the mask/resume and precise-fault fixtures
+in actual Chrome: 41 passed, one pre-existing ignored, zero page errors. The
+wasm/Node fixtures, Chrome fixtures and production Chrome workload tests are
+recorded separately; no Node-only result is described as an in-browser run.

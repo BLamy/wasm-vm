@@ -1,0 +1,64 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.60s
+     Running unittests src/lib.rs (/Users/blamy/Documents/Codex/wasm-vm/target/debug/deps/jit_runtime-21ba33c2d4e25740)
+
+running 6 tests
+test tests::keyed_hasher_accumulates_repeated_writes_without_resetting_the_secret ... ok
+test tests::deterministic_jit_hasher_resists_chosen_probe_clusters ... ok
+test tests::independent_executors_do_not_reuse_a_public_fixed_hash_permutation ... ok
+test tests::unexpected_engine_trap_after_mmio_fails_closed_without_register_commit ... ok
+test tests::mixed_jit_maps_survive_aligned_same_low_bit_churn ... ok
+test tests::mapped_dram_pcs_do_not_form_chosen_probe_clusters ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/jit_execution.rs (/Users/blamy/Documents/Codex/wasm-vm/target/debug/deps/jit_execution-a9c81ca5242eeaed)
+
+running 20 tests
+test jit_config_matrix::no_waivers_vs_epic1_baseline ... ok
+test compiled_builtin_sbi_ecall_consumes_exact_work_before_resume ... ok
+test compiled_first_op_fault_consumes_one_work_and_retires_zero ... ok
+test pending_interrupt_consumes_only_budget_slot_before_compiled_entry ... ok
+test branch_to_uncompiled_falls_back ... ok
+test hot_loop_actually_jit_executes ... ok
+test riscv_tests_gate::hot_m_loop_executes_in_jit ... ok
+test smc_invalidates_compiled_block ... ok
+test trap_midblock_leaves_precise_state ... ok
+test two_jit_runs_are_deterministic ... ok
+test jit_on_matches_interp_on_programs ... ok
+test six_op_loop_respects_exact_budget_tail_counters_clock_and_trace_gate ... ok
+test riscv_tests_gate::m_and_c_suites_execute_in_jit_tier ... ok
+test riscv_tests_gate::fp_suites_verdict_identical_under_jit ... ok
+test jit_config_matrix::matrix_jit_default ... ok
+test jit_config_matrix::matrix_jit_churn ... ok
+test riscv_tests_gate::riscv_tests_verdict_identical_with_jit ... ok
+test riscv_tests_gate::riscv_tests_verdict_identical_with_max_batches_2 ... ok
+test jit_config_matrix::matrix_jit_nochain has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_threshold0 has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_nochain ... ok
+test jit_config_matrix::matrix_jit_threshold0 ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 66.37s
+
+     Running tests/precise_traps.rs (/Users/blamy/Documents/Codex/wasm-vm/target/debug/deps/precise_traps-97f1f18b4149f203)
+
+running 5 tests
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test overwritten_base_register_fault ... ok
+test mmio_store_then_fault_commits_once ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/verifier_jitcov_r1.rs (/Users/blamy/Documents/Codex/wasm-vm/target/debug/deps/verifier_jitcov_r1-1773dfb1baf1b56e)
+
+running 3 tests
+test fp_image_elision_survives_a_precise_trap_exit_inside_the_module ... ok
+test inline_double_compares_match_softfloat_on_adversarial_pairs ... ok
+test inline_fcvt_d_w_and_wu_are_exact_over_a_dense_integer_sweep ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.72s
+
