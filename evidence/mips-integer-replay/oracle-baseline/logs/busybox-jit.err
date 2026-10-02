@@ -1,0 +1,12 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=1151596 bytes @ 0x81a00000..0x81b1926c, dtb=2962 bytes @ 0x8fffb468, 256 MiB RAM
+=== E4-T29 JIT summary ===
+jit_active=true  blocks_compiled=9617  blocks_executed=42853470  retired_via_jit=373772269
+discovery: nominated=14370 deduped=3091127 excluded=111 dropped_stale=0 dropped_overflow=0 queue_hwm=1096
+chaining: links_made=7903 links_cut=309 dispatch_entries=3745325 max_chain_depth=32 links_followed=42495281
+cache: modules=1750 est_bytes=117327374 installs=10072 retranslations=0 evictions=0 flushes=0 generation=2
+jit_pause: samples=3413 sum_ns=0 max_ns=0 over_target=0
+coverage: retired_via_jit=373772269 retired_total=399972858 jit_pct=93.45%  translations: full=9962 partial=110 rejected=0 partial_exits=332299
+first_untranslated_op: csr:sstatus=95 csr:time=8 csr:sie=2 csr:sscratch=2 sfence.vma=2 sret=1
+partial_resume: rebuilds=0 failures=0
+JIT_STATS_JSON {"blocks_compiled":9617,"blocks_executed":42853470,"retired_via_jit":373772269,"retired_total":399972858,"blocks_full":9962,"blocks_partial":110,"blocks_rejected":0,"partial_exits":332299,"links_made":7903,"dispatch_entries":3745325,"installs":10072,"evictions":0,"jit_pause_count":3413,"jit_pause_sum_ns":0,"jit_pause_max_ns":0,"jit_pause_over_target":0}
+wasm-vm: reached --max-instrs 400000000

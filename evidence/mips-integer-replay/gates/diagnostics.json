@@ -1,0 +1,140 @@
+{
+  "head": "87d6bc05191cf0634f3fa35fb4b58a31d0fe432b",
+  "sources": {
+    "crates/core/src/hart/mod.rs": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae",
+    "crates/core/src/lib.rs": "c401d8fff4e027c9815cbf2e47376a860bca31d199347ce47ee91b7daf47fab6"
+  },
+  "runs": [
+    {
+      "label": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.907
+    },
+    {
+      "label": "affected-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-wasm",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 12.713
+    },
+    {
+      "label": "make-ci",
+      "command": [
+        "make",
+        "ci"
+      ],
+      "exit": 2,
+      "elapsedSeconds": 2.519
+    },
+    {
+      "label": "affected-native-tests",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-jit-translate",
+        "-p",
+        "wasm-vm-wasm",
+        "--no-fail-fast"
+      ],
+      "exit": 101,
+      "elapsedSeconds": 836.16
+    },
+    {
+      "label": "feature-matrix",
+      "command": [
+        "make",
+        "features"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 10.759
+    },
+    {
+      "label": "no-host-float",
+      "command": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.011
+    },
+    {
+      "label": "determinism-hazards",
+      "command": [
+        "bash",
+        "tools/ci/determinism-hazards.sh"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 0.095
+    }
+  ],
+  "frozenRuntime": "9123bc06",
+  "frozenSourceHashesMatchRecorded": {
+    "crates/core/src/hart/mod.rs": true,
+    "crates/core/src/lib.rs": true
+  },
+  "nativeCounts": {
+    "wasm_vm_core": {
+      "passed": 1103,
+      "failed": 1,
+      "ignored": 11,
+      "testBinarySummaries": 132
+    },
+    "jit_runtime": {
+      "passed": 135,
+      "failed": 0,
+      "ignored": 3,
+      "testBinarySummaries": 32
+    },
+    "jit_translate": {
+      "passed": 23,
+      "failed": 0,
+      "ignored": 2,
+      "testBinarySummaries": 5
+    },
+    "wasm_vm_wasm": {
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0,
+      "testBinarySummaries": 79
+    }
+  },
+  "nativeTotals": {
+    "passed": 1294,
+    "failed": 1,
+    "ignored": 16,
+    "testBinarySummaries": 248
+  },
+  "fixtureScope": "Broad native test binaries were compiled before the final fixture correction and verifier additions; root separately recorded frozen-head acceptance and scrubbed cold-clone runs for those fixtures. Production runtime hashes match frozen commit.",
+  "preexistingFailureFilesMatchParent": {
+    "crates/wvseccomp/src/main.rs": true,
+    "crates/core/src/decoded_cache_capacity_tests.rs": true,
+    "crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs": true,
+    "crates/core/src/dev/virtio/gpu/mod.rs": true,
+    "crates/core/src/dev/virtio/gpu/resources.rs": true
+  }
+}

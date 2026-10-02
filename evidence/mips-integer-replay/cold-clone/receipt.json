@@ -1,0 +1,56 @@
+{
+  "head": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-integer-cold-2sdzp1nt/repo",
+  "scrubbed": true,
+  "commands": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-integer-cold-2sdzp1nt/repo"
+      ],
+      "exit": 0,
+      "seconds": 0.04065170800000001
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "9123bc06cec84f4c581aa877b1126babff245a99"
+      ],
+      "exit": 0,
+      "seconds": 2.000821833
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "seconds": 0.4383679579999997
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 0.9690335000000001
+    },
+    {
+      "command": [
+        "make",
+        "verify-E5.5-T03bf"
+      ],
+      "exit": 0,
+      "seconds": 32.716970584
+    }
+  ]
+}

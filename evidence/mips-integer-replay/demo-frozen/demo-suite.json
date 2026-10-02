@@ -1,0 +1,81 @@
+{
+  "url": "http://127.0.0.1:50765/app.html?noAutoBoot=1",
+  "browser": "154.0.8037.93",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "detail": "E5.5-T03bf\nIN PROGRESS\n✕ Close\nIncrease cached interpreter throughput with a compact integer executor\nEpic\nE5.5 — 5.5\nStatus\nin progress\nEstimate\nS\nDepends on\nE5.5-T03be\nVERIFICATION LOG — EVIDENCE\n### 2026-10-02 — worker — activated\n\nSelected this narrow task for the user's explicit MIPS priority ahead of the\npublication queue. No other task occupies the active lane. Work is isolated in\nthe mips-throughput checkout above the latest open stack layer, preserving the\nuser's unrelated local edits. Parent runtime already includes the September\nperformance overhaul; no comparison to an obsolete pre-overhaul binary counts.\nADVERSARIAL VERIFICATION\nA fresh verifier records predictions before inspecting evidence and checks the\ndiff against all opcode, capture and fallback paths. Attack division by zero,\nsigned MIN/-1, high products, W sign extension, shift masking, x0, split budgets,\ntraps after integer prefixes and code invalidation. Independently recalculate\ntiming ratios and compare artifact hashes. Invent one bounded attack and sabotage\none new regression test. Only the verifier may set verified; leave PRs open.\nsource: tasks/epic-5.5-omarchy/E5.5-T03bf-integer-replay.md",
+  "capability": "Compact cached integer execution54/54 passing · live in browser",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:50765/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "http://127.0.0.1:50765/app.html?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://127.0.0.1:50765/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "http://127.0.0.1:50765/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "b5aeed8adddebe256e90a1bb0433f0f7efa7071a85eb88f5717e502661a76990"
+}
