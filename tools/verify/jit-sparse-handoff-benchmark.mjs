@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
 import { createServer } from "node:http";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
@@ -16,7 +17,10 @@ const sha = bytes => createHash("sha256").update(bytes).digest("hex");
 const meta = JSON.parse(await fs.readFile(path.join(baseline, "baseline.json"), "utf8"));
 assert.equal(sha(await fs.readFile(path.join(baseline, "libwasm_vm_core.rlib"))), meta.rlibSha256);
 assert.equal(sha(await fs.readFile(path.join(baseline, "pkg/wasm_vm_wasm_bg.wasm"))), meta.wasmSha256);
-const report = { head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), baseline: meta,
+const report = { startedAt: new Date().toISOString(),
+  host: { cpu: os.cpus()[0]?.model, platform: os.platform(), release: os.release(), loadAtStart: os.loadavg() },
+  budgets: { minimumSparseSpeedup: 1.02, minimumPairedSpeedup: 0.98 },
+  head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), baseline: meta,
   sourceSha256: sha(await fs.readFile(path.join(repo, "crates/core/src/hart/regs.rs"))),
   harnessSha256: sha(await fs.readFile(fileURLToPath(import.meta.url))), errors: [], passed: false };
 const median = values => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
@@ -45,7 +49,7 @@ try {
     report.nativeBinaries[arm] = sha(await fs.readFile(binary));
   }
   report.native = [];
-  for (const mask of [0, 1, 0x80000000, 0x80000082, 0xfffffffe]) {
+  for (const mask of [0, 1, 0x80000000, 0x80000082, 0x1fe, 0x3fe, 0x7ffffffe, 0xfffffffe]) {
     const run = arm => ({ arm, ...JSON.parse(execFileSync(path.join(out, `native-${arm}`), [String(mask), "4000000"], { encoding: "utf8", timeout: 60_000 })) });
     const warmups = [run("baseline"), run("candidate")], pairs = [];
     for (let pair = 0; pair < 7; pair++) {
@@ -92,6 +96,8 @@ try {
     };
     const configs = [{ name: "empty", regs: [0] }, { name: "one", regs: [31] },
       { name: "sparse", regs: [1, 7, 31] },
+      { name: "eight", regs: Array.from({ length: 8 }, (_, i) => i + 1) },
+      { name: "nine", regs: Array.from({ length: 9 }, (_, i) => i + 1) },
       { name: "half-dense", regs: Array.from({ length: 15 }, (_, i) => i + 1) },
       { name: "near-dense", regs: Array.from({ length: 30 }, (_, i) => i + 1) },
       { name: "dense", regs: Array.from({ length: 31 }, (_, i) => i + 1) }];
@@ -102,7 +108,7 @@ try {
       words.push(((off >>> 20 & 1) << 31) | ((off >>> 1 & 0x3ff) << 21) | ((off >>> 11 & 1) << 20) | ((off >>> 12 & 0xff) << 12) | 0x6f);
       const kernel = new Uint8Array(words.length * 4), view = new DataView(kernel.buffer);
       words.forEach((word, i) => view.setUint32(i * 4, word, true));
-      async function run(arm, jit = true, budget = 40_000_000) {
+      async function run(arm, jit = true, budget = 400_000_000) {
         const vm = new modules[arm].WasmLinux(8, kernel, new Uint8Array(), "", () => {}, false);
         try {
           vm.setICountDivider(64); vm.setFastInterpreter(true); if (jit) vm.enableJit(1);
@@ -136,18 +142,20 @@ try {
     const all = [...row.warmups, ...row.pairs.flatMap(p => p.runs)];
     for (const run of all) {
       assert.deepEqual(run.state, all[0].state);
-      assert.deepEqual(run.result, { done: false, state: null, retired: 40_000_000 });
-      assert.equal(run.jit.guestRetired, 40_020_000);
-      assert.ok(run.jit.retiredViaJit > 39_900_000, "real compiled execution");
+      assert.deepEqual(run.result, { done: false, state: null, retired: 400_000_000 });
+      assert.equal(run.jit.guestRetired, 400_020_000);
+      assert.ok(run.jit.retiredViaJit > 399_900_000, "real compiled execution");
     }
     Object.assign(row, summarize(row.pairs, "elapsedMs"));
   }
   assert.deepEqual(report.errors, []);
   report.passed = true;
   report.sparseSpeedup = report.browser.find(row => row.config.name === "sparse").pairedSpeedup;
-  report.acceptanceHeld = !report.identicalBrowserBinary && report.sparseSpeedup > 1.02;
+  report.regressions = report.browser.filter(row => row.pairedSpeedup < report.budgets.minimumPairedSpeedup).map(row => row.config.name);
+  report.acceptanceHeld = !report.identicalBrowserBinary && report.sparseSpeedup > report.budgets.minimumSparseSpeedup && report.regressions.length === 0;
   console.log(JSON.stringify({ native: report.native.map(({ mask, speedup }) => ({ mask, speedup })), browser: report.browser.map(({ config, speedup, pairedSpeedup }) => ({ config, speedup, pairedSpeedup })), acceptanceHeld: report.acceptanceHeld }));
 } finally {
+  report.finishedAt = new Date().toISOString(); report.host.loadAtEnd = os.loadavg();
   await fs.writeFile(path.join(out, "report.json"), JSON.stringify(report, null, 2) + "\n");
   await browser?.close(); if (server) await new Promise(resolve => server.close(resolve));
 }

@@ -9,6 +9,11 @@ use wasm_vm_core::jit::CpuStateHandoff;
 #[cfg_attr(not(target_arch = "wasm32"), test)]
 fn sparse_handoff_matches_full_array_oracle() {
     let mut masks = vec![0, 1, u32::MAX, !1, 0xaaaa_aaaa, 0x5555_5555];
+    // Every density, with and without x0, including both sides of the sparse/scan threshold.
+    for count in 0..=31 {
+        let mask = ((1_u32 << count) - 1) << 1;
+        masks.extend([mask, mask | 1]);
+    }
     for first in 0..32 {
         masks.push(1 << first);
         for second in first + 1..32 {
