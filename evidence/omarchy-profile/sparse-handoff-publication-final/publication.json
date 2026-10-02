@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-10-02T01:33:49.751976+00:00",
+  "sourceHead": "9ea6cf8765b70a9a13fd66ef4c6a79da66af150c",
+  "task": "E5.5-T03be",
+  "taskStatus": "verified",
+  "outcome": "verified negative investigation; no runtime speedup retained",
+  "baselineRuntimeWasmSha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+  "entireProductionPkgUnchangedFromParent": true,
+  "files": [
+    {
+      "url": "https://4a47bdb3.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1628023,
+      "sha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+      "matchesCommittedDist": true
+    },
+    {
+      "url": "https://4a47bdb3.wasm-vm.pages.dev/roadmap.js",
+      "bytes": 52251,
+      "sha256": "f4b647463e3be838359fad78b45451b07f1f40dd12fff9f8ab203b2725c1eb8d",
+      "matchesCommittedDist": true
+    },
+    {
+      "url": "https://4a47bdb3.wasm-vm.pages.dev/tasks.json",
+      "bytes": 3770839,
+      "sha256": "761abca6d030e974e1c90b5d3905b221088f63f6f6eb36325ac533d4c078a006",
+      "matchesCommittedDist": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1628023,
+      "sha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+      "matchesCommittedDist": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "bytes": 52251,
+      "sha256": "f4b647463e3be838359fad78b45451b07f1f40dd12fff9f8ab203b2725c1eb8d",
+      "matchesCommittedDist": true
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/tasks.json",
+      "bytes": 3770839,
+      "sha256": "761abca6d030e974e1c90b5d3905b221088f63f6f6eb36325ac533d4c078a006",
+      "matchesCommittedDist": true
+    }
+  ],
+  "liveSmoke": {
+    "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot=1",
+    "browser": "154.0.8037.93",
+    "metrics": {
+      "metric-pass": "127",
+      "metric-fail": "0",
+      "metric-done": "127"
+    },
+    "errors": [],
+    "httpErrors": [],
+    "screenshotSha256": "e169f773abeeb1470410c9d2cd768c3cc534a064505ac11d76f711a3ef976104",
+    "screenshotReviewed": true
+  }
+}
