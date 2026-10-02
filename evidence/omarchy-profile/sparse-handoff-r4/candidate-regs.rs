@@ -83,17 +83,22 @@ impl XRegs {
     /// `x0` is deliberately ignored even if a malformed mask includes it.
     pub(crate) fn jit_commit_words_mask(&mut self, words: &[u64], mask: u32) {
         debug_assert!(words.len() >= 32);
-        let mut changed = false;
+        let writable = mask & !1;
+        if writable == 0 {
+            return;
+        }
+        // A chain that wrote every writable register is cheaper as one bulk copy.
+        if writable == !1 {
+            self.jit_commit_words(words);
+            return;
+        }
         for (offset, word) in words[1..32].iter().copied().enumerate() {
             let register = offset + 1;
-            if mask & (1_u32 << register) != 0 {
+            if writable & (1_u32 << register) != 0 {
                 self.regs[register] = word;
-                changed = true;
             }
         }
-        if changed {
-            self.jit_version = self.jit_version.wrapping_add(1);
-        }
+        self.jit_version = self.jit_version.wrapping_add(1);
     }
 }
 

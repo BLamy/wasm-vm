@@ -1775,3 +1775,14 @@ verify-E5.5-T03bd:
 	cargo test -p wasm-vm-core --lib clock_advance_tests
 	cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture
 	wasm-pack test --node crates/wasm --test clock_advance
+
+.PHONY: verify-E5.5-T03be
+verify-E5.5-T03be:
+	cargo fmt --all --check
+	node --check tools/verify/jit-sparse-handoff-benchmark.mjs
+	cargo clippy -p wasm-vm-core --lib --test jit_sparse_handoff --example jit_handoff_probe --features trace -- -D warnings
+	cargo test -p wasm-vm-core --lib sparse_mask_stamp
+	cargo test -p wasm-vm-core --test jit_sparse_handoff -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_sparse_handoff
+	wasm-pack test --node crates/wasm --test jit_browser_parity
+	wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier

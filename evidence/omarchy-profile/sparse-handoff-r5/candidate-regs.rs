@@ -81,19 +81,35 @@ impl XRegs {
 
     /// Commit only the architectural registers named by a generated direct-chain write mask.
     /// `x0` is deliberately ignored even if a malformed mask includes it.
+    #[inline(always)]
     pub(crate) fn jit_commit_words_mask(&mut self, words: &[u64], mask: u32) {
         debug_assert!(words.len() >= 32);
-        let mut changed = false;
-        for (offset, word) in words[1..32].iter().copied().enumerate() {
-            let register = offset + 1;
-            if mask & (1_u32 << register) != 0 {
-                self.regs[register] = word;
-                changed = true;
+        let mut remaining = mask & !1;
+        if remaining == 0 {
+            return;
+        }
+        // A chain that wrote every writable register is cheaper as one bulk copy.
+        if remaining == !1 {
+            self.jit_commit_words(words);
+            return;
+        }
+        // Bit iteration wins for short masks. For denser masks the straight scan is cheaper
+        // in browser engines; keep it rather than paying one ctz/indexed load per register.
+        if remaining.count_ones() <= 8 {
+            while remaining != 0 {
+                let register = remaining.trailing_zeros() as usize;
+                self.regs[register] = words[register];
+                remaining &= remaining - 1;
+            }
+        } else {
+            for (offset, word) in words[1..32].iter().copied().enumerate() {
+                let register = offset + 1;
+                if remaining & (1_u32 << register) != 0 {
+                    self.regs[register] = word;
+                }
             }
         }
-        if changed {
-            self.jit_version = self.jit_version.wrapping_add(1);
-        }
+        self.jit_version = self.jit_version.wrapping_add(1);
     }
 }
 

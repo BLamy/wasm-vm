@@ -1,0 +1,49 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "started": "2026-10-02T01:02:41.174524+00:00",
+    "exitCode": 0,
+    "logSha256": "6a34a90c73d59e7e5ed217a0dfe82741f75e36f678e5a5e17db25025ca711b09"
+  },
+  {
+    "name": "novel-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "wasm-vm-core",
+      "--test",
+      "jit_sparse_handoff",
+      "--features",
+      "trace",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "started": "2026-10-02T01:02:42.095821+00:00",
+    "exitCode": 0,
+    "logSha256": "eb3ebf9d79fd808779863f04ce6300870422d670ec9c64f8e3958d75023f19df"
+  },
+  {
+    "name": "novel-native",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "wasm-vm-core",
+      "--test",
+      "jit_sparse_handoff",
+      "--",
+      "--nocapture"
+    ],
+    "started": "2026-10-02T01:02:42.374965+00:00",
+    "exitCode": 0,
+    "logSha256": "f957535a1b3d7e6105cec264a6d01ae396e5444aa517d85b856deca26a3105eb"
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "head": "26f63873d0a005be19ef2c7c682cfee96907de27",
+  "checks": [
+    {
+      "name": "ci",
+      "command": [
+        "make",
+        "ci"
+      ],
+      "exitCode": 2
+    },
+    {
+      "name": "stdout",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "no_stdout_in_core"
+      ],
+      "exitCode": 101
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+    Checking wasm-vm-wvseccomp v0.0.0 (/private/tmp/wasm-vm-prod-2988a8a/crates/wvseccomp)
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp") due to 4 previous errors

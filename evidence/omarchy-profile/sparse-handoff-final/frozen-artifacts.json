@@ -1,0 +1,27 @@
+{
+  "head": "26f63873d0a005be19ef2c7c682cfee96907de27",
+  "baseline": "ec178d579aed126c30eae1ee608e62557b276c08",
+  "sha256": {
+    "Makefile": "10b6b722cfc755a6ddd00fec97f44793ecc3f85a46148bebd454faa69214b668",
+    "crates/core/src/hart/regs.rs": "31fc9d06ff7d5264510c8f3d5fdeab0736c5887f1abc94a7055fd8f2c62aa312",
+    "crates/core/tests/jit_sparse_handoff.rs": "0ca76b7c0f29fe60222742022076b8388e1f2a3a799a85b6ef23c4d96aebd2d4",
+    "crates/wasm/tests/jit_sparse_handoff.rs": "0fd2ca518bf674be66aa7a45cfbf472d5ac3b864e47abebd310c46266576b601",
+    "crates/core/examples/jit_handoff_probe.rs": "f691b18781a322cea887da18c0cd8fdb540c200cf2ff21d8ca3e0e4bec3dc0e7",
+    "tools/verify/jit-sparse-handoff-benchmark.mjs": "4f52599d5f87ac84805ed01e67bc1ac1f65bb7c5fece1695f6da2dd6a42cb974",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516"
+  },
+  "sourceDiff": "",
+  "productionRegisterSourceIdentical": true,
+  "productionWasmPackageDiff": "",
+  "incrementalHarnessChange": {
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "files": [
+      "crates/core/examples/jit_handoff_probe.rs",
+      "docs/perf/jit-register-handoff-2026-10.md"
+    ],
+    "producerSha256": "f46708ea09fad895c8b520e98770276fe220b062dfab4ce8ad16625d36c71dd9",
+    "exactWordEvidence": "native-exact-words.json",
+    "coldEvidence": "cold-native-exact-words.json",
+    "productionAndBrowserHarnessUnchanged": true
+  }
+}

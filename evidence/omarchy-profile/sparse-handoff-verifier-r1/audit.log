@@ -1,0 +1,104 @@
+{
+  "restoration": {
+    "productionPrefixEqual": true,
+    "wasmSha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "wasmBytes": 1628023
+  },
+  "candidates": [
+    {
+      "name": "Sparse bit iteration",
+      "sparsePaired": 1.010453828845618,
+      "worstDensity": 0.9391066342834689,
+      "gateRecomputed": false
+    },
+    {
+      "name": "Sparse + full bulk copy (expanded run)",
+      "sparsePaired": 1.0088354683919818,
+      "worstDensity": 0.9314317080811633,
+      "gateRecomputed": false
+    },
+    {
+      "name": "Threshold + iterator scan",
+      "sparsePaired": 1.0112875310318,
+      "worstDensity": 0.8579549879499656,
+      "gateRecomputed": false
+    },
+    {
+      "name": "Threshold + fixed-slice scan",
+      "sparsePaired": 1.0157737811446266,
+      "worstDensity": 0.9857066921584231,
+      "gateRecomputed": false
+    },
+    {
+      "name": "Empty/full fast paths + fixed-slice scan",
+      "sparsePaired": 1.004268035738096,
+      "worstDensity": 0.9761668791428136,
+      "gateRecomputed": false
+    },
+    {
+      "name": "Threshold + forced inlining (screen)",
+      "sparsePaired": 1.02005391968668,
+      "worstDensity": 0.9882404825189609,
+      "gateRecomputed": true
+    },
+    {
+      "name": "Threshold + forced inlining (repeat)",
+      "sparsePaired": 1.0138260311494256,
+      "worstDensity": 1.0058319665538562,
+      "gateRecomputed": false
+    }
+  ],
+  "arrayOracle": {
+    "masks": 10598,
+    "independentDigest": "4dace58378d14297762d010665b9d3bf1ac0fd376e5565ccbe4f122f34e6d1f2"
+  },
+  "compositionOracle": {
+    "cases": 5952,
+    "independentDigest": "091a8d5c6853b91d309bae75e9c8b6f7a88b6291f5fd9771e48127942f567d64"
+  },
+  "guestTracePoints": 40,
+  "workloads": {
+    "reportSha256": "139fe9ae0633a61a051f3dafb5fd1f716f15317361afa8f1e317c6c487dc6380",
+    "timings": [
+      {
+        "case": "busybox-jit",
+        "metric": "readyMs",
+        "pairedSpeedup": 0.9965143164966266
+      },
+      {
+        "case": "busybox-jit",
+        "metric": "regionMs",
+        "pairedSpeedup": 1.0257801295257305
+      },
+      {
+        "case": "busybox-nojit",
+        "metric": "readyMs",
+        "pairedSpeedup": 0.9922597348810128
+      },
+      {
+        "case": "busybox-nojit",
+        "metric": "regionMs",
+        "pairedSpeedup": 0.9867528395625925
+      }
+    ],
+    "recordedConsoleErrors": [
+      {
+        "case": "busybox-jit",
+        "arm": "baseline",
+        "rep": 0,
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      {
+        "case": "busybox-jit",
+        "arm": "candidate",
+        "rep": 0,
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      }
+    ]
+  },
+  "held": true
+}

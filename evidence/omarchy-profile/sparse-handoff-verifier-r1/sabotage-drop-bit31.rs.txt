@@ -86,7 +86,7 @@ impl XRegs {
         let mut changed = false;
         for (offset, word) in words[1..32].iter().copied().enumerate() {
             let register = offset + 1;
-            if mask & (1_u32 << register) != 0 {
+            if mask & 0x7fff_ffff & (1_u32 << register) != 0 {
                 self.regs[register] = word;
                 changed = true;
             }
