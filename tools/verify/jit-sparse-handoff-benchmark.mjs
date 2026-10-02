@@ -91,7 +91,10 @@ try {
       return result;
     };
     const configs = [{ name: "empty", regs: [0] }, { name: "one", regs: [31] },
-      { name: "sparse", regs: [1, 7, 31] }, { name: "dense", regs: Array.from({ length: 31 }, (_, i) => i + 1) }];
+      { name: "sparse", regs: [1, 7, 31] },
+      { name: "half-dense", regs: Array.from({ length: 15 }, (_, i) => i + 1) },
+      { name: "near-dense", regs: Array.from({ length: 30 }, (_, i) => i + 1) },
+      { name: "dense", regs: Array.from({ length: 31 }, (_, i) => i + 1) }];
     const rows = [];
     for (const config of configs) {
       const words = config.regs.map(reg => (1 << 20) | (reg << 15) | (reg << 7) | 0x13);
