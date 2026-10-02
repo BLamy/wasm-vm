@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 351,
-    "total": 528
+    "total": 529
   },
   "epics": [
     {
@@ -23523,16 +23523,15 @@
         },
         {
           "date": "2026-10-01",
-          "commits": 2,
+          "commits": 1,
           "labels": [
-            "verify(omarchy): prove interactive startup gate",
             "verify(omarchy): prove interactive startup gate"
           ]
         }
       ],
       "firstActivity": "2026-09-17",
       "lastActivity": "2026-10-01",
-      "commitCount": 5
+      "commitCount": 4
     },
     {
       "id": "E5.5-T03bd",
@@ -23558,18 +23557,52 @@
       "activity": [
         {
           "date": "2026-10-01",
-          "commits": 7,
+          "commits": 6,
           "labels": [
+            "docs(perf): record production demo publication",
             "verify(perf): prove current-main clock investigation",
             "docs(perf): submit clock investigation evidence",
-            "test(perf): reject clock regressions against current main",
-            "task: activate deterministic clock fast path"
+            "test(perf): reject clock regressions against current main"
           ]
         }
       ],
       "firstActivity": "2026-10-01",
       "lastActivity": "2026-10-01",
-      "commitCount": 7
+      "commitCount": 6
+    },
+    {
+      "id": "E5.5-T03be",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Measure browser JIT register handoff and reject unproven speedups",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03bd"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-10-01 — worker — activated\n\nSelected the bounded register-handoff optimization after the prior clock\ninvestigation rejected its candidates. Source inspection finds a 31-word scan\nin `XRegs::jit_commit_words_mask`; compiled FP commits already use sparse bit\niteration. Work is isolated in the `emulator-speed-next` worktree; unrelated\nedits in the user's original checkout are preserved.\n\n### 2026-10-01 — worker — candidate selection (negative)\n\nSix implementations were screened. Sparse iteration alone regressed full masks;\na full-copy special case regressed near-full masks; a threshold with an iterator\nscan regressed mixed masks. Preserving the fixed-slice scan removed those large\nregressions. The empty/full-only variant and the final inlining variant still\nfailed the repeated >1.02x sparse gate. The latter reached 1.0200539197x in its\nscreen, then only 1.0138260311x at frozen head `29980ba5`. No threshold was lowered.\n\nProduction `jit_commit_words_mask` is restored to parent `ec178d57`. Only tests,\nthe benchmark harness, measured evidence and demo documentation will remain.\nNo faster browser/Omarchy/boot behavior is claimed. Exact worker submission and\nfresh-verifier verdict follow after restored-head gates and publication.",
+      "adversarial": "A fresh verifier predicts register/stamp values before reading evidence; attack\nx0-only, highest register, dense masks, wrap and precise fault prefixes. Compare\nrecorded guest state to the untouched implementation and inspect each changed\nruntime hunk. Independently recount paired benchmark medians, invent one bounded\nmask attack, and sabotage-check a new regression. Verify the frozen clone and\nserved artifact hashes. No runtime edits by the verifier; leave PRs open.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03be-jit-sparse-handoff.md",
+      "activity": [
+        {
+          "date": "2026-10-01",
+          "commits": 2,
+          "labels": [
+            "perf(core): bound sparse commits and preserve dense scan codegen",
+            "task: investigate sparse JIT register handoff"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-01",
+      "lastActivity": "2026-10-01",
+      "commitCount": 2
     },
     {
       "id": "E5.5-T03c",
