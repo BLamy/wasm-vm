@@ -4,7 +4,8 @@ The compact integer executor increases cached interpreter throughput while shari
 integer semantics with the general executor. The repeated measured gain is about
 **20% native and 10% browser** for the cached integer loop. Real workloads show
 smaller, workload-dependent gains; legacy execution and JIT shell results include
-small regressions. This guide records worker evidence. Publication succeeded. A fresh verifier independently accepted the scoped claim
+small regressions. This guide records worker evidence. Publication succeeded.
+A fresh verifier independently accepted the scoped claim
 in commit `99a51c5b`; see [the final verdict](verifier/verdict.md) and
 [publication audit](verifier/publication-audit.json).
 
@@ -208,3 +209,21 @@ HTTP errors. Its favicon 404 is explicitly URL-attributed and retained. The
 [screenshot](demo-live-worker/demo-suite.png) records the page. The live task still
 shows the worker's in-progress state from the first runtime publication; a final
 metadata publication follows the verifier verdict.
+
+
+Final metadata publication: deployment <https://48c6b10d.wasm-vm.pages.dev>
+serves the verified task and measured roadmap entry at <https://wasm-vm.pages.dev>.
+[deploy-verified.log](deploy-verified.log) records the second deploy;
+[live-verified-artifacts.json](live-verified-artifacts.json) confirms wasm,
+roadmap, tasks and service-worker bytes match committed build `0d9d99aa`.
+The runtime wasm hash is unchanged. The final
+[live browser capture](demo-live-verified/demo-suite.json) asserts task status
+**verified**, **127/127** suite passes, **67/67** integer capability cases live,
+and zero unexpected errors; [screenshot](demo-live-verified/demo-suite.png).
+Command: `E5_T18E_DEMO_URL=https://wasm-vm.pages.dev E5_DEMO_TASK=E5.5-T03bf
+E5_DEMO_VERIFIED=1 E5_DEMO_CAPABILITY='Compact cached integer execution'
+E5_DEMO_OUT=evidence/mips-integer-replay/demo-live-verified
+node tools/verify/e5-t18e-demo-smoke.mjs`.
+
+[PR #401](https://github.com/BLamy/wasm-vm/pull/401) is the open draft layer above
+PR #400 in the native GitHub stack. No PR was merged.

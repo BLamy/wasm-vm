@@ -1,0 +1,38 @@
+{
+  "url": "https://wasm-vm.pages.dev",
+  "deployment": "https://48c6b10d.wasm-vm.pages.dev",
+  "head": "0d9d99aa9199c83fb78a5ce9dd1ef2b3bbca7a85",
+  "recordedAt": "2026-10-02T20:41:41.394649+00:00",
+  "fetch": "curl --fail --silent --show-error --location --max-time 60",
+  "records": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873",
+      "size": 1633329,
+      "matchesLocalDist": true,
+      "matchesCommittedDist": true
+    },
+    {
+      "path": "roadmap.js",
+      "sha256": "b948d6f9545853fd7a953bbf71ca14db428ea980abe95d1fc81f2b561eb3bf64",
+      "size": 52683,
+      "matchesLocalDist": true,
+      "matchesCommittedDist": true
+    },
+    {
+      "path": "tasks.json",
+      "sha256": "6813c3ca918d3b965fbafb29b49002cc7cd5285bd228ff93490a098c28a2d300",
+      "size": 3784612,
+      "matchesLocalDist": true,
+      "matchesCommittedDist": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "e12bbb7a4ef33d53cbf75191a836aac26025ed77167dcf7368b8b1d105d1dd11",
+      "size": 5053,
+      "matchesLocalDist": true,
+      "matchesCommittedDist": true
+    }
+  ],
+  "stagedManifestsMatchFirstVerifiedDeployment": true
+}
