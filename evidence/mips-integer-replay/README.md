@@ -4,8 +4,9 @@ The compact integer executor increases cached interpreter throughput while shari
 integer semantics with the general executor. The repeated measured gain is about
 **20% native and 10% browser** for the cached integer loop. Real workloads show
 smaller, workload-dependent gains; legacy execution and JIT shell results include
-small regressions. This guide records worker evidence. Publication succeeded; the fresh verifier's
-final verdict remains pending. This worker guide does not declare the task verified.
+small regressions. This guide records worker evidence. Publication succeeded. A fresh verifier independently accepted the scoped claim
+in commit `99a51c5b`; see [the final verdict](verifier/verdict.md) and
+[publication audit](verifier/publication-audit.json).
 
 ## Identity and evidence map
 
