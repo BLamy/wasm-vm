@@ -74,3 +74,104 @@ fn sparse_handoff_matches_full_array_oracle() {
         digest.finalize()
     );
 }
+
+/// A verifier-authored composition attack: a mask and its disjoint complement must
+/// equal a full commit, while same-value writes still count as separate mutations.
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+#[cfg_attr(not(target_arch = "wasm32"), test)]
+fn disjoint_rotated_masks_compose_without_losing_same_value_stamps() {
+    fn next(state: &mut u64) -> u64 {
+        *state ^= *state << 13;
+        *state ^= *state >> 7;
+        *state ^= *state << 17;
+        *state
+    }
+
+    let mut digest = Sha256::new();
+    let mut cases = 0;
+    for mut random in [
+        0x61da_209f_4bc8_e357,
+        0xb043_97ac_82ef_165d,
+        0x9c17_fba5_6d30_42e9,
+    ] {
+        for count in 0..=31 {
+            for rotation in 0..31 {
+                for x0_bit in [0, 1] {
+                    let initial: [u64; 32] = core::array::from_fn(|_| next(&mut random));
+                    let mut words: [u64; 32] = core::array::from_fn(|_| next(&mut random));
+                    words[0] |= 1;
+                    let pc = next(&mut random);
+                    let mut selected = [false; 32];
+                    let mut mask = x0_bit;
+                    for offset in 0..count {
+                        let reg = (rotation + offset) % 31 + 1;
+                        selected[reg] = true;
+                        mask |= 1_u32 << reg;
+                    }
+                    let complement = (!mask & !1) | (1 - x0_bit);
+                    let mut whole = Hart::default();
+                    let mut split = Hart::default();
+                    whole.regs.pc = pc;
+                    split.regs.pc = pc;
+                    for (reg, value) in initial.iter().enumerate().skip(1) {
+                        whole.regs.write(reg as u8, *value);
+                        split.regs.write(reg as u8, *value);
+                    }
+                    let before = split.regs.jit_version();
+                    let mut handoff = CpuStateHandoff::default();
+                    for (reg, word) in words.iter().enumerate() {
+                        handoff.as_mut_bytes()[8 * reg..8 * reg + 8]
+                            .copy_from_slice(&word.to_le_bytes());
+                    }
+                    let transport = *handoff.as_bytes();
+                    handoff.commit_registers_mask(&mut whole, u32::MAX);
+                    for repetition in 1..=2 {
+                        handoff.commit_registers_mask(&mut split, mask);
+                        for reg in 0..32 {
+                            let expected = if reg == 0 {
+                                0
+                            } else if selected[reg] {
+                                words[reg]
+                            } else {
+                                initial[reg]
+                            };
+                            assert_eq!(
+                                split.regs.read(reg as u8),
+                                expected,
+                                "count={count} rotation={rotation} x{reg} repeat={repetition}"
+                            );
+                        }
+                        assert_eq!(
+                            split.regs.jit_version(),
+                            before + repetition * u64::from(count != 0),
+                            "same-value commits must retain mutation stamps"
+                        );
+                    }
+                    handoff.commit_registers_mask(&mut split, complement);
+                    for (reg, word) in words.iter().enumerate() {
+                        let expected = if reg == 0 { 0 } else { *word };
+                        assert_eq!(split.regs.read(reg as u8), expected);
+                        assert_eq!(whole.regs.read(reg as u8), expected);
+                        digest.update(expected.to_le_bytes());
+                    }
+                    assert_eq!(whole.regs.jit_version(), before + 1);
+                    assert_eq!(
+                        split.regs.jit_version(),
+                        before + 2 * u64::from(count != 0) + u64::from(count != 31)
+                    );
+                    assert_eq!(split.regs.pc, pc);
+                    assert_eq!(whole.regs.pc, pc);
+                    assert_eq!(*handoff.as_bytes(), transport);
+                    digest.update(mask.to_le_bytes());
+                    digest.update(pc.to_le_bytes());
+                    cases += 1;
+                }
+            }
+        }
+    }
+    assert_eq!(cases, 5952);
+    println!(
+        "VERIFIER_HANDOFF cases={cases} state_sha256={:x}",
+        digest.finalize()
+    );
+}
