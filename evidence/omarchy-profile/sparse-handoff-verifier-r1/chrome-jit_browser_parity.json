@@ -1,0 +1,185 @@
+{
+  "fixture": "jit_browser_parity",
+  "artifact": "/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm",
+  "artifactSha256": "8365e851293654326c5ce7b8e6a41aa7bc2c7e78ba446e677fac904c48f81e7c",
+  "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+  "command": [
+    "/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner",
+    "/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm",
+    "--nocapture"
+  ],
+  "env": {
+    "WASM_BINDGEN_USE_BROWSER": "1",
+    "NO_HEADLESS": "1"
+  },
+  "errors": [],
+  "console": [
+    {
+      "type": "warning",
+      "text": "using deprecated parameters for the initialization function; pass a single object instead"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: unexpected_js_exception_fails_closed_without_commit_and_cleans_host"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: production_browser_budget_stays_below_measured_instance_cliff"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: page_write_invalidates_compiled_block"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: execute_miss_preserves_public_guard_and_guest_state"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: directed_eviction_through_the_single_ordered_path"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: compile_instantiate_and_cache_by_phys_pc"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: chain_edge_links_and_unlinks_on_invalidation"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_machine_xie_enable_preempts_reused_inline_target"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_jit_six_op_loop_is_exactly_budgeted"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_jit_matches_interpreter_m_block"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_jit_matches_interpreter_i_block"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_jit_matches_interpreter_a_block"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_tlb_matches_interpreter_for_ram_loop"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_link_unlinks_and_rearms_after_target_reinstall"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_link_retains_across_interrupt_stack_bits"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_link_refuses_after_execute_permission_change"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_guard_rejects_remapped_target_page"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_cross_page_tail_refuses_before_target_entry"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_cross_batch_target_fault_is_precise"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_cross_batch_load_store_matches_interpreter"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_cross_batch_link_executes_and_misses_safely"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_code_store_cuts_link_before_target_reuse"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_static_chain_reaches_five_blocks_in_one_engine_call"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_raw_store_to_compiled_page_aborts_before_successor"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_raw_store_commits_reservation_and_code_log"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_dynamic_jalr_links_switch_and_unlinks"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_direct_chain_reports_bounded_retirement"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_direct_chain_honors_depth_budget"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_handoff_refreshes_after_outer_growth_during_compiled_call"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_dispatch_reuses_memory_views_without_subarray_allocation"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_clean_dispatch_reuses_cached_outer_view_without_constructor"
+    },
+    {
+      "type": "log",
+      "text": "Invoking test: browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks"
+    }
+  ],
+  "passed": true,
+  "runnerPid": 73464,
+  "url": "http://127.0.0.1:8000",
+  "browser": "154.0.8037.93",
+  "body": "Loading Wasm module...\n\nrunning 39 tests\ntest browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence\ntest unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok\ntest production_browser_budget_stays_below_measured_instance_cliff ... ok\ntest page_write_invalidates_compiled_block ... ok\ntest execute_miss_preserves_public_guard_and_guest_state ... ok\ntest directed_eviction_through_the_single_ordered_path ... ok\ntest compile_instantiate_and_cache_by_phys_pc ... ok\ntest chain_edge_links_and_unlinks_on_invalidation ... ok\ntest bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok\ntest browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok\ntest browser_machine_xie_enable_preempts_reused_inline_target ... ok\ntest browser_jit_six_op_loop_is_exactly_budgeted ... ok\ntest browser_jit_matches_interpreter_m_block ... ok\ntest browser_jit_matches_interpreter_i_block ... ok\ntest browser_jit_matches_interpreter_a_block ... ok\ntest browser_inline_tlb_matches_interpreter_for_ram_loop ... ok\ntest browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok\ntest browser_inline_static_link_retains_across_interrupt_stack_bits ... ok\ntest browser_inline_static_link_refuses_after_execute_permission_change ... ok\ntest browser_inline_static_guard_rejects_remapped_target_page ... ok\ntest browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok\ntest browser_inline_static_cross_batch_target_fault_is_precise ... ok\ntest browser_inline_static_cross_batch_load_store_matches_interpreter ... ok\ntest browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok\ntest browser_inline_static_code_store_cuts_link_before_target_reuse ... ok\ntest browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok\ntest browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok\ntest browser_inline_raw_store_commits_reservation_and_code_log ... ok\ntest browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... ok\ntest browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok\ntest browser_inline_direct_chain_reports_bounded_retirement ... ok\ntest browser_inline_direct_chain_honors_depth_budget ... ok\ntest browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok\ntest browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links ... ok\ntest browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok\ntest browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok\ntest browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok\ntest browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok\ntest browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok\n\ntest result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.38s\n\n",
+  "result": "test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.38s",
+  "crossOriginIsolated": true
+}

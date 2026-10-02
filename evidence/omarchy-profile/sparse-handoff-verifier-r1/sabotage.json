@@ -1,0 +1,23 @@
+{
+  "productSha256Before": "31fc9d06ff7d5264510c8f3d5fdeab0736c5887f1abc94a7055fd8f2c62aa312",
+  "runs": [
+    {
+      "name": "control",
+      "sourceSha256": "31fc9d06ff7d5264510c8f3d5fdeab0736c5887f1abc94a7055fd8f2c62aa312",
+      "exitCode": 0,
+      "expectedPass": true,
+      "log": "evidence/omarchy-profile/sparse-handoff-verifier-r1/sabotage-control.log",
+      "logSha256": "5f20b7bca689b74c41c61d55e405264e4a32fb41e682636c70521c50137754b9"
+    },
+    {
+      "name": "drop-bit31",
+      "sourceSha256": "7c9fef8e43bbf4797226aa484513e4e997e756c943000e50bd6265cc58d1d7fe",
+      "exitCode": 101,
+      "expectedPass": false,
+      "log": "evidence/omarchy-profile/sparse-handoff-verifier-r1/sabotage-drop-bit31.log",
+      "logSha256": "8f53fba8464761549f35aa3a74d31266b132c8d4a01f16b7fa36b5352eaf123a"
+    }
+  ],
+  "productSha256After": "31fc9d06ff7d5264510c8f3d5fdeab0736c5887f1abc94a7055fd8f2c62aa312",
+  "held": true
+}
