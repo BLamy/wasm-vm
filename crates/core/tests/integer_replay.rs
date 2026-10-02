@@ -286,64 +286,112 @@ fn exercise_cases(name: &str, cases: &[Case]) {
     let mut evidence = Vec::new();
     let mut states = String::new();
     for c in cases {
-        let setup = |cache, batching| {
-            let mut m = machine(cache, batching);
-            m.hart_mut().regs.write(1, c.a);
-            m.hart_mut().regs.write(2, c.b);
-            // Exact op, x0-discard variant, and an immediately dependent readback.
-            for (idx, word) in [c.word, c.word & !(31 << 7), addi(4, 3, 0)]
-                .into_iter()
-                .enumerate()
-            {
-                m.bus_mut()
-                    .store32(DRAM_BASE + idx as u64 * 4, word)
-                    .unwrap();
-            }
-            m
-        };
-        let mut reference = setup(false, false);
-        let mut reference_trace = Records::default();
-        assert_eq!(
-            reference.run_traced(3, &mut reference_trace),
-            RunOutcome::MaxInstrs
-        );
-        assert_eq!(reference.hart().regs.read(3), c.expected, "{}", c.name);
-        assert_eq!(
-            reference.hart().regs.read(4),
-            c.expected,
-            "{} dependent read",
-            c.name
-        );
-        assert_eq!(reference_trace.0[0].rd, Some((3, c.expected)), "{}", c.name);
-        assert_eq!(reference_trace.0[1].rd, None, "{} x0 trace", c.name);
-        assert_eq!(reference.hart().resv, Some((DATA, 8)));
-        for (cache, batching) in [(false, false), (true, false), (true, true)] {
-            for slices in [&[3u64][..], &[1u64, 0, 2][..]] {
-                for recording in [false, true] {
-                    let mut m = setup(cache, batching);
-                    let mut trace = Records::default();
-                    for &budget in slices {
-                        let outcome = if recording {
-                            m.run_traced(budget, &mut trace)
-                        } else {
-                            m.run(budget)
-                        };
-                        assert_eq!(outcome, RunOutcome::MaxInstrs, "{}", c.name);
-                    }
-                    assert_same(&reference, &m);
-                    assert_eq!(m.hart().regs.read(0), 0, "{} x0", c.name);
-                    if recording {
+        // Prefix=0 exercises the general first-op path. Prefix=1 makes the
+        // observed rd3 result an interior, deferrable cached op. An x0-only
+        // interior copy cannot prove the computed integer value was correct.
+        for prefix in 0..=1usize {
+            let budget = 3 + prefix as u64;
+            let expected = if c.word & 0x7f == 0x17 {
+                c.expected.wrapping_add(prefix as u64 * 4) // AUIPC observes its own PC.
+            } else {
+                c.expected
+            };
+            let setup = |cache, batching| {
+                let mut m = machine(cache, batching);
+                m.hart_mut().regs.write(1, c.a);
+                m.hart_mut().regs.write(2, c.b);
+                if prefix != 0 {
+                    m.bus_mut().store32(DRAM_BASE, addi(31, 31, 0)).unwrap();
+                }
+                // Exact op, x0-discard variant, and an immediately dependent readback.
+                for (idx, word) in [c.word, c.word & !(31 << 7), addi(4, 3, 0)]
+                    .into_iter()
+                    .enumerate()
+                {
+                    m.bus_mut()
+                        .store32(DRAM_BASE + (idx + prefix) as u64 * 4, word)
+                        .unwrap();
+                }
+                m
+            };
+            let mut reference = setup(false, false);
+            let mut reference_trace = Records::default();
+            assert_eq!(
+                reference.run_traced(budget, &mut reference_trace),
+                RunOutcome::MaxInstrs
+            );
+            assert_eq!(
+                reference.hart().regs.read(3),
+                expected,
+                "{} prefix={prefix}",
+                c.name
+            );
+            assert_eq!(
+                reference.hart().regs.read(4),
+                expected,
+                "{} prefix={prefix} dependent read",
+                c.name
+            );
+            assert_eq!(
+                reference_trace.0[prefix].rd,
+                Some((3, expected)),
+                "{} prefix={prefix}",
+                c.name
+            );
+            assert_eq!(
+                reference_trace.0[prefix + 1].rd,
+                None,
+                "{} prefix={prefix} x0 trace",
+                c.name
+            );
+            assert_eq!(reference.hart().resv, Some((DATA, 8)));
+            for (cache, batching) in [(false, false), (true, false), (true, true)] {
+                for slices in [&[budget][..], &[1 + prefix as u64, 0, 2][..]] {
+                    for recording in [false, true] {
+                        let mut m = setup(cache, batching);
+                        let mut trace = Records::default();
+                        for &budget in slices {
+                            let outcome = if recording {
+                                m.run_traced(budget, &mut trace)
+                            } else {
+                                m.run(budget)
+                            };
+                            assert_eq!(
+                                outcome,
+                                RunOutcome::MaxInstrs,
+                                "{} prefix={prefix}",
+                                c.name
+                            );
+                        }
+                        assert_same(&reference, &m);
+                        assert_eq!(m.hart().regs.read(0), 0, "{} prefix={prefix} x0", c.name);
+                        // Assert the independent expected value on the candidate too,
+                        // making a broken deferred write visible without trace capture.
                         assert_eq!(
-                            reference_trace.0, trace.0,
-                            "{} cache={cache} batching={batching} slices={slices:?}",
+                            m.hart().regs.read(3),
+                            expected,
+                            "{} prefix={prefix} recording={recording} cache={cache} batching={batching}",
                             c.name
                         );
+                        if recording {
+                            assert_eq!(
+                                reference_trace.0, trace.0,
+                                "{} prefix={prefix} cache={cache} batching={batching} slices={slices:?}",
+                                c.name
+                            );
+                        }
                     }
                 }
             }
+            evidence.extend_from_slice(&reference_trace.0);
+            writeln!(
+                &mut states,
+                "{} prefix={prefix} {}",
+                c.name,
+                digest(&reference)
+            )
+            .unwrap();
         }
-        evidence.extend_from_slice(&reference_trace.0);
-        writeln!(&mut states, "{} {}", c.name, digest(&reference)).unwrap();
     }
     record_evidence(name, &evidence, &states);
 }
