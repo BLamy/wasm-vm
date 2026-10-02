@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-10-02T20:36:39.999047+00:00",
+  "submissionHead": "35448100affd89128c1579662851265f076b1dac",
+  "runtimeHead": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "url": "https://wasm-vm.pages.dev",
+  "records": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873",
+      "size": 1633329,
+      "matches_worker_and_committed_dist": true,
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--location",
+        "--max-time",
+        "45",
+        "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm"
+      ]
+    },
+    {
+      "path": "roadmap.js",
+      "sha256": "bb8d6f7b7ee5f39d4c1e76da6c4afa4dde30ad0cbb3b98f50db8f54a6ac751c6",
+      "size": 52600,
+      "matches_worker_and_committed_dist": true,
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--location",
+        "--max-time",
+        "45",
+        "https://wasm-vm.pages.dev/roadmap.js"
+      ]
+    },
+    {
+      "path": "tasks.json",
+      "sha256": "ee917f4a67d783f603a5147d20e614911aa2db4fe2ad5ac53a8ea73ccf05db28",
+      "size": 3772629,
+      "matches_worker_and_committed_dist": true,
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--location",
+        "--max-time",
+        "45",
+        "https://wasm-vm.pages.dev/tasks.json"
+      ]
+    }
+  ],
+  "submissionBindingMatched": true,
+  "liveSuitePassed": 127,
+  "liveCapabilityPassed": 67,
+  "unexpectedConsoleErrors": 0,
+  "expectedConsoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "url": "https://wasm-vm.pages.dev/favicon.ico"
+    }
+  ],
+  "screenshotSha256": "b5aeed8adddebe256e90a1bb0433f0f7efa7071a85eb88f5717e502661a76990"
+}

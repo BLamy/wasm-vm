@@ -53,6 +53,13 @@ try {
     && document.getElementById("suite-run")?.disabled === false, expectedTotal, { timeout: 120_000 });
   const metrics = await page.evaluate(() => Object.fromEntries(["metric-pass", "metric-fail", "metric-done"].map((id) => [id, document.getElementById(id)?.textContent.trim()])));
   assert.deepEqual(metrics, { "metric-pass": expectedTotal, "metric-fail": "0", "metric-done": expectedTotal });
+  let capability = null;
+  if (process.env.E5_DEMO_CAPABILITY) {
+    const row = page.locator(".cap").filter({ has: page.locator(".cap-name", { hasText: process.env.E5_DEMO_CAPABILITY }) });
+    assert.equal(await row.count(), 1, "requested capability must be unique");
+    assert.equal(await row.locator(".cap-pip").getAttribute("class"), "cap-pip live");
+    capability = await row.innerText();
+  }
   await page.locator("#rm-search").fill(task);
   await page.locator(".rm-g-label").filter({ hasText: task }).click();
   await page.locator("#rm-detail").waitFor({ state: "visible" });
@@ -62,7 +69,7 @@ try {
   assert.deepEqual(httpErrors, []);
   await mkdir(out, { recursive: true });
   const screenshot = await page.screenshot({ path: path.join(out, "demo-suite.png") });
-  const result = { url: `${base}/app.html?noAutoBoot=1`, browser: browser.version(), metrics, detail, errors, httpErrors, consoleLog,
+  const result = { url: `${base}/app.html?noAutoBoot=1`, browser: browser.version(), metrics, detail, capability, errors, httpErrors, consoleLog,
     screenshotSha256: createHash("sha256").update(screenshot).digest("hex") };
   await writeFile(path.join(out, "demo-suite.json"), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify({ metrics, errors, httpErrors, detail }));

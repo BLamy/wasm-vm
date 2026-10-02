@@ -1,0 +1,18 @@
+{
+  "head": "2af39073f0f1aaf3cc041797b738b963e90b554c",
+  "frozenRuntimeHead": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "baselineHead": "a6ae84fd1c71c76ecadcff9000c40ed6319ef4b5",
+  "sha256": {
+    "crates/core/src/hart/mod.rs": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae",
+    "crates/core/src/lib.rs": "c401d8fff4e027c9815cbf2e47376a860bca31d199347ce47ee91b7daf47fab6",
+    "crates/core/tests/integer_replay.rs": "1db60893bcb537be4de11c798913a7af425b0cbd7dfdf563a926bac504fccdb2",
+    "crates/wasm/tests/integer_replay.rs": "1b68a90357ab1f15c721b8679eaf401c00f0cd78c564746f770ce003ae7d0285",
+    "Cargo.toml": "da37ba00621fbe0f427d429f32aa475feca70daa958d626fcb37f48ca0b24e9c",
+    "Cargo.lock": "80adc2d17f060267b4a8ad69e7ec957ecf9828b6c3d0173bd4e646b9c136f4b3",
+    ".cargo/config.toml": "693000886a9f8195d7dbfbba41d9ffa19147b18233b83f52c4626d92a54c2b7b",
+    "target/release/wasm-vm": "48989812b5c1207d121c3c68a9c6c463e879cba3c33041564c98c354e6f09a7a",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873"
+  },
+  "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "guestOracleCases": 6
+}

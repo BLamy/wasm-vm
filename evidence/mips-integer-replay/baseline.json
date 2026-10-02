@@ -1,0 +1,9 @@
+{
+  "head": "a6ae84fd1c71c76ecadcff9000c40ed6319ef4b5",
+  "coreSourceSha256": "454a3fb7c578f75e675f532d182e64a1f441d7eebfa0caed77ef8fe41fae3673",
+  "rlibSha256": "f0fa5b9b474f1a28c352327286a469b9eb020324e5444e37f54d4abd26ff0172",
+  "wasmSha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+  "cliSha256": "b1e12a32647789429b6b28239e198d17385303129d84344222cbd5c01833d268",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "baselineArtifactDirectory": "/tmp/wasm-vm-mips-baseline"
+}

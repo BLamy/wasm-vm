@@ -4174,6 +4174,21 @@ impl Machine {
         mut capture: C,
         defer: bool,
     ) -> Result<(), Trap> {
+        if defer {
+            debug_assert!(dispatch::retire_deferrable(&op.instr));
+            debug_assert!(self.bus.code_write_log_mut().is_empty());
+            // The decoded block has already classified this as a pure integer op. Inline its
+            // shared semantics into replay without entering the general executor's bus/trap path.
+            let (rd, value) = self
+                .hart
+                .integer_result(op.instr)
+                .expect("deferred operations have pure integer semantics");
+            self.hart.regs.write(rd, value);
+            self.hart.regs.pc = pc.wrapping_add(u64::from(op.len));
+            let output = capture.finish(rd, value);
+            capture.retire(output, pc, op.raw);
+            return Ok(());
+        }
         let output = self.hart.execute(
             &mut self.bus,
             op.instr,
@@ -4181,12 +4196,6 @@ impl Machine {
             u64::from(op.raw),
             &mut capture,
         )?;
-        if defer {
-            debug_assert!(dispatch::retire_deferrable(&op.instr));
-            debug_assert!(self.bus.code_write_log_mut().is_empty());
-            capture.retire(output, pc, op.raw);
-            return Ok(());
-        }
         self.hart.csr.retire_tick();
         capture.retire(output, pc, op.raw);
         // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):

@@ -1,0 +1,24 @@
+{
+  "head": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "command": [
+    "cargo",
+    "test",
+    "-j",
+    "4",
+    "-p",
+    "wasm-vm-core",
+    "--features",
+    "trace",
+    "--test",
+    "integer_replay",
+    "all_43_integer_opcodes_match_literal_results_in_every_replay_mode",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "exit": 101,
+  "seconds": 3.899,
+  "runtime_sha256_before": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae",
+  "mutant_sha256": "2bbe743f84cc73fafcfee20be76063eb4d3c6ec9d08f852e5ffb72dd4f5bf272",
+  "runtime_restored_sha256": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae"
+}
