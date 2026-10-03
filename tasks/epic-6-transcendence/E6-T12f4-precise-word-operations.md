@@ -3,7 +3,7 @@ id: E6-T12f4
 epic: 6
 title: Preserve PRECISE comparison selection and copy semantics on the GPU
 priority: 525.0269914
-status: pending
+status: in-progress
 depends_on: [E6-T12f1]
 estimate: S
 risk: high
@@ -43,4 +43,23 @@ boundaries that only have the existing floating-output contract.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+E6-T12f1 is verified at `2a0d0359de37452d5a78bb9ab6fbf8583c69cb7c`;
+the preceding radial boundary is verified at
+`220c2640d8c75df4decae10a3aa12a7be150897f`. Audit the pinned virglrenderer
+1.3.0 instruction Precise bit, text suffix parser and upstream destination
+qualifier behavior against the stable Mesa 24.2.8 TGSI definition. Retain a
+per-instruction flag in checked IR and implement only the four exact word
+operations named by this task. MAX selects the second source on equal or
+unordered comparisons, preserving the selected word including its zero sign
+or NaN payload. Do not infer exact upstream RSQ/DP3 arithmetic from a marked
+copy or comparison. ADD_PRECISE and MUL_PRECISE remain separately gated.
+
+Preserve every numeric/output and owned-bank/control obligation under a closed
+precision contract. Record independent both-stage word oracles, consumed
+swizzles and aliases, actual shared-renderer GPU results, real compiler-source
+sabotage, sanitizer/Wasm parity, retained independent leaves, caps and a final
+pristine clone. Original bodies retain their capture hashes. This isolated
+compiler/shared-renderer slice neither enables guest negotiation nor claims
+desktop 300 MIPS; original radial output authority remains its own boundary.
