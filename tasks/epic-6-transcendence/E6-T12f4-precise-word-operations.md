@@ -2,7 +2,7 @@
 id: E6-T12f4
 epic: 6
 title: Preserve PRECISE comparison selection and copy semantics on the GPU
-priority: 525.0270004
+priority: 525.0269914
 status: pending
 depends_on: [E6-T12f1]
 estimate: S

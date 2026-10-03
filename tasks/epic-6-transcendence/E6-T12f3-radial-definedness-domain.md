@@ -2,7 +2,7 @@
 id: E6-T12f3
 epic: 6
 title: Establish an explicit admission contract for radial shader definedness
-priority: 525.0270003
+priority: 525.0269913
 status: pending
 depends_on: [E6-T12f2]
 estimate: S

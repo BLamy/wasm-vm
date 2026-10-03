@@ -2,7 +2,7 @@
 id: E6-T12f5
 epic: 6
 title: Execute PRECISE ADD and MUL with explicit binary32 rounding
-priority: 525.0270005
+priority: 525.0269915
 status: pending
 depends_on: [E6-T12f4]
 estimate: S

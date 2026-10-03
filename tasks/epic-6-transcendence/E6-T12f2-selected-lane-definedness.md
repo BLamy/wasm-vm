@@ -2,7 +2,7 @@
 id: E6-T12f2
 epic: 6
 title: Prove selected-away interpolation lanes without inventing values
-priority: 525.0270002
+priority: 525.0269912
 status: pending
 depends_on: [E6-T12f1]
 estimate: S

@@ -9,7 +9,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Next up (deps satisfied, in priority order)
 
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
-1. **E6-T12f1** — Implement raw FSEQ and FSNE masks without changing precision semantics
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -569,6 +568,12 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269907` [E6-T12e7](epic-6-transcendence/E6-T12e7-structured-conditional.md) — Validate and execute structured TGSI unsigned conditionals *(deps: E6-T12e6b)*
 - [x] `525.0269908` [E6-T12e8](epic-6-transcendence/E6-T12e8-indirect-constants.md) — Admit proven-bounded TGSI indirect constant access *(deps: E6-T12e7)*
 - [x] `525.0269909` [E6-T12e9](epic-6-transcendence/E6-T12e9-bounded-loops.md) — Execute structured loops only with established execution and address bounds *(deps: E6-T12e8)*
+- [~] `525.0269911` [E6-T12f1](epic-6-transcendence/E6-T12f1-raw-float-equality.md) — Implement raw FSEQ and FSNE masks without changing precision semantics *(deps: E6-T12e9)*
+- [ ] `525.0269912` [E6-T12f2](epic-6-transcendence/E6-T12f2-selected-lane-definedness.md) — Prove selected-away interpolation lanes without inventing values *(deps: E6-T12f1)*
+- [ ] `525.0269913` [E6-T12f3](epic-6-transcendence/E6-T12f3-radial-definedness-domain.md) — Establish an explicit admission contract for radial shader definedness *(deps: E6-T12f2)*
+- [ ] `525.0269914` [E6-T12f4](epic-6-transcendence/E6-T12f4-precise-word-operations.md) — Preserve PRECISE comparison selection and copy semantics on the GPU *(deps: E6-T12f1)*
+- [ ] `525.0269915` [E6-T12f5](epic-6-transcendence/E6-T12f5-precise-binary32-arithmetic.md) — Execute PRECISE ADD and MUL with explicit binary32 rounding *(deps: E6-T12f4)*
+- [ ] `525.0269916` [E6-T12f6](epic-6-transcendence/E6-T12f6-original-shader-closure.md) — Close the unchanged 19-body shader corpus with explicit contracts *(deps: E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f5)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
@@ -593,12 +598,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Epic 6 — `epic-6-transcendence`
 
 - [-] `525.027` [E6-T12f](epic-6-transcendence/E6-T12f-complete-corpus-shader-semantics.md) — Preserve PRECISE semantics and close all original captured shader bodies *(deps: E6-T12e9)*
-- [ ] `525.0270001` [E6-T12f1](epic-6-transcendence/E6-T12f1-raw-float-equality.md) — Implement raw FSEQ and FSNE masks without changing precision semantics *(deps: E6-T12e9)*
-- [ ] `525.0270002` [E6-T12f2](epic-6-transcendence/E6-T12f2-selected-lane-definedness.md) — Prove selected-away interpolation lanes without inventing values *(deps: E6-T12f1)*
-- [ ] `525.0270003` [E6-T12f3](epic-6-transcendence/E6-T12f3-radial-definedness-domain.md) — Establish an explicit admission contract for radial shader definedness *(deps: E6-T12f2)*
-- [ ] `525.0270004` [E6-T12f4](epic-6-transcendence/E6-T12f4-precise-word-operations.md) — Preserve PRECISE comparison selection and copy semantics on the GPU *(deps: E6-T12f1)*
-- [ ] `525.0270005` [E6-T12f5](epic-6-transcendence/E6-T12f5-precise-binary32-arithmetic.md) — Execute PRECISE ADD and MUL with explicit binary32 rounding *(deps: E6-T12f4)*
-- [ ] `525.0270006` [E6-T12f6](epic-6-transcendence/E6-T12f6-original-shader-closure.md) — Close the unchanged 19-body shader corpus with explicit contracts *(deps: E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f5)*
 - [x] `525.02701` [E6-T10a](epic-6-transcendence/E6-T10a-virgl-shader-bridge.md) — Reuse VirGL TGSI shader translation in a bounded browser module *(deps: E5-T06b, E5.5-T03bg)*
 - [ ] `525.02701` [E6-T12g](epic-6-transcendence/E6-T12g-virgl-format-view-mapping.md) — Map required VirGL resource formats and texture views to WebGL2 *(deps: E6-T12f6)*
 - [x] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*

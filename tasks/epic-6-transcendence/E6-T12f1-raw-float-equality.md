@@ -2,8 +2,8 @@
 id: E6-T12f1
 epic: 6
 title: Implement raw FSEQ and FSNE masks without changing precision semantics
-priority: 525.0270001
-status: pending
+priority: 525.0269911
+status: in-progress
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -76,4 +76,11 @@ strict receipts. Final source freezes before the complete recorded submission.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+Prioritize the six graphics-semantic slices before the desktop publication task
+to continue the user’s explicit guest-GPU implementation request. The earlier
+E5.5-T03az verdict verified a negative trial, not desktop release admission.
+E9 is independently verified at `80813f4e45202cec3769d51b4f7d2b421034df01`;
+no other task occupies the active lane.
+

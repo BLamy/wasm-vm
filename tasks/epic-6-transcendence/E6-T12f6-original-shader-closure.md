@@ -2,7 +2,7 @@
 id: E6-T12f6
 epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
-priority: 525.0270006
+priority: 525.0269916
 status: pending
 depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f5]
 estimate: S
