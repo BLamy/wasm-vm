@@ -1200,9 +1200,9 @@
     "ok": false
   },
   {
-    "name": "const-bank-8",
+    "name": "const-bank-46",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[8]\nMOV OUT[0], CONST[8]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[46]\nMOV OUT[0], CONST[46]\nEND\n",
     "ok": false
   },
   {
@@ -1302,21 +1302,21 @@
     "ok": false
   },
   {
-    "name": "bad-register-TEMP-10",
+    "name": "bad-register-TEMP-118",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[10]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[118]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {
-    "name": "bad-register-CONST-8",
+    "name": "bad-register-CONST-46",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[8]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[46]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {
-    "name": "bad-register-CONST-0__8",
+    "name": "bad-register-CONST-0__46",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..8]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..46]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {
@@ -1338,9 +1338,9 @@
     "ok": false
   },
   {
-    "name": "bad-register-TEMP-0__10",
+    "name": "bad-register-TEMP-0__118",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..118]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {

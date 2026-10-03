@@ -1,0 +1,434 @@
+{
+  "schema": "wasm-vm-banks-coverage-v1",
+  "frozenHead": "f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91",
+  "bridgeSha256": "eea6467ae207e56057ed54cdf25cb1dd992fefd61f433b3190ced073a9beca88",
+  "coverageSha256": "73d9b0d1dc14857f88bc4a769da4506601fa34a505718906919a0258fdc7bb6c",
+  "profileSha256": "1def60c152f74e4c3aec228817359f5645196cabc3e252bc6fef1222d337921f",
+  "changedExecutableLines": [
+    {
+      "line": 120,
+      "countDisplay": "282k",
+      "source": "   unsigned value = 0, digits = 0;"
+    },
+    {
+      "line": 121,
+      "countDisplay": "282k",
+      "source": "   bool zero = **p == '0';"
+    },
+    {
+      "line": 122,
+      "countDisplay": "805k",
+      "source": "   while (isdigit((unsigned char)**p)) {"
+    },
+    {
+      "line": 123,
+      "countDisplay": "523k",
+      "source": "      unsigned digit = (unsigned)(**p - '0');"
+    },
+    {
+      "line": 124,
+      "countDisplay": "523k",
+      "source": "      if (++digits > 3 || (zero && digits > 1) || value > (limit - 1) / 10 ||"
+    },
+    {
+      "line": 125,
+      "countDisplay": "523k",
+      "source": "          (value == (limit - 1) / 10 && digit > (limit - 1) % 10)) {"
+    },
+    {
+      "line": 126,
+      "countDisplay": "264",
+      "source": "         failure_code = \"unsupported-feature\";"
+    },
+    {
+      "line": 127,
+      "countDisplay": "264",
+      "source": "         return false;"
+    },
+    {
+      "line": 129,
+      "countDisplay": "522k",
+      "source": "      value = value * 10 + digit;"
+    },
+    {
+      "line": 130,
+      "countDisplay": "522k",
+      "source": "      ++*p;"
+    },
+    {
+      "line": 132,
+      "countDisplay": "282k",
+      "source": "   *result = value;"
+    },
+    {
+      "line": 137,
+      "countDisplay": "274k",
+      "source": "   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS : FILE_REGISTERS;"
+    },
+    {
+      "line": 141,
+      "countDisplay": "244k",
+      "source": "   if (word(p, \"ADDR\")) { failure_code = \"unsupported-feature\"; return false; }"
+    },
+    {
+      "line": 145,
+      "countDisplay": "244k",
+      "source": "   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index, register_limit(f))) return false;"
+    },
+    {
+      "line": 152,
+      "countDisplay": "31.0k",
+      "source": "      if (!index_number(p, &r->last, register_limit(f)) || r->last < r->index) return false;"
+    },
+    {
+      "line": 219,
+      "countDisplay": "58",
+      "source": "   if (!digits) return false;"
+    },
+    {
+      "line": 220,
+      "countDisplay": "56",
+      "source": "   const char *after = *p;"
+    },
+    {
+      "line": 221,
+      "countDisplay": "56",
+      "source": "   space(&after);"
+    },
+    {
+      "line": 222,
+      "countDisplay": "56",
+      "source": "   if (*after != ',' && *after != '}') return false;"
+    },
+    {
+      "line": 225,
+      "countDisplay": "48",
+      "source": "   if (((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0) ||"
+    },
+    {
+      "line": 226,
+      "countDisplay": "48",
+      "source": "       !isfinite(value) || fabsf(value) > 1000000.0f) {"
+    },
+    {
+      "line": 227,
+      "countDisplay": "16",
+      "source": "      failure_code = \"unsupported-feature\";"
+    },
+    {
+      "line": 228,
+      "countDisplay": "16",
+      "source": "      return false;"
+    },
+    {
+      "line": 230,
+      "countDisplay": "32",
+      "source": "   return true;"
+    },
+    {
+      "line": 512,
+      "countDisplay": "15.9k",
+      "source": "   append(\"\\\",\\\"metadata\\\":{\\\"profile\\\":\\\"virgl-webgl2-straight-line-v5\\\",\\\"stage\\\":\\\"%s\\\",\\\"inputs\\\":\", stage ? \"fragment\" : \"vertex\");"
+    }
+  ],
+  "changedBranches": [
+    [
+      141,
+      8,
+      141,
+      23,
+      6,
+      244144,
+      0,
+      0,
+      4
+    ],
+    [
+      145,
+      8,
+      145,
+      23,
+      352,
+      243792,
+      0,
+      0,
+      4
+    ],
+    [
+      145,
+      27,
+      145,
+      47,
+      44,
+      243748,
+      0,
+      0,
+      4
+    ],
+    [
+      145,
+      51,
+      145,
+      97,
+      358,
+      243390,
+      0,
+      0,
+      4
+    ],
+    [
+      152,
+      11,
+      152,
+      56,
+      16,
+      31023,
+      0,
+      0,
+      4
+    ],
+    [
+      152,
+      60,
+      152,
+      78,
+      4,
+      31019,
+      0,
+      0,
+      4
+    ],
+    [
+      137,
+      11,
+      137,
+      23,
+      127990,
+      146797,
+      0,
+      0,
+      4
+    ],
+    [
+      137,
+      43,
+      137,
+      56,
+      83056,
+      63741,
+      0,
+      0,
+      4
+    ],
+    [
+      122,
+      11,
+      122,
+      38,
+      523260,
+      282036,
+      0,
+      0,
+      4
+    ],
+    [
+      124,
+      11,
+      124,
+      23,
+      4,
+      523256,
+      0,
+      0,
+      4
+    ],
+    [
+      124,
+      28,
+      124,
+      32,
+      90585,
+      432671,
+      0,
+      0,
+      4
+    ],
+    [
+      124,
+      36,
+      124,
+      46,
+      100,
+      90485,
+      0,
+      0,
+      4
+    ],
+    [
+      124,
+      51,
+      124,
+      75,
+      110,
+      523046,
+      0,
+      0,
+      4
+    ],
+    [
+      125,
+      12,
+      125,
+      37,
+      199377,
+      323669,
+      0,
+      0,
+      4
+    ],
+    [
+      125,
+      41,
+      125,
+      65,
+      50,
+      199327,
+      0,
+      0,
+      4
+    ],
+    [
+      219,
+      8,
+      219,
+      15,
+      2,
+      56,
+      0,
+      0,
+      4
+    ],
+    [
+      222,
+      8,
+      222,
+      21,
+      16,
+      40,
+      0,
+      0,
+      4
+    ],
+    [
+      222,
+      25,
+      222,
+      38,
+      8,
+      8,
+      0,
+      0,
+      4
+    ],
+    [
+      225,
+      9,
+      225,
+      43,
+      34,
+      14,
+      0,
+      0,
+      4
+    ],
+    [
+      225,
+      47,
+      225,
+      81,
+      6,
+      28,
+      0,
+      0,
+      4
+    ],
+    [
+      226,
+      8,
+      226,
+      17,
+      8,
+      34,
+      0,
+      0,
+      4
+    ],
+    [
+      226,
+      9,
+      226,
+      9,
+      0,
+      0,
+      0,
+      0,
+      4
+    ],
+    [
+      226,
+      9,
+      226,
+      9,
+      42,
+      0,
+      0,
+      0,
+      4
+    ],
+    [
+      226,
+      28,
+      226,
+      53,
+      2,
+      32,
+      0,
+      0,
+      4
+    ],
+    [
+      512,
+      106,
+      512,
+      111,
+      7960,
+      7959,
+      0,
+      0,
+      4
+    ]
+  ],
+  "allChangedExecutableLinesCovered": true,
+  "waivers": [
+    {
+      "path": "renderer/virgl-shader/bridge.c:22",
+      "reason": "Enum table extents are compile-time data; all admitted TEMP0..117/CONST0..45 and first rejected neighbors are executed."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h:9",
+      "reason": "Compile-time instruction bound checked by179/180 neighbors in both stages and pair positions."
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs:5",
+      "reason": "Frozen exported constants checked against independent literals in actual Wasm/browser execution; no new executable algorithm."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c:128",
+      "reason": "Closing braces and function signatures contain no independently executable behavior; enclosing paths execute."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c:226",
+      "reason": "Two zero-width isfinite generic macro alternatives are compile-time type choices for non-float operands. Concrete float finite predicate and magnitude predicate each take both outcomes."
+    }
+  ]
+}

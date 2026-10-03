@@ -1,0 +1,11 @@
+{
+  "runtimeChanges": false,
+  "nativeAttackFailures": 0,
+  "hardwareAttackFailures": 0,
+  "supplementalHarnessRepair": {
+    "file": "extra-native-parity.py",
+    "issue": "Python3.9 zip does not support strict keyword",
+    "repair": "Explicit length equality before ordinary zip",
+    "outcome": "Six supplemental exact shader results match native; no runtime or evidence change."
+  }
+}

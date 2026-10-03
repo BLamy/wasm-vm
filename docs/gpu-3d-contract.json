@@ -728,11 +728,11 @@
   },
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
-  "shaderProfile": "virgl-webgl2-straight-line-v4",
+  "shaderProfile": "virgl-webgl2-straight-line-v5",
   "shaderSyntax": {
     "FS_COLOR0_WRITES_ALL_CBUFS": {
       "mapping": "Exactly one fragment property with value1 before instructions supported under fixed one-target configuration; no MRT support.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "PRECISE": {
@@ -745,17 +745,17 @@
     },
     "UINT32-immediates": {
       "mapping": "Four checked decimal words are preserved as float bits; finite magnitude<=1e6 only, no nonzero subnormals. Integer operations remain rejected.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "declaration-masks": {
       "mapping": "Generic VS outputs and smooth or flat FS inputs may declare .xy or .xyz; all other declarations stay full-width.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "declaration-ranges-and-order": {
-      "mapping": "Non-overlapping TEMP ranges within0..9 and CONST ranges within0..7 are supported, including declarations after immediates. Other file ranges, address registers and larger banks remain rejected.",
-      "scope": "bounded-v4-subset-only",
+      "mapping": "Canonical decimal TEMP0..117 and CONST0..45 indices/ranges are supported, including declarations after immediates. IN/OUT/IMM/SAMP/SVIEW/GENERIC remain0..7; 179 non-END instructions. Text/token/line/GLSL/response/fixed-Wasm bounds remain unchanged. This frontend boundary does not widen command constant uploads or renderer reflection; E6-T12e3b gates those. Other file ranges, address registers and larger banks remain rejected.",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "indirect-constant-index": {
@@ -764,17 +764,17 @@
     },
     "partial-destination-writes": {
       "mapping": "MOV/ADD/MUL accept TEMP/OUT masks x/y/z/w/xy/xyz, tracking initialized lanes. Complete POSITION/COLOR and every declared generic output lane are required. MAD/TEX retain full-width destinations.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "semantics-and-interpolation": {
       "mapping": "POSITION/COLOR and GENERIC0..7 with PERSPECTIVE or CONSTANT fragment interpolation. Bounded pair translation derives matching vertex qualifiers and a canonical semantic/mask/mode identity; no caller compiler keys.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "source-swizzles-and-negation": {
       "mapping": "Exactly four xyzw selectors supported. Consumed source lanes follow destination masks for componentwise operations and xy for 2D TEX, then swizzles select declared and initialized lanes. Negation/modifiers remain rejected.",
-      "scope": "bounded-v4-subset-only",
+      "scope": "bounded-v5-subset-only",
       "status": "supported"
     },
     "structured-target-annotations": {

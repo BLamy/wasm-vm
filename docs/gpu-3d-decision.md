@@ -33,7 +33,7 @@ require another shader translation stage and additional GL coordinate, binding
 and rasterization conversions. It is not selected by this contract. WebGL2 still
 needs explicit lowering where its semantics differ from native GL.
 
-The v4 shader bridge translates **twelve of 19 captured shader bodies** and
+The v5 shader bridge translates **twelve of 19 captured shader bodies** and
 rejects all seven PRECISE-bearing bodies with unsupported-feature. The original
 textured-scene pair retains its three-phase pixel proof. E6-T12e1 adds independent
 pixel fixtures for two original texture/intensity fragments and two original
@@ -41,7 +41,7 @@ affine/matrix vertex bodies. E6-T12e2 links the unchanged flat fragment with a
 translated literal vertex stage through the actual pair and command renderer
 paths. The other five accepted bodies have no execution claim. These explicit bindings do not establish a complete original workload.
 The nine literal shader regressions remain a separate frontend/API baseline.
-The profile now admits bounded CONST ranges, TEMP indices through9, generic
+The profile now admits CONST indices through45, TEMP indices through117, generic
 `.xy`/`.xyz` declarations and MOV/ADD/MUL component writes with definite lane
 initialization. Consumed lanes are checked after applying the source swizzle;
 2D texture coordinates consume xy. Fragment CONSTANT interpolation is supported
@@ -50,8 +50,18 @@ keys. A flat program owns and accounts for its vertex variant; selector
 generations and the effective interface both participate in program reuse.
 Unequal per-vertex attributes distinguish smooth from flat pixels, including
 mixed interfaces and switching back to a cached smooth pair. Integer/control
-flow and PRECISE remain rejected. See E6-T12e1 and E6-T12e2 task files for the
-exact originals, bounded APIs and acceptance evidence.
+flow and PRECISE remain rejected. The static limit is179 non-END instructions;
+the original maximum is178 non-END, leaving one instruction of headroom. This
+is a static admission limit, not a future loop execution bound. All other text,
+token, line, GLSL, response and fixed-Wasm bounds remain unchanged.
+
+The larger banks are a frontend capability. Command constant uploads still
+allow only eight vec4s, and renderer reflection/restoration has not been widened.
+E6-T12e3b separately gates those paths. The pinned compiler can emit a declared
+uniform extent47 when CONST45 precedes a disjoint CONST0 declaration; the legal
+address range remains0..45. Metadata retains that declared extent, while direct
+hardware proofs use actual active uniform reflection. No input text is rewritten.
+See E6-T12e1/E6-T12e2/E6-T12e3 for bounded APIs and acceptance evidence.
 No general Mesa capset can honestly describe that frontend: pinned Mesa assumes
 256 temporaries, indirect temporary/constant access and control-flow depth 32
 regardless of many advertised bits.

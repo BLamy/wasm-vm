@@ -4,7 +4,7 @@ epic: 6
 title: Preserve straight-line TGSI 32-bit integer and mask semantics
 priority: 525.0269904
 status: pending
-depends_on: [E6-T12e3]
+depends_on: [E6-T12e3b]
 estimate: S
 risk: high
 capstone: false

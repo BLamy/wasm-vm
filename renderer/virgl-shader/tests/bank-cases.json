@@ -1,0 +1,3032 @@
+[
+  {
+    "name": "hardware-low-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[9], IN[0], CONST[7]\nADD TEMP[8], TEMP[9], CONST[0]\nMOV OUT[0], TEMP[8]\nMOV OUT[1], TEMP[8]\nMOV OUT[1].w, TEMP[17].xxxx\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 6
+    }
+  },
+  {
+    "name": "hardware-high-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[117], IN[0], CONST[45]\nADD TEMP[116], TEMP[117], CONST[0]\nMOV OUT[0], TEMP[116]\nMOV OUT[1], TEMP[116]\nMOV OUT[1].w, TEMP[17].xxxx\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 6
+    }
+  },
+  {
+    "name": "hardware-low-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[9], CONST[7]\nADD OUT[0], TEMP[9], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 4
+    }
+  },
+  {
+    "name": "hardware-high-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nADD OUT[0], TEMP[117], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 4
+    }
+  },
+  {
+    "name": "hardware-simple-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "hardware-simple-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "hardware-order-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[5]\nDCL CONST[0]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nADD OUT[0], TEMP[117], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 47,
+      "instructions": 4
+    }
+  },
+  {
+    "name": "hardware-maximal-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\n0: MOV TEMP[0], CONST[0]\n1: MOV TEMP[1], CONST[1]\n2: MOV TEMP[2], CONST[2]\n3: MOV TEMP[3], CONST[3]\n4: MOV TEMP[4], CONST[4]\n5: MOV TEMP[5], CONST[5]\n6: MOV TEMP[6], CONST[6]\n7: MOV TEMP[7], CONST[7]\n8: MOV TEMP[8], CONST[8]\n9: MOV TEMP[9], CONST[9]\n10: MOV TEMP[10], CONST[10]\n11: MOV TEMP[11], CONST[11]\n12: MOV TEMP[12], CONST[12]\n13: MOV TEMP[13], CONST[13]\n14: MOV TEMP[14], CONST[14]\n15: MOV TEMP[15], CONST[15]\n16: MOV TEMP[16], CONST[16]\n17: MOV TEMP[17], CONST[17]\n18: MOV TEMP[18], CONST[18]\n19: MOV TEMP[19], CONST[19]\n20: MOV TEMP[20], CONST[20]\n21: MOV TEMP[21], CONST[21]\n22: MOV TEMP[22], CONST[22]\n23: MOV TEMP[23], CONST[23]\n24: MOV TEMP[24], CONST[24]\n25: MOV TEMP[25], CONST[25]\n26: MOV TEMP[26], CONST[26]\n27: MOV TEMP[27], CONST[27]\n28: MOV TEMP[28], CONST[28]\n29: MOV TEMP[29], CONST[29]\n30: MOV TEMP[30], CONST[30]\n31: MOV TEMP[31], CONST[31]\n32: MOV TEMP[32], CONST[32]\n33: MOV TEMP[33], CONST[33]\n34: MOV TEMP[34], CONST[34]\n35: MOV TEMP[35], CONST[35]\n36: MOV TEMP[36], CONST[36]\n37: MOV TEMP[37], CONST[37]\n38: MOV TEMP[38], CONST[38]\n39: MOV TEMP[39], CONST[39]\n40: MOV TEMP[40], CONST[40]\n41: MOV TEMP[41], CONST[41]\n42: MOV TEMP[42], CONST[42]\n43: MOV TEMP[43], CONST[43]\n44: MOV TEMP[44], CONST[44]\n45: MOV TEMP[45], CONST[45]\n46: MOV TEMP[46], CONST[0]\n47: MOV TEMP[47], CONST[1]\n48: MOV TEMP[48], CONST[2]\n49: MOV TEMP[49], CONST[3]\n50: MOV TEMP[50], CONST[4]\n51: MOV TEMP[51], CONST[5]\n52: MOV TEMP[52], CONST[6]\n53: MOV TEMP[53], CONST[7]\n54: MOV TEMP[54], CONST[8]\n55: MOV TEMP[55], CONST[9]\n56: MOV TEMP[56], CONST[10]\n57: MOV TEMP[57], CONST[11]\n58: MOV TEMP[58], CONST[12]\n59: MOV TEMP[59], CONST[13]\n60: MOV TEMP[60], CONST[14]\n61: MOV TEMP[61], CONST[15]\n62: MOV TEMP[62], CONST[16]\n63: MOV TEMP[63], CONST[17]\n64: MOV TEMP[64], CONST[18]\n65: MOV TEMP[65], CONST[19]\n66: MOV TEMP[66], CONST[20]\n67: MOV TEMP[67], CONST[21]\n68: MOV TEMP[68], CONST[22]\n69: MOV TEMP[69], CONST[23]\n70: MOV TEMP[70], CONST[24]\n71: MOV TEMP[71], CONST[25]\n72: MOV TEMP[72], CONST[26]\n73: MOV TEMP[73], CONST[27]\n74: MOV TEMP[74], CONST[28]\n75: MOV TEMP[75], CONST[29]\n76: MOV TEMP[76], CONST[30]\n77: MOV TEMP[77], CONST[31]\n78: MOV TEMP[78], CONST[32]\n79: MOV TEMP[79], CONST[33]\n80: MOV TEMP[80], CONST[34]\n81: MOV TEMP[81], CONST[35]\n82: MOV TEMP[82], CONST[36]\n83: MOV TEMP[83], CONST[37]\n84: MOV TEMP[84], CONST[38]\n85: MOV TEMP[85], CONST[39]\n86: MOV TEMP[86], CONST[40]\n87: MOV TEMP[87], CONST[41]\n88: MOV TEMP[88], CONST[42]\n89: MOV TEMP[89], CONST[43]\n90: MOV TEMP[90], CONST[44]\n91: MOV TEMP[91], CONST[45]\n92: MOV TEMP[92], CONST[0]\n93: MOV TEMP[93], CONST[1]\n94: MOV TEMP[94], CONST[2]\n95: MOV TEMP[95], CONST[3]\n96: MOV TEMP[96], CONST[4]\n97: MOV TEMP[97], CONST[5]\n98: MOV TEMP[98], CONST[6]\n99: MOV TEMP[99], CONST[7]\n100: MOV TEMP[100], CONST[8]\n101: MOV TEMP[101], CONST[9]\n102: MOV TEMP[102], CONST[10]\n103: MOV TEMP[103], CONST[11]\n104: MOV TEMP[104], CONST[12]\n105: MOV TEMP[105], CONST[13]\n106: MOV TEMP[106], CONST[14]\n107: MOV TEMP[107], CONST[15]\n108: MOV TEMP[108], CONST[16]\n109: MOV TEMP[109], CONST[17]\n110: MOV TEMP[110], CONST[18]\n111: MOV TEMP[111], CONST[19]\n112: MOV TEMP[112], CONST[20]\n113: MOV TEMP[113], CONST[21]\n114: MOV TEMP[114], CONST[22]\n115: MOV TEMP[115], CONST[23]\n116: MOV TEMP[116], CONST[24]\n117: MOV TEMP[117], CONST[25]\n118: ADD TEMP[117], TEMP[117], CONST[0]\n119: ADD TEMP[117], TEMP[117], CONST[1]\n120: ADD TEMP[117], TEMP[117], CONST[2]\n121: ADD TEMP[117], TEMP[117], CONST[3]\n122: ADD TEMP[117], TEMP[117], CONST[4]\n123: ADD TEMP[117], TEMP[117], CONST[5]\n124: ADD TEMP[117], TEMP[117], CONST[6]\n125: ADD TEMP[117], TEMP[117], CONST[7]\n126: ADD TEMP[117], TEMP[117], CONST[8]\n127: ADD TEMP[117], TEMP[117], CONST[9]\n128: ADD TEMP[117], TEMP[117], CONST[10]\n129: ADD TEMP[117], TEMP[117], CONST[11]\n130: ADD TEMP[117], TEMP[117], CONST[12]\n131: ADD TEMP[117], TEMP[117], CONST[13]\n132: ADD TEMP[117], TEMP[117], CONST[14]\n133: ADD TEMP[117], TEMP[117], CONST[15]\n134: ADD TEMP[117], TEMP[117], CONST[16]\n135: ADD TEMP[117], TEMP[117], CONST[17]\n136: ADD TEMP[117], TEMP[117], CONST[18]\n137: ADD TEMP[117], TEMP[117], CONST[19]\n138: ADD TEMP[117], TEMP[117], CONST[20]\n139: ADD TEMP[117], TEMP[117], CONST[21]\n140: ADD TEMP[117], TEMP[117], CONST[22]\n141: ADD TEMP[117], TEMP[117], CONST[23]\n142: ADD TEMP[117], TEMP[117], CONST[24]\n143: ADD TEMP[117], TEMP[117], CONST[25]\n144: ADD TEMP[117], TEMP[117], CONST[26]\n145: ADD TEMP[117], TEMP[117], CONST[27]\n146: ADD TEMP[117], TEMP[117], CONST[28]\n147: ADD TEMP[117], TEMP[117], CONST[29]\n148: ADD TEMP[117], TEMP[117], CONST[30]\n149: ADD TEMP[117], TEMP[117], CONST[31]\n150: ADD TEMP[117], TEMP[117], CONST[32]\n151: ADD TEMP[117], TEMP[117], CONST[33]\n152: ADD TEMP[117], TEMP[117], CONST[34]\n153: ADD TEMP[117], TEMP[117], CONST[35]\n154: ADD TEMP[117], TEMP[117], CONST[36]\n155: ADD TEMP[117], TEMP[117], CONST[37]\n156: ADD TEMP[117], TEMP[117], CONST[38]\n157: ADD TEMP[117], TEMP[117], CONST[39]\n158: ADD TEMP[117], TEMP[117], CONST[40]\n159: ADD TEMP[117], TEMP[117], CONST[41]\n160: ADD TEMP[117], TEMP[117], CONST[42]\n161: ADD TEMP[117], TEMP[117], CONST[43]\n162: ADD TEMP[117], TEMP[117], CONST[44]\n163: ADD TEMP[117], TEMP[117], CONST[45]\n164: ADD TEMP[117], TEMP[117], CONST[0]\n165: ADD TEMP[117], TEMP[117], CONST[1]\n166: ADD TEMP[117], TEMP[117], CONST[2]\n167: ADD TEMP[117], TEMP[117], CONST[3]\n168: ADD TEMP[117], TEMP[117], CONST[4]\n169: ADD TEMP[117], TEMP[117], CONST[5]\n170: ADD TEMP[117], TEMP[117], CONST[6]\n171: ADD TEMP[117], TEMP[117], CONST[7]\n172: ADD TEMP[117], TEMP[117], CONST[8]\n173: ADD TEMP[117], TEMP[117], CONST[9]\n174: ADD TEMP[117], TEMP[117], CONST[10]\n175: ADD TEMP[117], TEMP[117], CONST[11]\n176: ADD OUT[0].xyz, IN[0].xyzz, TEMP[117].xyzz\n177: MOV OUT[0].w, IN[0].wwww\n178: MOV OUT[1], TEMP[117]\n179: END\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 179
+    }
+  },
+  {
+    "name": "hardware-maximal-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\n0: MOV TEMP[0], CONST[0]\n1: MOV TEMP[1], CONST[1]\n2: MOV TEMP[2], CONST[2]\n3: MOV TEMP[3], CONST[3]\n4: MOV TEMP[4], CONST[4]\n5: MOV TEMP[5], CONST[5]\n6: MOV TEMP[6], CONST[6]\n7: MOV TEMP[7], CONST[7]\n8: MOV TEMP[8], CONST[8]\n9: MOV TEMP[9], CONST[9]\n10: MOV TEMP[10], CONST[10]\n11: MOV TEMP[11], CONST[11]\n12: MOV TEMP[12], CONST[12]\n13: MOV TEMP[13], CONST[13]\n14: MOV TEMP[14], CONST[14]\n15: MOV TEMP[15], CONST[15]\n16: MOV TEMP[16], CONST[16]\n17: MOV TEMP[17], CONST[17]\n18: MOV TEMP[18], CONST[18]\n19: MOV TEMP[19], CONST[19]\n20: MOV TEMP[20], CONST[20]\n21: MOV TEMP[21], CONST[21]\n22: MOV TEMP[22], CONST[22]\n23: MOV TEMP[23], CONST[23]\n24: MOV TEMP[24], CONST[24]\n25: MOV TEMP[25], CONST[25]\n26: MOV TEMP[26], CONST[26]\n27: MOV TEMP[27], CONST[27]\n28: MOV TEMP[28], CONST[28]\n29: MOV TEMP[29], CONST[29]\n30: MOV TEMP[30], CONST[30]\n31: MOV TEMP[31], CONST[31]\n32: MOV TEMP[32], CONST[32]\n33: MOV TEMP[33], CONST[33]\n34: MOV TEMP[34], CONST[34]\n35: MOV TEMP[35], CONST[35]\n36: MOV TEMP[36], CONST[36]\n37: MOV TEMP[37], CONST[37]\n38: MOV TEMP[38], CONST[38]\n39: MOV TEMP[39], CONST[39]\n40: MOV TEMP[40], CONST[40]\n41: MOV TEMP[41], CONST[41]\n42: MOV TEMP[42], CONST[42]\n43: MOV TEMP[43], CONST[43]\n44: MOV TEMP[44], CONST[44]\n45: MOV TEMP[45], CONST[45]\n46: MOV TEMP[46], CONST[0]\n47: MOV TEMP[47], CONST[1]\n48: MOV TEMP[48], CONST[2]\n49: MOV TEMP[49], CONST[3]\n50: MOV TEMP[50], CONST[4]\n51: MOV TEMP[51], CONST[5]\n52: MOV TEMP[52], CONST[6]\n53: MOV TEMP[53], CONST[7]\n54: MOV TEMP[54], CONST[8]\n55: MOV TEMP[55], CONST[9]\n56: MOV TEMP[56], CONST[10]\n57: MOV TEMP[57], CONST[11]\n58: MOV TEMP[58], CONST[12]\n59: MOV TEMP[59], CONST[13]\n60: MOV TEMP[60], CONST[14]\n61: MOV TEMP[61], CONST[15]\n62: MOV TEMP[62], CONST[16]\n63: MOV TEMP[63], CONST[17]\n64: MOV TEMP[64], CONST[18]\n65: MOV TEMP[65], CONST[19]\n66: MOV TEMP[66], CONST[20]\n67: MOV TEMP[67], CONST[21]\n68: MOV TEMP[68], CONST[22]\n69: MOV TEMP[69], CONST[23]\n70: MOV TEMP[70], CONST[24]\n71: MOV TEMP[71], CONST[25]\n72: MOV TEMP[72], CONST[26]\n73: MOV TEMP[73], CONST[27]\n74: MOV TEMP[74], CONST[28]\n75: MOV TEMP[75], CONST[29]\n76: MOV TEMP[76], CONST[30]\n77: MOV TEMP[77], CONST[31]\n78: MOV TEMP[78], CONST[32]\n79: MOV TEMP[79], CONST[33]\n80: MOV TEMP[80], CONST[34]\n81: MOV TEMP[81], CONST[35]\n82: MOV TEMP[82], CONST[36]\n83: MOV TEMP[83], CONST[37]\n84: MOV TEMP[84], CONST[38]\n85: MOV TEMP[85], CONST[39]\n86: MOV TEMP[86], CONST[40]\n87: MOV TEMP[87], CONST[41]\n88: MOV TEMP[88], CONST[42]\n89: MOV TEMP[89], CONST[43]\n90: MOV TEMP[90], CONST[44]\n91: MOV TEMP[91], CONST[45]\n92: MOV TEMP[92], CONST[0]\n93: MOV TEMP[93], CONST[1]\n94: MOV TEMP[94], CONST[2]\n95: MOV TEMP[95], CONST[3]\n96: MOV TEMP[96], CONST[4]\n97: MOV TEMP[97], CONST[5]\n98: MOV TEMP[98], CONST[6]\n99: MOV TEMP[99], CONST[7]\n100: MOV TEMP[100], CONST[8]\n101: MOV TEMP[101], CONST[9]\n102: MOV TEMP[102], CONST[10]\n103: MOV TEMP[103], CONST[11]\n104: MOV TEMP[104], CONST[12]\n105: MOV TEMP[105], CONST[13]\n106: MOV TEMP[106], CONST[14]\n107: MOV TEMP[107], CONST[15]\n108: MOV TEMP[108], CONST[16]\n109: MOV TEMP[109], CONST[17]\n110: MOV TEMP[110], CONST[18]\n111: MOV TEMP[111], CONST[19]\n112: MOV TEMP[112], CONST[20]\n113: MOV TEMP[113], CONST[21]\n114: MOV TEMP[114], CONST[22]\n115: MOV TEMP[115], CONST[23]\n116: MOV TEMP[116], CONST[24]\n117: MOV TEMP[117], CONST[25]\n118: ADD TEMP[117], TEMP[117], CONST[0]\n119: ADD TEMP[117], TEMP[117], CONST[1]\n120: ADD TEMP[117], TEMP[117], CONST[2]\n121: ADD TEMP[117], TEMP[117], CONST[3]\n122: ADD TEMP[117], TEMP[117], CONST[4]\n123: ADD TEMP[117], TEMP[117], CONST[5]\n124: ADD TEMP[117], TEMP[117], CONST[6]\n125: ADD TEMP[117], TEMP[117], CONST[7]\n126: ADD TEMP[117], TEMP[117], CONST[8]\n127: ADD TEMP[117], TEMP[117], CONST[9]\n128: ADD TEMP[117], TEMP[117], CONST[10]\n129: ADD TEMP[117], TEMP[117], CONST[11]\n130: ADD TEMP[117], TEMP[117], CONST[12]\n131: ADD TEMP[117], TEMP[117], CONST[13]\n132: ADD TEMP[117], TEMP[117], CONST[14]\n133: ADD TEMP[117], TEMP[117], CONST[15]\n134: ADD TEMP[117], TEMP[117], CONST[16]\n135: ADD TEMP[117], TEMP[117], CONST[17]\n136: ADD TEMP[117], TEMP[117], CONST[18]\n137: ADD TEMP[117], TEMP[117], CONST[19]\n138: ADD TEMP[117], TEMP[117], CONST[20]\n139: ADD TEMP[117], TEMP[117], CONST[21]\n140: ADD TEMP[117], TEMP[117], CONST[22]\n141: ADD TEMP[117], TEMP[117], CONST[23]\n142: ADD TEMP[117], TEMP[117], CONST[24]\n143: ADD TEMP[117], TEMP[117], CONST[25]\n144: ADD TEMP[117], TEMP[117], CONST[26]\n145: ADD TEMP[117], TEMP[117], CONST[27]\n146: ADD TEMP[117], TEMP[117], CONST[28]\n147: ADD TEMP[117], TEMP[117], CONST[29]\n148: ADD TEMP[117], TEMP[117], CONST[30]\n149: ADD TEMP[117], TEMP[117], CONST[31]\n150: ADD TEMP[117], TEMP[117], CONST[32]\n151: ADD TEMP[117], TEMP[117], CONST[33]\n152: ADD TEMP[117], TEMP[117], CONST[34]\n153: ADD TEMP[117], TEMP[117], CONST[35]\n154: ADD TEMP[117], TEMP[117], CONST[36]\n155: ADD TEMP[117], TEMP[117], CONST[37]\n156: ADD TEMP[117], TEMP[117], CONST[38]\n157: ADD TEMP[117], TEMP[117], CONST[39]\n158: ADD TEMP[117], TEMP[117], CONST[40]\n159: ADD TEMP[117], TEMP[117], CONST[41]\n160: ADD TEMP[117], TEMP[117], CONST[42]\n161: ADD TEMP[117], TEMP[117], CONST[43]\n162: ADD TEMP[117], TEMP[117], CONST[44]\n163: ADD TEMP[117], TEMP[117], CONST[45]\n164: ADD TEMP[117], TEMP[117], CONST[0]\n165: ADD TEMP[117], TEMP[117], CONST[1]\n166: ADD TEMP[117], TEMP[117], CONST[2]\n167: ADD TEMP[117], TEMP[117], CONST[3]\n168: ADD TEMP[117], TEMP[117], CONST[4]\n169: ADD TEMP[117], TEMP[117], CONST[5]\n170: ADD TEMP[117], TEMP[117], CONST[6]\n171: ADD TEMP[117], TEMP[117], CONST[7]\n172: ADD TEMP[117], TEMP[117], CONST[8]\n173: ADD TEMP[117], TEMP[117], CONST[9]\n174: ADD TEMP[117], TEMP[117], CONST[10]\n175: ADD TEMP[117], TEMP[117], CONST[11]\n176: ADD TEMP[117], TEMP[117], CONST[12]\n177: ADD TEMP[117], TEMP[117], CONST[13]\n178: MOV OUT[0], TEMP[117]\n179: END\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 179
+    }
+  },
+  {
+    "name": "temp-use-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[10]\nMOV TEMP[10], IN[0]\nMOV OUT[0], TEMP[10]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-11",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[11]\nMOV TEMP[11], IN[0]\nMOV OUT[0], TEMP[11]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-12",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[12]\nMOV TEMP[12], IN[0]\nMOV OUT[0], TEMP[12]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-13",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[13]\nMOV TEMP[13], IN[0]\nMOV OUT[0], TEMP[13]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-14",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[14]\nMOV TEMP[14], IN[0]\nMOV OUT[0], TEMP[14]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-15",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[15]\nMOV TEMP[15], IN[0]\nMOV OUT[0], TEMP[15]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-16",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[16]\nMOV TEMP[16], IN[0]\nMOV OUT[0], TEMP[16]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-17",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[17]\nMOV TEMP[17], IN[0]\nMOV OUT[0], TEMP[17]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-18",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[18]\nMOV TEMP[18], IN[0]\nMOV OUT[0], TEMP[18]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-19",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[19]\nMOV TEMP[19], IN[0]\nMOV OUT[0], TEMP[19]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-20",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[20]\nMOV TEMP[20], IN[0]\nMOV OUT[0], TEMP[20]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-21",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[21]\nMOV TEMP[21], IN[0]\nMOV OUT[0], TEMP[21]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-22",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[22]\nMOV TEMP[22], IN[0]\nMOV OUT[0], TEMP[22]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-23",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[23]\nMOV TEMP[23], IN[0]\nMOV OUT[0], TEMP[23]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-24",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[24]\nMOV TEMP[24], IN[0]\nMOV OUT[0], TEMP[24]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-25",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[25]\nMOV TEMP[25], IN[0]\nMOV OUT[0], TEMP[25]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-26",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[26]\nMOV TEMP[26], IN[0]\nMOV OUT[0], TEMP[26]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-27",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[27]\nMOV TEMP[27], IN[0]\nMOV OUT[0], TEMP[27]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-28",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[28]\nMOV TEMP[28], IN[0]\nMOV OUT[0], TEMP[28]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-29",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[29]\nMOV TEMP[29], IN[0]\nMOV OUT[0], TEMP[29]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-30",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[30]\nMOV TEMP[30], IN[0]\nMOV OUT[0], TEMP[30]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-31",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[31]\nMOV TEMP[31], IN[0]\nMOV OUT[0], TEMP[31]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-32",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[32]\nMOV TEMP[32], IN[0]\nMOV OUT[0], TEMP[32]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-33",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[33]\nMOV TEMP[33], IN[0]\nMOV OUT[0], TEMP[33]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-34",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[34]\nMOV TEMP[34], IN[0]\nMOV OUT[0], TEMP[34]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-35",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[35]\nMOV TEMP[35], IN[0]\nMOV OUT[0], TEMP[35]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-36",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[36]\nMOV TEMP[36], IN[0]\nMOV OUT[0], TEMP[36]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-37",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[37]\nMOV TEMP[37], IN[0]\nMOV OUT[0], TEMP[37]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-38",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[38]\nMOV TEMP[38], IN[0]\nMOV OUT[0], TEMP[38]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-39",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[39]\nMOV TEMP[39], IN[0]\nMOV OUT[0], TEMP[39]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-40",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[40]\nMOV TEMP[40], IN[0]\nMOV OUT[0], TEMP[40]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-41",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[41]\nMOV TEMP[41], IN[0]\nMOV OUT[0], TEMP[41]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-42",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[42]\nMOV TEMP[42], IN[0]\nMOV OUT[0], TEMP[42]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-43",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[43]\nMOV TEMP[43], IN[0]\nMOV OUT[0], TEMP[43]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-44",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[44]\nMOV TEMP[44], IN[0]\nMOV OUT[0], TEMP[44]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[45]\nMOV TEMP[45], IN[0]\nMOV OUT[0], TEMP[45]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-46",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[46]\nMOV TEMP[46], IN[0]\nMOV OUT[0], TEMP[46]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-47",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[47]\nMOV TEMP[47], IN[0]\nMOV OUT[0], TEMP[47]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-48",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[48]\nMOV TEMP[48], IN[0]\nMOV OUT[0], TEMP[48]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-49",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[49]\nMOV TEMP[49], IN[0]\nMOV OUT[0], TEMP[49]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-50",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[50]\nMOV TEMP[50], IN[0]\nMOV OUT[0], TEMP[50]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-51",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[51]\nMOV TEMP[51], IN[0]\nMOV OUT[0], TEMP[51]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-52",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[52]\nMOV TEMP[52], IN[0]\nMOV OUT[0], TEMP[52]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-53",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[53]\nMOV TEMP[53], IN[0]\nMOV OUT[0], TEMP[53]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-54",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[54]\nMOV TEMP[54], IN[0]\nMOV OUT[0], TEMP[54]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-55",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[55]\nMOV TEMP[55], IN[0]\nMOV OUT[0], TEMP[55]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-56",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[56]\nMOV TEMP[56], IN[0]\nMOV OUT[0], TEMP[56]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-57",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[57]\nMOV TEMP[57], IN[0]\nMOV OUT[0], TEMP[57]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-58",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[58]\nMOV TEMP[58], IN[0]\nMOV OUT[0], TEMP[58]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-59",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[59]\nMOV TEMP[59], IN[0]\nMOV OUT[0], TEMP[59]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-60",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[60]\nMOV TEMP[60], IN[0]\nMOV OUT[0], TEMP[60]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-61",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[61]\nMOV TEMP[61], IN[0]\nMOV OUT[0], TEMP[61]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-62",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[62]\nMOV TEMP[62], IN[0]\nMOV OUT[0], TEMP[62]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-63",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[63]\nMOV TEMP[63], IN[0]\nMOV OUT[0], TEMP[63]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-64",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[64]\nMOV TEMP[64], IN[0]\nMOV OUT[0], TEMP[64]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-65",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[65]\nMOV TEMP[65], IN[0]\nMOV OUT[0], TEMP[65]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-66",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[66]\nMOV TEMP[66], IN[0]\nMOV OUT[0], TEMP[66]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-67",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[67]\nMOV TEMP[67], IN[0]\nMOV OUT[0], TEMP[67]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-68",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[68]\nMOV TEMP[68], IN[0]\nMOV OUT[0], TEMP[68]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-69",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[69]\nMOV TEMP[69], IN[0]\nMOV OUT[0], TEMP[69]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-70",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[70]\nMOV TEMP[70], IN[0]\nMOV OUT[0], TEMP[70]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-71",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[71]\nMOV TEMP[71], IN[0]\nMOV OUT[0], TEMP[71]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-72",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[72]\nMOV TEMP[72], IN[0]\nMOV OUT[0], TEMP[72]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-73",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[73]\nMOV TEMP[73], IN[0]\nMOV OUT[0], TEMP[73]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-74",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[74]\nMOV TEMP[74], IN[0]\nMOV OUT[0], TEMP[74]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-75",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[75]\nMOV TEMP[75], IN[0]\nMOV OUT[0], TEMP[75]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-76",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[76]\nMOV TEMP[76], IN[0]\nMOV OUT[0], TEMP[76]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-77",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[77]\nMOV TEMP[77], IN[0]\nMOV OUT[0], TEMP[77]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-78",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[78]\nMOV TEMP[78], IN[0]\nMOV OUT[0], TEMP[78]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-79",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[79]\nMOV TEMP[79], IN[0]\nMOV OUT[0], TEMP[79]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-80",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[80]\nMOV TEMP[80], IN[0]\nMOV OUT[0], TEMP[80]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-81",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[81]\nMOV TEMP[81], IN[0]\nMOV OUT[0], TEMP[81]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-82",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[82]\nMOV TEMP[82], IN[0]\nMOV OUT[0], TEMP[82]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-83",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[83]\nMOV TEMP[83], IN[0]\nMOV OUT[0], TEMP[83]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-84",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[84]\nMOV TEMP[84], IN[0]\nMOV OUT[0], TEMP[84]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-85",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[85]\nMOV TEMP[85], IN[0]\nMOV OUT[0], TEMP[85]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-86",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[86]\nMOV TEMP[86], IN[0]\nMOV OUT[0], TEMP[86]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-87",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[87]\nMOV TEMP[87], IN[0]\nMOV OUT[0], TEMP[87]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-88",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[88]\nMOV TEMP[88], IN[0]\nMOV OUT[0], TEMP[88]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-89",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[89]\nMOV TEMP[89], IN[0]\nMOV OUT[0], TEMP[89]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-90",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[90]\nMOV TEMP[90], IN[0]\nMOV OUT[0], TEMP[90]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-91",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[91]\nMOV TEMP[91], IN[0]\nMOV OUT[0], TEMP[91]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-92",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[92]\nMOV TEMP[92], IN[0]\nMOV OUT[0], TEMP[92]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-93",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[93]\nMOV TEMP[93], IN[0]\nMOV OUT[0], TEMP[93]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-94",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[94]\nMOV TEMP[94], IN[0]\nMOV OUT[0], TEMP[94]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-95",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[95]\nMOV TEMP[95], IN[0]\nMOV OUT[0], TEMP[95]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-96",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[96]\nMOV TEMP[96], IN[0]\nMOV OUT[0], TEMP[96]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-97",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[97]\nMOV TEMP[97], IN[0]\nMOV OUT[0], TEMP[97]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-98",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[98]\nMOV TEMP[98], IN[0]\nMOV OUT[0], TEMP[98]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-99",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[99]\nMOV TEMP[99], IN[0]\nMOV OUT[0], TEMP[99]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-100",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[100]\nMOV TEMP[100], IN[0]\nMOV OUT[0], TEMP[100]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-101",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[101]\nMOV TEMP[101], IN[0]\nMOV OUT[0], TEMP[101]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-102",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[102]\nMOV TEMP[102], IN[0]\nMOV OUT[0], TEMP[102]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-103",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[103]\nMOV TEMP[103], IN[0]\nMOV OUT[0], TEMP[103]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-104",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[104]\nMOV TEMP[104], IN[0]\nMOV OUT[0], TEMP[104]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-105",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[105]\nMOV TEMP[105], IN[0]\nMOV OUT[0], TEMP[105]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-106",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[106]\nMOV TEMP[106], IN[0]\nMOV OUT[0], TEMP[106]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-107",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[107]\nMOV TEMP[107], IN[0]\nMOV OUT[0], TEMP[107]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-108",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[108]\nMOV TEMP[108], IN[0]\nMOV OUT[0], TEMP[108]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-109",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[109]\nMOV TEMP[109], IN[0]\nMOV OUT[0], TEMP[109]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-110",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[110]\nMOV TEMP[110], IN[0]\nMOV OUT[0], TEMP[110]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-111",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[111]\nMOV TEMP[111], IN[0]\nMOV OUT[0], TEMP[111]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-112",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[112]\nMOV TEMP[112], IN[0]\nMOV OUT[0], TEMP[112]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-113",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[113]\nMOV TEMP[113], IN[0]\nMOV OUT[0], TEMP[113]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-114",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[114]\nMOV TEMP[114], IN[0]\nMOV OUT[0], TEMP[114]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-115",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[115]\nMOV TEMP[115], IN[0]\nMOV OUT[0], TEMP[115]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-116",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[116]\nMOV TEMP[116], IN[0]\nMOV OUT[0], TEMP[116]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "temp-use-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117], IN[0]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 2
+    }
+  },
+  {
+    "name": "constant-use-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[8]\nMOV OUT[0], CONST[8]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 9,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[9]\nMOV OUT[0], CONST[9]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 10,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[10]\nMOV OUT[0], CONST[10]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 11,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-11",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[11]\nMOV OUT[0], CONST[11]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 12,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-12",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[12]\nMOV OUT[0], CONST[12]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 13,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-13",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[13]\nMOV OUT[0], CONST[13]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 14,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-14",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[14]\nMOV OUT[0], CONST[14]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 15,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-15",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[15]\nMOV OUT[0], CONST[15]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 16,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-16",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[16]\nMOV OUT[0], CONST[16]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 17,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-17",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[17]\nMOV OUT[0], CONST[17]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 18,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-18",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[18]\nMOV OUT[0], CONST[18]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 19,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-19",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[19]\nMOV OUT[0], CONST[19]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 20,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-20",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[20]\nMOV OUT[0], CONST[20]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 21,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-21",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[21]\nMOV OUT[0], CONST[21]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 22,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-22",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[22]\nMOV OUT[0], CONST[22]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 23,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-23",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[23]\nMOV OUT[0], CONST[23]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 24,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-24",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[24]\nMOV OUT[0], CONST[24]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 25,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-25",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[25]\nMOV OUT[0], CONST[25]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 26,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-26",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[26]\nMOV OUT[0], CONST[26]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 27,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-27",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[27]\nMOV OUT[0], CONST[27]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 28,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-28",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[28]\nMOV OUT[0], CONST[28]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 29,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-29",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[29]\nMOV OUT[0], CONST[29]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 30,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-30",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[30]\nMOV OUT[0], CONST[30]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 31,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-31",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[31]\nMOV OUT[0], CONST[31]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 32,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-32",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[32]\nMOV OUT[0], CONST[32]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 33,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-33",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[33]\nMOV OUT[0], CONST[33]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 34,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-34",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[34]\nMOV OUT[0], CONST[34]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 35,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-35",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[35]\nMOV OUT[0], CONST[35]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 36,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-36",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[36]\nMOV OUT[0], CONST[36]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 37,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-37",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[37]\nMOV OUT[0], CONST[37]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 38,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-38",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[38]\nMOV OUT[0], CONST[38]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 39,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-39",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[39]\nMOV OUT[0], CONST[39]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 40,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-40",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[40]\nMOV OUT[0], CONST[40]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 41,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-41",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[41]\nMOV OUT[0], CONST[41]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 42,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-42",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[42]\nMOV OUT[0], CONST[42]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 43,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-43",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[43]\nMOV OUT[0], CONST[43]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 44,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-44",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[44]\nMOV OUT[0], CONST[44]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 45,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "constant-use-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[45]\nMOV OUT[0], CONST[45]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "vertex-TEMP-decimal-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-TEMP-decimal-00",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[00]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-01",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[01]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-09",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[09]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-010",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[010]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-00117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[00117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-+1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[+1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal--1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[-1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-0x1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0x1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-1e1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1e1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-1_0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1 0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-118",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-119",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[119]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-999",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-1000",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1000]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-4294967296",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4294967296]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-decimal-9999999999999999999999999999999999999999999999999999999999999999999999",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9999999999999999999999999999999999999999999999999999999999999999999999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-decimal-00",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[00]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-01",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[01]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-09",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[09]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-010",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[010]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-00117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[00117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-+1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[+1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal--1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[-1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-0x1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0x1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-1e1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1e1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-1_0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1 0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-118",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-119",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[119]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-999",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-1000",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1000]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-4294967296",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[4294967296]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-decimal-9999999999999999999999999999999999999999999999999999999999999999999999",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[9999999999999999999999999999999999999999999999999999999999999999999999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-range-0-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-TEMP-range-116-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[116..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-TEMP-range-117-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-TEMP-range-0-10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-TEMP-range-117-116",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117..116]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-range-0-118",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-range-118-118",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[118..118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-duplicate",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-overlap",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-partial-overlap",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[115..116]\nDCL TEMP[116..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-TEMP-adjacent",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..116]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-range-0-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-range-44-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[44..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-range-45-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[45..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-range-0-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-CONST-range-45-44",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[45..44]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-range-0-46",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..46]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-range-46-46",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[46..46]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-duplicate",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[45]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-overlap",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-partial-overlap",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[43..44]\nDCL CONST[44..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-CONST-adjacent",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..44]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-high-lanes-x-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-high-lanes-x-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-x-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-x-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-y-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-y-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-high-lanes-y-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-y-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-z-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-z-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-z-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-high-lanes-z-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-w-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-w-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-w-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-lanes-w-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "vertex-high-self-read-uninitialized",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nADD TEMP[117], TEMP[117], IN[0]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-uninitialized",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[117]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-undeclared-high",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-operand-one-past",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nMOV TEMP[118], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-constant-operand-one-past",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], CONST[46]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-instructions-178-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 178
+    }
+  },
+  {
+    "name": "vertex-instructions-178-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: END\n",
+    "ok": true,
+    "expected": {
+      "instructions": 178
+    }
+  },
+  {
+    "name": "vertex-instructions-179-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 179
+    }
+  },
+  {
+    "name": "vertex-instructions-179-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: MOV OUT[0], IN[0]\n179: END\n",
+    "ok": true,
+    "expected": {
+      "instructions": 179
+    }
+  },
+  {
+    "name": "vertex-instructions-180-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-instructions-180-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: MOV OUT[0], IN[0]\n179: MOV OUT[0], IN[0]\n180: END\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-high-then-zero",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[45]\nDCL CONST[0]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 47,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "vertex-zero-then-high",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0]\nDCL CONST[45]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "vertex-unread-tail",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "vertex-unsupported-ADD_PRECISE",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nADD_PRECISE TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-UIF",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUIF TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-IF",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIF TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-BGNLOOP",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nBGNLOOP TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-UADD",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUADD TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-UARL",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUARL TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-ADDR",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL ADDR[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "vertex-unsupported-indirect",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], CONST[ADDR[0].x]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-TEMP-decimal-00",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[00]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-01",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[01]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-09",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[09]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-010",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[010]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-00117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[00117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-+1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[+1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal--1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[-1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-0x1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0x1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-1e1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[1e1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-1_0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[1 0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-118",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-119",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[119]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-999",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-1000",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[1000]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-4294967296",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[4294967296]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-decimal-9999999999999999999999999999999999999999999999999999999999999999999999",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[9999999999999999999999999999999999999999999999999999999999999999999999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-decimal-00",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[00]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-01",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[01]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-09",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[09]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-010",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[010]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-00117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[00117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-+1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[+1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal--1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[-1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-0x1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0x1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-1e1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[1e1]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-1_0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[1 0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-118",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-119",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[119]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-999",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-1000",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[1000]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-4294967296",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[4294967296]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-decimal-9999999999999999999999999999999999999999999999999999999999999999999999",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[9999999999999999999999999999999999999999999999999999999999999999999999]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-range-0-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-TEMP-range-116-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[116..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-TEMP-range-117-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-TEMP-range-0-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-TEMP-range-117-116",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117..116]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-range-0-118",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-range-118-118",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[118..118]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-duplicate",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-overlap",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-partial-overlap",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[115..116]\nDCL TEMP[116..117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-TEMP-adjacent",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..116]\nDCL TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-range-0-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-range-44-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[44..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-range-45-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-range-0-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-CONST-range-45-44",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45..44]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-range-0-46",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..46]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-range-46-46",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[46..46]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-duplicate",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-overlap",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-partial-overlap",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[43..44]\nDCL CONST[44..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-CONST-adjacent",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..44]\nDCL CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-high-lanes-x-x",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-high-lanes-x-y",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-x-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-x-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].x, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-y-x",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-y-y",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-high-lanes-y-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-y-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].y, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-z-x",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-z-y",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-z-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-high-lanes-z-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].z, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-w-x",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].xxxx\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-w-y",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].yyyy\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-w-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].zzzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-lanes-w-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV TEMP[117].w, IN[0]\nMOV OUT[0], TEMP[117].wwww\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "fragment-high-self-read-uninitialized",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nADD TEMP[117], TEMP[117], IN[0]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-uninitialized",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[117]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-undeclared-high",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-operand-one-past",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nMOV TEMP[118], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-constant-operand-one-past",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nMOV OUT[0], CONST[46]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-instructions-178-0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 178
+    }
+  },
+  {
+    "name": "fragment-instructions-178-1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: END\n",
+    "ok": true,
+    "expected": {
+      "instructions": 178
+    }
+  },
+  {
+    "name": "fragment-instructions-179-0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "instructions": 179
+    }
+  },
+  {
+    "name": "fragment-instructions-179-1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: MOV OUT[0], IN[0]\n179: END\n",
+    "ok": true,
+    "expected": {
+      "instructions": 179
+    }
+  },
+  {
+    "name": "fragment-instructions-180-0",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-instructions-180-1",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n3: MOV OUT[0], IN[0]\n4: MOV OUT[0], IN[0]\n5: MOV OUT[0], IN[0]\n6: MOV OUT[0], IN[0]\n7: MOV OUT[0], IN[0]\n8: MOV OUT[0], IN[0]\n9: MOV OUT[0], IN[0]\n10: MOV OUT[0], IN[0]\n11: MOV OUT[0], IN[0]\n12: MOV OUT[0], IN[0]\n13: MOV OUT[0], IN[0]\n14: MOV OUT[0], IN[0]\n15: MOV OUT[0], IN[0]\n16: MOV OUT[0], IN[0]\n17: MOV OUT[0], IN[0]\n18: MOV OUT[0], IN[0]\n19: MOV OUT[0], IN[0]\n20: MOV OUT[0], IN[0]\n21: MOV OUT[0], IN[0]\n22: MOV OUT[0], IN[0]\n23: MOV OUT[0], IN[0]\n24: MOV OUT[0], IN[0]\n25: MOV OUT[0], IN[0]\n26: MOV OUT[0], IN[0]\n27: MOV OUT[0], IN[0]\n28: MOV OUT[0], IN[0]\n29: MOV OUT[0], IN[0]\n30: MOV OUT[0], IN[0]\n31: MOV OUT[0], IN[0]\n32: MOV OUT[0], IN[0]\n33: MOV OUT[0], IN[0]\n34: MOV OUT[0], IN[0]\n35: MOV OUT[0], IN[0]\n36: MOV OUT[0], IN[0]\n37: MOV OUT[0], IN[0]\n38: MOV OUT[0], IN[0]\n39: MOV OUT[0], IN[0]\n40: MOV OUT[0], IN[0]\n41: MOV OUT[0], IN[0]\n42: MOV OUT[0], IN[0]\n43: MOV OUT[0], IN[0]\n44: MOV OUT[0], IN[0]\n45: MOV OUT[0], IN[0]\n46: MOV OUT[0], IN[0]\n47: MOV OUT[0], IN[0]\n48: MOV OUT[0], IN[0]\n49: MOV OUT[0], IN[0]\n50: MOV OUT[0], IN[0]\n51: MOV OUT[0], IN[0]\n52: MOV OUT[0], IN[0]\n53: MOV OUT[0], IN[0]\n54: MOV OUT[0], IN[0]\n55: MOV OUT[0], IN[0]\n56: MOV OUT[0], IN[0]\n57: MOV OUT[0], IN[0]\n58: MOV OUT[0], IN[0]\n59: MOV OUT[0], IN[0]\n60: MOV OUT[0], IN[0]\n61: MOV OUT[0], IN[0]\n62: MOV OUT[0], IN[0]\n63: MOV OUT[0], IN[0]\n64: MOV OUT[0], IN[0]\n65: MOV OUT[0], IN[0]\n66: MOV OUT[0], IN[0]\n67: MOV OUT[0], IN[0]\n68: MOV OUT[0], IN[0]\n69: MOV OUT[0], IN[0]\n70: MOV OUT[0], IN[0]\n71: MOV OUT[0], IN[0]\n72: MOV OUT[0], IN[0]\n73: MOV OUT[0], IN[0]\n74: MOV OUT[0], IN[0]\n75: MOV OUT[0], IN[0]\n76: MOV OUT[0], IN[0]\n77: MOV OUT[0], IN[0]\n78: MOV OUT[0], IN[0]\n79: MOV OUT[0], IN[0]\n80: MOV OUT[0], IN[0]\n81: MOV OUT[0], IN[0]\n82: MOV OUT[0], IN[0]\n83: MOV OUT[0], IN[0]\n84: MOV OUT[0], IN[0]\n85: MOV OUT[0], IN[0]\n86: MOV OUT[0], IN[0]\n87: MOV OUT[0], IN[0]\n88: MOV OUT[0], IN[0]\n89: MOV OUT[0], IN[0]\n90: MOV OUT[0], IN[0]\n91: MOV OUT[0], IN[0]\n92: MOV OUT[0], IN[0]\n93: MOV OUT[0], IN[0]\n94: MOV OUT[0], IN[0]\n95: MOV OUT[0], IN[0]\n96: MOV OUT[0], IN[0]\n97: MOV OUT[0], IN[0]\n98: MOV OUT[0], IN[0]\n99: MOV OUT[0], IN[0]\n100: MOV OUT[0], IN[0]\n101: MOV OUT[0], IN[0]\n102: MOV OUT[0], IN[0]\n103: MOV OUT[0], IN[0]\n104: MOV OUT[0], IN[0]\n105: MOV OUT[0], IN[0]\n106: MOV OUT[0], IN[0]\n107: MOV OUT[0], IN[0]\n108: MOV OUT[0], IN[0]\n109: MOV OUT[0], IN[0]\n110: MOV OUT[0], IN[0]\n111: MOV OUT[0], IN[0]\n112: MOV OUT[0], IN[0]\n113: MOV OUT[0], IN[0]\n114: MOV OUT[0], IN[0]\n115: MOV OUT[0], IN[0]\n116: MOV OUT[0], IN[0]\n117: MOV OUT[0], IN[0]\n118: MOV OUT[0], IN[0]\n119: MOV OUT[0], IN[0]\n120: MOV OUT[0], IN[0]\n121: MOV OUT[0], IN[0]\n122: MOV OUT[0], IN[0]\n123: MOV OUT[0], IN[0]\n124: MOV OUT[0], IN[0]\n125: MOV OUT[0], IN[0]\n126: MOV OUT[0], IN[0]\n127: MOV OUT[0], IN[0]\n128: MOV OUT[0], IN[0]\n129: MOV OUT[0], IN[0]\n130: MOV OUT[0], IN[0]\n131: MOV OUT[0], IN[0]\n132: MOV OUT[0], IN[0]\n133: MOV OUT[0], IN[0]\n134: MOV OUT[0], IN[0]\n135: MOV OUT[0], IN[0]\n136: MOV OUT[0], IN[0]\n137: MOV OUT[0], IN[0]\n138: MOV OUT[0], IN[0]\n139: MOV OUT[0], IN[0]\n140: MOV OUT[0], IN[0]\n141: MOV OUT[0], IN[0]\n142: MOV OUT[0], IN[0]\n143: MOV OUT[0], IN[0]\n144: MOV OUT[0], IN[0]\n145: MOV OUT[0], IN[0]\n146: MOV OUT[0], IN[0]\n147: MOV OUT[0], IN[0]\n148: MOV OUT[0], IN[0]\n149: MOV OUT[0], IN[0]\n150: MOV OUT[0], IN[0]\n151: MOV OUT[0], IN[0]\n152: MOV OUT[0], IN[0]\n153: MOV OUT[0], IN[0]\n154: MOV OUT[0], IN[0]\n155: MOV OUT[0], IN[0]\n156: MOV OUT[0], IN[0]\n157: MOV OUT[0], IN[0]\n158: MOV OUT[0], IN[0]\n159: MOV OUT[0], IN[0]\n160: MOV OUT[0], IN[0]\n161: MOV OUT[0], IN[0]\n162: MOV OUT[0], IN[0]\n163: MOV OUT[0], IN[0]\n164: MOV OUT[0], IN[0]\n165: MOV OUT[0], IN[0]\n166: MOV OUT[0], IN[0]\n167: MOV OUT[0], IN[0]\n168: MOV OUT[0], IN[0]\n169: MOV OUT[0], IN[0]\n170: MOV OUT[0], IN[0]\n171: MOV OUT[0], IN[0]\n172: MOV OUT[0], IN[0]\n173: MOV OUT[0], IN[0]\n174: MOV OUT[0], IN[0]\n175: MOV OUT[0], IN[0]\n176: MOV OUT[0], IN[0]\n177: MOV OUT[0], IN[0]\n178: MOV OUT[0], IN[0]\n179: MOV OUT[0], IN[0]\n180: END\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-high-then-zero",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[0]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 47,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "fragment-zero-then-high",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0]\nDCL CONST[45]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "fragment-unread-tail",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "constantCount": 46,
+      "instructions": 1
+    }
+  },
+  {
+    "name": "fragment-unsupported-ADD_PRECISE",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nADD_PRECISE TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-UIF",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUIF TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-IF",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIF TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-BGNLOOP",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nBGNLOOP TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-UADD",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUADD TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-UARL",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUARL TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-ADDR",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL ADDR[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "fragment-unsupported-indirect",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nMOV OUT[0], CONST[ADDR[0].x]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IN-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IN-10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IN-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IN-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-OUT-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[8], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[8], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-OUT-10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[10], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[10], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-OUT-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[45], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[45], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-OUT-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[117], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[117], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IMM-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[8] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IMM-10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[10] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IMM-45",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[45] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-IMM-117",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[117] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SAMP-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SAMP-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SAMP-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SAMP-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SVIEW-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[8], 2D, FLOAT\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SVIEW-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[10], 2D, FLOAT\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SVIEW-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[45], 2D, FLOAT\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-SVIEW-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[117], 2D, FLOAT\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-GENERIC-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[8], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-GENERIC-10",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[10], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-GENERIC-45",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[45], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-GENERIC-117",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[117], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-source-IN",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[8]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-source-OUT",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[8], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-source-IMM",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[8]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-source-SAMP",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {1, 0, 0, 1}\nTEX OUT[0], IN[0], SAMP[8], 2D\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "small-bank-source-GENERIC",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0], GENERIC[08], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "line-bytes-512",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               \nEND\n",
+    "ok": true
+  },
+  {
+    "name": "line-bytes-513",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                \nEND\n",
+    "ok": false
+  },
+  {
+    "name": "nonempty-lines-256",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\nDCL TEMP[1]\nDCL TEMP[2]\nDCL TEMP[3]\nDCL TEMP[4]\nDCL TEMP[5]\nDCL TEMP[6]\nDCL TEMP[7]\nDCL TEMP[8]\nDCL TEMP[9]\nDCL TEMP[10]\nDCL TEMP[11]\nDCL TEMP[12]\nDCL TEMP[13]\nDCL TEMP[14]\nDCL TEMP[15]\nDCL TEMP[16]\nDCL TEMP[17]\nDCL TEMP[18]\nDCL TEMP[19]\nDCL TEMP[20]\nDCL TEMP[21]\nDCL TEMP[22]\nDCL TEMP[23]\nDCL TEMP[24]\nDCL TEMP[25]\nDCL TEMP[26]\nDCL TEMP[27]\nDCL TEMP[28]\nDCL TEMP[29]\nDCL TEMP[30]\nDCL TEMP[31]\nDCL TEMP[32]\nDCL TEMP[33]\nDCL TEMP[34]\nDCL TEMP[35]\nDCL TEMP[36]\nDCL TEMP[37]\nDCL TEMP[38]\nDCL TEMP[39]\nDCL TEMP[40]\nDCL TEMP[41]\nDCL TEMP[42]\nDCL TEMP[43]\nDCL TEMP[44]\nDCL TEMP[45]\nDCL TEMP[46]\nDCL TEMP[47]\nDCL TEMP[48]\nDCL TEMP[49]\nDCL TEMP[50]\nDCL TEMP[51]\nDCL TEMP[52]\nDCL TEMP[53]\nDCL TEMP[54]\nDCL TEMP[55]\nDCL TEMP[56]\nDCL TEMP[57]\nDCL TEMP[58]\nDCL TEMP[59]\nDCL TEMP[60]\nDCL TEMP[61]\nDCL TEMP[62]\nDCL TEMP[63]\nDCL TEMP[64]\nDCL TEMP[65]\nDCL TEMP[66]\nDCL TEMP[67]\nDCL TEMP[68]\nDCL TEMP[69]\nDCL TEMP[70]\nDCL TEMP[71]\nDCL TEMP[72]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "nonempty-lines-257",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\nDCL TEMP[1]\nDCL TEMP[2]\nDCL TEMP[3]\nDCL TEMP[4]\nDCL TEMP[5]\nDCL TEMP[6]\nDCL TEMP[7]\nDCL TEMP[8]\nDCL TEMP[9]\nDCL TEMP[10]\nDCL TEMP[11]\nDCL TEMP[12]\nDCL TEMP[13]\nDCL TEMP[14]\nDCL TEMP[15]\nDCL TEMP[16]\nDCL TEMP[17]\nDCL TEMP[18]\nDCL TEMP[19]\nDCL TEMP[20]\nDCL TEMP[21]\nDCL TEMP[22]\nDCL TEMP[23]\nDCL TEMP[24]\nDCL TEMP[25]\nDCL TEMP[26]\nDCL TEMP[27]\nDCL TEMP[28]\nDCL TEMP[29]\nDCL TEMP[30]\nDCL TEMP[31]\nDCL TEMP[32]\nDCL TEMP[33]\nDCL TEMP[34]\nDCL TEMP[35]\nDCL TEMP[36]\nDCL TEMP[37]\nDCL TEMP[38]\nDCL TEMP[39]\nDCL TEMP[40]\nDCL TEMP[41]\nDCL TEMP[42]\nDCL TEMP[43]\nDCL TEMP[44]\nDCL TEMP[45]\nDCL TEMP[46]\nDCL TEMP[47]\nDCL TEMP[48]\nDCL TEMP[49]\nDCL TEMP[50]\nDCL TEMP[51]\nDCL TEMP[52]\nDCL TEMP[53]\nDCL TEMP[54]\nDCL TEMP[55]\nDCL TEMP[56]\nDCL TEMP[57]\nDCL TEMP[58]\nDCL TEMP[59]\nDCL TEMP[60]\nDCL TEMP[61]\nDCL TEMP[62]\nDCL TEMP[63]\nDCL TEMP[64]\nDCL TEMP[65]\nDCL TEMP[66]\nDCL TEMP[67]\nDCL TEMP[68]\nDCL TEMP[69]\nDCL TEMP[70]\nDCL TEMP[71]\nDCL TEMP[72]\nDCL TEMP[73]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "text-exact-16384",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nEND\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "ok": true
+  },
+  {
+    "name": "skipped-label",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n2: MOV OUT[0], IN[0]\n2: END\n",
+    "ok": false
+  },
+  {
+    "name": "repeated-label",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n0: MOV OUT[0], IN[0]\n2: END\n",
+    "ok": false
+  },
+  {
+    "name": "end-label",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n1: MOV OUT[0], IN[0]\n1: END\n",
+    "ok": false
+  },
+  {
+    "name": "malformed-tail-after-high",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[117], IN[0], CONST[45]\nADD TEMP[116], TEMP[117], CONST[0]\nMOV OUT[0], TEMP[116]\nMOV OUT[1], TEMP[116]\nEND\nMOV OUT[0], IN[0]\n",
+    "ok": false
+  },
+  {
+    "name": "uint32-domain-zero",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {0, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "uint32-domain-negative-zero",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {2147483648, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "uint32-domain-one",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1065353216, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "uint32-domain-min-normal",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {8388608, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "uint32-domain-magnitude-edge",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1232348160, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "uint32-domain-subnormal-min",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-subnormal-max",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {8388607, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-positive-infinity",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {2139095040, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-negative-infinity",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {4286578688, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-quiet-nan",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {2143289344, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-signalling-nan",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {2139095041, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-max-u32",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {4294967295, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-max-finite",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {2139095039, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-magnitude-neighbor",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1232348161, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "uint32-domain-overflow",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {4294967296, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "uint32-domain-digits-overflow",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {99999999999999999999, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "uint32-domain-signed",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {-1, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "uint32-domain-trailing-token",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1x, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "uint32-domain-missing-delimiter",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {1 0, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "uint32-domain-empty",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] UINT32 {, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "register-file-ADDR",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL ADDR[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "register-file-ADDRESS",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL ADDRESS[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "register-file-ADDRX",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL ADDRX[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  }
+]

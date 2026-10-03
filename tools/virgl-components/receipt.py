@@ -113,7 +113,7 @@ def main():
     records = [binding(path, output) for path in sorted(output.rglob('*'))
                if path.is_file() and path != output / 'receipt.json' and path.name != 'acceptance.log']
     receipt = {'schema': 1, 'task': 'E6-T12e1', 'status': 'passed', 'gitHead': head,
-               'boundary': 'Four unchanged captured shader bodies through bounded v4 frontend and independent hardware pixels; no guest GPU activation.',
+               'boundary': 'Four unchanged captured shader bodies through bounded v5 frontend and independent hardware pixels; no guest GPU activation.',
                'sources': sources, 'records': records, 'shaderOutcomes': expected_outcomes,
                'production': contract['production'], 'nativeCases': len(fixtures),
                'newOriginalHashes': sorted(gate.COMPONENT_SHADERS),
@@ -146,7 +146,8 @@ def verify_browser(hardware, sabotage, corpus, fixtures, native):
     require(boundary['recovery'] == {'rounds': 2, 'conversions': len(fixtures) * 8,
                                     'outputsAndMetadataIdentical': True}, 'Wasm rejection recovery')
     require(hardware['limits'] == {'textBytes': 16384, 'tokens': 8192, 'glslBytes': 65536,
-                                  'instructions': 128, 'registerIndex': 7, 'temporaryRegisterIndex': 9},
+                                  'instructions': 179, 'registerIndex': 7, 'temporaryRegisterIndex': 117,
+                                  'constantRegisterIndex': 45},
             'published per-file bounds')
 
     fragments = ['003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605',

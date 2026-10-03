@@ -7,7 +7,7 @@
   {
     "name": "oversized-temp-range",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..118]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
     "name": "negative-temp-range",

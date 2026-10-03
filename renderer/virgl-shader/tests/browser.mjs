@@ -298,7 +298,7 @@ export async function runAcceptance() {
   }
   // Fixed limit is part of this slice's public contract; do not silently adapt to a looser wrapper.
   const textLimit = 16384;
-  equal(LIMITS, { textBytes: 16384, tokens: 8192, glslBytes: 65536, instructions: 128, registerIndex: 7, temporaryRegisterIndex: 9 },
+  equal(LIMITS, { textBytes: 16384, tokens: 8192, glslBytes: 65536, instructions: 179, registerIndex: 7, temporaryRegisterIndex: 117, constantRegisterIndex: 45 },
     "published fixed profile limits");
   const exactlyBounded = sources.passthrough + "\n".repeat(textLimit - sources.passthrough.length);
   equal(bridge.translate({ stage: "vertex", text: exactlyBounded }), translations.passthrough,

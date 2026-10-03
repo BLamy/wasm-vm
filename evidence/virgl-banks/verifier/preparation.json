@@ -1,0 +1,54 @@
+{
+  "schema": "wasm-vm-banks-verifier-preparation-v1",
+  "preparedAt": "2026-10-03T08:47:38.245883+00:00",
+  "baseline": "9ed66780d4e476634cbe4b5296b302ab0579feec",
+  "verifiedParent": "43113616971d026744c377b6bbe8fb58aa7f7d20",
+  "task": "E6-T12e3",
+  "evidenceInspected": false,
+  "implementationInspected": "activation baseline only",
+  "predictions": 25,
+  "predictionsSha256": "e7c1c6e5ba959fd3cc3f599c97507cb22f1b18187fe379cb75533345951a9b87",
+  "baselineSources": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 25819,
+      "sha256": "d1c7718fd7ab6c3efaa7900d1923f090e267829e6762f7a1a1bb64d4c45c085d"
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T12e3-captured-register-banks.md",
+      "bytes": 2807,
+      "sha256": "4ba789339ea48ad950785533a52f22011267f9930a0893ee671e42274dfdeb04"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "bytes": 907,
+      "sha256": "2febc160dbafdf74e9c23e823e436ab6ea4d026a116c98a9bcda4fa050a17aec"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 23688,
+      "sha256": "37acf60a04c189555a545f5275ef969f7ee7d9e9ba5966c2d195c56352afd1c0"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "bytes": 4373,
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "bytes": 2834,
+      "sha256": "a4f4681901296f5a09b8893ec04a5ce5decfd8afed8817fca6805ed862e9b5b2"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "bytes": 15874,
+      "sha256": "6f9822e48c42b3cec46134325369d537bdb1f2e9ee126161dcaa3190d0f8619f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    }
+  ],
+  "status": "holding for frozen worker submission"
+}

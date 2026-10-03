@@ -69,7 +69,7 @@ def verify_native(native, fixtures, corpus, output):
                     and projection(result['fragment']['metadata']['inputs']) == expected['fragmentInputs'],
                     'literal semantic interpolation projections')
             for stage in ('vertex', 'fragment'):
-                require(result[stage]['metadata']['profile'] == 'virgl-webgl2-straight-line-v4'
+                require(result[stage]['metadata']['profile'] == 'virgl-webgl2-straight-line-v5'
                         and result[stage]['metadata']['stage'] == stage, 'bounded pair metadata profile')
         else:
             require(set(case['result']) == {'ok', 'error'}, 'failed pair exposes partial outputs')
