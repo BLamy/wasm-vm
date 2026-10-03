@@ -1,0 +1,2 @@
+$ cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --lib --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s

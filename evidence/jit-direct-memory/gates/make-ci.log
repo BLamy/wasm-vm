@@ -1,0 +1,77 @@
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+    Checking regex v1.12.4
+   Compiling serde_derive v1.0.228
+   Compiling zerocopy-derive v0.8.52
+   Compiling clap_derive v4.6.1
+   Compiling thiserror-impl v1.0.69
+   Compiling tokio-macros v2.7.0
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling pulley-macros v35.0.0
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling thiserror-impl v2.0.18
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling synstructure v0.13.2
+   Compiling zerovec-derive v0.11.3
+   Compiling displaydoc v0.2.7
+   Compiling ring v0.17.14
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+    Checking icu_normalizer_data v2.2.0
+   Compiling wasmtime v35.0.0
+   Compiling pulley-interpreter v35.0.0
+    Checking icu_properties_data v2.2.0
+    Checking tokio v1.52.3
+    Checking env_filter v2.0.0
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+    Checking env_logger v0.11.11
+    Checking predicates v3.1.4
+    Checking bstr v1.12.3
+    Checking wasm-vm-file-agent v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/file-agent)
+    Checking thiserror v2.0.18
+    Checking thiserror v1.0.69
+    Checking wasm-vm-wvseccomp v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wvseccomp)
+    Checking assert_cmd v2.2.2
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp") due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp" test) due to 4 previous errors
+make: *** [clippy] Error 101

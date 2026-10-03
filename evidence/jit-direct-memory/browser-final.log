@@ -1,0 +1,48 @@
+fatal: not a git repository (or any of the parent directories): .git
+[bench-browser 01:35:10] busybox-jit   baseline   rep 0: ready 4.98 s (boot mips 82.5) region 3.92 s mips 42.3 ok=true (10s)
+[bench-browser 01:35:19] busybox-jit   candidate  rep 0: ready 4.78 s (boot mips 83.8) region 3.89 s mips 42.7 ok=true (9s)
+[bench-browser 01:35:27] busybox-nojit baseline   rep 0: ready 4.84 s (boot mips 82.3) region 2.89 s mips 57.4 ok=true (8s)
+[bench-browser 01:35:36] busybox-nojit candidate  rep 0: ready 4.91 s (boot mips 81.7) region 2.87 s mips 57.9 ok=true (8s)
+[bench-browser 01:35:45] busybox-jit   candidate  rep 1: ready 4.79 s (boot mips 82.9) region 3.93 s mips 42.2 ok=true (9s)
+[bench-browser 01:35:55] busybox-jit   baseline   rep 1: ready 4.87 s (boot mips 81.7) region 3.97 s mips 41.9 ok=true (9s)
+[bench-browser 01:36:03] busybox-nojit candidate  rep 1: ready 4.92 s (boot mips 81.6) region 2.96 s mips 56.0 ok=true (8s)
+[bench-browser 01:36:11] busybox-nojit baseline   rep 1: ready 4.87 s (boot mips 81.8) region 2.96 s mips 56.1 ok=true (8s)
+[bench-browser 01:36:21] busybox-jit   baseline   rep 2: ready 4.94 s (boot mips 80.5) region 4.03 s mips 41.2 ok=true (10s)
+[bench-browser 01:36:30] busybox-jit   candidate  rep 2: ready 4.89 s (boot mips 81.0) region 3.87 s mips 42.9 ok=true (9s)
+[bench-browser 01:36:38] busybox-nojit baseline   rep 2: ready 4.52 s (boot mips 88.8) region 2.73 s mips 60.8 ok=true (8s)
+[bench-browser 01:36:46] busybox-nojit candidate  rep 2: ready 4.54 s (boot mips 88.1) region 2.75 s mips 60.4 ok=true (8s)
+[bench-browser 01:36:55] busybox-jit   candidate  rep 3: ready 4.50 s (boot mips 89.4) region 3.64 s mips 45.6 ok=true (9s)
+[bench-browser 01:37:03] busybox-jit   baseline   rep 3: ready 4.46 s (boot mips 89.4) region 3.60 s mips 46.1 ok=true (9s)
+[bench-browser 01:37:11] busybox-nojit candidate  rep 3: ready 4.52 s (boot mips 88.8) region 2.72 s mips 61.0 ok=true (8s)
+[bench-browser 01:37:19] busybox-nojit baseline   rep 3: ready 4.63 s (boot mips 86.4) region 2.80 s mips 59.2 ok=true (8s)
+[bench-browser 01:37:28] busybox-jit   baseline   rep 4: ready 4.80 s (boot mips 83.1) region 3.74 s mips 44.3 ok=true (9s)
+[bench-browser 01:37:37] busybox-jit   candidate  rep 4: ready 4.71 s (boot mips 85.2) region 3.81 s mips 43.5 ok=true (9s)
+[bench-browser 01:37:46] busybox-nojit baseline   rep 4: ready 4.68 s (boot mips 85.8) region 2.86 s mips 58.1 ok=true (8s)
+[bench-browser 01:37:54] busybox-nojit candidate  rep 4: ready 4.72 s (boot mips 84.7) region 2.87 s mips 57.7 ok=true (8s)
+# Browser benchmark (2026-10-03T01:35:00.778Z)
+
+Chromium 154.0.8037.93 (headless=true) · Apple M4 Max · samples=5 · medians · interleaved=true
+
+- **baseline**: `/tmp/wasm-vm-direct-memory-baseline/web` rev `?` wasm sha256 `70de75fd1a2c` (1.63 MB)
+- **candidate**: `/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/web` rev `7e51177d96` wasm sha256 `4f1005a174e6` (1.63 MB)
+
+| case | metric | baseline | candidate | speedup candidate vs baseline | ok |
+|---|---|---:|---:|---:|---:|
+| busybox-jit | (a) cold boot: navigation -> shell prompt s | 4.87 [4.46–4.98] | 4.78 [4.50–4.89] | 1.02x (paired 1.02x) | 5/5 · 5/5 |
+| busybox-jit | (a) boot MIPS (boot span, wall) | 82.5 [80.5–89.4] | 83.8 [81.0–89.4] | 1.02x (paired 1.01x) | 5/5 · 5/5 |
+| busybox-jit | (a) boot MIPS (inside runChunk) | 82.9 [81.4–91.3] | 84.2 [82.4–89.3] | 1.02x (paired 1.01x) | 5/5 · 5/5 |
+| busybox-jit | (a) boot JIT-retired fraction | 0.710 | 0.709 | 1.00x | 5/5 · 5/5 |
+| busybox-jit | (b) shell loop x10000: Enter -> done s | 3.92 [3.60–4.03] | 3.87 [3.64–3.93] | 1.01x (paired 1.01x) | 5/5 · 5/5 |
+| busybox-jit | (b) shell loop MIPS (wall) | 42.3 [41.2–46.1] | 42.9 [42.2–45.6] | 1.01x (paired 1.01x) | 5/5 · 5/5 |
+| busybox-jit | (b) shell loop JIT-retired fraction | 0.522 | 0.527 | 1.01x | 5/5 · 5/5 |
+| busybox-nojit | (a) cold boot: navigation -> shell prompt s | 4.68 [4.52–4.87] | 4.72 [4.52–4.92] | 0.99x (paired 0.99x) | 5/5 · 5/5 |
+| busybox-nojit | (a) boot MIPS (boot span, wall) | 85.8 [81.8–88.8] | 84.7 [81.6–88.8] | 0.99x (paired 0.99x) | 5/5 · 5/5 |
+| busybox-nojit | (a) boot MIPS (inside runChunk) | 85.3 [82.8–89.5] | 85.0 [81.6–88.9] | 1.00x (paired 0.99x) | 5/5 · 5/5 |
+| busybox-nojit | (b) shell loop x10000: Enter -> done s | 2.86 [2.73–2.96] | 2.87 [2.72–2.96] | 1.00x (paired 1.00x) | 5/5 · 5/5 |
+| busybox-nojit | (b) shell loop MIPS (wall) | 58.1 [56.1–60.8] | 57.9 [56.0–61.0] | 1.00x (paired 1.00x) | 5/5 · 5/5 |
+
+Cells: median [min–max over samples]. Speedup = ratio of medians; 'paired' = median of the per-rep ratios (each A/B pair ran back to back).
+
+All times are host clock (page performance.now()); MIPS = worker retired-instruction counter delta / host time. 'boot span' runs from the page's guest-booting event (includes kernel fetch + worker/wasm start) to the prompt; 'inside runChunk' divides by the worker's summed slice time (excludes scheduler yields and idle).
+
+Median 1-minute load average: busybox-jit/baseline=7.0, busybox-jit/candidate=7.6, busybox-nojit/baseline=6.7, busybox-nojit/candidate=6.7

@@ -1,0 +1,147 @@
+$ wasm-pack test --node crates/wasm --test jit_memory_direct_imports_verifier -- verifier_private_memory_interleaved_lifetime --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.31s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/jit_memory_direct_imports_verifier.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm)
+running 1 test
+Invoking test: verifier_private_memory_interleaved_lifetime
+panicked at crates/wasm/src/jit_browser.rs:862:25:
+null pointer dereference occurred
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2735:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3456:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2734:57)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21553]:0x4dfa64)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[12943]:0x48212b)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[5289]:0x3955e4)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[14553]:0x49b95a)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4316]:0x35fb93)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8732]:0x41d6b4)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21978]:0x4e0fbe)
+
+
+panicked at crates/wasm/tests/jit_memory_direct_imports_verifier.rs:140:51:
+called `Result::unwrap()` on an `Err` value: JsValue(Error: CRITIC_INACTIVE_WRONG_EXCEPTION load: RuntimeError: unreachable
+Error: CRITIC_INACTIVE_WRONG_EXCEPTION load: RuntimeError: unreachable
+    at criticMemoryInactive (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js:14:33)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2426:25
+    at handleError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3443:18)
+    at __wbg_criticMemoryInactive_1f1ba06639bbbfbd (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2425:74)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::inactive::__wbg_criticMemoryInactive_1f1ba06639bbbfbd::h71f089ce553b70fc externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21986]:0x4e1012)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::inactive::h64873d0c86cada14 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4015]:0x34cb81)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::alternating_guests::h145929fbab09ec0e (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[209]:0x843e6)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::verifier_private_memory_interleaved_lifetime::hbf048bb295c56d95 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21627]:0x4dfee7)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.core::ops::function::FnOnce::call_once::h8ac76927c3346efc (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[20293]:0x4d8519)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::execute_sync::{{closure}}::h2c00200d1e5bbb3d (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8175]:0x40b9d5))
+
+Stack:
+
+Error
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2735:25
+    at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3456:18)
+    at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2734:57)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21553]:0x4dfa64)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[12943]:0x48212b)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[5289]:0x3955e4)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[14553]:0x49b95a)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4316]:0x35fb93)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8732]:0x41d6e6)
+    at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21978]:0x4e0fbe)
+
+
+test verifier_private_memory_interleaved_lifetime ... FAIL
+
+failures:
+
+---- verifier_private_memory_interleaved_lifetime output ----
+    error output:
+        panicked at crates/wasm/src/jit_browser.rs:862:25:
+        null pointer dereference occurred
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2735:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3456:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2734:57)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21553]:0x4dfa64)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[12943]:0x48212b)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[5289]:0x3955e4)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[14553]:0x49b95a)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4316]:0x35fb93)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8732]:0x41d6b4)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21978]:0x4e0fbe)
+        
+        
+        panicked at crates/wasm/tests/jit_memory_direct_imports_verifier.rs:140:51:
+        called `Result::unwrap()` on an `Err` value: JsValue(Error: CRITIC_INACTIVE_WRONG_EXCEPTION load: RuntimeError: unreachable
+        Error: CRITIC_INACTIVE_WRONG_EXCEPTION load: RuntimeError: unreachable
+            at criticMemoryInactive (file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js:14:33)
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2426:25
+            at handleError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3443:18)
+            at __wbg_criticMemoryInactive_1f1ba06639bbbfbd (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2425:74)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::inactive::__wbg_criticMemoryInactive_1f1ba06639bbbfbd::h71f089ce553b70fc externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21986]:0x4e1012)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::inactive::h64873d0c86cada14 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4015]:0x34cb81)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::alternating_guests::h145929fbab09ec0e (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[209]:0x843e6)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::verifier_private_memory_interleaved_lifetime::hbf048bb295c56d95 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21627]:0x4dfee7)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.core::ops::function::FnOnce::call_once::h8ac76927c3346efc (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[20293]:0x4d8519)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::execute_sync::{{closure}}::h2c00200d1e5bbb3d (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8175]:0x40b9d5))
+        
+        Stack:
+        
+        Error
+            at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2735:25
+            at logError (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:3456:18)
+            at __wbg_new_7d855807e01e00a1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/.tmppMua3Y/wasm-bindgen-test.js:2734:57)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::__wbg_new_7d855807e01e00a1::hfab925b889131269 externref shim (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21553]:0x4dfa64)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::Error::new::had0abccdf7166dd5 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[12943]:0x48212b)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::panic_handling::h171039f8d2c86083 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[5289]:0x3955e4)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.wasm_bindgen_test::__rt::Context::new::{{closure}}::{{closure}}::h214165eeef19ee45 (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[14553]:0x49b95a)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4316]:0x35fb93)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8732]:0x41d6e6)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21978]:0x4e0fbe)
+        
+        
+    
+    JS exception that was thrown:
+        RuntimeError: unreachable
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.__rustc[8068f81614cfe5c]::__rust_abort (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[22076]:0x4e12b9)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.__rustc[8068f81614cfe5c]::__rust_start_panic (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[22058]:0x4e125e)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.__rustc[8068f81614cfe5c]::rust_panic (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21683]:0x4e01fe)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_with_hook (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[4316]:0x35fc05)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::panicking::panic_handler::{closure#0} (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[8732]:0x41d6e6)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.std[f839c7267e543978]::sys::backtrace::__rust_end_short_backtrace::<std[f839c7267e543978]::panicking::panic_handler::{closure#0}, !> (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[21978]:0x4e0fbe)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.__rustc[8068f81614cfe5c]::rust_begin_unwind (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[16942]:0x4b913f)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.core[2c5ad5f686fcca5c]::panicking::panic_fmt (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[14277]:0x497a70)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.core[2c5ad5f686fcca5c]::result::unwrap_failed (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[10751]:0x4547d8)
+            at jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm.jit_memory_direct_imports_verifier::alternating_guests::h145929fbab09ec0e (wasm://wasm/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm-0a238e76:wasm-function[209]:0x8443c)
+
+failures:
+
+    verifier_private_memory_interleaved_lifetime
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 1 filtered out; finished in 0.03s
+
+Error: Node failed with exit_code 1
+error: test failed, to rerun pass `--test jit_memory_direct_imports_verifier`
+
+Caused by:
+  process didn't exit successfully: `/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm verifier_private_memory_interleaved_lifetime --nocapture` (exit status: 1)
+Error: Running Wasm tests with wasm-bindgen-test failed
+Caused by: Running Wasm tests with wasm-bindgen-test failed
+Caused by: failed to execute `cargo test`: exited with exit status: 1
+  full command: cd "crates/wasm" && CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER="/Users/blamy/Library/Caches/.wasm-pack/wasm-bindgen-cargo-install-0.2.126/wasm-bindgen-test-runner" WASM_BINDGEN_TEST_ONLY_NODE="1" "cargo" "test" "--target" "wasm32-unknown-unknown" "--test" "jit_memory_direct_imports_verifier" "--" "verifier_private_memory_interleaved_lifetime" "--nocapture"

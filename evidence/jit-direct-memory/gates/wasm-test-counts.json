@@ -1,0 +1,29 @@
+{
+  "resultLines": 61,
+  "passed": 248,
+  "failed": 1,
+  "ignored": 1,
+  "integrationTargetsExpected": 79,
+  "integrationTargetsRun": 60,
+  "skippedIntegrationTargets": [
+    "tests/retirement_capture.rs",
+    "tests/retirement_capture_baseline.rs",
+    "tests/retirement_capture_verifier.rs",
+    "tests/riscv_tests.rs",
+    "tests/rv64a.rs",
+    "tests/rv64c.rs",
+    "tests/rv64d.rs",
+    "tests/rv64f.rs",
+    "tests/rv64m.rs",
+    "tests/sbi.rs",
+    "tests/sbi_timer.rs",
+    "tests/snapshot.rs",
+    "tests/softfloat.rs",
+    "tests/trace.rs",
+    "tests/uart16550.rs",
+    "tests/virtio_blk.rs",
+    "tests/virtio_mmio.rs",
+    "tests/virtqueue.rs",
+    "tests/wrapper.rs"
+  ]
+}

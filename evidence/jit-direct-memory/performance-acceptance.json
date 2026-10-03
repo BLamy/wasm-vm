@@ -1,0 +1,488 @@
+{
+  "passed": true,
+  "planSha256": "5a10e792d6e32bc8957c188b92d946cf855041dd72f7dda49626ce95bf95b659",
+  "analyzerSha256": "b9d39602d0fe667d0060814b4d319eabe8678103ef582b432dc628b3b26653fd",
+  "micro": [
+    {
+      "batch": 1,
+      "workload": "amoadd-d",
+      "baselineMips": 15.819968753771628,
+      "candidateMips": 19.076688291685485,
+      "speedup": 1.205861312914251,
+      "pairedSpeedup": 1.2015804667544656
+    },
+    {
+      "batch": 1,
+      "workload": "lr-sc-d",
+      "baselineMips": 23.22745484648942,
+      "candidateMips": 31.737215861144474,
+      "speedup": 1.366366486164592,
+      "pairedSpeedup": 1.3619232763980365
+    },
+    {
+      "batch": 1,
+      "workload": "tlb-collision",
+      "baselineMips": 41.47656576701663,
+      "candidateMips": 103.70754458284478,
+      "speedup": 2.5003888982852103,
+      "pairedSpeedup": 2.493376623500477
+    },
+    {
+      "batch": 1,
+      "workload": "tlb-hit-control",
+      "baselineMips": 393.5845719649286,
+      "candidateMips": 401.8888778408333,
+      "speedup": 1.021099165128466,
+      "pairedSpeedup": 1.021139522295808
+    },
+    {
+      "batch": 1,
+      "workload": "integer-control",
+      "baselineMips": 635.6268869450762,
+      "candidateMips": 655.7645804899632,
+      "speedup": 1.0316816263730946,
+      "pairedSpeedup": 1.0337937233571415
+    },
+    {
+      "batch": 2,
+      "workload": "amoadd-d",
+      "baselineMips": 16.03881393093653,
+      "candidateMips": 19.15938210117504,
+      "speedup": 1.1945635246892783,
+      "pairedSpeedup": 1.195476190249125
+    },
+    {
+      "batch": 2,
+      "workload": "lr-sc-d",
+      "baselineMips": 23.301197104178897,
+      "candidateMips": 32.10401700775711,
+      "speedup": 1.3777840196029882,
+      "pairedSpeedup": 1.3777840196029882
+    },
+    {
+      "batch": 2,
+      "workload": "tlb-collision",
+      "baselineMips": 41.97051573581072,
+      "candidateMips": 105.80611044966939,
+      "speedup": 2.5209628377139977,
+      "pairedSpeedup": 2.5264989311767216
+    },
+    {
+      "batch": 2,
+      "workload": "tlb-hit-control",
+      "baselineMips": 389.5218616974523,
+      "candidateMips": 396.78603335685233,
+      "speedup": 1.018648944702986,
+      "pairedSpeedup": 1.0144429163786937
+    },
+    {
+      "batch": 2,
+      "workload": "integer-control",
+      "baselineMips": 635.6016366260551,
+      "candidateMips": 657.0302234417372,
+      "speedup": 1.0337138634970024,
+      "pairedSpeedup": 1.0365291099166938
+    }
+  ],
+  "real": [
+    {
+      "case": "busybox-jit",
+      "phase": "readyMs",
+      "baselineSeconds": 4.869075000047684,
+      "candidateSeconds": 4.784434999942779,
+      "timeRatio": 0.9826168214488223,
+      "pairedTimeRatio": 0.9831682609033312
+    },
+    {
+      "case": "busybox-jit",
+      "phase": "regionMs",
+      "baselineSeconds": 3.9197850000858305,
+      "candidateSeconds": 3.8678700000047685,
+      "timeRatio": 0.986755651118639,
+      "pairedTimeRatio": 0.9913862871201843
+    },
+    {
+      "case": "busybox-nojit",
+      "phase": "readyMs",
+      "baselineSeconds": 4.683304999947548,
+      "candidateSeconds": 4.724889999985695,
+      "timeRatio": 1.0088794131577192,
+      "pairedTimeRatio": 1.008646130265434
+    },
+    {
+      "case": "busybox-nojit",
+      "phase": "regionMs",
+      "baselineSeconds": 2.857274999976158,
+      "candidateSeconds": 2.8688550000190736,
+      "timeRatio": 1.0040528125724728,
+      "pairedTimeRatio": 1.0004761221661373
+    }
+  ],
+  "checks": [
+    {
+      "prediction": "micro 1: exact runtime",
+      "held": true
+    },
+    {
+      "prediction": "micro 1: correctness and errors",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 amoadd-d: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 amoadd-d: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 amoadd-d: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 amoadd-d: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 lr-sc-d: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 lr-sc-d: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 lr-sc-d: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 lr-sc-d: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-collision: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-collision: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-collision: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-collision: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-hit-control: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-hit-control: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-hit-control: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 tlb-hit-control: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 integer-control: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 integer-control: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 integer-control: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 1 integer-control: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2: exact runtime",
+      "held": true
+    },
+    {
+      "prediction": "micro 2: correctness and errors",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 amoadd-d: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 amoadd-d: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 amoadd-d: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 amoadd-d: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 lr-sc-d: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 lr-sc-d: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 lr-sc-d: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 lr-sc-d: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-collision: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-collision: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-collision: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-collision: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-hit-control: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-hit-control: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-hit-control: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 tlb-hit-control: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 integer-control: predeclared speed budget",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 integer-control: seven complete pairs",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 integer-control: identical final state",
+      "held": true
+    },
+    {
+      "prediction": "micro 2 integer-control: exact retired budget",
+      "held": true
+    },
+    {
+      "prediction": "real: all twenty runs succeeded",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep0: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep0: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep0: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep0: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep0: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep0: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep0: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep0: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep1: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep1: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep1: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep1: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep1: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep1: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep1: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep1: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep2: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep2: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep2: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep2: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep2: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep2: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep2: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep2: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep3: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep3: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep3: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep3: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep3: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep3: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep3: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep3: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep4: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit baseline rep4: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep4: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit candidate rep4: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep4: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit baseline rep4: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep4: no snapshots",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit candidate rep4: only identified favicon errors",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit: five equal-policy pairs",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit readyMs: <=5% time regression",
+      "held": true
+    },
+    {
+      "prediction": "busybox-jit regionMs: <=5% time regression",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit: five equal-policy pairs",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit readyMs: <=5% time regression",
+      "held": true
+    },
+    {
+      "prediction": "busybox-nojit regionMs: <=5% time regression",
+      "held": true
+    }
+  ],
+  "limitations": "Real workloads use live RTC; timed work varies. No 300 MIPS desktop or responsiveness improvement claim. All recorded samples retained."
+}
