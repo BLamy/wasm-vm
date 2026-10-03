@@ -1,0 +1,79 @@
+{
+  "schema": "fresh-raw-equality-response-evidence-v1",
+  "status": "verified",
+  "sourceHead": "02d39991b1589deff0c74ec3d62770eb09a407a8",
+  "workerSubmission": "7c606fa45e1589d56244388ef66d479556d2745e",
+  "heldVerifier": "93829baddc66a06fe66b175a98f0717b73e09654",
+  "files": [
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-audit.json",
+      "bytes": 33497,
+      "sha256": "543725027f839427bd6e095ab07fab195f4cc9a893123618a0d1831503259b87"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-audit.log",
+      "bytes": 3040,
+      "sha256": "ea574215b40efb95fb1399a835964abf83b1d3f1bdb7f1a4d0f73ae502e8e2ec"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-audit.py",
+      "bytes": 21297,
+      "sha256": "09c88925e5fc243902aea24ab7b661b2cf0f091505517d1e411e10ff9b1a024b"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-commands.json",
+      "bytes": 2428,
+      "sha256": "2d8ba5b2edc0b649a97def256a2a98a99b8f6d44e3f5bff81fc35035b3e8e7e7"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-coverage.json",
+      "bytes": 35540,
+      "sha256": "811d91796373dc833da02d9a40de56b674abfe1528b704e20705cb5346d1757e"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-policy.log",
+      "bytes": 30,
+      "sha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-predictions.md",
+      "bytes": 4060,
+      "sha256": "548ff72d7584fff848ca45d4f49c2b35b8bd464946dc5795814c1c831b587d20"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-queue.log",
+      "bytes": 46,
+      "sha256": "679dec984b1688cf0fbd7a13fc379570c5a7c243006bd2b04750c91ea4cca6be"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-test-sabotage.json",
+      "bytes": 1447,
+      "sha256": "d8c1b0533db36b4c851ca0ccb165c83cc3f9eed1aa043a480bf9249819091b72"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-test-sabotage.log",
+      "bytes": 102,
+      "sha256": "d1ff5fe60528f5c3ec5f4ba938f8dc23c49de8b704e6baebec85c74641c80024"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-test-sabotage.py",
+      "bytes": 2963,
+      "sha256": "4c3bc1431338682eb9f993b6f80514a9ce5d9db22fd95b13962f232f9a1db718"
+    },
+    {
+      "path": "evidence/virgl-raw-equality/verifier/response-verdict.md",
+      "bytes": 6665,
+      "sha256": "5e4ea40f75fcf43b34ffa41dc59089eea62e351b1e6d73b47b8c0bd1c60df44b"
+    }
+  ],
+  "task": {
+    "path": "tasks/epic-6-transcendence/E6-T12f1-raw-float-equality.md",
+    "bytes": 21111,
+    "sha256": "3c58dc9812edfae56a0da032cc3c7e5d06a743f72745806d31573cde94d0384f"
+  },
+  "queue": {
+    "path": "tasks/QUEUE.md",
+    "bytes": 101385,
+    "sha256": "43db153a330e43b053fadc749645852db1e939485f1bb430782b7172d4219251"
+  }
+}

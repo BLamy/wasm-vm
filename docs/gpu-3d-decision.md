@@ -656,3 +656,32 @@ break while changing the observable early-break choice.
 Original shader bodies remain untouched at 12/19 accepted. PRECISE and the second
 capture's separate conservative TEMP2.x initialization gap remain later work.
 Production guest GPU negotiation and performance claims remain gated.
+
+## Raw float equality — E6-T12f1
+
+Undecorated FSEQ/FSNE compare integer binary32 encodings. Both zero signs are
+identical for equality; any NaN is unordered, including a self-comparison of
+an identical signaling payload. Results are exactly zero or all-ones. The
+compiler folds only fully known words and consumes current raw snapshots of
+computed numeric results. Source initialization, existing destination-mask
+syntax, PRECISE/modifier rejection and ordinary output authority are preserved.
+
+The closed unconditional profile13 follows loop12, indirect10/11, structured8/9
+and finite-bank7 in obligation precedence. The consumer forbids every domain,
+access and count field on13 and rejects unknown14. Comparison alone adds no
+numeric bank dependency.
+
+`make verify-E6-T12f1` preserves 4,004 complete E9 stage results, all264 pairs and
+all19 original outcomes. The eight former negative comparison bodies in the
+immutable integer/float fixture sets have an explicit hash/result migration
+manifest and are separately rendered on the GPU. Successor leaf recorders keep
+the old GPU probes/oracles byte-exact; no historical full gate is claimed.
+Their historical heap partition assumptions are replaced by the current Wasm
+pressure recording, which preserves fixed16MiB memory and available4KiB chunk
+capacity through allocation failure and recovery. Coalescing may increase the
+available chunk count; every observed before/after count remains in evidence.
+
+The native input table grows to8192 only in the test driver; runtime storage and
+179-instruction/16KiB/64KiB output caps stay unchanged. Original captures remain
+12/19 while PRECISE and selected-lane definedness are implemented in later slices.
+This compiler proof does not enable guest GPU negotiation or establish300MIPS.

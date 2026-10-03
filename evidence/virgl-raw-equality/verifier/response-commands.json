@@ -1,0 +1,86 @@
+{
+  "schema": "fresh-raw-equality-response-commands-v1",
+  "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+  "workerSubmission": "7c606fa45e1589d56244388ef66d479556d2745e",
+  "sourceHead": "02d39991b1589deff0c74ec3d62770eb09a407a8",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/response-audit.py",
+        "--root",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "--evidence",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-raw-equality/proof-response",
+        "--head",
+        "02d39991b1589deff0c74ec3d62770eb09a407a8",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/response-audit.json"
+      ],
+      "exitCode": 0,
+      "stdout": "response-audit.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/response-test-sabotage.py",
+        "--root",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "--evidence",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-raw-equality/proof-response",
+        "--head",
+        "02d39991b1589deff0c74ec3d62770eb09a407a8",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/response-test-sabotage.json"
+      ],
+      "exitCode": 0,
+      "stdout": "response-test-sabotage.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "tools/verify-virgl-raw-equality.sh"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path; files=[Path(\"tools/virgl-raw-equality\")/name for name in [\"native_receipt.py\",\"receipt.py\",\"consumer_receipt.py\",\"receipt_attacks.py\"]]; [compile(p.read_text(),str(p),\"exec\") for p in files]; print(\"Affected Python and shell syntax passed\")"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "02d39991",
+        "--",
+        "tools",
+        "renderer",
+        "docs",
+        "Makefile"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "response-policy.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exitCode": 0,
+      "stdout": "response-queue.log"
+    }
+  ]
+}

@@ -21,9 +21,10 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_DP3 = 22, RAW_RCP, RAW_RSQ,
                   /* Bit25 is the finite-bank feature, not an opcode. */
                   RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL,
-                  RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP };
+                  RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP, RAW_FSEQ, RAW_FSNE };
 #define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP))
 #define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
+#define RAW_EQUALITY_OPCODES ((UINT64_C(1) << RAW_FSEQ) | (UINT64_C(1) << RAW_FSNE))
 #define RAW_V4_OPCODES ((UINT64_C(1) << RAW_ADD) | (UINT64_C(1) << RAW_MUL) | (UINT64_C(1) << RAW_MAD) | (UINT64_C(1) << RAW_TEX))
 #define RAW_V5_OPCODES ((UINT64_C(1) << RAW_DIV) | (UINT64_C(1) << RAW_MAX) | (UINT64_C(1) << RAW_FRC) | (UINT64_C(1) << RAW_LRP))
 #define RAW_V6_OPCODES ((UINT64_C(1) << RAW_DP3) | (UINT64_C(1) << RAW_RCP) | (UINT64_C(1) << RAW_RSQ))
@@ -35,7 +36,7 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
 #define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
 #define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
-_Static_assert(RAW_ENDLOOP < 64, "opcode mask width");
+_Static_assert(RAW_FSNE < 64, "opcode mask width");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,

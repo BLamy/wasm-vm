@@ -4,7 +4,7 @@ epic: 6
 title: Map required VirGL resource formats and texture views to WebGL2
 priority: 525.02701
 status: pending
-depends_on: [E6-T12f]
+depends_on: [E6-T12f6]
 estimate: S
 risk: high
 capstone: false

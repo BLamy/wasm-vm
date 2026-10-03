@@ -3,7 +3,7 @@ id: E6-T12f
 epic: 6
 title: Preserve PRECISE semantics and close all original captured shader bodies
 priority: 525.02700
-status: pending
+status: cancelled
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -48,4 +48,16 @@ complete compositor rendering; production negotiation remains separately gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — decomposed before activation
+
+The seven remaining exact bodies require plain FSEQ/FSNE and independent
+observational-definedness work in addition to PRECISE. In particular the radial
+TEMP2.x gap can affect a visible alternate root under the current finite-bank
+contract. The previous PRECISE-only boundary would not establish its acceptance.
+
+Replaced by S tasks E6-T12f1 through E6-T12f6: raw equality masks; selected-away
+lane definedness; explicit radial admission; precise word operations; precise
+binary32 arithmetic; and unchanged 19-body integration. Each has one deterministic
+acceptance command. E6-T12f6 is the full-corpus closure dependency for E6-T12g.
+All shader bodies remain unchanged; no capability or original acceptance count
+changes as part of this planning decomposition.

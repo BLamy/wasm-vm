@@ -1,0 +1,78 @@
+{
+  "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+  "successfulCommands": [
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/audit-recording.py",
+        "--root",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "--clone",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/recording-audit.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/receipt-attacks.py",
+        "--clone",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm",
+        "--evidence",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/receipt-attacks.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/propagated-attacks.py",
+        "--clone",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm",
+        "--evidence",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/propagated-attacks.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/known-facts.py",
+        "--root",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/known-facts",
+        "--fault-binary",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts/known-nan/native"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "node",
+        "evidence/virgl-raw-equality/verifier/gpu-runner.mjs",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/seeded-gpu-authoritative"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/virgl-raw-equality/verifier/dependencies.py",
+        "--clone",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm",
+        "--output",
+        "evidence/virgl-raw-equality/verifier/loaded-dependencies.json"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "prechecks": "The critic corrected two harness-only GPU setup omissions (unbound vertex system UBO; applying the vertex UBO helper to a standalone fragment partner) before the final complete healthy recording. No implementation or worker harness changed."
+}

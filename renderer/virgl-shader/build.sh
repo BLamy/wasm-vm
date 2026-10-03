@@ -16,7 +16,7 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c
     ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
@@ -141,6 +141,16 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
       build/bounded-loop-sanitize/bridge.o build/bounded-loop-sanitize/raw_bits.o \
       "${sources[@]:2}" native_tests/bounded_loops.c -lm -o build/bounded-loop-sanitize/bounded-loop-test
+    ;;
+  raw-equality-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=raw_equality_calloc -fstack-usage -c "$source.c" -o "build/raw-equality-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
+      build/raw-equality-sanitize/bridge.o build/raw-equality-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/raw_equality.c -lm -o build/raw-equality-sanitize/raw-equality-test
     ;;
   wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
