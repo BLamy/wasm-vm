@@ -1,0 +1,96 @@
+{
+  "schema": "precise-word-lossless-evidence-v1",
+  "task": "E6-T12f4",
+  "gitHead": "09afcaa29bda5206b98fb14e019f41395d669fec",
+  "runtimeCommit": "09afcaa29bda5206b98fb14e019f41395d669fec",
+  "archives": [
+    {
+      "path": "worker.tar.gz",
+      "bytes": 16984949,
+      "sha256": "dc704cd8aa90f33d75163fd4620c0d102c280cd2d4a1c3e02e3ea19810cbd99f"
+    },
+    {
+      "path": "refuted-b8743ae4.tar.gz",
+      "bytes": 2708029,
+      "sha256": "e969f935363d2d1e829980c5c91aaea5c25782fba8f44500cc66512e8bcb4acb"
+    },
+    {
+      "path": "cold.tar.gz",
+      "bytes": 17022604,
+      "sha256": "0994986417bfa37e01157a7151858f2bf91b662ccd9fde388e0bbbf360caeb09"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "worker-receipt.json",
+      "bytes": 32577,
+      "sha256": "4aa1d0b0ac90ad2588d70edff530458a8c1dd4d5bd77db8d1ec66fbb7aeb2e5a"
+    },
+    {
+      "path": "cold-receipt.json",
+      "bytes": 32577,
+      "sha256": "f579d9fd37c22a01484568861d5294928be097af034ca6ea4316b5d2daba14ca"
+    },
+    {
+      "path": "cold-report.json",
+      "bytes": 107833,
+      "sha256": "9b7c780d15f71cdb7ca2d32d8aff2b61c0e8b1c0284995d9a84ef420c3865017"
+    }
+  ],
+  "nativeArtifacts": [
+    {
+      "path": "worker-native",
+      "bytes": 3356128,
+      "sha256": "72a608a4ff981f0b3e09988741815e384f2d8d5fb5631b38e838d5ce3941c17e"
+    },
+    {
+      "path": "worker-token-audit",
+      "bytes": 2513808,
+      "sha256": "16a6201948ce6f6e2341570fe4623ff2393186a48c82986b54f44511dfbd1c89"
+    },
+    {
+      "path": "cold-native",
+      "bytes": 3357152,
+      "sha256": "d8750d6b78ed26965f4c539095258a9b9f5f22c16e1237394f31d2508bad0d6c"
+    },
+    {
+      "path": "cold-token-audit",
+      "bytes": 2514688,
+      "sha256": "4195aedd5b95e2b639ef7de522d2e8e869331837edb09898181ee27898f2ce18"
+    }
+  ],
+  "wasmArtifacts": [
+    {
+      "path": "artifacts/worker/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/worker/virgl-shader.wasm",
+      "bytes": 304555,
+      "sha256": "35f654c4bc18d39c09187099bf3c0af493514b66da96a4cac5ef6d529e941227"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.wasm",
+      "bytes": 304555,
+      "sha256": "35f654c4bc18d39c09187099bf3c0af493514b66da96a4cac5ef6d529e941227"
+    }
+  ],
+  "workerRecordedFiles": 526,
+  "refutedRecordedFiles": 16,
+  "screenshot": {
+    "path": "browser.png",
+    "bytes": 31515,
+    "sha256": "78be2f2c478ced2564a86103ae92664471c5219b6ecc663f83d18400d1c42a02"
+  },
+  "coldRecordedFiles": 528,
+  "coldAcceptanceFiles": 526,
+  "scope": "Instruction-local PRECISE FSEQ/FSNE/MAX/MOV in the isolated compiler/shared renderer. Captured bodies remain unchanged, with 12/19 accepted originals. No exact backward RSQ/DP3 cone, PRECISE ADD/MUL, arbitrary raster word transport, guest GPU negotiation, deployment or desktop throughput claim.",
+  "repair": "The b8743ae4 canonical run exposed actual upstream allocation failure publishing incomplete ordinary GLSL under fixed Wasm heap pressure. Owned checked allocation/strbuf wrappers repair the runtime without changing pinned vendor files. The complete selected risk-tier acceptance was rerun on repaired frozen source 09afcaa2, followed by one pristine exact-head clone proof.",
+  "boundary": "Lossless packaging only: every archive member was streamed and compared against its original size and SHA-256, then all original files were checked again. Native/token/Wasm artifacts match their recorded digests. Final pristine clone remained clean before and after canonical acceptance. Evidence/status submission leaves runtime and harness sources unchanged."
+}
