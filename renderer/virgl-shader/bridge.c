@@ -19,7 +19,7 @@
 
 enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT };
 enum operand_kind { DECLARATION, DESTINATION, SOURCE };
-enum { FILE_REGISTERS = 8, TEMP_REGISTERS = 10 };
+enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
 struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -117,23 +117,39 @@ static bool index_number(const char **p, unsigned *result, unsigned limit)
 {
    space(p);
    if (**p < '0' || **p > '9') { failure_code = "unsupported-feature"; return false; }
-   *result = (unsigned)(*(*p)++ - '0');
-   if (*result >= limit || isdigit((unsigned char)**p)) { failure_code = "unsupported-feature"; return false; }
+   unsigned value = 0, digits = 0;
+   bool zero = **p == '0';
+   while (isdigit((unsigned char)**p)) {
+      unsigned digit = (unsigned)(**p - '0');
+      if (++digits > 3 || (zero && digits > 1) || value > (limit - 1) / 10 ||
+          (value == (limit - 1) / 10 && digit > (limit - 1) % 10)) {
+         failure_code = "unsupported-feature";
+         return false;
+      }
+      value = value * 10 + digit;
+      ++*p;
+   }
+   *result = value;
    return true;
+}
+static unsigned register_limit(unsigned file)
+{
+   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS : FILE_REGISTERS;
 }
 static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
 {
+   if (word(p, "ADDR")) { failure_code = "unsupported-feature"; return false; }
    static const char *names[] = {"IN", "OUT", "TEMP", "CONST", "IMM", "SAMP", "SVIEW"};
    unsigned f;
    for (f = 0; f < FILE_COUNT; ++f) if (word(p, names[f])) break;
-   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index, f == TEMP ? TEMP_REGISTERS : FILE_REGISTERS)) return false;
+   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index, register_limit(f))) return false;
    r->file = (enum file)f;
    r->last = r->index;
    space(p);
    if (!strncmp(*p, "..", 2)) {
       if (kind != DECLARATION || (f != TEMP && f != CONST)) { failure_code = "unsupported-feature"; return false; }
       *p += 2;
-      if (!index_number(p, &r->last, f == TEMP ? TEMP_REGISTERS : FILE_REGISTERS) || r->last < r->index) return false;
+      if (!index_number(p, &r->last, register_limit(f)) || r->last < r->index) return false;
    }
    if (!punctuation(p, ']')) return false;
    r->mask = 15;
@@ -200,10 +216,18 @@ static bool literal_float_bits(const char **p)
       bits = bits * 10 + digit;
       ++*p;
    }
-   if (!digits || ((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0)) return false;
+   if (!digits) return false;
+   const char *after = *p;
+   space(&after);
+   if (*after != ',' && *after != '}') return false;
    float value;
    memcpy(&value, &bits, sizeof(value));
-   return isfinite(value) && fabsf(value) <= 1000000.0f;
+   if (((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0) ||
+       !isfinite(value) || fabsf(value) > 1000000.0f) {
+      failure_code = "unsupported-feature";
+      return false;
+   }
+   return true;
 }
 
 static bool declaration(const char **p, struct profile *s)
@@ -485,7 +509,7 @@ static void stage_result(const struct conversion *c)
          else append("%c", byte);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v4\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
+   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v5\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(profile, IN); else append("[]");

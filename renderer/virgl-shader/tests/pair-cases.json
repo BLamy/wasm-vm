@@ -1826,9 +1826,9 @@
     "ok": false
   },
   {
-    "name": "fragment-temp10",
+    "name": "fragment-temp118",
     "vertexText": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nEND\n",
-    "fragmentText": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..10]\n  0: MOV OUT[0], IN[0]\n  1: END\n",
+    "fragmentText": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..118]\n  0: MOV OUT[0], IN[0]\n  1: END\n",
     "ok": false
   },
   {

@@ -163,7 +163,7 @@ export async function runShaderPairs(gl, report) {
     if(input.sha256.startsWith('0ec6a7a8'))sources.missingVertex=source;
     if(input.sha256.startsWith('23b5f8a8'))sources.partialVertex=source;
     equal(result.ok,!source.text.includes('PRECISE'),`original ${input.sha256} outcome`);
-    if(result.ok)equal(result.metadata.profile,'virgl-webgl2-straight-line-v4','v4 standalone profile');
+    if(result.ok)equal(result.metadata.profile,'virgl-webgl2-straight-line-v5','v4 standalone profile');
     else equal(result.error.code,'unsupported-feature','PRECISE remains rejected');
     report.corpus.push({path:input.path,sha256:input.sha256,bytes:source.bytes,stage:input.stage,result,glslSha256:result.ok?await digest(result.glsl):null});
   }
@@ -178,7 +178,7 @@ export async function runShaderPairs(gl, report) {
       require(test.expected,'positive literal expectations');equal(result.interfaceKey,test.expected.interfaceKey,`${test.name} literal interface`);
       equal(project(result.vertex.metadata.outputs),test.expected.vertexOutputs,`${test.name} vertex qualifiers`);
       equal(project(result.fragment.metadata.inputs),test.expected.fragmentInputs,`${test.name} fragment qualifiers`);
-      for(const stage of ['vertex','fragment'])equal(result[stage].metadata.profile,'virgl-webgl2-straight-line-v4','v4 pair profile');
+      for(const stage of ['vertex','fragment'])equal(result[stage].metadata.profile,'virgl-webgl2-straight-line-v5','v4 pair profile');
     } else equal(Object.keys(result).sort(),['error','ok'],'pair rejection no partial stages');
     report.cases.push({name:test.name,vertexSha256:await digest(test.vertexText),fragmentSha256:await digest(test.fragmentText),result});
   }

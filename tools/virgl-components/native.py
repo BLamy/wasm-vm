@@ -82,7 +82,7 @@ def main():
         require(result.get('ok') is (True if kind == 'ORIGINAL' else entries[index]['ok']), 'native acceptance matches literal expectation')
         entries[index]['result'] = result
         if result['ok']:
-            require(result['metadata']['profile'] == 'virgl-webgl2-straight-line-v4', 'native profile version')
+            require(result['metadata']['profile'] == 'virgl-webgl2-straight-line-v5', 'native profile version')
             require('#version 300 es' in result['glsl'], 'native ESSL300 source')
             if kind == 'ORIGINAL':
                 entries[index]['glslSha256'] = sha(result['glsl'].encode())

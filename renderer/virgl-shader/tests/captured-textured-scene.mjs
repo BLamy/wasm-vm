@@ -40,7 +40,7 @@ async function translations(bridge, report) {
     const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
     const translated = bridge.translate({ stage: input.stage, text });
     require(translated.ok === true, `${input.stage}: exact captured translation rejected: ${JSON.stringify(translated)}`);
-    equal(translated.metadata.profile, "virgl-webgl2-straight-line-v4", "component-aware metadata profile");
+    equal(translated.metadata.profile, "virgl-webgl2-straight-line-v5", "component-aware metadata profile");
     equal(translated.metadata.stage, input.stage, "captured metadata stage");
     require(translated.glsl.length > 0 && translated.glsl.length <= LIMITS.glslBytes, "captured GLSL output bound");
     result[input.stage] = { text, ...translated };

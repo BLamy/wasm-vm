@@ -13,7 +13,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / 'renderer/virgl-shader/tests/pair-cases.json'
-PROFILE = 'virgl-webgl2-straight-line-v4'
+PROFILE = 'virgl-webgl2-straight-line-v5'
 SEEDS = ['6102ab3d', 'b487095f', '938ad217', '27a461cb']
 SOURCE_PATHS = [
     'renderer/virgl-shader/bridge.c', 'renderer/virgl-shader/bridge.h',

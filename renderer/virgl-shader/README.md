@@ -17,6 +17,7 @@ make verify-E6-T10a
 make verify-E6-T10d
 make verify-E6-T12e1
 make verify-E6-T12e2
+make verify-E6-T12e3
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -71,6 +72,43 @@ standalone/pair results and literal semantic expectations, then runs truncations
 invalid bytes and four deterministic mutation seeds. Four distinct pair outputs
 and standalone smooth-VS/flat-FS outputs must recover exactly after every case.
 
+The bank sanitizer target is `build.sh bank-sanitize`, followed by
+`python3 tools/virgl-banks/native.py --binary
+renderer/virgl-shader/build/bank-sanitize/bank-test --output DIR/native`.
+It records all nineteen unchanged original results, every shared bank boundary,
+and the exact four hardware pair inputs. Low/high single-stage and full-bank
+pair translations recover after every rejection, truncation and mutation. The
+shared cases actually write/read every new TEMP and read every new CONST index,
+check independent small banks, and exercise 179/180 instructions plus unchanged
+text and line bounds. Historical negative fixtures retain their counts: v5
+replaces TEMP10/CONST8 neighbors with TEMP118/CONST46 neighbors; the newly valid
+forms have positive bank cases. Seven PRECISE-bearing originals still reject;
+some bodies now reach the integer-immediate or ADDR guard before their
+decorated instruction. Well-formed UINT32 words excluded by the unchanged
+float domain and recognized ADDR files return `unsupported-feature`; malformed
+words, decimal overflow and unknown file spellings remain `parse-error`. All
+seven original rejection codes remain `unsupported-feature`.
+
+The larger profile tables add 6,804 bytes per stage (13,608 per pair) on the
+fixed Wasm ABI; their bank checks precede every indexed access. Text, token,
+line, GLSL, JSON, memory and stack capacities are unchanged. The sanitizer and
+browser reports record observed generated/serialized maxima, without claiming
+that the selected stress input mathematically maximizes every output.
+
+Constant metadata stays faithful to upstream declaration order. Disjoint
+`DCL CONST[45]` followed by `DCL CONST[0]` emits extent47 because upstream's
+single-CONST0 path increments its count; the addressable bank still ends at45.
+An unread declared tail can also exceed the active reflected prefix. Direct
+WebGL callers must inspect the actual active uniform array before uploading.
+The qualified Metal driver retains the full declared extent, including47 in
+the reordered case. The hardware proof records required, declared, reflected
+and uploaded counts separately, poisons the unaddressable host element46, and
+checks that the shader still uses only guest CONST0..45. Neither a retained
+suffix nor a link-time default value is evidence of a guest input.
+E6-T12e3b separately owns command transport, host-limit checks and renderer
+restoration for these extents; v5 frontend acceptance does not enable those
+command paths or production GPU negotiation.
+
 ## JavaScript contract
 
 ```js
@@ -86,7 +124,9 @@ trusted application configuration. Translation requests accept exactly `stage`
 and `text`; unknown enumerable string request keys are rejected, including
 shader-key overrides. The pair request described below rejects every unknown own
 key, including symbols and non-enumerable keys.
-`LIMITS.registerIndex` remains 7 and `LIMITS.temporaryRegisterIndex` is 9.
+`LIMITS.registerIndex` remains 7; `LIMITS.temporaryRegisterIndex` is 117 and
+`LIMITS.constantRegisterIndex` is 45. These are shader frontend limits. The
+command decoder and state renderer retain their separately gated constant limits.
 Each factory call creates separate Wasm memory. Calls are synchronous and
 serialized. Returned strings and objects own their data; the adapter frees its
 input allocation in `finally` and does not return any view into Wasm memory.
@@ -138,13 +178,14 @@ in `finally` and owns all returned JSON data.
 
 ## Supported profile and bounds
 
-`virgl-webgl2-straight-line-v4` deliberately accepts a strict subset of TGSI text:
+`virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
 
-- `VERT` and `FRAG`; unique `DCL` registers with single-digit decimal indices.
-  TEMP indices are 0–9; IN, OUT, CONST, IMM, SAMP, SVIEW and GENERIC semantic
-  indices remain 0–7. TEMP and CONST declarations may use non-overlapping
-  inclusive ranges within their respective banks. Other ranges, multi-digit
-  indices, signs and leading zeroes remain rejected. Declarations and immediates
+- `VERT` and `FRAG`; unique `DCL` registers with canonical decimal indices
+  of at most three digits. TEMP indices are 0–117 and CONST indices are 0–45;
+  IN, OUT, IMM, SAMP, SVIEW and GENERIC semantic indices remain independently
+  bounded at 0–7. TEMP and CONST declarations may use non-overlapping inclusive
+  ranges within their respective banks. Other ranges, signs, nondecimal
+  spellings and leading zeroes remain rejected. Declarations and immediates
   precede instructions; declarations may follow immediates.
 - Vertex input attributes, mandatory vertex `OUT[0], POSITION`, and generic
   vertex outputs. Fragment inputs are `GENERIC[n], PERSPECTIVE` or `GENERIC[n], CONSTANT`; fragment
@@ -188,7 +229,10 @@ This is not a general Mesa desktop-shader frontend. Widening this profile
 requires new safety checks and independent browser execution evidence.
 
 Input is capped at 16,384 bytes, 256 nonempty lines, 512 bytes per nonempty line,
-128 non-END instructions, ten TEMP registers and eight registers in every other file. Tokens have a fixed 8,192
+179 non-END instructions, 118 TEMP registers, 46 CONST registers and eight
+registers in each other file. The original corpus maximum is 178 non-END
+instructions (179 including END); the admission limit is static, not a future
+loop execution bound. Tokens have a fixed 8,192
 word allocation, GLSL is capped at 65,536 bytes, and JSON storage is fixed at
 147,456 bytes per standalone result and 295,936 bytes per pair result. Pair
 conversion reuses the text/token stack workspaces sequentially. The fixed
@@ -207,7 +251,7 @@ arrays where applicable:
 | --- | --- |
 | `inputs`, `outputs` | `{index,name,type,semantic,semanticIndex,componentMask}`; outputs additionally include `writtenMask`. GENERIC inputs/outputs also have `interpolation:"smooth"|"flat"`; standalone VS outputs are smooth, while pair VS outputs reflect the matched FS modes (unmatched outputs stay smooth). Attributes, POSITION and COLOR have no interpolation field. Masks are numeric bitsets (`xy=3`, `xyz=7`, `xyzw=15`). Type remains `vec4`, matching upstream declarations, even for partial generic components. A linker must check component coverage rather than infer it from type. VS attribute names are `in_n`, linked generic names are `vso_gn`, position is `gl_Position`, and fragment color is `fsout_c0`. |
 | `attributes` | Vertex input records; bind or reflect each attribute name. Fragment list is empty. |
-| `uniforms` | `{name,type:"uvec4[]",count,encoding:"float32-bits"}`. Base name is `vsconst0` or `fsconst0`; query `name + "[0]"`. Upload float bit patterns with `uniform4uiv`, not numeric integer conversion or `uniform4fv`. `count` includes any register gaps. |
+| `uniforms` | `{name,type:"uvec4[]",count,encoding:"float32-bits"}`. Base name is `vsconst0` or `fsconst0`; query `name + "[0]"`. Upload float bit patterns with `uniform4uiv`, not numeric integer conversion or `uniform4fv`. `count` is the upstream declared extent and includes gaps; it is not the active reflected size. |
 | `samplers` | `{index,name,type:"sampler2D"}`; name is `fssampn`. Caller binds each texture unit and sets the sampler uniform. |
 | `uniformBlocks` | Vertex `VirglBlock`, 656 bytes under std140. Its required member is `winsys_adjust_y`, float at byte offset 640, default 1. Fragment list is empty. |
 

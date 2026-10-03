@@ -2,9 +2,10 @@ export const LIMITS = Object.freeze({
   textBytes: 16384,
   tokens: 8192,
   glslBytes: 65536,
-  instructions: 128,
+  instructions: 179,
   registerIndex: 7,
-  temporaryRegisterIndex: 9,
+  temporaryRegisterIndex: 117,
+  constantRegisterIndex: 45,
 });
 
 const failure = (code, message) => ({ ok: false, error: { code, message } });

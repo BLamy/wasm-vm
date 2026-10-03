@@ -68,7 +68,7 @@ async function readOriginals(bridge, report) {
     const translated = bridge.translate({ stage: input.stage, text });
     equal(translated.ok, ACCEPTED.has(input.sha256), `original ${input.sha256} unchanged outcome`);
     if (translated.ok) {
-      equal(translated.metadata.profile, 'virgl-webgl2-straight-line-v4', 'component profile');
+      equal(translated.metadata.profile, 'virgl-webgl2-straight-line-v5', 'component profile');
       equal(translated.metadata.stage, input.stage, 'original stage');
       require(translated.glsl.length > 0 && translated.glsl.length <= LIMITS.glslBytes, 'bounded GLSL');
     } else {

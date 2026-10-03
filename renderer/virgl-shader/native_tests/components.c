@@ -63,7 +63,7 @@ static void shared_cases(void)
       const char *result = translate((int)stage, text, text_length);
       require((strstr(result, "\"ok\":true,") != NULL) == (accepted != 0), "literal boundary acceptance");
       if (accepted) {
-         require(strstr(result, "#version 300 es") && strstr(result, "virgl-webgl2-straight-line-v4"), "versioned ESSL300 success");
+         require(strstr(result, "#version 300 es") && strstr(result, "virgl-webgl2-straight-line-v5"), "versioned ESSL300 success");
       } else {
          require(strstr(result, "\"code\":\"parse-error\"") || strstr(result, "\"code\":\"unsupported-feature\""),
                  "negative must reject in guard before upstream translation");
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
       require(fclose(file) == 0, "close original");
       original[i][lengths[i]] = 0;
       const char *result = translate(stages[i], original[i], lengths[i]);
-      require(strstr(result, "\"ok\":true,") && strstr(result, "#version 300 es") && strstr(result, "virgl-webgl2-straight-line-v4"),
+      require(strstr(result, "\"ok\":true,") && strstr(result, "#version 300 es") && strstr(result, "virgl-webgl2-straight-line-v5"),
               "unchanged original translates to versioned ESSL300");
       baseline[i] = strdup(result);
       require(baseline[i] != NULL, "retain bounded original result");
