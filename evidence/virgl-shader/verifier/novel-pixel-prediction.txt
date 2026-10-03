@@ -1,0 +1,1 @@
+Before the novel hardware run: alpha.frag TGSI MAD with IN=(0,0,0,1), IMM=(0.5,1,0,0.5), CONST=(0,0.5,1,0) yields RGBA=(0,0.5,1,0.5). SRC_ALPHA/ONE_MINUS_SRC_ALPHA over red (1,0,0,1) must yield RGB=(0.5,0.25,0.5), alpha=1, hence interior RGBA8=[128,64,128,255]. No shader or pixel output from this variant was inspected before this prediction.

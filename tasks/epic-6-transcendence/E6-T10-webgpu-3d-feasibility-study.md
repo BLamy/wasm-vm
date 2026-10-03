@@ -3,11 +3,20 @@ id: E6-T10
 epic: 6
 title: WebGPU 3D feasibility study — virgl vs venus decision document
 priority: 610
-status: pending
+status: cancelled
 depends_on: [E5]
 estimate: M
 capstone: false
 ---
+
+## Replacements
+
+The user explicitly prioritized implementing browser guest graphics offload on 2026-10-03.
+This M research container is decomposed into E6-T10a (reusable shader frontend),
+E6-T10b (current guest driver and real-stream capture), and E6-T10c (backend contract
+and capability decision). Each is S and has one acceptance command. The early
+frontend depends on already-verified graphics primitives, not the unrelated full
+E5 desktop capstone. The full captured-workload acceptance remains in T10b/T10c.
 
 ## Goal
 An evidence-based, written go/no-go decision on the guest-3D backend: virgl (Gallium-level

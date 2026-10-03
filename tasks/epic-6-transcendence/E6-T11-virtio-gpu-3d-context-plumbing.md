@@ -4,7 +4,7 @@ epic: 6
 title: virtio-gpu 3D context plumbing — capsets, contexts, SUBMIT_3D, fences
 priority: 611
 status: pending
-depends_on: [E6-T10]
+depends_on: [E6-T10c]
 estimate: L
 capstone: false
 ---
