@@ -501,7 +501,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02694` [E6-T12c](epic-6-transcendence/E6-T12c-virgl-object-state.md) — Execute the captured eight-object VirGL state model *(deps: E6-T12b)*
+- [?] `525.02694` [E6-T12c](epic-6-transcendence/E6-T12c-virgl-object-state.md) — Execute the captured eight-object VirGL state model *(deps: E6-T12b)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
