@@ -556,7 +556,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269903` [E6-T12e3](epic-6-transcendence/E6-T12e3-captured-register-banks.md) — Bound declaration banks and static budgets for the remaining corpus *(deps: E6-T12e2)*
 - [x] `525.02699035` [E6-T12e3b](epic-6-transcendence/E6-T12e3b-constant-transport-reflection.md) — Bound high constant uploads and active renderer reflection *(deps: E6-T12e3)*
 - [-] `525.0269904` [E6-T12e4](epic-6-transcendence/E6-T12e4-typed-integer.md) — Preserve straight-line TGSI 32-bit integer and mask semantics *(deps: E6-T12e3b)*
-- [~] `525.02699041` [E6-T12e4a](epic-6-transcendence/E6-T12e4a-raw-bit-storage.md) — Preserve private raw shader lanes and masked bitwise operations *(deps: E6-T12e3b)*
+- [?] `525.02699041` [E6-T12e4a](epic-6-transcendence/E6-T12e4a-raw-bit-storage.md) — Preserve private raw shader lanes and masked bitwise operations *(deps: E6-T12e3b)*
 - [ ] `525.02699042` [E6-T12e4b](epic-6-transcendence/E6-T12e4b-integer-masks.md) — Preserve wrapping integer arithmetic masks and selection *(deps: E6-T12e4a)*
 - [ ] `525.02699043` [E6-T12e4c](epic-6-transcendence/E6-T12e4c-float-mask-comparisons.md) — Preserve ordered float masks and explicit mixed typed use *(deps: E6-T12e4b)*
 - [ ] `525.0269905` [E6-T12e5](epic-6-transcendence/E6-T12e5-component-float.md) — Preserve the remaining componentwise float operations and negation *(deps: E6-T12e4c)*

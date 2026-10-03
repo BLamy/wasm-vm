@@ -3,7 +3,7 @@ id: E6-T12e4a
 epic: 6
 title: Preserve private raw shader lanes and masked bitwise operations
 priority: 525.02699041
-status: in-progress
+status: implemented
 depends_on: [E6-T12e3b]
 estimate: S
 risk: high
@@ -97,3 +97,85 @@ arithmetic/masks and mixed float use stay in separate pending slices. The owned
 emitter is required because merely admitting new opcodes into float-backed TEMP
 storage cannot establish the requested all-bit guarantee. Legacy results remain
 unchanged; no guest device or production behavior is activated.
+
+
+### 2026-10-03 — worker — implemented submission
+
+Runtime/fixtures frozen at `347dc59d60fa7e77cec58b14a36bcc8adb88db8d`;
+final recording harness at `2484d01736e15b6aee05cef12a3215f283705762`.
+The only intervening changes enable precise browser coverage in the new wrapper
+and allow the successor receipt to carry unchanged regression recordings across
+those two harness files. Every recorded runtime/source/artifact digest is still
+checked. The initial aggregate reached all passing runtime gates but stopped on
+missing `browserCoverage`; its complete log is retained. No runtime repair was
+made during recorded submission. The two affected browser recordings and the
+aggregate receipt were repeated, then the full gate passed once in a pristine
+clone at the final harness head.
+
+Commands:
+
+```sh
+EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc VIRGL_RAW_BITS_EVIDENCE_DIR=evidence/virgl-raw-bits/worker make verify-E6-T12e4a
+node tools/verify-virgl-raw-bits.mjs --output evidence/virgl-raw-bits/worker/hardware
+node tools/verify-virgl-raw-bits.mjs --output evidence/virgl-raw-bits/worker/sabotage --sabotage shift-mask
+python3 tools/virgl-raw-bits/receipt.py evidence/virgl-raw-bits/worker
+python3 tools/virgl-raw-bits/cold.py --output evidence/virgl-raw-bits/cold-clone
+```
+
+The sabotage command must exit nonzero on actual readback. The clean-clone helper
+runs `make verify-E6-T12e4a` with the documented build environment scrubbed; both
+checkout status checks are empty. Its retained checkout is
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-bits-cold-nqo7_wad/wasm-vm`.
+
+Evidence and SHA256:
+
+- `evidence/virgl-raw-bits/worker/receipt.json`:
+  `b9f7b38a5c4f3d372ba260a1ba762e31096f36540d2181bb6ccb5b50533f0414`.
+- `worker/native/native-report.json`:
+  `cb39748e8786140e0fd5b0439c1407a302d9df353e5e0ecb9dec48dbd8ca2b7d`.
+- `worker/hardware/report.json`:
+  `088fe0f80137bfe5ff47ce3b419265b6a14e958b201bd050146ea872f5ef2527`.
+- `worker/sabotage/report.json`:
+  `27d4b5f6db245812d911f1c28b8962e6bb92cea77bf77aa0adbb09c47385720a`.
+- `cold-clone/report.json`:
+  `3b904909a23f599385cc5596163eea65878942af757c31a5b669068eaf54f0c4`.
+- `cold-clone/acceptance/receipt.json`:
+  `96fae8d6ea6011d7490eb59cae60c1f68c724e832aac9dfcf1c7481dd9c8f915`.
+
+Paths after the first bullet are relative to `evidence/virgl-raw-bits/`.
+All95 final worker record digests and102 copied cold artifacts were rechecked.
+Both actual hardware screenshots (`worker/hardware/browser.png` and
+`cold-clone/acceptance/hardware/browser.png`) have SHA256
+`2587c795257a0a4ccf48f9aeaa63f6324fa1e69a5bd90dfaddf55abbf2bbe942`;
+the worker inspected the image. Both builds produced Wasm SHA256
+`64b4dd240932ab30031b81485d78e321cc1e6b4ec9d7cbf967e3ceebe87ca1a2`.
+
+The native ASan/UBSan recording covers279 shared cases (172 accepted),22 pairs
+(18 accepted),42,283 calls,4,096 seeded mutations,1,335 truncations,324 hostile
+calls and24,136 standalone/12,068 mixed-pair recoveries. All19 original full
+serialized results remain identical to verified E3b (12 accepted/seven PRECISE
+rejections). LLVM counters and native per-function stack observations are retained;
+the latter are explicitly not a total Wasm stack measurement. IR is26,232 bytes
+on the heap, with fixed allocation/static-stack bounds documented in the header
+and README. Each raw stage has two owned allocations and no vendor conversion.
+
+Actual ANGLE/Metal WebGL2 executes MOV/AND/OR/NOT/SHL/USHR, aliases, all-bit
+immediates and179-instruction programs in both stages using six dynamic vectors.
+The receipt independently reconstructs480 u32 results from240 vertex captures
+and1,920 fragment bitplanes, and checks14,880 non-edge interpolation pixels
+across15 full/partial/mixed/inactive pairs. Actual UBO reflection is656/640;
+nonzero-y feedback proves both coordinate signs. Both47-element declarations
+upload only46 legal entries, leaving poisoned host-only padding unchanged after
+every draw; unused arrays reflect absent. All303 GL objects are released.
+Exhausted16MiB Wasm tests exercise IR and GLSL failures in both stages and raw/raw
+pairs, restore allocator capacity at4KiB granularity, and recover both mixed
+pairs. This is an owned-allocation claim, not new vendor OOM semantics. Exactly
+four sabotaged dynamic count masks still compile/link but fail SHL lane-z byte0
+(expected carrier `0x3f7f0000`, observed `0x3f7f8000`).
+
+The full bank/component/pair/original shader and renderer regressions pass, as do
+23 finite constant packet cases,45,056 constant-renderer pixels and the async
+210-packet/three-draw replay with93 rejection attacks. Production negotiation,
+finite guest constant transport and default demo artifacts remain unchanged;
+this isolated compiler submission makes no guest acceleration or MIPS/FPS claim.
+Independent verification is still required before `verified`.
