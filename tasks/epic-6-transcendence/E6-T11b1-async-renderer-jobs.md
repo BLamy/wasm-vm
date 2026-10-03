@@ -3,7 +3,7 @@ id: E6-T11b1
 epic: 6
 title: Execute renderer jobs with staged GPU readback and explicit DMA handshakes
 priority: 525.026971
-status: implemented
+status: verified
 depends_on: [E6-T11a]
 estimate: S
 risk: high
@@ -151,3 +151,38 @@ Physical guest DMA and virtqueue completion remain E6-T11b2. Production negotiat
 scanout, live Mesa and FPS/MIPS are not claimed. No default web/Wasm artifact is
 changed by this renderer-only layer; the prior production 127/127 proof and
 ordinary no-VIRGL gating remain unchanged.
+
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- P01–P24 — HELD for the scoped asynchronous renderer boundary. The immutable
+  initial predictions remain SHA-256
+  `677ada291f5788b987dfe01f2d2b34fa14c16fc50fe123ddc062158b8d72b111`;
+  supplemental/defensive predictions are separate. Detailed results and exact
+  JSON/event citations: `evidence/virgl-async/verifier/review.md`.
+- Independent actual-WebGL recording passed 4,520 assertions, 95 records and
+  2,304 literal pixels across three complete original replays. Novel partial
+  texture rows cross an SG boundary and preserve unrelated bytes. Fresh/owned
+  inputs, stale identities, staged-index mutation, final fences, quotas, empty
+  and pending cancellation, actual context loss and zero final ownership hold.
+  Browser errors are zero. Fence-wait omission fails the independent sequencing
+  oracle at event 356. `verifier/attacks.json` SHA-256:
+  `5be2721cebc7b87d0dca3353adea0c7f446787a06f25170fbe4270598d4d021a`.
+- COVERAGE — every added runtime range in resources.mjs (235 changed lines) and
+  state.mjs (207) executes in source-bound worker/regression/independent captures.
+  Six defensive exception/idempotency ranges received additional trusted-fault
+  checks; no runtime waivers remain. Independent precise coverage SHA:
+  `28b29b1b5f40c1de0361056422077e7a977693c630e7e4b56a7de27a15c0ee4d`.
+- Exact frozen source, worker/cold receipts, original fixture bytes, served-source
+  hashes, captures and the retained pristine clone were independently checked.
+  `verifier/audit.json` SHA:
+  `5e560aaf3eb504ae7f99a90faace0c9cceb678cd0a705789074d4792ddfd6ae7`.
+  Prior production no-VIRGL proof carries forward: core/Wasm/default-web sources
+  did not change. No guest transport or throughput claim is made.
+- SUITE — retain the independent hardware runner, GL oracle, literal partial-row
+  regression and audit script alongside the permanent `make verify-E6-T11b1`.
+  No compiled artifacts or runtime changes are part of this review.
+
+Commands: `node evidence/virgl-async/verifier/run-attacks.mjs`;
+`python3 evidence/virgl-async/verifier/audit-evidence.py`;
+`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.
