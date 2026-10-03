@@ -3,7 +3,7 @@ id: E6-T12e4c2
 epic: 6
 title: Preserve ordinary numeric shader chains with bounded float shadows
 priority: 525.026990432
-status: in-progress
+status: implemented
 depends_on: [E6-T12e4c1]
 estimate: S
 risk: high
@@ -77,4 +77,75 @@ not only the two results from fused/separate round-to-nearest binary32.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — implemented ordinary numeric shadows
+
+Frozen implementation/proof head: `1ce9b75b182b5411aee9922f329dc898e2a28b4e`.
+The v4 compiler snapshots ordinary ADD/MUL/MAD/TEX values and their captured u32
+representations before aliased/partial publication. MOV/UCMP preserve authorized
+views, integer writes invalidate authority, unknown raw numeric inputs reject,
+and used sampler metadata matches one logical emitted sample per TEX. This is
+an isolated compiler proof: guest constant transport and production negotiation
+remain unchanged, all 19 original bodies retain their 12 accepted/7 rejected
+outcomes, and no Mesa or desktop-performance claim is made.
+
+Commands on the frozen head:
+
+```sh
+VIRGL_NUMERIC_FLOATS_EVIDENCE_DIR=evidence/virgl-numeric-floats/worker make verify-E6-T12e4c2
+python3 tools/virgl-numeric-floats/cold.py --output evidence/virgl-numeric-floats/cold-clone
+```
+
+The recorded sanitizer run checks 1,509 cases and 125 pairs in 219,699 calls,
+including 5,626 truncations, 324 hostile cases and 4,096 mutations across four
+fixed seeds, followed by 115,550 standalone and 92,440 mixed-pair exact recovery
+conversions. Native/Wasm full result parity and the complete unchanged ordered,
+integer, raw, bank, constant and renderer regression checks pass. Existing fixed
+IR/output/Wasm bounds remain; allocation-pressure runs reach structured failures
+and restore exact output and capacity. The LLVM record includes both changed C
+sources; interpretation of hunk/branch sufficiency belongs to the fresh verifier.
+
+Actual ANGLE/Metal GPU recordings independently reconstruct 352 complete words
+through vertex feedback and fragment bitplanes. Forty-eight draws consume both
+raw and numeric forms; four texture frames check 4,096 pixels, 26 interface draws
+check 25,792 non-edge pixels, and actual UBO writes exercise both orientation
+signs. Exact rational dyadics and texture endpoints are the numeric oracles;
+no non-exact MAD or exceptional-payload promise is inferred. Stale shadow,
+incorrect numeric decode and exchanged sampler source mutations each compile,
+link and cause an independently predicted actual GPU mismatch. Every run releases
+all GL objects and records zero console/page/request errors. The worker inspected
+`worker/hardware/browser.png`; the whole independent browser/native receipt also
+revalidates retained recorded data instead of trusting printed pass status.
+
+Worker evidence under `evidence/virgl-numeric-floats/worker/` (SHA-256):
+
+- `receipt.json`: `612453552ec1c95798dcbc4e179a82725d44e577ad2054d752cdf59de8fa0a3b`.
+- `native/native-report.json`: `86e1e501016a4b1ad59f4b99ee9587cf57d9f170347b7d0719d412102fcac4e7`.
+- `hardware/report.json`: `6030241cb71e6abd68886f93a10b0fbb6036e2dc2664ea12460d9f123e5eb946`.
+- `sabotage-stale-shadow/report.json`: `10a55bace05fd41cf7b6ea13ad4792419fb7d22f5117101de3fe552a08377fe9`.
+- `sabotage-numeric-decode/report.json`: `18b5a06d84c7ba8bf79fb153570fff16bc218fd9b3772d1f8cf078ca60e16c0d`.
+- `sabotage-sampler-index/report.json`: `fa4076859980e1fd00dc6522ff6b259f7218c3a7fa72671555450ed619a3db91`.
+- `hardware/browser.png`: `083d7e8502d859b2cfa12aa2fad7aa2fa00dc90744751648e47c2636a65cb319`.
+
+The receipt binds 236 source files and 142 recorded artifacts. Native sanitizer
+binary SHA-256 is `4bc86b7e8e68f818ed51e04847cce9d449841ec73011957d8c016bc9ccdf8ae7`;
+Wasm SHA-256 is `eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d`.
+
+The final pristine-clone acceptance passed on the same frozen head with a clean
+checkout before and after. Build/runtime overrides were scrubbed by the recorded
+cold harness. All 151 copied files and 142 receipt records were rehashed. The
+retained clone is
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-numeric-floats-cold-nv_gxqs6/wasm-vm`.
+Cold evidence under `evidence/virgl-numeric-floats/cold-clone/` (SHA-256):
+
+- `report.json`: `2bbdfa7bdbc25ed352ec6e60d91618351f16bb73ceb2c614703fe2290367cd78`.
+- `acceptance/receipt.json`: `a9659c5279ddb8c8d75372acff27e51bdd77540570a96047086fdf3ab5fd86fa`.
+- `acceptance/native/native-report.json`: `4724df18e9fbfbc04b52d79efa9bf3a67c8d400bcc6d81eb1913d7d2a3ce2804`.
+- `acceptance/hardware/report.json`: `e99a4d9d32a718c487a4d3c658811b63bc19ec08fe9799ce92d087e15f7efc0b`.
+- `cold.log`: `c032cd95632b5af5cdfb9fd348cf6127ac8b708754d69192b7d28f3f5a04a35d`.
+
+The cold Wasm digest equals the worker digest above. The path-dependent debug
+sanitizer binary has its own recorded SHA-256:
+`5db4f1763bed04759b1b2c17a11be65ea439e5eac6babbbcc0c7caa306c24368`.
+Browser-impacting demo gates do not apply to this isolated compiler fixture path:
+production negotiation remains off and the deployable demo sources are unchanged.
+This worker submission does not set `verified`; the fresh critic owns that verdict.
