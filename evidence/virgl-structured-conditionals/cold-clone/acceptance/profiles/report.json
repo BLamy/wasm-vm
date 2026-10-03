@@ -1,0 +1,2246 @@
+{
+  "schema": "wasm-vm-structured-profiles-v1",
+  "task": "E6-T12e7",
+  "status": "passed",
+  "gitHead": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-structured-conditionals-cold-kmq8d6wj/wasm-vm/tools/virgl-structured-conditionals/profiles.mjs",
+    "--output",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-structured-conditionals-cold-kmq8d6wj/wasm-vm/target/evidence/virgl-structured-conditionals-cold/profiles"
+  ],
+  "node": "v24.20.0",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 5640,
+      "sha256": "1539c76a2cef0ed59ec6a611461f90d6e14075b1abfcacbeb5653eec8ab1a819"
+    },
+    {
+      "path": "tools/virgl-structured-conditionals/profiles.mjs",
+      "bytes": 6973,
+      "sha256": "f9623deba77f041cf59de5c2d7e82908b15af429be66c92d42e8ba9aba018169"
+    }
+  ],
+  "cases": [
+    {
+      "name": "vertex-v8-unconditional",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": true,
+        "domain": null
+      },
+      "result": {
+        "ok": true,
+        "domain": null
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v7-extent1",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 1,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 1
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 1
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v7-extent8",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 8,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 8
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 8
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 8
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v7-extent46",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 46
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 46
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v7-extent47",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 47,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 47
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 47
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 47
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent1",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 1,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 1
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 1
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent8",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 8,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 8
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 8
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 8
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent46",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 46
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 46
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent47",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 47,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 47
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 47
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 47
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-missing-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-empty-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader requires one domain and one constant bank."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader requires one domain and one constant bank."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-duplicate-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          },
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Array extent exceeds the bounded contract."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Array extent exceeds the bounded contract."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-wrong-kind",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "finite-normal-only-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-wrong-stage",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-wrong-slot",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 1,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-wrong-name",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "otherconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent-mismatch",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 45
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extent48",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 48,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 48
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-numeric-uniform",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "numeric"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-extra-field",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46,
+            "optional": true
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v8-with-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unconditional shader profile carries a conditional contract."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unconditional shader profile carries a conditional contract."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v10-with-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v10",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v10-without-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v10",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v7-missing-domain",
+      "stage": "vertex",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "vertex",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "vertex-v9-accessor",
+      "stage": "vertex",
+      "recipe": "v9-domain-accessor",
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "frozen": true,
+      "getterCalls": 0
+    },
+    {
+      "name": "fragment-v8-unconditional",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": true,
+        "domain": null
+      },
+      "result": {
+        "ok": true,
+        "domain": null
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v7-extent1",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 1,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 1
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 1
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v7-extent8",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 8,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 8
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 8
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 8
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v7-extent46",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 46
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 46
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v7-extent47",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 47,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 47
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 47
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 47
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent1",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 1,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 1
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 1
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 1
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent8",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 8,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 8
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 8
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 8
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent46",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 46
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 46
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent47",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 47,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 47
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 47
+        }
+      },
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 47
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-missing-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-empty-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader requires one domain and one constant bank."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader requires one domain and one constant bank."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-duplicate-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          },
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Array extent exceeds the bounded contract."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Array extent exceeds the bounded contract."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-wrong-kind",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "finite-normal-only-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-wrong-stage",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-wrong-slot",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 1,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-wrong-name",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "otherconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or inconsistent constant-bank domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent-mismatch",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 45
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extent48",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 48,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 48
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-numeric-uniform",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "numeric"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Constant domain does not match the declared bank extent and encoding."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-extra-field",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "optional": true
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v8-with-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unconditional shader profile carries a conditional contract."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unconditional shader profile carries a conditional contract."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v10-with-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v10",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v10-without-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v10",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown shader profile."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v7-missing-domain",
+      "stage": "fragment",
+      "input": {
+        "profile": "virgl-webgl2-raw-bits-v7",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 46,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      },
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Conditional shader profile requires a constant domain."
+        }
+      },
+      "frozen": true
+    },
+    {
+      "name": "fragment-v9-accessor",
+      "stage": "fragment",
+      "recipe": "v9-domain-accessor",
+      "expected": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "frozen": true,
+      "getterCalls": 0
+    }
+  ],
+  "coverage": {
+    "path": "coverage.json",
+    "bytes": 5000,
+    "sha256": "b15647fabe3b9484fc1ee6cadbfeef97f3f18b687cf168da444722f1faae8d61"
+  }
+}

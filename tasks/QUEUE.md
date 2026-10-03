@@ -565,7 +565,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269906` [E6-T12e6](epic-6-transcendence/E6-T12e6-dot-reciprocal.md) — Preserve captured dot-product and reciprocal float operations *(deps: E6-T12e5)*
 - [x] `525.02699061` [E6-T12e6a](epic-6-transcendence/E6-T12e6a-constant-domain-consumer.md) — Enforce compiler constant-domain contracts at shared draw issue *(deps: E6-T12e6)*
 - [x] `525.02699062` [E6-T12e6b](epic-6-transcendence/E6-T12e6b-constant-domain-compiler.md) — Derive conditional finite constant authority in the owned compiler *(deps: E6-T12e6a)*
-- [~] `525.0269907` [E6-T12e7](epic-6-transcendence/E6-T12e7-structured-conditional.md) — Validate and execute structured TGSI unsigned conditionals *(deps: E6-T12e6b)*
+- [?] `525.0269907` [E6-T12e7](epic-6-transcendence/E6-T12e7-structured-conditional.md) — Validate and execute structured TGSI unsigned conditionals *(deps: E6-T12e6b)*
 - [ ] `525.0269908` [E6-T12e8](epic-6-transcendence/E6-T12e8-indirect-constants.md) — Admit proven-bounded TGSI indirect constant access *(deps: E6-T12e7)*
 - [ ] `525.0269909` [E6-T12e9](epic-6-transcendence/E6-T12e9-bounded-loops.md) — Execute structured loops only with established execution and address bounds *(deps: E6-T12e8)*
 
