@@ -7,7 +7,7 @@
   {
     "name": "oversized-temp-range",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..8]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
     "name": "negative-temp-range",
@@ -60,9 +60,9 @@
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nDCL TEMP[0..3]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
-    "name": "const-range-remains-rejected",
+    "name": "overlapping-const-range",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nDCL CONST[3..7]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
     "name": "input-range-remains-rejected",
@@ -110,7 +110,7 @@
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].w, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
   },
   {
-    "name": "generic-declaration-mask-xyz",
+    "name": "generic-xyz-full-write-undeclared-w",
     "stage": "vertex",
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
   },
@@ -165,19 +165,19 @@
     "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[0].xy, 2D, FLOAT\nMOV OUT[0], IN[0].xyyy\nEND\n"
   },
   {
-    "name": "partial-temp-write-xy",
+    "name": "partial-temp-write-xy-then-unwritten-read",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].xy, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].xy, IN[0]\nMOV OUT[0], TEMP[0]\nEND\n"
   },
   {
-    "name": "partial-temp-write-z",
+    "name": "partial-temp-write-z-then-unwritten-read",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].z, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].z, IN[0]\nMOV OUT[0], TEMP[0]\nEND\n"
   },
   {
-    "name": "partial-temp-write-w",
+    "name": "partial-temp-write-w-then-unwritten-read",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].w, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].w, IN[0]\nMOV OUT[0], TEMP[0]\nEND\n"
   },
   {
     "name": "partial-temp-write-xyzw",
@@ -185,14 +185,14 @@
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].xyzw, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
-    "name": "unsupported-output-mask-x",
+    "name": "incomplete-output-mask-x",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].x, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].x, IN[0]\nEND\n"
   },
   {
-    "name": "unsupported-output-mask-y",
+    "name": "incomplete-output-mask-y",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].y, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].y, IN[0]\nEND\n"
   },
   {
     "name": "unsupported-output-mask-zw",
@@ -200,9 +200,9 @@
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].zw, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
-    "name": "unsupported-output-mask-xyz",
+    "name": "incomplete-output-mask-xyz",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyz, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyz, IN[0]\nEND\n"
   },
   {
     "name": "unsupported-output-mask-xyzw",
@@ -220,14 +220,14 @@
     "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].yx, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
-    "name": "masked-add-output",
+    "name": "masked-add-output-missing-second-source-lanes",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].xy, IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\nMOV TEMP[0].x, IN[0].xxxx\nADD OUT[0].xy, IN[0], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
-    "name": "masked-mul-output",
+    "name": "masked-mul-output-missing-second-source-lanes",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].xy, IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\nMOV TEMP[0].x, IN[0].xxxx\nMUL OUT[0].xy, IN[0], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
     "name": "masked-mad-output",
@@ -300,9 +300,9 @@
     "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyw\nEND\n"
   },
   {
-    "name": "unused-swizzle-lane-remains-bounded",
+    "name": "consumed-swizzle-lane-remains-bounded",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0].xy, IN[0].xyzz\nMOV OUT[0].z, IN[0].xxxx\nMOV OUT[0].w, IN[0].yyyy\nEND\n"
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0].xy, IN[0].xzyy\nMOV OUT[0].z, IN[0].xxxx\nMOV OUT[0].w, IN[0].yyyy\nEND\n"
   },
   {
     "name": "malformed-swizzle-x",

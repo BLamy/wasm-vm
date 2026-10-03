@@ -23,6 +23,13 @@ PRODUCTION = {'virglFeature': False, 'numCapsets': 0, 'capsets': [], 'guestRende
 PIXEL_PAIR = {'e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33',
               '80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808'}
 
+COMPONENT_SHADERS = {
+    '003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605',
+    '9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83',
+    '403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c',
+    'e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551',
+}
+
 
 def require(value, message):
     if not value:
@@ -68,7 +75,8 @@ def check_matrix(contract, totals, manifests, shaders, vertices):
         row = contract['capturedShaders'][digest]
         require(row['stage'] == info['stage'] and row['currentBridge'] in ('translated', 'rejected'),
                 'captured shader stage/status differs')
-        require(row['executionEvidence'] == ('textured-scene-three-phases' if digest in PIXEL_PAIR else 'not-executed'),
+        require(row['executionEvidence'] == ('textured-scene-three-phases' if digest in PIXEL_PAIR else
+                'component-fixture-four-bodies' if digest in COMPONENT_SHADERS else 'not-executed'),
                 'shader execution scope')
         if row['currentBridge'] == 'rejected':
             require(row['executionEvidence'] == 'not-executed' and

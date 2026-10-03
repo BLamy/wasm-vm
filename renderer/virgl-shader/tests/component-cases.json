@@ -1,0 +1,1496 @@
+[
+  {
+    "name": "temp-range-0-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..0]\nMOV TEMP[0], IN[0]\nMOV TEMP[0], TEMP[0]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..1]\nMOV TEMP[0], IN[0]\nMOV TEMP[1], TEMP[0]\nMOV OUT[0], TEMP[1]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..2]\nMOV TEMP[0], IN[0]\nMOV TEMP[2], TEMP[0]\nMOV OUT[0], TEMP[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0], IN[0]\nMOV TEMP[3], TEMP[0]\nMOV OUT[0], TEMP[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..4]\nMOV TEMP[0], IN[0]\nMOV TEMP[4], TEMP[0]\nMOV OUT[0], TEMP[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..5]\nMOV TEMP[0], IN[0]\nMOV TEMP[5], TEMP[0]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..6]\nMOV TEMP[0], IN[0]\nMOV TEMP[6], TEMP[0]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..7]\nMOV TEMP[0], IN[0]\nMOV TEMP[7], TEMP[0]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..8]\nMOV TEMP[0], IN[0]\nMOV TEMP[8], TEMP[0]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-0-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..9]\nMOV TEMP[0], IN[0]\nMOV TEMP[9], TEMP[0]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..1]\nMOV TEMP[1], IN[0]\nMOV TEMP[1], TEMP[1]\nMOV OUT[0], TEMP[1]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..2]\nMOV TEMP[1], IN[0]\nMOV TEMP[2], TEMP[1]\nMOV OUT[0], TEMP[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..3]\nMOV TEMP[1], IN[0]\nMOV TEMP[3], TEMP[1]\nMOV OUT[0], TEMP[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..4]\nMOV TEMP[1], IN[0]\nMOV TEMP[4], TEMP[1]\nMOV OUT[0], TEMP[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..5]\nMOV TEMP[1], IN[0]\nMOV TEMP[5], TEMP[1]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..6]\nMOV TEMP[1], IN[0]\nMOV TEMP[6], TEMP[1]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..7]\nMOV TEMP[1], IN[0]\nMOV TEMP[7], TEMP[1]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..8]\nMOV TEMP[1], IN[0]\nMOV TEMP[8], TEMP[1]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-1-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[1..9]\nMOV TEMP[1], IN[0]\nMOV TEMP[9], TEMP[1]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..2]\nMOV TEMP[2], IN[0]\nMOV TEMP[2], TEMP[2]\nMOV OUT[0], TEMP[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..3]\nMOV TEMP[2], IN[0]\nMOV TEMP[3], TEMP[2]\nMOV OUT[0], TEMP[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..4]\nMOV TEMP[2], IN[0]\nMOV TEMP[4], TEMP[2]\nMOV OUT[0], TEMP[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..5]\nMOV TEMP[2], IN[0]\nMOV TEMP[5], TEMP[2]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..6]\nMOV TEMP[2], IN[0]\nMOV TEMP[6], TEMP[2]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..7]\nMOV TEMP[2], IN[0]\nMOV TEMP[7], TEMP[2]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..8]\nMOV TEMP[2], IN[0]\nMOV TEMP[8], TEMP[2]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-2-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2..9]\nMOV TEMP[2], IN[0]\nMOV TEMP[9], TEMP[2]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..3]\nMOV TEMP[3], IN[0]\nMOV TEMP[3], TEMP[3]\nMOV OUT[0], TEMP[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..4]\nMOV TEMP[3], IN[0]\nMOV TEMP[4], TEMP[3]\nMOV OUT[0], TEMP[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..5]\nMOV TEMP[3], IN[0]\nMOV TEMP[5], TEMP[3]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..6]\nMOV TEMP[3], IN[0]\nMOV TEMP[6], TEMP[3]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..7]\nMOV TEMP[3], IN[0]\nMOV TEMP[7], TEMP[3]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..8]\nMOV TEMP[3], IN[0]\nMOV TEMP[8], TEMP[3]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-3-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..9]\nMOV TEMP[3], IN[0]\nMOV TEMP[9], TEMP[3]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..4]\nMOV TEMP[4], IN[0]\nMOV TEMP[4], TEMP[4]\nMOV OUT[0], TEMP[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..5]\nMOV TEMP[4], IN[0]\nMOV TEMP[5], TEMP[4]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..6]\nMOV TEMP[4], IN[0]\nMOV TEMP[6], TEMP[4]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..7]\nMOV TEMP[4], IN[0]\nMOV TEMP[7], TEMP[4]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..8]\nMOV TEMP[4], IN[0]\nMOV TEMP[8], TEMP[4]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-4-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[4..9]\nMOV TEMP[4], IN[0]\nMOV TEMP[9], TEMP[4]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-5-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[5..5]\nMOV TEMP[5], IN[0]\nMOV TEMP[5], TEMP[5]\nMOV OUT[0], TEMP[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-5-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[5..6]\nMOV TEMP[5], IN[0]\nMOV TEMP[6], TEMP[5]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-5-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[5..7]\nMOV TEMP[5], IN[0]\nMOV TEMP[7], TEMP[5]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-5-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[5..8]\nMOV TEMP[5], IN[0]\nMOV TEMP[8], TEMP[5]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-5-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[5..9]\nMOV TEMP[5], IN[0]\nMOV TEMP[9], TEMP[5]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-6-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[6..6]\nMOV TEMP[6], IN[0]\nMOV TEMP[6], TEMP[6]\nMOV OUT[0], TEMP[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-6-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[6..7]\nMOV TEMP[6], IN[0]\nMOV TEMP[7], TEMP[6]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-6-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[6..8]\nMOV TEMP[6], IN[0]\nMOV TEMP[8], TEMP[6]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-6-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[6..9]\nMOV TEMP[6], IN[0]\nMOV TEMP[9], TEMP[6]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-7-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[7..7]\nMOV TEMP[7], IN[0]\nMOV TEMP[7], TEMP[7]\nMOV OUT[0], TEMP[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-7-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[7..8]\nMOV TEMP[7], IN[0]\nMOV TEMP[8], TEMP[7]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-7-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[7..9]\nMOV TEMP[7], IN[0]\nMOV TEMP[9], TEMP[7]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-8-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[8..8]\nMOV TEMP[8], IN[0]\nMOV TEMP[8], TEMP[8]\nMOV OUT[0], TEMP[8]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-8-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[8..9]\nMOV TEMP[8], IN[0]\nMOV TEMP[9], TEMP[8]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "temp-range-9-9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9..9]\nMOV TEMP[9], IN[0]\nMOV TEMP[9], TEMP[9]\nMOV OUT[0], TEMP[9]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..0]\nADD OUT[0], CONST[0], CONST[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..1]\nADD OUT[0], CONST[0], CONST[1]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..2]\nADD OUT[0], CONST[0], CONST[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nADD OUT[0], CONST[0], CONST[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..4]\nADD OUT[0], CONST[0], CONST[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..5]\nADD OUT[0], CONST[0], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..6]\nADD OUT[0], CONST[0], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-0-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..7]\nADD OUT[0], CONST[0], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-1",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..1]\nADD OUT[0], CONST[1], CONST[1]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..2]\nADD OUT[0], CONST[1], CONST[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..3]\nADD OUT[0], CONST[1], CONST[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..4]\nADD OUT[0], CONST[1], CONST[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..5]\nADD OUT[0], CONST[1], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..6]\nADD OUT[0], CONST[1], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-1-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[1..7]\nADD OUT[0], CONST[1], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-2",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..2]\nADD OUT[0], CONST[2], CONST[2]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..3]\nADD OUT[0], CONST[2], CONST[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..4]\nADD OUT[0], CONST[2], CONST[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..5]\nADD OUT[0], CONST[2], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..6]\nADD OUT[0], CONST[2], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-2-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[2..7]\nADD OUT[0], CONST[2], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-3-3",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3..3]\nADD OUT[0], CONST[3], CONST[3]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-3-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3..4]\nADD OUT[0], CONST[3], CONST[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-3-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3..5]\nADD OUT[0], CONST[3], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-3-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3..6]\nADD OUT[0], CONST[3], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-3-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3..7]\nADD OUT[0], CONST[3], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-4-4",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[4..4]\nADD OUT[0], CONST[4], CONST[4]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-4-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[4..5]\nADD OUT[0], CONST[4], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-4-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[4..6]\nADD OUT[0], CONST[4], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-4-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[4..7]\nADD OUT[0], CONST[4], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-5-5",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[5..5]\nADD OUT[0], CONST[5], CONST[5]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-5-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[5..6]\nADD OUT[0], CONST[5], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-5-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[5..7]\nADD OUT[0], CONST[5], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-6-6",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[6..6]\nADD OUT[0], CONST[6], CONST[6]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-6-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[6..7]\nADD OUT[0], CONST[6], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-range-7-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[7..7]\nADD OUT[0], CONST[7], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-x-destination-x-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].x, TEMP[9].xyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-x-destination-x-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].x, TEMP[9].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-x-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].x, TEMP[9].zyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-x-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].x, TEMP[9].wyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-y-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].y, TEMP[9].yxyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-x-destination-y-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].y, TEMP[9].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-y-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].y, TEMP[9].yzyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-y-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].y, TEMP[9].ywyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-z-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].z, TEMP[9].yyxy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-x-destination-z-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].z, TEMP[9].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-z-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].z, TEMP[9].yyzy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-z-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].z, TEMP[9].yywy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-w-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].w, TEMP[9].yyyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-x-destination-w-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].w, TEMP[9].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-w-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].w, TEMP[9].yyyz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-x-destination-w-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wwww\nMOV OUT[0].w, TEMP[9].yyyw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-x-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].x, TEMP[9].xzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-x-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].x, TEMP[9].yzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-y-destination-x-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].x, TEMP[9].zzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-x-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].x, TEMP[9].wzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-y-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].y, TEMP[9].zxzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-y-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].y, TEMP[9].zyzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-y-destination-y-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].y, TEMP[9].zzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-y-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].y, TEMP[9].zwzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-z-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].z, TEMP[9].zzxz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-z-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].z, TEMP[9].zzyz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-y-destination-z-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].z, TEMP[9].zzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-z-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].z, TEMP[9].zzwz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-w-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].w, TEMP[9].zzzx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-w-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].w, TEMP[9].zzzy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-y-destination-w-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].w, TEMP[9].zzzz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-y-destination-w-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wwww\nMOV OUT[0].w, TEMP[9].zzzw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-x-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].x, TEMP[9].xwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-x-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].x, TEMP[9].ywww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-x-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].x, TEMP[9].zwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-z-destination-x-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].x, TEMP[9].wwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-y-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].y, TEMP[9].wxww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-y-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].y, TEMP[9].wyww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-y-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].y, TEMP[9].wzww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-z-destination-y-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].y, TEMP[9].wwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-z-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].z, TEMP[9].wwxw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-z-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].z, TEMP[9].wwyw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-z-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].z, TEMP[9].wwzw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-z-destination-z-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].z, TEMP[9].wwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-w-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].w, TEMP[9].wwwx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-w-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].w, TEMP[9].wwwy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-z-destination-w-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].w, TEMP[9].wwwz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-z-destination-w-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wwww\nMOV OUT[0].w, TEMP[9].wwww\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-x-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].x, TEMP[9].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-x-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].x, TEMP[9].yxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-x-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].x, TEMP[9].zxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-x-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].x, TEMP[9].wxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-w-destination-y-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].y, TEMP[9].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-y-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].y, TEMP[9].xyxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-y-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].y, TEMP[9].xzxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-y-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].y, TEMP[9].xwxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-w-destination-z-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].z, TEMP[9].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-z-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].z, TEMP[9].xxyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-z-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].z, TEMP[9].xxzx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-z-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].z, TEMP[9].xxwx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "lane-written-w-destination-w-selected-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].w, TEMP[9].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-w-selected-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].w, TEMP[9].xxxy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-w-selected-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].w, TEMP[9].xxxz\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "lane-written-w-destination-w-selected-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wwww\nMOV OUT[0].w, TEMP[9].xxxw\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].x, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].x, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0].wzyx\nMOV OUT[0], TEMP[9].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].y, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].z, IN[0].wzyx\nMOV OUT[0], TEMP[9].zzzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].z, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].w, IN[0].wzyx\nMOV OUT[0], TEMP[9].wwww\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].w, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].xy, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xy, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-temporary-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].xyz, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mov-output-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyz, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].x, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].x, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].y, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].y, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].z, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].zzzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].z, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].w, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].wwww\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].w, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].xy, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].xy, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-temporary-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].xyz, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "add-output-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].xyz, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].x, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].x, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].y, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].y, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].z, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].zzzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].z, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].w, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].wwww\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].w, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].xy, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].xy, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-temporary-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMUL TEMP[9].xyz, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], TEMP[9].xxxx\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "mul-output-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].xyz, IN[0].wzyx, IN[0].wzyx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "input-bank-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[7]\nMOV OUT[0], IN[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "output-bank-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[7], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[7], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "const-bank-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[7]\nMOV OUT[0], CONST[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "immediate-bank-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] FLT32 {1, 0, 0, 1}\nIMM[1] FLT32 {1, 0, 0, 1}\nIMM[2] FLT32 {1, 0, 0, 1}\nIMM[3] FLT32 {1, 0, 0, 1}\nIMM[4] FLT32 {1, 0, 0, 1}\nIMM[5] FLT32 {1, 0, 0, 1}\nIMM[6] FLT32 {1, 0, 0, 1}\nIMM[7] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[7]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "generic-semantic-7",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[7]\nMOV OUT[0], IN[0]\nMOV OUT[1].xyz, IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "sampler-bank-7",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nTEX OUT[0], IN[0], SAMP[7], 2D\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "view-bank-7",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nTEX OUT[0], IN[0], SAMP[7], 2D\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "input-bank-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[8]\nMOV OUT[0], IN[8]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "output-bank-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[8], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[8], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "const-bank-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[8]\nMOV OUT[0], CONST[8]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "immediate-bank-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] FLT32 {1, 0, 0, 1}\nIMM[1] FLT32 {1, 0, 0, 1}\nIMM[2] FLT32 {1, 0, 0, 1}\nIMM[3] FLT32 {1, 0, 0, 1}\nIMM[4] FLT32 {1, 0, 0, 1}\nIMM[5] FLT32 {1, 0, 0, 1}\nIMM[6] FLT32 {1, 0, 0, 1}\nIMM[7] FLT32 {1, 0, 0, 1}\nIMM[8] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[8]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "generic-semantic-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[8]\nMOV OUT[0], IN[0]\nMOV OUT[1].xyz, IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "sampler-bank-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[8]\nDCL SVIEW[7], 2D, FLOAT\nTEX OUT[0], IN[0], SAMP[8], 2D\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "view-bank-8",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[7]\nDCL SVIEW[8], 2D, FLOAT\nTEX OUT[0], IN[0], SAMP[7], 2D\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "tex-effective-xy-identity-unconsumed-zw",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nMOV TEMP[0].xy, IN[0].zzzz\nTEX OUT[0], TEMP[0].xyzw, SAMP[0], 2D\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "tex-effective-xy-selected-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nMOV TEMP[0].xy, IN[0].zzzz\nTEX OUT[0], TEMP[0].xzxy, SAMP[0], 2D\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "tex-effective-x-repeated",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nMOV TEMP[0].x, IN[0].zzzz\nTEX OUT[0], TEMP[0].xxxx, SAMP[0], 2D\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "tex-effective-x-selected-y",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nMOV TEMP[0].x, IN[0].zzzz\nTEX OUT[0], TEMP[0].xyxx, SAMP[0], 2D\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "tex-effective-z-repeated",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nMOV TEMP[0].z, IN[0].zzzz\nTEX OUT[0], TEMP[0].zzzz, SAMP[0], 2D\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "generic-xyz-input",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyzz\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "generic-xyz-output",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[0]\nMOV OUT[1].xyz, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "generic-xy-unconsumed-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0].xy, IN[0].xyzz\nMOV OUT[0].z, IN[0].xxxx\nMOV OUT[0].w, IN[0].yyyy\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "read-before-first-partial-write",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].x, TEMP[9].xxxx, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "read-before-second-source-write",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nADD TEMP[9].x, IN[0], TEMP[9].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "full-mad-repeated-initialized-lane",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].y, IN[0]\nMAD OUT[0], TEMP[9].yyyy, IN[0], IN[0]\nEND\n",
+    "ok": true
+  },
+  {
+    "name": "full-mad-uninitialized-lane",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[9]\nMOV TEMP[9].xyz, IN[0]\nMAD OUT[0], TEMP[9], IN[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-TEMP-10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-CONST-8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-CONST-0__8",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..8]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-CONST-7__0",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[7..0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-CONST-0__4294967296",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..4294967296]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-CONST-0__07",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..07]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-TEMP-0__10",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..10]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-register-TEMP-0__9__9",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..9..9]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "overlapping-range-225",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nDCL CONST[3..7]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "overlapping-range-226",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[3]\nDCL CONST[0..3]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "overlapping-range-227",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nDCL CONST[2]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "overlapping-range-228",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..9]\nDCL TEMP[9]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xz, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-yz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].yz, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-zw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].zw, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xyw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyw, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xw, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xx, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-yx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].yx, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xzy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xzy, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "bad-destination-mask-xyzw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyzw, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "masked-mad",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMAD OUT[0].xyz, IN[0], IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "masked-tex",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nTEX OUT[0].xyz, IN[0], SAMP[0], 2D\nMOV OUT[0], IN[0].xyzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "missing-position-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyz, IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "missing-generic-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[0]\nMOV OUT[1].xy, IN[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "declared-xyz-consumed-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-flat",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-linear",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], LINEAR\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyzz\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-precise",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV_PRECISE OUT[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-integer",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nUADD OUT[0], IN[0], IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-flow",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIF IN[0]\nEND\n",
+    "ok": false
+  },
+  {
+    "name": "unsupported-indirect",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], CONST[ADDR[0].x]\nEND\n",
+    "ok": false
+  }
+]

@@ -4,6 +4,7 @@ export const LIMITS = Object.freeze({
   glslBytes: 65536,
   instructions: 128,
   registerIndex: 7,
+  temporaryRegisterIndex: 9,
 });
 
 const failure = (code, message) => ({ ok: false, error: { code, message } });

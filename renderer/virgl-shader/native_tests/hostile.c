@@ -93,9 +93,9 @@ int main(void)
       { "DCL OUT[1], POSITION", "parse-error" },
       { "DCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[0]", "parse-error" },
       { "DCL TEMP[0]\nMOV OUT[0], TEMP[0]", "parse-error" },
-      /* v2 admits MOV output masks and four-lane swizzles; retain adjacent
-       * unsupported/malformed cases instead of rejecting new valid syntax. */
-      { "ADD OUT[0].xy, IN[0], IN[0]", "unsupported-feature" },
+      /* v3 admits MOV/ADD/MUL component writes; masked MAD stays outside
+       * this profile, preserving a neighboring unsupported-operation check. */
+      { "MAD OUT[0].xy, IN[0], IN[0], IN[0]", "unsupported-feature" },
       { "MOV OUT[0], IN[0].xxx", "parse-error" },
       { "MOV OUT[0], -IN[0]", "parse-error" },
       { "IMM[0] FLT32 { nan, 0, 0, 0 }", "parse-error" },

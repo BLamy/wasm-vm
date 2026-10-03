@@ -19,11 +19,12 @@
 
 enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT };
 enum operand_kind { DECLARATION, DESTINATION, SOURCE };
-struct reg { enum file file; unsigned index, last, mask; bool explicit_mask; };
+enum { FILE_REGISTERS = 8, TEMP_REGISTERS = 10 };
+struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
 struct profile {
-   bool declared[FILE_COUNT][8];
-   unsigned components[FILE_COUNT][8];
-   unsigned written[FILE_COUNT][8];
+   bool declared[FILE_COUNT][TEMP_REGISTERS];
+   unsigned components[FILE_COUNT][TEMP_REGISTERS];
+   unsigned written[FILE_COUNT][TEMP_REGISTERS];
    unsigned semantic[2][8]; /* 0 attribute, 1 POSITION, 2 GENERIC, 3 COLOR */
    unsigned semantic_index[2][8];
    unsigned instructions, immediates;
@@ -108,12 +109,12 @@ static bool word(const char **p, const char *s)
    return true;
 }
 static bool end(const char **p) { space(p); return **p == '\0'; }
-static bool index_number(const char **p, unsigned *result)
+static bool index_number(const char **p, unsigned *result, unsigned limit)
 {
    space(p);
-   if (**p < '0' || **p > '7') { failure_code = "unsupported-feature"; return false; }
+   if (**p < '0' || **p > '9') { failure_code = "unsupported-feature"; return false; }
    *result = (unsigned)(*(*p)++ - '0');
-   if (isdigit((unsigned char)**p)) { failure_code = "unsupported-feature"; return false; }
+   if (*result >= limit || isdigit((unsigned char)**p)) { failure_code = "unsupported-feature"; return false; }
    return true;
 }
 static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
@@ -121,17 +122,18 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
    static const char *names[] = {"IN", "OUT", "TEMP", "CONST", "IMM", "SAMP", "SVIEW"};
    unsigned f;
    for (f = 0; f < FILE_COUNT; ++f) if (word(p, names[f])) break;
-   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index)) return false;
+   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index, f == TEMP ? TEMP_REGISTERS : FILE_REGISTERS)) return false;
    r->file = (enum file)f;
    r->last = r->index;
    space(p);
    if (!strncmp(*p, "..", 2)) {
-      if (kind != DECLARATION || f != TEMP) { failure_code = "unsupported-feature"; return false; }
+      if (kind != DECLARATION || (f != TEMP && f != CONST)) { failure_code = "unsupported-feature"; return false; }
       *p += 2;
-      if (!index_number(p, &r->last) || r->last < r->index) return false;
+      if (!index_number(p, &r->last, f == TEMP ? TEMP_REGISTERS : FILE_REGISTERS) || r->last < r->index) return false;
    }
    if (!punctuation(p, ']')) return false;
    r->mask = 15;
+   for (unsigned i = 0; i < 4; ++i) r->swizzle[i] = i;
    r->explicit_mask = punctuation(p, '.');
    if (r->explicit_mask) {
       static const char components[] = "xyzw";
@@ -142,27 +144,32 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
          unsigned component = (unsigned)(strchr(components, **p) - components);
          if (++count > 4 || (kind != SOURCE && count > 1 && component <= previous)) return false;
          previous = component;
+         r->swizzle[count - 1] = component;
          r->mask |= 1u << component;
          ++*p;
       }
       if (kind == SOURCE) {
          if (count != 4) return false;
       } else if (!((count == 2 && !strncmp(begin, "xy", 2)) ||
-                   (kind == DESTINATION && count == 1 && (*begin == 'z' || *begin == 'w')))) {
+                   (count == 3 && !strncmp(begin, "xyz", 3)) ||
+                   (kind == DESTINATION && count == 1))) {
          failure_code = "unsupported-feature";
          return false;
       }
    }
    return true;
 }
-static bool source(const char **p, struct profile *s)
+static bool source(const char **p, struct profile *s, unsigned consumed)
 {
    struct reg r;
-   if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index] ||
-       (s->components[r.file][r.index] & r.mask) != r.mask) return false;
-   /* Deliberately conservative: all selected lanes must be declared, including
-    * lanes a masked destination may not consume. TEMP writes remain full. */
-   return r.file != TEMP || s->written[TEMP][r.index] == 15;
+   if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index]) return false;
+   /* Match tgsi_util_get_inst_usage_mask: choose opcode/destination lanes
+    * first, then map each through its ordered source selector. */
+   unsigned needed = 0;
+   for (unsigned lane = 0; lane < 4; ++lane)
+      if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
+   if ((s->components[r.file][r.index] & needed) != needed) return false;
+   return r.file != TEMP || (s->written[TEMP][r.index] & needed) == needed;
 }
 static bool literal_float(const char **p)
 {
@@ -207,7 +214,7 @@ static bool declaration(const char **p, struct profile *s)
          if (s->stage != 0 || r.file != OUT || r.index != 0) return false;
          semantic = 1;
       } else if (word(p, "GENERIC")) {
-         if (!punctuation(p, '[') || !index_number(p, &sid) || !punctuation(p, ']')) return false;
+         if (!punctuation(p, '[') || !index_number(p, &sid, FILE_REGISTERS) || !punctuation(p, ']')) return false;
          if (s->stage == 1 && r.file == OUT) return false;
          semantic = 2;
       } else if (word(p, "COLOR")) {
@@ -220,7 +227,7 @@ static bool declaration(const char **p, struct profile *s)
    } else if (r.file == SVIEW) {
       if (s->stage != 1 || !punctuation(p, ',') || !word(p, "2D") || !punctuation(p, ',') || !word(p, "FLOAT")) return false;
    } else if (r.file == SAMP && s->stage != 1) return false;
-   if (r.mask != 15 && (semantic != 2 || r.mask != 3)) return false;
+   if (r.mask != 15 && (semantic != 2 || (r.mask != 3 && r.mask != 7))) return false;
    if (!end(p)) return false;
    for (unsigned i = r.index; i <= r.last; ++i) {
       s->declared[r.file][i] = true;
@@ -236,10 +243,10 @@ static bool declaration(const char **p, struct profile *s)
 static bool instruction(const char **p, struct profile *s)
 {
    unsigned arity;
-   bool tex = false, mov = false;
+   bool tex = false, partial = false;
    if (word(p, "END")) { s->ended = true; return end(p); }
-   if (word(p, "MOV")) { arity = 1; mov = true; }
-   else if (word(p, "ADD") || word(p, "MUL")) arity = 2;
+   if (word(p, "MOV")) { arity = 1; partial = true; }
+   else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
    else if (word(p, "TEX")) { tex = true; arity = 1; }
    else { failure_code = "unsupported-feature"; return false; }
@@ -247,9 +254,9 @@ static bool instruction(const char **p, struct profile *s)
    struct reg dst;
    if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||
        !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
-   if (dst.explicit_mask && (!mov || dst.file != OUT)) { failure_code = "unsupported-feature"; return false; }
+   if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = 0; i < arity; ++i)
-      if (!punctuation(p, ',') || !source(p, s)) return false;
+      if (!punctuation(p, ',') || !source(p, s, tex ? 3u : dst.mask)) return false;
    if (tex) {
       struct reg sampler;
       if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
@@ -277,7 +284,7 @@ static bool validate(char *text, struct profile *s)
          if (!declaration(&p, s)) return false;
       } else if (word(&p, "IMM")) {
          unsigned i;
-         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i) || i != s->immediates || !punctuation(&p, ']')) return false;
+         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i, FILE_REGISTERS) || i != s->immediates || !punctuation(&p, ']')) return false;
          bool bits = false;
          if (!word(&p, "FLT32")) {
             if (!word(&p, "UINT32")) return false;
@@ -381,7 +388,7 @@ const char *bridge_translate(int stage, const char *text, size_t length)
          else append("%c", c);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v2\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
+   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v3\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
    io_metadata(&profile, IN); append(",\"outputs\":"); io_metadata(&profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(&profile, IN); else append("[]");

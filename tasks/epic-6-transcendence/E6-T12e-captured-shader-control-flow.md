@@ -3,7 +3,7 @@ id: E6-T12e
 epic: 6
 title: Preserve captured TGSI integer and structured control-flow semantics
 priority: 525.02699
-status: pending
+status: cancelled
 depends_on: [E6-T11c]
 estimate: S
 risk: high
@@ -41,4 +41,15 @@ compositor compatibility; missing corpus semantics remain a dependency.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — decomposed after original-hash inventory
+
+All captured integer/control-flow bodies also contain PRECISE. The five rejected
+non-PRECISE originals need declaration/lane support and flat pair linkage first;
+the old boundary therefore conflated independent work and misstated the corpus.
+Replaced by ordered S tasks E6-T12e1 through E6-T12e9, followed by the narrowed
+E6-T12f PRECISE/full-corpus closure. Each prerequisite names one acceptance command.
+The inventory also identifies DIV/MAX/FRC/LRP and DP3/RCP/RSQ as explicit float
+families. No original shader bytes are changed; accepting a stripped derivative
+never counts toward the 19 originals. See the exact source/hash inventory in
+`docs/virgl-shader-prerequisites.md` and `docs/virgl-shader-original-inventory.json`.
+

@@ -1,0 +1,461 @@
+[
+  {
+    "name": "unknown-file",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL BOGUS[0]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "missing-bracket",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP 0]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "input-range",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL IN[0..1], GENERIC[0], PERSPECTIVE\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "generic-missing-open",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL IN[0], GENERIC 0], PERSPECTIVE\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "generic-missing-close",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL IN[0], GENERIC[0, PERSPECTIVE\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "ordered-wrong-three",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL IN[0].xyw, GENERIC[0], PERSPECTIVE\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-range",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], TEMP[9..9]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-short-swizzle",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], TEMP[9].xxx\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-output",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], OUT[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-sampler",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], SAMP[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-view",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], SVIEW[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "src-undeclared",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9], IMM[0]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "destination-range",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9..9], IMM[0]\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "source-missing-comma",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0] IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "imm-after-start",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nIMM[1] FLT32 {1,1,1,1}\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "imm-missing-open",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM 0] FLT32 {1,1,1,1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "imm-missing-close",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0 FLT32 {1,1,1,1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "imm-sequence-hole",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[1] FLT32 {1,1,1,1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "stage": 1,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  },
+  {
+    "name": "constant-seven-gap",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[7]\nMOV OUT[0], CONST[7]\nEND\n",
+    "stage": 1,
+    "ok": true,
+    "native": {
+      "ok": true,
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\nuniform uvec4 fsconst0[8];\nvoid main(void)\n{\nfsout_c0 = vec4((uintBitsToFloat(fsconst0[7])));\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v3",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 8,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": []
+      }
+    }
+  },
+  {
+    "name": "input-seven-semantic-seven",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL IN[7].xyz, GENERIC[7], PERSPECTIVE\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[7]\nEND\n",
+    "stage": 1,
+    "ok": true,
+    "native": {
+      "ok": true,
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g7;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vec4(0.125,0.25,0.5,1))));\nfsout_c0.xyz = vec3(((vso_g7).xyz));\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v3",
+        "stage": "fragment",
+        "inputs": [
+          {
+            "index": 7,
+            "name": "vso_g7",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 7,
+            "componentMask": 7
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": []
+      }
+    }
+  },
+  {
+    "name": "sampler-view-seven",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nTEX OUT[0], IMM[0], SAMP[7], 2D\nEND\n",
+    "stage": 1,
+    "ok": true,
+    "native": {
+      "ok": true,
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\nuniform highp  sampler2D fssamp7;\nvoid main(void)\n{\nfsout_c0 = vec4((texture(fssamp7, (vec4(0.125,0.25,0.5,1)).xy)));\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v3",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [],
+        "samplers": [
+          {
+            "index": 7,
+            "name": "fssamp7",
+            "type": "sampler2D"
+          }
+        ],
+        "uniformBlocks": []
+      }
+    }
+  },
+  {
+    "name": "imm-seven-sequential",
+    "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0,0,0,1}\nIMM[1] FLT32 {0,0,0,1}\nIMM[2] FLT32 {0,0,0,1}\nIMM[3] FLT32 {0,0,0,1}\nIMM[4] FLT32 {0,0,0,1}\nIMM[5] FLT32 {0,0,0,1}\nIMM[6] FLT32 {0,0,0,1}\nIMM[7] FLT32 {0,0,0,1}\nMOV OUT[0], IMM[7]\nEND\n",
+    "stage": 1,
+    "ok": true,
+    "native": {
+      "ok": true,
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vec4(0,0,0,1))));\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v3",
+        "stage": "fragment",
+        "inputs": [],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": []
+      }
+    }
+  },
+  {
+    "name": "out-seven-semantic-seven",
+    "text": "VERT\nDCL IN[7]\nDCL OUT[0], POSITION\nDCL OUT[7].xyz, GENERIC[7]\nMOV OUT[0], IN[7]\nMOV OUT[7].xyz, IN[7]\nEND\n",
+    "stage": 0,
+    "ok": true,
+    "native": {
+      "ok": true,
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_7;\n   out  vec4 vso_g7;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_7)));\nvso_g7.xyz = vec3(((in_7).xyz));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v3",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 7,
+            "name": "in_7",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          },
+          {
+            "index": 7,
+            "name": "vso_g7",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 7,
+            "componentMask": 7,
+            "writtenMask": 7
+          }
+        ],
+        "attributes": [
+          {
+            "index": 7,
+            "name": "in_7",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "position-xyz",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0].xyz, POSITION\nMOV OUT[0].xyz, IN[0]\nEND\n",
+    "stage": 0,
+    "ok": false,
+    "native": {
+      "ok": false,
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  }
+]
