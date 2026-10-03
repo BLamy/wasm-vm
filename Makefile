@@ -1905,3 +1905,7 @@ verify-E6-T12e6:
 .PHONY: verify-E6-T12e6a
 verify-E6-T12e6a:
 	bash tools/verify-virgl-constant-domains.sh
+
+.PHONY: verify-E6-T12e6b
+verify-E6-T12e6b:
+	bash tools/verify-virgl-constant-compiler.sh

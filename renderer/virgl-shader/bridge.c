@@ -26,6 +26,9 @@ static size_t response_used;
 static bool response_overflow;
 static bool upstream_logged;
 static const char *failure_code;
+/* Public unsupported-feature also covers syntax. Only this typed failure may
+ * retry with compiler-derived finite-bank authority. */
+static bool missing_numeric_authority;
 
 /* Logging is bounded and never allows guest text to become a format string.
  * Any upstream diagnostic invalidates the conversion instead of silently
@@ -228,7 +231,7 @@ static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
    if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
-   if (s->raw && !s->mixed_candidate && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
+   if (s->raw && !(s->raw_flags & RAW_MIXED) && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
    bool flat = false;
@@ -343,8 +346,12 @@ static bool instruction(const char **p, struct profile *s)
    if (!end(p)) return false;
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
-      raw.flags |= s->mixed_candidate ? RAW_MIXED : 0;
-      if (!raw_record(s->raw, &raw)) { failure_code = "unsupported-feature"; return false; }
+      raw.flags |= s->raw_flags;
+      if (!raw_record(s->raw, &raw)) {
+         missing_numeric_authority = true;
+         failure_code = "unsupported-feature";
+         return false;
+      }
    }
    s->written[dst.file][dst.index] |= dst.mask;
    failure_code = "parse-error";
@@ -462,6 +469,11 @@ static void begin_response(bool pair)
    response_overflow = false;
 }
 
+static const char *numeric_rejection(void)
+{
+   return error("unsupported-feature", "TGSI is malformed or outside the documented straight-line profile.");
+}
+
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
@@ -505,13 +517,29 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       }
    }
    if (candidate) {
-      profile->mixed_candidate = numeric_candidate;
+      profile->raw_flags = numeric_candidate ? RAW_MIXED : 0;
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
    }
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
-   if (!validate(checked, profile)) return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
+   missing_numeric_authority = false;
+   if (validate(checked, profile)) return NULL;
+   if (!missing_numeric_authority)
+      return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
+   /* The ordinary result wins whenever it succeeds. A failed domain use gets
+    * one fresh whole-text attempt: no first-pass facts or borrowed response
+    * pointer survive, and no concurrent second IR grows the storage budget. */
+   int stage = profile->stage;
+   free(profile->raw);
+   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL};
+   profile->raw = calloc(1, sizeof(*profile->raw));
+   if (!profile->raw) return numeric_rejection();
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error";
+   missing_numeric_authority = false;
+   if (!validate(checked, profile) || !(profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
+      return numeric_rejection();
    return NULL;
 }
 
@@ -628,6 +656,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v7" :
       c->profile.raw->opcode_mask & RAW_V6_OPCODES ? "virgl-webgl2-raw-bits-v6" :
       c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :
       c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
@@ -646,7 +675,11 @@ static void stage_result(const struct conversion *c)
    }
    append("],\"uniformBlocks\":[");
    if (!stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}" );
-   append("]}");
+   append("]");
+   if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
+      append(",\"constantDomains\":[{\"kind\":\"constant-bank-finite-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d}]",
+         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+   append("}");
 }
 
 const char *bridge_translate(int stage, const char *text, size_t length)
@@ -657,7 +690,9 @@ const char *bridge_translate(int stage, const char *text, size_t length)
    const char *failed = check_input(&c.profile, text, length);
    if (!failed) failed = convert(&c, text, length, NULL);
    if (!failed) { append("{\"ok\":true,"); stage_result(&c); append("}"); }
+   bool retry_failed = (c.profile.raw_flags & RAW_CONDITIONAL) && (failed || response_overflow);
    cleanup(&c);
+   if (retry_failed) return numeric_rejection();
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
    return response;
 }
@@ -680,7 +715,12 @@ const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
       append("},\"fragment\":{"); stage_result(&fragment);
       append("},\"interfaceKey\":"); interface_key(&fragment.profile); append("}");
    }
+   /* A later stage/interface/emission failure must not replace the original
+    * ordinary rejection that selected a conditional transaction. */
+   bool retry_failed = ((vertex.profile.raw_flags | fragment.profile.raw_flags) & RAW_CONDITIONAL) &&
+      (failed || response_overflow);
    cleanup(&vertex); cleanup(&fragment);
+   if (retry_failed) return numeric_rejection();
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
    return response;
 }
