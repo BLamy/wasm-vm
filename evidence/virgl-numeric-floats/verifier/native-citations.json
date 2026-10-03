@@ -1,0 +1,105 @@
+{
+  "status": "passed",
+  "records": [
+    {
+      "name": "vertex-ADD-future-authority",
+      "inputSha256": "95180b3b1fdfe2b90c4f9f49b3a6be4bf523264db57cc0a16a5185f69b59c9ec",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 109,
+      "ok": false,
+      "outcome": "unsupported-feature",
+      "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+    },
+    {
+      "name": "fragment-selector-IMM[0]-CONST[1]-TEMP[115]",
+      "inputSha256": "307b327e1624c7c8a6080360a5478991320a9b76a20dfa28dd4290085845a356",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 787,
+      "ok": true,
+      "outcome": "virgl-webgl2-raw-bits-v4",
+      "resultSha256": "2096346fd0867335616c154c7c3e3124c008d7900e7b733277086fb486bcb8ba"
+    },
+    {
+      "name": "fragment-selector-CONST[0]-IN[0]-CONST[1]",
+      "inputSha256": "8621d67b15ddc79eb11ca722b43ce534e7d00d56e9b5481dd4ad336afb521744",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 808,
+      "ok": false,
+      "outcome": "unsupported-feature",
+      "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+    },
+    {
+      "name": "fragment-early-wide-join",
+      "inputSha256": "374ec6979a1173bf4a107953c8ac4ca47711ce2911c8d34550574639bdc59f80",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 820,
+      "ok": true,
+      "outcome": "virgl-webgl2-raw-bits-v4",
+      "resultSha256": "52821055a5bc47bb57e1b56833338bb766e00c661d65a4b147c482f354e03c76"
+    },
+    {
+      "name": "fragment-invalidate-x",
+      "inputSha256": "182ac57af8bc9cb5d1a927797600e21ed97eaa39495a406891492e17834d3114",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 823,
+      "ok": false,
+      "outcome": "unsupported-feature",
+      "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+    },
+    {
+      "name": "fragment-untouched-x",
+      "inputSha256": "a62cf50e45e02afd5f5e135c06a421f66a76366566d62aeab9f272cf0cd2b550",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 826,
+      "ok": true,
+      "outcome": "virgl-webgl2-raw-bits-v4",
+      "resultSha256": "81fb2889b213a8f0efc9407ef8e8297542fae299c20f4a2a3d56223f2a216822"
+    },
+    {
+      "name": "fragment-unselected-uninitialized-x",
+      "inputSha256": "977ebb70d0b12eb022b140812e323f2e7549cc4601e2759ad536b0c8d8fcdc32",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 829,
+      "ok": false,
+      "outcome": "parse-error",
+      "resultSha256": "7c656d42b3e2df6ca2ce63a25fec532f2513531dd3f9f1318bdaaa11dd135477"
+    },
+    {
+      "name": "fragment-ADD-domain-80000000",
+      "inputSha256": "0e630363e67c3cfaa0460dca7372d3ab37ffa8d30349c1edf4f5fe8927abdcaa",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 502,
+      "ok": true,
+      "outcome": "virgl-webgl2-raw-bits-v4",
+      "resultSha256": "a76a98fe6c7a08491f920139f7f3496aad6c16d74c99978bcd23074b1e873a81"
+    },
+    {
+      "name": "fragment-ADD-domain-80000001",
+      "inputSha256": "8e5e763c37c9ce3ad03b53edc9181146ba9ffc5b16848b9e72c3baa6f981afbf",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 508,
+      "ok": false,
+      "outcome": "unsupported-feature",
+      "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+    },
+    {
+      "name": "sampler-7",
+      "inputSha256": "b7adc13c2f0d97b22955ab8b9f422f978e16348695447c551eb837ea12f8a1e4",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 988,
+      "ok": true,
+      "outcome": "virgl-webgl2-raw-bits-v4",
+      "resultSha256": "9af5fe03805a1d035c2a06bf0f2052b19b02c3f763efcd2fb263fe6163ab0960"
+    },
+    {
+      "name": "sampler-7-vertex",
+      "inputSha256": "5e86a312b5560216ad027f83ac067016c8f4ace8d8af624b12d16b7816f6708b",
+      "resultPath": "audit-native.jsonl",
+      "resultLine": 991,
+      "ok": false,
+      "outcome": "parse-error",
+      "resultSha256": "7c656d42b3e2df6ca2ce63a25fec532f2513531dd3f9f1318bdaaa11dd135477"
+    }
+  ],
+  "transcriptSha256": "05a0ce2f80dde6cba9695db05a8d761ad0b311053109f566da837ef8c1b70c80"
+}

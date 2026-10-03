@@ -3,7 +3,7 @@ id: E6-T12e4c2
 epic: 6
 title: Preserve ordinary numeric shader chains with bounded float shadows
 priority: 525.026990432
-status: implemented
+status: verified
 depends_on: [E6-T12e4c1]
 estimate: S
 risk: high
@@ -149,3 +149,45 @@ sanitizer binary has its own recorded SHA-256:
 Browser-impacting demo gates do not apply to this isolated compiler fixture path:
 production negotiation remains off and the deployable demo sources are unchanged.
 This worker submission does not set `verified`; the fresh critic owns that verdict.
+
+
+### 2026-10-03 — verifier — VERDICT: verified
+
+Fresh verifier predictions preceded evidence inspection. All 18 held against
+frozen head `1ce9b75b182b5411aee9922f329dc898e2a28b4e` and worker submission
+`752b4f677b7c3266080d5924cca780d9bde81468`; no runtime/harness fix was made.
+Full verdict: `evidence/virgl-numeric-floats/verifier/VERIFICATION.md`, SHA-256
+`0fc328a6fb05b390321470e422499d5048ae0353c86f3945a72744846769f383`.
+Verifier manifest: `evidence/virgl-numeric-floats/verifier/manifest.json`, SHA-256
+`172b96116ece1f9b8a3784da86da5be139afec423cd17d8b34a2d0f78f31d5a6`.
+
+- HELD — Independent sanitized native/Wasm matrix: 2,024 programs, 4,048 exact
+  recoveries and 1,178 parent full-result comparisons, including all 19 originals.
+  Future authority, unknown raw domains, selected/unselected arms, partial
+  invalidation and sampler attacks have precise transcript citations in
+  `verifier/native-citations.json`.
+- HELD — Five-seed independent state attack: 74,110 admitted instructions,
+  18,050 rejection-without-mutation checks, 23,715,200 concrete fact checks,
+  889,320 instruction-time mode checks and 3,051,568 origin/shadow checks.
+- HELD — Independent hardware probes reconstruct 512 numeric/raw words through
+  aliased dyadic arithmetic and two texture samplers. A separate rational TGSI
+  interpreter reproduces 9,152 worker output-word assertions, all 4,096 texture
+  pixels and all 25,792 nonedge interface pixels. Four source-bound semantic
+  controls fail on actual GPU observations; the novel shadow-copy fault changes
+  numeric x from `0x3f400000` to `0x3e400000`.
+- HELD — All 155 changed executable C lines and both outcomes of all 111 changed
+  conditional regions are recorded. Headers/config/comments have narrow direct
+  inspection/compilation waivers; there is no new runtime proof gap.
+- HELD — 40,028 independent binding assertions verify worker/cold sources,
+  native streams, complete prior results, 9,522 nested source bindings, all 151
+  copied cold files and all twelve worker-claim evidence digests. The retained
+  exact-head clone is clean and its Wasm equals the worker module. Both hardware
+  screenshots were inspected. Production remains off; unknown raw numeric
+  constants, the seven rejected originals, PRECISE and Mesa remain gated.
+
+Commands: verifier `native_audit.py`, `run_knowledge.py`, clean and sabotaged
+`run_browser.mjs`, `coverage_audit.py`, `worker_semantics.py`,
+`controls_audit.py`, and `binding-audit.py --frozen 1ce9b75b182b5411aee9922f329dc898e2a28b4e`.
+SUITE: preserve the worker acceptance plus independent state, TGSI, GPU/control
+and binding audit sources/records. Rebuildable native executables/debug bundles
+are not promoted. No remaining finding or evidence demand within this boundary.
