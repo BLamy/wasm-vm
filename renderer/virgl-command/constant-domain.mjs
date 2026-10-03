@@ -5,11 +5,16 @@ export const STRUCTURED_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v9";
 export const INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v10";
 export const INDIRECT_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v11";
 export const LOOP_PROFILE = "virgl-webgl2-raw-bits-v12";
+export const RADIAL_PROFILE = "virgl-webgl2-raw-bits-v14";
+export const RADIAL_INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v15";
+export const RADIAL_LOOP_PROFILE = "virgl-webgl2-raw-bits-v16";
+export const RADIAL_DOMAIN_KIND = "constant-bank-radial-coefficient-f32-v1";
 export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
 export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
 export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
-const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
-const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
+const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE]);
+const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE]);
+const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, ...RADIAL_PROFILES]);
 const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
   ...[1, 2, 3, 4, 5, 6, 13].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
@@ -52,10 +57,12 @@ function failure(code, message) { return Object.freeze({ ok: false, error: Objec
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
     require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), "Unknown shader profile.");
-    const loop = value.profile === LOOP_PROFILE;
+    const loop = value.profile === LOOP_PROFILE || value.profile === RADIAL_LOOP_PROFILE;
+    const radial = RADIAL_PROFILES.has(value.profile);
+    require(radial || !Object.hasOwn(value, "constantRadialDomains"), "Shader profile forbids a radial coefficient domain.");
     require(loop || !Object.hasOwn(value, "constantConstraints"), "Shader profile forbids a constant count constraint.");
     const indirect = INDIRECT_PROFILES.has(value.profile);
     let access = null;
@@ -109,7 +116,21 @@ export function parseConstantDomain(metadata, expectedStage) {
         "Loop constant access must cover every certified index from 10 through 45.");
       constraint = Object.freeze(constraint);
     }
-    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}), ...(loop ? { constraint } : {}) });
+    let radialDomain = null;
+    if (radial) {
+      require(Object.hasOwn(value, "constantRadialDomains"), "Radial shader requires a coefficient domain.");
+      const domains = array(value.constantRadialDomains, 1);
+      require(domains.length === 1, "Radial shader requires exactly one coefficient domain.");
+      radialDomain = record(domains[0], [...DOMAIN_KEYS, "register", "component", "minimumMagnitude"]);
+      require(radialDomain.kind === RADIAL_DOMAIN_KIND && radialDomain.stage === expectedStage &&
+        radialDomain.slot === 0 && radialDomain.name === name && radialDomain.count === domain.count &&
+        radialDomain.count >= 5 && radialDomain.register === 4 && radialDomain.component === 0 &&
+        radialDomain.minimumMagnitude === 0x3727c5ac,
+      "Unknown or inconsistent radial coefficient domain.");
+      radialDomain = Object.freeze(radialDomain);
+    }
+    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}),
+      ...(loop ? { constraint } : {}), ...(radial ? { radialDomain } : {}) });
   } catch (error) {
     if (!(error instanceof DomainFault)) throw error;
     return failure("shader-domain-error", error.message);
@@ -167,5 +188,23 @@ export function checkLoopBank(words, declaredCount) {
   const word = checked.words[36];
   if (!(word >= 0x80000000 || word <= 18))
     return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+  return checked;
+}
+
+/** One owned full finite prefix proves the radial and any loop obligation. */
+export function checkRadialBank(words, declaredCount, counted = false) {
+  if (!Number.isInteger(declaredCount) || declaredCount < 5 || declaredCount > 47 ||
+      typeof counted !== "boolean" || (counted && declaredCount !== 46 && declaredCount !== 47))
+    return failure("constant-radial-domain-error", "Invalid radial constant-bank extent.");
+  const checked = checkIndirectBank(words, declaredCount, true);
+  if (!checked.ok) return checked;
+  const magnitude = checked.words[16] & 0x7fffffff;
+  if (magnitude < 0x3727c5ac)
+    return failure("constant-radial-domain-error", "Radial coefficient permits an undefined linear predecessor.");
+  if (counted) {
+    const count = checked.words[36];
+    if (!(count >= 0x80000000 || count <= 18))
+      return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+  }
   return checked;
 }

@@ -459,6 +459,42 @@ static bool demand_recognize(struct raw_ir *ir)
    ir->demand = found;
    return true;
 }
+
+static bool radial_recognize(struct raw_ir *ir)
+{
+   struct radial_certificate found = {0};
+   for (unsigned pc = 0; pc + 2 < ir->count; ++pc) {
+      const struct raw_instruction *v = &ir->instructions[pc];
+      unsigned magnitude = loop_scalar(&v[0]), condition = loop_scalar(&v[1]);
+      if (v[0].opcode != RAW_MAX || v[1].opcode != RAW_FSLT || v[2].opcode != RAW_UIF ||
+          magnitude == UINT16_MAX || condition == UINT16_MAX ||
+          (v[0].flags & RAW_NEGATE_SOURCES) != (RAW_NEGATE_SOURCE0 << 1) ||
+          (v[1].flags & RAW_NEGATE_SOURCES) ||
+          !loop_scalar_arg(&v[1], 0, magnitude) ||
+          !loop_scalar_word(ir, &v[1], 1, UINT32_C(0x3727c5ac)) ||
+          !loop_arg(&v[2], 0, 0, condition)) continue;
+      unsigned lane = magnitude % 4;
+      if (v[0].src[0].file != CONST || v[0].src[1].file != CONST ||
+          v[0].src[0].index != 4 || v[0].src[1].index != 4 ||
+          v[0].src[0].swizzle[lane] != 0 || v[0].src[1].swizzle[lane] != 0) continue;
+      unsigned depth = 1, otherwise = 0, end = pc + 3;
+      for (; end < ir->count; ++end) {
+         enum raw_opcode op = ir->instructions[end].opcode;
+         if (op == RAW_UIF) ++depth;
+         else if (op == RAW_ELSE && depth == 1) otherwise = end;
+         else if (op == RAW_ENDIF && !--depth) break;
+      }
+      if (!otherwise || end == ir->count || found.recognized) return false;
+      /* Adjacency binds both producer versions. The only policy input is the
+       * fixed CONST4.x word, not a float shadow or a caller-supplied register. */
+      found = (struct radial_certificate){.magnitude = pc, .comparison = pc + 1,
+         .branch = pc + 2, .otherwise = otherwise, .end = end,
+         .condition = condition, .recognized = true};
+   }
+   if (!found.recognized) return false;
+   ir->radial = found;
+   return true;
+}
 static uint64_t loop_indices(unsigned first, unsigned last)
 {
    uint64_t result = 0;
@@ -688,6 +724,14 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
       if (!s->syntax_only) {
          if (frame->is_loop) loop_header(s);
          else flow_snapshot(s, frame, false);
+         if (!frame->is_loop && s->raw->radial.recognized &&
+             s->current_pc == s->raw->radial.branch) {
+            /* The owned finite bank must satisfy the coefficient domain
+             * before execution. Its bound predicate cannot take this edge.
+             * ELSE restores entry_live; ENDIF joins only live predecessors. */
+            s->live = false;
+            s->raw->radial.used = true;
+         }
       }
    } else if (opcode == RAW_BRK) {
       unsigned depth = flow->depth;
@@ -1008,6 +1052,29 @@ static bool demand_retry(struct profile *profile, const char *text, size_t lengt
    return validate(checked, profile) && (ir->opcode_mask & RAW_FINITE_BANK_USED);
 }
 
+static bool radial_retry(struct profile *profile, const char *text, size_t length, char *checked)
+{
+   if (!profile->raw || !(profile->raw_flags & RAW_STRUCTURED)) return false;
+   struct raw_ir *ir = profile->raw;
+   int stage = profile->stage;
+   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL;
+   memset(ir, 0, sizeof(*ir));
+   *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
+   if (!validate(checked, profile) || !radial_recognize(ir)) return false;
+   bool loop = false;
+   for (unsigned pc = 0; pc < ir->count; ++pc) loop |= ir->instructions[pc].opcode == RAW_BGNLOOP;
+   if (loop && !loop_recognize(ir)) return false;
+   /* A radial predicate and the existing selected-away interpolation prove
+    * independent edges. Neither certificate grants the other's lane facts. */
+   if (!loop) (void)demand_recognize(ir);
+   demand_reset(profile, stage, ir, flags);
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
+   return validate(checked, profile) && ir->radial.used && (ir->opcode_mask & RAW_FINITE_BANK_USED);
+}
+
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
@@ -1085,6 +1152,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
       if (validate(checked, profile)) return NULL;
+      if (missing_initialization && radial_retry(profile, text, length, checked)) return NULL;
       profile->raw_flags &= ~RAW_CONDITIONAL;
       return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
          !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
@@ -1096,7 +1164,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    if (validate(checked, profile)) return NULL;
    if (!missing_numeric_authority) {
       const char *original_code = failure_code;
-      if (missing_initialization && demand_retry(profile, text, length, checked)) return NULL;
+      if (missing_initialization && (demand_retry(profile, text, length, checked) ||
+          (strcmp(failure_code, "translation-error") && radial_retry(profile, text, length, checked)))) return NULL;
       profile->raw_flags &= ~RAW_CONDITIONAL;
       if (strcmp(failure_code, "translation-error")) failure_code = original_code;
       return error(failure_code, !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
@@ -1115,7 +1184,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    failure_code = "parse-error";
    missing_numeric_authority = missing_initialization = false;
    if (validate(checked, profile) && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED)) return NULL;
-   if (missing_initialization && demand_retry(profile, text, length, checked)) return NULL;
+   if (missing_initialization && (demand_retry(profile, text, length, checked) ||
+       (strcmp(failure_code, "translation-error") && radial_retry(profile, text, length, checked)))) return NULL;
    return numeric_rejection();
 }
 
@@ -1238,6 +1308,8 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      profile->raw->radial.used ? (profile->raw->loop.checked ? "virgl-webgl2-raw-bits-v16" :
+         profile->raw->indirect_indices ? "virgl-webgl2-raw-bits-v15" : "virgl-webgl2-raw-bits-v14") :
       c->profile.raw->loop.checked ? "virgl-webgl2-raw-bits-v12" :
       c->profile.raw->indirect_indices ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
@@ -1279,6 +1351,9 @@ static void stage_result(const struct conversion *c)
    }
    if (profile->raw && profile->raw->loop.checked)
       append(",\"constantConstraints\":[{\"kind\":\"constant-bank-counted-table-i32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":9,\"component\":0,\"maximum\":18}]",
+         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+   if (profile->raw && profile->raw->radial.used)
+      append(",\"constantRadialDomains\":[{\"kind\":\"constant-bank-radial-coefficient-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":4,\"component\":0,\"minimumMagnitude\":925353388}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    append("}");
 }

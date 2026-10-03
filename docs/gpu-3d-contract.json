@@ -845,6 +845,19 @@
     "numCapsets": 0,
     "virglFeature": false
   },
+  "radialCoefficientAdmission": {
+    "certificate": "Adjacent MAX(CONST4.x,-CONST4.x), FSLT against exact word0x3727c5ac, UIF consuming the current scalar producer version and one matching ELSE/ENDIF. Only the linear predecessor is excluded.",
+    "kind": "constant-bank-radial-coefficient-f32-v1",
+    "policy": "One complete owned finite bank prefix, absBits(CONST4.x)>=0x3727c5ac, and any counted-table constraint on the same snapshot before effects. Every older profile forbids radial metadata.",
+    "profiles": {
+      "countedTable": "virgl-webgl2-raw-bits-v16",
+      "indirect": "virgl-webgl2-raw-bits-v15",
+      "structured": "virgl-webgl2-raw-bits-v14"
+    },
+    "proof": "make verify-E6-T12f3; independent rational predicate and counterexample, native/Wasm parity, actual admitted shared GPU paths, replacement/async/restoration, actual domain-check removal caught before GPU dispatch and pristine clone.",
+    "scope": "Restricted admitted domain only. Both full-body fixtures are labelled unmarked structural ports with numeric alpha projection; untouched PRECISE originals, workload compatibility, guest negotiation and300MIPS remain unclaimed.",
+    "task": "E6-T12f3"
+  },
   "rawEquality": {
     "compatibility": "All4004 other full E9 stage results and264 pairs remain exact. Exactly8 explicitly hashed undecorated negative fixtures become13 successes; historical fixtures and GPU oracles remain immutable. Originals stay12/19.",
     "metadata": "Pure equality is unconditional13. Counted-loop12, indirect10/11, structured8/9 and actual finite-bank7 obligations take precedence. Every old domain/access/count record is forbidden on13; unknown14 remains rejected.",
