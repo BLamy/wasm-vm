@@ -1,9 +1,11 @@
-/** Typed VirGL object/state execution without DRAW_VBO. See state-README.md. */
+/** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
   programs: 64, shaderBytes: 1048576, uniformBytes: 65536 });
+export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
+export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 function freeze(value) {
@@ -42,17 +44,37 @@ function unwrap(value) {
 }
 const ref = (object) => object ? { handle: object.handle, generation: object.generation } : null;
 
-/** gl, resources, bindings and shaderBridge are trusted, synchronous host capabilities. */
+/** The state-only entry point deliberately continues to reject every draw. */
 export function createVirglStateRenderer(options) {
+  return createRenderer(options, false);
+}
+
+/** Execute the bounded indexed draw profile using the same private state engine. */
+export function createVirglDrawRenderer(options) {
+  return createRenderer(options, true);
+}
+
+/** gl, resources, bindings and shaderBridge are trusted, synchronous host capabilities. */
+function createRenderer(options, drawing) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits"], ["gl", "resources", "bindings", "shaderBridge"]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", ...(drawing ? ["drawLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge"]);
     const { gl, resources, bindings, shaderBridge } = config;
     require(gl && typeof gl.createVertexArray === "function" && typeof gl.uniform4uiv === "function", "invalid-input", "A WebGL2 context is required.");
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
       bindings && typeof bindings.resolve === "function" && shaderBridge && typeof shaderBridge.translate === "function", "invalid-input", "Resource and shader capabilities are required.");
+    require(!drawing || typeof resources.readStorage === "function", "invalid-input", "Drawing requires actual storage readback.");
     const supplied = dataRecord(config.limits ?? {}, Object.keys(STATE_LIMITS), []), limits = { ...STATE_LIMITS, ...supplied };
     for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= STATE_LIMITS[key], "invalid-input", "Limits may only tighten defaults.");
     Object.freeze(limits);
+    let drawLimits = null;
+    if (drawing) {
+      const suppliedDraw = dataRecord(config.drawLimits ?? {}, Object.keys(DRAW_LIMITS), []);
+      drawLimits = { ...DRAW_LIMITS, ...suppliedDraw };
+      for (const key of Object.keys(drawLimits)) require(Number.isSafeInteger(drawLimits[key]) && drawLimits[key] >= 0 && drawLimits[key] <= DRAW_LIMITS[key],
+        "invalid-input", "Draw limits may only tighten defaults.");
+      Object.freeze(drawLimits);
+    }
+    const profile = drawing ? DRAW_PROFILE : STATE_PROFILE;
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
     const check = () => {
@@ -254,7 +276,7 @@ export function createVirglStateRenderer(options) {
               gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.SAMPLER_2D &&
               gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1, "shader-reflection-error", "Sampler reflection mismatch.");
             const unit = unitFor(stage, sampler.index);
-            program.samplers.push({ location, unit }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
+            program.samplers.push({ location, unit, stage, index: sampler.index }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
           }
           for (const block of metadata.uniformBlocks ?? []) {
             const index = gl.getUniformBlockIndex(program.native, block.name);
@@ -395,7 +417,75 @@ export function createVirglStateRenderer(options) {
       } else { gl.viewport(0, 0, 0, 0); gl.depthRange(0, 1); }
       check();
     };
-    const apply = (ctx, command) => {
+    const draw = (ctx, sub, command, submission) => {
+      const fields = command.fields;
+      require(fields.indexed && fields.start === 0 && fields.count > 0,
+        "unsupported-draw", "Only nonempty indexed draws with start zero are supported.");
+      require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= drawLimits.indicesPerSubmission - submission.indices,
+        "limit-exceeded", "Submission draw or index budget exceeded.");
+      require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
+      require(sub.surfaces[0] && sub.viewport && sub.vertexElements && sub.indexBuffer,
+        "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and index buffer.");
+      const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
+      for (const uniform of program.uniforms) require(sub.constants[uniform.stage].length >= uniform.count * 4,
+        "incomplete-draw", "Drawing requires every active constant word.");
+      for (const sampler of program.samplers) {
+        const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
+        require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
+        require(resolve(view.lease).storage.texture !== surface.storage.texture,
+          "framebuffer-feedback", "A draw cannot sample its own framebuffer texture.");
+      }
+      const attributes = program.reflection.attributes.map((attribute) => {
+        const element = sub.vertexElements.fields.elements[attribute.index];
+        const buffer = element ? sub.vertexBuffers[element.vertexBufferIndex] : null;
+        require(buffer, "incomplete-draw", "Drawing requires each active vertex attribute buffer.");
+        require(buffer.fields.stride !== 0, "unsupported-draw", "Gallium constant attributes with stride zero are unsupported.");
+        resolve(buffer.lease);
+        return { attribute, element, buffer };
+      });
+      vertexLayout(sub);
+      const index = sub.indexBuffer, indexStorage = resolve(index.lease), indexOffset = index.fields.offset;
+      // Pinned indexed draws use the index-binding byte offset; DRAW.start is not
+      // added to it. Subtraction proves the range before multiplying or reading.
+      require(fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
+        "out-of-bounds", "Index draw range exceeds retained storage.");
+      const indexByteLength = fields.count * 2;
+      const bytes = unwrap(resources.readStorage(index.lease,
+        { x: indexOffset, y: 0, z: 0, width: indexByteLength, height: 1, depth: 1 })).bytes;
+      const indices = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      let actualMinIndex = 65535, actualMaxIndex = 0;
+      for (let offset = 0; offset < indexByteLength; offset += 2) {
+        const value = indices.getUint16(offset, true);
+        // WebGL2's fixed primitive restart is always enabled. The wire profile
+        // disables restart, so accepting ushort 0xffff would change semantics.
+        require(value !== 65535, "unsupported-draw", "Index 0xffff requires unsupported primitive-restart lowering.");
+        actualMinIndex = Math.min(actualMinIndex, value); actualMaxIndex = Math.max(actualMaxIndex, value);
+      }
+      const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
+        const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
+        // vertexLayout proved that the first complete RG32 element fits. Bound
+        // the largest actual fetch with division, independent of wire hints.
+        require(actualMaxIndex <= Math.floor((buffer.metadata.byteLength - offset - 8) / stride),
+          "out-of-bounds", "An actual index fetch exceeds vertex storage.");
+        return { attributeIndex: attribute.index, location: attribute.location,
+          resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
+          stride, offset, firstByte: offset + actualMinIndex * stride, requiredEnd: offset + actualMaxIndex * stride + 8 };
+      });
+      // readStorage changes copy/pixel bindings. Restore every supported binding
+      // after its synchronous GPU read, immediately before issuing the real draw.
+      restore(sub);
+      gl.drawElements(gl.TRIANGLES, fields.count, gl.UNSIGNED_SHORT, indexOffset);
+      check();
+      submission.indices += fields.count;
+      submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count,
+        indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
+        contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
+        indexResourceId: indexStorage.metadata.id, indexResourceGeneration: indexStorage.generation,
+        vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
+          width: surface.metadata.width, height: surface.metadata.height },
+        vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]) });
+    };
+    const apply = (ctx, command, submission) => {
       const fields = command.fields, sub = ctx.subs.get(ctx.current), op = command.opcode;
       switch (op) {
         case 1: createObject(ctx, sub, command); break;
@@ -441,7 +531,9 @@ export function createVirglStateRenderer(options) {
           restore(sub);
           gl.colorMask(true, true, true, true); gl.clearColor(...fields.color); gl.clear(gl.COLOR_BUFFER_BIT);
           gl.colorMask(...colorMask(sub)); check(); return;
-        case 8: throw new StateFault("unsupported-draw", "DRAW_VBO execution belongs to the next renderer boundary.");
+        case 8:
+          if (!drawing) throw new StateFault("unsupported-draw", "DRAW_VBO execution belongs to the next renderer boundary.");
+          draw(ctx, sub, command, submission); return;
         case 10: case 18: {
           if (fields.stage > 1) { sub.resets[`${command.name}:${fields.stage}`] = fields; break; }
           const type = op === 10 ? 6 : 7, values = fields.handles.map((handle) => lookup(sub, handle, type, true));
@@ -523,20 +615,22 @@ export function createVirglStateRenderer(options) {
       }); },
       executeSubmission(id, bytes, provenance = {}) {
         let appliedCommands = 0, command = null;
+        const submission = drawing ? { draws: [], indices: 0 } : null;
+        const drawResults = () => drawing ? { draws: submission.draws } : {};
         try {
           const decoded = decodeSubmission(bytes, provenance);
-          if (!decoded.ok) return freeze({ ...decoded, appliedCommands });
+          if (!decoded.ok) return freeze({ ...decoded, appliedCommands, ...drawResults() });
           const ctx = context(id);
           require(decoded.contextId === null || decoded.contextId === id, "invalid-provenance", "Context provenance disagrees with execution context.");
-          for (command of decoded.commands) { apply(ctx, command); appliedCommands++; }
-          return success({ profile: STATE_PROFILE, appliedCommands, byteLength: decoded.byteLength, contextId: id, subContextId: ctx.current });
-        } catch (error) { return failure(error, { appliedCommands }, command); }
+          for (command of decoded.commands) { apply(ctx, command, submission); appliedCommands++; }
+          return success({ profile, appliedCommands, byteLength: decoded.byteLength, contextId: id, subContextId: ctx.current, ...drawResults() });
+        } catch (error) { return failure(error, { appliedCommands, ...drawResults() }, command); }
       },
       restoreContext(id) { return result(() => { const ctx = context(id); restore(ctx.subs.get(ctx.current)); return success({ contextId: id, subContextId: ctx.current }); }); },
       inspect(id) { return result(() => {
         if (id !== undefined) { uint(id, "contextId"); require(contexts.has(id), "missing-context", "State context does not exist."); }
         const selected = id === undefined ? [...contexts.values()] : [contexts.get(id)];
-        return success({ profile: STATE_PROFILE, disposed, limits,
+        return success({ profile, disposed, limits, ...(drawing ? { drawLimits } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes },

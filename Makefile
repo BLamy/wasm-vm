@@ -1838,3 +1838,8 @@ verify-E6-T12b:
 .PHONY: verify-E6-T12c
 verify-E6-T12c:
 	bash tools/verify-virgl-object-state.sh
+
+# Replay the original captured indexed scene on actual hardware WebGL2.
+.PHONY: verify-E6-T12d
+verify-E6-T12d:
+	bash tools/verify-virgl-draw-replay.sh
