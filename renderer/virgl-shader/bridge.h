@@ -11,7 +11,9 @@
 #define BRIDGE_MAX_PAIR_RESULT (BRIDGE_MAX_RESULT * 2u + 1024u)
 
 /* stage: 0 = vertex, 1 = fragment. The returned JSON is borrowed until the
- * next call. No input pointer is retained. Calls must be serialized. */
+ * next call. No input pointer is retained. Calls must be serialized. The
+ * checked opcode set internally selects the legacy v5 or owned raw-bit stage;
+ * callers cannot select a backend or bypass output-domain validation. */
 const char *bridge_translate(int stage, const char *text, size_t length);
 
 /* The two-stage API derives its interface from the fragment declarations.

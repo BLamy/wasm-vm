@@ -1,7 +1,8 @@
 # Bounded VirGL shader bridge
 
 This isolated module reuses virglrenderer 1.3.0's TGSI text parser and GLSL
-converter. It supplies a bounded shader translation boundary to the proof-only browser
+converter for the legacy finite-float profile, and owns a bounded IR/emitter for
+the separate private raw-bit profile. It supplies a translation boundary to the proof-only browser
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
@@ -18,6 +19,7 @@ make verify-E6-T10d
 make verify-E6-T12e1
 make verify-E6-T12e2
 make verify-E6-T12e3
+make verify-E6-T12e4a
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -158,7 +160,7 @@ const pair = bridge.translatePair({ vertexText, fragmentText });
 Both fields must be own string-valued data properties; getters, missing fields,
 unknown keys and failed reflection reject before Wasm allocation. Each text
 keeps the single-stage bounds, for at most 32,768 input bytes per pair. No source
-is rewritten. Both original texts are grammar-checked before upstream conversion;
+is rewritten. Both original texts are grammar-checked before conversion;
 each declared fragment GENERIC input needs a matching, fully written vertex
 output covering its declared components. Upstream first converts the fragment,
 then its value-only interpolation export is checked against the bounded profile
@@ -177,6 +179,80 @@ never a partial stage. The synchronous JS wrapper frees both input allocations
 in `finally` and owns all returned JSON data.
 
 ## Supported profile and bounds
+
+### Private raw lanes
+
+`virgl-webgl2-raw-bits-v1` is selected internally for fully validated programs
+containing AND, OR, NOT, SHL or USHR. A bounded lexical probe chooses which guard
+to attempt; it does not admit an instruction or select returned semantics.
+Programs without these instruction tokens take the original v5 path, preserving
+its full GLSL, metadata and error results, including its finite UINT32-immediate
+policy. A raw-domain immediate alone does not opt a program into the new profile.
+There is no caller backend flag, vendor patch or generated-source rewrite.
+
+The owned path permits MOV and the five bitwise operations. ADD, MUL, MAD and
+TEX cannot be mixed into it; SAMP/SVIEW declarations also reject in this profile.
+UADD, comparisons, UCMP, PRECISE, modifiers, control
+flow, indirect addressing and ADDR remain unsupported. It retains the v5 bank,
+line, text, instruction, component and initialization bounds. All decimal UINT32
+words from 0 through 4294967295 are permitted in raw immediates; signs, exponent
+notation, suffixes and overflow reject. FLT32 immediates keep their existing
+finite parsing policy. TEMP lanes and immediate operands use highp unsigned
+32-bit storage/expressions. SHL and USHR always mask each count with `31u`, as
+specified by the captured Mesa TGSI revision. Every instruction first snapshots
+all consumed RHS lanes into `raw_rhs`, then commits destination lanes. Sparse
+unsupported masks remain rejected; prefix masks and individual lanes preserve
+untouched components and ordered source swizzles.
+
+The bit-preservation guarantee covers private lanes and these integer operations.
+Attribute, GENERIC, POSITION and COLOR interfaces remain float interfaces. Each
+lane tracks known-zero bits, known-one bits, and an optional original float-input
+register/lane. MOV retains that origin; bitwise operations clear it. A surviving
+float origin is emitted directly from the corresponding input at final output,
+without claiming preservation of input NaN payloads. Other output lanes must
+exclude all-one exponents, and must either contain a definitely set exponent bit
+or have a definitely zero mantissa. This proves finite normal values or signed
+zero and rejects possible NaNs, infinities and subnormals. Unknown raw CONST
+words receive no float-origin authority. Dynamic shift proofs join all compatible
+low-five-bit counts, at most 32 possibilities. Final output validation happens
+after all source checks and writes; intermediate private values can use every bit.
+
+Raw stages never invoke the upstream translator. The owned emitter constructs a
+complete ESSL300 shader from typed operands and fixed templates. Checked
+declarations supply the same metadata shape and names. Every GENERIC retains the
+legacy vec4 link type even when its checked component mask is xy or xyz; masks
+constrain initialized and consumed lanes, not the varying's GLSL width. Constant extent follows
+the pinned `vrend_shader.c:1961–1965` rule, including the CONST45-before-CONST0
+extent47 case; the addressable limit remains46. The exact 656-byte VirglBlock
+and its winsys_adjust_y offset640 are retained. Raw fragment declarations form
+the same bounded value-only interpolation interface checked for legacy stages;
+mixed-backend pairs derive the same sorted key and only alter authorized vertex
+qualifiers. Fragment standalone/pair results remain identical. The `float32-bits`
+uniform transport encoding is unchanged: arbitrary host-u32 hardware probes are
+direct compiler tests, not expanded guest constant-command admission.
+
+Each owned stage allocates a fixed 26,232-byte IR and a 65,537-byte GLSL buffer,
+including its terminator. A pair holds at most 183,538 bytes in these blocks.
+Both are freed on every success or failure, including second-stage failure.
+Native compile-time assertions cap the IR at32KiB, each profile at8KiB and the
+two conversion records together at32KiB. The current profile is7,608 bytes;
+the IR's 179 instruction entries are112 bytes each. The input guard uses one
+16,385-byte temporary text buffer sequentially. Raw emission has bounded scalar
+locals and no recursion or token workspace. Legacy conversion retains its
+sequential 16,385-byte input and 8,192 four-byte token workspaces; the new raw
+grammar cannot exceed that token capacity (at most179 three-operand statements,
+8 immediates and256 bounded lines). The fixed16MiB Wasm memory,256KiB stack,
+64KiB GLSL and existing JSON capacities stay unchanged. Native sanitizer stack
+records describe that compiler build, not the Wasm stack layout.
+
+`build.sh raw-bit-sanitize` builds the ASan/UBSan and LLVM-coverage harness;
+`tools/virgl-raw-bits/native.py` records exact results for `raw-bit-cases.json`,
+the hardware fixtures and all19 unchanged original bodies. The hardware gate
+reconstructs u32 words from finite-normal vertex transform-feedback carriers
+and exact0/255 fragment bit planes, with independent expected words and dynamic
+uniforms. It also records real fixed-memory allocation failure and recovery.
+
+### Legacy finite-float profile
 
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
 

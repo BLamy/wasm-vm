@@ -726,6 +726,26 @@
     "numCapsets": 0,
     "virglFeature": false
   },
+  "rawShaderBoundary": {
+    "acceptance": "make verify-E6-T12e4a; authored both-stage raw32 reconstruction with actual WebGL2 transform feedback and32 fragment bitplanes, mixed-backend interpolation, native/Wasm parity and unchanged12/19 original acceptance.",
+    "constants": "Existing uvec4 declaration metadata, VirglBlock layout and finite float-bit guest command transport remain unchanged. Direct arbitrary host uniforms are hardware probes only.",
+    "floatInterface": "Existing attribute/varying/POSITION/COLOR ABI remains float. MOV input origins may pass through directly; raw output must prove finite normal or zero using conservative known bits. No NaN/Inf/subnormal raw-payload promise across float IO.",
+    "limits": "All v5 limits remain:179 non-END instructions,118 TEMP registers,46 guest constants,8 other-bank entries/immediates,16KiB text,8192 tokens,256 lines,512-byte lines,64KiB GLSL,147456/295936-byte JSON buffers,16MiB fixed Wasm,256KiB stack.",
+    "mixedPrograms": "ADD/MUL/MAD/TEX combined with new bitwise operations remain rejected until E6-T12e4c. Integer arithmetic/comparisons/select, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations also reject while texture use is absent.",
+    "operations": [
+      "MOV",
+      "AND",
+      "OR",
+      "NOT",
+      "SHL",
+      "USHR"
+    ],
+    "pairing": "Per-stage backend selection preserves semantic/mask/interpolation-derived keys, exact standalone fragment output, and checked smooth/flat vertex qualifiers. No caller-selected keys or backend flags.",
+    "scope": "Isolated compiler boundary; no production guest GPU negotiation or desktop performance claim.",
+    "selection": "Internal only after an AND, OR, NOT, SHL or USHR instruction passes full validation; legacy-only source keeps v5 acceptance, errors and complete GLSL/metadata.",
+    "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
+  },
+  "rawShaderProfile": "virgl-webgl2-raw-bits-v1",
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
   "shaderProfile": "virgl-webgl2-straight-line-v5",

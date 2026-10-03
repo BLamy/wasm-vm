@@ -284,3 +284,36 @@ replay proof. Command decoding itself consumes no backing-memory snapshots.
   differences from GLES3 including texture swizzles, fixed restart and sync objects;
   [ESSL 3.00 specification](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf),
   language types, operators and control flow. The WebGL reference is a living draft.
+
+
+## Private raw shader words
+
+E6-T12e4a adds `virgl-webgl2-raw-bits-v1` for a bounded program containing
+validated AND, OR, NOT, SHL or USHR instructions. MOV and these operations use an
+owned IR and emitter with highp unsigned private storage. A shift always masks its
+count with31. Each instruction reads all consumed source lanes before writing any
+destination lane. All checked UINT32 immediate words are admitted on this path.
+The vendored converter is unchanged. The owned backend derives declaration
+metadata from the checked profile, including the established constant-count
+ordering rule; upstream float-backed instruction bodies are not used. Legacy-only
+programs retain their exact v5 acceptance, errors, source and metadata.
+
+The stage interface stays float. An unchanged float-input origin may pass through
+MOV directly. A computed raw output must conservatively prove a finite normal
+value or zero before emission. Unknown raw constants do not satisfy that proof;
+NaN, infinity and subnormal payloads stay private until converted into a proven
+safe carrier. This is why merely allowing upstream integer opcodes would not
+establish raw32 correctness: its float TEMP storage can lose those bit patterns.
+
+The hardware acceptance reconstructs every output bit using finite byte carriers
+in vertex transform feedback and0/255 bitplanes in fragment pixels. Inputs include
+dynamic actual uvec4 uniforms, high banks, masked shift neighbors, overlapping
+writes and179-instruction programs. Those arbitrary host uniforms are direct
+compiler probes; the guest's finite float-bit constant command policy is unchanged.
+Mixed legacy/owned pairs derive the existing smooth/flat interface key internally.
+The native sanitizer, fixed16MiB Wasm, unchanged legacy suites and actual GPU
+output are bound to the frozen source by `make verify-E6-T12e4a`.
+
+Integer arithmetic and masks, then mixed float operations and comparisons, remain
+separate successors. PRECISE, control flow and raw-stage sampler declarations still reject. This isolated shader
+boundary does not activate a guest renderer or establish a MIPS/FPS improvement.

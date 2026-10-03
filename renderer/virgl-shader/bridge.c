@@ -5,6 +5,7 @@
  * indirect address, unsupported stage, or control-flow token reaches upstream.
  */
 #include "bridge.h"
+#include "raw_bits.h"
 #include "vrend/vrend_shader.h"
 #include "tgsi/tgsi_text.h"
 #include "util/os_misc.h"
@@ -16,22 +17,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT };
-enum operand_kind { DECLARATION, DESTINATION, SOURCE };
-enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
-struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
-struct profile {
-   bool declared[FILE_COUNT][TEMP_REGISTERS];
-   unsigned components[FILE_COUNT][TEMP_REGISTERS];
-   unsigned written[FILE_COUNT][TEMP_REGISTERS];
-   unsigned semantic[2][8]; /* 0 attribute, 1 POSITION, 2 GENERIC, 3 COLOR */
-   unsigned semantic_index[2][8];
-   bool flat[2][8];
-   unsigned instructions, immediates;
-   bool ended, started, color0_property;
-   int stage;
-};
 
 static char single_response[BRIDGE_MAX_RESULT];
 static char pair_response[BRIDGE_MAX_PAIR_RESULT];
@@ -179,7 +164,7 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
    }
    return true;
 }
-static bool source(const char **p, struct profile *s, unsigned consumed)
+static bool source(const char **p, struct profile *s, unsigned consumed, struct reg *operand)
 {
    struct reg r;
    if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index]) return false;
@@ -189,9 +174,11 @@ static bool source(const char **p, struct profile *s, unsigned consumed)
    for (unsigned lane = 0; lane < 4; ++lane)
       if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
    if ((s->components[r.file][r.index] & needed) != needed) return false;
-   return r.file != TEMP || (s->written[TEMP][r.index] & needed) == needed;
+   if (r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
+   if (operand) *operand = r;
+   return true;
 }
-static bool literal_float(const char **p)
+static bool literal_float(const char **p, uint32_t *bits)
 {
    space(p);
    const char *begin = *p;
@@ -202,10 +189,12 @@ static bool literal_float(const char **p)
    char *after;
    errno = 0;
    float value = strtof(number, &after);
-   return !errno && *after == 0 && isfinite(value) && fabsf(value) <= 1000000.0f;
+   if (errno || *after || !isfinite(value) || fabsf(value) > 1000000.0f) return false;
+   if (bits) memcpy(bits, &value, sizeof(value));
+   return true;
 }
 
-static bool literal_float_bits(const char **p)
+static bool literal_float_bits(const char **p, uint32_t *raw_bits)
 {
    space(p);
    uint32_t bits = 0;
@@ -220,6 +209,7 @@ static bool literal_float_bits(const char **p)
    const char *after = *p;
    space(&after);
    if (*after != ',' && *after != '}') return false;
+   if (raw_bits) { *raw_bits = bits; return true; }
    float value;
    memcpy(&value, &bits, sizeof(value));
    if (((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0) ||
@@ -234,6 +224,7 @@ static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
    if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+   if (s->raw && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
    bool flat = false;
@@ -262,6 +253,12 @@ static bool declaration(const char **p, struct profile *s)
    } else if (r.file == SAMP && s->stage != 1) return false;
    if (r.mask != 15 && (semantic != 2 || (r.mask != 3 && r.mask != 7))) return false;
    if (!end(p)) return false;
+   if (r.file == CONST) {
+      /* Preserve vrend_shader.c:1961–1965, including a last CONST[0]
+       * declaration's extra, guest-inaccessible array element. */
+      if (!r.last) ++s->constant_extent;
+      else if (r.last + 1 > s->constant_extent) s->constant_extent = r.last + 1;
+   }
    for (unsigned i = r.index; i <= r.last; ++i) {
       s->declared[r.file][i] = true;
       s->components[r.file][i] = r.mask;
@@ -278,8 +275,19 @@ static bool instruction(const char **p, struct profile *s)
 {
    unsigned arity;
    bool tex = false, partial = false;
+   struct raw_instruction raw = {0};
    if (word(p, "END")) { s->ended = true; return end(p); }
    if (word(p, "MOV")) { arity = 1; partial = true; }
+   else if (s->raw) {
+      if (word(p, "AND")) raw.opcode = RAW_AND;
+      else if (word(p, "OR")) raw.opcode = RAW_OR;
+      else if (word(p, "NOT")) raw.opcode = RAW_NOT;
+      else if (word(p, "SHL")) raw.opcode = RAW_SHL;
+      else if (word(p, "USHR")) raw.opcode = RAW_USHR;
+      else { failure_code = "unsupported-feature"; return false; }
+      arity = raw.opcode == RAW_NOT ? 1 : 2;
+      partial = true;
+   }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
    else if (word(p, "TEX")) { tex = true; arity = 1; }
@@ -290,13 +298,14 @@ static bool instruction(const char **p, struct profile *s)
        !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
    if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = 0; i < arity; ++i)
-      if (!punctuation(p, ',') || !source(p, s, tex ? 3u : dst.mask)) return false;
+      if (!punctuation(p, ',') || !source(p, s, tex ? 3u : dst.mask, s->raw ? &raw.src[i] : NULL)) return false;
    if (tex) {
       struct reg sampler;
       if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
           !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
    }
    if (!end(p)) return false;
+   if (s->raw) { raw.dst = dst; raw_record(s->raw, &raw); }
    s->written[dst.file][dst.index] |= dst.mask;
    return true;
 }
@@ -325,8 +334,10 @@ static bool validate(char *text, struct profile *s)
             bits = true;
          }
          if (!punctuation(&p, '{')) return false;
-         for (unsigned c = 0; c < 4; ++c)
-            if ((c && !punctuation(&p, ',')) || !(bits ? literal_float_bits(&p) : literal_float(&p))) return false;
+         for (unsigned c = 0; c < 4; ++c) {
+            uint32_t *value = s->raw ? &s->raw->immediates[i][c] : NULL;
+            if ((c && !punctuation(&p, ',')) || !(bits ? literal_float_bits(&p, value) : literal_float(&p, value))) return false;
+         }
          if (!punctuation(&p, '}') || !end(&p)) return false;
          s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;
       } else if (word(&p, "PROPERTY")) {
@@ -354,6 +365,10 @@ static bool validate(char *text, struct profile *s)
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
+   if (s->raw && (!s->raw->bitwise_count || !raw_outputs_safe(s))) {
+      failure_code = "unsupported-feature";
+      return false;
+   }
    return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
 }
 
@@ -385,13 +400,17 @@ struct conversion {
    struct vrend_shader_info info;
    struct vrend_variable_shader_info variable;
    struct vrend_strarray shader;
+   char *owned_shader;
 };
+_Static_assert(sizeof(struct conversion) * 2 <= 32768, "pair conversion stack bound");
 
 static void cleanup(struct conversion *c)
 {
    strarray_free(&c->shader, true);
    free(c->info.sampler_arrays);
    free(c->info.image_arrays);
+   free(c->profile.raw);
+   free(c->owned_shader);
 }
 
 static void begin_response(bool pair)
@@ -413,6 +432,29 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    }
    char checked[BRIDGE_MAX_TEXT + 1];
    memcpy(checked, text, length); checked[length] = 0;
+   /* This bounded lexical probe chooses which validator to attempt; it never
+    * admits a shader or selects emitted semantics. Only fully validated new
+    * instructions plus a complete output proof authorize the owned backend.
+    * Texts without such opcode tokens retain the exact legacy validator path. */
+   bool candidate = false;
+   char *save = NULL;
+   for (char *line = strtok_r(checked, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
+      const char *p = line;
+      space(&p);
+      if (isdigit((unsigned char)*p)) {
+         while (isdigit((unsigned char)*p)) ++p;
+         if (!punctuation(&p, ':')) continue;
+      }
+      if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR")) {
+         candidate = true;
+         break;
+      }
+   }
+   if (candidate) {
+      profile->raw = calloc(1, sizeof(*profile->raw));
+      if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+   }
+   memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
    if (!validate(checked, profile)) return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
    return NULL;
@@ -421,6 +463,24 @@ static const char *check_input(struct profile *profile, const char *text, size_t
 static const char *convert(struct conversion *c, const char *text, size_t length,
                            const struct vrend_fs_shader_info *fragment_interface)
 {
+   if (c->profile.raw) {
+      /* Raw stages never enter the float-backed upstream emitter. These are
+       * value-only metadata from declarations already checked by our guard. */
+      c->info.num_consts = (int)c->profile.constant_extent;
+      if (c->profile.stage) {
+         struct vrend_fs_shader_info *fs = &c->variable.fs_info;
+         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i]) {
+            struct vrend_interp_info *entry = &fs->interpinfo[fs->num_interps++];
+            entry->semantic_name = TGSI_SEMANTIC_GENERIC;
+            entry->semantic_index = c->profile.semantic_index[IN][i];
+            entry->interpolate = c->profile.flat[IN][i] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
+            entry->location = TGSI_INTERPOLATE_LOC_CENTER;
+         }
+      }
+      c->owned_shader = raw_emit(&c->profile, c->profile.constant_extent);
+      if (!c->owned_shader) return error("translation-error", "Raw GLSL allocation or output bound failed.");
+      return NULL;
+   }
    char input[BRIDGE_MAX_TEXT + 1];
    memcpy(input, text, length); input[length] = 0;
    struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
@@ -501,15 +561,15 @@ static void stage_result(const struct conversion *c)
    const struct vrend_shader_info *info = &c->info;
    int stage = profile->stage;
    append("\"glsl\":\"");
-   for (int i = 0; i < c->shader.num_strings; ++i) {
-      for (const char *p = c->shader.strings[i].buf; *p; ++p) {
+   for (int i = 0; i < (c->owned_shader ? 1 : c->shader.num_strings); ++i) {
+      for (const char *p = c->owned_shader ? c->owned_shader : c->shader.strings[i].buf; *p; ++p) {
          unsigned char byte = (unsigned char)*p;
          if (byte == '"' || byte == '\\') append("\\%c", byte);
          else if (byte < 32) append("\\u%04x", byte);
          else append("%c", byte);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v5\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", c->owned_shader ? "virgl-webgl2-raw-bits-v1" : "virgl-webgl2-straight-line-v5", stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(profile, IN); else append("[]");

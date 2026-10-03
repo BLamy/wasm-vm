@@ -1877,3 +1877,7 @@ verify-E6-T12e3:
 .PHONY: verify-E6-T12e3b
 verify-E6-T12e3b:
 	bash tools/verify-virgl-constants.sh
+
+.PHONY: verify-E6-T12e4a
+verify-E6-T12e4a:
+	bash tools/verify-virgl-raw-bits.sh
