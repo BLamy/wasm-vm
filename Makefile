@@ -1808,3 +1808,10 @@ verify-E5.5-T03be:
 	wasm-pack test --node crates/wasm --test jit_sparse_handoff
 	wasm-pack test --node crates/wasm --test jit_browser_parity
 	wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier
+
+.PHONY: verify-E6-T10b
+verify-E6-T10b:
+	python3 -m py_compile tools/virgl-capture/validate.py tools/virgl-capture/capture.py tools/virgl-capture/workloads/build.py tools/virgl-capture/workloads/build_in_container.py
+	sh -n tools/virgl-capture/recorder.build.sh tools/virgl-capture/reference.sh
+	python3 -m unittest discover -s tools/virgl-capture/tests -v
+	python3 tools/virgl-capture/validate.py $(or $(VIRGL_CORPUS),evidence/virgl-corpus/captures)
