@@ -454,7 +454,17 @@ export function createResourceStore(options) {
         });
       },
     };
-    return success({ store: Object.freeze(store) });
+    // Host-only capability: a guest numeric ID cannot resolve native storage.
+    // The lease keeps the exact allocation alive even after public unref/reuse.
+    const bindings = Object.freeze({
+      resolve: operation((token) => {
+        const entry = leases.get(token);
+        require(entry !== undefined, "invalid-lease", "Unknown, released or foreign storage lease.");
+        return success({ metadata: entry.resource.meta, generation: entry.resource.generation,
+          role: entry.role, storage: entry.resource.storage });
+      }),
+    });
+    return success({ store: Object.freeze(store), bindings });
   });
 }
 

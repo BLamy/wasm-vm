@@ -23,7 +23,7 @@ import {
 
 const backendResult = createWebGL2TransferBackend(gl);
 const storeResult = createResourceStore({ backend: backendResult.backend });
-const store = storeResult.store; // Check each result.ok in real callers.
+const { store, bindings } = storeResult; // Check each result.ok in real callers.
 store.createContext(2);
 store.createResource({
   id: 3, target: 0, format: 64, bind: 16,
@@ -180,9 +180,15 @@ Actual queue acceptance/fence completion and guest reset epochs are later tasks.
 
 Storage leases are trusted host ownership objects, not guest handles. They remain
 usable for readback after lookup, backing or context removal until explicitly
-released or disposed. Future draw/view code must release its leases when the
-corresponding object dies; a future internal binding API will resolve them for
-rendering. No raw GL storage handle is exposed by the store.
+released or disposed. The factory returns `{ok:true,store,bindings}`. Its separate
+trusted `bindings.resolve(lease)` capability returns
+`{ok:true,metadata,generation,role,storage}` for a live opaque lease, including
+retained unpublished storage. Foreign, forged and released leases fail. The
+native backend descriptor is available only through this trusted capability;
+ordinary store operations expose no raw GL handles. The state executor in
+`state.mjs` owns its surface/view and vertex/index leases and releases each when
+its owning object or binding dies. State and resource context lifetimes remain
+separate; see `state-README.md`.
 
 ## Backend contract and WebGL state
 
