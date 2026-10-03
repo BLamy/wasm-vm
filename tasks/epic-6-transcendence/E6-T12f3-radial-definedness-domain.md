@@ -3,7 +3,7 @@ id: E6-T12f3
 epic: 6
 title: Establish an explicit admission contract for radial shader definedness
 priority: 525.0269913
-status: pending
+status: in-progress
 depends_on: [E6-T12f2]
 estimate: S
 risk: high
@@ -50,4 +50,21 @@ compatibility from shader creation or a compile-only result.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+Dependency E6-T12f2 is verified at
+`ab1f145616fc9dbf97e8113759622b6848cdfeee`. Begin with the task's finite
+counterexample and independently prove the exact coefficient predicate. Bind
+one bounded graph certificate to consumed lane versions and exclude only its
+small-coefficient predecessor under a new explicit immutable-bank domain.
+Keep simultaneous finite, indirect and loop-count contracts on the same owned
+bank snapshot through synchronous draws, asynchronous jobs and restoration.
+Submit native sanitizer/Wasm parity, before-effect domain failures, admitted
+hardware paths, actual domain sabotage and final pristine-clone evidence with
+`make verify-E6-T12f3` for a fresh adversarial verifier.
+
+This is a restricted compiler/shared-renderer admission boundary. Original
+PRECISE-bearing bodies remain independently gated; compiler fixtures cannot
+establish radial workload compatibility. The isolated renderer is not wired
+into the demo's guest negotiation, so this slice claims no deployment, guest
+execution or desktop 300 MIPS.
