@@ -1,0 +1,1335 @@
+{
+  "schema": "wasm-vm-indirect-fault-wasm-v1",
+  "mode": "index-offset",
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/tools/virgl-indirect-constants/fault_wasm.mjs",
+    "--output",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/target/evidence/virgl-indirect-constants-cold/fault-artifacts/index-offset/wasm.json",
+    "--fixture",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/renderer/virgl-command/tests/indirect-constants-shaders.json",
+    "--directory",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/target/evidence/virgl-indirect-constants-cold/fault-artifacts",
+    "--mode",
+    "index-offset"
+  ],
+  "node": "v24.20.0",
+  "fixture": {
+    "path": "renderer/virgl-command/tests/indirect-constants-shaders.json",
+    "bytes": 57769,
+    "sha256": "c4d9fefc1700e2e926b8110ccc4fd1e3542233872967bf2e5e7c98a27932966f"
+  },
+  "harness": {
+    "path": "tools/virgl-indirect-constants/fault_wasm.mjs",
+    "bytes": 3591,
+    "sha256": "d3dca2ca62ce82e8eb586184753c320f47800e91d176897e7bfe2ea8e7ee8660"
+  },
+  "artifacts": {
+    "module": {
+      "path": "index-offset/wasm/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    "wasm": {
+      "path": "index-offset/wasm/virgl-shader.wasm",
+      "bytes": 287270,
+      "sha256": "8552787d88bdf479e33a309476a68090e5d5e43b56b25af86e308356887e335f"
+    },
+    "native": {
+      "path": "index-offset/native/virgl-shader",
+      "bytes": 313664,
+      "sha256": "6ba78044d9e17181a5dab91c3b21df101bc6b91e592c73774296fff10b8fce7f"
+    }
+  },
+  "nativeTranslations": {
+    "path": "index-offset/native.json",
+    "bytes": 261318,
+    "sha256": "508bf70a835efd0bd3fb7de13d9a836cfd3865353ccfcae3a236a3235a3eb4da"
+  },
+  "calls": [
+    {
+      "name": "pass-vertex",
+      "stage": "vertex",
+      "inputSha256": "bc3328656e06ff5c92fba86689fbc673fde032433d90ab0e4f405620dca643c6",
+      "inputBytes": 211,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nin vec4 in_2;\nin vec4 in_3;\n   out  vec4 vso_g0;\n   out  vec4 vso_g1;\n   out  vec4 vso_g2;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\nvso_g0 = vec4(((in_1)));\nvso_g1 = vec4(((in_2)));\nvso_g2 = vec4(((in_3)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "pass-fragment",
+      "stage": "fragment",
+      "inputSha256": "a0679142744d8bdf484bbe455ff0c0a5a5fcb5c76d2f18c2db8102500f390d57",
+      "inputBytes": 77,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n flat    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vso_g0)));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "flat"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "name": "raw-vertex",
+      "stage": "vertex",
+      "inputSha256": "2d0456af83c484c533c1b67ca829d2c983a662708ba85173bee936cac0b567ff",
+      "inputBytes": 3233,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nin vec4 in_2;\nin vec4 in_3;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nsmooth out vec4 vso_g2;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_addr = 0u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n raw_addr = 1u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].w), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].x));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n raw_addr = 45u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[3].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].w), (vsconst0[(raw_addr ^ 1u)].z));\n raw_temp[4].xyzw = raw_rhs.xyzw;\n raw_addr = 0u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[5].xyzw = raw_rhs.xyzw;\n raw_addr = 45u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[6].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[7].x;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[8].x;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n if (vsconst0[44].y != 0u) {\n raw_addr = 0u;\n } else {\n raw_addr = 45u;\n }\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[9].xyzw = raw_rhs.xyzw;\n raw_addr = 0u;\n if (vsconst0[44].z != 0u) {\n raw_addr = 45u;\n }\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[10].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[11].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[11].y), (raw_temp[11].x), 0u, 0u);\n raw_temp[11].xy = raw_rhs.xy;\n raw_addr = 1u;\n raw_rhs = uvec4(0u, 0u, (vsconst0[(raw_addr ^ 1u)].w), 0u);\n raw_temp[11].z = raw_rhs.z;\n raw_rhs = uvec4(0u, 0u, 0u, (vsconst0[(raw_addr ^ 1u)].z));\n raw_temp[11].w = raw_rhs.w;\n raw_rhs = uvec4((floatBitsToUint(in_1.x) >> (23u & 31u)), (floatBitsToUint(in_1.y) >> (23u & 31u)), (floatBitsToUint(in_1.z) >> (23u & 31u)), (floatBitsToUint(in_1.w) >> (23u & 31u)));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].x & 31u), (raw_temp[110].y & 31u), (raw_temp[110].z & 31u), (raw_temp[110].w & 31u));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(19088743u)), (uintBitsToFloat(2309737967u)), (uintBitsToFloat(2147483648u)), 0.0);\n raw_rhs = uvec4((19088743u), (2309737967u), (2147483648u), (8388607u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n float_rhs = vec4((uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)));\n raw_rhs = uvec4((0u), (0u), (0u), (0u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n float_temp[113].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[0].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[0].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[0].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[0].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[1].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[1].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[1].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[1].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[2].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[2].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[2].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[2].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[3].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[3].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[3].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[3].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[4].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[4].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[4].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[4].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[5].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[5].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[5].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[5].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[6].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[6].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[6].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[6].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[7].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[7].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[7].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[7].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[8].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[8].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[8].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[8].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[9].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[9].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[9].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[9].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[10].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[10].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[10].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[10].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[11].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[11].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[11].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[11].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x >> (raw_temp[110].x & 31u)), (raw_temp[111].y >> (raw_temp[110].x & 31u)), (raw_temp[111].z >> (raw_temp[110].x & 31u)), (raw_temp[111].w >> (raw_temp[110].x & 31u)));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x & 1u), (raw_temp[111].y & 1u), (raw_temp[111].z & 1u), (raw_temp[111].w & 1u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[111].x != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].y != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].z != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].w != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)));\n raw_rhs = uvec4((raw_temp[111].x != 0u ? 1065353216u : 0u), (raw_temp[111].y != 0u ? 1065353216u : 0u), (raw_temp[111].z != 0u ? 1065353216u : 0u), (raw_temp[111].w != 0u ? 1065353216u : 0u));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x), (in_0.y), (in_0.z), (in_0.w));\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_2.x), (in_2.y), (in_2.z), (in_2.w));\n raw_rhs = uvec4((floatBitsToUint(in_2.x)), (floatBitsToUint(in_2.y)), (floatBitsToUint(in_2.z)), (floatBitsToUint(in_2.w)));\n raw_out[2].xyzw = raw_rhs.xyzw;\n float_out[2].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_3.x), (in_3.y), (in_3.z), (in_3.w));\n raw_rhs = uvec4((floatBitsToUint(in_3.x)), (floatBitsToUint(in_3.y)), (floatBitsToUint(in_3.z)), (floatBitsToUint(in_3.w)));\n raw_out[3].xyzw = raw_rhs.xyzw;\n float_out[3].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = float_out[2].x;\n vso_g1.y = float_out[2].y;\n vso_g1.z = float_out[2].z;\n vso_g1.w = float_out[2].w;\n vso_g2.x = float_out[3].x;\n vso_g2.y = float_out[3].y;\n vso_g2.z = float_out[3].z;\n vso_g2.w = float_out[3].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v10",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                36,
+                37,
+                40,
+                41,
+                44,
+                45
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "raw-fragment",
+      "stage": "fragment",
+      "inputSha256": "d88471d6d6e6a4ae88f38364a0d62a490d7ef58b21c2f4dc033d2fdde63b773b",
+      "inputBytes": 3163,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nflat in vec4 vso_g0;\nflat in vec4 vso_g1;\nflat in vec4 vso_g2;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_addr = 0u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n raw_addr = 1u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].w), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].x));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n raw_addr = 45u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[3].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].w), (fsconst0[(raw_addr ^ 1u)].z));\n raw_temp[4].xyzw = raw_rhs.xyzw;\n raw_addr = 0u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[5].xyzw = raw_rhs.xyzw;\n raw_addr = 45u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[6].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((fsconst0[44].x & 31u), (fsconst0[44].x & 31u), (fsconst0[44].x & 31u), (fsconst0[44].x & 31u));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[7].x;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[8].x;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n if (fsconst0[44].y != 0u) {\n raw_addr = 0u;\n } else {\n raw_addr = 45u;\n }\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[9].xyzw = raw_rhs.xyzw;\n raw_addr = 0u;\n if (fsconst0[44].z != 0u) {\n raw_addr = 45u;\n }\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[10].xyzw = raw_rhs.xyzw;\n raw_addr = 23u;\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[11].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[11].y), (raw_temp[11].x), 0u, 0u);\n raw_temp[11].xy = raw_rhs.xy;\n raw_addr = 1u;\n raw_rhs = uvec4(0u, 0u, (fsconst0[(raw_addr ^ 1u)].w), 0u);\n raw_temp[11].z = raw_rhs.z;\n raw_rhs = uvec4(0u, 0u, 0u, (fsconst0[(raw_addr ^ 1u)].z));\n raw_temp[11].w = raw_rhs.w;\n raw_rhs = uvec4((floatBitsToUint(vso_g0.x) >> (23u & 31u)), (floatBitsToUint(vso_g0.y) >> (23u & 31u)), (floatBitsToUint(vso_g0.z) >> (23u & 31u)), (floatBitsToUint(vso_g0.w) >> (23u & 31u)));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].x & 31u), (raw_temp[110].y & 31u), (raw_temp[110].z & 31u), (raw_temp[110].w & 31u));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(19088743u)), (uintBitsToFloat(2309737967u)), (uintBitsToFloat(2147483648u)), 0.0);\n raw_rhs = uvec4((19088743u), (2309737967u), (2147483648u), (8388607u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n float_rhs = vec4((uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)));\n raw_rhs = uvec4((0u), (0u), (0u), (0u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n float_temp[113].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[0].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[0].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[0].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[0].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[1].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[1].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[1].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[1].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[2].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[2].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[2].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[2].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[3].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[3].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[3].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[3].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[4].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[4].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[4].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[4].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[5].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[5].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[5].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[5].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[6].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[6].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[6].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[6].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[7].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[7].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[7].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[7].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[8].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[8].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[8].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[8].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[9].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[9].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[9].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[9].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[10].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[10].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[10].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[10].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[11].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[11].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[11].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[11].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x >> (raw_temp[110].x & 31u)), (raw_temp[111].y >> (raw_temp[110].x & 31u)), (raw_temp[111].z >> (raw_temp[110].x & 31u)), (raw_temp[111].w >> (raw_temp[110].x & 31u)));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x & 1u), (raw_temp[111].y & 1u), (raw_temp[111].z & 1u), (raw_temp[111].w & 1u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[111].x != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].y != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].z != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].w != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)));\n raw_rhs = uvec4((raw_temp[111].x != 0u ? 1065353216u : 0u), (raw_temp[111].y != 0u ? 1065353216u : 0u), (raw_temp[111].z != 0u ? 1065353216u : 0u), (raw_temp[111].w != 0u ? 1065353216u : 0u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v10",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "interpolation": "flat"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                36,
+                37,
+                40,
+                41,
+                44,
+                45
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "numeric-vertex",
+      "stage": "vertex",
+      "inputSha256": "5d0d1c081b12cf8440ce2bd37e389b29cf2e21150b4bf7529b91f756360b9ded",
+      "inputBytes": 5191,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nin vec4 in_2;\nin vec4 in_3;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nsmooth out vec4 vso_g2;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_addr = 0u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n raw_addr = 1u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n float_temp[1].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].w), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].x));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n float_temp[2].xyzw = float_rhs.xyzw;\n raw_addr = 45u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[3].xyzw = raw_rhs.xyzw;\n float_temp[3].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].w), (vsconst0[(raw_addr ^ 1u)].z));\n raw_temp[4].xyzw = raw_rhs.xyzw;\n float_temp[4].xyzw = float_rhs.xyzw;\n raw_addr = 0u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[5].xyzw = raw_rhs.xyzw;\n float_temp[5].xyzw = float_rhs.xyzw;\n raw_addr = 45u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[6].xyzw = raw_rhs.xyzw;\n float_temp[6].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[7].x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n float_temp[7].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u), (floatBitsToUint(in_3.x) & 31u));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[8].x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n float_temp[8].xyzw = float_rhs.xyzw;\n if (vsconst0[44].y != 0u) {\n raw_addr = 0u;\n } else {\n raw_addr = 45u;\n }\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[9].xyzw = raw_rhs.xyzw;\n float_temp[9].xyzw = float_rhs.xyzw;\n raw_addr = 0u;\n if (vsconst0[44].z != 0u) {\n raw_addr = 45u;\n }\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[10].xyzw = raw_rhs.xyzw;\n float_temp[10].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[11].xyzw = raw_rhs.xyzw;\n float_temp[11].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[11].y), (float_temp[11].x), 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[11].y), (raw_temp[11].x), 0u, 0u);\n raw_temp[11].xy = raw_rhs.xy;\n float_temp[11].xy = float_rhs.xy;\n raw_addr = 1u;\n float_rhs = vec4(0.0, 0.0, (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)), 0.0);\n raw_rhs = uvec4(0u, 0u, (vsconst0[(raw_addr ^ 1u)].w), 0u);\n raw_temp[11].z = raw_rhs.z;\n float_temp[11].z = float_rhs.z;\n float_rhs = vec4(0.0, 0.0, 0.0, (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)));\n raw_rhs = uvec4(0u, 0u, 0u, (vsconst0[(raw_addr ^ 1u)].z));\n raw_temp[11].w = raw_rhs.w;\n float_temp[11].w = float_rhs.w;\n float_rhs = vec4((float_temp[0].x + uintBitsToFloat(1048576000u)), (float_temp[0].y + uintBitsToFloat(1048576000u)), (float_temp[0].z + uintBitsToFloat(1048576000u)), (float_temp[0].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[12].xyzw = raw_rhs.xyzw;\n float_temp[12].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[1].x + uintBitsToFloat(1048576000u)), (float_temp[1].y + uintBitsToFloat(1048576000u)), (float_temp[1].z + uintBitsToFloat(1048576000u)), (float_temp[1].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[13].xyzw = raw_rhs.xyzw;\n float_temp[13].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[2].x + uintBitsToFloat(1048576000u)), (float_temp[2].y + uintBitsToFloat(1048576000u)), (float_temp[2].z + uintBitsToFloat(1048576000u)), (float_temp[2].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[14].xyzw = raw_rhs.xyzw;\n float_temp[14].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[3].x + uintBitsToFloat(1048576000u)), (float_temp[3].y + uintBitsToFloat(1048576000u)), (float_temp[3].z + uintBitsToFloat(1048576000u)), (float_temp[3].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[15].xyzw = raw_rhs.xyzw;\n float_temp[15].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[4].x + uintBitsToFloat(1048576000u)), (float_temp[4].y + uintBitsToFloat(1048576000u)), (float_temp[4].z + uintBitsToFloat(1048576000u)), (float_temp[4].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[16].xyzw = raw_rhs.xyzw;\n float_temp[16].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[5].x + uintBitsToFloat(1048576000u)), (float_temp[5].y + uintBitsToFloat(1048576000u)), (float_temp[5].z + uintBitsToFloat(1048576000u)), (float_temp[5].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[17].xyzw = raw_rhs.xyzw;\n float_temp[17].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[6].x + uintBitsToFloat(1048576000u)), (float_temp[6].y + uintBitsToFloat(1048576000u)), (float_temp[6].z + uintBitsToFloat(1048576000u)), (float_temp[6].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[18].xyzw = raw_rhs.xyzw;\n float_temp[18].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[7].x + uintBitsToFloat(1048576000u)), (float_temp[7].y + uintBitsToFloat(1048576000u)), (float_temp[7].z + uintBitsToFloat(1048576000u)), (float_temp[7].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[19].xyzw = raw_rhs.xyzw;\n float_temp[19].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[8].x + uintBitsToFloat(1048576000u)), (float_temp[8].y + uintBitsToFloat(1048576000u)), (float_temp[8].z + uintBitsToFloat(1048576000u)), (float_temp[8].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[20].xyzw = raw_rhs.xyzw;\n float_temp[20].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[9].x + uintBitsToFloat(1048576000u)), (float_temp[9].y + uintBitsToFloat(1048576000u)), (float_temp[9].z + uintBitsToFloat(1048576000u)), (float_temp[9].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[21].xyzw = raw_rhs.xyzw;\n float_temp[21].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[10].x + uintBitsToFloat(1048576000u)), (float_temp[10].y + uintBitsToFloat(1048576000u)), (float_temp[10].z + uintBitsToFloat(1048576000u)), (float_temp[10].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[22].xyzw = raw_rhs.xyzw;\n float_temp[22].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[11].x + uintBitsToFloat(1048576000u)), (float_temp[11].y + uintBitsToFloat(1048576000u)), (float_temp[11].z + uintBitsToFloat(1048576000u)), (float_temp[11].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[23].xyzw = raw_rhs.xyzw;\n float_temp[23].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_1.x) >> (23u & 31u)), (floatBitsToUint(in_1.y) >> (23u & 31u)), (floatBitsToUint(in_1.z) >> (23u & 31u)), (floatBitsToUint(in_1.w) >> (23u & 31u)));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].x & 31u), (raw_temp[110].y & 31u), (raw_temp[110].z & 31u), (raw_temp[110].w & 31u));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(19088743u)), (uintBitsToFloat(2309737967u)), (uintBitsToFloat(2147483648u)), 0.0);\n raw_rhs = uvec4((19088743u), (2309737967u), (2147483648u), (8388607u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n float_rhs = vec4((uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)));\n raw_rhs = uvec4((0u), (0u), (0u), (0u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n float_temp[113].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[0].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[0].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[0].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[0].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[0].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[0].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[0].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[1].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[1].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[1].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[1].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[1].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[1].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[1].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[2].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[2].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[2].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[2].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[2].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[2].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[2].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[3].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[3].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[3].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[3].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[3].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[3].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[3].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[4].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[4].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[4].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[4].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[4].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[4].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[4].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[5].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[5].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[5].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[5].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[5].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[5].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[5].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[6].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[6].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[6].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[6].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[6].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[6].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[6].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[7].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[7].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[7].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[7].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[7].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[7].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[7].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[8].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[8].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[8].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[8].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[8].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[8].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[8].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[9].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[9].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[9].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[9].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[9].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[9].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[9].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[10].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[10].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[10].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[10].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[10].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[10].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[10].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[11].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[11].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[11].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[11].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[11].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[11].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[11].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[12].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[12].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[12].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[12].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[12].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[12].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[12].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[13].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[13].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[13].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[13].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[13].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[13].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[13].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[14].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[14].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[14].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[14].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[14].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[14].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[14].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[15].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[15].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[15].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[15].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[15].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[15].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[15].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[16].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[16].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[16].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[16].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[16].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[16].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[16].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[17].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[17].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[17].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[17].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[17].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[17].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[17].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[18].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[18].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[18].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[18].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[18].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[18].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[18].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[19].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[19].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[19].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[19].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[19].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[19].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[19].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[20].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[20].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[20].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[20].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[20].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[20].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[20].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[21].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[21].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[21].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[21].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[21].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[21].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[21].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[22].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[22].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[22].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[22].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[22].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[22].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[22].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[23].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[23].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[23].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[23].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[23].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[23].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[23].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[111].x >> (raw_temp[110].x & 31u)), (raw_temp[111].y >> (raw_temp[110].x & 31u)), (raw_temp[111].z >> (raw_temp[110].x & 31u)), (raw_temp[111].w >> (raw_temp[110].x & 31u)));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x & 1u), (raw_temp[111].y & 1u), (raw_temp[111].z & 1u), (raw_temp[111].w & 1u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[111].x != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].y != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].z != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].w != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)));\n raw_rhs = uvec4((raw_temp[111].x != 0u ? 1065353216u : 0u), (raw_temp[111].y != 0u ? 1065353216u : 0u), (raw_temp[111].z != 0u ? 1065353216u : 0u), (raw_temp[111].w != 0u ? 1065353216u : 0u));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x), (in_0.y), (in_0.z), (in_0.w));\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_2.x), (in_2.y), (in_2.z), (in_2.w));\n raw_rhs = uvec4((floatBitsToUint(in_2.x)), (floatBitsToUint(in_2.y)), (floatBitsToUint(in_2.z)), (floatBitsToUint(in_2.w)));\n raw_out[2].xyzw = raw_rhs.xyzw;\n float_out[2].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_3.x), (in_3.y), (in_3.z), (in_3.w));\n raw_rhs = uvec4((floatBitsToUint(in_3.x)), (floatBitsToUint(in_3.y)), (floatBitsToUint(in_3.z)), (floatBitsToUint(in_3.w)));\n raw_out[3].xyzw = raw_rhs.xyzw;\n float_out[3].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = float_out[2].x;\n vso_g1.y = float_out[2].y;\n vso_g1.z = float_out[2].z;\n vso_g1.w = float_out[2].w;\n vso_g2.x = float_out[3].x;\n vso_g2.y = float_out[3].y;\n vso_g2.z = float_out[3].z;\n vso_g2.w = float_out[3].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v11",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                36,
+                37,
+                40,
+                41,
+                44,
+                45
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "numeric-fragment",
+      "stage": "fragment",
+      "inputSha256": "5f97987ad044bd736b77a62da86751ad92b732f4d49b6907d100823cc68562ff",
+      "inputBytes": 5121,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nflat in vec4 vso_g0;\nflat in vec4 vso_g1;\nflat in vec4 vso_g2;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_addr = 0u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n raw_addr = 1u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n float_temp[1].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].w), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].x));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n float_temp[2].xyzw = float_rhs.xyzw;\n raw_addr = 45u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[3].xyzw = raw_rhs.xyzw;\n float_temp[3].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].w), (fsconst0[(raw_addr ^ 1u)].z));\n raw_temp[4].xyzw = raw_rhs.xyzw;\n float_temp[4].xyzw = float_rhs.xyzw;\n raw_addr = 0u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[5].xyzw = raw_rhs.xyzw;\n float_temp[5].xyzw = float_rhs.xyzw;\n raw_addr = 45u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[6].xyzw = raw_rhs.xyzw;\n float_temp[6].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((fsconst0[44].x & 31u), (fsconst0[44].x & 31u), (fsconst0[44].x & 31u), (fsconst0[44].x & 31u));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[7].x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[7].xyzw = raw_rhs.xyzw;\n float_temp[7].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u), (floatBitsToUint(vso_g2.x) & 31u));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n raw_addr = raw_temp[8].x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n float_temp[8].xyzw = float_rhs.xyzw;\n if (fsconst0[44].y != 0u) {\n raw_addr = 0u;\n } else {\n raw_addr = 45u;\n }\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[9].xyzw = raw_rhs.xyzw;\n float_temp[9].xyzw = float_rhs.xyzw;\n raw_addr = 0u;\n if (fsconst0[44].z != 0u) {\n raw_addr = 45u;\n }\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[10].xyzw = raw_rhs.xyzw;\n float_temp[10].xyzw = float_rhs.xyzw;\n raw_addr = 23u;\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[11].xyzw = raw_rhs.xyzw;\n float_temp[11].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[11].y), (float_temp[11].x), 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[11].y), (raw_temp[11].x), 0u, 0u);\n raw_temp[11].xy = raw_rhs.xy;\n float_temp[11].xy = float_rhs.xy;\n raw_addr = 1u;\n float_rhs = vec4(0.0, 0.0, (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)), 0.0);\n raw_rhs = uvec4(0u, 0u, (fsconst0[(raw_addr ^ 1u)].w), 0u);\n raw_temp[11].z = raw_rhs.z;\n float_temp[11].z = float_rhs.z;\n float_rhs = vec4(0.0, 0.0, 0.0, (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)));\n raw_rhs = uvec4(0u, 0u, 0u, (fsconst0[(raw_addr ^ 1u)].z));\n raw_temp[11].w = raw_rhs.w;\n float_temp[11].w = float_rhs.w;\n float_rhs = vec4((float_temp[0].x + uintBitsToFloat(1048576000u)), (float_temp[0].y + uintBitsToFloat(1048576000u)), (float_temp[0].z + uintBitsToFloat(1048576000u)), (float_temp[0].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[12].xyzw = raw_rhs.xyzw;\n float_temp[12].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[1].x + uintBitsToFloat(1048576000u)), (float_temp[1].y + uintBitsToFloat(1048576000u)), (float_temp[1].z + uintBitsToFloat(1048576000u)), (float_temp[1].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[13].xyzw = raw_rhs.xyzw;\n float_temp[13].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[2].x + uintBitsToFloat(1048576000u)), (float_temp[2].y + uintBitsToFloat(1048576000u)), (float_temp[2].z + uintBitsToFloat(1048576000u)), (float_temp[2].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[14].xyzw = raw_rhs.xyzw;\n float_temp[14].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[3].x + uintBitsToFloat(1048576000u)), (float_temp[3].y + uintBitsToFloat(1048576000u)), (float_temp[3].z + uintBitsToFloat(1048576000u)), (float_temp[3].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[15].xyzw = raw_rhs.xyzw;\n float_temp[15].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[4].x + uintBitsToFloat(1048576000u)), (float_temp[4].y + uintBitsToFloat(1048576000u)), (float_temp[4].z + uintBitsToFloat(1048576000u)), (float_temp[4].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[16].xyzw = raw_rhs.xyzw;\n float_temp[16].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[5].x + uintBitsToFloat(1048576000u)), (float_temp[5].y + uintBitsToFloat(1048576000u)), (float_temp[5].z + uintBitsToFloat(1048576000u)), (float_temp[5].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[17].xyzw = raw_rhs.xyzw;\n float_temp[17].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[6].x + uintBitsToFloat(1048576000u)), (float_temp[6].y + uintBitsToFloat(1048576000u)), (float_temp[6].z + uintBitsToFloat(1048576000u)), (float_temp[6].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[18].xyzw = raw_rhs.xyzw;\n float_temp[18].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[7].x + uintBitsToFloat(1048576000u)), (float_temp[7].y + uintBitsToFloat(1048576000u)), (float_temp[7].z + uintBitsToFloat(1048576000u)), (float_temp[7].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[19].xyzw = raw_rhs.xyzw;\n float_temp[19].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[8].x + uintBitsToFloat(1048576000u)), (float_temp[8].y + uintBitsToFloat(1048576000u)), (float_temp[8].z + uintBitsToFloat(1048576000u)), (float_temp[8].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[20].xyzw = raw_rhs.xyzw;\n float_temp[20].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[9].x + uintBitsToFloat(1048576000u)), (float_temp[9].y + uintBitsToFloat(1048576000u)), (float_temp[9].z + uintBitsToFloat(1048576000u)), (float_temp[9].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[21].xyzw = raw_rhs.xyzw;\n float_temp[21].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[10].x + uintBitsToFloat(1048576000u)), (float_temp[10].y + uintBitsToFloat(1048576000u)), (float_temp[10].z + uintBitsToFloat(1048576000u)), (float_temp[10].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[22].xyzw = raw_rhs.xyzw;\n float_temp[22].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[11].x + uintBitsToFloat(1048576000u)), (float_temp[11].y + uintBitsToFloat(1048576000u)), (float_temp[11].z + uintBitsToFloat(1048576000u)), (float_temp[11].w + uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[23].xyzw = raw_rhs.xyzw;\n float_temp[23].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(vso_g0.x) >> (23u & 31u)), (floatBitsToUint(vso_g0.y) >> (23u & 31u)), (floatBitsToUint(vso_g0.z) >> (23u & 31u)), (floatBitsToUint(vso_g0.w) >> (23u & 31u)));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].x & 31u), (raw_temp[110].y & 31u), (raw_temp[110].z & 31u), (raw_temp[110].w & 31u));\n raw_temp[110].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(19088743u)), (uintBitsToFloat(2309737967u)), (uintBitsToFloat(2147483648u)), 0.0);\n raw_rhs = uvec4((19088743u), (2309737967u), (2147483648u), (8388607u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n float_rhs = vec4((uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)), (uintBitsToFloat(0u)));\n raw_rhs = uvec4((0u), (0u), (0u), (0u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n float_temp[113].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[0].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[0].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[0].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[0].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[0].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[0].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[0].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[1].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[1].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[1].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[1].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[1].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[1].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[1].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[2].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[2].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[2].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[2].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[2].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[2].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[2].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[3].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[3].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[3].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[3].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[3].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[3].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[3].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[4].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[4].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[4].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[4].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[4].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[4].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[4].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[5].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[5].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[5].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[5].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[5].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[5].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[5].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[6].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[6].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[6].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[6].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[6].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[6].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[6].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[7].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[7].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[7].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[7].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[7].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[7].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[7].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[8].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[8].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[8].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[8].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[8].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[8].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[8].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[9].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[9].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[9].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[9].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[9].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[9].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[9].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[10].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[10].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[10].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[10].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[10].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[10].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[10].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[11].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[11].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[11].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[11].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[11].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[11].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[11].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[12].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[12].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[12].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[12].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[12].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[12].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[12].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[13].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[13].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[13].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[13].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[13].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[13].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[13].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[14].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[14].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[14].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[14].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[14].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[14].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[14].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[15].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[15].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[15].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[15].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[15].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[15].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[15].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[16].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[16].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[16].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[16].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[16].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[16].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[16].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[17].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[17].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[17].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[17].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[17].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[17].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[17].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[18].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[18].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[18].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[18].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[18].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[18].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[18].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[19].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[19].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[19].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[19].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[19].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[19].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[19].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[20].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[20].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[20].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[20].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[20].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[20].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[20].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[21].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[21].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[21].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[21].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[21].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[21].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[21].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[22].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[22].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[22].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[22].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[22].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[22].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[22].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[113].x + 1u), (raw_temp[113].y + 1u), (raw_temp[113].z + 1u), (raw_temp[113].w + 1u));\n raw_temp[113].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[110].y == raw_temp[113].x ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].y ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].z ? 4294967295u : 0u), (raw_temp[110].y == raw_temp[113].w ? 4294967295u : 0u));\n raw_temp[112].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[112].x != 0u ? float_temp[23].x : float_temp[111].x), (raw_temp[112].y != 0u ? float_temp[23].y : float_temp[111].y), (raw_temp[112].z != 0u ? float_temp[23].z : float_temp[111].z), 0.0);\n raw_rhs = uvec4((raw_temp[112].x != 0u ? raw_temp[23].x : raw_temp[111].x), (raw_temp[112].y != 0u ? raw_temp[23].y : raw_temp[111].y), (raw_temp[112].z != 0u ? raw_temp[23].z : raw_temp[111].z), (raw_temp[112].w != 0u ? raw_temp[23].w : raw_temp[111].w));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_temp[111].xyz = float_rhs.xyz;\n raw_rhs = uvec4((raw_temp[111].x >> (raw_temp[110].x & 31u)), (raw_temp[111].y >> (raw_temp[110].x & 31u)), (raw_temp[111].z >> (raw_temp[110].x & 31u)), (raw_temp[111].w >> (raw_temp[110].x & 31u)));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[111].x & 1u), (raw_temp[111].y & 1u), (raw_temp[111].z & 1u), (raw_temp[111].w & 1u));\n raw_temp[111].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((raw_temp[111].x != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].y != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].z != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)), (raw_temp[111].w != 0u ? uintBitsToFloat(1065353216u) : uintBitsToFloat(0u)));\n raw_rhs = uvec4((raw_temp[111].x != 0u ? 1065353216u : 0u), (raw_temp[111].y != 0u ? 1065353216u : 0u), (raw_temp[111].z != 0u ? 1065353216u : 0u), (raw_temp[111].w != 0u ? 1065353216u : 0u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v11",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "interpolation": "flat"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                36,
+                37,
+                40,
+                41,
+                44,
+                45
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "coupled-vertex",
+      "stage": "vertex",
+      "inputSha256": "c56c5206df59d6f4f5821df577ac49aa9dfe17ac2a283268735a53d965af75d9",
+      "inputBytes": 487,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nin vec4 in_2;\nin vec4 in_3;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nsmooth out vec4 vso_g2;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u), (vsconst0[44].x & 31u));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n if (vsconst0[44].z != 0u) {\n raw_addr = raw_temp[0].x;\n } else {\n raw_addr = raw_temp[0].x;\n }\n float_rhs = vec4((uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(vsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((vsconst0[(raw_addr ^ 1u)].x), (vsconst0[(raw_addr ^ 1u)].y), (vsconst0[(raw_addr ^ 1u)].z), (vsconst0[(raw_addr ^ 1u)].w));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n float_temp[1].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[1].x * uintBitsToFloat(1056964608u)), (float_temp[1].y * uintBitsToFloat(1056964608u)), (float_temp[1].z * uintBitsToFloat(1056964608u)), (float_temp[1].w * uintBitsToFloat(1056964608u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x), (in_0.y), (in_0.z), (in_0.w));\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_2.x), (in_2.y), (in_2.z), (in_2.w));\n raw_rhs = uvec4((floatBitsToUint(in_2.x)), (floatBitsToUint(in_2.y)), (floatBitsToUint(in_2.z)), (floatBitsToUint(in_2.w)));\n raw_out[2].xyzw = raw_rhs.xyzw;\n float_out[2].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_3.x), (in_3.y), (in_3.z), (in_3.w));\n raw_rhs = uvec4((floatBitsToUint(in_3.x)), (floatBitsToUint(in_3.y)), (floatBitsToUint(in_3.z)), (floatBitsToUint(in_3.w)));\n raw_out[3].xyzw = raw_rhs.xyzw;\n float_out[3].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = float_out[2].x;\n vso_g1.y = float_out[2].y;\n vso_g1.z = float_out[2].z;\n vso_g1.w = float_out[2].w;\n vso_g2.x = float_out[3].x;\n vso_g2.y = float_out[3].y;\n vso_g2.z = float_out[3].z;\n vso_g2.w = float_out[3].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v11",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "coupled-fragment",
+      "stage": "fragment",
+      "inputSha256": "46224097470b92f00933e8ded3be6793cabd20da96aca015a4f359d574992e52",
+      "inputBytes": 340,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nflat in vec4 vso_g0;\nflat in vec4 vso_g1;\nflat in vec4 vso_g2;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp uint raw_addr;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n if (fsconst0[44].y != 0u) {\n raw_addr = 45u;\n } else {\n raw_addr = 0u;\n }\n float_rhs = vec4((uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].x)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].y)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].z)), (uintBitsToFloat(fsconst0[(raw_addr ^ 1u)].w)));\n raw_rhs = uvec4((fsconst0[(raw_addr ^ 1u)].x), (fsconst0[(raw_addr ^ 1u)].y), (fsconst0[(raw_addr ^ 1u)].z), (fsconst0[(raw_addr ^ 1u)].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[0].x + vso_g0.x), (float_temp[0].y + vso_g0.y), (float_temp[0].z + vso_g0.z), (float_temp[0].w + vso_g0.w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v11",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "interpolation": "flat"
+            },
+            {
+              "index": 3,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "interpolation": "flat"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ],
+          "constantAccesses": [
+            {
+              "kind": "constant-bank-static-indirect-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46,
+              "indices": [
+                0,
+                1,
+                4,
+                5,
+                8,
+                9,
+                12,
+                13,
+                32,
+                33,
+                36,
+                37,
+                40,
+                41,
+                44,
+                45
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "one-past46-vertex",
+      "stage": "vertex",
+      "inputSha256": "c5b769646c582d074e0a015975c8aed226f8fe6bd9126bf5d2bbd39f6b88df3d",
+      "inputBytes": 340,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "uint32-max-vertex",
+      "stage": "vertex",
+      "inputSha256": "6b8e91f32fa3aeebf31a360ed65f378a071819025b74b8db828284009140f74a",
+      "inputBytes": 348,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "unwritten-address-vertex",
+      "stage": "vertex",
+      "inputSha256": "8595ffafe4b83d6bfc70a41ab3fd564c6bb55dbab0b2e5a523766fcef3cb2882",
+      "inputBytes": 287,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "undeclared-address-vertex",
+      "stage": "vertex",
+      "inputSha256": "6cd77e53a740dfb7d7d386691e17dd355d01ed23a61d58d5a1fd69089ad51a07",
+      "inputBytes": 327,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "wrong-slot-vertex",
+      "stage": "vertex",
+      "inputSha256": "356625ee2425a81ef5b3a1402258332e4b02f18065cddf3bfd58bb8be4daa933",
+      "inputBytes": 345,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "one-past46-fragment",
+      "stage": "fragment",
+      "inputSha256": "1aeb86c8d87d37bada00066d018ac38504e1ec134beb046c6ac07e3469007c02",
+      "inputBytes": 270,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "uint32-max-fragment",
+      "stage": "fragment",
+      "inputSha256": "ad22cec51538caa48a5e86e01748a7857c79a2ed62047529a67443d7aa35bbf9",
+      "inputBytes": 278,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "unwritten-address-fragment",
+      "stage": "fragment",
+      "inputSha256": "0a2e01e17b051ffaf0230977cc525b272fba0427b57d6ac4b009c678f570345b",
+      "inputBytes": 217,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "undeclared-address-fragment",
+      "stage": "fragment",
+      "inputSha256": "80e12a259b9fc8bf02f75531024819a244daf803b4a179ad644ec1e0025b975c",
+      "inputBytes": 257,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "wrong-slot-fragment",
+      "stage": "fragment",
+      "inputSha256": "dfaa1f47bf09d6b2088eb0722668077d00a8810bc8af71711527c97f5e724c86",
+      "inputBytes": 275,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "mask-includes46-vertex",
+      "stage": "vertex",
+      "inputSha256": "9629715e0dd483f28161c22d4d2bb000ead71f67eab116ec125ba8069ae8fb1f",
+      "inputBytes": 378,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "name": "mask-includes46-fragment",
+      "stage": "fragment",
+      "inputSha256": "f6d01b806e67bca8df7ade35fa817181c26524b1831991d73525c466d8a17e1c",
+      "inputBytes": 308,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    }
+  ],
+  "memory": {
+    "initialBytes": 16777216,
+    "finalBytes": 16777216,
+    "bufferIdentityStable": true
+  }
+}
