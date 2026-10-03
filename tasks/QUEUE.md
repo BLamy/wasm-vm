@@ -553,7 +553,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `525.02699` [E6-T12e](epic-6-transcendence/E6-T12e-captured-shader-control-flow.md) — Preserve captured TGSI integer and structured control-flow semantics *(deps: E6-T11c)*
 - [x] `525.0269901` [E6-T12e1](epic-6-transcendence/E6-T12e1-ranges-components.md) — Admit bounded declaration ranges and initialized component writes *(deps: E6-T11c)*
 - [x] `525.0269902` [E6-T12e2](epic-6-transcendence/E6-T12e2-flat-stage-link.md) — Derive flat vertex-fragment interfaces from accepted shader pairs *(deps: E6-T12e1)*
-- [~] `525.0269903` [E6-T12e3](epic-6-transcendence/E6-T12e3-captured-register-banks.md) — Bound declaration banks and static budgets for the remaining corpus *(deps: E6-T12e2)*
+- [?] `525.0269903` [E6-T12e3](epic-6-transcendence/E6-T12e3-captured-register-banks.md) — Bound declaration banks and static budgets for the remaining corpus *(deps: E6-T12e2)*
 - [ ] `525.02699035` [E6-T12e3b](epic-6-transcendence/E6-T12e3b-constant-transport-reflection.md) — Bound high constant uploads and active renderer reflection *(deps: E6-T12e3)*
 - [ ] `525.0269904` [E6-T12e4](epic-6-transcendence/E6-T12e4-typed-integer.md) — Preserve straight-line TGSI 32-bit integer and mask semantics *(deps: E6-T12e3b)*
 - [ ] `525.0269905` [E6-T12e5](epic-6-transcendence/E6-T12e5-component-float.md) — Preserve the remaining componentwise float operations and negation *(deps: E6-T12e4)*
