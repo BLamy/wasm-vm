@@ -714,6 +714,7 @@
     "tweaks": "Only (id1,value1) destination BGRA swizzle and (id2,value1024) transform-feedback samples multiplier; validate exact supported meanings.",
     "viewport": "Kmscube event176 byte4612 has negative Y scale; other captures positive. Coordinate conversion must preserve cull, scissor and readback."
   },
+  "orderedShaderProfile": "virgl-webgl2-raw-bits-v3",
   "pins": {
     "guestArchitecture": "riscv64",
     "hyprland": "0.56.2-3",
@@ -728,7 +729,7 @@
     "virglFeature": false
   },
   "rawShaderBoundary": {
-    "acceptance": "make verify-E6-T12e4a and make verify-E6-T12e4b; authored both-stage raw32 reconstruction with actual WebGL2 transform feedback and32 fragment bitplanes, mixed v5/v1/v2 interpolation, native/Wasm parity, exact prior raw results and unchanged12/19 original acceptance.",
+    "acceptance": "make verify-E6-T12e4a, make verify-E6-T12e4b and make verify-E6-T12e4c1; authored both-stage raw32 reconstruction with actual WebGL2 transform feedback and32 fragment bitplanes, mixed v5/v1/v2/v3 interpolation, native/Wasm parity, exact unaffected prior results and unchanged12/19 original acceptance.",
     "constants": "Existing uvec4 declaration metadata, VirglBlock layout and finite float-bit guest command transport remain unchanged. Direct arbitrary host uniforms are hardware probes only.",
     "floatInterface": "Existing attribute/varying/POSITION/COLOR ABI remains float. MOV input origins may pass through directly; raw output must prove finite normal or zero using conservative known bits. No NaN/Inf/subnormal raw-payload promise across float IO.",
     "integerOperations": [
@@ -741,7 +742,7 @@
     "integerOutputProof": "Constant-only arithmetic/comparisons yield exact known bits. UCMP chooses a statically determined arm, otherwise intersects known bits and retains float origin only when both payload origins match. No arithmetic float-origin shortcut or arbitrary float-origin join.",
     "integerSemantics": "UADD wraps modulo2^32. ISGE compares signed two\u2019s-complement values; USEQ/USNE compare raw words. Comparisons produce0xffffffff or0. UCMP chooses src1 for any nonzero condition, src2 for zero, preserving private payload bits and reading all three initialized sources before writes.",
     "limits": "All v5 limits remain:179 non-END instructions,118 TEMP registers,46 guest constants,8 other-bank entries/immediates,16KiB text,8192 tokens,256 lines,512-byte lines,64KiB GLSL,147456/295936-byte JSON buffers,16MiB fixed Wasm,256KiB stack.",
-    "mixedPrograms": "ADD/MUL/MAD/TEX combined with raw operations remain rejected until E6-T12e4c. Float comparisons, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations also reject while texture use is absent.",
+    "mixedPrograms": "ADD/MUL/MAD/TEX combined with raw operations remain rejected until E6-T12e4c2. Other float comparisons, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations also reject while texture use is absent.",
     "operations": [
       "MOV",
       "AND",
@@ -750,9 +751,14 @@
       "SHL",
       "USHR"
     ],
+    "orderedOperations": [
+      "FSLT",
+      "FSGE"
+    ],
+    "orderedSemantics": "Pure unsigned-word binary32 classification and ordering. Every signed quiet/signalling NaN is unordered; both signed zeros compare equal; negative magnitude order reverses; infinity and subnormal encodings retain their order. Results are exactly0xffffffff or0 without converting raw source words to floats.",
     "pairing": "Per-stage backend selection preserves semantic/mask/interpolation-derived keys, exact standalone fragment output, and checked smooth/flat vertex qualifiers. No caller-selected keys or backend flags.",
     "scope": "Isolated compiler boundary; no production guest GPU negotiation or desktop performance claim.",
-    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; a validated UADD/ISGE/USEQ/USNE/UCMP selects raw-bits-v2 for that stage. Programs without those new operations retain exact v1/v5 acceptance, errors and complete GLSL/metadata.",
+    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata.",
     "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
   },
   "rawShaderProfile": "virgl-webgl2-raw-bits-v1",

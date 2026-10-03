@@ -47,6 +47,17 @@ static bool known_operands(struct raw_lane a, struct raw_lane b)
    return (a.zero | a.one) == UINT32_MAX && (b.zero | b.one) == UINT32_MAX;
 }
 
+static uint32_t ordered_float_mask(uint32_t a, uint32_t b, bool greater_equal)
+{
+   uint32_t magnitude_a = a & UINT32_C(0x7fffffff), magnitude_b = b & UINT32_C(0x7fffffff);
+   if (magnitude_a > UINT32_C(0x7f800000) || magnitude_b > UINT32_C(0x7f800000)) return 0;
+   bool both_zero = magnitude_a == 0 && magnitude_b == 0;
+   uint32_t key_a = a & UINT32_C(0x80000000) ? ~a : a ^ UINT32_C(0x80000000);
+   uint32_t key_b = b & UINT32_C(0x80000000) ? ~b : b ^ UINT32_C(0x80000000);
+   bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;
+   return selected ? UINT32_MAX : 0;
+}
+
 static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no)
 {
    if (condition.zero == UINT32_MAX) return no;
@@ -84,6 +95,10 @@ void raw_record(struct raw_ir *ir, const struct raw_instruction *instruction)
          break;
       case RAW_USNE:
          if (known_operands(a, b)) result[lane] = known_word(a.one != b.one ? UINT32_MAX : 0);
+         break;
+      case RAW_FSLT:
+      case RAW_FSGE:
+         if (known_operands(a, b)) result[lane] = known_word(ordered_float_mask(a.one, b.one, instruction->opcode == RAW_FSGE));
          break;
       case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane)); break;
       }
@@ -158,6 +173,15 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
    if (const_count) emit(&w, "uniform highp uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", const_count);
    if (!p->stage) emit(&w, "layout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\n");
+   if (p->raw->opcode_mask & RAW_V3_OPCODES)
+      emit(&w, "uint raw_float_mask(uint a, uint b, bool greater_equal) {\n"
+         " uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n"
+         " if (magnitude_a > 2139095040u || magnitude_b > 2139095040u) return 0u;\n"
+         " bool both_zero = magnitude_a == 0u && magnitude_b == 0u;\n"
+         " uint key_a = (a & 2147483648u) != 0u ? ~a : a ^ 2147483648u;\n"
+         " uint key_b = (b & 2147483648u) != 0u ? ~b : b ^ 2147483648u;\n"
+         " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
+         " return selected ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
@@ -169,6 +193,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          emit(&w, "(");
          if (op == RAW_NOT) emit(&w, "~");
          if (op == RAW_ISGE) emit(&w, "(");
+         if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
          operand(&w, p, &instruction->src[0], lane);
          if (op == RAW_AND || op == RAW_OR) {
             emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
@@ -186,6 +211,9 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          } else if (op == RAW_UCMP) {
             emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
             emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
+         } else if (op == RAW_FSLT || op == RAW_FSGE) {
+            emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
+            emit(&w, op == RAW_FSGE ? ", true)" : ", false)");
          }
          emit(&w, ")");
       }

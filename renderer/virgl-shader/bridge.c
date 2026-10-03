@@ -293,6 +293,8 @@ static bool instruction(const char **p, struct profile *s)
       else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
       else if (word(p, "USNE")) raw.opcode = RAW_USNE;
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
+      else if (word(p, "FSLT")) raw.opcode = RAW_FSLT;
+      else if (word(p, "FSGE")) raw.opcode = RAW_FSGE;
       else { failure_code = "unsupported-feature"; return false; }
       arity = raw.opcode == RAW_NOT ? 1 : raw.opcode == RAW_UCMP ? 3 : 2;
       partial = true;
@@ -455,7 +457,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          if (!punctuation(&p, ':')) continue;
       }
       if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
-          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP")) {
+          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
+          word(&p, "FSLT") || word(&p, "FSGE")) {
          candidate = true;
          break;
       }
@@ -580,6 +583,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
       c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", name, stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);

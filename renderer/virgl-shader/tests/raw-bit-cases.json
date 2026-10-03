@@ -820,9 +820,9 @@
     }
   },
   {
-    "name": "reject-mixed-FSLT-vertex",
+    "name": "reject-mixed-FSEQ-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSLT OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSEQ OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1868,9 +1868,9 @@
     }
   },
   {
-    "name": "reject-mixed-FSLT-fragment",
+    "name": "reject-mixed-FSEQ-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSLT OUT[0], IMM[0], IMM[0]\nEND\n",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSEQ OUT[0], IMM[0], IMM[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
