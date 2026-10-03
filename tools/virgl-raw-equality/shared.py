@@ -13,5 +13,7 @@ def binding(path,base=ROOT):
  path=Path(path);raw=path.read_bytes();return {'path':str(path.relative_to(base)),'bytes':len(raw),'sha256':sha(raw)}
 def source(item,head):
  require(type(item) is dict and set(item)=={'path','bytes','sha256'} and type(item['bytes']) is int and item['bytes']>=0,'typed closed source binding')
- path=ROOT/item['path'];require(same(binding(path),item) and path.read_bytes()==subprocess.check_output(['git','show',f'{head}:{item["path"]}'],cwd=ROOT),'exact committed source '+item['path'])
+ path=ROOT/item['path'];require(same(binding(path),item),'exact current source or artifact '+item['path'])
+ if not item['path'].startswith('renderer/virgl-shader/build/'):
+  require(path.read_bytes()==subprocess.check_output(['git','show',f'{head}:{item["path"]}'],cwd=ROOT),'exact committed source '+item['path'])
 def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT)

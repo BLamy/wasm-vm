@@ -9,7 +9,10 @@ import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[2]
 def load(name,relative):
- s=importlib.util.spec_from_file_location(name,ROOT/relative);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+ s=importlib.util.spec_from_file_location(name,ROOT/relative);m=importlib.util.module_from_spec(s);saved=sys.path[:]
+ try:s.loader.exec_module(m)
+ finally:sys.path[:]=saved
+ return m
 producer=load('equality_producer','tools/virgl-raw-equality/native.py')
 held=load('e9_native_primitives','tools/virgl-bounded-loops/native_receipt.py')
 require,sha,exact=producer.require,producer.sha,producer.exact
@@ -59,5 +62,5 @@ def verify(directory,head):
  for item in r['sources']:
   path=ROOT/item['path'];require(exact(producer.describe(path),item) and subprocess.check_output(['git','show',f'{head}:{item["path"]}'],cwd=ROOT)==path.read_bytes(),'exact committed compiler/harness source')
  held.verify_records(directory,r['coverage']);exported=json.loads((directory/'coverage.json').read_bytes());held.coverage_primitives(r['coverage'],exported)
- require(any(f['name']=='equal_float_mask' and f['count']>0 for f in exported['data'][0]['functions']),'new compile-time known-fact predicate executed')
+ require(any(f['name']=='raw_bits.c:equal_float_mask' and f['count']>0 for f in exported['data'][0]['functions']),'new compile-time known-fact predicate executed')
  return r

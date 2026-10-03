@@ -119,6 +119,9 @@ def verify(output,head):
  # Close the exact committed source inventory before a recorded claim.
  paths={str(p.relative_to(ROOT)) for directory in (ROOT/'tools/virgl-raw-equality',ROOT/'renderer/virgl-shader') for p in directory.rglob('*') if p.is_file() and not any(part in ('build','__pycache__') or part.startswith('.') for part in p.relative_to(directory).parts)}
  paths.update(['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/bounded-loops-oracle.mjs','tools/lib/virgl-browser-runner.mjs','Makefile','docs/gpu-3d-contract.json','docs/gpu-3d-decision.md','tools/verify-virgl-raw-equality.sh','tools/virgl-bounded-loops/native_receipt.py','tools/virgl-bounded-loops/compat_common.py','tools/virgl-bounded-loops/shader_compat.py'])
+ # Bind the historical validators actually loaded for their retained primitives.
+ # Importing them is distinct from claiming their obsolete complete gates passed.
+ paths.update(['tools/virgl-constants/receipt.py','tools/virgl-raw-bits/receipt.py','tools/virgl-integer-masks/receipt.py','tools/virgl-float-masks/receipt.py','tools/virgl-component-floats/native_receipt.py','tools/virgl-dot-reciprocals/native_receipt.py'])
  sources=[binding(ROOT/p) for p in sorted(paths)]
  for item in sources:source(item,head)
  for item in fm['sources']:source(item,head)
