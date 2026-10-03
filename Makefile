@@ -1828,3 +1828,8 @@ verify-E6-T10d:
 .PHONY: verify-E6-T12a
 verify-E6-T12a:
 	bash tools/verify-virgl-command-decoder.sh
+
+# Original buffer/texture transfers on real WebGL2 storage; no guest 3D advertisement.
+.PHONY: verify-E6-T12b
+verify-E6-T12b:
+	bash tools/verify-virgl-resource-transfers.sh
