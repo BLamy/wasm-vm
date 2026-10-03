@@ -28,10 +28,14 @@ def browser_envelope(directory,head,base,fault):
  require(qualified in read(ROOT/'docs/gpu-3d-contract.json')['browserMatrix']['qualified'],'qualified real browser/driver')
  photo=r['failureScreenshot'];raw=(directory/photo['path']).read_bytes();require(raw.startswith(b'\x89PNG') and sha(raw)==photo['sha256'],'actual recorded fault screenshot')
  coverage=r['browserCoverage'];raw=(directory/coverage['path']).read_bytes();require(sha(raw)==coverage['sha256'],'exact actual fault V8 coverage')
- for script in json.loads(raw)['scripts']:
+ exported=json.loads(raw);require(set(exported)=={'schema','scripts'} and type(exported['schema']) is int and exported['schema']==1 and type(exported['scripts']) is list,'closed fault V8 coverage inventory')
+ for script in exported['scripts']:
+  require(set(script)=={'source','sha256','coverage'} and type(script['coverage']) is dict and set(script['coverage'])=={'scriptId','url','functions'},'closed recorded script coverage')
   require(script['source'] in served and script['sha256']==served[script['source']]['sha256'],'coverage describes actual served runtime')
-  for function in script['functions']:
-   for region in function['ranges']:require(all(type(region[k]) is int and region[k]>=0 for k in ('startOffset','endOffset','count')) and region['endOffset']>=region['startOffset'],'typed V8 offsets and actual counters')
+  require(type(script['coverage']['functions']) is list and script['coverage']['functions'],'recorded fault V8 function counters')
+  for function in script['coverage']['functions']:
+   require(set(function)=={'functionName','ranges','isBlockCoverage'} and type(function['functionName']) is str and type(function['isBlockCoverage']) is bool and type(function['ranges']) is list and function['ranges'],'closed recorded function coverage')
+   for region in function['ranges']:require(set(region)=={'startOffset','endOffset','count'} and all(type(region[k]) is int and region[k]>=0 for k in ('startOffset','endOffset','count')) and region['endOffset']>=region['startOffset'],'typed V8 offsets and actual counters')
  return r
 
 
