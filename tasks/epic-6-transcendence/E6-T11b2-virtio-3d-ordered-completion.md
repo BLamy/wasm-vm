@@ -3,7 +3,7 @@ id: E6-T11b2
 epic: 6
 title: Complete guest 3D submissions and DMA through ordered asynchronous jobs
 priority: 525.026972
-status: implemented
+status: verified
 depends_on: [E6-T11b1]
 estimate: S
 risk: high
@@ -162,3 +162,34 @@ and their temporary URL rewrites were restored to committed bytes.
 `53676ce1356bdc75fbbf8aeac9913fa569761507a056adea67d8d721917575f9`;
 `worker/deploy.log` SHA-256:
 `b8325056c6d8c365a8ff6270a4bb5deb239c7ea31b1c1f69e385a281e7292b7f`. The live report binds its screenshot.
+
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- P01–P27 — HELD. The frozen source `f0f125fd` survived independent literal
+  wire/SG and actual hardware attacks: 2,859 assertions, 42 records, three forced
+  readiness schedules, fresh outer/embedded DMA, owned requests, queued detach,
+  interleaved contexts, ID reuse, full fence IDs, late callbacks and reset recovery.
+  Both own served-source sequencing sabotages failed at their intended assertions.
+- P24 — HELD. Three independent native cases plus 16 existing scoped cases passed;
+  a focused MMIO snapshot test also passed. Bulk DMA replaced a saved middle-page
+  instruction, and resumed guest execution produced x6=11 at three span offsets,
+  digest `5cfdaed9fdc7141cdf083d768f9974a1062eeb9e326194103eafd99842ca1401`.
+- P25–P27 — HELD. Independently recomputed source/evidence hashes, eight complete
+  native/Wasm parity records and canonical digests, clean exact-head clone and
+  final live default bundle (127/0; proof exports absent). Audit checked 635
+  bindings/assertions. Unchanged B1 results carry forward.
+- COVERAGE — HELD. LLVM/V8 changed-source census and explicit narrow defensive,
+  diagnostic and type/config waivers are in
+  [`verifier/review.md`](../../evidence/virgl-submit/verifier/review.md).
+  The review distinguishes accepted-complete commit semantics from uncertain
+  pre-acceptance failure, and discloses a corrected verifier descriptor-hole
+  expectation. No product code or worker harness was changed.
+- SUITE — retain replayable independent wire/row/GL attacks, source controls,
+  native tests, coverage data and digest audit under `evidence/virgl-submit/verifier`;
+  compiled binaries/profiles stay in ignored `target/`. Full commands and each
+  prediction citation are in the review. No production 3D, Mesa boot or FPS claim.
+
+Verifier manifest SHA-256: `f6f6063975c59cd121c7c424ec85e6a72158be8906d82e06cd5b41c3f2d97aa1`.
+Review SHA-256: `602ccffd9b9afe186a510c7f056c6bd11a30a49c5962234bdb9055d07cd086de`.
+Audit SHA-256: `89bedcf6170d8a0fb1bc504f47464e47a023f56fea4f60264832af5660d80a47`.

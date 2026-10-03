@@ -1,0 +1,188 @@
+{
+  "schema": 1,
+  "task": "E6-T11b2",
+  "verdict": "verified",
+  "frozen": "f0f125fd0578a22ce08c4bc255ca63708c6e6566",
+  "claimCommit": "16cdcbaa",
+  "predictions": {
+    "P01": "HELD",
+    "P02": "HELD",
+    "P03": "HELD",
+    "P04": "HELD",
+    "P05": "HELD",
+    "P06": "HELD",
+    "P07": "HELD",
+    "P08": "HELD",
+    "P09": "HELD",
+    "P10": "HELD",
+    "P11": "HELD",
+    "P12": "HELD",
+    "P13": "HELD",
+    "P14": "HELD",
+    "P15": "HELD",
+    "P16": "HELD",
+    "P17": "HELD",
+    "P18": "HELD",
+    "P19": "HELD",
+    "P20": "HELD",
+    "P21": "HELD",
+    "P22": "HELD",
+    "P23": "HELD",
+    "P24": "HELD",
+    "P25": "HELD",
+    "P26": "HELD",
+    "P27": "HELD"
+  },
+  "hardware": {
+    "assertions": 2859,
+    "records": 42,
+    "taskYields": 290,
+    "errors": {
+      "console": [],
+      "page": [],
+      "request": []
+    }
+  },
+  "native": {
+    "tests": 19,
+    "focusedMmioTests": 1,
+    "ownNativeTests": 3
+  },
+  "tools": {
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+    "node": "v24.20.0",
+    "python": "Python 3.9.6"
+  },
+  "records": [
+    {
+      "path": "attack-cases.mjs",
+      "bytes": 20931,
+      "sha256": "8556602d16f429278c1a0adcb77a2067261343f62253a773aab75e2b11fa7938"
+    },
+    {
+      "path": "attack-coverage.json",
+      "bytes": 100032,
+      "sha256": "ffeb658b4ec8bf18ba40a6270e76099176b1ed457f67a08c94d51a317e6862fb"
+    },
+    {
+      "path": "attack.png",
+      "bytes": 343364,
+      "sha256": "5d8f54e5199dfe559c9a00a806879a750c7375c96c6763e8e321eeb251d8dac4"
+    },
+    {
+      "path": "attacks.json",
+      "bytes": 362983,
+      "sha256": "49d59dfb7d3b52c348cacd07e1e20bdb3bfc2fedf7447612961400344716ab72"
+    },
+    {
+      "path": "audit-evidence.py",
+      "bytes": 7678,
+      "sha256": "2ac09e829adf59099af324f293572791def22e9a0a04c4fc2f2c335551ad661a"
+    },
+    {
+      "path": "audit.json",
+      "bytes": 46677,
+      "sha256": "89bedcf6170d8a0fb1bc504f47464e47a023f56fea4f60264832af5660d80a47"
+    },
+    {
+      "path": "calibration-descriptor-holes.json",
+      "bytes": 13108,
+      "sha256": "89eb776e377aea521bc0fd3a00bd5e9a96c16dc305a20cb50e5fdc6d3ff26149"
+    },
+    {
+      "path": "coverage-audit.py",
+      "bytes": 4655,
+      "sha256": "0420c7fbc7dbb8c88bd691ad779717651c61f199f50d1d7b974761a64433c22d"
+    },
+    {
+      "path": "coverage-census.json",
+      "bytes": 27447,
+      "sha256": "461cb2ef8dbca87a6eda590a5b973c576fc2ef8b765f0f38983782e87866a0ba"
+    },
+    {
+      "path": "coverage-census.log",
+      "bytes": 7135,
+      "sha256": "a4ff07f47f9091c6c5b7d320c278fc07dd400eb0f05b13aae549c492768269e8"
+    },
+    {
+      "path": "early-readback-coverage.json",
+      "bytes": 85698,
+      "sha256": "81acbbe2a62299194a4bc4079833c88a2e246dd44a86a400f3d90bc4f93cf443"
+    },
+    {
+      "path": "early-readback.json",
+      "bytes": 13453,
+      "sha256": "d64847106fcd5c72e3f6c6c43a5b236ac8816c7e23ccc32259bb6a368326a86c"
+    },
+    {
+      "path": "early-readback.png",
+      "bytes": 42736,
+      "sha256": "48f8891b52a38ab2aa6b69d20689485ee70b1893e7e6b8129f51856d45349a6a"
+    },
+    {
+      "path": "mmio-test.log",
+      "bytes": 2810,
+      "sha256": "b55199ebfd7765c71debabfe182021d2fcb780e354eb000a0c9230c8af6b6820"
+    },
+    {
+      "path": "native/Cargo.lock",
+      "bytes": 3365,
+      "sha256": "5f61537dceff6d7acbda6b63b208d7ff64abad81a2ebfc0ca52a3bd17309f4ca"
+    },
+    {
+      "path": "native/Cargo.toml",
+      "bytes": 349,
+      "sha256": "18ae32fb72ea8b507b30098aa630467e51a06f97876d65d257b6ece344053536"
+    },
+    {
+      "path": "native/src/lib.rs",
+      "bytes": 4143,
+      "sha256": "30349a4e89407ac62999cf6166980db95e950458078c0f77d7e5e356e9a0e947"
+    },
+    {
+      "path": "native-coverage.json",
+      "bytes": 1816879,
+      "sha256": "1a99f465fd5bbbe62249e4571eb4fec80b69940bff4101f498228ce0d78de53d"
+    },
+    {
+      "path": "native-test.log",
+      "bytes": 354312,
+      "sha256": "cb4f1c9c52e8cb3ef7f4649580fe8a1db4c25be46c69659c60a251474fedd179"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 11596,
+      "sha256": "93a6ca5849a6cf6b63c61110c0f21a58dcd6e959047731036038b73f337efba8"
+    },
+    {
+      "path": "review.md",
+      "bytes": 18337,
+      "sha256": "602ccffd9b9afe186a510c7f056c6bd11a30a49c5962234bdb9055d07cd086de"
+    },
+    {
+      "path": "run-attacks.mjs",
+      "bytes": 7388,
+      "sha256": "6c71baf099d5a4909e218233555ed7ba952226a6a92bda2dd3edec4a5c882712"
+    },
+    {
+      "path": "wire-oracle.mjs",
+      "bytes": 4106,
+      "sha256": "cb88fba8eb20d65447fb93963b54b823d99d38dfb09142cb6e3fa3018a4b88b7"
+    },
+    {
+      "path": "wrong-completion-coverage.json",
+      "bytes": 88617,
+      "sha256": "57ef937bc80525f19ff85504e7ca988b2abf76d9e044bf15d47ba090ee70d6e7"
+    },
+    {
+      "path": "wrong-completion.json",
+      "bytes": 13657,
+      "sha256": "87fe8eb4a1b1c83c919d73bfb02efb1f9178ab66060517a5bfacaac5b1c680de"
+    },
+    {
+      "path": "wrong-completion.png",
+      "bytes": 41937,
+      "sha256": "73b9a3b23034684aa06f68efe46489238ad789fd4771c51f7dd7170f53f7a65f"
+    }
+  ]
+}
