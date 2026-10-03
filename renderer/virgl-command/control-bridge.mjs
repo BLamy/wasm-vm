@@ -1,5 +1,6 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
 import { createResourceStore, createWebGL2TransferBackend } from './resources.mjs';
+import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
 import { createVirglStateRenderer, createVirglAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
@@ -147,10 +148,14 @@ export function createVirglControlBridge(options) { return createBridge(options,
 /** Async submission proof only; transport capabilities are trusted host functions. */
 export function createVirglSubmitBridge(options) { return createBridge(options, true); }
 
-function createBridge(options, asynchronous) {
+export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
+
+function createBridge(options, asynchronous, scanoutEnabled = false) {
   let owners = null;
   try {
-    const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : [])]);
+    const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
+    if (scanoutEnabled) { const methods = config.presenter; need(methods && typeof methods === 'object', 'invalid-parameter', 'Missing presenter capability.');
+      for (const key of ['rebind','enqueueOwned','inspect','readPixels','dispose']) need(typeof methods[key] === 'function', 'invalid-parameter', 'Invalid presenter capability.'); }
     const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete']) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
     const fresh = () => {
@@ -174,12 +179,16 @@ function createBridge(options, asynchronous) {
       need(found && found.transport.generation === token.generation, code, 'Unknown or stale transport identity.');
       return found;
     };
+    const scanout = scanoutEnabled ? createRetainedScanout({ getOwners: () => owners, resolveResource: (token) => resolve(resources, token, 'invalid-resource-id'),
+      presenter: config.presenter, onFault: (error) => { poisoned = true; lastFailure = { code: 'bridge-poisoned', message: String(error?.message ?? error) }; } }) : null;
+    const scanoutResult = (result) => { if (!result?.ok) throw new Fault(result?.error?.code ?? 'bridge-poisoned', result?.error?.message ?? 'Scanout operation failed.'); return result; };
     const newIdentity = (map, token, code) => {
       need(!map.has(token.id) && token.generation > highestGeneration, code, 'Duplicate or stale creation identity.');
     };
     const cleanup = () => {
       // Try both owners even if teardown fails; failed reset remains poisoned.
       let error;
+      try { if (scanout) scanoutResult(scanout.reset()); } catch (caught) { error = caught; }
       try { unwrap(owners.renderer.dispose()); } catch (caught) { error = caught; }
       try { unwrap(owners.store.dispose()); } catch (caught) { error ??= caught; }
       if (error) throw error;
@@ -229,7 +238,8 @@ function createBridge(options, asynchronous) {
       busy = true; counters.pumps++;
       const job = pending;
       try {
-        const state = unwrap(owners.renderer.step(job.job)); job.status = state.status; job.appliedCommands = state.appliedCommands;
+        const state = job.scanout ? scanoutResult(scanout.step(job.job)) : unwrap(owners.renderer.step(job.job)); job.status = state.status; job.appliedCommands = state.appliedCommands;
+        need(!job.scanout || !poisoned || job.cancelled, 'bridge-poisoned', 'Scanout ownership retirement failed.');
         if (state.status === 'done') {
           if (!job.cancelled) {
             const result = state.result; job.appliedCommands = result.appliedCommands; job.draws = result.draws.length;
@@ -262,14 +272,14 @@ function createBridge(options, asynchronous) {
         return Object.freeze({ ok: true, status: state.status, epoch: job.epoch, sequence: job.sequence, exchangeSequence: job.exchangeSequence, appliedCommands: state.appliedCommands });
       } catch (error) {
         const diagnostic = owners.renderer.inspect();
-        if (diagnostic.ok && diagnostic.jobs?.active) { job.appliedCommands = diagnostic.jobs.appliedCommands; job.draws = diagnostic.jobs.draws; }
+        if (!job.scanout && diagnostic.ok && diagnostic.jobs?.active) { job.appliedCommands = diagnostic.jobs.appliedCommands; job.draws = diagnostic.jobs.draws; }
         poisoned = true; lastFailure = { code: 'bridge-poisoned', message: error instanceof Error ? error.message : 'Host exchange failed.' };
         // Core accepts outcome6/false against its actual consumed exchange counter,
         // even if a trusted wrapper threw after committing a scatter.
         if (!job.cancelled) {
           try { post(job, 6, false, job.appliedCommands, job.draws); counters.completed++; counters.failed++; }
           catch { lastFailure.completionRejected = true; }
-          const cancelled = owners.renderer.cancel(job.job);
+          const cancelled = job.scanout ? scanout.cancel(job.job) : owners.renderer.cancel(job.job);
           if (cancelled.ok) { job.cancelled = true; counters.cancelled++; } else pending = null;
         }
         return fail('bridge-poisoned', 'Host exchange failed; reset required.');
@@ -282,7 +292,7 @@ function createBridge(options, asynchronous) {
         busy = true;
         let event;
         try {
-          try { event = asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input) : normalize(input, asynchronous); }
+          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input) : normalize(input, asynchronous); }
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');
@@ -295,7 +305,7 @@ function createBridge(options, asynchronous) {
           need(event.epoch === epoch, 'invalid-parameter', 'Stale transport epoch.');
           if (event.type === 'cancelJob') {
             need(pending && pending.epoch === event.epoch && pending.sequence === event.sequence && !pending.cancelled, 'invalid-parameter', 'Unknown or consumed cancellation.');
-            unwrap(owners.renderer.cancel(pending.job)); pending.cancelled = true; poisoned = true; counters.cancelled++; return ok();
+            if (pending.scanout) scanoutResult(scanout.cancel(pending.job)); else unwrap(owners.renderer.cancel(pending.job)); pending.cancelled = true; poisoned = true; counters.cancelled++; return ok();
           }
           need(!poisoned, 'bridge-poisoned', 'Bridge requires reset.');
           need(pending === null, 'bridge-poisoned', 'Control operation overlaps a pending job.');
@@ -304,6 +314,17 @@ function createBridge(options, asynchronous) {
           if (context && event.type !== 'createContext') resolve(contexts, context, 'invalid-context-id');
           if (resource && event.type !== 'createResource') resolve(resources, resource, 'invalid-resource-id');
           switch (event.type) {
+            case 'bindScanout': {
+              const result = scanout.bind(event);
+              need(!poisoned, 'bridge-poisoned', 'Scanout ownership replacement failed.');
+              return scanoutResult(result);
+            }
+            case 'beginScanout': {
+              need(lastSequence === null || event.sequence > lastSequence, 'invalid-parameter', 'Stale request sequence.');
+              const started = scanoutResult(scanout.begin(event));
+              pending = { epoch: event.epoch, sequence: event.sequence, scanout: true, job: started.job, exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
+              lastSequence = event.sequence; counters.begun++; return ok();
+            }
             case 'beginJob': return beginJob(event);
             case 'createContext': {
               newIdentity(contexts, context, 'invalid-context-id');
@@ -359,18 +380,23 @@ function createBridge(options, asynchronous) {
           ...(asynchronous ? { pending: pending ? { epoch: pending.epoch, sequence: pending.sequence, exchangeSequence: pending.exchangeSequence, cancelled: pending.cancelled, status: pending.status } : null, counters: { ...counters }, lastFailure } : {}),
           contexts: [...contexts.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration })),
           resources: [...resources.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration, ...(asynchronous ? { backing: v.backing ? { ...v.backing } : null } : {}) })),
+          ...(scanout ? { scanout: scanout.inspect() } : {}),
           store: owners.store.inspect(), renderer: owners.renderer.inspect() };
       },
       dispose() {
         if (busy) return fail('bridge-poisoned', 'Reentrant disposal.');
         if (disposed) return ok();
         busy = true; disposed = true; poisoned = true; contexts.clear(); resources.clear(); pending = null;
-        try { cleanup(); return ok(); }
+        try { cleanup(); if (scanout) scanoutResult(scanout.dispose()); return ok(); }
         catch { return fail('bridge-poisoned', 'Host teardown failed.'); }
         finally { busy = false; }
       },
     };
     if (asynchronous) bridge.pump = pump;
+    if (scanout) bridge.present2D = (frame) => {
+      if (busy || disposed || poisoned) return fail('bridge-poisoned', 'Bridge is not available for presentation.');
+      busy = true; try { return scanout.present2D(frame); } finally { busy = false; }
+    };
     Object.freeze(bridge);
     return Object.freeze({ ok: true, bridge, probes: Object.freeze({ owners: () => owners }) });
   } catch (error) { return fail(error instanceof Fault ? error.code : 'bridge-poisoned', error instanceof Fault ? error.message : 'Bridge construction failed.'); }

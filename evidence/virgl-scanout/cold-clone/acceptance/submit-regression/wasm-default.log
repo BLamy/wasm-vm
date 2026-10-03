@@ -1,0 +1,39 @@
+   Compiling unicode-ident v1.0.24
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-task v0.3.32
+   Compiling byteorder v1.5.0
+   Compiling serde_core v1.0.228
+   Compiling tinyvec_macros v0.1.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling zmij v1.0.21
+   Compiling itoa v1.0.18
+   Compiling bitflags v1.3.2
+   Compiling memchr v2.8.2
+   Compiling managed v0.8.0
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/core)
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling tinyvec v1.12.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/wasm-emit)
+   Compiling futures-util v0.3.32
+   Compiling hash32 v0.3.1
+   Compiling heapless v0.9.3
+   Compiling wasm-bindgen v0.2.126
+   Compiling unicode-normalization v0.1.25
+   Compiling smoltcp v0.13.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling js-sys v0.3.103
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/storage)
+   Compiling wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/jit-translate)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/wasm)
+   Compiling wasm-vm-wasm-web v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/crates/wasm-web)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.42s

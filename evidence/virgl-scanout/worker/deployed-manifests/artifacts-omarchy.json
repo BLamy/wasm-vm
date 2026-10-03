@@ -1,0 +1,25 @@
+{
+  "generated": "content-hashed Omarchy desktop (kernel + paired RAM snapshot/disk delta)",
+  "artifacts": {
+    "kernel": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "size": 24208896
+    },
+    "bootSnapshot": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256/releases/boot-snapshot/omarchy-ready.snap.gz",
+      "sha256": "0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256",
+      "size": 198380324
+    },
+    "overlayDelta": {
+      "url": "releases/boot-snapshot/omarchy-overlay-delta.bin.gz",
+      "sha256": "b54280f45f5ca91aa01a4dcdc12e14b837b8d7918345067359707c955093c565",
+      "size": 2037489
+    }
+  },
+  "chunkedImage": {
+    "key": "chunked-omarchy/manifest-5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44.json",
+    "sha256": "5f6a080986a423e5d77d2ec794eee3e42359ccc7d8a5fd23071a7420f4f23d44",
+    "size": 1097812
+  }
+}

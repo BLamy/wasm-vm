@@ -1,0 +1,32 @@
+{
+  "task": "E6-T11c",
+  "status": "passed",
+  "gitHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "deploymentUrl": "https://b5863307.wasm-vm.pages.dev",
+  "errors": [],
+  "faviconErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "location": {
+        "url": "https://wasm-vm.pages.dev/favicon.ico",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "httpErrors": [],
+  "startedAt": "2026-10-03T07:20:40.611Z",
+  "expectedWasmSha256": "1fbb3fa9b673bb9e6718ee787d25a75e3ed30ec0fdd8a8de1b5952f475e1aeea",
+  "actualWasmSha256": "1fbb3fa9b673bb9e6718ee787d25a75e3ed30ec0fdd8a8de1b5952f475e1aeea",
+  "proofExportAbsent": true,
+  "passed": 127,
+  "failed": 0,
+  "graphicsRoadmapPip": "cap-pip partial",
+  "screenshot": {
+    "path": "live-browser.png",
+    "sha256": "bba632c67d713750983a8e62c08be48acf0c09dac934a8d0fdabd7ca9a94cff6"
+  },
+  "finishedAt": "2026-10-03T07:21:00.079Z",
+  "deployLogSha256": "fa93ac2a611e612dcb3335f0c3e9fc4372695e31726f0e93ad65c06afc6982f4"
+}

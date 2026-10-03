@@ -1,0 +1,13 @@
+✔ Canvas2D is the measured default and unavailable WebGL2 falls back (0.686667ms)
+✔ B8G8R8X8 frames normalize the unused byte to opaque before delivery (0.563375ms)
+✔ clear control drops the retained frame and resets the presentation surface (0.183542ms)
+✔ WebGL context loss replaces the context and replays the latest frame through Canvas2D (0.349542ms)
+✔ rapid presents are synchronous, last-frame-wins, and listener ownership is bounded (1.955917ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.534625

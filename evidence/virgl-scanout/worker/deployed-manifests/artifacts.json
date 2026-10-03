@@ -1,0 +1,20 @@
+{
+  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
+  "artifacts": {
+    "kernel": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "size": 24208896
+    },
+    "initramfs": {
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz",
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+      "size": 1151596
+    },
+    "bootSnapshot": {
+      "url": "releases/boot-snapshot/busybox-ready.snap.gz",
+      "sha256": "4263563b0d04342dc052c019cd6e3ab265e9e3234f8f7e7086755533e85a3098",
+      "size": 11530215
+    }
+  }
+}

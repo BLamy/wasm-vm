@@ -1,0 +1,16 @@
+[package]
+name = "virgl-scanout-independent-verifier"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+default = ["virgl-control-proof", "gpu-trace"]
+virgl-control-proof = []
+zicsr-stub = []
+gpu-trace = []
+
+[dependencies]
+wasm-vm-core = { path = "../../../../crates/core", features = ["virgl-control-proof", "gpu-trace"] }

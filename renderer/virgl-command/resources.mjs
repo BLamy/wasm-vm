@@ -497,6 +497,16 @@ export function createResourceStore(options) {
     // Host-only capability: a guest numeric ID cannot resolve native storage.
     // The lease keeps the exact allocation alive even after public unref/reuse.
     const bindings = Object.freeze({
+      retainScanout: operation((id, expectedGeneration) => {
+        const res = resource(id);
+        require(Number.isSafeInteger(expectedGeneration) && expectedGeneration > 0 && res.generation === expectedGeneration,
+          "stale-resource", "Scanout resource generation changed.");
+        require(res.meta.kind === "texture" && res.meta.format === 67 && res.meta.flags === 0,
+          "unsupported-resource", "Scanout requires a supported RGBA8 texture.");
+        require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
+        const lease = Object.freeze({}); leases.set(lease, { resource: res, role: "scanout" }); res.references++;
+        return success({ lease, metadata: res.meta, generation: res.generation });
+      }),
       resolve: operation((token) => {
         const entry = leases.get(token);
         require(entry !== undefined, "invalid-lease", "Unknown, released or foreign storage lease.");
@@ -510,10 +520,10 @@ export function createResourceStore(options) {
       return entry;
     };
     const checkAsync = (entry) => {
-      if (entry.resource) {
+      if (entry.resource && !entry.scanoutSnapshot) {
         require(leases.get(entry.lease) === entry.leaseEntry && entry.resource.contentRevision === entry.revision,
           "stale-storage", "Retained storage lease or contents changed during readback.");
-      } else checkTicket(entry);
+      } else if (!entry.resource) checkTicket(entry);
     };
     const describeTransfer = (entry) => {
       const destination = entry.retained.find((res) => res.backing === entry.transferBacking);
@@ -566,6 +576,24 @@ export function createResourceStore(options) {
         try { startRead(entry, res); }
         catch (error) { freeStorageRead(entry); throw error; }
         const ticket = Object.freeze({}); storageReads.set(ticket, entry); return success({ ticket, layout });
+      }),
+      // A display capture is an ordered GPU snapshot. Its own reference outlives
+      // the binding lease and later texture writes; index reads keep their stricter checks.
+      beginScanoutRead: operation((lease) => {
+        const leaseEntry = leases.get(lease);
+        require(leaseEntry?.role === "scanout", "invalid-lease", "Expected a live global scanout lease.");
+        const res = leaseEntry.resource, meta = res.meta;
+        const fields = normalizedFields({ resourceHandle: meta.id, level: 0, usage: 0, stride: 0, layerStride: 0,
+          box: { x: 0, y: 0, z: 0, width: meta.width, height: meta.height, depth: 1 }, dataOffset: 0, direction: 2 });
+        const layout = layoutFor(meta, fields, meta.byteLength, limits);
+        require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
+        reserveScratch(layout.tightBytes);
+        const entry = { resource: res, scanoutSnapshot: true, layout, native: null, bytes: null };
+        res.references++;
+        try { startRead(entry, res); }
+        catch (error) { freeStorageRead(entry); throw error; }
+        const ticket = Object.freeze({}); storageReads.set(ticket, entry);
+        return success({ ticket, layout, resource: freeze({ id: meta.id, generation: res.generation }) });
       }),
       poll: operation((token, discard = false) => {
         require(typeof discard === "boolean", "invalid-input", "Discard must be boolean.");

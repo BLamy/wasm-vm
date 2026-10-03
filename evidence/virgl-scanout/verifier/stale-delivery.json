@@ -1,0 +1,262 @@
+{
+  "variant": "stale-delivery",
+  "task": "E6-T11c",
+  "gitHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "status": "passed",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "3f7f91fadbc06d137bb067d862c079d717d47dc2f61f902677846ce8eb517d7f"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "08130dcfe18de3ca1b5efdb187b88e2a8028c30493f4e64bcbd00572dad245d9"
+    },
+    {
+      "path": "renderer/virgl-command/scanout.mjs",
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "sha256": "59881d26fa257e3462f5d628026d4557ae541f27894124d19fddc9b104db43cf"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "c07700b916f20d650bc9169a0add036fdd6cc4d103ad63c118d21c259ac86cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "sha256": "59452f700a9c717cae5148b6e4437f5b57977c7215717ae0b91e599ef368455f"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f"
+    },
+    {
+      "path": "target/virgl-scanout/pkg/wasm_vm_wasm.js",
+      "sha256": "2e9b6422b3ace22aedb7dd2f001f56e752590d4d5bf7eb367763c1a7482dd15b"
+    },
+    {
+      "path": "target/virgl-scanout/pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "d59237956c60e4fa6760f8c7fcfdbd467a04a41e71bf3bdbc3e27af42944c4df"
+    },
+    {
+      "path": "web/dist/src/sink/canvas2d.js",
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936"
+    },
+    {
+      "path": "web/dist/src/sink/cursor-controller.js",
+      "sha256": "3f3505f27dca24ea5a1f5454905e4a6744f7af58803a8c609e25b7fbff3344e0"
+    },
+    {
+      "path": "web/dist/src/sink/cursor.js",
+      "sha256": "be4619b7f049b4a468bdbfbc20602d4d514775b710d2abc6ccdc370406e63c7b"
+    },
+    {
+      "path": "web/dist/src/sink/frame-scheduler.js",
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+    },
+    {
+      "path": "web/dist/src/sink/present-backend.js",
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7"
+    },
+    {
+      "path": "web/dist/src/sink/presentation.js",
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819"
+    },
+    {
+      "path": "web/dist/src/sink/viewport.js",
+      "sha256": "e1e66178b5f2a622da7e0f887497643c1cdd6261310dd38a3429ce8a6119d5b8"
+    },
+    {
+      "path": "web/dist/src/sink/virgl-scanout-presenter.js",
+      "sha256": "61b84c035374bf0eef0bcf05d4e427eb8f9707519c3eeb85d05d3754bf79f824"
+    },
+    {
+      "path": "web/dist/src/sink/visibility-scheduler.js",
+      "sha256": "c878ce43e806975368e63adce8157ead3a579c4246a770202047a3be3c46ca80"
+    },
+    {
+      "path": "web/dist/src/sink/webgl.js",
+      "sha256": "508adc4d731afc6fe100b4970eef969c52c350ee296c4bb7bb87b88c8c85f4b4"
+    },
+    {
+      "path": "evidence/virgl-scanout/verifier/attack-cases.mjs",
+      "sha256": "65855d3a3424876981ade450a826cda874ef79e179d8aae910811a529f2b44da"
+    },
+    {
+      "path": "evidence/virgl-scanout/verifier/wire-oracle.mjs",
+      "sha256": "cb88fba8eb20d65447fb93963b54b823d99d38dfb09142cb6e3fa3018a4b88b7"
+    },
+    {
+      "path": "evidence/virgl-scanout/verifier/pixel-oracle.mjs",
+      "sha256": "0d459281117404313b0e3916c963217a1ca7c9cb46fc8efcc0ea7228543ac994"
+    },
+    {
+      "path": "evidence/virgl-scanout/verifier/run-attacks.mjs",
+      "sha256": "0a7b6e04bd809a3585fa4310803948f34c3019d808976fc2480de4c18b07e12f"
+    },
+    {
+      "path": "evidence/virgl-scanout/verifier/predictions.md",
+      "sha256": "274196136e3bf17fa5c8a3f9e190dc29b99ede19d39c276fd4d2f2c6afd7d982"
+    },
+    {
+      "path": "evidence/virgl-async/verifier/gl-oracle.mjs",
+      "sha256": "ac2bc14a72d0fb71ba2e4249a80a5adaa1033e2d2ee7b6236ecb62a7a5db6682"
+    },
+    {
+      "path": "target/virgl-scanout/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/virgl-scanout/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    }
+  ],
+  "started": "2026-10-03T07:23:11.739Z",
+  "errors": {
+    "console": [],
+    "page": [],
+    "request": []
+  },
+  "mutation": {
+    "source": "web/dist/src/sink/virgl-scanout-presenter.js",
+    "anchor": "if (scheduled !== token || !token.active || disposed) return;",
+    "replacement": "if (disposed) return;",
+    "originalSha256": "61b84c035374bf0eef0bcf05d4e427eb8f9707519c3eeb85d05d3754bf79f824",
+    "servedSha256": "e72a649c1e5e5f5273b63a6ad53e2ab517960d5906a8dfad0a7e331bb731715d"
+  },
+  "browser": {
+    "version": "154.0.8037.93",
+    "system": {
+      "gpu": {
+        "devices": [
+          {
+            "vendorId": 4203,
+            "deviceId": 0,
+            "vendorString": "Google Inc. (Apple)",
+            "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+            "driverVendor": "Apple",
+            "driverVersion": "26.6.2"
+          }
+        ],
+        "auxAttributes": {
+          "amdSwitchable": false,
+          "canSupportThreadedTextureMailbox": false,
+          "directRenderingVersion": "",
+          "displayType": "ANGLE_METAL",
+          "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+          "glImplementationParts": "(gl=egl-angle,angle=metal)",
+          "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "glResetNotificationStrategy": 33362,
+          "glVendor": "Google Inc. (Apple)",
+          "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+          "glWsExtensions": "",
+          "glWsVendor": "",
+          "glWsVersion": "",
+          "inProcessGpu": false,
+          "initializationTime": 0.031913,
+          "isAsan": false,
+          "isClangCoverage": false,
+          "jpegDecodeAcceleratorSupported": false,
+          "maxMsaaSamples": "4",
+          "optimus": false,
+          "passthroughCmdDecoder": true,
+          "pixelShaderVersion": "3.00",
+          "processCrashCount": 0,
+          "sandboxed": false,
+          "skiaBackendType": "GraphiteDawnMetal",
+          "subpixelFontRendering": true,
+          "targetCpuBits": 64,
+          "vertexShaderVersion": "3.00",
+          "visibilityCallbackCallCount": 0
+        },
+        "featureStatus": {
+          "2d_canvas": "enabled",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "enabled",
+          "multiple_raster_threads": "enabled_on",
+          "opengl": "enabled_on",
+          "rasterization": "enabled",
+          "raw_draw": "disabled_off_ok",
+          "skia_graphite": "enabled_on",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "enabled",
+          "video_encode": "enabled",
+          "webgl": "enabled",
+          "webgpu": "enabled",
+          "webnn": "disabled_off"
+        },
+        "driverBugWorkarounds": [
+          "disable_2d_canvas_auto_flush",
+          "enable_webgl_timer_query_extensions",
+          "disabled_extension_GL_KHR_blend_equation_advanced",
+          "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+        ],
+        "videoDecoding": [],
+        "videoEncoding": []
+      },
+      "modelName": "Mac",
+      "modelVersion": "16.6",
+      "commandLine": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-use-zoom-for-dsf=false --no-sandbox --enable-gpu --user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-3zzk5Y --remote-debugging-pipe --no-startup-window --flag-switches-begin --flag-switches-end"
+    },
+    "commandLine": {
+      "arguments": [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "--disable-field-trial-config",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-back-forward-cache",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-component-update",
+        "--no-default-browser-check",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+        "--allow-pre-commit-input",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--no-service-autorun",
+        "--export-tagged-pdf",
+        "--disable-search-engine-choice-screen",
+        "--unsafely-disable-devtools-self-xss-warnings",
+        "--enable-use-zoom-for-dsf=false",
+        "--no-sandbox",
+        "--enable-gpu",
+        "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-3zzk5Y",
+        "--remote-debugging-pipe",
+        "--no-startup-window",
+        "--flag-switches-begin",
+        "--flag-switches-end"
+      ]
+    }
+  },
+  "result": {
+    "status": "failed",
+    "error": {
+      "message": "stale 3D callback cannot paint pending 2D: 1 != 0",
+      "stack": "Error: stale 3D callback cannot paint pending 2D: 1 != 0\n    at eq (http://127.0.0.1:53609/attack-cases.mjs:19:85)\n    at runAttacks (http://127.0.0.1:53609/attack-cases.mjs:84:325)\n    at async eval (eval at evaluate (:234:30), <anonymous>:1:244)\n    at async <anonymous>:260:30"
+    }
+  },
+  "coverageSha256": "e460a796b0ce422acaa19c5cd80992ccb4de586a3a1b1577dee3c96ae6038fe1",
+  "screenshotSha256": "5fedf4f34c265dce00b374b1b8fcca8e989d8ab327cf7df3d774699038751039",
+  "control": "caught intended sequencing violation",
+  "finished": "2026-10-03T07:23:12.948Z"
+}

@@ -1,0 +1,9 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.97s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-66cd39800b706bc9)
+
+running 139 tests
+....................................................................................... 87/139
+....................................................
+test result: ok. 139 passed; 0 failed; 0 ignored; 0 measured; 243 filtered out; finished in 0.49s
+

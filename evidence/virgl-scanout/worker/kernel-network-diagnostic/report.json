@@ -1,0 +1,4684 @@
+{
+  "schema": 1,
+  "task": "E6-T11c",
+  "boundary": "fetch-only; no VM or desktop execution",
+  "gitHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-scanout/worker/kernel-network-diagnostic/repro.mjs"
+  ],
+  "startedAt": "2026-10-03T07:27:29.849Z",
+  "status": "reproduced",
+  "inputs": {
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "loader": {
+      "path": "web/dist/loader.js",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    "fetchFunctionSha256": "6a31ec1c11b27a542b53ea31014def25a9cfaf75146d32b32f5bb8653794f0dd",
+    "harnessSha256": "0ee7e11270623f81663628bd4e85f4bca081a9ff75830ef1a151743d9da2f231"
+  },
+  "cases": [
+    {
+      "label": "page-no-store-0",
+      "location": "page",
+      "policy": "no-store",
+      "repetition": 0,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@ec0d34c6c18edc5a1adb5129ea09e752",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012450295.954,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.076,
+          "responseStart": 8.622,
+          "responseEnd": 15.152
+        }
+      },
+      "response": {
+        "requestId": "request@ec0d34c6c18edc5a1adb5129ea09e752",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-3",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "page-no-cache-0",
+      "location": "page",
+      "policy": "no-cache",
+      "repetition": 0,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@d93c27afc20673590048aed913da84dd",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012450462.2559,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.061,
+          "responseStart": 9.399,
+          "responseEnd": 18.747
+        }
+      },
+      "response": {
+        "requestId": "request@d93c27afc20673590048aed913da84dd",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-6",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "page-no-store-1",
+      "location": "page",
+      "policy": "no-store",
+      "repetition": 1,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfailed",
+        "requestId": "request@1206da23523dca4f0c211785c52b9933",
+        "failure": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "timing": {
+          "startTime": 1791012450615.3938,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.056,
+          "responseStart": 8.961,
+          "responseEnd": 15.635
+        }
+      },
+      "response": {
+        "requestId": "request@1206da23523dca4f0c211785c52b9933",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-9",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "page-no-cache-1",
+      "location": "page",
+      "policy": "no-cache",
+      "repetition": 1,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@761ed0fcd87ab3a868ef4931f92ffb8e",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012450768.6082,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.059,
+          "responseStart": 8.734,
+          "responseEnd": 17.826
+        }
+      },
+      "response": {
+        "requestId": "request@761ed0fcd87ab3a868ef4931f92ffb8e",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-12",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "page-no-store-2",
+      "location": "page",
+      "policy": "no-store",
+      "repetition": 2,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfailed",
+        "requestId": "request@6e1b903577ada065d82b332665f4d64f",
+        "failure": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "timing": {
+          "startTime": 1791012450939.9028,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.072,
+          "responseStart": 9.292,
+          "responseEnd": 16.851
+        }
+      },
+      "response": {
+        "requestId": "request@6e1b903577ada065d82b332665f4d64f",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-15",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "page-no-cache-2",
+      "location": "page",
+      "policy": "no-cache",
+      "repetition": 2,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@d2a4da52b52da45800cb84c710bff875",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012451099.082,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.09,
+          "responseStart": 9.01,
+          "responseEnd": 19.771
+        }
+      },
+      "response": {
+        "requestId": "request@d2a4da52b52da45800cb84c710bff875",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-18",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        }
+      }
+    },
+    {
+      "label": "worker-no-store-0",
+      "location": "worker",
+      "policy": "no-store",
+      "repetition": 0,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@6cb3c99290b3ea8ed56f77b68f9c081b",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012451262.555,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.073,
+          "responseStart": 8.43,
+          "responseEnd": 16.077
+        }
+      },
+      "response": {
+        "requestId": "request@6cb3c99290b3ea8ed56f77b68f9c081b",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-22",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "814CB11867378BCC1F6BABE34F7B25F0",
+          "targetId": "7B7AE3832D0DDA261B27DBA16FF16EF3",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 29
+      }
+    },
+    {
+      "label": "worker-no-cache-0",
+      "location": "worker",
+      "policy": "no-cache",
+      "repetition": 0,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@da4b4f1d19b0c76e57a140024760e2bc",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012451409.738,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.084,
+          "responseStart": 8.602,
+          "responseEnd": 22.806
+        }
+      },
+      "response": {
+        "requestId": "request@da4b4f1d19b0c76e57a140024760e2bc",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-26",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "0E51D2BE10D44C2BD079E4585BCE2919",
+          "targetId": "6E194412233712FF383A20F7D76E1337",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 68
+      }
+    },
+    {
+      "label": "worker-no-store-1",
+      "location": "worker",
+      "policy": "no-store",
+      "repetition": 1,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfailed",
+        "requestId": "request@f09db94ac4a9c5e358936b0adac4f79e",
+        "failure": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "timing": {
+          "startTime": 1791012451582.702,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.08,
+          "responseStart": 8.555,
+          "responseEnd": 15.897
+        }
+      },
+      "response": {
+        "requestId": "request@f09db94ac4a9c5e358936b0adac4f79e",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-30",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "F81EF11CA43AAEF653B58EE9D434C0E4",
+          "targetId": "B9BBD4D8823457A4BBCAB8F7A74A3574",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 24
+      }
+    },
+    {
+      "label": "worker-no-cache-1",
+      "location": "worker",
+      "policy": "no-cache",
+      "repetition": 1,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@9f4b85379f969c2202496029b3e54b03",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012451733.188,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.079,
+          "responseStart": 8.841,
+          "responseEnd": 17.41
+        }
+      },
+      "response": {
+        "requestId": "request@9f4b85379f969c2202496029b3e54b03",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-34",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "80E3A76FE630D6C0D17C0E888C9274AA",
+          "targetId": "6B2DEA8D6B8A8F621991A829A23C5280",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 92
+      }
+    },
+    {
+      "label": "worker-no-store-2",
+      "location": "worker",
+      "policy": "no-store",
+      "repetition": 2,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfailed",
+        "requestId": "request@42cf48350824705df8731b1ae20a4491",
+        "failure": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "timing": {
+          "startTime": 1791012451885.132,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.085,
+          "responseStart": 8.67,
+          "responseEnd": 17.257
+        }
+      },
+      "response": {
+        "requestId": "request@42cf48350824705df8731b1ae20a4491",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-38",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "300C4DCBB8E9D3EFD5638C6C80F9C420",
+          "targetId": "DB828E1C4E61E956C20F7E7CB4C48511",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 24
+      }
+    },
+    {
+      "label": "worker-no-cache-2",
+      "location": "worker",
+      "policy": "no-cache",
+      "repetition": 2,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": {
+        "event": "requestfinished",
+        "requestId": "request@6134a1214b47973fc50dcb5d0f180521",
+        "failure": null,
+        "timing": {
+          "startTime": 1791012452041.7947,
+          "domainLookupStart": -1,
+          "domainLookupEnd": -1,
+          "connectStart": -1,
+          "secureConnectionStart": -1,
+          "connectEnd": -1,
+          "requestStart": 0.084,
+          "responseStart": 8.608,
+          "responseEnd": 19.131
+        }
+      },
+      "response": {
+        "requestId": "request@6134a1214b47973fc50dcb5d0f180521",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-cache",
+          "cross-origin-opener-policy": "same-origin",
+          "x-diagnostic-request-id": "server-42",
+          "connection": "keep-alive",
+          "cross-origin-embedder-policy": "require-corp",
+          "content-length": "24208896",
+          "keep-alive": "timeout=5",
+          "date": "Sat, 03 Oct 2026 07:27:32 GMT",
+          "content-type": "application/octet-stream"
+        }
+      },
+      "errors": [],
+      "cdpSetup": [
+        {
+          "sessionId": "1289FE9B717E31B0FC1BC6144F6F5151",
+          "targetId": "6B338B48BE4F0C931972C9F217C06496",
+          "type": "worker"
+        }
+      ],
+      "progressMessages": 0,
+      "application": {
+        "result": {
+          "bytes": 24208896,
+          "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "reachedEof": true
+        },
+        "progressMessages": 69
+      }
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-03T07:27:30.285Z",
+      "kind": "server-request",
+      "requestId": "server-1",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-1"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:30.285Z",
+      "kind": "server-finish",
+      "requestId": "server-1",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.286Z",
+      "kind": "server-close",
+      "requestId": "server-1",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.292Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "50025D8CA0E8EA73648C5FF28BA8A466",
+        "timestamp": 869589.08267,
+        "encodedDataLength": 348
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.295Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71020.2",
+        "timestamp": 869589.091253,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.296Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71020.3",
+        "loaderId": "50025D8CA0E8EA73648C5FF28BA8A466",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-0",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.092593,
+        "wallTime": 1791012450.295793,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "0A1BEB969D60117BA11CAC2DC19D51C1",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.304Z",
+      "kind": "server-request",
+      "requestId": "server-3",
+      "url": "/kernel?policy=no-store&case=page-no-store-0",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-3"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:30.304Z",
+      "kind": "playwright-request",
+      "label": "page-no-store-0",
+      "requestId": "request@ec0d34c6c18edc5a1adb5129ea09e752",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-0",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.305Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71020.3",
+        "loaderId": "50025D8CA0E8EA73648C5FF28BA8A466",
+        "timestamp": 869589.101584,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-0",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-3",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:30 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 104,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 314,
+          "timing": {
+            "requestTime": 869589.092764,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.076,
+            "sendEnd": 0.102,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.6,
+            "receiveHeadersEnd": 8.622
+          },
+          "responseTime": 1791012450304.529,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "0A1BEB969D60117BA11CAC2DC19D51C1"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.305Z",
+      "kind": "playwright-response",
+      "label": "page-no-store-0",
+      "requestId": "request@ec0d34c6c18edc5a1adb5129ea09e752",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-3",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.311Z",
+      "kind": "server-finish",
+      "requestId": "server-3",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.311Z",
+      "kind": "server-close",
+      "requestId": "server-3",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.332Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71020.3",
+        "timestamp": 869589.107745,
+        "encodedDataLength": 24209210
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.332Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-store-0",
+      "event": "requestfinished",
+      "requestId": "request@ec0d34c6c18edc5a1adb5129ea09e752",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012450295.954,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.076,
+        "responseStart": 8.622,
+        "responseEnd": 15.152
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.451Z",
+      "kind": "server-request",
+      "requestId": "server-4",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-4"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:30.451Z",
+      "kind": "server-finish",
+      "requestId": "server-4",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.451Z",
+      "kind": "server-close",
+      "requestId": "server-4",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.458Z",
+      "kind": "cdp",
+      "label": "page-no-cache-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "06CA24F251DE983DFBE830B09A75E0B7",
+        "timestamp": 869589.24819,
+        "encodedDataLength": 348
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.471Z",
+      "kind": "server-request",
+      "requestId": "server-6",
+      "url": "/kernel?policy=no-cache&case=page-no-cache-0",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-6"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:30.471Z",
+      "kind": "cdp",
+      "label": "page-no-cache-0",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71026.3",
+        "loaderId": "06CA24F251DE983DFBE830B09A75E0B7",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-0",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.258915,
+        "wallTime": 1791012450.462117,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "814066F613BA717CD24C1DB5DD2410FC",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.471Z",
+      "kind": "playwright-request",
+      "label": "page-no-cache-0",
+      "requestId": "request@d93c27afc20673590048aed913da84dd",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-0",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.472Z",
+      "kind": "cdp",
+      "label": "page-no-cache-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71026.2",
+        "timestamp": 869589.258446,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.473Z",
+      "kind": "cdp",
+      "label": "page-no-cache-0",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71026.3",
+        "loaderId": "06CA24F251DE983DFBE830B09A75E0B7",
+        "timestamp": 869589.268651,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-0",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-6",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:30 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 166,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 314,
+          "timing": {
+            "requestTime": 869589.259064,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.061,
+            "sendEnd": 0.107,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 9.38,
+            "receiveHeadersEnd": 9.399
+          },
+          "responseTime": 1791012450471.61,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "814066F613BA717CD24C1DB5DD2410FC"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.473Z",
+      "kind": "playwright-response",
+      "label": "page-no-cache-0",
+      "requestId": "request@d93c27afc20673590048aed913da84dd",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-6",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.480Z",
+      "kind": "server-finish",
+      "requestId": "server-6",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.480Z",
+      "kind": "server-close",
+      "requestId": "server-6",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.496Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-cache-0",
+      "event": "requestfinished",
+      "requestId": "request@d93c27afc20673590048aed913da84dd",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012450462.2559,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.061,
+        "responseStart": 9.399,
+        "responseEnd": 18.747
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.504Z",
+      "kind": "cdp",
+      "label": "page-no-cache-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71026.3",
+        "timestamp": 869589.277662,
+        "encodedDataLength": 24209210
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.607Z",
+      "kind": "server-request",
+      "requestId": "server-7",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-7"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:30.607Z",
+      "kind": "server-finish",
+      "requestId": "server-7",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.607Z",
+      "kind": "server-close",
+      "requestId": "server-7",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.612Z",
+      "kind": "cdp",
+      "label": "page-no-store-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "5BC2F474BFE799B9E72C86F2956F3711",
+        "timestamp": 869589.404305,
+        "encodedDataLength": 348
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.623Z",
+      "kind": "server-request",
+      "requestId": "server-9",
+      "url": "/kernel?policy=no-store&case=page-no-store-1",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-9"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:30.625Z",
+      "kind": "cdp",
+      "label": "page-no-store-1",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71078.3",
+        "loaderId": "5BC2F474BFE799B9E72C86F2956F3711",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-1",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.41196,
+        "wallTime": 1791012450.615159,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "36DD6FA3896BD284A402199059A26015",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.625Z",
+      "kind": "playwright-request",
+      "label": "page-no-store-1",
+      "requestId": "request@1206da23523dca4f0c211785c52b9933",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-1",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.625Z",
+      "kind": "cdp",
+      "label": "page-no-store-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71078.2",
+        "timestamp": 869589.412139,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.625Z",
+      "kind": "cdp",
+      "label": "page-no-store-1",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71078.3",
+        "loaderId": "5BC2F474BFE799B9E72C86F2956F3711",
+        "timestamp": 869589.42135,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-1",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-9",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:30 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 215,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 314,
+          "timing": {
+            "requestTime": 869589.412204,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.056,
+            "sendEnd": 0.074,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.945,
+            "receiveHeadersEnd": 8.961
+          },
+          "responseTime": 1791012450624.316,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "36DD6FA3896BD284A402199059A26015"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.625Z",
+      "kind": "playwright-response",
+      "label": "page-no-store-1",
+      "requestId": "request@1206da23523dca4f0c211785c52b9933",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-9",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.630Z",
+      "kind": "server-finish",
+      "requestId": "server-9",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.630Z",
+      "kind": "server-close",
+      "requestId": "server-9",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.644Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-store-1",
+      "event": "requestfailed",
+      "requestId": "request@1206da23523dca4f0c211785c52b9933",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      },
+      "timing": {
+        "startTime": 1791012450615.3938,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.056,
+        "responseStart": 8.961,
+        "responseEnd": 15.635
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.653Z",
+      "kind": "cdp",
+      "label": "page-no-store-1",
+      "session": "page",
+      "event": "Network.loadingFailed",
+      "data": {
+        "requestId": "71078.3",
+        "timestamp": 869589.427597,
+        "type": "Fetch",
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.759Z",
+      "kind": "server-request",
+      "requestId": "server-10",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-10"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:30.759Z",
+      "kind": "server-finish",
+      "requestId": "server-10",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.759Z",
+      "kind": "server-close",
+      "requestId": "server-10",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.765Z",
+      "kind": "cdp",
+      "label": "page-no-cache-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "64E31538970492C8FC80B7A8A1BA90E3",
+        "timestamp": 869589.556223,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.768Z",
+      "kind": "cdp",
+      "label": "page-no-cache-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71130.2",
+        "timestamp": 869589.564475,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.777Z",
+      "kind": "server-request",
+      "requestId": "server-12",
+      "url": "/kernel?policy=no-cache&case=page-no-cache-1",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-12"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:30.778Z",
+      "kind": "cdp",
+      "label": "page-no-cache-1",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71130.3",
+        "loaderId": "64E31538970492C8FC80B7A8A1BA90E3",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-1",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.565275,
+        "wallTime": 1791012450.768473,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "80FE1F1C29F6906FCECE09192BDCB012",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.778Z",
+      "kind": "playwright-request",
+      "label": "page-no-cache-1",
+      "requestId": "request@761ed0fcd87ab3a868ef4931f92ffb8e",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-1",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.778Z",
+      "kind": "cdp",
+      "label": "page-no-cache-1",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71130.3",
+        "loaderId": "64E31538970492C8FC80B7A8A1BA90E3",
+        "timestamp": 869589.574386,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-1",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-12",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:30 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 263,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869589.565417,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.059,
+            "sendEnd": 0.083,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.703,
+            "receiveHeadersEnd": 8.734
+          },
+          "responseTime": 1791012450777.287,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "80FE1F1C29F6906FCECE09192BDCB012"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.778Z",
+      "kind": "playwright-response",
+      "label": "page-no-cache-1",
+      "requestId": "request@761ed0fcd87ab3a868ef4931f92ffb8e",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-12",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.784Z",
+      "kind": "server-finish",
+      "requestId": "server-12",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.784Z",
+      "kind": "server-close",
+      "requestId": "server-12",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.803Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-cache-1",
+      "event": "requestfinished",
+      "requestId": "request@761ed0fcd87ab3a868ef4931f92ffb8e",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012450768.6082,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.059,
+        "responseStart": 8.734,
+        "responseEnd": 17.826
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.811Z",
+      "kind": "cdp",
+      "label": "page-no-cache-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71130.3",
+        "timestamp": 869589.583101,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.928Z",
+      "kind": "server-request",
+      "requestId": "server-13",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-13"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:30.928Z",
+      "kind": "server-finish",
+      "requestId": "server-13",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.928Z",
+      "kind": "server-close",
+      "requestId": "server-13",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.935Z",
+      "kind": "cdp",
+      "label": "page-no-store-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "8E734FE4FC8810D067870E44A5CB6A7A",
+        "timestamp": 869589.725814,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.939Z",
+      "kind": "cdp",
+      "label": "page-no-store-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71136.2",
+        "timestamp": 869589.735711,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.948Z",
+      "kind": "server-request",
+      "requestId": "server-15",
+      "url": "/kernel?policy=no-store&case=page-no-store-2",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-15"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:30.949Z",
+      "kind": "cdp",
+      "label": "page-no-store-2",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71136.3",
+        "loaderId": "8E734FE4FC8810D067870E44A5CB6A7A",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-2",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.736537,
+        "wallTime": 1791012450.939739,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "D911C13865893B3A1930AEDE1B9CD95D",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.949Z",
+      "kind": "playwright-request",
+      "label": "page-no-store-2",
+      "requestId": "request@6e1b903577ada065d82b332665f4d64f",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-2",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.951Z",
+      "kind": "cdp",
+      "label": "page-no-store-2",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71136.3",
+        "loaderId": "8E734FE4FC8810D067870E44A5CB6A7A",
+        "timestamp": 869589.746321,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=page-no-store-2",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-15",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:30 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 311,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869589.736709,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.072,
+            "sendEnd": 0.093,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 9.268,
+            "receiveHeadersEnd": 9.292
+          },
+          "responseTime": 1791012450949.144,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "D911C13865893B3A1930AEDE1B9CD95D"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.951Z",
+      "kind": "playwright-response",
+      "label": "page-no-store-2",
+      "requestId": "request@6e1b903577ada065d82b332665f4d64f",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-15",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:30 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.956Z",
+      "kind": "server-finish",
+      "requestId": "server-15",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.956Z",
+      "kind": "server-close",
+      "requestId": "server-15",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:30.974Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-store-2",
+      "event": "requestfailed",
+      "requestId": "request@6e1b903577ada065d82b332665f4d64f",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      },
+      "timing": {
+        "startTime": 1791012450939.9028,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.072,
+        "responseStart": 9.292,
+        "responseEnd": 16.851
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:30.982Z",
+      "kind": "cdp",
+      "label": "page-no-store-2",
+      "session": "page",
+      "event": "Network.loadingFailed",
+      "data": {
+        "requestId": "71136.3",
+        "timestamp": 869589.753391,
+        "type": "Fetch",
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.086Z",
+      "kind": "server-request",
+      "requestId": "server-16",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-16"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.086Z",
+      "kind": "server-finish",
+      "requestId": "server-16",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.086Z",
+      "kind": "server-close",
+      "requestId": "server-16",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.093Z",
+      "kind": "cdp",
+      "label": "page-no-cache-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "1728930FAF874A2989661A5D29FC0F6D",
+        "timestamp": 869589.883423,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.098Z",
+      "kind": "cdp",
+      "label": "page-no-cache-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71143.2",
+        "timestamp": 869589.892583,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.099Z",
+      "kind": "cdp",
+      "label": "page-no-cache-2",
+      "session": "page",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71143.3",
+        "loaderId": "1728930FAF874A2989661A5D29FC0F6D",
+        "documentURL": "http://127.0.0.1:54158/",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-2",
+          "method": "GET",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "Referer": "http://127.0.0.1:54158/",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0"
+          },
+          "mixedContentType": "none",
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "isSameSite": true
+        },
+        "timestamp": 869589.89569,
+        "wallTime": 1791012451.098896,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 23
+              },
+              {
+                "functionName": "eval",
+                "scriptId": "12",
+                "url": "",
+                "lineNumber": 32,
+                "columnNumber": 116
+              },
+              {
+                "functionName": "evaluate",
+                "scriptId": "5",
+                "url": "",
+                "lineNumber": 233,
+                "columnNumber": 29
+              },
+              {
+                "functionName": "",
+                "scriptId": "11",
+                "url": "",
+                "lineNumber": 0,
+                "columnNumber": 43
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "frameId": "7E877C02BD5FA6616532F3AF948002BF",
+        "hasUserGesture": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.107Z",
+      "kind": "server-request",
+      "requestId": "server-18",
+      "url": "/kernel?policy=no-cache&case=page-no-cache-2",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-18"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.108Z",
+      "kind": "playwright-request",
+      "label": "page-no-cache-2",
+      "requestId": "request@d2a4da52b52da45800cb84c710bff875",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-2",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.109Z",
+      "kind": "cdp",
+      "label": "page-no-cache-2",
+      "session": "page",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71143.3",
+        "loaderId": "1728930FAF874A2989661A5D29FC0F6D",
+        "timestamp": 869589.905055,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=page-no-cache-2",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-18",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 359,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869589.895885,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.09,
+            "sendEnd": 0.121,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.946,
+            "receiveHeadersEnd": 9.01
+          },
+          "responseTime": 1791012451108,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "7E877C02BD5FA6616532F3AF948002BF"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.109Z",
+      "kind": "playwright-response",
+      "label": "page-no-cache-2",
+      "requestId": "request@d2a4da52b52da45800cb84c710bff875",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-18",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.117Z",
+      "kind": "server-finish",
+      "requestId": "server-18",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.117Z",
+      "kind": "server-close",
+      "requestId": "server-18",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.135Z",
+      "kind": "playwright-terminal",
+      "label": "page-no-cache-2",
+      "event": "requestfinished",
+      "requestId": "request@d2a4da52b52da45800cb84c710bff875",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012451099.082,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.09,
+        "responseStart": 9.01,
+        "responseEnd": 19.771
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.143Z",
+      "kind": "cdp",
+      "label": "page-no-cache-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71143.3",
+        "timestamp": 869589.915462,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.250Z",
+      "kind": "server-request",
+      "requestId": "server-19",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-19"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.250Z",
+      "kind": "server-finish",
+      "requestId": "server-19",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.250Z",
+      "kind": "server-close",
+      "requestId": "server-19",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.256Z",
+      "kind": "cdp",
+      "label": "worker-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "F0792459C35E0D8C88A4AFC4F0C578CB",
+        "timestamp": 869590.047436,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.259Z",
+      "kind": "cdp",
+      "label": "worker-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71150.2",
+        "timestamp": 869590.055463,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.259Z",
+      "kind": "server-request",
+      "requestId": "server-21",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-21"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:31.259Z",
+      "kind": "server-finish",
+      "requestId": "server-21",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.259Z",
+      "kind": "server-close",
+      "requestId": "server-21",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.270Z",
+      "kind": "server-request",
+      "requestId": "server-22",
+      "url": "/kernel?policy=no-store&case=worker-no-store-0",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-22"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.272Z",
+      "kind": "cdp",
+      "label": "worker-no-store-0",
+      "session": "814CB11867378BCC1F6BABE34F7B25F0",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71150.4",
+        "loaderId": "",
+        "documentURL": "http://127.0.0.1:54158/worker.js",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-0",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "Referer": "http://127.0.0.1:54158/worker.js"
+          },
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin"
+        },
+        "timestamp": 869590.059224,
+        "wallTime": 1791012451.262416,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "self.onmessage",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 33,
+                "columnNumber": 41
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "hasUserGesture": false
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.272Z",
+      "kind": "playwright-request",
+      "label": "worker-no-store-0",
+      "requestId": "request@6cb3c99290b3ea8ed56f77b68f9c081b",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-0",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.275Z",
+      "kind": "cdp",
+      "label": "worker-no-store-0",
+      "session": "814CB11867378BCC1F6BABE34F7B25F0",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71150.4",
+        "loaderId": "",
+        "timestamp": 869590.067985,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-0",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-22",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 409,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.059369,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.073,
+            "sendEnd": 0.096,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.409,
+            "receiveHeadersEnd": 8.43
+          },
+          "responseTime": 1791012451270.949,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.275Z",
+      "kind": "playwright-response",
+      "label": "worker-no-store-0",
+      "requestId": "request@6cb3c99290b3ea8ed56f77b68f9c081b",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-22",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.276Z",
+      "kind": "server-finish",
+      "requestId": "server-22",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.276Z",
+      "kind": "server-close",
+      "requestId": "server-22",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.292Z",
+      "kind": "cdp",
+      "label": "worker-no-store-0",
+      "session": "814CB11867378BCC1F6BABE34F7B25F0",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71150.4",
+        "timestamp": 869590.075301,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.292Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-store-0",
+      "event": "requestfinished",
+      "requestId": "request@6cb3c99290b3ea8ed56f77b68f9c081b",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012451262.555,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.073,
+        "responseStart": 8.43,
+        "responseEnd": 16.077
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.396Z",
+      "kind": "server-request",
+      "requestId": "server-23",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-23"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.396Z",
+      "kind": "server-finish",
+      "requestId": "server-23",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.396Z",
+      "kind": "server-close",
+      "requestId": "server-23",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.402Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "DCC6B83796B4146F19BE38BC78E51003",
+        "timestamp": 869590.193933,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.406Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71154.2",
+        "timestamp": 869590.201598,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.407Z",
+      "kind": "server-request",
+      "requestId": "server-25",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-25"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:31.407Z",
+      "kind": "server-finish",
+      "requestId": "server-25",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.407Z",
+      "kind": "server-close",
+      "requestId": "server-25",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.409Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "0E51D2BE10D44C2BD079E4585BCE2919",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "6E194412233712FF383A20F7D76E1337",
+        "timestamp": 869590.206076,
+        "encodedDataLength": 302
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.409Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "0E51D2BE10D44C2BD079E4585BCE2919",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71154.4",
+        "loaderId": "",
+        "documentURL": "http://127.0.0.1:54158/worker.js",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-0",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "Referer": "http://127.0.0.1:54158/worker.js"
+          },
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin"
+        },
+        "timestamp": 869590.206353,
+        "wallTime": 1791012451.409548,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "self.onmessage",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 33,
+                "columnNumber": 41
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "hasUserGesture": false
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.418Z",
+      "kind": "server-request",
+      "requestId": "server-26",
+      "url": "/kernel?policy=no-cache&case=worker-no-cache-0",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-26"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.418Z",
+      "kind": "playwright-request",
+      "label": "worker-no-cache-0",
+      "requestId": "request@da4b4f1d19b0c76e57a140024760e2bc",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-0",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.419Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "0E51D2BE10D44C2BD079E4585BCE2919",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71154.4",
+        "loaderId": "",
+        "timestamp": 869590.215324,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-0",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-26",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 461,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.206549,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.084,
+            "sendEnd": 0.107,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.566,
+            "receiveHeadersEnd": 8.602
+          },
+          "responseTime": 1791012451418.285,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.419Z",
+      "kind": "playwright-response",
+      "label": "worker-no-cache-0",
+      "requestId": "request@da4b4f1d19b0c76e57a140024760e2bc",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-26",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.427Z",
+      "kind": "server-finish",
+      "requestId": "server-26",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.427Z",
+      "kind": "server-close",
+      "requestId": "server-26",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.450Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-0",
+      "session": "0E51D2BE10D44C2BD079E4585BCE2919",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71154.4",
+        "timestamp": 869590.22916,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.450Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-cache-0",
+      "event": "requestfinished",
+      "requestId": "request@da4b4f1d19b0c76e57a140024760e2bc",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012451409.738,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.084,
+        "responseStart": 8.602,
+        "responseEnd": 22.806
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.570Z",
+      "kind": "server-request",
+      "requestId": "server-27",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-27"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.570Z",
+      "kind": "server-finish",
+      "requestId": "server-27",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.570Z",
+      "kind": "server-close",
+      "requestId": "server-27",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.576Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "035B3E7E95013640D186B5C310A065CA",
+        "timestamp": 869590.367268,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.579Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71158.2",
+        "timestamp": 869590.375784,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.580Z",
+      "kind": "server-request",
+      "requestId": "server-29",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-29"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:31.580Z",
+      "kind": "server-finish",
+      "requestId": "server-29",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.580Z",
+      "kind": "server-close",
+      "requestId": "server-29",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.582Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "F81EF11CA43AAEF653B58EE9D434C0E4",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "B9BBD4D8823457A4BBCAB8F7A74A3574",
+        "timestamp": 869590.379044,
+        "encodedDataLength": 302
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.582Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "F81EF11CA43AAEF653B58EE9D434C0E4",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71158.4",
+        "loaderId": "",
+        "documentURL": "http://127.0.0.1:54158/worker.js",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-1",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "Referer": "http://127.0.0.1:54158/worker.js"
+          },
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin"
+        },
+        "timestamp": 869590.379353,
+        "wallTime": 1791012451.582549,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "self.onmessage",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 33,
+                "columnNumber": 41
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "hasUserGesture": false
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.582Z",
+      "kind": "playwright-request",
+      "label": "worker-no-store-1",
+      "requestId": "request@f09db94ac4a9c5e358936b0adac4f79e",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-1",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.591Z",
+      "kind": "server-request",
+      "requestId": "server-30",
+      "url": "/kernel?policy=no-store&case=worker-no-store-1",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-30"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.592Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "F81EF11CA43AAEF653B58EE9D434C0E4",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71158.4",
+        "loaderId": "",
+        "timestamp": 869590.388276,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-1",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-30",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 513,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.379512,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.08,
+            "sendEnd": 0.122,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.529,
+            "receiveHeadersEnd": 8.555
+          },
+          "responseTime": 1791012451591.213,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.592Z",
+      "kind": "playwright-response",
+      "label": "worker-no-store-1",
+      "requestId": "request@f09db94ac4a9c5e358936b0adac4f79e",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-30",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.598Z",
+      "kind": "server-finish",
+      "requestId": "server-30",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.598Z",
+      "kind": "server-close",
+      "requestId": "server-30",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.611Z",
+      "kind": "cdp",
+      "label": "worker-no-store-1",
+      "session": "F81EF11CA43AAEF653B58EE9D434C0E4",
+      "event": "Network.loadingFailed",
+      "data": {
+        "requestId": "71158.4",
+        "timestamp": 869590.395253,
+        "type": "Fetch",
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.611Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-store-1",
+      "event": "requestfailed",
+      "requestId": "request@f09db94ac4a9c5e358936b0adac4f79e",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      },
+      "timing": {
+        "startTime": 1791012451582.702,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.08,
+        "responseStart": 8.555,
+        "responseEnd": 15.897
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.720Z",
+      "kind": "server-request",
+      "requestId": "server-31",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-31"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.720Z",
+      "kind": "server-finish",
+      "requestId": "server-31",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.720Z",
+      "kind": "server-close",
+      "requestId": "server-31",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.727Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "D2BFF8B605918A624469F9067D335907",
+        "timestamp": 869590.517658,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.729Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-1",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71162.2",
+        "timestamp": 869590.526231,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.730Z",
+      "kind": "server-request",
+      "requestId": "server-33",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-33"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:31.730Z",
+      "kind": "server-finish",
+      "requestId": "server-33",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.730Z",
+      "kind": "server-close",
+      "requestId": "server-33",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.741Z",
+      "kind": "server-request",
+      "requestId": "server-34",
+      "url": "/kernel?policy=no-cache&case=worker-no-cache-1",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-34"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.742Z",
+      "kind": "playwright-request",
+      "label": "worker-no-cache-1",
+      "requestId": "request@9f4b85379f969c2202496029b3e54b03",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-1",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.743Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-1",
+      "session": "80E3A76FE630D6C0D17C0E888C9274AA",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71162.4",
+        "loaderId": "",
+        "timestamp": 869590.539007,
+        "type": "Other",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-1",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-34",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 565,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.529998,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.079,
+            "sendEnd": 0.107,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.805,
+            "receiveHeadersEnd": 8.841
+          },
+          "responseTime": 1791012451741.976,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.743Z",
+      "kind": "playwright-response",
+      "label": "worker-no-cache-1",
+      "requestId": "request@9f4b85379f969c2202496029b3e54b03",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-34",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.749Z",
+      "kind": "server-finish",
+      "requestId": "server-34",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.749Z",
+      "kind": "server-close",
+      "requestId": "server-34",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.764Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-1",
+      "session": "80E3A76FE630D6C0D17C0E888C9274AA",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71162.4",
+        "timestamp": 869590.547228,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.764Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-cache-1",
+      "event": "requestfinished",
+      "requestId": "request@9f4b85379f969c2202496029b3e54b03",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012451733.188,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.079,
+        "responseStart": 8.841,
+        "responseEnd": 17.41
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.872Z",
+      "kind": "server-request",
+      "requestId": "server-35",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-35"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:31.872Z",
+      "kind": "server-finish",
+      "requestId": "server-35",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.872Z",
+      "kind": "server-close",
+      "requestId": "server-35",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.878Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "4F59DFC3AB1D786C1E98A1914E01281D",
+        "timestamp": 869590.669676,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.880Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71166.2",
+        "timestamp": 869590.677455,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.881Z",
+      "kind": "server-request",
+      "requestId": "server-37",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-37"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:31.881Z",
+      "kind": "server-finish",
+      "requestId": "server-37",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.881Z",
+      "kind": "server-close",
+      "requestId": "server-37",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.884Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "300C4DCBB8E9D3EFD5638C6C80F9C420",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "DB828E1C4E61E956C20F7E7CB4C48511",
+        "timestamp": 869590.681432,
+        "encodedDataLength": 302
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.885Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "300C4DCBB8E9D3EFD5638C6C80F9C420",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71166.4",
+        "loaderId": "",
+        "documentURL": "http://127.0.0.1:54158/worker.js",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-2",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "Referer": "http://127.0.0.1:54158/worker.js"
+          },
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin"
+        },
+        "timestamp": 869590.681742,
+        "wallTime": 1791012451.884939,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "self.onmessage",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 33,
+                "columnNumber": 41
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "hasUserGesture": false
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.885Z",
+      "kind": "playwright-request",
+      "label": "worker-no-store-2",
+      "requestId": "request@42cf48350824705df8731b1ae20a4491",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-2",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.893Z",
+      "kind": "server-request",
+      "requestId": "server-38",
+      "url": "/kernel?policy=no-store&case=worker-no-store-2",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-38"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:31.894Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "300C4DCBB8E9D3EFD5638C6C80F9C420",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71166.4",
+        "loaderId": "",
+        "timestamp": 869590.690804,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-store&case=worker-no-store-2",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-store",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-38",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:31 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 616,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.681941,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.085,
+            "sendEnd": 0.117,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.647,
+            "receiveHeadersEnd": 8.67
+          },
+          "responseTime": 1791012451893.762,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.894Z",
+      "kind": "playwright-response",
+      "label": "worker-no-store-2",
+      "requestId": "request@42cf48350824705df8731b1ae20a4491",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-38",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:31 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.900Z",
+      "kind": "server-finish",
+      "requestId": "server-38",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.900Z",
+      "kind": "server-close",
+      "requestId": "server-38",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:31.916Z",
+      "kind": "cdp",
+      "label": "worker-no-store-2",
+      "session": "300C4DCBB8E9D3EFD5638C6C80F9C420",
+      "event": "Network.loadingFailed",
+      "data": {
+        "requestId": "71166.4",
+        "timestamp": 869590.699001,
+        "type": "Fetch",
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:31.916Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-store-2",
+      "event": "requestfailed",
+      "requestId": "request@42cf48350824705df8731b1ae20a4491",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      },
+      "timing": {
+        "startTime": 1791012451885.132,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.085,
+        "responseStart": 8.67,
+        "responseEnd": 17.257
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.030Z",
+      "kind": "server-request",
+      "requestId": "server-39",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-39"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:32.030Z",
+      "kind": "server-finish",
+      "requestId": "server-39",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.030Z",
+      "kind": "server-close",
+      "requestId": "server-39",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.036Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "C0B0658363921F4118C0ED47B62CFA80",
+        "timestamp": 869590.827096,
+        "encodedDataLength": 349
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.038Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71170.2",
+        "timestamp": 869590.835224,
+        "encodedDataLength": 111
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.039Z",
+      "kind": "server-request",
+      "requestId": "server-41",
+      "url": "/worker.js",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "same-origin",
+        "sec-fetch-dest": "worker",
+        "referer": "http://127.0.0.1:54158/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/javascript",
+        "Content-Length": 1646,
+        "X-Diagnostic-Request-Id": "server-41"
+      },
+      "bytes": 1646,
+      "sha256": "0ec506a3db93fd667d02c3a49e77bcc648288b062cbfee1425f80604dff5735c"
+    },
+    {
+      "at": "2026-10-03T07:27:32.039Z",
+      "kind": "server-finish",
+      "requestId": "server-41",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.039Z",
+      "kind": "server-close",
+      "requestId": "server-41",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.050Z",
+      "kind": "server-request",
+      "requestId": "server-42",
+      "url": "/kernel?policy=no-cache&case=worker-no-cache-2",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54158",
+        "connection": "keep-alive",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "http://127.0.0.1:54158/worker.js",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-cache",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": 24208896,
+        "X-Diagnostic-Request-Id": "server-42"
+      },
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    {
+      "at": "2026-10-03T07:27:32.050Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "1289FE9B717E31B0FC1BC6144F6F5151",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "6B338B48BE4F0C931972C9F217C06496",
+        "timestamp": 869590.838182,
+        "encodedDataLength": 302
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.050Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "1289FE9B717E31B0FC1BC6144F6F5151",
+      "event": "Network.requestWillBeSent",
+      "data": {
+        "requestId": "71170.4",
+        "loaderId": "",
+        "documentURL": "http://127.0.0.1:54158/worker.js",
+        "request": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-2",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "Referer": "http://127.0.0.1:54158/worker.js"
+          },
+          "initialPriority": "High",
+          "referrerPolicy": "strict-origin-when-cross-origin"
+        },
+        "timestamp": 869590.838437,
+        "wallTime": 1791012452.041634,
+        "initiator": {
+          "type": "script",
+          "stack": {
+            "callFrames": [
+              {
+                "functionName": "fetchWithProgress",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 1,
+                "columnNumber": 21
+              },
+              {
+                "functionName": "consume",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 28,
+                "columnNumber": 22
+              },
+              {
+                "functionName": "self.onmessage",
+                "scriptId": "3",
+                "url": "http://127.0.0.1:54158/worker.js",
+                "lineNumber": 33,
+                "columnNumber": 41
+              }
+            ]
+          }
+        },
+        "redirectHasExtraInfo": false,
+        "type": "Fetch",
+        "hasUserGesture": false
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.050Z",
+      "kind": "playwright-request",
+      "label": "worker-no-cache-2",
+      "requestId": "request@6134a1214b47973fc50dcb5d0f180521",
+      "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-2",
+      "method": "GET",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "referer": "http://127.0.0.1:54158/worker.js"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.051Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "1289FE9B717E31B0FC1BC6144F6F5151",
+      "event": "Network.responseReceived",
+      "data": {
+        "requestId": "71170.4",
+        "loaderId": "",
+        "timestamp": 869590.84738,
+        "type": "Fetch",
+        "response": {
+          "url": "http://127.0.0.1:54158/kernel?policy=no-cache&case=worker-no-cache-2",
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "Cache-Control": "no-cache",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "X-Diagnostic-Request-Id": "server-42",
+            "Connection": "keep-alive",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+            "Content-Length": "24208896",
+            "Keep-Alive": "timeout=5",
+            "Date": "Sat, 03 Oct 2026 07:27:32 GMT",
+            "Content-Type": "application/octet-stream"
+          },
+          "mimeType": "application/octet-stream",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 668,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 54158,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 315,
+          "timing": {
+            "requestTime": 869590.838604,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.084,
+            "sendEnd": 0.113,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 8.578,
+            "receiveHeadersEnd": 8.608
+          },
+          "responseTime": 1791012452050.356,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.051Z",
+      "kind": "playwright-response",
+      "label": "worker-no-cache-2",
+      "requestId": "request@6134a1214b47973fc50dcb5d0f180521",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-cache",
+        "cross-origin-opener-policy": "same-origin",
+        "x-diagnostic-request-id": "server-42",
+        "connection": "keep-alive",
+        "cross-origin-embedder-policy": "require-corp",
+        "content-length": "24208896",
+        "keep-alive": "timeout=5",
+        "date": "Sat, 03 Oct 2026 07:27:32 GMT",
+        "content-type": "application/octet-stream"
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.059Z",
+      "kind": "server-finish",
+      "requestId": "server-42",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.059Z",
+      "kind": "server-close",
+      "requestId": "server-42",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:32.076Z",
+      "kind": "cdp",
+      "label": "worker-no-cache-2",
+      "session": "1289FE9B717E31B0FC1BC6144F6F5151",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "71170.4",
+        "timestamp": 869590.857569,
+        "encodedDataLength": 24209211
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:32.076Z",
+      "kind": "playwright-terminal",
+      "label": "worker-no-cache-2",
+      "event": "requestfinished",
+      "requestId": "request@6134a1214b47973fc50dcb5d0f180521",
+      "failure": null,
+      "timing": {
+        "startTime": 1791012452041.7947,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.084,
+        "responseStart": 8.608,
+        "responseEnd": 19.131
+      }
+    }
+  ],
+  "browser": {
+    "version": "154.0.8037.93",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "headed": true,
+    "playwrightVersion": "1.49.1"
+  },
+  "summary": {
+    "total": 12,
+    "fullBytesAndHash": 12,
+    "noStoreFailures": 4,
+    "noCacheFailures": 0,
+    "workerNoStoreFailures": 2
+  },
+  "finishedAt": "2026-10-03T07:27:32.166Z"
+}

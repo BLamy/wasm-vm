@@ -66,7 +66,7 @@ def completed_state(state, expected):
         require(set(value) == {str(i) for i in range(len(value))}, 'noncontiguous typed-array encoding')
         value = [value[str(i)] for i in range(len(value))]
     raw = bytes(value)
-    require(sha(raw) == state['digest'] and raw[:8] == b'WV3DSUB1' and len(raw) == 97
+    require(sha(raw) == state['digest'] and raw[:8] == b'WV3DSUB2' and len(raw) == 97
             and raw[96] == 0, 'completed transport state digest/layout mismatch')
     keys = ('admitted', 'completed', 'cancelled', 'fenced', 'submissionBytes',
             'inputBytes', 'outputBytes', 'exchanges', 'appliedCommands', 'draws')

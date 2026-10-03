@@ -1,0 +1,587 @@
+{
+  "base": "ab5f3a85cbf25dd151b6ae74904dd5e1fc793820",
+  "frozen": "f1aeb2538d1fda62eef7c127925ac043973f8f4a",
+  "nativeObjects": [
+    {
+      "path": "target/virgl-scanout-verifier-native/debug/deps/virgl_scanout_independent_verifier-f33b0f60767fcd0b",
+      "sha256": "e50b8ee2c1c28a693005c055882cf8cab85147bda5bbbc1aecc218dda01bbb9e"
+    }
+  ],
+  "profiles": [
+    {
+      "path": "target/virgl-scanout-verifier-native/71644-9581848780605258164_0.profraw",
+      "sha256": "0affc4b41e01a3771e0832e07da785f75969407b22dea4898efd21894599aa2e"
+    },
+    {
+      "path": "target/virgl-scanout-verifier-native/71595-14241365783574255177_0.profraw",
+      "sha256": "72160221427dc33520e708802bffcbfbc1f75208afc6b0ef8730aeffa76325f6"
+    }
+  ],
+  "native": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "sha256": "790391a7d823b053843ab5e69c2a0297808407b3995821f2c532e126c3b1efeb",
+      "added": 110,
+      "positiveLineCounts": 84,
+      "zeroLines": [
+        {
+          "line": 1903,
+          "text": "                        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 1904,
+          "text": "                        *vq = None;"
+        },
+        {
+          "line": 1905,
+          "text": "                        return;"
+        }
+      ],
+      "unmapped": [
+        14,
+        15,
+        329,
+        330,
+        571,
+        633,
+        702,
+        703,
+        715,
+        1658,
+        1670,
+        1671,
+        1684,
+        1685,
+        1880,
+        1884,
+        1891,
+        1898,
+        1900,
+        1902,
+        1906,
+        1907,
+        1908
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            1903,
+            25
+          ],
+          "end": [
+            1903,
+            63
+          ]
+        },
+        {
+          "start": [
+            1904,
+            25
+          ],
+          "end": [
+            1904,
+            35
+          ]
+        },
+        {
+          "start": [
+            1905,
+            25
+          ],
+          "end": [
+            1905,
+            31
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/scanout3d.rs",
+      "sha256": "ab57cab9ff1fe4f68f5ebf9b6e959880e2d3fb138226cdd218feb28dc1833b64",
+      "added": 402,
+      "positiveLineCounts": 308,
+      "zeroLines": [
+        {
+          "line": 203,
+          "text": "        return Err(E::Unspecified);"
+        },
+        {
+          "line": 264,
+          "text": "            return Err(E::InvalidParameter);"
+        },
+        {
+          "line": 340,
+          "text": "        return true;"
+        }
+      ],
+      "unmapped": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        86,
+        91,
+        96,
+        97,
+        100,
+        119,
+        120,
+        125,
+        132,
+        133,
+        134,
+        135,
+        136,
+        171,
+        182,
+        189,
+        210,
+        239,
+        240,
+        275,
+        292,
+        320,
+        328,
+        329,
+        341,
+        382,
+        390,
+        399,
+        401
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            340,
+            16
+          ],
+          "end": [
+            340,
+            20
+          ]
+        },
+        {
+          "start": [
+            243,
+            79
+          ],
+          "end": [
+            243,
+            80
+          ]
+        },
+        {
+          "start": [
+            264,
+            20
+          ],
+          "end": [
+            264,
+            44
+          ]
+        },
+        {
+          "start": [
+            299,
+            52
+          ],
+          "end": [
+            299,
+            53
+          ]
+        },
+        {
+          "start": [
+            354,
+            82
+          ],
+          "end": [
+            354,
+            83
+          ]
+        },
+        {
+          "start": [
+            358,
+            82
+          ],
+          "end": [
+            358,
+            83
+          ]
+        },
+        {
+          "start": [
+            389,
+            33
+          ],
+          "end": [
+            389,
+            34
+          ]
+        },
+        {
+          "start": [
+            397,
+            68
+          ],
+          "end": [
+            397,
+            69
+          ]
+        },
+        {
+          "start": [
+            203,
+            16
+          ],
+          "end": [
+            203,
+            35
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "sha256": "5b4e9fe0f9d9384ae16a2bde34b4bdd605f5d416b2d5c58c43d052a0463f6364",
+      "added": 90,
+      "positiveLineCounts": 62,
+      "zeroLines": [
+        {
+          "line": 274,
+          "text": "            Self::Render(r) => Some(r.context),"
+        },
+        {
+          "line": 280,
+          "text": "            Self::Render(r) => match &r.kind {"
+        },
+        {
+          "line": 281,
+          "text": "                Submit3dKind::Commands(b) => b.len() as u64,"
+        },
+        {
+          "line": 282,
+          "text": "                Submit3dKind::Transfer(_) => 72,"
+        }
+      ],
+      "unmapped": [
+        10,
+        99,
+        103,
+        119,
+        185,
+        255,
+        256,
+        257,
+        258,
+        259,
+        264,
+        270,
+        276,
+        283,
+        285,
+        287,
+        289,
+        352,
+        354,
+        369,
+        437,
+        440,
+        659,
+        665
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            280,
+            26
+          ],
+          "end": [
+            280,
+            27
+          ]
+        },
+        {
+          "start": [
+            280,
+            38
+          ],
+          "end": [
+            280,
+            45
+          ]
+        },
+        {
+          "start": [
+            281,
+            40
+          ],
+          "end": [
+            281,
+            41
+          ]
+        },
+        {
+          "start": [
+            281,
+            46
+          ],
+          "end": [
+            281,
+            60
+          ]
+        },
+        {
+          "start": [
+            282,
+            46
+          ],
+          "end": [
+            282,
+            48
+          ]
+        },
+        {
+          "start": [
+            274,
+            26
+          ],
+          "end": [
+            274,
+            27
+          ]
+        },
+        {
+          "start": [
+            274,
+            32
+          ],
+          "end": [
+            274,
+            47
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sha256": "de7037868fe854d9e7a49565e467a66bb4a4a55d081bc1a74526d2469353b7a1",
+      "added": 21,
+      "positiveLineCounts": 18,
+      "zeroLines": [],
+      "unmapped": [
+        1737,
+        1738,
+        1757
+      ],
+      "zeroRegions": []
+    }
+  ],
+  "javascript": [
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "sha256": "59881d26fa257e3462f5d628026d4557ae541f27894124d19fddc9b104db43cf",
+      "added": 34,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 184,
+          "endLine": 184,
+          "startOffset": 13489,
+          "endOffset": 13509,
+          "text": "?? 'bridge-poisoned'"
+        },
+        {
+          "startLine": 184,
+          "endLine": 184,
+          "startOffset": 13534,
+          "endOffset": 13564,
+          "text": "?? 'Scanout operation failed.'"
+        },
+        {
+          "startLine": 191,
+          "endLine": 191,
+          "startOffset": 13943,
+          "endOffset": 13977,
+          "text": "catch (caught) { error = caught; }"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "3f7f91fadbc06d137bb067d862c079d717d47dc2f61f902677846ce8eb517d7f",
+      "added": 30,
+      "uncoveredChangedRanges": []
+    },
+    {
+      "path": "renderer/virgl-command/scanout.mjs",
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac",
+      "added": 169,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 54,
+          "endLine": 54,
+          "startOffset": 5006,
+          "endOffset": 5037,
+          "text": "?? 'Scanout dependency failed.'"
+        },
+        {
+          "startLine": 83,
+          "endLine": 83,
+          "startOffset": 6962,
+          "endOffset": 6969,
+          "text": "return;"
+        },
+        {
+          "startLine": 91,
+          "endLine": 91,
+          "startOffset": 7612,
+          "endOffset": 7645,
+          "text": "catch (error) { onFault(error); }"
+        },
+        {
+          "startLine": 106,
+          "endLine": 106,
+          "startOffset": 8977,
+          "endOffset": 9096,
+          "text": "catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }"
+        },
+        {
+          "startLine": 159,
+          "endLine": 159,
+          "startOffset": 13370,
+          "endOffset": 13382,
+          "text": "return ok();"
+        }
+      ]
+    },
+    {
+      "path": "web/dist/src/sink/virgl-scanout-presenter.js",
+      "sha256": "61b84c035374bf0eef0bcf05d4e427eb8f9707519c3eeb85d05d3754bf79f824",
+      "added": 128,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 127,
+          "endLine": 127,
+          "startOffset": 9012,
+          "endOffset": 9021,
+          "text": "?.dispose"
+        },
+        {
+          "startLine": 127,
+          "endLine": 127,
+          "startOffset": 9118,
+          "endOffset": 9126,
+          "text": "?? error"
+        },
+        {
+          "startLine": 51,
+          "endLine": 51,
+          "startOffset": 4335,
+          "endOffset": 4342,
+          "text": "return;"
+        },
+        {
+          "startLine": 62,
+          "endLine": 62,
+          "startOffset": 5040,
+          "endOffset": 5047,
+          "text": "return;"
+        },
+        {
+          "startLine": 65,
+          "endLine": 65,
+          "startOffset": 5131,
+          "endOffset": 5170,
+          "text": "{ settle(entry, 'cancelled'); return; }"
+        },
+        {
+          "startLine": 77,
+          "endLine": 77,
+          "startOffset": 5820,
+          "endOffset": 5920,
+          "text": "catch (error) { remember(`delivery: ${String(error?.message ?? error)}`); settle(entry, 'failed'); }"
+        },
+        {
+          "startLine": 84,
+          "endLine": 84,
+          "startOffset": 6239,
+          "endOffset": 6254,
+          "text": ": 'unspecified'"
+        },
+        {
+          "startLine": 84,
+          "endLine": 84,
+          "startOffset": 6295,
+          "endOffset": 6326,
+          "text": ": 'Presenter operation failed.'"
+        },
+        {
+          "startLine": 122,
+          "endLine": 123,
+          "startOffset": 8797,
+          "endOffset": 8884,
+          "text": "catch (error) { return fail('unspecified', String(error?.message ?? error)); }\n        "
+        }
+      ]
+    }
+  ]
+}

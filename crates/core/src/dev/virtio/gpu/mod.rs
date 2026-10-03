@@ -11,6 +11,8 @@ pub mod edid;
 pub mod protocol;
 pub mod resources;
 #[cfg(feature = "virgl-control-proof")]
+pub mod scanout3d;
+#[cfg(feature = "virgl-control-proof")]
 pub mod submit3d;
 pub mod tiles;
 
@@ -324,6 +326,8 @@ pub struct GpuState {
     control3d: Option<control3d::Control3dState>,
     #[cfg(feature = "virgl-control-proof")]
     submit3d: Option<submit3d::Submit3dState>,
+    #[cfg(feature = "virgl-control-proof")]
+    scanout3d: Option<scanout3d::Scanout3dState>,
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
@@ -373,6 +377,8 @@ impl GpuState {
             control3d: None,
             #[cfg(feature = "virgl-control-proof")]
             submit3d: None,
+            #[cfg(feature = "virgl-control-proof")]
+            scanout3d: None,
             scanout_resource: None,
             cursor_states: [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize],
             frame_sink: sink,
@@ -562,6 +568,10 @@ impl GpuState {
         if let Some(control) = &mut self.control3d {
             control.reset();
         }
+        #[cfg(feature = "virgl-control-proof")]
+        if let Some(scanout) = &mut self.scanout3d {
+            scanout.reset();
+        }
         self.events_read = 0;
         // Device reset discards guest-owned queues/resources, not the physical
         // host monitor. Linux resets the device during initial probe, after the
@@ -613,6 +623,12 @@ impl GpuState {
         self.submit3d
             .as_ref()
             .map(submit3d::Submit3dState::snapshot)
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn scanout3d_snapshot(&self) -> Option<scanout3d::Scanout3dSnapshot> {
+        self.scanout3d
+            .as_ref()
+            .map(scanout3d::Scanout3dState::snapshot)
     }
     #[cfg(feature = "virgl-control-proof")]
     fn revoke_submit3d(&mut self) {
@@ -680,6 +696,20 @@ impl VirtioGpu {
     ) -> (Self, Rc<RefCell<GpuState>>) {
         let (device, state) = Self::new_with_control3d_proof_state(frame_sink, control_sink);
         state.borrow_mut().submit3d = Some(submit3d::Submit3dState::new(submit_sink, mailbox));
+        (device, state)
+    }
+
+    /// Explicit proof-only global scanout assembly; ordinary and submit-only devices stay unchanged.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_scanout3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) =
+            Self::new_with_submit3d_proof_state(frame_sink, control_sink, submit_sink, mailbox);
+        state.borrow_mut().scanout3d = Some(scanout3d::Scanout3dState::new());
         (device, state)
     }
 
@@ -1622,23 +1652,37 @@ fn service_kicked(
         let trace_meta = command_trace_meta(&chain, bus, state, request);
         let written = match request {
             #[cfg(feature = "virgl-control-proof")]
-            Some(request) if is_submit3d_type(request.ty) && state.borrow().submit3d.is_some() => {
+            Some(request)
+                if (is_submit3d_type(request.ty) && state.borrow().submit3d.is_some())
+                    || scanout3d::is_capture(&chain, bus, &state.borrow(), request) =>
+            {
                 let admitted = {
                     let state_ref = state.borrow();
                     let transport = slot.borrow();
-                    submit3d::admit(
-                        state_ref.submit3d.as_ref().expect("async proof"),
-                        state_ref
-                            .control3d
-                            .as_ref()
-                            .expect("proof control")
-                            .snapshot(),
-                        chain.clone(),
-                        bus,
-                        request,
-                        transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
-                        transport.queue_generation(0),
-                    )
+                    if scanout3d::is_capture(&chain, bus, &state_ref, request) {
+                        scanout3d::admit(
+                            &state_ref,
+                            chain.clone(),
+                            bus,
+                            request,
+                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                            transport.queue_generation(0),
+                        )
+                    } else {
+                        submit3d::admit(
+                            state_ref.submit3d.as_ref().expect("async proof"),
+                            state_ref
+                                .control3d
+                                .as_ref()
+                                .expect("proof control")
+                                .snapshot(),
+                            chain.clone(),
+                            bus,
+                            request,
+                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                            transport.queue_generation(0),
+                        )
+                    }
                 };
                 let error = match admitted {
                     Ok(pending) => {
@@ -1646,9 +1690,22 @@ fn service_kicked(
                         let pending = {
                             let mut pending = pending;
                             pending.trace = trace_meta;
-                            pending.trace.submit_sequence = Some(pending.request.key.sequence);
+                            pending.trace.submit_sequence = Some(pending.request.key().sequence);
+                            if let submit3d::PendingRequest::Scanout(r) = &pending.request {
+                                pending.trace.scanout = Some(0);
+                                pending.trace.resource_width = Some(r.binding.rect.width);
+                                pending.trace.resource_height = Some(r.binding.rect.height);
+                            }
                             pending
                         };
+                        if let submit3d::PendingRequest::Scanout(r) = &pending.request {
+                            state
+                                .borrow_mut()
+                                .scanout3d
+                                .as_mut()
+                                .expect("scanout proof")
+                                .admitted(r);
+                        }
                         state
                             .borrow_mut()
                             .submit3d
@@ -1812,6 +1869,35 @@ fn service_kicked(
                 };
                 let response = response_header(request, response_type).to_bytes();
                 match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            #[cfg(feature = "virgl-control-proof")]
+            Some(request)
+                if request.ty == protocol::CMD_SET_SCANOUT
+                    && state.borrow().scanout3d.is_some() =>
+            {
+                let result = scanout3d::bind(
+                    &chain,
+                    bus,
+                    &mut state.borrow_mut(),
+                    request,
+                    slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                );
+                let ty = result.map_or_else(control3d::Control3dError::response_type, |()| {
+                    protocol::RESP_OK_NODATA
+                });
+                let response = response_header(request, ty).to_bytes();
+                match if chain.writable_len() < 24 {
+                    Ok(0)
+                } else {
+                    write_prefix(&chain, bus, &response)
+                } {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -4902,7 +4988,7 @@ fn service_submit3d_completion(
         .map_or_else(control3d::Control3dError::response_type, |()| {
             protocol::RESP_OK_NODATA
         });
-    let response = response_header(pending.request.header, response_type).to_bytes();
+    let response = response_header(pending.request.header(), response_type).to_bytes();
     // The immutable descriptor snapshot remains authoritative; guest rewrites to
     // its descriptor table cannot redirect either response or used publication.
     if pending.chain.writable_len() < 24
@@ -4940,6 +5026,14 @@ fn service_submit3d_completion(
             pending.chain.head,
             written,
         );
+    }
+    if let submit3d::PendingRequest::Scanout(request) = &pending.request {
+        state
+            .borrow_mut()
+            .scanout3d
+            .as_mut()
+            .expect("scanout proof")
+            .completed(request, completion.outcome.is_ok());
     }
     state
         .borrow_mut()

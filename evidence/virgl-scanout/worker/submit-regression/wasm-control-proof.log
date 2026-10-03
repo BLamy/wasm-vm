@@ -1,0 +1,12 @@
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.64s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 2.07s
+[INFO]: 📦   Your wasm pkg is ready to publish at target/virgl-control/pkg.

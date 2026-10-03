@@ -1857,3 +1857,7 @@ verify-E6-T11b1:
 .PHONY: verify-E6-T11b2
 verify-E6-T11b2:
 	bash tools/verify-virgl-submit.sh
+
+.PHONY: verify-E6-T11c
+verify-E6-T11c:
+	bash tools/verify-virgl-scanout.sh
