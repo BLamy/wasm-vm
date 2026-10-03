@@ -3,7 +3,7 @@ id: E6-T12c
 epic: 6
 title: Execute the captured eight-object VirGL state model
 priority: 525.02694
-status: implemented
+status: verified
 depends_on: [E6-T12b]
 estimate: S
 risk: high
@@ -107,3 +107,37 @@ resource internals and production web/Rust surfaces carry forward earlier proof.
 Fresh verification must interrogate the recordings, attack the changed state
 boundary and classify defensive branches not exercised by worker coverage.
 
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+Independent verifier, no implementation edits. Frozen source
+`d530c0943c9c8bdb757e0f8ee440794d1316aea9`, diff from `442b87c0`.
+Predictions P1–P12 in `evidence/virgl-state/verifier/predictions.md` all HELD;
+concrete observations, pinned-reference review, per-hunk classifications and
+promoted test commands are in `verifier/review.md`.
+
+- Original 38-command prefix stops at unsupported draw byte5684; separately
+  recorded state/teardown, actual original shader linkage/reflection, typed
+  namespaces, raw constants, full CLEAR and retained storage lifetimes hold.
+- Independent hardware attacks pass 5,342 assertions, 528 rejection/recovery cases
+  across 11 attack families and three seeds, 48 A/B/A restoration rounds and 50,176
+  literal clear pixels. Negative-zero/subnormal words, overwritten actual system
+  UBO bytes/binding, LINK without stage bind, and simultaneous resource/surface
+  ID reuse preserve actual GPU state. Zero draws, browser errors and final budgets.
+- Both worker/cold wire corruptions and both independent runtime sabotages fail
+  the intended actual uniform/mask/UBO oracles. Screenshots visually inspected.
+- `verifier/audit.json` passes 369 exact-source/input/record/oracle/cold checks.
+  Retained scrubbed clone is still clean at frozen HEAD; translator bytes match.
+  All 68 state functions and the added lease resolver execute. Only two diagnostic
+  fallback strings at state.mjs:89 are waived: malformed trusted releaseStorage
+  responses cannot arise from the verified resource capability. No guest state
+  behavior or unused semantic fallback is waived.
+
+Commands: `node evidence/virgl-state/verifier/run-attacks.mjs`;
+`python3 evidence/virgl-state/verifier/audit-evidence.py`.
+Independent attacks SHA256
+`29ccc226b0acad86e37a70939e8be1866e346a9e527ce5732ec00ac5057661d6`;
+audit `5ce1258a510a4728c1d92d38a28bfcd21218f151ddde27d0ec13f1d335e93e1d`.
+Worker/cold receipt digests match the implemented claim. Retain the acceptance
+harness and independent seeded GPU/sabotage tests as permanent artifacts.
+This verdict proves the isolated state boundary only; DRAW, guest activation,
+capsets and FPS remain outside this task.

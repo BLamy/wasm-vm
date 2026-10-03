@@ -1,0 +1,5489 @@
+{
+  "task": "E6-T12c",
+  "status": "passed",
+  "gitHead": "51bb95eecb0bd506d5fa2fc4a447edf91ee5d6c2",
+  "started": "2026-10-03T04:34:51.590Z",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "2c607d7687df4e09a6c128dba1fab9a3da8a3e9cb30e84ecbac2bd1977f9a45e"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "738ed223232257ceeda2d4a49eefa444d10ef7707bd509407df76b236d13e8c7"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "c07700b916f20d650bc9169a0add036fdd6cc4d103ad63c118d21c259ac86cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "sha256": "59452f700a9c717cae5148b6e4437f5b57977c7215717ae0b91e599ef368455f"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f"
+    },
+    {
+      "path": "evidence/virgl-state/verifier/attack-cases.mjs",
+      "sha256": "59014e6893f4b066ee6a7202537cbdd6ae1f07220adf883e88338416563b11f9"
+    },
+    {
+      "path": "evidence/virgl-state/verifier/run-attacks.mjs",
+      "sha256": "37e24cffdc9f6e750ccea06fcaf604dd3844bb37624a1b73b1ba725021186b1b"
+    },
+    {
+      "path": "evidence/virgl-state/verifier/predictions.md",
+      "sha256": "768c3ad8ab3ffa22f2b752c74617f4b38a94fa686985924e4ec918848051467a"
+    },
+    {
+      "path": "evidence/virgl-state/verifier/supplemental-predictions.md",
+      "sha256": "0aa90d964dc84667cbd82b2803e4d5b86f0339beba12220df3572c3c5f029aa9"
+    },
+    {
+      "path": "evidence/virgl-state/verifier/reference-notes.md",
+      "sha256": "f9665b7971fbdaf414896e60127884ec620383905a53edd1160f792813e889b0"
+    }
+  ],
+  "variants": [
+    {
+      "variant": "baseline",
+      "servedRuntimeSha256": "738ed223232257ceeda2d4a49eefa444d10ef7707bd509407df76b236d13e8c7",
+      "errors": {
+        "console": [],
+        "page": [],
+        "request": []
+      },
+      "result": {
+        "status": "passed",
+        "assertions": 5342,
+        "pixels": 50176,
+        "rounds": [
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "bits": [
+              2147483648,
+              3032881,
+              141498076,
+              3212836864
+            ],
+            "mask": 10,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "bits": [
+              2147483648,
+              336771,
+              1258917113,
+              3212836864
+            ],
+            "mask": 15,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "bits": [
+              2147483648,
+              6410359,
+              487912298,
+              3212836864
+            ],
+            "mask": 8,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "bits": [
+              2147483648,
+              143905,
+              2065972991,
+              3212836864
+            ],
+            "mask": 5,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "bits": [
+              2147483648,
+              8147661,
+              1497486792,
+              3212836864
+            ],
+            "mask": 6,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "bits": [
+              2147483648,
+              1020943,
+              185928725,
+              3212836864
+            ],
+            "mask": 11,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "bits": [
+              2147483648,
+              5112755,
+              777614710,
+              3212836864
+            ],
+            "mask": 4,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "bits": [
+              2147483648,
+              7333069,
+              1697831355,
+              3212836864
+            ],
+            "mask": 1,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "bits": [
+              2147483648,
+              4308137,
+              1769070068,
+              3212836864
+            ],
+            "mask": 2,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5010395,
+              1480831345,
+              3212836864
+            ],
+            "mask": 7,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "bits": [
+              2147483648,
+              3889967,
+              1264471746,
+              3212836864
+            ],
+            "mask": 0,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5317817,
+              589766839,
+              3212836864
+            ],
+            "mask": 13,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "bits": [
+              2147483648,
+              7807173,
+              256318304,
+              3212836864
+            ],
+            "mask": 14,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "bits": [
+              2147483648,
+              2969319,
+              1797363981,
+              3212836864
+            ],
+            "mask": 3,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "bits": [
+              2147483648,
+              4330219,
+              591825742,
+              3212836864
+            ],
+            "mask": 12,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "bits": [
+              2147483648,
+              3251685,
+              1293996019,
+              3212836864
+            ],
+            "mask": 9,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "bits": [
+              2147483648,
+              1190655,
+              543407186,
+              3212836864
+            ],
+            "mask": 0,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4977097,
+              1344793223,
+              3212836864
+            ],
+            "mask": 13,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "bits": [
+              2147483648,
+              7215125,
+              908823152,
+              3212836864
+            ],
+            "mask": 14,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4665719,
+              1481079389,
+              3212836864
+            ],
+            "mask": 3,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "bits": [
+              2147483648,
+              7996859,
+              1059897310,
+              3212836864
+            ],
+            "mask": 12,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "bits": [
+              2147483648,
+              7485941,
+              1562844355,
+              3212836864
+            ],
+            "mask": 9,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "bits": [
+              2147483648,
+              261489,
+              992401436,
+              3212836864
+            ],
+            "mask": 10,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4737731,
+              1465256761,
+              3212836864
+            ],
+            "mask": 15,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "bits": [
+              2147483648,
+              3378359,
+              1400701610,
+              3212836864
+            ],
+            "mask": 8,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5879649,
+              527270719,
+              3212836864
+            ],
+            "mask": 5,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "bits": [
+              2147483648,
+              5580045,
+              1145701128,
+              3212836864
+            ],
+            "mask": 6,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "bits": [
+              2147483648,
+              6866767,
+              558376533,
+              3212836864
+            ],
+            "mask": 11,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "bits": [
+              2147483648,
+              1997811,
+              941166774,
+              3212836864
+            ],
+            "mask": 4,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4429325,
+              2085771771,
+              3212836864
+            ],
+            "mask": 1,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "bits": [
+              2147483648,
+              256745,
+              947631924,
+              3212836864
+            ],
+            "mask": 2,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5436187,
+              1091282865,
+              3212836864
+            ],
+            "mask": 7,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "bits": [
+              2147483648,
+              8116085,
+              761601091,
+              3212836864
+            ],
+            "mask": 9,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5546225,
+              1667507612,
+              3212836864
+            ],
+            "mask": 10,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "bits": [
+              2147483648,
+              4475971,
+              943398585,
+              3212836864
+            ],
+            "mask": 15,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4826167,
+              1601778730,
+              3212836864
+            ],
+            "mask": 8,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "bits": [
+              2147483648,
+              7372001,
+              793152191,
+              3212836864
+            ],
+            "mask": 5,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "bits": [
+              2147483648,
+              8294541,
+              406419592,
+              3212836864
+            ],
+            "mask": 6,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "bits": [
+              2147483648,
+              3387599,
+              589234645,
+              3212836864
+            ],
+            "mask": 11,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4070259,
+              1010903606,
+              3212836864
+            ],
+            "mask": 4,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "bits": [
+              2147483648,
+              2425741,
+              1248192891,
+              3212836864
+            ],
+            "mask": 1,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "bits": [
+              2147483648,
+              4824681,
+              1242223796,
+              3212836864
+            ],
+            "mask": 2,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "bits": [
+              2147483648,
+              935067,
+              2114439985,
+              3212836864
+            ],
+            "mask": 7,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "bits": [
+              2147483648,
+              5732079,
+              454702978,
+              3212836864
+            ],
+            "mask": 0,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "bits": [
+              2147483648,
+              2611065,
+              201766007,
+              3212836864
+            ],
+            "mask": 13,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "bits": [
+              2147483648,
+              1205893,
+              1765025312,
+              3212836864
+            ],
+            "mask": 14,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "bits": [
+              2147483648,
+              3773351,
+              1801819853,
+              3212836864
+            ],
+            "mask": 3,
+            "clear": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "bits": [
+              2147483648,
+              7467691,
+              756770830,
+              3212836864
+            ],
+            "mask": 12,
+            "clear": [
+              0,
+              1,
+              0,
+              1
+            ]
+          }
+        ],
+        "rejections": [
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 0,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 51315
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 1,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 21996
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 2,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 36777
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 3,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 50234
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 4,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 33391
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 5,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 62040
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 6,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 62021
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 7,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 34758
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 8,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 29867
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 9,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 65540
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 10,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 17185
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 11,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 35474
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 12,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 39719
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 13,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 60144
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 14,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 7741
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 22686
+          },
+          {
+            "seed": 1779033703,
+            "n": 15,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 22686
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 0,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 13169
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 1,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 43554
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 2,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 40695
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 3,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 15360
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 4,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 10637
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 5,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 7982
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 6,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 6323
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 7,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 16172
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 8,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 54761
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 9,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 47994
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 10,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 20143
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 11,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 51096
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 12,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 21637
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 13,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 35590
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 14,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 64747
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 65860
+          },
+          {
+            "seed": 3144134277,
+            "n": 15,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 65860
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 0,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 6318
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 1,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 2099
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 2,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 15532
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 3,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 22889
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 4,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 7418
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 5,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 17967
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 6,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 60696
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 7,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 40965
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 8,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 54406
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 9,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 31851
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 10,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 52932
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 11,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 38113
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 12,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 35666
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 13,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 42727
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 14,
+            "context": 2,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 19888
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "wrong type",
+            "code": "wrong-object-type",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "destroyed copied object",
+            "code": "missing-object",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "missing subcontext",
+            "code": "missing-subcontext",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "active depth",
+            "code": "unsupported-feature",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "active storage reset",
+            "code": "unsupported-feature",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "active image reset",
+            "code": "unsupported-feature",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "nonidentity swizzle",
+            "code": "unsupported-feature",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "incompatible surface",
+            "code": "incompatible-resource",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "missing shader",
+            "code": "missing-object",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "wrong shader stage",
+            "code": "wrong-shader-stage",
+            "missing": 54269
+          },
+          {
+            "seed": 1013904242,
+            "n": 15,
+            "context": 3,
+            "name": "second vertex retain rollback",
+            "code": "missing-resource",
+            "missing": 54269
+          }
+        ],
+        "drawCalls": 0,
+        "finalStateBudgets": {
+          "contexts": 0,
+          "subContexts": 0,
+          "objects": 0,
+          "programs": 0,
+          "shaders": 0,
+          "samplers": 0,
+          "leases": 0,
+          "shaderBytes": 0,
+          "uniformBytes": 0
+        },
+        "finalResourceBudgets": {
+          "resources": 0,
+          "contexts": 0,
+          "storages": 0,
+          "backingBytes": 0,
+          "cpuBytes": 0,
+          "gpuBytes": 0,
+          "scratchBytes": 0,
+          "tickets": 0,
+          "leases": 0
+        },
+        "trustedHostControls": [
+          "ordinary host Error propagates unchanged with no context publication",
+          "missing empty fragment uniformBlocks still requires the original vertex block"
+        ],
+        "novel": [
+          "prelink after unbinding a stage",
+          "negative-zero/subnormal u32 constants",
+          "overwrite actual system UBO bytes and block binding",
+          "48 seeded A/B/A clear/state recoveries",
+          "resource and surface IDs simultaneously reused while old framebuffer binding survives"
+        ]
+      },
+      "coverageSha256": "7de8ca0cfc9adeedbd9e531231b72c9ce00a2a30ea62bf078039686e40c34718",
+      "screenshotSha256": "14b0327e9fa88c89ad9574cad18bed9c741b747769b9a3f446181b71495606b7"
+    },
+    {
+      "variant": "constant-bits",
+      "servedRuntimeSha256": "100fab5c72e156fbd1b1774b20140fc31c9e4b3dd69c2c5b14371708be795fe9",
+      "errors": {
+        "console": [],
+        "page": [],
+        "request": []
+      },
+      "result": {
+        "status": "failed",
+        "error": {
+          "message": "raw constant words: [0,0,0,0] != [2147483648,3032881,141498076,3212836864]",
+          "stack": "Error: raw constant words: [0,0,0,0] != [2147483648,3032881,141498076,3212836864]\n    at equal (http://127.0.0.1:49429/attack-cases.mjs:8:101)\n    at stateOracle (http://127.0.0.1:49429/attack-cases.mjs:39:5)\n    at runIndependentStateAttacks (http://127.0.0.1:49429/attack-cases.mjs:86:144)\n    at async eval (eval at evaluate (:234:30), <anonymous>:1:166)\n    at async <anonymous>:260:30"
+        }
+      }
+    },
+    {
+      "variant": "system-ubo-refresh",
+      "servedRuntimeSha256": "9cbb4bae90520a639f37037206d596232093435d4ba9522a03b2c7862089e74a",
+      "errors": {
+        "console": [],
+        "page": [],
+        "request": []
+      },
+      "result": {
+        "status": "failed",
+        "error": {
+          "message": "system UBO contents restored: [126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126] != [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128,63,0,0,0,0,0,0,0,0,0,0,0,0]",
+          "stack": "Error: system UBO contents restored: [126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126,126] != [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128,63,0,0,0,0,0,0,0,0,0,0,0,0]\n    at equal (http://127.0.0.1:49429/attack-cases.mjs:8:101)\n    at stateOracle (http://127.0.0.1:49429/attack-cases.mjs:43:105)\n    at runIndependentStateAttacks (http://127.0.0.1:49429/attack-cases.mjs:86:144)\n    at async eval (eval at evaluate (:234:30), <anonymous>:1:166)\n    at async <anonymous>:260:30"
+        }
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/manifest.json",
+      "bytes": 7303,
+      "sha256": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/events.jsonl",
+      "bytes": 47199,
+      "sha256": "c6a95dbcf78f2cdd955af45fbec044cfc5fe4fbb8a4a4a93afefbad37b6856f9"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc.bin.gz",
+      "bytes": 634,
+      "sha256": "d2d002ee00f714f3fab1c20bb2e5f77106279f3a52965e63568a0a9aacaa3e87",
+      "decodedBytes": 5736,
+      "decodedSha256": "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/11d7a8a13799e2c6a35a34ce40afd121e0d2e62370b9f0ca6b18002d4257470c.bin.gz",
+      "bytes": 111,
+      "sha256": "f11e95873b523cf47b5e86bda6f0abd927ba2166ddb7c83ed664da678c8c8b99",
+      "decodedBytes": 4164,
+      "decodedSha256": "11d7a8a13799e2c6a35a34ce40afd121e0d2e62370b9f0ca6b18002d4257470c"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/a30bdebf440d44f28e95bcb4f28a33f1a51db5350239acd50c8ec73bb9192396.bin.gz",
+      "bytes": 131,
+      "sha256": "433ae9f5c1350ab22276becef4b69799b550e41e445e5de6c30703447932b043",
+      "decodedBytes": 4236,
+      "decodedSha256": "a30bdebf440d44f28e95bcb4f28a33f1a51db5350239acd50c8ec73bb9192396"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/21b0c51152d709ad80365dd8ea0ea209a50bd2451dee23f77de6a4ed088ed4b0.bin.gz",
+      "bytes": 113,
+      "sha256": "6df756b0fb215f0e52085dcbba61f4b70473a7b0a01cb232f04f0e84c7b8a1b5",
+      "decodedBytes": 4164,
+      "decodedSha256": "21b0c51152d709ad80365dd8ea0ea209a50bd2451dee23f77de6a4ed088ed4b0"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/4850440acce5f52b247b9d04192c5fb757dec723b05f3dabe7a1ca53478b81b6.bin.gz",
+      "bytes": 155,
+      "sha256": "384d65d3fae29160d65b57ecdf2784e0b95fd53d958501d705c7d566ac6db46e",
+      "decodedBytes": 4292,
+      "decodedSha256": "4850440acce5f52b247b9d04192c5fb757dec723b05f3dabe7a1ca53478b81b6"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/c3e72f8d3b61dcae9cfd7aacd6a2c817686fa695a318d861139ce12bb504ec17.bin.gz",
+      "bytes": 113,
+      "sha256": "29093e0b9e1b5c6c2232bdd075c45917f4b553286c1106fc0c6f06784b986afc",
+      "decodedBytes": 4164,
+      "decodedSha256": "c3e72f8d3b61dcae9cfd7aacd6a2c817686fa695a318d861139ce12bb504ec17"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/077179667c9698bec4e54db75a1d8a458514ddf87a220ce05ff20eeed532a3da.bin.gz",
+      "bytes": 101,
+      "sha256": "dac8a1b8eb3af7f8539e3af1c804068d02231cd4d63bd20bd51bb8dfa6b8ce62",
+      "decodedBytes": 4144,
+      "decodedSha256": "077179667c9698bec4e54db75a1d8a458514ddf87a220ce05ff20eeed532a3da"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e.bin.gz",
+      "bytes": 438,
+      "sha256": "c95f039f380d5fb1cc61ddaaed4f12056440435846f5d2649c24d0fd30f1272f",
+      "decodedBytes": 11480,
+      "decodedSha256": "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "bytes": 256,
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "bytes": 261,
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/f5eeb6294d3e81fcce432bf79250004844f5597b62ba7c1843780c14a3dec751.bin.gz",
+      "bytes": 60,
+      "sha256": "acd5f499a31662907ade66f54a85aec3392caff44fdbf8b95e37723ba6bf540a",
+      "decodedBytes": 4096,
+      "decodedSha256": "f5eeb6294d3e81fcce432bf79250004844f5597b62ba7c1843780c14a3dec751"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/3fa8bf0940bec2c126815596ab68436434c8acc27d52289d182b06f52c4165ab.bin.gz",
+      "bytes": 44,
+      "sha256": "d0ab33fd925b621432291b329f6b2057183d4c89fa91c32093f055563984d2d0",
+      "decodedBytes": 4096,
+      "decodedSha256": "3fa8bf0940bec2c126815596ab68436434c8acc27d52289d182b06f52c4165ab"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7.bin.gz",
+      "bytes": 38,
+      "sha256": "cff445672d15fef1deb1a63b86a313146aa301372be8acc42bc8b89663738081",
+      "decodedBytes": 4096,
+      "decodedSha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/da1741f5aaf544e3609af2515998cdf6673735dd64691c22ea78a1d8efbfb50f.bin.gz",
+      "bytes": 1059,
+      "sha256": "a5ba77d48995ae0c1c7ed37da0887f847ea9e5ec7db55943f4de652d1b20bfb0",
+      "decodedBytes": 1048576,
+      "decodedSha256": "da1741f5aaf544e3609af2515998cdf6673735dd64691c22ea78a1d8efbfb50f"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/83d8606069b425a9b37f1c98f0bc660f01eb085879f885bc38904569bf6b0dee.bin.gz",
+      "bytes": 1091,
+      "sha256": "51cf330178ce3a6f7965e2b28c07a69bb37cf3107fdb22a6c42f28325eb2d000",
+      "decodedBytes": 1048576,
+      "decodedSha256": "83d8606069b425a9b37f1c98f0bc660f01eb085879f885bc38904569bf6b0dee"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/d6efb590c558fa44ea395b5bbd073ff4f0ca7012fdf0cd55b917da120d9449f3.bin.gz",
+      "bytes": 1118,
+      "sha256": "b8da3f415ed283261221d57b3ae596d9b5378ab48393a239c8fba98fe0404c68",
+      "decodedBytes": 1048576,
+      "decodedSha256": "d6efb590c558fa44ea395b5bbd073ff4f0ca7012fdf0cd55b917da120d9449f3"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/blobs/808b237af135f43417d9db2f3f4476c30a2a5c02ade1efafa1f65184aa16fc7c.bin.gz",
+      "bytes": 1148,
+      "sha256": "a44127d09d3e6373d9022b4a3b71ca07381934d357c50af32c471eeb9eae6265",
+      "decodedBytes": 1048576,
+      "decodedSha256": "808b237af135f43417d9db2f3f4476c30a2a5c02ade1efafa1f65184aa16fc7c"
+    }
+  ],
+  "fixtureSha256": "d579441a75a08df717aa7bfac1c6021408fbb504221a60a85c22ced6d25cd9ba",
+  "sabotages": [
+    {
+      "name": "constant-bits",
+      "before": "gl.uniform4uiv(uniform.location, words);",
+      "after": "gl.uniform4uiv(uniform.location, new Uint32Array(words.length));",
+      "sourceSha256": "100fab5c72e156fbd1b1774b20140fc31c9e4b3dd69c2c5b14371708be795fe9"
+    },
+    {
+      "name": "system-ubo-refresh",
+      "before": "gl.bufferSubData(gl.UNIFORM_BUFFER, 0, block.data);",
+      "after": "/* verifier sabotage: omit refreshing the overwritten system UBO */",
+      "sourceSha256": "9cbb4bae90520a639f37037206d596232093435d4ba9522a03b2c7862089e74a"
+    }
+  ],
+  "browser": {
+    "version": "154.0.8037.93",
+    "system": {
+      "gpu": {
+        "devices": [
+          {
+            "vendorId": 4203,
+            "deviceId": 0,
+            "vendorString": "Google Inc. (Apple)",
+            "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+            "driverVendor": "Apple",
+            "driverVersion": "26.6.2"
+          }
+        ],
+        "auxAttributes": {
+          "amdSwitchable": false,
+          "canSupportThreadedTextureMailbox": false,
+          "directRenderingVersion": "",
+          "displayType": "ANGLE_METAL",
+          "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+          "glImplementationParts": "(gl=egl-angle,angle=metal)",
+          "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "glResetNotificationStrategy": 33362,
+          "glVendor": "Google Inc. (Apple)",
+          "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+          "glWsExtensions": "",
+          "glWsVendor": "",
+          "glWsVersion": "",
+          "inProcessGpu": false,
+          "initializationTime": 0.030943,
+          "isAsan": false,
+          "isClangCoverage": false,
+          "jpegDecodeAcceleratorSupported": false,
+          "maxMsaaSamples": "4",
+          "optimus": false,
+          "passthroughCmdDecoder": true,
+          "pixelShaderVersion": "3.00",
+          "processCrashCount": 0,
+          "sandboxed": false,
+          "skiaBackendType": "GraphiteDawnMetal",
+          "subpixelFontRendering": true,
+          "targetCpuBits": 64,
+          "vertexShaderVersion": "3.00",
+          "visibilityCallbackCallCount": 0
+        },
+        "featureStatus": {
+          "2d_canvas": "enabled",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "enabled",
+          "multiple_raster_threads": "enabled_on",
+          "opengl": "enabled_on",
+          "rasterization": "enabled",
+          "raw_draw": "disabled_off_ok",
+          "skia_graphite": "enabled_on",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "enabled",
+          "video_encode": "enabled",
+          "webgl": "enabled",
+          "webgpu": "enabled",
+          "webnn": "disabled_off"
+        },
+        "driverBugWorkarounds": [
+          "disable_2d_canvas_auto_flush",
+          "enable_webgl_timer_query_extensions",
+          "disabled_extension_GL_KHR_blend_equation_advanced",
+          "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+        ],
+        "videoDecoding": [],
+        "videoEncoding": []
+      },
+      "modelName": "Mac",
+      "modelVersion": "16.6",
+      "commandLine": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-use-zoom-for-dsf=false --no-sandbox --enable-gpu --user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-DVXyfi --remote-debugging-pipe --no-startup-window --flag-switches-begin --flag-switches-end"
+    },
+    "commandLine": {
+      "arguments": [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "--disable-field-trial-config",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-back-forward-cache",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-component-update",
+        "--no-default-browser-check",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+        "--allow-pre-commit-input",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--no-service-autorun",
+        "--export-tagged-pdf",
+        "--disable-search-engine-choice-screen",
+        "--unsafely-disable-devtools-self-xss-warnings",
+        "--enable-use-zoom-for-dsf=false",
+        "--no-sandbox",
+        "--enable-gpu",
+        "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-DVXyfi",
+        "--remote-debugging-pipe",
+        "--no-startup-window",
+        "--flag-switches-begin",
+        "--flag-switches-end"
+      ]
+    }
+  },
+  "finished": "2026-10-03T04:34:52.899Z"
+}
