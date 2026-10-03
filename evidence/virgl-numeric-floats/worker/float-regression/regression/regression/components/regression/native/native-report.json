@@ -1,0 +1,37 @@
+{
+  "schema": "wasm-vm-captured-native-v1",
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/build/captured-sanitize/captured-test",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi"
+  ],
+  "inputs": [
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "bytes": 256,
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "bytes": 261,
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+    }
+  ],
+  "negativeCases": 112,
+  "negativeFixtureSha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80",
+  "streamSha256": "722343c6630620f1411680459a8b74ef8bb7a9c8a467bb6f1d3f7fa8ac7e186a",
+  "logSha256": "1efee7d0b5f11a6afae314c0aa68ecc39c62c5b0e460e1193d6d869a6d451885",
+  "binarySha256": "29f489eaad0c25a806946be4b2ad4ec60dce62e11ae1710132c4d7163781a9d8",
+  "seeds": [
+    "18a9e24d",
+    "4c907fb3",
+    "c31e7d82",
+    "9b4260a5"
+  ],
+  "mutationsPerSeed": 2048,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ]
+}

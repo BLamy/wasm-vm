@@ -377,3 +377,40 @@ The successor receipt explicitly binds newly admitted historical inputs and
 their adjacent unsupported replacements while preserving all unaffected native
 results and earlier GPU checks. Numeric float shadows and actual mixed
 ADD/MUL/MAD/TEX chains remain E6-T12e4c2; production negotiation remains off.
+
+
+## Ordinary numeric chains beside raw words
+
+E6-T12e4c2 adds the owned v4 stage profile for validated ADD/MUL/MAD and fragment
+2D FLOAT TEX mixed with raw operations. Private unsigned words remain available
+for integer consumers. Actual arithmetic/sample values also retain a bounded
+ordinary float shadow, so later arithmetic and float outputs can use the value
+directly. Every consumed float view is determined before its instruction writes;
+both RHS representations are captured before partial or aliased destinations are
+published. Integer operations invalidate float authority. MOV preserves it, and
+mixed-stage UCMP can select between independently authorized float views using
+its unchanged nonzero raw selector. Earlier profiles retain their narrow rules.
+
+Numeric source authority requires an ordinary input, a computed/sample shadow,
+or a conservative proof that raw words are finite normal values or signed zeros.
+Unknown raw numeric constants are still rejected. All seven remaining unsupported
+captured bodies use such constants; they require a separate enforced domain or
+full-domain numeric lowering before Mesa activation. The guest decoder's finite
+value check, which permits subnormals, is not authority for standalone callers.
+
+The floating arithmetic contract follows [GLSL ES3.00 revision6, sections4.5.1
+and4.5.3](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf).
+It permits ordinary GPU precision behavior, including higher internal precision
+and a single or sequential MAD. It makes no PRECISE or exceptional raw-payload
+preservation promise after numeric computation. Exact dyadic chains and texture
+endpoints provide strict hardware oracles. Any non-exact assertion must use a
+derived rational enclosure rather than assuming one rounding mode. Comparisons
+of captured raw words retain the separately proved all-encoding integer semantics.
+
+TEX uses the existing fragment-only 2D FLOAT grammar, samples once per instruction
+and reports its real sampler names/indices. The checked destination is compacted
+to keep instruction and IR allocations unchanged. The GLSL cap still rejects
+excessive generated text; additional shadow arrays are bounded logical storage,
+not a prediction of the driver's register allocation. `make verify-E6-T12e4c2`
+records these behaviors, failures, recovery and retained renderer regressions.
+Production negotiation and original captured shader outcomes remain unchanged.

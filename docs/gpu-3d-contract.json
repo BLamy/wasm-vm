@@ -5,7 +5,8 @@
     "Command execution, transport and retained scanout have isolated proof paths; production GPU negotiation and a real Mesa guest remain gated.",
     "Mesa has unconditional capabilities not suppressible by zero capset fields.",
     "Reduced capset requires new guest initialization and reduced-profile captures.",
-    "Future GLES3 requires transform feedback, UBOs, MRT, format and draw semantics proof."
+    "Future GLES3 requires transform feedback, UBOs, MRT, format and draw semantics proof.",
+    "Owned mixed numeric shaders reject unknown raw numeric constants. Direct numeric CONST uses in all seven remaining originals need an explicit enforced runtime domain or separately proven full-domain lowering before Mesa activation."
   ],
   "backend": "WebGL2 / ESSL 3.00",
   "browserMatrix": {
@@ -702,6 +703,25 @@
       }
     }
   },
+  "numericShaderBoundary": {
+    "acceptance": "make verify-E6-T12e4c2; native sanitizer/Wasm parity, real numeric/raw GPU consumers, texture chains, aliases, mixed interfaces, fixed-memory failure/recovery, preserved earlier gates and source-bound fault injection.",
+    "bounds": "112-byte checked instruction,26232-byte IR,12-byte lane state; existing finite text/instruction/register/GLSL/JSON/Wasm limits. Float-shadow declarations add bounded per-invocation logical storage, not a driver-register allocation claim.",
+    "compatibility": "No-numeric v1/v2/v3 and pure legacy v5 outcomes remain exact. All19 original bodies and their12 accepted/7 rejected outcomes remain unchanged.",
+    "operations": [
+      "ADD",
+      "MUL",
+      "MAD",
+      "TEX"
+    ],
+    "ordinaryFloatContract": "GLSL ES3.00 ordinary highp operations, without PRECISE, raw NaN-payload, signed-zero or subnormal-preservation promises after numeric computation. MAD permits the specified single or sequential arithmetic and higher internal precision. Output and later numeric consumers use authorized floats directly; raw-only outputs retain their existing safety proof.",
+    "propagation": "MOV preserves available views. In a validated mixed stage, UCMP may preserve a selected arm or join independently authorized float arms using the same nonzero raw selector. An unknown raw arm does not confer authority. All consumed arms remain initialization-checked.",
+    "scope": "Isolated compiler boundary E6-T12e4c2; no guest command admission, capset, Mesa or performance claim.",
+    "sourceAuthority": "Each numeric use resolves an original ordinary float input, an existing computed/sample float shadow, or a raw word proved finite normal or signed zero by conservative known bits. Unknown raw constants/temporaries are rejected. The standalone compiler does not inherit guest constant validation.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+    "storage": "Private u32 words retain captured representations for integer consumers. Computation and samples also retain their actual ordinary float values in bounded float shadows. Both RHS views are captured before any aliased/partial destination publication; integer writes invalidate float authority.",
+    "texture": "Fragment-only declared 2D FLOAT views and matching samplers0..7; one sample expression per TEX instruction, truthful fssampN sampler2D metadata. Existing full-width TEX destination and consumed-coordinate rules remain."
+  },
+  "numericShaderProfile": "virgl-webgl2-raw-bits-v4",
   "observedStateScope": {
     "blend": "RT0 full mask; add; disabled or ONE/INV_SRC_ALPHA and SRC_ALPHA/INV_SRC_ALPHA RGB; ONE/INV_SRC_ALPHA alpha; dither0/1.",
     "constants": "VS slot0 uploads12/16/32words, FS slot0 uploads4words; all stages0..5 slots0..14 receive empty clears.",
@@ -739,10 +759,10 @@
       "USNE",
       "UCMP"
     ],
-    "integerOutputProof": "Constant-only arithmetic/comparisons yield exact known bits. UCMP chooses a statically determined arm, otherwise intersects known bits and retains float origin only when both payload origins match. No arithmetic float-origin shortcut or arbitrary float-origin join.",
+    "integerOutputProof": "In v1/v2/v3, constant-only arithmetic/comparisons yield exact known bits. UCMP chooses a statically determined arm, otherwise intersects known bits and retains float origin only when both payload origins match. No arithmetic float-origin shortcut or arbitrary float-origin join. V4 ordinary-float authority is separately specified in numericShaderBoundary.",
     "integerSemantics": "UADD wraps modulo2^32. ISGE compares signed two\u2019s-complement values; USEQ/USNE compare raw words. Comparisons produce0xffffffff or0. UCMP chooses src1 for any nonzero condition, src2 for zero, preserving private payload bits and reading all three initialized sources before writes.",
     "limits": "All v5 limits remain:179 non-END instructions,118 TEMP registers,46 guest constants,8 other-bank entries/immediates,16KiB text,8192 tokens,256 lines,512-byte lines,64KiB GLSL,147456/295936-byte JSON buffers,16MiB fixed Wasm,256KiB stack.",
-    "mixedPrograms": "ADD/MUL/MAD/TEX combined with raw operations remain rejected until E6-T12e4c2. Other float comparisons, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations also reject while texture use is absent.",
+    "mixedPrograms": "ADD/MUL/MAD and fragment 2D FLOAT TEX may combine with raw operations only under the v4 numericShaderBoundary. Other float comparisons, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations without a validated mixed numeric program remain rejected.",
     "operations": [
       "MOV",
       "AND",
@@ -758,7 +778,7 @@
     "orderedSemantics": "Pure unsigned-word binary32 classification and ordering. Every signed quiet/signalling NaN is unordered; both signed zeros compare equal; negative magnitude order reverses; infinity and subnormal encodings retain their order. Results are exactly0xffffffff or0 without converting raw source words to floats.",
     "pairing": "Per-stage backend selection preserves semantic/mask/interpolation-derived keys, exact standalone fragment output, and checked smooth/flat vertex qualifiers. No caller-selected keys or backend flags.",
     "scope": "Isolated compiler boundary; no production guest GPU negotiation or desktop performance claim.",
-    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata.",
+    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata. A validated ADD/MUL/MAD/TEX in an owned raw stage selects raw-bits-v4; pure legacy numeric shaders remain v5.",
     "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
   },
   "rawShaderProfile": "virgl-webgl2-raw-bits-v1",

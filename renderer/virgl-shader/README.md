@@ -22,6 +22,7 @@ make verify-E6-T12e3
 make verify-E6-T12e4a
 make verify-E6-T12e4b
 make verify-E6-T12e4c1
+make verify-E6-T12e4c2
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -185,7 +186,7 @@ in `finally` and owns all returned JSON data.
 ### Private raw lanes
 
 `virgl-webgl2-raw-bits-v1` identifies fully validated programs containing AND,
-OR, NOT, SHL or USHR, without any v2 or v3 operation described below. A bounded lexical probe chooses which guard
+OR, NOT, SHL or USHR, without any v2, v3 or v4 operation described below. A bounded lexical probe chooses which guard
 to attempt; it does not admit an instruction or select returned semantics.
 Programs without any admitted raw instruction tokens take the original v5 path, preserving
 its full GLSL, metadata and error results, including its finite UINT32-immediate
@@ -257,7 +258,7 @@ uniforms. It also records real fixed-memory allocation failure and recovery.
 ### Wrapping arithmetic, masks and raw selection
 
 `virgl-webgl2-raw-bits-v2` extends the owned profile with UADD, ISGE, USEQ, USNE
-and UCMP. A stage reports v2 when one of these instructions validates and no v3
+and UCMP. A stage reports v2 when one of these instructions validates and no v3 or v4
 instruction occurs; old v1 and
 legacy v5 programs retain their full GLSL/metadata/error results. A pair selects
 the profile independently for each stage, with the same derived interface key.
@@ -311,8 +312,8 @@ stages and mixed-profile pairs.
 ### Ordered binary32 masks
 
 `virgl-webgl2-raw-bits-v3` adds FSLT and FSGE. Only a fully validated occurrence
-of one of these opcodes selects v3; unaffected v1, v2 and v5 full results stay
-unchanged. The comparison helper is emitted only in v3 stages. Both operands
+of one of these opcodes selects v3 when no v4 numeric operation occurs; unaffected v1, v2 and v5 full results stay
+unchanged. The comparison helper is emitted only in stages that use these opcodes. Both operands
 remain unsigned words: no float bitcast or floating-point comparison implements
 either instruction.
 
@@ -335,8 +336,8 @@ only to the float encoding delivered by the existing input ABI; it does not
 extend arbitrary raw NaN/subnormal payload transport across that ABI.
 
 These operations add no IR field, allocation or capacity. Instructions remain
-112 bytes and the IR remains26,232 bytes. Mixed ADD/MUL/MAD/TEX, PRECISE and
-control flow still reject; ordinary numeric mixing is a separate boundary.
+112 bytes and the IR remains26,232 bytes. Mixed ADD/MUL/MAD/TEX still reject in v3; ordinary numeric mixing uses the
+separate v4 boundary below. PRECISE and control flow remain unsupported.
 
 `tests/float-mask-cases.json` records constant-fold and dynamic cases, all ordered
 domains, partial initialization, aliases, unsafe outputs and unchanged bounds.
@@ -348,6 +349,71 @@ retaining all unaffected earlier full results and browser proofs. Native and
 Wasm results are compared in full, and hardware vertex/fragment probes reconstruct
 all32 result bits against an independent encoding-domain oracle. Production GPU
 negotiation and guest constant-command admission remain unchanged.
+
+### Ordinary numeric shadows
+
+`virgl-webgl2-raw-bits-v4` admits ADD, MUL, MAD and fragment 2D FLOAT TEX in
+owned raw programs. A bounded lexical scan recognizes the possibility of numeric
+work throughout the stage so UCMP before the first arithmetic instruction can
+join different ordinary float origins. Only a fully validated numeric instruction
+and a successful complete output proof select v4. Numeric-only legacy programs
+retain v5; comments, malformed tokens and sampler declarations alone cannot select
+v4. Unaffected v1/v2/v3/v5 full translations and errors remain unchanged.
+
+Each lane keeps its private uint word and separately tracks authority to read an
+ordinary float. Authority is either an immutable original input register/lane or
+a computed/copied float shadow. Numeric use may also decode raw words whose known
+bits prove every possible value is finite normal or signed zero. Unknown CONST
+words and arbitrary raw TEMP words have no numeric authority, even when one
+particular host upload is finite. The guest constant decoder's finite check does
+not confer standalone compiler authority and permits subnormals. Direct numeric
+Mesa constants therefore need a later explicit runtime-domain boundary before
+remaining original shaders or production Mesa can be claimed supported.
+
+ADD/MUL/MAD read the pre-instruction authorized float sources into `float_rhs`,
+then capture that same result with `floatBitsToUint` before publishing any raw or
+float destination lane. TEX evaluates one `texture(fssampN, vec2(...))` expression
+into `float_rhs` per validated instruction and shares that vec4 across all lanes
+and both views. Only x/y coordinate selectors are consumed; their ordinary-input,
+shadow or proved-raw domains are checked separately. Used samplers alone appear
+in owned metadata and GLSL; unused declarations may remain inactive. The existing
+fragment-only SAMP/SVIEW pairing, 2D FLOAT type, indices0–7 and explicit sampler
+bindings remain required. Explicit TEX/MAD destination masks still reject.
+
+MOV copies existing shadows before destination writes; original-input authority
+may remain a direct input identity. Mixed UCMP snapshots both representations and
+selects with the same raw `condition != 0u`. A dynamic selector grants float
+authority only when both arms are authorized inputs/shadows or statically proved
+safe raw values; the selected float becomes a new shadow. A known selector may
+retain its selected authorized arm while the other arm has arbitrary raw data;
+that unselected arm is never decoded as float. Both arms' consumed lanes must
+still be initialized. Integer and comparison writes always clear float authority,
+including UADD by zero. A later numeric use must establish a new raw-domain proof;
+it must not read an old shadow left in the physical array. Partial writes and
+swizzles preserve untouched lanes and snapshot every consumed lane before any
+publication. Final output uses an authorized input/shadow directly; raw-only
+output retains the preceding finite-normal-or-zero proof.
+
+Computed floats obey the ordinary GLSL ES3.00 highp contract. This is no promise
+of NaN payloads, computed zero signs, subnormal retention or PRECISE semantics.
+The raw view preserves the bits actually captured from a computation, while
+numeric consumers use its actual shadow without an undefined Inf/NaN decode.
+Raw FSLT/FSGE still compare captured encodings with exact integer predicates.
+The primary hardware arithmetic oracles use exact dyadic chains and texture
+endpoints; any non-exact MAD witness requires a separately justified enclosure.
+
+The checked destination is12 bytes, leaving room for three packed per-source
+float-read mode words, a float publication mask, sampler index and mixed-mode
+flag in each unchanged112-byte instruction. The facts remain12 bytes per lane
+and the IR remains26,232 bytes. Checked modes record the source authority at the
+instruction, never the final register facts. The shader adds118 TEMP vec4 shadows,
+eight OUT vec4 shadows and one vec4 RHS:2,032 logical bytes per invocation, not a
+claim about driver register allocation. All native/Wasm memory, stack, input,
+instruction and output capacities remain unchanged. Long179-op full MAD programs
+can return the existing structured GLSL-bound error; short179-op scalar programs
+remain accepted. The successor gate covers deterministic native/Wasm parity,
+actual hardware texture/arithmetic chains, mixed profiles, source-bound sabotage,
+fixed-memory recovery and unchanged original outcomes. Production stays off.
 
 ### Legacy finite-float profile
 

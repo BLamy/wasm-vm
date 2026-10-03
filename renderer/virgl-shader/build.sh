@@ -16,7 +16,7 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c
     ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
@@ -72,6 +72,16 @@ case "$mode" in
       build/float-mask-sanitize/bridge.o build/float-mask-sanitize/raw_bits.o \
       "${sources[@]:2}" native_tests/float_masks.c -lm -o build/float-mask-sanitize/float-mask-test
     ;;
+  numeric-float-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -fstack-usage -c "$source.c" -o "build/numeric-float-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
+      build/numeric-float-sanitize/bridge.o build/numeric-float-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/numeric_floats.c -lm -o build/numeric-float-sanitize/numeric-float-test
+    ;;
   wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
@@ -83,5 +93,5 @@ case "$mode" in
       '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
-  *) echo 'Usage: build.sh guard-check|native|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|wasm' >&2; exit 2 ;;
+  *) echo 'Usage: build.sh guard-check|native|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|wasm' >&2; exit 2 ;;
 esac

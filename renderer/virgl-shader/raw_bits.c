@@ -58,23 +58,53 @@ static uint32_t ordered_float_mask(uint32_t a, uint32_t b, bool greater_equal)
    return selected ? UINT32_MAX : 0;
 }
 
-static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no)
+static bool safe_raw_float(struct raw_lane value)
+{
+   const uint32_t exponent = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);
+   return (value.zero & exponent) && ((value.one & exponent) || (value.zero & mantissa) == mantissa);
+}
+
+static unsigned float_mode(struct raw_lane value)
+{
+   return value.origin ? value.origin : safe_raw_float(value) ? RAW_FLOAT_DECODE : 0;
+}
+
+static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no, bool mixed)
 {
    if (condition.zero == UINT32_MAX) return no;
    if (condition.one) return yes;
    /* An unknown selector retains only facts true for BOTH payloads. Distinct
-    * float origins cannot become one input identity merely by being floats. */
+    * float origins remain distinct in old profiles. A mixed stage instead
+    * materializes the chosen authorized value in a new float shadow. */
    return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one,
-      .origin = yes.origin == no.origin ? yes.origin : 0};
+      .origin = mixed && float_mode(yes) && float_mode(no) ? RAW_FLOAT_SHADOW :
+         yes.origin == no.origin ? yes.origin : 0};
 }
 
-void raw_record(struct raw_ir *ir, const struct raw_instruction *instruction)
+bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
+   struct raw_instruction checked = *input;
+   checked.float_mask = 0;
+   for (unsigned source = 0; source < 3; ++source) checked.float_modes[source] = 0;
+   const struct raw_instruction *instruction = &checked;
+   bool mixed = (instruction->flags & RAW_MIXED) != 0;
+   bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;
+   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT || instruction->opcode == RAW_TEX ? 1 :
+      instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD ? 3 : 2;
+   unsigned consumed = instruction->opcode == RAW_TEX ? 3u : instruction->dst.mask;
+   /* Capture read authority at the use site, before any aliased destination
+    * changes facts. Every numeric lane must have an enforceable domain. */
+   for (unsigned source = 0; source < sources; ++source)
+      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
+         unsigned mode = float_mode(source_lane(ir, &instruction->src[source], lane));
+         if (numeric && !mode) return false;
+         if (mixed) checked.float_modes[source] |= (uint32_t)mode << (lane * 8);
+      }
    struct raw_lane result[4] = {{0}};
    /* Read all consumed lanes before publishing any destination lane. */
    for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) {
       struct raw_lane a = source_lane(ir, &instruction->src[0], lane), b = {0};
-      if (instruction->opcode != RAW_MOV && instruction->opcode != RAW_NOT)
+      if (instruction->opcode != RAW_MOV && instruction->opcode != RAW_NOT && instruction->opcode != RAW_TEX)
          b = source_lane(ir, &instruction->src[1], lane);
       switch (instruction->opcode) {
       case RAW_MOV: result[lane] = a; break;
@@ -100,27 +130,33 @@ void raw_record(struct raw_ir *ir, const struct raw_instruction *instruction)
       case RAW_FSGE:
          if (known_operands(a, b)) result[lane] = known_word(ordered_float_mask(a.one, b.one, instruction->opcode == RAW_FSGE));
          break;
-      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane)); break;
+      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane), mixed); break;
+      case RAW_ADD:
+      case RAW_MUL:
+      case RAW_MAD:
+      case RAW_TEX: result[lane].origin = RAW_FLOAT_SHADOW; break;
       }
    }
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
    for (unsigned lane = 0; lane < 4; ++lane)
-      if (instruction->dst.mask & (1u << lane)) destination[lane] = result[lane];
+      if (instruction->dst.mask & (1u << lane)) {
+         destination[lane] = result[lane];
+         if (result[lane].origin == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;
+      }
    ir->instructions[ir->count++] = *instruction;
    if (instruction->opcode != RAW_MOV) ir->opcode_mask |= 1u << instruction->opcode;
+   return true;
 }
 
 bool raw_outputs_safe(const struct profile *p)
 {
-   const uint32_t exponent = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);
    for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
       for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {
          struct raw_lane value = p->raw->output[index][lane];
          if (value.origin) continue;
          /* Exclude Inf/NaN, then exclude possible subnormal values. Signed
           * zero is permitted; neither the sign nor normal mantissa is lost. */
-         if (!(value.zero & exponent) ||
-             (!(value.one & exponent) && (value.zero & mantissa) != mantissa)) return false;
+         if (!safe_raw_float(value)) return false;
       }
    }
    return true;
@@ -157,6 +193,58 @@ static void operand(struct writer *w, const struct profile *p, const struct raw_
    }
 }
 
+static unsigned lane_mode(const struct raw_instruction *instruction, unsigned source, unsigned lane)
+{
+   return (instruction->float_modes[source] >> (lane * 8)) & 255u;
+}
+
+static void float_operand(struct writer *w, const struct profile *p, const struct raw_instruction *instruction, unsigned source, unsigned lane)
+{
+   unsigned mode = lane_mode(instruction, source, lane);
+   const struct raw_source *r = &instruction->src[source];
+   if (mode == RAW_FLOAT_SHADOW) emit(w, "float_temp[%u].%c", r->index, "xyzw"[r->swizzle[lane]]);
+   else if (mode == RAW_FLOAT_DECODE) {
+      emit(w, "uintBitsToFloat("); operand(w, p, r, lane); emit(w, ")");
+   } else input_float(w, p, (mode - 1) / 4, (mode - 1) % 4);
+}
+
+static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
+{
+   enum raw_opcode op = instruction->opcode;
+   if (op == RAW_TEX) {
+      /* One vec4 sample is shared by all lanes and both representations. */
+      emit(w, " float_rhs = texture(fssamp%u, vec2(", instruction->sampler);
+      float_operand(w, p, instruction, 0, 0); emit(w, ", ");
+      float_operand(w, p, instruction, 0, 1); emit(w, "));\n");
+      return;
+   }
+   emit(w, " float_rhs = vec4(");
+   for (unsigned lane = 0; lane < 4; ++lane) {
+      if (lane) emit(w, ", ");
+      if (!(instruction->float_mask & (1u << lane))) { emit(w, "0.0"); continue; }
+      emit(w, "(");
+      if (op == RAW_UCMP) {
+         unsigned yes = lane_mode(instruction, 1, lane), no = lane_mode(instruction, 2, lane);
+         /* A known selector may choose an authorized shadow while the other
+          * payload is arbitrary raw data. Never decode that unselected arm. */
+         if (yes && no) {
+            operand(w, p, &instruction->src[0], lane); emit(w, " != 0u ? ");
+            float_operand(w, p, instruction, 1, lane); emit(w, " : ");
+            float_operand(w, p, instruction, 2, lane);
+         } else float_operand(w, p, instruction, yes ? 1 : 2, lane);
+      } else {
+         float_operand(w, p, instruction, 0, lane);
+         if (op == RAW_ADD || op == RAW_MUL || op == RAW_MAD) {
+            emit(w, op == RAW_ADD ? " + " : " * ");
+            float_operand(w, p, instruction, 1, lane);
+            if (op == RAW_MAD) { emit(w, " + "); float_operand(w, p, instruction, 2, lane); }
+         }
+      }
+      emit(w, ")");
+   }
+   emit(w, ");\n");
+}
+
 char *raw_emit(const struct profile *p, unsigned const_count)
 {
    struct writer w = {.text = calloc(BRIDGE_MAX_GLSL + 1, 1)};
@@ -172,6 +260,12 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          else if (semantic == 3) emit(&w, "layout(location=0) out vec4 fsout_c0;\n");
       }
    if (const_count) emit(&w, "uniform highp uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", const_count);
+   for (unsigned index = 0; index < FILE_REGISTERS; ++index) {
+      bool used = false;
+      for (unsigned i = 0; i < p->raw->count; ++i)
+         used |= p->raw->instructions[i].opcode == RAW_TEX && p->raw->instructions[i].sampler == index;
+      if (used) emit(&w, "uniform highp sampler2D fssamp%u;\n", index);
+   }
    if (!p->stage) emit(&w, "layout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\n");
    if (p->raw->opcode_mask & RAW_V3_OPCODES)
       emit(&w, "uint raw_float_mask(uint a, uint b, bool greater_equal) {\n"
@@ -183,45 +277,59 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
          " return selected ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
+   if (p->raw->opcode_mask & RAW_V4_OPCODES)
+      emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
-      emit(&w, " raw_rhs = uvec4(");
-      for (unsigned lane = 0; lane < 4; ++lane) {
-         if (lane) emit(&w, ", ");
-         if (!(instruction->dst.mask & (1u << lane))) { emit(&w, "0u"); continue; }
-         enum raw_opcode op = instruction->opcode;
-         emit(&w, "(");
-         if (op == RAW_NOT) emit(&w, "~");
-         if (op == RAW_ISGE) emit(&w, "(");
-         if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
-         operand(&w, p, &instruction->src[0], lane);
-         if (op == RAW_AND || op == RAW_OR) {
-            emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
-         } else if (op == RAW_SHL || op == RAW_USHR) {
-            emit(&w, op == RAW_SHL ? " << (" : " >> (");
-            operand(&w, p, &instruction->src[1], lane); emit(&w, " & 31u)");
-         } else if (op == RAW_UADD) {
-            emit(&w, " + "); operand(&w, p, &instruction->src[1], lane);
-         } else if (op == RAW_ISGE) {
-            emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
-            emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
-         } else if (op == RAW_USEQ || op == RAW_USNE) {
-            emit(&w, op == RAW_USEQ ? " == " : " != "); operand(&w, p, &instruction->src[1], lane);
-            emit(&w, " ? 4294967295u : 0u");
-         } else if (op == RAW_UCMP) {
-            emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
-            emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
-         } else if (op == RAW_FSLT || op == RAW_FSGE) {
-            emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
-            emit(&w, op == RAW_FSGE ? ", true)" : ", false)");
+      bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;
+      if (instruction->float_mask) float_snapshot(&w, p, instruction);
+      if (numeric) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
+      else {
+         emit(&w, " raw_rhs = uvec4(");
+         for (unsigned lane = 0; lane < 4; ++lane) {
+            if (lane) emit(&w, ", ");
+            if (!(instruction->dst.mask & (1u << lane))) { emit(&w, "0u"); continue; }
+            enum raw_opcode op = instruction->opcode;
+            emit(&w, "(");
+            if (op == RAW_NOT) emit(&w, "~");
+            if (op == RAW_ISGE) emit(&w, "(");
+            if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
+            operand(&w, p, &instruction->src[0], lane);
+            if (op == RAW_AND || op == RAW_OR) {
+               emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
+            } else if (op == RAW_SHL || op == RAW_USHR) {
+               emit(&w, op == RAW_SHL ? " << (" : " >> (");
+               operand(&w, p, &instruction->src[1], lane); emit(&w, " & 31u)");
+            } else if (op == RAW_UADD) {
+               emit(&w, " + "); operand(&w, p, &instruction->src[1], lane);
+            } else if (op == RAW_ISGE) {
+               emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
+            } else if (op == RAW_USEQ || op == RAW_USNE) {
+               emit(&w, op == RAW_USEQ ? " == " : " != "); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, " ? 4294967295u : 0u");
+            } else if (op == RAW_UCMP) {
+               emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
+            } else if (op == RAW_FSLT || op == RAW_FSGE) {
+               emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, op == RAW_FSGE ? ", true)" : ", false)");
+            }
+            emit(&w, ")");
          }
-         emit(&w, ")");
       }
       emit(&w, ");\n raw_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
       for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
       emit(&w, " = raw_rhs.");
       for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
       emit(&w, ";\n");
+      if (instruction->float_mask) {
+         emit(&w, " float_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
+         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+         emit(&w, " = float_rhs.");
+         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+         emit(&w, ";\n");
+      }
    }
    for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
       for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {
@@ -231,7 +339,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          else emit(&w, " fsout_c0");
          emit(&w, ".%c = ", "xyzw"[lane]);
          unsigned origin = p->raw->output[index][lane].origin;
-         if (origin) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);
+         if (origin == RAW_FLOAT_SHADOW) emit(&w, "float_out[%u].%c", index, "xyzw"[lane]);
+         else if (origin) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);
          else emit(&w, "uintBitsToFloat(raw_out[%u].%c)", index, "xyzw"[lane]);
          emit(&w, ";\n");
       }

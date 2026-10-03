@@ -1889,3 +1889,7 @@ verify-E6-T12e4b:
 .PHONY: verify-E6-T12e4c1
 verify-E6-T12e4c1:
 	bash tools/verify-virgl-float-masks.sh
+
+.PHONY: verify-E6-T12e4c2
+verify-E6-T12e4c2:
+	bash tools/verify-virgl-numeric-floats.sh
