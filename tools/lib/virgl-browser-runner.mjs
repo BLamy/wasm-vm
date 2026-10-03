@@ -49,6 +49,7 @@ export async function runVirglBrowser(suite) {
   let browser;
   let page;
   let server;
+  let coverageSession;
 
   async function withDeadline(milliseconds, operation) {
     let timer;
@@ -136,6 +137,11 @@ export async function runVirglBrowser(suite) {
     page.on("pageerror", (error) => report.browserErrors.page.push(error.message));
     page.on("requestfailed", (request) => report.browserErrors.requests.push({ url: request.url(), error: request.failure()?.errorText }));
     await page.goto(base, { waitUntil: "load" });
+    if (suite.coveragePaths?.length) {
+      coverageSession = await context.newCDPSession(page);
+      await coverageSession.send("Profiler.enable");
+      await coverageSession.send("Profiler.startPreciseCoverage", { callCount: true, detailed: true });
+    }
     report.acceptance = await withDeadline(90_000, page.evaluate(async ({ modulePath, arguments: options }) => {
       const { runAcceptance } = await import(modulePath);
       return await runAcceptance(options);
@@ -171,6 +177,27 @@ export async function runVirglBrowser(suite) {
     console.error(error.stack ?? error);
     process.exitCode = 1;
   } finally {
+    if (coverageSession) {
+      try {
+        const coverage = await coverageSession.send("Profiler.takePreciseCoverage");
+        const scripts = suite.coveragePaths.map((filename) => {
+          const source = report.sources.find((entry) => entry.path === filename);
+          assert.ok(source, `coverage source must be hash-bound: ${filename}`);
+          const matches = coverage.result.filter((script) => script.url.endsWith(`/${filename}`));
+          assert.equal(matches.length, 1, `coverage must name the served runtime ${filename}`);
+          return { source: filename, sha256: source.sha256, coverage: matches[0] };
+        });
+        const bytes = Buffer.from(`${JSON.stringify({ schema: 1, scripts }, null, 2)}\n`);
+        await fs.writeFile(path.join(output, "browser-coverage.json"), bytes);
+        report.browserCoverage = { path: "browser-coverage.json", sha256: hash(bytes) };
+        await coverageSession.send("Profiler.stopPreciseCoverage");
+      } catch (error) {
+        report.status = "failed";
+        report.coverageFailure = { message: error.message, stack: error.stack };
+        console.error(error.stack ?? error);
+        process.exitCode = 1;
+      }
+    }
     report.servedFiles = [...servedFiles.values()].sort((a, b) => a.path.localeCompare(b.path));
     report.finishedAt = new Date().toISOString();
     await fs.writeFile(path.join(output, "report.json"), `${JSON.stringify(report, null, 2)}\n`);

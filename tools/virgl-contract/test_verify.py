@@ -69,6 +69,15 @@ class ContractGate(unittest.TestCase):
             with self.subTest(digest=digest), self.assertRaises(ValueError):
                 self.check(changed)
 
+    def test_flat_execution_scope_is_bound_to_original_fragment(self):
+        self.check(self.contract)
+        for digest in self.contract['capturedShaders']:
+            changed = deepcopy(self.contract)
+            changed['capturedShaders'][digest]['executionEvidence'] = (
+                'not-executed' if digest == verify.FLAT_SHADER else 'flat-pair-renderer-pixels')
+            with self.subTest(digest=digest), self.assertRaises(ValueError):
+                self.check(changed)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -33,19 +33,25 @@ require another shader translation stage and additional GL coordinate, binding
 and rasterization conversions. It is not selected by this contract. WebGL2 still
 needs explicit lowering where its semantics differ from native GL.
 
-The v3 shader bridge translates **eleven of 19 captured shader bodies** and
-rejects eight (seven unsupported-feature, one parse-error). The original
+The v4 shader bridge translates **twelve of 19 captured shader bodies** and
+rejects all seven PRECISE-bearing bodies with unsupported-feature. The original
 textured-scene pair retains its three-phase pixel proof. E6-T12e1 adds independent
 pixel fixtures for two original texture/intensity fragments and two original
-affine/matrix vertex bodies; the other five accepted bodies have no execution
-claim. These explicit bindings do not establish a complete original workload.
+affine/matrix vertex bodies. E6-T12e2 links the unchanged flat fragment with a
+translated literal vertex stage through the actual pair and command renderer
+paths. The other five accepted bodies have no execution claim. These explicit bindings do not establish a complete original workload.
 The nine literal shader regressions remain a separate frontend/API baseline.
 The profile now admits bounded CONST ranges, TEMP indices through9, generic
 `.xy`/`.xyz` declarations and MOV/ADD/MUL component writes with definite lane
 initialization. Consumed lanes are checked after applying the source swizzle;
-2D texture coordinates consume xy. Integer/control flow, flat interpolation and
-PRECISE remain rejected. See the exact four hashes and profile limits in
-`tasks/epic-6-transcendence/E6-T12e1-ranges-components.md`.
+2D texture coordinates consume xy. Fragment CONSTANT interpolation is supported
+through checked per-semantic smooth/flat metadata and internally derived pair
+keys. A flat program owns and accounts for its vertex variant; selector
+generations and the effective interface both participate in program reuse.
+Unequal per-vertex attributes distinguish smooth from flat pixels, including
+mixed interfaces and switching back to a cached smooth pair. Integer/control
+flow and PRECISE remain rejected. See E6-T12e1 and E6-T12e2 task files for the
+exact originals, bounded APIs and acceptance evidence.
 No general Mesa capset can honestly describe that frontend: pinned Mesa assumes
 256 temporaries, indirect temporary/constant access and control-flow depth 32
 regardless of many advertised bits.

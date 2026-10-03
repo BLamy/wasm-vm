@@ -1865,3 +1865,7 @@ verify-E6-T11c:
 .PHONY: verify-E6-T12e1
 verify-E6-T12e1:
 	bash tools/verify-virgl-components.sh
+
+.PHONY: verify-E6-T12e2
+verify-E6-T12e2:
+	bash tools/verify-virgl-pairs.sh

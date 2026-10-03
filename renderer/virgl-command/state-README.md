@@ -81,8 +81,24 @@ Shader creation passes original decoded TGSI text and its VS/FS stage to the
 verified Wasm bridge, then compiles the emitted GLSL ES300 on the actual GL
 context. LINK_SHADER prelinks a pair without binding it; BIND_SHADER selects its
 stage and links the pair when both stages are present. Programs are keyed by the
-two selector generations. Fragment input component masks must be written by the
-vertex stage. Reflection checks actual attribute type/size/location, uvec4
+two selector generations and a canonical interface derived from the fragment's
+GENERIC semantic indices, component masks and interpolation modes. Fragment
+input components must be written by the matching vertex semantic, independently
+of physical register order. The v4 shader bridge exposes `smooth`/`flat` metadata.
+A flat input uses `translatePair` on the exact immutable selector TGSI to derive
+matching vertex qualifiers; callers cannot supply compiler keys. The returned
+fragment must match its existing translation, and the vertex metadata must
+match the derived interface before any variant is compiled.
+
+Each flat program owns one additional vertex shader. Its generated GLSL length
+counts toward `shaderBytes`, including while it is being compiled. Allocation,
+compile, link and reflection failures release that charge and every temporary
+GL object. Program deletion, final selector release and context disposal release
+the variant; dropping a bound selector's public name preserves its variant until
+the final binding is released. Smooth pairs keep their existing base shaders.
+`inspect()` exposes each program's `key`, `interfaceKey` and `variantBytes`.
+
+Reflection checks actual attribute type/size/location, uvec4
 constant-array type/count, sampler2D type/count, fragment output location zero,
 and every uniform block. `VirglBlock` must be 656 bytes with float
 `winsys_adjust_y` at offset640, initialized to 1. Its buffer is rebound and

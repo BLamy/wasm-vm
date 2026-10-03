@@ -1,5 +1,6 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
+import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -45,6 +46,39 @@ function unwrap(value) {
   return value;
 }
 const ref = (object) => object ? { handle: object.handle, generation: object.generation } : null;
+
+// Reconstruct the interface from checked stage metadata. The guest never supplies
+// a compiler key, and physical register order does not identify a varying.
+function shaderInterface(vertex, fragment) {
+  require(Array.isArray(vertex.outputs) && vertex.outputs.length <= 8 &&
+    Array.isArray(fragment.inputs) && fragment.inputs.length <= 8,
+  "shader-link-error", "Shader interface exceeds the bounded varying profile.");
+  const outputs = new Map(), inputs = new Map(), registers = new Set();
+  const generic = (entry) => entry && entry.semantic === "GENERIC" && entry.type === "vec4" &&
+    Number.isInteger(entry.index) && entry.index >= 0 && entry.index <= 7 &&
+    Number.isInteger(entry.semanticIndex) && entry.semanticIndex >= 0 && entry.semanticIndex <= 7 &&
+    entry.name === `vso_g${entry.semanticIndex}` && [3, 7, 15].includes(entry.componentMask);
+  for (const output of vertex.outputs) {
+    if (output?.semantic !== "GENERIC") continue;
+    require(generic(output) && output.interpolation === "smooth" &&
+      output.writtenMask === output.componentMask && !outputs.has(output.semanticIndex),
+    "shader-link-error", "Vertex varying metadata is incompatible.");
+    outputs.set(output.semanticIndex, output);
+  }
+  for (const input of fragment.inputs) {
+    require(generic(input) && ["smooth", "flat"].includes(input.interpolation) &&
+      !inputs.has(input.semanticIndex) && !registers.has(input.index),
+    "shader-link-error", "Fragment varying metadata is incompatible.");
+    const output = outputs.get(input.semanticIndex);
+    require(output && (input.componentMask & ~output.writtenMask) === 0,
+      "shader-link-error", "Fragment input is not written by the vertex shader.");
+    inputs.set(input.semanticIndex, input); registers.add(input.index);
+  }
+  const ordered = [...inputs.values()].sort((left, right) => left.semanticIndex - right.semanticIndex);
+  return { key: `generic-interpolation-v1:${ordered.map((input) =>
+    `g${input.semanticIndex}/${input.componentMask}/${input.interpolation}`).join(";")}`,
+  flat: ordered.some((input) => input.interpolation === "flat"), inputs };
+}
 
 /** The state-only entry point deliberately continues to reject every draw. */
 export function createVirglStateRenderer(options) {
@@ -161,6 +195,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       sub.programs.delete(program.key); programs.delete(program);
       if (gl.getParameter(gl.CURRENT_PROGRAM) === program.native) gl.useProgram(null);
       gl.deleteProgram(program.native);
+      if (program.variantShader) gl.deleteShader(program.variantShader);
+      shaderBytes -= program.variantBytes;
       for (const block of program.blocks) { gl.deleteBuffer(block.buffer); uniformBytes -= block.byteLength; }
     };
     const collectObject = (sub, object) => {
@@ -253,19 +289,41 @@ function createRenderer(options, drawing, asynchronous = false) {
     const unitFor = (stage, index) => stage === 1 ? index : 16 + index;
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
-      const key = `${vertex.generation}:${fragment.generation}`;
-      if (sub.programs.has(key)) return sub.programs.get(key);
-      require(programs.size < limits.programs, "limit-exceeded", "Linked program limit exceeded.");
-      const vs = vertex.translation.metadata, fs = fragment.translation.metadata;
-      for (const input of fs.inputs) {
-        const output = vs.outputs.find((value) => value.name === input.name && value.semantic === input.semantic && value.semanticIndex === input.semanticIndex);
-        require(output && (input.componentMask & ~output.writtenMask) === 0, "shader-link-error", "Fragment input is not written by the vertex shader.");
+      // A successfully checked selector is immutable. Repeated restoration can
+      // reuse its canonical key without rebuilding the varying maps each time.
+      if (fragment.interfaceKey !== undefined) {
+        const cached = sub.programs.get(`${vertex.generation}:${fragment.generation}:${fragment.interfaceKey}`);
+        if (cached) return cached;
       }
+      let vs = vertex.translation.metadata;
+      const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs);
+      const key = `${vertex.generation}:${fragment.generation}:${interfaceInfo.key}`;
+      require(programs.size < limits.programs, "limit-exceeded", "Linked program limit exceeded.");
       const program = { key, vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
+        interfaceKey: interfaceInfo.key, variantShader: null, variantBytes: 0,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
       try {
+        if (interfaceInfo.flat) {
+          require(typeof shaderBridge.translatePair === "function", "shader-link-error", "Flat interpolation requires the checked pair compiler.");
+          const pair = unwrap(shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text }));
+          const expectedVertex = { ...vs, outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
+            { ...output, interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
+          require(pair.interfaceKey === interfaceInfo.key &&
+            pair.fragment?.glsl === fragment.translation.glsl && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(fs) &&
+            typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
+            /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
+          "shader-link-error", "Pair compiler output does not match the selected shader interface.");
+          require(pair.vertex.glsl.length <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Vertex variant storage budget exceeded.");
+          program.variantBytes = pair.vertex.glsl.length; shaderBytes += program.variantBytes;
+          program.variantShader = gl.createShader(gl.VERTEX_SHADER);
+          require(program.variantShader, "backend-error", "Vertex variant allocation failed.");
+          gl.shaderSource(program.variantShader, pair.vertex.glsl); gl.compileShader(program.variantShader);
+          require(gl.getShaderParameter(program.variantShader, gl.COMPILE_STATUS), "shader-error",
+            `WebGL vertex variant compilation failed: ${gl.getShaderInfoLog(program.variantShader)}`);
+          vs = pair.vertex.metadata;
+        }
         program.native = gl.createProgram(); require(program.native, "backend-error", "Program allocation failed.");
-        gl.attachShader(program.native, vertex.shader); gl.attachShader(program.native, fragment.shader);
+        gl.attachShader(program.native, program.variantShader ?? vertex.shader); gl.attachShader(program.native, fragment.shader);
         gl.linkProgram(program.native);
         require(gl.getProgramParameter(program.native, gl.LINK_STATUS), "shader-link-error", `WebGL program link failed: ${gl.getProgramInfoLog(program.native)}`);
         for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_ATTRIBUTES); index++) {
@@ -331,9 +389,12 @@ function createRenderer(options, drawing, asynchronous = false) {
           require(output.semantic === "COLOR" && location === 0, "shader-reflection-error", "Unsupported fragment output.");
           program.reflection.outputs.push({ ...output, location });
         }
-        check(); freeze(program.reflection); sub.programs.set(key, program); programs.add(program); return program;
+        check(); freeze(program.reflection); sub.programs.set(key, program); programs.add(program);
+        fragment.interfaceKey = interfaceInfo.key; return program;
       } catch (error) {
         if (program.native) gl.deleteProgram(program.native);
+        if (program.variantShader) gl.deleteShader(program.variantShader);
+        shaderBytes -= program.variantBytes;
         for (const block of program.blocks) { gl.deleteBuffer(block.buffer); uniformBytes -= block.byteLength; }
         throw error;
       }
@@ -626,7 +687,9 @@ function createRenderer(options, drawing, asynchronous = false) {
         constants: sub.constants.map((words) => [...words]), viewport: sub.viewport, blendColor: [...sub.blendColor],
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
-        vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation, reflection: program.reflection })), resets: { ...sub.resets } });
+        vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation,
+        key: program.key, interfaceKey: program.interfaceKey, variantBytes: program.variantBytes,
+        reflection: program.reflection })), resets: { ...sub.resets } });
     const releaseJobAccess = (job) => {
       if (job.pending) {
         const pending = job.pending; job.pending = null;

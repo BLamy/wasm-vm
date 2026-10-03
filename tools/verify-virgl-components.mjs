@@ -14,11 +14,11 @@ await runVirglBrowser({
   html: browserDocument({ title: 'E6-T12e1 component shader proof', heading: 'Bounded component shader execution',
     description: 'Four unchanged original shaders. Independent texture, affine, matrix and depth pixels. Production graphics negotiation remains disabled.' }),
   validate(acceptance) {
-    assert.equal(acceptance.corpus.length, 19); assert.equal(acceptance.corpus.filter((entry) => entry.result.ok).length, 11);
+    assert.equal(acceptance.corpus.length, 19); assert.equal(acceptance.corpus.filter((entry) => entry.result.ok).length, 12);
     assert.deepEqual(acceptance.translations.map((entry) => entry.sha256).sort(), [...NEW_HASHES].sort());
     assert.equal(acceptance.draws.length, 10); assert.ok(acceptance.checkedPixels > 4000);
     assert.equal(acceptance.boundary.recovery.conversions, acceptance.boundary.cases.length * 4 * 2);
     assert.equal(acceptance.sabotage, null); assert.deepEqual(acceptance.omissions, []);
   },
-  successMessage: (acceptance) => `E6-T12e1: 11/19 unchanged shaders, four original GPU bodies, ten draws, ${acceptance.checkedPixels} independent pixels; ${acceptance.boundary.cases.length} shared cases; production 3D disabled.`,
+  successMessage: (acceptance) => `E6-T12e1: 12/19 unchanged shaders, four original GPU bodies, ten draws, ${acceptance.checkedPixels} independent pixels; ${acceptance.boundary.cases.length} shared cases; production 3D disabled.`,
 });

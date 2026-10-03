@@ -16,6 +16,49 @@ export async function createVirglShaderBridge(options = {}) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
   return Object.freeze({
+    translatePair(request) {
+      let vertexText, fragmentText;
+      try {
+        if (!request || typeof request !== "object" || Array.isArray(request)) {
+          return failure("invalid-input", "Provide vertexText and fragmentText own string fields.");
+        }
+        const keys = Reflect.ownKeys(request);
+        if (keys.some((key) => key !== "vertexText" && key !== "fragmentText")) {
+          return failure("unsupported-feature", "This profile does not accept shader-key overrides.");
+        }
+        const vertex = Object.getOwnPropertyDescriptor(request, "vertexText");
+        const fragment = Object.getOwnPropertyDescriptor(request, "fragmentText");
+        if (keys.length !== 2 || !vertex || !fragment || !("value" in vertex) || !("value" in fragment) ||
+            typeof vertex.value !== "string" || typeof fragment.value !== "string") {
+          return failure("invalid-input", "Provide vertexText and fragmentText own string fields.");
+        }
+        vertexText = vertex.value; fragmentText = fragment.value;
+      } catch {
+        return failure("invalid-input", "Pair request reflection failed.");
+      }
+      for (const text of [vertexText, fragmentText]) {
+        if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 16384 bytes.");
+        if (/[^\x09\x0a\x0d\x20-\x7e]/.test(text)) {
+          return failure("invalid-input", "TGSI must be printable ASCII without NUL bytes.");
+        }
+      }
+      const vertex = module._malloc(vertexText.length + 1);
+      if (!vertex) return failure("allocation-failed", "Wasm input allocation failed.");
+      let fragment = 0;
+      try {
+        fragment = module._malloc(fragmentText.length + 1);
+        if (!fragment) return failure("allocation-failed", "Wasm input allocation failed.");
+        for (const [ptr, text] of [[vertex, vertexText], [fragment, fragmentText]]) {
+          for (let i = 0; i < text.length; ++i) module.HEAPU8[ptr + i] = text.charCodeAt(i);
+          module.HEAPU8[ptr + text.length] = 0;
+        }
+        const result = module._bridge_translate_pair(vertex, vertexText.length, fragment, fragmentText.length);
+        return JSON.parse(module.UTF8ToString(result));
+      } finally {
+        if (fragment) module._free(fragment);
+        module._free(vertex);
+      }
+    },
     translate(request) {
       if (!request || typeof request !== "object" || typeof request.text !== "string") {
         return failure("invalid-input", "Provide a stage and TGSI text string.");

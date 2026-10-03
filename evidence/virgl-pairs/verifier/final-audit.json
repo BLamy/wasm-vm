@@ -1,0 +1,316 @@
+{
+  "status": "passed",
+  "checks": 118,
+  "frozenSource": "8b7106488b84c256cae7f4eae87eee16a4f09eee",
+  "workerClaim": "09e923695edd77d2b0500e3e81ce7cabfcc60835",
+  "sources": [
+    {
+      "path": "Makefile",
+      "sha256": "9b1fe5cef87531d395da3a967f6848188e57296a31322de7f7876d3d2672b8a8"
+    },
+    {
+      "path": "docs/gpu-3d-contract.json",
+      "sha256": "6cfa7cb20dab6980af38d3a6697b09fab10b2df808e8a8e364423b23641cac85"
+    },
+    {
+      "path": "docs/gpu-3d-decision.md",
+      "sha256": "3661e3ead3245a68f53bf2133ac93d9b78e02d92dced02bd0bbc070b44f75d45"
+    },
+    {
+      "path": "renderer/virgl-command/state-README.md",
+      "sha256": "b5d95d726afcfe092153c57629cb0507c2ac1b9fcccedb4ade0782e0da0619fd"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "18cbfef017a61fce214b8f830932b5035f4500804b1ec4ab0e2b1be28f5afae7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/flat-pairs.mjs",
+      "sha256": "5ebbf293e4273d4093074f264acd61940e8a74e63a89a241fafe3d99b06e092d"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "sha256": "6f9822e48c42b3cec46134325369d537bdb1f2e9ee126161dcaa3190d0f8619f"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "37acf60a04c189555a545f5275ef969f7ee7d9e9ba5966c2d195c56352afd1c0"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "sha256": "2febc160dbafdf74e9c23e823e436ab6ea4d026a116c98a9bcda4fa050a17aec"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "sha256": "a4f4681901296f5a09b8893ec04a5ce5decfd8afed8817fca6805ed862e9b5b2"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "sha256": "203fbbf533fca4749f2fed5896557eab97cacc1ac37579d9f985996c075c2626"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "sha256": "a4d354dd26828aa38743baa402b19bccc2ffa7f8d206dd750b7da057f06133b4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "sha256": "7a2524ec56b2cad12cc919411ce3984e91d61e66968cdcf43158c05cc5b7ad55"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "sha256": "2c8bdeda1368908d02d886bbb207c7e3341502d474a16cde5f0f5ee58a475936"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "sha256": "3e96e57258aa60ed807a516b91508e1f22cb01445899d4e94d2016d5727fd054"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "sha256": "639e5b388775729b6d9e2776c2313cdef869195af548f8f9b08c70937b77aac5"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "sha256": "e24a52f0a3de67b692a703c3b0307453e8c07e97e114898e432bc62d2d867567"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "sha256": "96f5c649d0d34ee6a3d88795b328572cec9bc020d78726d733717ae20b5f2e23"
+    },
+    {
+      "path": "tools/lib/virgl-browser-runner.mjs",
+      "sha256": "8ef93b0898858329aca938219b3532424aa4bb65945ddba3a59ae799af26f0e2"
+    },
+    {
+      "path": "tools/verify-virgl-components.mjs",
+      "sha256": "706063fb02512b74daad0faf402690f86229bdce62ab8acd2497d88765e7b230"
+    },
+    {
+      "path": "tools/verify-virgl-pairs.mjs",
+      "sha256": "721064714da7517dcac0a1662ff0d835abd7f5040ffff3155d8ab8d92d5169d8"
+    },
+    {
+      "path": "tools/verify-virgl-pairs.sh",
+      "sha256": "3ec05b437e5ab75bb1691f761f8e6d72ade6e39ff552720dd4e52a72ca761953"
+    },
+    {
+      "path": "tools/virgl-components/native.py",
+      "sha256": "535d40baacf497a301e95e5bce48c1376a63e2d69a77fed75cf38aeeeab62dda"
+    },
+    {
+      "path": "tools/virgl-components/receipt.py",
+      "sha256": "ab783013ef840d73118e2cf358025ef1a860089902797801ad7ee17b4fb05353"
+    },
+    {
+      "path": "tools/virgl-contract/test_verify.py",
+      "sha256": "3bf50e04d5513f2be822bdb6458bff2b9229161c51d10204ea33afe233003b77"
+    },
+    {
+      "path": "tools/virgl-contract/verify.py",
+      "sha256": "81d9c3958529a5f9f8fde01123cc5bbe3c366a29d5174755d4904dd3df04a65e"
+    },
+    {
+      "path": "tools/virgl-pairs/cold.py",
+      "sha256": "ee3cf05b9a439d248369e9f87a5bb17573cfc91d519fdde523be18a34f7fb52f"
+    },
+    {
+      "path": "tools/virgl-pairs/native.py",
+      "sha256": "35e707676954396c565b3b60be26f55fd4348831a5884cc4e2157b817fa4b065"
+    },
+    {
+      "path": "tools/virgl-pairs/receipt.py",
+      "sha256": "e6b3fdf3dde7e73b8b20482b8c29d33642989db7c7ce1527032c398ef8cb21ad"
+    }
+  ],
+  "verifierFiles": [
+    {
+      "path": "evidence/virgl-pairs/verifier/anchors.json",
+      "size": 6063,
+      "sha256": "9ca29d199fe87c7c4e0df836fdac5ea7acaaba60d93eaeb5508499526c63d259"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/batch.c",
+      "size": 772,
+      "sha256": "037a0a41d1f52cec7ddd9052851a2da3db6ccff398d8e4f26c70b1e412aa4c6d"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/binding-audit.json",
+      "size": 5021,
+      "sha256": "bbd6959294740b45b96fa5fe6bb329cd492683227f4986bed3e28ef3497b138b"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/binding-audit.py",
+      "size": 17491,
+      "sha256": "763eef386993f081e310515ddb761da2790b11967dabb1d34a1a69d1a393a745"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/binding-review.md",
+      "size": 6529,
+      "sha256": "8c376e29a2d96a41d93ed9f1f9238393d5d42a8d917746e608696d87ed2d5c15"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/browser-cases.json",
+      "size": 692625,
+      "sha256": "ad5fb4655ce0fd86c6e35bbc1f91d207c2f972161d0808b2b00a65fcfd569656"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/browser-coverage.json",
+      "size": 54617,
+      "sha256": "c6f8e412fb35d073739b70d8fb801d264d66488419cb9026a90722a1e6456077"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/build-defensive.py",
+      "size": 1170,
+      "sha256": "2b923b304fb1fcbc8724192fb7c02e91dee25ec34a65f91156eec2eacf7de555"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/build-native.py",
+      "size": 2507,
+      "sha256": "90e615fdca1ea602a237d2aab4fd4703be58966a10bdcfa8f050ed4d047962bc"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/coverage-audit.py",
+      "size": 2351,
+      "sha256": "e785e98c8abc7a85d4d007858ee952c1a4231115dfcae2009b7313908682c094"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/coverage-census.json",
+      "size": 27265,
+      "sha256": "d06fdcb4ea409b170444d2e871e1664d1c3a325bc8caf2f6ebb86a9274401886"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/coverage-review.md",
+      "size": 8202,
+      "sha256": "105e965ca4a38ce0e35407fde8651d13851ca5ca6c4276f53ef3f479061b0b3b"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/defensive.c",
+      "size": 2733,
+      "sha256": "622c83c06a16d59a90349dbce3ced49b4455780a3d1f5eef91c2f801db68ab7f"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/defensive.json",
+      "size": 4941,
+      "sha256": "648b7bfcb3a02c8f0b37cfe02fb5afd5ade617d68e3757e2453f5bf18b3975b2"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/final-audit.py",
+      "size": 4383,
+      "sha256": "bb211d8124b9f2c013b313987b7f204621f6ae26273bda374fba467154db4790"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu-attacks.mjs",
+      "size": 15579,
+      "sha256": "85428152eeead742a16f6e5e2aac578e9d10550bef69a80761345b6c7ebee3b6"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu-sabotage.json",
+      "size": 18760,
+      "sha256": "07b26f127809a68856f74c648052a1cd6827d87a5e2a4c17c7663eccd37693a6"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu-sabotage.png",
+      "size": 71330,
+      "sha256": "a0c1ccd0ef80350b92c177608c191e1f5419582202adfa2920cfc02ffb087b82"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu.json",
+      "size": 94478,
+      "sha256": "34fd7f895290b71eac150fa639c0d8f71e76aef2825493420d7920fa128afcf8"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu.png",
+      "size": 81941,
+      "sha256": "3ba6aed5e0868513a953cceba0acb8e8e808f403a20ba46260fe3dcba0f5941a"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/harness-calibration.json",
+      "size": 14186,
+      "sha256": "1c2c92a6554dc47df93826b89282d64e2f867a47241040d97d8237d9d98d899b"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/js-coverage-census.json",
+      "size": 9712,
+      "sha256": "18cd6998075fae400646d02021e7163ecb8d041f510a53499dc30aa37d5e67f3"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/js-coverage.py",
+      "size": 2148,
+      "sha256": "d3d3d38d029fbfe2a8cef8bb6c833279f4abeeea9cdc1e5576de2ac13be7e858"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-attacks.py",
+      "size": 8911,
+      "sha256": "78c36354e76f127c4464e57606aa494d25f12a8b07976a2938832606720e5159"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-build.json",
+      "size": 38452,
+      "sha256": "8cd6853c30563e464ce85309ef80aa17de3655248dcc9726aad7458cab4dbb6b"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-build.log",
+      "size": 3630,
+      "sha256": "a50c6844b08efd0cb2adedfe2fab1ac5c7ed67d486dc5a768d28f0ed65cdddc8"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-coverage.json",
+      "size": 222149,
+      "sha256": "670c83255bb9157386acebeb2f7c928416a66dbc02ca3e9f12747f3069357e20"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-run.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native-sabotage.json",
+      "size": 3687,
+      "sha256": "8debad46872b9bfdda54cbebba7ce73bd958c11f9dfb824603f27c9d65045741"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/native.json",
+      "size": 1575737,
+      "sha256": "5a047d000c9415de83922668e78948991a9a854985607af0b34c7240fbad76c9"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/predictions.md",
+      "size": 12123,
+      "sha256": "4d2edf5971eafebbf73dfe527077673907252a1ffea56af40b51888107150ba1"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/preparation.json",
+      "size": 7082,
+      "sha256": "667cb9d9936a23399b528d9183d074d83ef7a3fd9f3cd4459bfb5510ea16f291"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/review.md",
+      "size": 7862,
+      "sha256": "9ebd4bdf86717944e3eaa74873e0f6c85c5d118b53e9db1468e7f6f5a7ed2452"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/run-gpu.mjs",
+      "size": 4783,
+      "sha256": "df280d61de3d886958448ee960d83686c5349c153a2b5b527a26371d789a52eb"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/sabotage-coverage.json",
+      "size": 48194,
+      "sha256": "f6c5de6d17dbfb196297e62509416687bd4ccb07bad6061c7c18d639f1d8a591"
+    }
+  ],
+  "nativeCases": 2729,
+  "nativeCalls": 8187,
+  "hardwareAssertions": 944,
+  "hardwarePixels": 84,
+  "nativeDefensiveChecks": 19,
+  "remainingNativeBranchWaivers": 7,
+  "unhitChangedJsRanges": 0
+}
