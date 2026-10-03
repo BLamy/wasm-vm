@@ -4,7 +4,7 @@ epic: 6
 title: Present retained 3D resources through the existing virtio scanout path
 priority: 525.02698
 status: pending
-depends_on: [E6-T11b]
+depends_on: [E6-T11b2]
 estimate: S
 risk: high
 capstone: false

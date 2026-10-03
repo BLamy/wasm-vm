@@ -6,6 +6,8 @@ export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, object
   programs: 64, shaderBytes: 1048576, uniformBytes: 65536 });
 export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
+export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
+export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 function freeze(value) {
@@ -54,10 +56,15 @@ export function createVirglDrawRenderer(options) {
   return createRenderer(options, true);
 }
 
-/** gl, resources, bindings and shaderBridge are trusted, synchronous host capabilities. */
-function createRenderer(options, drawing) {
+/** Owned jobs; the caller pumps step from later browser tasks. */
+export function createVirglAsyncRenderer(options) {
+  return createRenderer(options, true, true);
+}
+
+/** Host capabilities are trusted and non-reentrant. */
+function createRenderer(options, drawing, asynchronous = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", ...(drawing ? ["drawLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge"]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
     require(gl && typeof gl.createVertexArray === "function" && typeof gl.uniform4uiv === "function", "invalid-input", "A WebGL2 context is required.");
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
@@ -74,7 +81,18 @@ function createRenderer(options, drawing) {
         "invalid-input", "Draw limits may only tighten defaults.");
       Object.freeze(drawLimits);
     }
-    const profile = drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const asyncAccess = config.asyncAccess;
+    let jobLimits = null, activeJob = null;
+    if (asynchronous) {
+      require(asyncAccess && ["prepareTransfer", "validate", "provideInput", "upload", "beginTransferRead", "beginStorageRead", "poll", "release", "inspect"]
+        .every((name) => typeof asyncAccess[name] === "function"), "invalid-input", "Asynchronous resource access is required.");
+      jobLimits = { ...JOB_LIMITS, ...dataRecord(config.jobLimits ?? {}, Object.keys(JOB_LIMITS), []) };
+      for (const key of Object.keys(jobLimits)) require(Number.isSafeInteger(jobLimits[key]) && jobLimits[key] >= (key === "commandsPerStep" ? 1 : 0) && jobLimits[key] <= JOB_LIMITS[key],
+        "invalid-input", "Job limits may only tighten defaults; step budget must be positive.");
+      Object.freeze(jobLimits);
+    }
+    const profile = asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
     const check = () => {
@@ -417,7 +435,7 @@ function createRenderer(options, drawing) {
       } else { gl.viewport(0, 0, 0, 0); gl.depthRange(0, 1); }
       check();
     };
-    const draw = (ctx, sub, command, submission) => {
+    const prepareDraw = (ctx, sub, command, submission) => {
       const fields = command.fields;
       require(fields.indexed && fields.start === 0 && fields.count > 0,
         "unsupported-draw", "Only nonempty indexed draws with start zero are supported.");
@@ -450,8 +468,10 @@ function createRenderer(options, drawing) {
       require(fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
         "out-of-bounds", "Index draw range exceeds retained storage.");
       const indexByteLength = fields.count * 2;
-      const bytes = unwrap(resources.readStorage(index.lease,
-        { x: indexOffset, y: 0, z: 0, width: indexByteLength, height: 1, depth: 1 })).bytes;
+      return { ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength };
+    };
+    const issueDraw = (plan, bytes, submission) => {
+      const { ctx, sub, command, fields, surface, attributes, indexStorage, indexOffset, indexByteLength } = plan;
       const indices = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
       let actualMinIndex = 65535, actualMaxIndex = 0;
       for (let offset = 0; offset < indexByteLength; offset += 2) {
@@ -484,6 +504,12 @@ function createRenderer(options, drawing) {
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
           width: surface.metadata.width, height: surface.metadata.height },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]) });
+    };
+    const draw = (ctx, sub, command, submission) => {
+      const plan = prepareDraw(ctx, sub, command, submission);
+      const bytes = unwrap(resources.readStorage(plan.index.lease,
+        { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 })).bytes;
+      issueDraw(plan, bytes, submission);
     };
     const apply = (ctx, command, submission) => {
       const fields = command.fields, sub = ctx.subs.get(ctx.current), op = command.opcode;
@@ -601,16 +627,141 @@ function createRenderer(options, drawing) {
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
         vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation, reflection: program.reflection })), resets: { ...sub.resets } });
+    const releaseJobAccess = (job) => {
+      if (job.pending) {
+        const pending = job.pending; job.pending = null;
+        unwrap(asyncAccess.release(pending.ticket));
+      }
+      job.request = null;
+    };
+    const getJob = (token) => {
+      alive(); require(activeJob && activeJob.token === token, "invalid-job", "Unknown, completed or foreign renderer job.");
+      return activeJob;
+    };
+    const validateJob = (job) => {
+      require(context(job.ctx.id) === job.ctx, "stale-context", "Renderer context identity changed.");
+      if (job.pending) {
+        require(job.ctx.subs.get(job.pending.sub.id) === job.pending.sub && job.ctx.current === job.pending.sub.id,
+          "stale-context", "Renderer subcontext identity changed.");
+        unwrap(asyncAccess.validate(job.pending.ticket));
+      }
+    };
+    const jobStatus = (job, status) => Object.freeze({ ok: true, status, appliedCommands: job.index,
+      ...(job.request ? { request: job.request } : {}) });
+    const finishJob = (job, gpuComplete) => {
+      releaseJobAccess(job);
+      if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
+      activeJob = null;
+      const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
+      const completed = job.error ? failure(job.error, extra, job.command) : success({ profile, ...extra,
+        byteLength: job.byteLength, contextId: job.ctx.id, subContextId: job.ctx.current });
+      return Object.freeze({ ok: true, status: "done", appliedCommands: job.index, result: completed });
+    };
+    const finishOrFence = (job) => {
+      if (!job.sync && job.hadFence && job.completedSerial === job.serial) return finishJob(job, true);
+      if (!job.sync) {
+        job.sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+        require(job.sync, "backend-error", "Completion fence allocation failed.");
+        job.fenceSerial = job.serial; job.hadFence = true; gl.flush(); check();
+      }
+      job.phase = "finishing"; return jobStatus(job, "waiting-gpu");
+    };
+    const failJob = (job, error, uncertain = false) => {
+      if (!(error instanceof StateFault)) throw error;
+      job.error ??= error; job.request = null;
+      if (uncertain || gl.isContextLost() || unwrap(resources.inspect()).disposed) return finishJob(job, false);
+      if (job.pending?.readStarted) { job.phase = "retiring"; return jobStatus(job, "waiting-gpu"); }
+      releaseJobAccess(job);
+      try { return finishOrFence(job); }
+      catch (finishError) { if (!(finishError instanceof StateFault)) throw finishError; return finishJob(job, false); }
+    };
+    const transferRequest = (job, prepared, bytes) => Object.freeze({
+      token: Object.freeze({}), command: freeze({ byteOffset: job.command.byteOffset, opcode: job.command.opcode }),
+      resource: prepared.resource, backingGeneration: prepared.backingGeneration, layout: prepared.layout,
+      ...(bytes ? { bytes } : {}) });
+    const stepJob = (token) => {
+      const job = getJob(token);
+      let polling = false;
+      try {
+        if (job.phase === "cancelling" || job.phase === "retiring") {
+          if (job.pending?.readStarted) {
+            polling = true;
+            const polled = unwrap(asyncAccess.poll(job.pending.ticket, true));
+            if (polled.status === "pending") return jobStatus(job, "waiting-gpu");
+            polling = false; job.completedSerial = job.pending.fenceSerial;
+          }
+          releaseJobAccess(job); return finishOrFence(job);
+        }
+        if (!job.error) validateJob(job);
+        if (job.phase === "finishing") {
+          polling = true;
+          const status = gl.clientWaitSync(job.sync, 0, 0);
+          require(status === gl.TIMEOUT_EXPIRED || status === gl.ALREADY_SIGNALED || status === gl.CONDITION_SATISFIED,
+            "backend-error", "Completion fence wait failed.");
+          check();
+          if (status === gl.TIMEOUT_EXPIRED) return jobStatus(job, "waiting-gpu");
+          job.completedSerial = job.fenceSerial; return finishJob(job, true);
+        }
+        if (job.phase === "needs-input" || job.phase === "needs-output") return jobStatus(job, job.phase);
+        let budget = jobLimits.commandsPerStep;
+        if (job.phase === "waiting-index" || job.phase === "waiting-transfer") {
+          polling = true;
+          const polled = unwrap(asyncAccess.poll(job.pending.ticket));
+          if (polled.status === "pending") return jobStatus(job, "waiting-gpu");
+          polling = false; job.completedSerial = job.pending.fenceSerial;
+          if (job.phase === "waiting-transfer") {
+            job.request = transferRequest(job, job.pending, polled.bytes);
+            job.phase = "needs-output"; return jobStatus(job, job.phase);
+          }
+          // No yield or public host callback separates the revision check and draw.
+          unwrap(asyncAccess.validate(job.pending.ticket));
+          job.serial++; issueDraw(job.pending.plan, polled.bytes, job.submission);
+          releaseJobAccess(job); job.index++; budget--; job.phase = "ready";
+        } else if (job.phase === "upload-ready") {
+          job.serial++; unwrap(asyncAccess.upload(job.pending.ticket));
+          releaseJobAccess(job); job.index++; budget--; job.phase = "ready";
+        }
+        while (job.index < job.commands.length && budget > 0) {
+          job.command = job.commands[job.index];
+          const sub = job.ctx.subs.get(job.ctx.current);
+          if (job.command.opcode === 8) {
+            // Planning may link a program, so account for even a failed prefix.
+            job.serial++;
+            const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
+            require(plan.indexByteLength <= jobLimits.transferBytes, "limit-exceeded", "Index staging exceeds job byte limit.");
+            const read = unwrap(asyncAccess.beginStorageRead(plan.index.lease,
+              { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 }));
+            job.pending = { ...read, sub, plan, readStarted: true, fenceSerial: job.serial };
+            job.hadFence = true; job.phase = "waiting-index"; return jobStatus(job, "waiting-gpu");
+          }
+          if (job.command.opcode === 43 || job.command.opcode === 45) {
+            const prepared = unwrap(asyncAccess.prepareTransfer(job.ctx.id, job.command));
+            job.pending = { ...prepared, sub, readStarted: false };
+            require(prepared.layout.tightBytes <= jobLimits.transferBytes, "limit-exceeded", "Transfer exceeds job byte limit.");
+            if (prepared.layout.direction === "upload") {
+              job.request = transferRequest(job, prepared); job.phase = "needs-input"; return jobStatus(job, job.phase);
+            }
+            job.serial++; unwrap(asyncAccess.beginTransferRead(prepared.ticket));
+            job.pending.readStarted = true; job.pending.fenceSerial = job.serial;
+            job.hadFence = true; job.phase = "waiting-transfer"; return jobStatus(job, "waiting-gpu");
+          }
+          // END_TRANSFERS issues no GL work. Other state operations restore GL state.
+          if (job.command.opcode !== 44) job.serial++;
+          apply(job.ctx, job.command, job.submission); job.index++; budget--;
+        }
+        return job.index === job.commands.length ? finishOrFence(job) : jobStatus(job, "ready");
+      } catch (error) { return failJob(job, error, polling && error.code === "backend-error"); }
+    };
     const renderer = {
       createContext(id) { return result(() => {
-        alive(); uint(id, "contextId"); require(!contexts.has(id), "duplicate-context", "State context already exists.");
+        alive(); idle(); uint(id, "contextId"); require(!contexts.has(id), "duplicate-context", "State context already exists.");
         require(contexts.size < limits.contexts, "limit-exceeded", "Context limit exceeded.");
         const resourceGeneration = resourceContext(id).generation, contextGeneration = generation(), sub = createSub(0);
         const ctx = { id, generation: contextGeneration, resourceContextGeneration: resourceGeneration, current: 0, subs: new Map([[0, sub]]) };
         contexts.set(id, ctx); return success({ context: { id, generation: ctx.generation } });
       }); },
       destroyContext(id) { return result(() => {
-        alive(); uint(id, "contextId"); const ctx = contexts.get(id); require(ctx, "missing-context", "State context does not exist.");
+        alive(); idle(); uint(id, "contextId"); const ctx = contexts.get(id); require(ctx, "missing-context", "State context does not exist.");
         for (const sub of ctx.subs.values()) disposeSub(sub); contexts.delete(id); return success();
       }); },
       executeSubmission(id, bytes, provenance = {}) {
@@ -618,6 +769,7 @@ function createRenderer(options, drawing) {
         const submission = drawing ? { draws: [], indices: 0 } : null;
         const drawResults = () => drawing ? { draws: submission.draws } : {};
         try {
+          idle();
           const decoded = decodeSubmission(bytes, provenance);
           if (!decoded.ok) return freeze({ ...decoded, appliedCommands, ...drawResults() });
           const ctx = context(id);
@@ -626,11 +778,16 @@ function createRenderer(options, drawing) {
           return success({ profile, appliedCommands, byteLength: decoded.byteLength, contextId: id, subContextId: ctx.current, ...drawResults() });
         } catch (error) { return failure(error, { appliedCommands, ...drawResults() }, command); }
       },
-      restoreContext(id) { return result(() => { const ctx = context(id); restore(ctx.subs.get(ctx.current)); return success({ contextId: id, subContextId: ctx.current }); }); },
+      restoreContext(id) { return result(() => { idle(); const ctx = context(id); restore(ctx.subs.get(ctx.current)); return success({ contextId: id, subContextId: ctx.current }); }); },
       inspect(id) { return result(() => {
         if (id !== undefined) { uint(id, "contextId"); require(contexts.has(id), "missing-context", "State context does not exist."); }
         const selected = id === undefined ? [...contexts.values()] : [contexts.get(id)];
         return success({ profile, disposed, limits, ...(drawing ? { drawLimits } : {}),
+          ...(asynchronous ? { jobLimits, jobs: { active: activeJob === null ? 0 : 1, status: activeJob?.phase ?? "idle",
+            appliedCommands: activeJob?.index ?? 0, commandCount: activeJob?.commands.length ?? 0,
+            inputBytes: activeJob?.phase === "upload-ready" ? activeJob.pending.layout.tightBytes : 0,
+            outputBytes: activeJob?.request?.bytes?.byteLength ?? 0,
+            reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes },
@@ -639,10 +796,50 @@ function createRenderer(options, drawing) {
       }); },
       dispose() { return result(() => {
         if (disposed) return success();
+        if (activeJob) { releaseJobAccess(activeJob); if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null; }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
         contexts.clear(); disposed = true; return success();
       }); },
     };
+    if (asynchronous) {
+      // This entry point has no synchronous escape hatch while using the job profile.
+      delete renderer.executeSubmission;
+      Object.assign(renderer, {
+        beginSubmission(id, bytes, provenance = {}) {
+          return result(() => {
+            alive(); idle(); require(jobLimits.jobs > 0, "limit-exceeded", "Renderer jobs are disabled.");
+            const decoded = decodeSubmission(bytes, provenance);
+            if (!decoded.ok) return freeze({ ...decoded, appliedCommands: 0, draws: [] });
+            require(decoded.byteLength <= jobLimits.submissionBytes, "limit-exceeded", "Submission exceeds job byte budget.");
+            const ctx = context(id);
+            require(decoded.contextId === null || decoded.contextId === id, "invalid-provenance", "Context provenance disagrees with execution context.");
+            const token = Object.freeze({});
+            activeJob = { token, ctx, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
+              command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
+              error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null };
+            return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
+          });
+        },
+        step(token) { return result(() => stepJob(token)); },
+        provideInput(token, requestToken, bytes) { return result(() => {
+          const job = getJob(token);
+          require(job.phase === "needs-input" && job.request.token === requestToken, "invalid-request", "Unknown or consumed input request.");
+          validateJob(job); unwrap(asyncAccess.provideInput(job.pending.ticket, bytes));
+          job.request = null; job.phase = "upload-ready"; return success();
+        }); },
+        acknowledgeOutput(token, requestToken) { return result(() => {
+          const job = getJob(token);
+          require(job.phase === "needs-output" && job.request.token === requestToken, "invalid-request", "Unknown or consumed output request.");
+          validateJob(job); releaseJobAccess(job); job.index++; job.phase = "ready"; return success();
+        }); },
+        cancel(token) { return result(() => {
+          const job = getJob(token);
+          require(!job.error, "invalid-job", "Job is already cancelling or failed.");
+          job.error = new StateFault("cancelled", "Renderer job was cancelled."); job.request = null;
+          job.phase = "cancelling"; return success({ status: "cancelling" });
+        }); },
+      });
+    }
     // Do not recursively freeze capabilities or any of the native GL objects they own.
     return Object.freeze({ ok: true, renderer: Object.freeze(renderer) });
   });
