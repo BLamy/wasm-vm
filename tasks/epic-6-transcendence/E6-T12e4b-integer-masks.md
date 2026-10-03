@@ -3,7 +3,7 @@ id: E6-T12e4b
 epic: 6
 title: Preserve wrapping integer arithmetic masks and selection
 priority: 525.02699042
-status: pending
+status: in-progress
 depends_on: [E6-T12e4a]
 estimate: S
 risk: high
