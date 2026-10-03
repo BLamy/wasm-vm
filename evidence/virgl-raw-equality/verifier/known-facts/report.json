@@ -1,0 +1,41 @@
+{
+  "schema": "fresh-raw-equality-known-facts-v1",
+  "status": "passed",
+  "seeds": [
+    "615a4ec7",
+    "cab92135",
+    "037d8a61",
+    "92f460bd"
+  ],
+  "vectorsPerSeed": 32,
+  "calls": 3088,
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "bytes": 26670,
+      "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "bytes": 6532,
+      "sha256": "20d99c205b2004141529a3502b51fd76d6d99149aee90cd2fb6e74ad1a2477dc"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 57735,
+      "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "bytes": 10212,
+      "sha256": "b50b0035080f526238c07164c509a092c7562c2e8640486abf1b33f95dc5c8b9"
+    }
+  ],
+  "binarySha256": "474747e6e5fd5f430740cbbf7adbc41b898e5cf6f558d97c7e1218e66fb125eb",
+  "faultBinarySha256": "bf580e3e1826e62150a77301d1c1d456d2d04f7aa95b3915cbc559beb9e3f989",
+  "transcript": {
+    "path": "calls.jsonl",
+    "bytes": 6295466,
+    "sha256": "8fe222d533b6fc14d361b51cb8ac00cf39bc5f0aaf484395444a1ccf6065b842"
+  }
+}

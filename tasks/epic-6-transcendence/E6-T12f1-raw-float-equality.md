@@ -3,7 +3,7 @@ id: E6-T12f1
 epic: 6
 title: Implement raw FSEQ and FSNE masks without changing precision semantics
 priority: 525.0269911
-status: implemented
+status: evidence-needed
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -160,3 +160,69 @@ Guest Renderer stay disabled. This proof does not close PRECISE/dataflow gaps,
 claim all 19 originals, establish guest desktop acceleration or demonstrate
 300 MIPS. Status is implemented pending a fresh adversarial verifier.
 
+### 2026-10-03 — fresh verifier — VERDICT: needs-evidence
+
+Predictions preceded evidence inspection in
+`evidence/virgl-raw-equality/verifier/predictions.md`. Reviewed the full E9-to-worker
+diff at `cdc9ebd14407976a2ea2fb5a5a2cf634078c2726`; implementation and worker
+harness were not edited by this critic. The final authoritative cold recording
+is `a7be954c1f3bea9dd1e96522e890fa012197c6fe`, not the earlier warm harness.
+
+- F1 / P9 maxima — NEEDS EVIDENCE. Predicted a typed reconstruction of actual
+  maximum GLSL58,201; full receipt accepts `true`, `1` and `58201.0` after the
+  altered native report's SHA/length is propagated into its Wasm cross-link.
+  `verifier/propagated-attacks.json:7`, `:23`, `:39`, SHA-256
+  `6bbd0e2a798c3b22174fc8ec8722205feab34bd0a275ef0abad3ce721284f009`.
+  `tools/virgl-raw-equality/native_receipt.py:54–66` never reconstructs the
+  separate `recordedMaxima`; `receipt.py:134` copies it. Reconstruct and compare
+  all three maxima as exact bounded JSON integers.
+- F2 / P9 source/coverage closure — NEEDS EVIDENCE. Predicted mandatory inventories
+  and source/summary correspondence. Full receipt instead accepts empty native
+  or coverage-source inventories, mismatched coverage summary and invented
+  coverage-source digest. `verifier/propagated-attacks.json:55`, `:71`, `:87`,
+  `:103`, same SHA above. Native-only wrong byte/path attacks also pass at
+  `verifier/receipt-attacks.json:1024`, `:1115`, SHA-256
+  `6bb33e2a808997107bd3771cae2c7610b9fa8c10ab908fb2652d9a33f48d994d`.
+  Code: `native_receipt.py:62–65`. Require exact compiler/harness inventories
+  and both covered implementation sources, frozen bytes/digests and matching
+  LLVM filenames/summaries. Actual pristine bindings currently match.
+- F3 / P4,P9 consumer ledger — NEEDS EVIDENCE. Predicted rejection of omitted
+  acceptance checks, missing sources and noninteger getter count. Full receipt
+  accepts checks0 or2,503 after removing every forbidden13/unknown14 case,
+  sources[], gettersFalse or0.0. `verifier/receipt-attacks.json:1341`, `:1354`,
+  `:1367`, `:1380`, `:1393`, SHA above; code `receipt.py:115–122`. Derive and
+  validate the complete ordered expected ledger, source inventory, schema and
+  typed counters, including recorded getter avoidance. Rerun the touched
+  consumer harness and these promoted negative checks.
+- P1–P8,P10 runtime results — HELD. Untouched final cold receipt regenerates
+  exactly. Independently checked all75 copied artifacts against the clean clone,
+  all175 source/73 record bindings and all15 loaded local validator dependencies.
+  Compared all4,012 retained stages/264 pairs: exactly8 migrations; all4,004
+  others and all19 original full results remain exact at12/19; successor GPU
+  probe prefixes remain byte-exact. Frozen native/Wasm totals, bounds, recovery,
+  all640 words/all8 actual migrated bodies and all5 real-source faults hold.
+  `verifier/recording-audit.json` SHA-256
+  `886ab3a3c2a7efe6cc9c20c44bd7856b05004a289d58fbc415064ff71e28a6af`.
+- P2,P3,P7,P10 novel attacks — HELD. 3,088 public CLI admission/alias checks under
+  four independent seeds pass; a new identical signaling-NaN witness catches the
+  actual known-fact compiler fault before GPU. `verifier/known-facts/report.json`
+  SHA-256 `7b7c1446e930467863c6994d725a67a60ba3d0cdf66e489cd53d47529cacc0e7`.
+  A fresh realGPU recording reconstructs2,112 complete words across16 both-stage
+  kernels, unknown self comparisons and both aliases, with zero browser errors.
+  `verifier/seeded-gpu-authoritative/report.json` SHA-256
+  `96b1c3c741c717ce07923ad3c2f50815cf80870f76b2f9661bc2ee79dd93de6d`;
+  screenshot inspected. Actual consumer checks/getter avoidance remain HELD;
+  its ledger sufficiency is the F3 gap.
+- P8 coverage — HELD for product hunks. Frozen LLVM re-export is byte-identical;
+  all25 changed executable C lines execute, including124 known-equality calls.
+  The consumer membership expression executes (module1/map callback7).
+  WAIVED: four nonexecutable C comment/blank/declaration lines, header/mask/static
+  declarations, documentation, task decomposition and declarative metadata;
+  their consumers/layouts/direct results are exercised. Receipt sufficiency is
+  still F1–F3. Carry unchanged E9 HELD results forward.
+- SUITE: promoted critic scripts/records are bound in `verifier/manifest.json`;
+  `verifier/commands.json` records exact final commands. Full verdict and demands
+  are in `verifier/verdict.md`. Receipt attack scripts offer `--expect-rejected`
+  for the repaired negative gate. No product claim was contradicted; repair only
+  the affected proof harness and rerun its missing proof/checks. Do not restart
+  unrelated runtime/workspace gates or the already-held final pristine clone.

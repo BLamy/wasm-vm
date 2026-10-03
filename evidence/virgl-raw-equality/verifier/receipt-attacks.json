@@ -1,0 +1,1406 @@
+{
+  "schema": "fresh-raw-equality-receipt-attacks-v1",
+  "head": "a7be954c1f3bea9dd1e96522e890fa012197c6fe",
+  "cleanControl": "passed",
+  "inputSha256": "cb4d4367911bba46789f3d32ecc166e24bba412c8ad9e27db20e03e3a39f5751",
+  "reconstructedActualMaxima": {
+    "singleResultBytes": 63369,
+    "pairResultBytes": 109235,
+    "stageGlslBytes": 58201
+  },
+  "attacks": [
+    {
+      "attack": "recordedMaxima-singleResultBytes-bool",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": true,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-singleResultBytes-float",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369.0,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-singleResultBytes-incorrect-integer",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 1,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-pairResultBytes-bool",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": true,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-pairResultBytes-float",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235.0,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-pairResultBytes-incorrect-integer",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 1,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-stageGlslBytes-bool",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": true
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-stageGlslBytes-float",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201.0
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "recordedMaxima-stageGlslBytes-incorrect-integer",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 1
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "omitted-native-source-inventory",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "omitted-coverage-source-inventory",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": []
+    },
+    {
+      "attack": "incorrect-coverage-source-digest",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "incorrect-coverage-source-byte-length",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 1,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "invented-coverage-source-name",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "invented/coverage.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 960,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "incorrect-coverage-source-summary",
+      "rejected": false,
+      "forgedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "forgedCoverageSources": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 57735,
+          "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5",
+          "summary": {
+            "branches": {
+              "count": 1476,
+              "covered": 1319,
+              "notcovered": 157,
+              "percent": 89.36314363143632
+            },
+            "functions": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "instantiations": {
+              "count": 49,
+              "covered": 47,
+              "percent": 95.91836734693877
+            },
+            "lines": {
+              "count": 969,
+              "covered": 0,
+              "percent": 99.07120743034056
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 2319,
+              "covered": 2247,
+              "notcovered": 72,
+              "percent": 96.89521345407503
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 26670,
+          "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf",
+          "summary": {
+            "branches": {
+              "count": 574,
+              "covered": 562,
+              "notcovered": 12,
+              "percent": 97.90940766550523
+            },
+            "functions": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 21,
+              "covered": 21,
+              "percent": 100
+            },
+            "lines": {
+              "count": 445,
+              "covered": 437,
+              "percent": 98.20224719101124
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 881,
+              "covered": 873,
+              "notcovered": 8,
+              "percent": 99.09194097616346
+            }
+          }
+        }
+      ]
+    },
+    {
+      "attack": "boolean-source-summary-counter",
+      "rejected": true,
+      "error": "nonnegative JSON integer: LLVM lines.covered",
+      "exception": "ValueError"
+    },
+    {
+      "attack": "float-layout-bound",
+      "rejected": true,
+      "error": "typed transcript observations",
+      "exception": "ValueError"
+    },
+    {
+      "attack": "float-native-statistic",
+      "rejected": true,
+      "error": "typed transcript observations",
+      "exception": "ValueError"
+    }
+  ],
+  "rejected": 3,
+  "acceptedForgeries": [
+    "recordedMaxima-singleResultBytes-bool",
+    "recordedMaxima-singleResultBytes-float",
+    "recordedMaxima-singleResultBytes-incorrect-integer",
+    "recordedMaxima-pairResultBytes-bool",
+    "recordedMaxima-pairResultBytes-float",
+    "recordedMaxima-pairResultBytes-incorrect-integer",
+    "recordedMaxima-stageGlslBytes-bool",
+    "recordedMaxima-stageGlslBytes-float",
+    "recordedMaxima-stageGlslBytes-incorrect-integer",
+    "omitted-native-source-inventory",
+    "omitted-coverage-source-inventory",
+    "incorrect-coverage-source-digest",
+    "incorrect-coverage-source-byte-length",
+    "invented-coverage-source-name",
+    "incorrect-coverage-source-summary"
+  ],
+  "fullCleanControl": "passed",
+  "fullSubmissionAttacks": [
+    {
+      "attack": "maxima-bool-full-submission",
+      "rejected": true,
+      "error": "actual independently checked native baseline"
+    },
+    {
+      "attack": "consumer-float-getter-count",
+      "rejected": false,
+      "nativeMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "consumer": {
+        "checks": 2535,
+        "getters": 0
+      }
+    },
+    {
+      "attack": "consumer-boolean-getter-count",
+      "rejected": false,
+      "nativeMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "consumer": {
+        "checks": 2535,
+        "getters": 0
+      }
+    },
+    {
+      "attack": "consumer-missing-checks",
+      "rejected": false,
+      "nativeMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "consumer": {
+        "checks": 0,
+        "getters": 0
+      }
+    },
+    {
+      "attack": "consumer-omitted-runtime-sources",
+      "rejected": false,
+      "nativeMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "consumer": {
+        "checks": 2535,
+        "getters": 0
+      }
+    },
+    {
+      "attack": "consumer-omitted-forbidden-and-v14",
+      "rejected": false,
+      "nativeMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "consumer": {
+        "checks": 2503,
+        "getters": 0
+      }
+    }
+  ]
+}

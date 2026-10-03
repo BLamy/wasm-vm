@@ -1,0 +1,120 @@
+{
+  "schema": "fresh-equality-propagated-forgeries-v1",
+  "head": "a7be954c1f3bea9dd1e96522e890fa012197c6fe",
+  "cleanControl": "passed",
+  "attacks": [
+    {
+      "name": "maxima-boolean-with-propagated-native-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": true
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19990623,
+        "sha256": "c231cd607c988eebc6b6a5e24eca76c2facf31f07b3a81805d6f3a5bb8ef5806"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "maxima-incorrect-integer-with-propagated-native-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 1
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19990620,
+        "sha256": "4d7751aefa77e5b3ef2147d0a478fcd2c87866c1e3f13a2360120972feda0f63"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "maxima-float-with-propagated-native-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201.0
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19990626,
+        "sha256": "2e82daaa5f714827adc634c61912df0a76e49059e94f6914141ab99a5595b10c"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "empty-native-source-inventory-with-propagated-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19988243,
+        "sha256": "eac0f652b4adc5beba6ea42537ab0d7ee4c6fdec65fa496f690889c8fe1c3746"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "empty-coverage-source-inventory-with-propagated-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19988516,
+        "sha256": "83e9550a6721d22649e50241fde096d474a2273f40af8b7b57efec4957eae2a8"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "incorrect-coverage-source-summary-with-propagated-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19990622,
+        "sha256": "5f86c495906cc85207caf7808fd557a9d11d2017c876adec7f00c0e957d2b0c7"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    },
+    {
+      "name": "invented-coverage-source-digest-with-propagated-binding",
+      "rejected": false,
+      "sourceEvidenceSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+      "observedMaxima": {
+        "singleResultBytes": 63369,
+        "pairResultBytes": 109235,
+        "stageGlslBytes": 58201
+      },
+      "nativeReportBinding": {
+        "path": "../native/native-report.json",
+        "bytes": 19990624,
+        "sha256": "3f0e3214a1dfc8faf46f106c052fb97f9f87529877843e4f20a1f28a07cd45c9"
+      },
+      "recordedTranscriptAndProfileUnchanged": true
+    }
+  ],
+  "accepted": 7
+}
