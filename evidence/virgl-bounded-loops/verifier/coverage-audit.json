@@ -1,0 +1,1541 @@
+[
+  {
+    "file": "renderer/virgl-shader/bridge.c",
+    "changedLines": 288,
+    "instrumented": 260,
+    "hitLines": 260,
+    "zero": [],
+    "lines": [
+      {
+        "line": 199,
+        "count": "648k",
+        "source": "      if (!s->raw || !s->address_declared) return false;"
+      },
+      {
+        "line": 200,
+        "count": "648k",
+        "source": "      if (!s->syntax_only) {"
+      },
+      {
+        "line": 201,
+        "count": "408k",
+        "source": "         if (!s->address_written) return false;"
+      },
+      {
+        "line": 202,
+        "count": "408k",
+        "source": "         uint64_t candidates = 0;"
+      },
+      {
+        "line": 203,
+        "count": "408k",
+        "source": "         if (s->raw->loop.checked)"
+      },
+      {
+        "line": 204,
+        "count": "1.16M",
+        "source": "            for (unsigned use = 0; use < 4; ++use)"
+      },
+      {
+        "line": 205,
+        "count": "933k",
+        "source": "               if (s->current_pc == s->raw->loop.access[use].read) candidates = s->raw->loop.access[use].candidates;"
+      },
+      {
+        "line": 206,
+        "count": "408k",
+        "source": "         if (!candidates) {"
+      },
+      {
+        "line": 207,
+        "count": "175k",
+        "source": "            struct raw_lane address = s->raw->address;"
+      },
+      {
+        "line": 208,
+        "count": "",
+        "source": "            /* The unsigned maximum bounds ALL compatible known-bit words. */"
+      },
+      {
+        "line": 209,
+        "count": "175k",
+        "source": "            if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;"
+      },
+      {
+        "line": 210,
+        "count": "8.24M",
+        "source": "            for (unsigned i = 0; i < CONST_REGISTERS; ++i)"
+      },
+      {
+        "line": 211,
+        "count": "8.06M",
+        "source": "               if (!(i & address.zero) && !((uint32_t)~i & address.one)) candidates |= UINT64_C(1) << i;"
+      },
+      {
+        "line": 212,
+        "count": "175k",
+        "source": "         }"
+      },
+      {
+        "line": 213,
+        "count": "408k",
+        "source": "         if (!candidates || candidates >> CONST_REGISTERS) return false;"
+      },
+      {
+        "line": 214,
+        "count": "19.2M",
+        "source": "         for (unsigned i = 0; i < CONST_REGISTERS; ++i) if (candidates & (UINT64_C(1) << i))"
+      },
+      {
+        "line": 215,
+        "count": "4.20M",
+        "source": "            if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;"
+      },
+      {
+        "line": 216,
+        "count": "408k",
+        "source": "         s->raw->indirect_indices |= candidates;"
+      },
+      {
+        "line": 219,
+        "count": "13.7M",
+        "source": "   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;"
+      },
+      {
+        "line": 327,
+        "count": "",
+        "source": "/* The certificate recognizes one typed dependency graph, not source spelling or"
+      },
+      {
+        "line": 328,
+        "count": "",
+        "source": " * register numbers. Every operand has already passed the shared syntax parser. */"
+      },
+      {
+        "line": 329,
+        "count": "",
+        "source": "static unsigned loop_scalar(const struct raw_instruction *i)"
+      },
+      {
+        "line": 330,
+        "count": "3.03M",
+        "source": "{"
+      },
+      {
+        "line": 331,
+        "count": "3.03M",
+        "source": "   if (i->dst.file != TEMP || !i->dst.mask || (i->dst.mask & (i->dst.mask - 1))) return UINT16_MAX;"
+      },
+      {
+        "line": 332,
+        "count": "2.91M",
+        "source": "   unsigned lane = 0;"
+      },
+      {
+        "line": 333,
+        "count": "2.91M",
+        "source": "   while (!(i->dst.mask & (1u << lane))) ++lane;"
+      },
+      {
+        "line": 334,
+        "count": "2.91M",
+        "source": "   return i->dst.index * 4 + lane;"
+      },
+      {
+        "line": 335,
+        "count": "3.03M",
+        "source": "}"
+      },
+      {
+        "line": 336,
+        "count": "",
+        "source": "static bool loop_arg(const struct raw_instruction *i, unsigned source, unsigned consumed, unsigned lane)"
+      },
+      {
+        "line": 337,
+        "count": "1.51M",
+        "source": "{"
+      },
+      {
+        "line": 338,
+        "count": "1.51M",
+        "source": "   const struct raw_source *r = &i->src[source];"
+      },
+      {
+        "line": 339,
+        "count": "1.51M",
+        "source": "   return lane != UINT16_MAX && r->file == TEMP && r->index == lane / 4 && r->swizzle[consumed] == lane % 4;"
+      },
+      {
+        "line": 340,
+        "count": "1.51M",
+        "source": "}"
+      },
+      {
+        "line": 341,
+        "count": "",
+        "source": "static bool loop_scalar_arg(const struct raw_instruction *i, unsigned source, unsigned lane)"
+      },
+      {
+        "line": 342,
+        "count": "933k",
+        "source": "{"
+      },
+      {
+        "line": 343,
+        "count": "933k",
+        "source": "   unsigned dst = loop_scalar(i);"
+      },
+      {
+        "line": 344,
+        "count": "933k",
+        "source": "   return dst != UINT16_MAX && loop_arg(i, source, dst % 4, lane);"
+      },
+      {
+        "line": 345,
+        "count": "933k",
+        "source": "}"
+      },
+      {
+        "line": 346,
+        "count": "",
+        "source": "static bool loop_word(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source, unsigned consumed, uint32_t word)"
+      },
+      {
+        "line": 347,
+        "count": "875k",
+        "source": "{"
+      },
+      {
+        "line": 348,
+        "count": "875k",
+        "source": "   const struct raw_source *r = &i->src[source];"
+      },
+      {
+        "line": 349,
+        "count": "875k",
+        "source": "   return r->file == IMM && ir->immediates[r->index][r->swizzle[consumed]] == word;"
+      },
+      {
+        "line": 350,
+        "count": "875k",
+        "source": "}"
+      },
+      {
+        "line": 351,
+        "count": "",
+        "source": "static bool loop_scalar_word(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source, uint32_t word)"
+      },
+      {
+        "line": 352,
+        "count": "642k",
+        "source": "{"
+      },
+      {
+        "line": 353,
+        "count": "642k",
+        "source": "   unsigned dst = loop_scalar(i);"
+      },
+      {
+        "line": 354,
+        "count": "642k",
+        "source": "   return dst != UINT16_MAX && loop_word(ir, i, source, dst % 4, word);"
+      },
+      {
+        "line": 355,
+        "count": "642k",
+        "source": "}"
+      },
+      {
+        "line": 356,
+        "count": "",
+        "source": "static bool loop_count(const struct raw_instruction *i)"
+      },
+      {
+        "line": 357,
+        "count": "116k",
+        "source": "{"
+      },
+      {
+        "line": 358,
+        "count": "116k",
+        "source": "   unsigned dst = loop_scalar(i);"
+      },
+      {
+        "line": 359,
+        "count": "116k",
+        "source": "   return dst != UINT16_MAX && i->src[1].file == CONST && i->src[1].index == 9 && i->src[1].swizzle[dst % 4] == 0;"
+      },
+      {
+        "line": 360,
+        "count": "116k",
+        "source": "}"
+      },
+      {
+        "line": 361,
+        "count": "",
+        "source": "static bool loop_load(const struct raw_instruction *i, bool scalar)"
+      },
+      {
+        "line": 362,
+        "count": "233k",
+        "source": "{"
+      },
+      {
+        "line": 363,
+        "count": "233k",
+        "source": "   unsigned dst = loop_scalar(i);"
+      },
+      {
+        "line": 364,
+        "count": "233k",
+        "source": "   return i->opcode == RAW_MOV && i->dst.file == TEMP && i->src[0].file == INDIRECT_CONST &&"
+      },
+      {
+        "line": 365,
+        "count": "233k",
+        "source": "      (scalar ? dst != UINT16_MAX && i->src[0].swizzle[dst % 4] == 0 : i->dst.mask == 15);"
+      },
+      {
+        "line": 366,
+        "count": "233k",
+        "source": "}"
+      },
+      {
+        "line": 367,
+        "count": "",
+        "source": "static bool loop_writes(const struct raw_instruction *i, unsigned lane)"
+      },
+      {
+        "line": 368,
+        "count": "6.12M",
+        "source": "{"
+      },
+      {
+        "line": 369,
+        "count": "6.12M",
+        "source": "   return !((UINT64_C(1) << i->opcode) & RAW_CONTROL_OPCODES) && i->dst.file == TEMP &&"
+      },
+      {
+        "line": 370,
+        "count": "6.12M",
+        "source": "      i->dst.index == lane / 4 && (i->dst.mask & (1u << (lane % 4)));"
+      },
+      {
+        "line": 371,
+        "count": "6.12M",
+        "source": "}"
+      },
+      {
+        "line": 372,
+        "count": "",
+        "source": "static uint64_t loop_indices(unsigned first, unsigned last)"
+      },
+      {
+        "line": 373,
+        "count": "233k",
+        "source": "{"
+      },
+      {
+        "line": 374,
+        "count": "233k",
+        "source": "   uint64_t result = 0;"
+      },
+      {
+        "line": 375,
+        "count": "4.25M",
+        "source": "   for (unsigned i = first; i <= last; ++i) result |= UINT64_C(1) << i;"
+      },
+      {
+        "line": 376,
+        "count": "233k",
+        "source": "   return result;"
+      },
+      {
+        "line": 377,
+        "count": "233k",
+        "source": "}"
+      },
+      {
+        "line": 378,
+        "count": "",
+        "source": "static bool loop_recognize(struct raw_ir *ir)"
+      },
+      {
+        "line": 379,
+        "count": "58.4k",
+        "source": "{"
+      },
+      {
+        "line": 380,
+        "count": "58.4k",
+        "source": "   unsigned begin = 0, loops = 0, breaks = 0, ends = 0;"
+      },
+      {
+        "line": 381,
+        "count": "2.25M",
+        "source": "   for (unsigned pc = 0; pc < ir->count; ++pc) {"
+      },
+      {
+        "line": 382,
+        "count": "2.19M",
+        "source": "      if (ir->instructions[pc].opcode == RAW_BGNLOOP) { begin = pc; ++loops; }"
+      },
+      {
+        "line": 383,
+        "count": "2.19M",
+        "source": "      breaks += ir->instructions[pc].opcode == RAW_BRK;"
+      },
+      {
+        "line": 384,
+        "count": "2.19M",
+        "source": "      ends += ir->instructions[pc].opcode == RAW_ENDLOOP;"
+      },
+      {
+        "line": 385,
+        "count": "2.19M",
+        "source": "   }"
+      },
+      {
+        "line": 386,
+        "count": "58.4k",
+        "source": "   if (loops != 1 || breaks != 1 || ends != 1 || begin < 3 || begin + 24 >= ir->count) return false;"
+      },
+      {
+        "line": 387,
+        "count": "58.4k",
+        "source": "   const struct raw_instruction *v = &ir->instructions[begin];"
+      },
+      {
+        "line": 388,
+        "count": "58.4k",
+        "source": "   static const enum raw_opcode body[] = {RAW_BGNLOOP, RAW_UARL, RAW_MOV, RAW_FSLT, RAW_ISGE,"
+      },
+      {
+        "line": 389,
+        "count": "58.4k",
+        "source": "      RAW_OR, RAW_UIF, RAW_BRK, RAW_ENDIF, RAW_UADD, RAW_SHL, RAW_UADD, RAW_UADD,"
+      },
+      {
+        "line": 390,
+        "count": "58.4k",
+        "source": "      RAW_USHR, RAW_MOV, RAW_ENDLOOP, RAW_USNE, RAW_UIF, RAW_SHL, RAW_UADD,"
+      },
+      {
+        "line": 391,
+        "count": "58.4k",
+        "source": "      RAW_USHR, RAW_MOV, RAW_UARL, RAW_MOV};"
+      },
+      {
+        "line": 392,
+        "count": "1.46M",
+        "source": "   for (unsigned i = 0; i < sizeof(body) / sizeof(body[0]); ++i) if (v[i].opcode != body[i]) return false;"
+      },
+      {
+        "line": 393,
+        "count": "58.4k",
+        "source": "   unsigned a = loop_scalar(&v[-3]), b = loop_scalar(&v[-2]), j = loop_scalar(&v[-1]);"
+      },
+      {
+        "line": 394,
+        "count": "58.4k",
+        "source": "   if (v[-3].opcode != RAW_MOV || v[-2].opcode != RAW_MOV || v[-1].opcode != RAW_MOV ||"
+      },
+      {
+        "line": 395,
+        "count": "58.4k",
+        "source": "       !loop_scalar_word(ir, &v[-3], 0, 11) || !loop_scalar_word(ir, &v[-2], 0, 16) ||"
+      },
+      {
+        "line": 396,
+        "count": "58.4k",
+        "source": "       !loop_scalar_word(ir, &v[-1], 0, 1) || a == b || a == j || b == j) return false;"
+      },
+      {
+        "line": 397,
+        "count": "58.4k",
+        "source": "   unsigned h = loop_scalar(&v[2]), fp = loop_scalar(&v[3]), ip = loop_scalar(&v[4]);"
+      },
+      {
+        "line": 398,
+        "count": "58.4k",
+        "source": "   unsigned pred = loop_scalar(&v[5]), next = loop_scalar(&v[9]), shift = loop_scalar(&v[10]), num = loop_scalar(&v[12]);"
+      },
+      {
+        "line": 399,
+        "count": "58.4k",
+        "source": "   if (fp == UINT16_MAX || v[3].src[0].file != TEMP) return false;"
+      },
+      {
+        "line": 400,
+        "count": "58.4k",
+        "source": "   unsigned q = v[3].src[0].index * 4 + v[3].src[0].swizzle[fp % 4];"
+      },
+      {
+        "line": 401,
+        "count": "58.4k",
+        "source": "   unsigned roles[] = {a, b, j, h, fp, ip, pred, next, shift, num, q};"
+      },
+      {
+        "line": 402,
+        "count": "700k",
+        "source": "   for (unsigned i = 0; i < sizeof(roles) / sizeof(roles[0]); ++i) {"
+      },
+      {
+        "line": 403,
+        "count": "642k",
+        "source": "      if (roles[i] == UINT16_MAX) return false;"
+      },
+      {
+        "line": 404,
+        "count": "3.85M",
+        "source": "      for (unsigned k = 0; k < i; ++k) if (roles[i] == roles[k]) return false;"
+      },
+      {
+        "line": 405,
+        "count": "642k",
+        "source": "   }"
+      },
+      {
+        "line": 406,
+        "count": "58.3k",
+        "source": "   if (!loop_arg(&v[1], 0, 0, a) || !loop_load(&v[2], true) || !loop_scalar_arg(&v[3], 1, h) ||"
+      },
+      {
+        "line": 407,
+        "count": "58.3k",
+        "source": "       !loop_scalar_arg(&v[4], 0, j) || !loop_count(&v[4]) ||"
+      },
+      {
+        "line": 408,
+        "count": "58.3k",
+        "source": "       !loop_scalar_arg(&v[5], 0, fp) || !loop_scalar_arg(&v[5], 1, ip) || !loop_arg(&v[6], 0, 0, pred) ||"
+      },
+      {
+        "line": 409,
+        "count": "58.3k",
+        "source": "       !loop_scalar_arg(&v[9], 0, j) || !loop_scalar_word(ir, &v[9], 1, 1) ||"
+      },
+      {
+        "line": 410,
+        "count": "58.3k",
+        "source": "       !loop_scalar_arg(&v[10], 0, j) || !loop_scalar_word(ir, &v[10], 1, 4) ||"
+      },
+      {
+        "line": 411,
+        "count": "58.3k",
+        "source": "       loop_scalar(&v[11]) != b || !loop_scalar_arg(&v[11], 0, shift) || !loop_scalar_word(ir, &v[11], 1, 16) ||"
+      },
+      {
+        "line": 412,
+        "count": "58.3k",
+        "source": "       !loop_scalar_word(ir, &v[12], 0, 176) || !loop_scalar_arg(&v[12], 1, shift) ||"
+      },
+      {
+        "line": 413,
+        "count": "58.3k",
+        "source": "       loop_scalar(&v[13]) != a || !loop_scalar_arg(&v[13], 0, num) || !loop_scalar_word(ir, &v[13], 1, 4) ||"
+      },
+      {
+        "line": 414,
+        "count": "58.3k",
+        "source": "       loop_scalar(&v[14]) != j || !loop_scalar_arg(&v[14], 0, next) ||"
+      },
+      {
+        "line": 415,
+        "count": "58.3k",
+        "source": "       !loop_scalar_arg(&v[16], 0, j) || !loop_count(&v[16]) ||"
+      },
+      {
+        "line": 416,
+        "count": "58.3k",
+        "source": "       !loop_arg(&v[17], 0, 0, loop_scalar(&v[16]))) return false;"
+      },
+      {
+        "line": 417,
+        "count": "",
+        "source": "   /* The true edge of this exact USNE is the relational j<=17 proof. */"
+      },
+      {
+        "line": 418,
+        "count": "58.3k",
+        "source": "   unsigned tail_end = begin + 18;"
+      },
+      {
+        "line": 419,
+        "count": "817k",
+        "source": "   while (tail_end < ir->count && !((UINT64_C(1) << ir->instructions[tail_end].opcode) & RAW_CONTROL_OPCODES)) ++tail_end;"
+      },
+      {
+        "line": 420,
+        "count": "58.3k",
+        "source": "   if (tail_end >= ir->count || (ir->instructions[tail_end].opcode != RAW_ELSE && ir->instructions[tail_end].opcode != RAW_ENDIF)) return false;"
+      },
+      {
+        "line": 421,
+        "count": "58.3k",
+        "source": "   unsigned ts = loop_scalar(&v[18]);"
+      },
+      {
+        "line": 422,
+        "count": "58.3k",
+        "source": "   if (!loop_scalar_arg(&v[18], 0, j) || !loop_scalar_word(ir, &v[18], 1, 4) ||"
+      },
+      {
+        "line": 423,
+        "count": "58.3k",
+        "source": "       v[19].dst.file != TEMP || v[19].dst.mask != 3 || v[20].dst.file != TEMP || v[20].dst.mask != 3) return false;"
+      },
+      {
+        "line": 424,
+        "count": "58.3k",
+        "source": "   unsigned nums = v[19].dst.index * 4, addresses = v[20].dst.index * 4;"
+      },
+      {
+        "line": 425,
+        "count": "175k",
+        "source": "   for (unsigned lane = 0; lane < 2; ++lane)"
+      },
+      {
+        "line": 426,
+        "count": "116k",
+        "source": "      if (!loop_word(ir, &v[19], 0, lane, lane ? 144 : 432) || !loop_arg(&v[19], 1, lane, ts) ||"
+      },
+      {
+        "line": 427,
+        "count": "116k",
+        "source": "          !loop_arg(&v[20], 0, lane, nums + lane) || !loop_word(ir, &v[20], 1, lane, 4)) return false;"
+      },
+      {
+        "line": 428,
+        "count": "58.3k",
+        "source": "   if (!loop_scalar_arg(&v[21], 0, addresses + 1) || !loop_arg(&v[22], 0, 0, loop_scalar(&v[21])) ||"
+      },
+      {
+        "line": 429,
+        "count": "58.3k",
+        "source": "       !loop_load(&v[23], true)) return false;"
+      },
+      {
+        "line": 430,
+        "count": "58.3k",
+        "source": "   unsigned upper = 0;"
+      },
+      {
+        "line": 431,
+        "count": "116k",
+        "source": "   for (unsigned pc = begin + 24; pc + 6 < tail_end; ++pc) {"
+      },
+      {
+        "line": 432,
+        "count": "58.4k",
+        "source": "      const struct raw_instruction *u = &ir->instructions[pc];"
+      },
+      {
+        "line": 433,
+        "count": "58.4k",
+        "source": "      if (u[0].opcode == RAW_UADD && loop_scalar_word(ir, &u[0], 0, 448) && loop_scalar_arg(&u[0], 1, b) &&"
+      },
+      {
+        "line": 434,
+        "count": "58.4k",
+        "source": "          u[1].opcode == RAW_USHR && loop_scalar_arg(&u[1], 0, loop_scalar(&u[0])) && loop_scalar_word(ir, &u[1], 1, 4) &&"
+      },
+      {
+        "line": 435,
+        "count": "58.4k",
+        "source": "          u[2].opcode == RAW_UARL && loop_arg(&u[2], 0, 0, loop_scalar(&u[1])) && loop_load(&u[3], false) &&"
+      },
+      {
+        "line": 436,
+        "count": "58.4k",
+        "source": "          u[4].opcode == RAW_MOV && loop_scalar_arg(&u[4], 0, addresses) &&"
+      },
+      {
+        "line": 437,
+        "count": "58.4k",
+        "source": "          u[5].opcode == RAW_UARL && loop_arg(&u[5], 0, 0, loop_scalar(&u[4])) && loop_load(&u[6], false)) {"
+      },
+      {
+        "line": 438,
+        "count": "58.3k",
+        "source": "         if (upper) return false;"
+      },
+      {
+        "line": 439,
+        "count": "58.3k",
+        "source": "         upper = pc;"
+      },
+      {
+        "line": 440,
+        "count": "58.3k",
+        "source": "      }"
+      },
+      {
+        "line": 441,
+        "count": "58.4k",
+        "source": "   }"
+      },
+      {
+        "line": 442,
+        "count": "58.3k",
+        "source": "   if (!upper) return false;"
+      },
+      {
+        "line": 443,
+        "count": "",
+        "source": "   /* Protect the role versions and the lower-address pair until all uses. */"
+      },
+      {
+        "line": 444,
+        "count": "58.3k",
+        "source": "   unsigned protected[] = {a, b, j, h, q};"
+      },
+      {
+        "line": 445,
+        "count": "933k",
+        "source": "   for (unsigned pc = begin + 16; pc < tail_end; ++pc) {"
+      },
+      {
+        "line": 446,
+        "count": "875k",
+        "source": "      const struct raw_instruction *i = &ir->instructions[pc];"
+      },
+      {
+        "line": 447,
+        "count": "5.25M",
+        "source": "      for (unsigned k = 0; k < sizeof(protected) / sizeof(protected[0]); ++k)"
+      },
+      {
+        "line": 448,
+        "count": "4.37M",
+        "source": "         if (loop_writes(i, protected[k])) return false;"
+      },
+      {
+        "line": 449,
+        "count": "875k",
+        "source": "      if (pc > begin + 20 && pc <= upper + 6 && (loop_writes(i, addresses) || loop_writes(i, addresses + 1))) return false;"
+      },
+      {
+        "line": 450,
+        "count": "875k",
+        "source": "   }"
+      },
+      {
+        "line": 451,
+        "count": "",
+        "source": "   /* The pair itself must not overwrite carried roles while being formed. */"
+      },
+      {
+        "line": 452,
+        "count": "349k",
+        "source": "   for (unsigned k = 0; k < sizeof(protected) / sizeof(protected[0]); ++k)"
+      },
+      {
+        "line": 453,
+        "count": "291k",
+        "source": "      if (loop_writes(&v[19], protected[k]) || loop_writes(&v[20], protected[k])) return false;"
+      },
+      {
+        "line": 454,
+        "count": "58.3k",
+        "source": "   struct loop_certificate c = {.begin = begin, .end = begin + 15, .break_pc = begin + 7,"
+      },
+      {
+        "line": 455,
+        "count": "58.3k",
+        "source": "      .tail_test = begin + 16, .tail_if = begin + 17, .tail_end = tail_end,"
+      },
+      {
+        "line": 456,
+        "count": "58.3k",
+        "source": "      .j = j, .a = a, .b = b, .header = h, .invariant = q, .count_register = 9, .count_component = 0, .checked = true};"
+      },
+      {
+        "line": 457,
+        "count": "58.3k",
+        "source": "   c.access[0].uarl = begin + 1; c.access[0].read = begin + 2; c.access[0].candidates = loop_indices(11, 28);"
+      },
+      {
+        "line": 458,
+        "count": "58.3k",
+        "source": "   c.access[1].uarl = begin + 22; c.access[1].read = begin + 23; c.access[1].candidates = loop_indices(10, 26);"
+      },
+      {
+        "line": 459,
+        "count": "58.3k",
+        "source": "   c.access[2].uarl = upper + 2; c.access[2].read = upper + 3; c.access[2].candidates = loop_indices(29, 45);"
+      },
+      {
+        "line": 460,
+        "count": "58.3k",
+        "source": "   c.access[3].uarl = upper + 5; c.access[3].read = upper + 6; c.access[3].candidates = loop_indices(28, 44);"
+      },
+      {
+        "line": 461,
+        "count": "58.3k",
+        "source": "   ir->loop = c;"
+      },
+      {
+        "line": 462,
+        "count": "58.3k",
+        "source": "   return true;"
+      },
+      {
+        "line": 463,
+        "count": "58.3k",
+        "source": "}"
+      },
+      {
+        "line": 464,
+        "count": "",
+        "source": ""
+      },
+      {
+        "line": 465,
+        "count": "",
+        "source": "static void loop_header(struct profile *s)"
+      },
+      {
+        "line": 466,
+        "count": "58.3k",
+        "source": "{"
+      },
+      {
+        "line": 467,
+        "count": "58.3k",
+        "source": "   const struct loop_certificate *c = &s->raw->loop;"
+      },
+      {
+        "line": 468,
+        "count": "",
+        "source": "   /* Only the three certified recurrence lanes carry facts across iterations."
+      },
+      {
+        "line": 469,
+        "count": "",
+        "source": "    * Every other body-written lane must be defined afresh before its use. */"
+      },
+      {
+        "line": 470,
+        "count": "874k",
+        "source": "   for (unsigned pc = c->begin + 1; pc < c->end; ++pc) {"
+      },
+      {
+        "line": 471,
+        "count": "816k",
+        "source": "      const struct raw_instruction *i = &s->raw->instructions[pc];"
+      },
+      {
+        "line": 472,
+        "count": "816k",
+        "source": "      if ((UINT64_C(1) << i->opcode) & RAW_CONTROL_OPCODES || i->dst.file != TEMP) continue;"
+      },
+      {
+        "line": 473,
+        "count": "583k",
+        "source": "      s->written[TEMP][i->dst.index] &= ~i->dst.mask;"
+      },
+      {
+        "line": 474,
+        "count": "2.91M",
+        "source": "      for (unsigned lane = 0; lane < 4; ++lane) if (i->dst.mask & (1u << lane)) s->raw->temporary[i->dst.index][lane] = (struct raw_lane){0};"
+      },
+      {
+        "line": 475,
+        "count": "583k",
+        "source": "   }"
+      },
+      {
+        "line": 476,
+        "count": "58.3k",
+        "source": "   unsigned lanes[] = {c->j, c->a, c->b};"
+      },
+      {
+        "line": 477,
+        "count": "233k",
+        "source": "   for (unsigned k = 0; k < 3; ++k) {"
+      },
+      {
+        "line": 478,
+        "count": "174k",
+        "source": "      struct raw_lane fact = {.zero = UINT32_MAX, .one = UINT32_MAX};"
+      },
+      {
+        "line": 479,
+        "count": "3.32M",
+        "source": "      for (unsigned j = 1; j <= 18; ++j) {"
+      },
+      {
+        "line": 480,
+        "count": "3.14M",
+        "source": "         uint32_t value = k == 0 ? j : k == 1 ? j + 10 : 16 * j;"
+      },
+      {
+        "line": 481,
+        "count": "3.14M",
+        "source": "         fact.zero &= ~value; fact.one &= value;"
+      },
+      {
+        "line": 482,
+        "count": "3.14M",
+        "source": "      }"
+      },
+      {
+        "line": 483,
+        "count": "174k",
+        "source": "      s->raw->temporary[lanes[k] / 4][lanes[k] % 4] = fact;"
+      },
+      {
+        "line": 484,
+        "count": "174k",
+        "source": "      s->written[TEMP][lanes[k] / 4] |= 1u << (lanes[k] % 4);"
+      },
+      {
+        "line": 485,
+        "count": "174k",
+        "source": "   }"
+      },
+      {
+        "line": 486,
+        "count": "58.3k",
+        "source": "   s->address_written = false; s->raw->address = (struct raw_lane){0};"
+      },
+      {
+        "line": 487,
+        "count": "58.3k",
+        "source": "}"
+      },
+      {
+        "line": 488,
+        "count": "",
+        "source": ""
+      },
+      {
+        "line": 495,
+        "count": "",
+        "source": "   bool is_loop, entry_live, saved_live, exit_live;"
+      },
+      {
+        "line": 552,
+        "count": "1.36M",
+        "source": "   bool loop = opcode == RAW_BGNLOOP || opcode == RAW_ENDLOOP;"
+      },
+      {
+        "line": 555,
+        "count": "1.36M",
+        "source": "   bool has_target = opcode != RAW_ENDIF && opcode != RAW_BRK && punctuation(p, ':');"
+      },
+      {
+        "line": 556,
+        "count": "1.36M",
+        "source": "   if (loop) {"
+      },
+      {
+        "line": 557,
+        "count": "240k",
+        "source": "      if (!has_target || !index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target != 0) return false;"
+      },
+      {
+        "line": 558,
+        "count": "1.12M",
+        "source": "   } else if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;"
+      },
+      {
+        "line": 560,
+        "count": "1.36M",
+        "source": "   if (opcode == RAW_UIF || opcode == RAW_BGNLOOP) {"
+      },
+      {
+        "line": 562,
+        "count": "536k",
+        "source": "      if (opcode == RAW_BGNLOOP) {"
+      },
+      {
+        "line": 563,
+        "count": "121k",
+        "source": "         for (unsigned i = 0; i < flow->depth; ++i) if (flow->frames[i].is_loop) return false;"
+      },
+      {
+        "line": 564,
+        "count": "121k",
+        "source": "         if (!s->syntax_only && (!s->raw->loop.checked || s->current_pc != s->raw->loop.begin)) return false;"
+      },
+      {
+        "line": 565,
+        "count": "121k",
+        "source": "      }"
+      },
+      {
+        "line": 567,
+        "count": "536k",
+        "source": "      frame->is_loop = opcode == RAW_BGNLOOP;"
+      },
+      {
+        "line": 570,
+        "count": "536k",
+        "source": "      frame->entry_live = s->live; frame->saved_live = frame->exit_live = false;"
+      },
+      {
+        "line": 571,
+        "count": "536k",
+        "source": "      if (!s->syntax_only) {"
+      },
+      {
+        "line": 572,
+        "count": "350k",
+        "source": "         if (frame->is_loop) loop_header(s);"
+      },
+      {
+        "line": 573,
+        "count": "292k",
+        "source": "         else flow_snapshot(s, frame, false);"
+      },
+      {
+        "line": 574,
+        "count": "350k",
+        "source": "      }"
+      },
+      {
+        "line": 575,
+        "count": "827k",
+        "source": "   } else if (opcode == RAW_BRK) {"
+      },
+      {
+        "line": 576,
+        "count": "120k",
+        "source": "      unsigned depth = flow->depth;"
+      },
+      {
+        "line": 577,
+        "count": "240k",
+        "source": "      while (depth && !flow->frames[depth - 1].is_loop) --depth;"
+      },
+      {
+        "line": 578,
+        "count": "120k",
+        "source": "      if (!depth) return false;"
+      },
+      {
+        "line": 579,
+        "count": "120k",
+        "source": "      if (!s->syntax_only) {"
+      },
+      {
+        "line": 580,
+        "count": "58.3k",
+        "source": "         if (s->current_pc != s->raw->loop.break_pc || !s->live) return false;"
+      },
+      {
+        "line": 581,
+        "count": "58.3k",
+        "source": "         struct flow_frame *frame = &flow->frames[depth - 1];"
+      },
+      {
+        "line": 582,
+        "count": "58.3k",
+        "source": "         flow_snapshot(s, frame, false); frame->exit_live = true;"
+      },
+      {
+        "line": 583,
+        "count": "58.3k",
+        "source": "         s->live = false;"
+      },
+      {
+        "line": 584,
+        "count": "58.3k",
+        "source": "      }"
+      },
+      {
+        "line": 588,
+        "count": "707k",
+        "source": "      if (opcode == RAW_ENDLOOP) {"
+      },
+      {
+        "line": 589,
+        "count": "119k",
+        "source": "         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || !frame->exit_live))) return false;"
+      },
+      {
+        "line": 590,
+        "count": "119k",
+        "source": "         if (!s->syntax_only) { flow_snapshot(s, frame, true); s->live = true; }"
+      },
+      {
+        "line": 592,
+        "count": "587k",
+        "source": "      } else {"
+      },
+      {
+        "line": 593,
+        "count": "587k",
+        "source": "         if (frame->is_loop) return false;"
+      },
+      {
+        "line": 594,
+        "count": "587k",
+        "source": "         if (opcode == RAW_ELSE) {"
+      },
+      {
+        "line": 595,
+        "count": "175k",
+        "source": "            if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;"
+      },
+      {
+        "line": 596,
+        "count": "175k",
+        "source": "            frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;"
+      },
+      {
+        "line": 597,
+        "count": "175k",
+        "source": "            frame->saved_live = s->live; s->live = frame->entry_live;"
+      },
+      {
+        "line": 598,
+        "count": "175k",
+        "source": "            if (!s->syntax_only) flow_snapshot(s, frame, true);"
+      },
+      {
+        "line": 599,
+        "count": "412k",
+        "source": "         } else {"
+      },
+      {
+        "line": 600,
+        "count": "412k",
+        "source": "            if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :"
+      },
+      {
+        "line": 601,
+        "count": "412k",
+        "source": "                 frame->has_target && frame->target != s->instructions)) return false;"
+      },
+      {
+        "line": 602,
+        "count": "412k",
+        "source": "            bool other_live = frame->has_else ? frame->saved_live : frame->entry_live;"
+      },
+      {
+        "line": 603,
+        "count": "412k",
+        "source": "            if (!s->syntax_only && other_live) {"
+      },
+      {
+        "line": 604,
+        "count": "292k",
+        "source": "               if (s->live) flow_join(s, frame);"
+      },
+      {
+        "line": 605,
+        "count": "58.3k",
+        "source": "               else flow_snapshot(s, frame, true);"
+      },
+      {
+        "line": 606,
+        "count": "292k",
+        "source": "            }"
+      },
+      {
+        "line": 607,
+        "count": "412k",
+        "source": "            s->live |= other_live;"
+      },
+      {
+        "line": 608,
+        "count": "412k",
+        "source": "            --flow->depth;"
+      },
+      {
+        "line": 609,
+        "count": "412k",
+        "source": "         }"
+      },
+      {
+        "line": 613,
+        "count": "1.36M",
+        "source": "   if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;"
+      },
+      {
+        "line": 614,
+        "count": "934k",
+        "source": "   else raw_record(s->raw, &raw);"
+      },
+      {
+        "line": 621,
+        "count": "11.1M",
+        "source": "   s->current_pc = s->instructions;"
+      },
+      {
+        "line": 630,
+        "count": "5.59M",
+        "source": "      if (word(p, \"BGNLOOP\")) return control(p, s, flow, RAW_BGNLOOP);"
+      },
+      {
+        "line": 631,
+        "count": "5.46M",
+        "source": "      if (word(p, \"BRK\")) return control(p, s, flow, RAW_BRK);"
+      },
+      {
+        "line": 632,
+        "count": "5.34M",
+        "source": "      if (word(p, \"ENDLOOP\")) return control(p, s, flow, RAW_ENDLOOP);"
+      },
+      {
+        "line": 671,
+        "count": "5.11M",
+        "source": "      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = \"unsupported-feature\";"
+      },
+      {
+        "line": 690,
+        "count": "13.2M",
+        "source": "      if (s->raw && ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))"
+      },
+      {
+        "line": 704,
+        "count": "7.86M",
+        "source": "      if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;"
+      },
+      {
+        "line": 705,
+        "count": "6.00M",
+        "source": "      else if (!raw_record(s->raw, &raw)) {"
+      },
+      {
+        "line": 771,
+        "count": "1.13M",
+        "source": "   if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);"
+      },
+      {
+        "line": 784,
+        "count": "1.32M",
+        "source": "   s->live = true;"
+      },
+      {
+        "line": 864,
+        "count": "1.08M",
+        "source": "   bool candidate = false, numeric_candidate = false, structured_candidate = false, loop_candidate = false;"
+      },
+      {
+        "line": 873,
+        "count": "16.9M",
+        "source": "      if (word(&p, \"BGNLOOP\") || word(&p, \"BRK\") || word(&p, \"ENDLOOP\")) {"
+      },
+      {
+        "line": 874,
+        "count": "185k",
+        "source": "         candidate = structured_candidate = loop_candidate = true;"
+      },
+      {
+        "line": 875,
+        "count": "16.7M",
+        "source": "      } else if (word(&p, \"UIF\") || word(&p, \"ELSE\") || word(&p, \"ENDIF\")) {"
+      },
+      {
+        "line": 901,
+        "count": "1.08M",
+        "source": "   if (loop_candidate) {"
+      },
+      {
+        "line": 902,
+        "count": "",
+        "source": "      /* Syntax-only records share the one bounded IR; they never reach emit."
+      },
+      {
+        "line": 903,
+        "count": "",
+        "source": "       * The complete recognized graph supplies the independent finite policy. */"
+      },
+      {
+        "line": 904,
+        "count": "62.9k",
+        "source": "      profile->syntax_only = true;"
+      },
+      {
+        "line": 905,
+        "count": "62.9k",
+        "source": "      memcpy(checked, text, length); checked[length] = 0;"
+      },
+      {
+        "line": 906,
+        "count": "62.9k",
+        "source": "      failure_code = \"parse-error\";"
+      },
+      {
+        "line": 907,
+        "count": "62.9k",
+        "source": "      if (!validate(checked, profile) || !loop_recognize(profile->raw)) {"
+      },
+      {
+        "line": 908,
+        "count": "4.60k",
+        "source": "         profile->syntax_only = false;"
+      },
+      {
+        "line": 909,
+        "count": "4.60k",
+        "source": "         return error(!strcmp(failure_code, \"translation-error\") ? failure_code : \"unsupported-feature\","
+      },
+      {
+        "line": 910,
+        "count": "4.60k",
+        "source": "            !strcmp(failure_code, \"translation-error\") ? \"Structured flow allocation failed.\" :"
+      },
+      {
+        "line": 911,
+        "count": "4.60k",
+        "source": "            \"TGSI is malformed or outside the documented straight-line profile.\");"
+      },
+      {
+        "line": 912,
+        "count": "4.60k",
+        "source": "      }"
+      },
+      {
+        "line": 913,
+        "count": "58.3k",
+        "source": "      struct raw_ir *ir = profile->raw;"
+      },
+      {
+        "line": 914,
+        "count": "58.3k",
+        "source": "      int stage = profile->stage;"
+      },
+      {
+        "line": 915,
+        "count": "",
+        "source": "      /* Retain parsed instructions for the header's write-set scan. The"
+      },
+      {
+        "line": 916,
+        "count": "",
+        "source": "       * checked pass overwrites them in place, one instruction at a time. */"
+      },
+      {
+        "line": 917,
+        "count": "58.3k",
+        "source": "      memset(ir->temporary, 0, sizeof(ir->temporary));"
+      },
+      {
+        "line": 918,
+        "count": "58.3k",
+        "source": "      memset(ir->output, 0, sizeof(ir->output));"
+      },
+      {
+        "line": 919,
+        "count": "58.3k",
+        "source": "      ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;"
+      },
+      {
+        "line": 920,
+        "count": "58.3k",
+        "source": "      ir->address = (struct raw_lane){0};"
+      },
+      {
+        "line": 921,
+        "count": "58.3k",
+        "source": "      *profile = (struct profile){.stage = stage, .raw = ir,"
+      },
+      {
+        "line": 922,
+        "count": "58.3k",
+        "source": "         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};"
+      },
+      {
+        "line": 923,
+        "count": "58.3k",
+        "source": "      memcpy(checked, text, length); checked[length] = 0;"
+      },
+      {
+        "line": 924,
+        "count": "58.3k",
+        "source": "      failure_code = \"parse-error\"; missing_numeric_authority = false;"
+      },
+      {
+        "line": 925,
+        "count": "58.3k",
+        "source": "      if (validate(checked, profile)) return NULL;"
+      },
+      {
+        "line": 926,
+        "count": "12",
+        "source": "      profile->raw_flags &= ~RAW_CONDITIONAL;"
+      },
+      {
+        "line": 927,
+        "count": "12",
+        "source": "      return error(!strcmp(failure_code, \"translation-error\") ? failure_code : \"unsupported-feature\","
+      },
+      {
+        "line": 928,
+        "count": "12",
+        "source": "         !strcmp(failure_code, \"translation-error\") ? \"Structured flow allocation failed.\" :"
+      },
+      {
+        "line": 929,
+        "count": "12",
+        "source": "         \"TGSI is malformed or outside the documented straight-line profile.\");"
+      },
+      {
+        "line": 930,
+        "count": "58.3k",
+        "source": "   }"
+      },
+      {
+        "line": 1053,
+        "count": "",
+        "source": "static void constant_domain(int stage, int count)"
+      },
+      {
+        "line": 1054,
+        "count": "233k",
+        "source": "{"
+      },
+      {
+        "line": 1055,
+        "count": "233k",
+        "source": "   append(\",\\\"constantDomains\\\":[{\\\"kind\\\":\\\"constant-bank-finite-f32-v1\\\",\\\"stage\\\":\\\"%s\\\",\\\"slot\\\":0,\\\"name\\\":\\\"%sconst0\\\",\\\"count\\\":%d}]\","
+      },
+      {
+        "line": 1056,
+        "count": "233k",
+        "source": "      stage ? \"fragment\" : \"vertex\", stage ? \"fs\" : \"vs\", count);"
+      },
+      {
+        "line": 1057,
+        "count": "233k",
+        "source": "}"
+      },
+      {
+        "line": 1058,
+        "count": "",
+        "source": ""
+      },
+      {
+        "line": 1074,
+        "count": "1.08M",
+        "source": "      c->profile.raw->loop.checked ? \"virgl-webgl2-raw-bits-v12\" :"
+      },
+      {
+        "line": 1100,
+        "count": "175k",
+        "source": "      constant_domain(stage, info->num_consts);"
+      },
+      {
+        "line": 1101,
+        "count": "905k",
+        "source": "   else if (profile->raw && profile->raw->loop.checked)"
+      },
+      {
+        "line": 1102,
+        "count": "58.2k",
+        "source": "      constant_domain(stage, info->num_consts); /* Explicit loop policy, not a fabricated numeric dependency. */"
+      },
+      {
+        "line": 1112,
+        "count": "1.08M",
+        "source": "   if (profile->raw && profile->raw->loop.checked)"
+      },
+      {
+        "line": 1113,
+        "count": "58.3k",
+        "source": "      append(\",\\\"constantConstraints\\\":[{\\\"kind\\\":\\\"constant-bank-counted-table-i32-v1\\\",\\\"stage\\\":\\\"%s\\\",\\\"slot\\\":0,\\\"name\\\":\\\"%sconst0\\\",\\\"count\\\":%d,\\\"register\\\":9,\\\"component\\\":0,\\\"maximum\\\":18}]\","
+      },
+      {
+        "line": 1114,
+        "count": "58.3k",
+        "source": "         stage ? \"fragment\" : \"vertex\", stage ? \"fs\" : \"vs\", info->num_consts);"
+      }
+    ]
+  },
+  {
+    "file": "renderer/virgl-shader/raw_bits.c",
+    "changedLines": 13,
+    "instrumented": 13,
+    "hitLines": 10,
+    "zero": [
+      {
+        "line": 211,
+        "count": "0",
+        "source": "      case RAW_BGNLOOP:"
+      },
+      {
+        "line": 212,
+        "count": "0",
+        "source": "      case RAW_BRK:"
+      },
+      {
+        "line": 213,
+        "count": "0",
+        "source": "      case RAW_ENDLOOP:"
+      }
+    ],
+    "lines": [
+      {
+        "line": 113,
+        "count": "6.94M",
+        "source": "   if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {"
+      },
+      {
+        "line": 115,
+        "count": "934k",
+        "source": "      ir->opcode_mask |= UINT64_C(1) << input->opcode;"
+      },
+      {
+        "line": 124,
+        "count": "409k",
+        "source": "      ir->opcode_mask |= UINT64_C(1) << RAW_UARL;"
+      },
+      {
+        "line": 134,
+        "count": "5.60M",
+        "source": "   bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;"
+      },
+      {
+        "line": 205,
+        "count": "1.89M",
+        "source": "         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & RAW_V6_OPCODES))"
+      },
+      {
+        "line": 211,
+        "count": "0",
+        "source": "      case RAW_BGNLOOP:"
+      },
+      {
+        "line": 212,
+        "count": "0",
+        "source": "      case RAW_BRK:"
+      },
+      {
+        "line": 213,
+        "count": "0",
+        "source": "      case RAW_ENDLOOP:"
+      },
+      {
+        "line": 232,
+        "count": "5.42M",
+        "source": "   if (instruction->opcode != RAW_MOV) ir->opcode_mask |= UINT64_C(1) << instruction->opcode;"
+      },
+      {
+        "line": 404,
+        "count": "6.35M",
+        "source": "      if (instruction->opcode == RAW_BGNLOOP) { emit(&w, \" do {\\n\"); continue; }"
+      },
+      {
+        "line": 405,
+        "count": "6.29M",
+        "source": "      if (instruction->opcode == RAW_BRK) { emit(&w, \" break;\\n\"); continue; }"
+      },
+      {
+        "line": 406,
+        "count": "6.23M",
+        "source": "      if (instruction->opcode == RAW_ENDLOOP) { emit(&w, \" } while (true);\\n\"); continue; }"
+      },
+      {
+        "line": 417,
+        "count": "5.47M",
+        "source": "      bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;"
+      }
+    ]
+  }
+]

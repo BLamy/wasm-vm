@@ -1,0 +1,127 @@
+[
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/attack.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"cases\": 1121,\n  \"accepted\": [\n    \"independent-lanes\",\n    \"alias-36-4-41\",\n    \"alias-36-4-42\",\n    \"alias-36-4-44\",\n    \"alias-36-4-45\",\n    \"alias-36-4-46\",\n    \"alias-36-4-47\",\n    \"alias-36-4-48\",\n    \"alias-36-4-49\",\n    \"alias-36-4-50\",\n    \"alias-36-4-51\",\n    \"alias-36-4-52\",\n    \"alias-36-4-53\",\n    \"alias-36-4-54\",\n    \"alias-36-4-55\",\n    \"alias-36-4-57\",\n    \"alias-36-4-58\",\n    \"alias-36-4-59\",\n    \"alias-36-4-60\",\n    \"alias-36-4-61\",\n    \"alias-36-4-62\",\n    \"alias-40-4-45\",\n    \"alias-40-4-46\",\n    \"alias-40-4-47\",\n    \"alias-40-4-48\",\n    \"alias-40-4-49\",\n    \"alias-40-4-50\",\n    \"alias-40-4-51\",\n    \"alias-40-4-52\",\n    \"alias-40-4-53\",\n    \"alias-40-4-55\",\n    \"alias-40-4-56\",\n    \"alias-40-4-57\",\n    \"alias-40-4-58\",\n    \"alias-40-4-60\",\n    \"alias-40-4-61\",\n    \"alias-40-4-62\",\n    \"alias-43-4-45\",\n    \"alias-43-4-46\",\n    \"alias-43-4-47\",\n    \"alias-43-4-48\",\n    \"alias-43-4-49\",\n    \"alias-43-4-50\",\n    \"alias-43-4-51\",\n    \"alias-43-4-52\",\n    \"alias-43-4-53\",\n    \"alias-43-4-55\",\n    \"alias-43-4-56\",\n    \"alias-43-4-57\",\n    \"alias-43-4-58\",\n    \"alias-43-4-59\",\n    \"alias-43-4-60\",\n    \"alias-43-4-62\"\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/interpret.py"
+    ],
+    "returncode": 0,
+    "stdout": "Accepted program executions 10441 max headers 18 address range 10 45\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/consumer.mjs"
+    ],
+    "returncode": 0,
+    "stdout": "independent bank checks 269 typed metadata mutants 45 all pass\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/sabotage.py"
+    ],
+    "returncode": 0,
+    "stdout": "count bypass fails at19; missing recurrence check admits +16 counterexample, CPU translation only\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/receipt-attacks.py"
+    ],
+    "returncode": 0,
+    "stdout": "[\n  {\n    \"name\": \"consumer-unit-control\",\n    \"passed\": true\n  },\n  {\n    \"name\": \"consumer-unit-count-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"consumer-unit-count-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"consumer-unit-startOffset-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"consumer-unit-startOffset-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"consumer-unit-endOffset-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"consumer-unit-endOffset-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-control\",\n    \"passed\": true\n  },\n  {\n    \"name\": \"profiles-count-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-count-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-startOffset-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-startOffset-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-endOffset-float\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  },\n  {\n    \"name\": \"profiles-endOffset-bool\",\n    \"rejected\": true,\n    \"message\": \"integer-only V8 offsets and execution counters\"\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/native-wasm-forgeries.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\"name\": \"native-calls-float\", \"rejected\": true, \"message\": \"nonnegative JSON integer: native.stats.calls\"}\n{\"name\": \"native-maxsingle-float\", \"rejected\": true, \"message\": \"nonnegative JSON integer: native.stats.maxSingleResultBytes\"}\n{\"name\": \"native-maxpair-float\", \"rejected\": true, \"message\": \"nonnegative JSON integer: native.stats.maxPairResultBytes\"}\n{\"name\": \"native-flow-float\", \"rejected\": true, \"message\": \"nonnegative JSON integer: native.flow.arenaBytes\"}\n{\"name\": \"native-count-bool\", \"rejected\": true, \"message\": \"exact mandatory signed raw-word constraint\"}\n{\"name\": \"native-extent-float\", \"rejected\": true, \"message\": \"exact mandatory signed raw-word constraint\"}\n{\"name\": \"native-source-bytes-float\", \"rejected\": true, \"message\": \"current source identity\"}\n{\"name\": \"native-allocation-counter-bool\", \"rejected\": true, \"message\": \"all sixteen actual loop allocations and transaction errors\"}\n{\"name\": \"native-llvm-region-float\", \"rejected\": true, \"message\": \"nonnegative JSON integer: LLVM function region positions and counts\"}\n{\"name\": \"native-llvm-region-bool\", \"rejected\": true, \"message\": \"nonnegative JSON integer: LLVM function region positions and counts\"}\n{\"name\": \"wasm-calls-float\", \"rejected\": true, \"message\": \"independent exact call/recovery/output accounting\"}\n{\"name\": \"wasm-memory-float\", \"rejected\": true, \"message\": \"same fixed Wasm memory throughout every recorded call\"}\n{\"name\": \"wasm-schedule-bool\", \"rejected\": true, \"message\": \"bounded real allocator pressure matrix\"}\n{\"name\": \"wasm-capacity-float\", \"rejected\": true, \"message\": \"real bounded malloc capacity record\"}\n{\"name\": \"wasm-source-bytes-float\", \"rejected\": true, \"message\": \"exact Wasm runtime/harness identities and bounds\"}\n{\"name\": \"wasm-ownership-ok-int\", \"rejected\": true, \"message\": \"complete owned request/result observations\"}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/browser-forgeries.py"
+    ],
+    "returncode": 0,
+    "stdout": "[\n  {\n    \"name\": \"draws-float\",\n    \"rejected\": true,\n    \"message\": \"fractional observation outside authored viewport depth at ('drawCount',)\"\n  },\n  {\n    \"name\": \"pixels-float\",\n    \"rejected\": true,\n    \"message\": \"fractional observation outside authored viewport depth at ('checkedPixels',)\"\n  },\n  {\n    \"name\": \"word-bool\",\n    \"rejected\": true,\n    \"message\": \"unexpected boolean/non-JSON observation at ('rigs', 0, 'atlases', 0, 'pages', 0, 'observedWords', 0)\"\n  },\n  {\n    \"name\": \"pixel-float\",\n    \"rejected\": true,\n    \"message\": \"byte observations contain only integer octets\"\n  },\n  {\n    \"name\": \"fence-seed-float\",\n    \"rejected\": true,\n    \"message\": \"fractional observation outside authored viewport depth at ('rigs', 3, 'schedule', 'seed')\"\n  },\n  {\n    \"name\": \"shader-ok-int\",\n    \"rejected\": true,\n    \"message\": \"boolean observation at ('shaderFixtures', 0, 'result', 'ok')\"\n  },\n  {\n    \"name\": \"coverage-count-float\",\n    \"rejected\": true,\n    \"message\": \"fractional observation outside authored viewport depth at (0, 'coverage', 'functions', 0, 'ranges', 0, 'count')\"\n  },\n  {\n    \"name\": \"coverage-count-bool\",\n    \"rejected\": true,\n    \"message\": \"unexpected boolean/non-JSON observation at (0, 'coverage', 'functions', 0, 'ranges', 0, 'count')\"\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/pixels.py"
+    ],
+    "returncode": 0,
+    "stdout": "independent reconstructed 25 atlases 800 words 102400 pixels\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/coverage.py"
+    ],
+    "returncode": 0,
+    "stdout": "renderer/virgl-shader/bridge.c changed 288 zero []\nrenderer/virgl-shader/raw_bits.c changed 13 zero [\n  {\n    \"line\": 211,\n    \"count\": \"0\",\n    \"source\": \"      case RAW_BGNLOOP:\"\n  },\n  {\n    \"line\": 212,\n    \"count\": \"0\",\n    \"source\": \"      case RAW_BRK:\"\n  },\n  {\n    \"line\": 213,\n    \"count\": \"0\",\n    \"source\": \"      case RAW_ENDLOOP:\"\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/js-coverage.py"
+    ],
+    "returncode": 0,
+    "stdout": "renderer/virgl-command/state.mjs changed 6 zero []\nrenderer/virgl-command/constant-domain.mjs changed 35 zero []\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/sabotage.py"
+    ],
+    "sourceSha256": "db8e636036fbf64fdda79e26b858c8b056b670e7cd874099fb4b951d9ce2a992",
+    "reason": "Correct verifier-only mutant arithmetic: altered increment does not preserve healthy a/j or b/j invariants; rerun affected proof only.",
+    "returncode": 0,
+    "stdout": "count bypass fails at19; missing recurrence check admits +16 counterexample, CPU translation only\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/cold-bindings.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"task\": \"E6-T12e9\",\n  \"sourceHead\": \"bfcd3a4076a163648c67bf7674e94d616c42c1e1\",\n  \"workerClaimCommit\": \"9e647be3c69fe4bfd3706ba198cd1630cd454400\",\n  \"workerClaimSha256\": \"bf33baa835f07c642224ce7ab0b0be0b1cd5da0a263edac500afa4ec3375f352\",\n  \"coldReportSha256\": \"69a613e5cfa4d46b06f6a486ee60f757c9912068230abe5fd17fe003d34438a9\",\n  \"coldReceiptSha256\": \"03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7\",\n  \"copiedArtifactsVerified\": 178,\n  \"copiedArtifactsEqualPreservedClone\": true,\n  \"cleanBeforeAndAfterAndNow\": true,\n  \"removedEnvironmentNames\": [\n    \"GIT_PAGER\",\n    \"RUST_LOG\"\n  ],\n  \"harnessSha256\": \"eda83074cfa59b1744c9e629fee97dfd2e3ce1de3234353141c48c3d996d7825\",\n  \"logSha256\": \"1a331691d0bbaaf7df5acc34dd6ab847169a6f5961108420bb15ec59aa6a6572\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/audit-submission.py",
+      "--root",
+      "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm",
+      "--evidence",
+      "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm/target/evidence/virgl-bounded-loops-cold",
+      "--result",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/verifier/cold-control.json"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"task\": \"E6-T12e9\",\n  \"sourceHead\": \"bfcd3a4076a163648c67bf7674e94d616c42c1e1\",\n  \"checkoutHead\": \"bfcd3a4076a163648c67bf7674e94d616c42c1e1\",\n  \"checkout\": \"/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm\",\n  \"evidence\": \"/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm/target/evidence/virgl-bounded-loops-cold\",\n  \"receiptSha256\": \"03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7\",\n  \"receiptReconstructedExactly\": true,\n  \"coverageReexportSha256\": \"0dee49ca9e9bd59c947504d105bb63b454255f81a251fa97772088ca735d7adc\",\n  \"sources\": 398,\n  \"records\": 176,\n  \"checkoutStatus\": \"\"\n}\n",
+    "stderr": ""
+  }
+]

@@ -1,7 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
-import { parseConstantDomain, checkFiniteBank, checkIndirectBank } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -264,6 +264,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           const contract = unwrap(parseConstantDomain(translated.metadata, fields.stageName));
           object.constantDomain = contract.domain;
           object.constantAccess = contract.access ?? null;
+          object.constantConstraint = contract.constraint ?? null;
           require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
@@ -442,7 +443,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       const shader = uniform.stage === 0 ? program.vertex : program.fragment;
       let words;
       if (shader.constantAccess) {
-        const checked = indirectBanks?.[uniform.stage] ?? checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional);
+        const checked = indirectBanks?.[uniform.stage] ?? (shader.constantConstraint ?
+          checkLoopBank(bank, shader.constantConstraint.count) : checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional));
         if (!checked.ok && !strict) return [];
         words = Object.freeze(unwrap(checked).words.slice(0, count));
       } else if (uniform.conditional) {
@@ -560,7 +562,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
       const indirectBanks = Object.freeze(shaders.map((shader, stage) => shader.constantAccess ?
-        unwrap(checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
+        unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :
+          checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
       const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
       const uploads = constantUploads(program, banks, true, indirectBanks);
       for (const sampler of program.samplers) {

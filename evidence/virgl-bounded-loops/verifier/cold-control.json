@@ -1,0 +1,13 @@
+{
+  "task": "E6-T12e9",
+  "sourceHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "checkoutHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "checkout": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm",
+  "evidence": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm/target/evidence/virgl-bounded-loops-cold",
+  "receiptSha256": "03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7",
+  "receiptReconstructedExactly": true,
+  "coverageReexportSha256": "0dee49ca9e9bd59c947504d105bb63b454255f81a251fa97772088ca735d7adc",
+  "sources": 398,
+  "records": 176,
+  "checkoutStatus": ""
+}

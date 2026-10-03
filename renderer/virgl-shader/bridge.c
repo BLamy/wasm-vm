@@ -196,21 +196,27 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
       if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
    if (r.file == INDIRECT_CONST) {
       failure_code = "unsupported-feature";
-      if (!s->raw || !s->address_declared || !s->address_written) return false;
-      struct raw_lane address = s->raw->address;
-      /* (~zero) is the unsigned maximum of ALL words represented by these
-       * known bits. It proves the complete set, not one observed address. */
-      if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;
-      uint64_t candidates = 0;
-      for (unsigned i = 0; i < CONST_REGISTERS; ++i) {
-         if ((i & address.zero) || ((uint32_t)~i & address.one)) continue;
-         if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;
-         candidates |= UINT64_C(1) << i;
+      if (!s->raw || !s->address_declared) return false;
+      if (!s->syntax_only) {
+         if (!s->address_written) return false;
+         uint64_t candidates = 0;
+         if (s->raw->loop.checked)
+            for (unsigned use = 0; use < 4; ++use)
+               if (s->current_pc == s->raw->loop.access[use].read) candidates = s->raw->loop.access[use].candidates;
+         if (!candidates) {
+            struct raw_lane address = s->raw->address;
+            /* The unsigned maximum bounds ALL compatible known-bit words. */
+            if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;
+            for (unsigned i = 0; i < CONST_REGISTERS; ++i)
+               if (!(i & address.zero) && !((uint32_t)~i & address.one)) candidates |= UINT64_C(1) << i;
+         }
+         if (!candidates || candidates >> CONST_REGISTERS) return false;
+         for (unsigned i = 0; i < CONST_REGISTERS; ++i) if (candidates & (UINT64_C(1) << i))
+            if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;
+         s->raw->indirect_indices |= candidates;
       }
-      if (!candidates) return false;
-      s->raw->indirect_indices |= candidates;
    } else if ((s->components[r.file][r.index] & needed) != needed) return false;
-   if (r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
+   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
    if (operand) {
       operand->file = r.file;
       operand->index = r.index;
@@ -318,12 +324,175 @@ static bool declaration(const char **p, struct profile *s)
    return true;
 }
 
+/* The certificate recognizes one typed dependency graph, not source spelling or
+ * register numbers. Every operand has already passed the shared syntax parser. */
+static unsigned loop_scalar(const struct raw_instruction *i)
+{
+   if (i->dst.file != TEMP || !i->dst.mask || (i->dst.mask & (i->dst.mask - 1))) return UINT16_MAX;
+   unsigned lane = 0;
+   while (!(i->dst.mask & (1u << lane))) ++lane;
+   return i->dst.index * 4 + lane;
+}
+static bool loop_arg(const struct raw_instruction *i, unsigned source, unsigned consumed, unsigned lane)
+{
+   const struct raw_source *r = &i->src[source];
+   return lane != UINT16_MAX && r->file == TEMP && r->index == lane / 4 && r->swizzle[consumed] == lane % 4;
+}
+static bool loop_scalar_arg(const struct raw_instruction *i, unsigned source, unsigned lane)
+{
+   unsigned dst = loop_scalar(i);
+   return dst != UINT16_MAX && loop_arg(i, source, dst % 4, lane);
+}
+static bool loop_word(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source, unsigned consumed, uint32_t word)
+{
+   const struct raw_source *r = &i->src[source];
+   return r->file == IMM && ir->immediates[r->index][r->swizzle[consumed]] == word;
+}
+static bool loop_scalar_word(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source, uint32_t word)
+{
+   unsigned dst = loop_scalar(i);
+   return dst != UINT16_MAX && loop_word(ir, i, source, dst % 4, word);
+}
+static bool loop_count(const struct raw_instruction *i)
+{
+   unsigned dst = loop_scalar(i);
+   return dst != UINT16_MAX && i->src[1].file == CONST && i->src[1].index == 9 && i->src[1].swizzle[dst % 4] == 0;
+}
+static bool loop_load(const struct raw_instruction *i, bool scalar)
+{
+   unsigned dst = loop_scalar(i);
+   return i->opcode == RAW_MOV && i->dst.file == TEMP && i->src[0].file == INDIRECT_CONST &&
+      (scalar ? dst != UINT16_MAX && i->src[0].swizzle[dst % 4] == 0 : i->dst.mask == 15);
+}
+static bool loop_writes(const struct raw_instruction *i, unsigned lane)
+{
+   return !((UINT64_C(1) << i->opcode) & RAW_CONTROL_OPCODES) && i->dst.file == TEMP &&
+      i->dst.index == lane / 4 && (i->dst.mask & (1u << (lane % 4)));
+}
+static uint64_t loop_indices(unsigned first, unsigned last)
+{
+   uint64_t result = 0;
+   for (unsigned i = first; i <= last; ++i) result |= UINT64_C(1) << i;
+   return result;
+}
+static bool loop_recognize(struct raw_ir *ir)
+{
+   unsigned begin = 0, loops = 0, breaks = 0, ends = 0;
+   for (unsigned pc = 0; pc < ir->count; ++pc) {
+      if (ir->instructions[pc].opcode == RAW_BGNLOOP) { begin = pc; ++loops; }
+      breaks += ir->instructions[pc].opcode == RAW_BRK;
+      ends += ir->instructions[pc].opcode == RAW_ENDLOOP;
+   }
+   if (loops != 1 || breaks != 1 || ends != 1 || begin < 3 || begin + 24 >= ir->count) return false;
+   const struct raw_instruction *v = &ir->instructions[begin];
+   static const enum raw_opcode body[] = {RAW_BGNLOOP, RAW_UARL, RAW_MOV, RAW_FSLT, RAW_ISGE,
+      RAW_OR, RAW_UIF, RAW_BRK, RAW_ENDIF, RAW_UADD, RAW_SHL, RAW_UADD, RAW_UADD,
+      RAW_USHR, RAW_MOV, RAW_ENDLOOP, RAW_USNE, RAW_UIF, RAW_SHL, RAW_UADD,
+      RAW_USHR, RAW_MOV, RAW_UARL, RAW_MOV};
+   for (unsigned i = 0; i < sizeof(body) / sizeof(body[0]); ++i) if (v[i].opcode != body[i]) return false;
+   unsigned a = loop_scalar(&v[-3]), b = loop_scalar(&v[-2]), j = loop_scalar(&v[-1]);
+   if (v[-3].opcode != RAW_MOV || v[-2].opcode != RAW_MOV || v[-1].opcode != RAW_MOV ||
+       !loop_scalar_word(ir, &v[-3], 0, 11) || !loop_scalar_word(ir, &v[-2], 0, 16) ||
+       !loop_scalar_word(ir, &v[-1], 0, 1) || a == b || a == j || b == j) return false;
+   unsigned h = loop_scalar(&v[2]), fp = loop_scalar(&v[3]), ip = loop_scalar(&v[4]);
+   unsigned pred = loop_scalar(&v[5]), next = loop_scalar(&v[9]), shift = loop_scalar(&v[10]), num = loop_scalar(&v[12]);
+   if (fp == UINT16_MAX || v[3].src[0].file != TEMP) return false;
+   unsigned q = v[3].src[0].index * 4 + v[3].src[0].swizzle[fp % 4];
+   unsigned roles[] = {a, b, j, h, fp, ip, pred, next, shift, num, q};
+   for (unsigned i = 0; i < sizeof(roles) / sizeof(roles[0]); ++i) {
+      if (roles[i] == UINT16_MAX) return false;
+      for (unsigned k = 0; k < i; ++k) if (roles[i] == roles[k]) return false;
+   }
+   if (!loop_arg(&v[1], 0, 0, a) || !loop_load(&v[2], true) || !loop_scalar_arg(&v[3], 1, h) ||
+       !loop_scalar_arg(&v[4], 0, j) || !loop_count(&v[4]) ||
+       !loop_scalar_arg(&v[5], 0, fp) || !loop_scalar_arg(&v[5], 1, ip) || !loop_arg(&v[6], 0, 0, pred) ||
+       !loop_scalar_arg(&v[9], 0, j) || !loop_scalar_word(ir, &v[9], 1, 1) ||
+       !loop_scalar_arg(&v[10], 0, j) || !loop_scalar_word(ir, &v[10], 1, 4) ||
+       loop_scalar(&v[11]) != b || !loop_scalar_arg(&v[11], 0, shift) || !loop_scalar_word(ir, &v[11], 1, 16) ||
+       !loop_scalar_word(ir, &v[12], 0, 176) || !loop_scalar_arg(&v[12], 1, shift) ||
+       loop_scalar(&v[13]) != a || !loop_scalar_arg(&v[13], 0, num) || !loop_scalar_word(ir, &v[13], 1, 4) ||
+       loop_scalar(&v[14]) != j || !loop_scalar_arg(&v[14], 0, next) ||
+       !loop_scalar_arg(&v[16], 0, j) || !loop_count(&v[16]) ||
+       !loop_arg(&v[17], 0, 0, loop_scalar(&v[16]))) return false;
+   /* The true edge of this exact USNE is the relational j<=17 proof. */
+   unsigned tail_end = begin + 18;
+   while (tail_end < ir->count && !((UINT64_C(1) << ir->instructions[tail_end].opcode) & RAW_CONTROL_OPCODES)) ++tail_end;
+   if (tail_end >= ir->count || (ir->instructions[tail_end].opcode != RAW_ELSE && ir->instructions[tail_end].opcode != RAW_ENDIF)) return false;
+   unsigned ts = loop_scalar(&v[18]);
+   if (!loop_scalar_arg(&v[18], 0, j) || !loop_scalar_word(ir, &v[18], 1, 4) ||
+       v[19].dst.file != TEMP || v[19].dst.mask != 3 || v[20].dst.file != TEMP || v[20].dst.mask != 3) return false;
+   unsigned nums = v[19].dst.index * 4, addresses = v[20].dst.index * 4;
+   for (unsigned lane = 0; lane < 2; ++lane)
+      if (!loop_word(ir, &v[19], 0, lane, lane ? 144 : 432) || !loop_arg(&v[19], 1, lane, ts) ||
+          !loop_arg(&v[20], 0, lane, nums + lane) || !loop_word(ir, &v[20], 1, lane, 4)) return false;
+   if (!loop_scalar_arg(&v[21], 0, addresses + 1) || !loop_arg(&v[22], 0, 0, loop_scalar(&v[21])) ||
+       !loop_load(&v[23], true)) return false;
+   unsigned upper = 0;
+   for (unsigned pc = begin + 24; pc + 6 < tail_end; ++pc) {
+      const struct raw_instruction *u = &ir->instructions[pc];
+      if (u[0].opcode == RAW_UADD && loop_scalar_word(ir, &u[0], 0, 448) && loop_scalar_arg(&u[0], 1, b) &&
+          u[1].opcode == RAW_USHR && loop_scalar_arg(&u[1], 0, loop_scalar(&u[0])) && loop_scalar_word(ir, &u[1], 1, 4) &&
+          u[2].opcode == RAW_UARL && loop_arg(&u[2], 0, 0, loop_scalar(&u[1])) && loop_load(&u[3], false) &&
+          u[4].opcode == RAW_MOV && loop_scalar_arg(&u[4], 0, addresses) &&
+          u[5].opcode == RAW_UARL && loop_arg(&u[5], 0, 0, loop_scalar(&u[4])) && loop_load(&u[6], false)) {
+         if (upper) return false;
+         upper = pc;
+      }
+   }
+   if (!upper) return false;
+   /* Protect the role versions and the lower-address pair until all uses. */
+   unsigned protected[] = {a, b, j, h, q};
+   for (unsigned pc = begin + 16; pc < tail_end; ++pc) {
+      const struct raw_instruction *i = &ir->instructions[pc];
+      for (unsigned k = 0; k < sizeof(protected) / sizeof(protected[0]); ++k)
+         if (loop_writes(i, protected[k])) return false;
+      if (pc > begin + 20 && pc <= upper + 6 && (loop_writes(i, addresses) || loop_writes(i, addresses + 1))) return false;
+   }
+   /* The pair itself must not overwrite carried roles while being formed. */
+   for (unsigned k = 0; k < sizeof(protected) / sizeof(protected[0]); ++k)
+      if (loop_writes(&v[19], protected[k]) || loop_writes(&v[20], protected[k])) return false;
+   struct loop_certificate c = {.begin = begin, .end = begin + 15, .break_pc = begin + 7,
+      .tail_test = begin + 16, .tail_if = begin + 17, .tail_end = tail_end,
+      .j = j, .a = a, .b = b, .header = h, .invariant = q, .count_register = 9, .count_component = 0, .checked = true};
+   c.access[0].uarl = begin + 1; c.access[0].read = begin + 2; c.access[0].candidates = loop_indices(11, 28);
+   c.access[1].uarl = begin + 22; c.access[1].read = begin + 23; c.access[1].candidates = loop_indices(10, 26);
+   c.access[2].uarl = upper + 2; c.access[2].read = upper + 3; c.access[2].candidates = loop_indices(29, 45);
+   c.access[3].uarl = upper + 5; c.access[3].read = upper + 6; c.access[3].candidates = loop_indices(28, 44);
+   ir->loop = c;
+   return true;
+}
+
+static void loop_header(struct profile *s)
+{
+   const struct loop_certificate *c = &s->raw->loop;
+   /* Only the three certified recurrence lanes carry facts across iterations.
+    * Every other body-written lane must be defined afresh before its use. */
+   for (unsigned pc = c->begin + 1; pc < c->end; ++pc) {
+      const struct raw_instruction *i = &s->raw->instructions[pc];
+      if ((UINT64_C(1) << i->opcode) & RAW_CONTROL_OPCODES || i->dst.file != TEMP) continue;
+      s->written[TEMP][i->dst.index] &= ~i->dst.mask;
+      for (unsigned lane = 0; lane < 4; ++lane) if (i->dst.mask & (1u << lane)) s->raw->temporary[i->dst.index][lane] = (struct raw_lane){0};
+   }
+   unsigned lanes[] = {c->j, c->a, c->b};
+   for (unsigned k = 0; k < 3; ++k) {
+      struct raw_lane fact = {.zero = UINT32_MAX, .one = UINT32_MAX};
+      for (unsigned j = 1; j <= 18; ++j) {
+         uint32_t value = k == 0 ? j : k == 1 ? j + 10 : 16 * j;
+         fact.zero &= ~value; fact.one &= value;
+      }
+      s->raw->temporary[lanes[k] / 4][lanes[k] % 4] = fact;
+      s->written[TEMP][lanes[k] / 4] |= 1u << (lanes[k] % 4);
+   }
+   s->address_written = false; s->raw->address = (struct raw_lane){0};
+}
+
 enum { FLOW_DEPTH = 8 };
 struct flow_frame {
    struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
    unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];
    unsigned target, else_target;
    bool has_target, has_else, has_else_target, address_written;
+   bool is_loop, entry_live, saved_live, exit_live;
    struct raw_lane address;
 };
 struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };
@@ -380,39 +549,76 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
 {
    failure_code = "unsupported-feature";
    struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   bool loop = opcode == RAW_BGNLOOP || opcode == RAW_ENDLOOP;
    if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0])) return false;
    unsigned target = 0;
-   bool has_target = opcode != RAW_ENDIF && punctuation(p, ':');
-   if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;
+   bool has_target = opcode != RAW_ENDIF && opcode != RAW_BRK && punctuation(p, ':');
+   if (loop) {
+      if (!has_target || !index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target != 0) return false;
+   } else if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;
    if (!end(p) || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;
-   if (opcode == RAW_UIF) {
+   if (opcode == RAW_UIF || opcode == RAW_BGNLOOP) {
       if (flow->depth == FLOW_DEPTH) return false;
+      if (opcode == RAW_BGNLOOP) {
+         for (unsigned i = 0; i < flow->depth; ++i) if (flow->frames[i].is_loop) return false;
+         if (!s->syntax_only && (!s->raw->loop.checked || s->current_pc != s->raw->loop.begin)) return false;
+      }
       struct flow_frame *frame = &flow->frames[flow->depth++];
+      frame->is_loop = opcode == RAW_BGNLOOP;
       frame->target = target; frame->has_target = has_target;
       frame->has_else = frame->has_else_target = false;
-      flow_snapshot(s, frame, false);
+      frame->entry_live = s->live; frame->saved_live = frame->exit_live = false;
+      if (!s->syntax_only) {
+         if (frame->is_loop) loop_header(s);
+         else flow_snapshot(s, frame, false);
+      }
+   } else if (opcode == RAW_BRK) {
+      unsigned depth = flow->depth;
+      while (depth && !flow->frames[depth - 1].is_loop) --depth;
+      if (!depth) return false;
+      if (!s->syntax_only) {
+         if (s->current_pc != s->raw->loop.break_pc || !s->live) return false;
+         struct flow_frame *frame = &flow->frames[depth - 1];
+         flow_snapshot(s, frame, false); frame->exit_live = true;
+         s->live = false;
+      }
    } else {
       if (!flow->depth) return false;
       struct flow_frame *frame = &flow->frames[flow->depth - 1];
-      if (opcode == RAW_ELSE) {
-         if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;
-         frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;
-         flow_snapshot(s, frame, true);
-      } else {
-         if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :
-              frame->has_target && frame->target != s->instructions)) return false;
-         flow_join(s, frame);
+      if (opcode == RAW_ENDLOOP) {
+         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || !frame->exit_live))) return false;
+         if (!s->syntax_only) { flow_snapshot(s, frame, true); s->live = true; }
          --flow->depth;
+      } else {
+         if (frame->is_loop) return false;
+         if (opcode == RAW_ELSE) {
+            if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;
+            frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;
+            frame->saved_live = s->live; s->live = frame->entry_live;
+            if (!s->syntax_only) flow_snapshot(s, frame, true);
+         } else {
+            if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :
+                 frame->has_target && frame->target != s->instructions)) return false;
+            bool other_live = frame->has_else ? frame->saved_live : frame->entry_live;
+            if (!s->syntax_only && other_live) {
+               if (s->live) flow_join(s, frame);
+               else flow_snapshot(s, frame, true);
+            }
+            s->live |= other_live;
+            --flow->depth;
+         }
       }
    }
    ++s->instructions;
-   raw_record(s->raw, &raw);
+   if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
+   else raw_record(s->raw, &raw);
    failure_code = "parse-error";
    return true;
 }
 
 static bool instruction(const char **p, struct profile *s, struct flow_context *flow)
 {
+   s->current_pc = s->instructions;
    unsigned arity;
    bool tex = false, partial = false;
    struct raw_instruction raw = {0};
@@ -421,6 +627,9 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       s->ended = true; return end(p);
    }
    if (flow) {
+      if (word(p, "BGNLOOP")) return control(p, s, flow, RAW_BGNLOOP);
+      if (word(p, "BRK")) return control(p, s, flow, RAW_BRK);
+      if (word(p, "ENDLOOP")) return control(p, s, flow, RAW_ENDLOOP);
       if (word(p, "UIF")) return control(p, s, flow, RAW_UIF);
       if (word(p, "ELSE")) return control(p, s, flow, RAW_ELSE);
       if (word(p, "ENDIF")) return control(p, s, flow, RAW_ENDIF);
@@ -459,7 +668,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if (raw.opcode == RAW_UARL || ((1u << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = "unsupported-feature";
+      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -478,7 +687,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (!punctuation(p, ',')) return false;
       /* A modifier belongs only to a numeric operand; samplers, raw selectors
        * and bitwise payloads never pass through this typed minus parser. */
-      if (s->raw && ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
+      if (s->raw && ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
       if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL)) return false;
    }
@@ -492,7 +701,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
       raw.flags |= s->raw_flags;
-      if (!raw_record(s->raw, &raw)) {
+      if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
+      else if (!raw_record(s->raw, &raw)) {
          missing_numeric_authority = true;
          failure_code = "unsupported-feature";
          return false;
@@ -558,6 +768,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    }
    if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
+   if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
    if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s) ||
@@ -570,6 +781,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
 
 static bool validate(char *text, struct profile *s)
 {
+   s->live = true;
    struct flow_context *flow = NULL;
    if (s->raw_flags & RAW_STRUCTURED) {
       flow = calloc(1, sizeof(*flow));
@@ -649,7 +861,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
     * admits a shader or selects emitted semantics. Only fully validated new
     * instructions plus a complete output proof authorize the owned backend.
     * Texts without such opcode tokens retain the exact legacy validator path. */
-   bool candidate = false, numeric_candidate = false, structured_candidate = false;
+   bool candidate = false, numeric_candidate = false, structured_candidate = false, loop_candidate = false;
    char *save = NULL;
    for (char *line = strtok_r(checked, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
       const char *p = line;
@@ -658,7 +870,9 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          while (isdigit((unsigned char)*p)) ++p;
          if (!punctuation(&p, ':')) continue;
       }
-      if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
+      if (word(&p, "BGNLOOP") || word(&p, "BRK") || word(&p, "ENDLOOP")) {
+         candidate = structured_candidate = loop_candidate = true;
+      } else if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
          candidate = structured_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
@@ -683,6 +897,36 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          (structured_candidate ? RAW_STRUCTURED : 0);
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+   }
+   if (loop_candidate) {
+      /* Syntax-only records share the one bounded IR; they never reach emit.
+       * The complete recognized graph supplies the independent finite policy. */
+      profile->syntax_only = true;
+      memcpy(checked, text, length); checked[length] = 0;
+      failure_code = "parse-error";
+      if (!validate(checked, profile) || !loop_recognize(profile->raw)) {
+         profile->syntax_only = false;
+         return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
+            !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
+            "TGSI is malformed or outside the documented straight-line profile.");
+      }
+      struct raw_ir *ir = profile->raw;
+      int stage = profile->stage;
+      /* Retain parsed instructions for the header's write-set scan. The
+       * checked pass overwrites them in place, one instruction at a time. */
+      memset(ir->temporary, 0, sizeof(ir->temporary));
+      memset(ir->output, 0, sizeof(ir->output));
+      ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;
+      ir->address = (struct raw_lane){0};
+      *profile = (struct profile){.stage = stage, .raw = ir,
+         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};
+      memcpy(checked, text, length); checked[length] = 0;
+      failure_code = "parse-error"; missing_numeric_authority = false;
+      if (validate(checked, profile)) return NULL;
+      profile->raw_flags &= ~RAW_CONDITIONAL;
+      return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
+         !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
+         "TGSI is malformed or outside the documented straight-line profile.");
    }
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
@@ -806,6 +1050,12 @@ static void interface_key(const struct profile *fragment)
    append("\"");
 }
 
+static void constant_domain(int stage, int count)
+{
+   append(",\"constantDomains\":[{\"kind\":\"constant-bank-finite-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d}]",
+      stage ? "fragment" : "vertex", stage ? "fs" : "vs", count);
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -821,6 +1071,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->loop.checked ? "virgl-webgl2-raw-bits-v12" :
       c->profile.raw->indirect_indices ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
       c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
@@ -846,8 +1097,9 @@ static void stage_result(const struct conversion *c)
    if (!stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}" );
    append("]");
    if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
-      append(",\"constantDomains\":[{\"kind\":\"constant-bank-finite-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d}]",
-         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+      constant_domain(stage, info->num_consts);
+   else if (profile->raw && profile->raw->loop.checked)
+      constant_domain(stage, info->num_consts); /* Explicit loop policy, not a fabricated numeric dependency. */
    if (profile->raw && profile->raw->indirect_indices) {
       append(",\"constantAccesses\":[{\"kind\":\"constant-bank-static-indirect-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"indices\":[",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
@@ -857,6 +1109,9 @@ static void stage_result(const struct conversion *c)
       }
       append("]}]");
    }
+   if (profile->raw && profile->raw->loop.checked)
+      append(",\"constantConstraints\":[{\"kind\":\"constant-bank-counted-table-i32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":9,\"component\":0,\"maximum\":18}]",
+         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    append("}");
 }
 
