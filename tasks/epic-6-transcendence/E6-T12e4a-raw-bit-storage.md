@@ -3,7 +3,7 @@ id: E6-T12e4a
 epic: 6
 title: Preserve private raw shader lanes and masked bitwise operations
 priority: 525.02699041
-status: implemented
+status: verified
 depends_on: [E6-T12e3b]
 estimate: S
 risk: high
@@ -179,3 +179,71 @@ The full bank/component/pair/original shader and renderer regressions pass, as d
 finite guest constant transport and default demo artifacts remain unchanged;
 this isolated compiler submission makes no guest acceleration or MIPS/FPS claim.
 Independent verification is still required before `verified`.
+
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- **P01–P20 HELD.** Fresh critic predictions preceded implementation inspection;
+  their SHA256 is `86bf220049e1ef3e434c1adc7e2bb78e4e09e83795df3c9a6b3973c3c7e17469`.
+  Runtime `347dc59d60fa7e77cec58b14a36bcc8adb88db8d`, final harness
+  `2484d01736e15b6aee05cef12a3215f283705762`, and worker submission
+  `71dc9b428fbbc325f885f257c95e2fff8b9e8079` match the bounded claim.
+  No product refutation or outstanding evidence gap was found.
+- **Independent native/Wasm attacks HELD.** `verifier/native-report.json`
+  (`ea99a7971c2122d604a37c0f94611a1505397f18eee02db976ed13974b59a4f7`)
+  records 1,408 separately authored/mutated cases, 4,224 ASan/UBSan calls,
+  2,816 exact recoveries and 28 full-object comparisons against a separately
+  compiled verified parent. All 1,408 native/Wasm core results match; the
+  unchanged public JS guard is asserted separately for 115 control-character
+  cases. Examples: `verifier/audit-native.jsonl:190` rejects an uninitialized
+  consumed lane; line 283 rejects decimal overflow; lines 469/472 distinguish
+  an unsafe raw overwrite from a restored float origin; lines 1027/1030 prove
+  the 179/180 instruction boundary. No runtime repair was needed.
+- **Raw semantics and output proof HELD.** `verifier/knowledge-report.json`
+  (`c2299973f503f6bc9c8806366efe79fc3390d9b1bbca659e6f17652553d2c9c0`)
+  records 444,976 concrete known-bit/origin assertions, four new seeds,
+  12,288 IR instructions and 16 schedules per trial. An independent TGSI
+  interpreter checked all 480 worker words, 240 TF captures and 1,920 bit planes
+  with 14,850 assertions in `verifier/worker-semantics.json`
+  (`896fb15da6e6f1f72b8df63da49d5f15d354ec3c9a5a7ba3fcb0218e69c74810`).
+- **Novel hardware attack and sabotage HELD.**
+  `verifier/hardware/report.json`
+  (`33d92f3384de850586a52f46c9d97b83d7e6447224a7f8b5e6767fe159ca4e21`)
+  combines overlapping SHL, dynamic counts, retained raw neighbors and all five
+  new operations, reconstructing 96 full words in both stages from 12 vectors.
+  Actual UBO reflection is 656/640, TF guards survive, all 40 GL objects are
+  released and browser errors are zero. In
+  `verifier/sabotage/report.json`
+  (`6c0ed51ff09fafc52cbc5e0dd70bb041984aa2812fa606db2de578e1334e9969`),
+  changing the aliased SHL source `.y` to `.x` still compiles/links but changes
+  vertex probe 0/vector 0/raw word 4 from expected `0x3f7f8000` to
+  `0x3f008000`. The worker's separate count-mask sabotage also fails actual
+  readback as claimed.
+- **Coverage HELD with narrow waivers.** Every one of the 213 changed executable
+  C lines is classified: 212 executed; `raw_bits.c:107` is the guard-excluded
+  operand enum default. Actual fixed-memory browser pressure covers both owned
+  allocation failure classes and pair cleanup. Fixed-format writer overflow/
+  libc-error branches are defensive waivers: each instruction is at most
+  318 bytes, all 179 plus declarations/templates/output fit below 64 KiB.
+  Types/static assertions/docs are non-executable. Full per-line classifications,
+  stack reasoning and exact citations are in `verifier/VERIFICATION.md` and
+  `worker-semantics.json`; native stack observations are not claimed as Wasm
+  totals. Existing unchanged upstream defensive paths carry prior evidence.
+- **Exact-head, legacy and pristine-clone binding HELD.** A second independent
+  helper performed 636,635 scalar/structure/digest assertions (not independent
+  test-case count): complete input stream/results, pinned originals/vendor,
+  native/Wasm parity, actual uniforms/readback, the exact two-file harness-only
+  repair, all 102 copied cold artifacts, clean retained clone and scrubbed
+  environment. `verifier/binding-audit.json` SHA256
+  `7c616a2bbda8bf126e2e29316bae21060feab62978a252a742cb7e11015f2c51`.
+  Both builds and independent browser use the same Wasm
+  `64b4dd240932ab30031b81485d78e321cc1e6b4ec9d7cbf967e3ceebe87ca1a2`.
+- **SUITE.** Preserve the independent native cases/driver, known-bit test, novel
+  hardware fixture/runner and TGSI interpreter as reproducible verifier artifacts.
+  `make verify-E6-T12e4a` remains the recurring acceptance target. Full commands,
+  seeds, inputs, outputs, screenshots and record digests are retained under
+  `evidence/virgl-raw-bits/verifier/`; final `audit.json` SHA256
+  `c3ecc6f96f7c07873e1d3a6c14150640a370e2a90be76fe38a2dfe7d32099a0f`.
+  The private-compiler boundary is verified; production, finite guest constant
+  transport and default demo artifacts remain unchanged. No guest GPU or
+  MIPS/FPS gain is claimed.
