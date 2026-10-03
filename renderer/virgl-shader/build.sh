@@ -16,7 +16,7 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c
     ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
@@ -121,6 +121,16 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
       build/structured-conditional-sanitize/bridge.o build/structured-conditional-sanitize/raw_bits.o \
       "${sources[@]:2}" native_tests/structured_conditionals.c -lm -o build/structured-conditional-sanitize/structured-conditional-test
+    ;;
+  indirect-constant-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=indirect_constant_calloc -fstack-usage -c "$source.c" -o "build/indirect-constant-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
+      build/indirect-constant-sanitize/bridge.o build/indirect-constant-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/indirect_constants.c -lm -o build/indirect-constant-sanitize/indirect-constant-test
     ;;
   wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}

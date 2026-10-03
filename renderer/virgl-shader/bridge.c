@@ -3,6 +3,7 @@
  * The guard validates a deliberately small language before upstream's general
  * TGSI parser sees it. No unbounded numeric/range value, unsupported property,
  * indirect address, unsupported stage, or control-flow token reaches upstream.
+ * Checked indirect constants use the owned raw backend exclusively.
  */
 #include "bridge.h"
 #include "raw_bits.h"
@@ -126,12 +127,26 @@ static unsigned register_limit(unsigned file)
 }
 static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
 {
-   if (word(p, "ADDR")) { failure_code = "unsupported-feature"; return false; }
+   if (word(p, "ADDR")) {
+      failure_code = "unsupported-feature";
+      if (kind == SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) || !punctuation(p, ']')) return false;
+      r->file = ADDR; r->last = 0; r->mask = 1;
+      for (unsigned i = 0; i < 4; ++i) r->swizzle[i] = 0;
+      r->explicit_mask = punctuation(p, '.');
+      if (r->explicit_mask && !word(p, "x")) return false;
+      return kind == DECLARATION || r->explicit_mask;
+   }
    static const char *names[] = {"IN", "OUT", "TEMP", "CONST", "IMM", "SAMP", "SVIEW"};
    unsigned f;
    for (f = 0; f < FILE_COUNT; ++f) if (word(p, names[f])) break;
-   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index, register_limit(f))) return false;
-   r->file = (enum file)f;
+   if (f == FILE_COUNT || !punctuation(p, '[')) return false;
+   bool indirect = f == CONST && word(p, "ADDR");
+   if (indirect) {
+      failure_code = "unsupported-feature";
+      if (kind != SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) ||
+          !punctuation(p, ']') || !punctuation(p, '.') || !word(p, "x")) return false;
+   } else if (!index_number(p, &r->index, register_limit(f))) return false;
+   r->file = indirect ? INDIRECT_CONST : (enum file)f;
    r->last = r->index;
    space(p);
    if (!strncmp(*p, "..", 2)) {
@@ -170,13 +185,31 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
 static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand)
 {
    struct reg r;
-   if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index]) return false;
+   if (!register_name(p, &r, SOURCE)) return false;
+   /* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */
+   if (r.file != INDIRECT_CONST &&
+       (r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index])) return false;
    /* Match tgsi_util_get_inst_usage_mask: choose opcode/destination lanes
     * first, then map each through its ordered source selector. */
    unsigned needed = 0;
    for (unsigned lane = 0; lane < 4; ++lane)
       if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
-   if ((s->components[r.file][r.index] & needed) != needed) return false;
+   if (r.file == INDIRECT_CONST) {
+      failure_code = "unsupported-feature";
+      if (!s->raw || !s->address_declared || !s->address_written) return false;
+      struct raw_lane address = s->raw->address;
+      /* (~zero) is the unsigned maximum of ALL words represented by these
+       * known bits. It proves the complete set, not one observed address. */
+      if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;
+      uint64_t candidates = 0;
+      for (unsigned i = 0; i < CONST_REGISTERS; ++i) {
+         if ((i & address.zero) || ((uint32_t)~i & address.one)) continue;
+         if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;
+         candidates |= UINT64_C(1) << i;
+      }
+      if (!candidates) return false;
+      s->raw->indirect_indices |= candidates;
+   } else if ((s->components[r.file][r.index] & needed) != needed) return false;
    if (r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
    if (operand) {
       operand->file = r.file;
@@ -231,6 +264,13 @@ static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
    if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+   if (r.file == ADDR) {
+      failure_code = "unsupported-feature";
+      if (!s->raw || s->address_declared || !end(p)) return false;
+      s->address_declared = true;
+      failure_code = "parse-error";
+      return true;
+   }
    if (s->raw && !(s->raw_flags & RAW_MIXED) && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
@@ -283,7 +323,8 @@ struct flow_frame {
    struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
    unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];
    unsigned target, else_target;
-   bool has_target, has_else, has_else_target;
+   bool has_target, has_else, has_else_target, address_written;
+   struct raw_lane address;
 };
 struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };
 _Static_assert(sizeof(struct flow_context) <= 53248, "bounded conditional heap arena");
@@ -293,6 +334,11 @@ _Static_assert(sizeof(struct flow_context) <= 53248, "bounded conditional heap a
  * recorded instructions are global and never participate in this swap. */
 static void flow_snapshot(struct profile *s, struct flow_frame *frame, bool swap)
 {
+   bool written = frame->address_written;
+   struct raw_lane address = frame->address;
+   frame->address_written = s->address_written;
+   frame->address = s->raw->address;
+   if (swap) { s->address_written = written; s->raw->address = address; }
    for (unsigned file = OUT; file <= TEMP; ++file) {
       unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
       unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
@@ -313,6 +359,9 @@ static void flow_snapshot(struct profile *s, struct flow_frame *frame, bool swap
 
 static void flow_join(struct profile *s, const struct flow_frame *frame)
 {
+   s->address_written &= frame->address_written;
+   s->raw->address = s->address_written ?
+      raw_join(s->raw->address, frame->address) : (struct raw_lane){0};
    for (unsigned file = OUT; file <= TEMP; ++file) {
       unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
       const unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
@@ -378,7 +427,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    }
    if (word(p, "MOV")) { arity = 1; partial = true; }
    else if (s->raw) {
-      if (word(p, "AND")) raw.opcode = RAW_AND;
+      if (word(p, "UARL")) raw.opcode = RAW_UARL;
+      else if (word(p, "AND")) raw.opcode = RAW_AND;
       else if (word(p, "OR")) raw.opcode = RAW_OR;
       else if (word(p, "NOT")) raw.opcode = RAW_NOT;
       else if (word(p, "SHL")) raw.opcode = RAW_SHL;
@@ -403,13 +453,13 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "RSQ")) raw.opcode = RAW_RSQ;
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
-      arity = raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
+      arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
          raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) failure_code = "unsupported-feature";
+      if (raw.opcode == RAW_UARL || ((1u << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -417,8 +467,11 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    else { failure_code = "unsupported-feature"; return false; }
    if (++s->instructions > BRIDGE_MAX_INSTRUCTIONS) return false;
    struct reg dst;
-   if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||
-       !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
+   if (!register_name(p, &dst, DESTINATION)) return false;
+   if (raw.opcode == RAW_UARL) {
+      if (dst.file != ADDR || !s->address_declared) return false;
+   } else if ((dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index] ||
+              (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
    if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
    unsigned consumed = s->raw ? raw_consumed_mask(raw.opcode, dst.mask) : tex ? 3u : dst.mask;
    for (unsigned i = 0; i < arity; ++i) {
@@ -445,7 +498,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
          return false;
       }
    }
-   s->written[dst.file][dst.index] |= dst.mask;
+   if (dst.file == ADDR) s->address_written = true;
+   else s->written[dst.file][dst.index] |= dst.mask;
    failure_code = "parse-error";
    return true;
 }
@@ -506,7 +560,8 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
-   if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s))) {
+   if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s) ||
+       (s->address_declared && !s->raw->indirect_indices))) {
       failure_code = "unsupported-feature";
       return false;
    }
@@ -607,7 +662,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
-          word(&p, "FSLT") || word(&p, "FSGE")) {
+          word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "UARL")) {
          candidate = true;
       } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {
          numeric_candidate = true;
@@ -766,6 +821,8 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->indirect_indices ?
+         (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
       c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v9" : "virgl-webgl2-raw-bits-v8") :
       c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v7" :
@@ -791,6 +848,15 @@ static void stage_result(const struct conversion *c)
    if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
       append(",\"constantDomains\":[{\"kind\":\"constant-bank-finite-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+   if (profile->raw && profile->raw->indirect_indices) {
+      append(",\"constantAccesses\":[{\"kind\":\"constant-bank-static-indirect-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"indices\":[",
+         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+      bool first = true;
+      for (unsigned i = 0; i < CONST_REGISTERS; ++i) if (profile->raw->indirect_indices & (UINT64_C(1) << i)) {
+         append("%s%u", first ? "" : ",", i); first = false;
+      }
+      append("]}]");
+   }
    append("}");
 }
 

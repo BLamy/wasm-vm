@@ -1913,3 +1913,7 @@ verify-E6-T12e6b:
 .PHONY: verify-E6-T12e7
 verify-E6-T12e7:
 	bash tools/verify-virgl-structured-conditionals.sh
+
+.PHONY: verify-E6-T12e8
+verify-E6-T12e8:
+	bash tools/verify-virgl-indirect-constants.sh

@@ -7,7 +7,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT };
+enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT,
+   /* Checked scalar/address-source tags are NEVER declaration-array indices. */
+   ADDR = FILE_COUNT, INDIRECT_CONST };
 enum operand_kind { DECLARATION, DESTINATION, SOURCE };
 enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
 struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
@@ -18,7 +20,7 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit21 is the validated v5 negation feature, not an opcode. */
                   RAW_DP3 = 22, RAW_RCP, RAW_RSQ,
                   /* Bit25 is the finite-bank feature, not an opcode. */
-                  RAW_UIF = 26, RAW_ELSE, RAW_ENDIF };
+                  RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL };
 #define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
 #define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
 #define RAW_V4_OPCODES ((1u << RAW_ADD) | (1u << RAW_MUL) | (1u << RAW_MAD) | (1u << RAW_TEX))
@@ -54,6 +56,8 @@ struct raw_ir {
    uint32_t immediates[FILE_REGISTERS][4];
    struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
    unsigned count, opcode_mask;
+   struct raw_lane address;
+   uint64_t indirect_indices; /* Union of complete, checked use-site candidate sets. */
 };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -63,7 +67,7 @@ struct profile {
    unsigned semantic_index[2][8];
    bool flat[2][8];
    unsigned instructions, immediates, constant_extent;
-   bool ended, started, color0_property;
+   bool ended, started, color0_property, address_declared, address_written;
    unsigned char raw_flags;
    int stage;
    struct raw_ir *raw;
@@ -73,7 +77,7 @@ _Static_assert(sizeof(struct raw_ir) <= 32768, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 26232, "unchanged raw IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 26256, "bounded scalar address IR allocation");
 _Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
 
 /* Shared post-swizzle lane selection for initialization and float authority. */
