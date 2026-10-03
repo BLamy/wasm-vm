@@ -1,0 +1,127 @@
+{
+  "status": "passed",
+  "checks": 195,
+  "records": [
+    {
+      "mode": "unordered-guard",
+      "reportSha256": "daa709c6e33131acae6c4cfa3d1659cc5df079ac3572304e97b2dd1528ac4a9f",
+      "failures": [
+        {
+          "probe": "fslt",
+          "vector": "nan-left",
+          "vectorIndex": 8,
+          "captureIndex": 0,
+          "selector": 0,
+          "expected": [
+            0,
+            0,
+            0,
+            1065353216,
+            1056964608,
+            1056964608,
+            1056964608,
+            1056964608
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            1065353216,
+            1056964608,
+            1056964608,
+            1065320448,
+            1065320448
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "signed-zero",
+      "reportSha256": "236fe1a68e1c79b6ebb132f241dd82e61de3c7e41ac864304c05dd85213bccbc",
+      "failures": [
+        {
+          "probe": "fslt",
+          "vector": "zeros",
+          "vectorIndex": 0,
+          "captureIndex": 0,
+          "selector": 0,
+          "expected": [
+            0,
+            0,
+            0,
+            1065353216,
+            1056964608,
+            1056964608,
+            1056964608,
+            1056964608
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            1065353216,
+            1056964608,
+            1065320448,
+            1056964608,
+            1056964608
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "negative-order",
+      "reportSha256": "ddc9f556916662eec8d1fcba184a000c467ecc80a211d3d06ec50a002a762279",
+      "failures": [
+        {
+          "probe": "fsge",
+          "vector": "negative-normal",
+          "vectorIndex": 2,
+          "captureIndex": 0,
+          "selector": 0,
+          "expected": [
+            0,
+            0,
+            0,
+            1065353216,
+            1065320448,
+            1065320448,
+            1056964608,
+            1065320448
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            1065353216,
+            1065320448,
+            1056964608,
+            1065320448,
+            1056964608
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "novel-alias",
+      "reportSha256": "f30fccff45acaa39f954ea418bb081f13edfc38d9d108f9c62711ea4c7ddeff3",
+      "probe": "alias-vertex-0",
+      "vector": "alias-sign-boundary",
+      "capture": 0,
+      "expectedWord": 4294967295,
+      "observedWord": 0,
+      "expectedCarrier": [
+        1065320448,
+        1065320448,
+        1065320448,
+        1065320448
+      ],
+      "observedCarrier": [
+        1056964608,
+        1056964608,
+        1056964608,
+        1056964608
+      ]
+    }
+  ],
+  "scriptSha256": "bed3c19ac9db553b87f1da8bb1c6f2b9cee0e0b6c8a1e5ce547d38aaa4fb03bd"
+}

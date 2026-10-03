@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "checks": 38036,
+  "interpolationPixels": 37696,
+  "finiteSelections": 24,
+  "allocationFailureMessages": [
+    "Raw GLSL allocation or output bound failed.",
+    "Raw IR allocation failed."
+  ],
+  "capacity": [
+    {
+      "name": "raw-vertex",
+      "before": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      },
+      "after": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      }
+    },
+    {
+      "name": "raw-fragment",
+      "before": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      },
+      "after": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      }
+    },
+    {
+      "name": "recovery-raw-pair",
+      "before": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      },
+      "after": {
+        "chunkBytes": 4096,
+        "availableChunks": 3894,
+        "availableRequestedBytes": 15949824
+      }
+    }
+  ],
+  "objects": {
+    "created": {
+      "Program": 57,
+      "Shader": 114,
+      "VertexArray": 57,
+      "TransformFeedback": 10,
+      "Buffer": 162,
+      "Framebuffer": 47,
+      "Texture": 47
+    },
+    "deleted": {
+      "Shader": 114,
+      "Buffer": 162,
+      "TransformFeedback": 10,
+      "VertexArray": 57,
+      "Program": 57,
+      "Framebuffer": 47,
+      "Texture": 47
+    },
+    "live": 0
+  },
+  "workerHardwareSha256": "65ec3ac7d7398df79828a68ee2311c2009ef6f915f4065952cac9a737e0e2e92",
+  "scriptSha256": "d2e2b012e4f6e1ae7682c8667b2cf73b5f7cd1f2fa3ac531d65635bba92dc3ca"
+}
