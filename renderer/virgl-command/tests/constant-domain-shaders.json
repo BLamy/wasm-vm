@@ -1,0 +1,114 @@
+[
+  {
+    "name": "hardware-low-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[9], IN[0], CONST[7]\nADD TEMP[8], TEMP[9], CONST[0]\nMOV OUT[0], TEMP[8]\nMOV OUT[1], TEMP[8]\nMOV OUT[1].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "hardware-high-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[117], IN[0], CONST[45]\nADD TEMP[116], TEMP[117], CONST[0]\nMOV OUT[0], TEMP[116]\nMOV OUT[1], TEMP[116]\nMOV OUT[1].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "hardware-low-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[9], CONST[7]\nADD OUT[0], TEMP[9], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "hardware-high-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nADD OUT[0], TEMP[117], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "hardware-order-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[5]\nDCL CONST[0]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nADD OUT[0], TEMP[117], CONST[0]\nMOV OUT[0].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 47
+    }
+  },
+  {
+    "name": "hardware-order-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nDCL CONST[5]\nDCL CONST[0]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMUL TEMP[117], IN[0], CONST[45]\nADD TEMP[116], TEMP[117], CONST[0]\nMOV OUT[0], TEMP[116]\nMOV OUT[1], TEMP[116]\nMOV OUT[1].w, TEMP[17].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 47
+    }
+  },
+  {
+    "name": "hardware-inactive-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "hardware-inactive-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-pass-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..45]\nMOV OUT[0], IN[0]\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-pass-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nMOV OUT[0], IN[1]\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-c0-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1, 1065353216, 0}\nMOV OUT[0], IN[0]\nUSHR TEMP[0], CONST[0], CONST[44]\nAND TEMP[0], TEMP[0], IMM[0].yyyy\nUCMP OUT[1], TEMP[0], IMM[0].zzzz, IMM[0].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-c45-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1, 1065353216, 0}\nMOV OUT[0], IN[0]\nUSHR TEMP[0], CONST[45], CONST[44]\nAND TEMP[0], TEMP[0], IMM[0].yyyy\nUCMP OUT[1], TEMP[0], IMM[0].zzzz, IMM[0].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-c0-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1, 1065353216, 0}\nUSHR TEMP[0], CONST[0], CONST[44]\nAND TEMP[0], TEMP[0], IMM[0].yyyy\nUCMP OUT[0], TEMP[0], IMM[0].zzzz, IMM[0].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-c45-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1, 1065353216, 0}\nUSHR TEMP[0], CONST[45], CONST[44]\nAND TEMP[0], TEMP[0], IMM[0].yyyy\nUCMP OUT[0], TEMP[0], IMM[0].zzzz, IMM[0].xxxx\nEND\n",
+    "expected": {
+      "constantCount": 46
+    }
+  }
+]

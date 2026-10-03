@@ -1,6 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
+import { parseConstantDomain, checkFiniteBank } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -260,7 +261,8 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         if (type === 4) {
           const translated = unwrap(shaderBridge.translate({ stage: fields.stageName, text: fields.text }));
-          require(typeof translated.glsl === "string" && translated.metadata?.stage === fields.stageName && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
+          object.constantDomain = unwrap(parseConstantDomain(translated.metadata, fields.stageName)).domain;
+          require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
           object.shader = gl.createShader(fields.stage === 0 ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER);
@@ -355,7 +357,8 @@ function createRenderer(options, drawing, asynchronous = false) {
             // The upstream declaration can include an unaddressable 47th element.
             // Driver-retained suffixes are not permission to upload guest CONST46.
             const uploadCount = Math.min(activeCount, 46);
-            if (uploadCount) program.uniforms.push({ stage, uploadCount, location });
+            if (uploadCount) program.uniforms.push({ stage, uploadCount, location,
+              conditional: (stage === 0 ? vertex : fragment).constantDomain !== null });
             program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage, activeCount, uploadCount });
           }
           for (const sampler of metadata.samplers) {
@@ -427,9 +430,35 @@ function createRenderer(options, drawing, asynchronous = false) {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit));
     };
-    const restore = (sub) => {
+    // Restoration also follows SET, CLEAR, binding changes and restoreContext.
+    // A partial/invalid conditional bank remains CPU state but is never uploaded.
+    const constantUploads = (program, banks, strict) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
+      const bank = banks[uniform.stage], count = uniform.uploadCount * 4;
+      let words;
+      if (uniform.conditional) {
+        const checked = checkFiniteBank(bank, uniform.uploadCount);
+        if (!checked.ok && !strict) return [];
+        words = unwrap(checked).words;
+      } else {
+        if (strict) require(bank.length >= count, "incomplete-draw", "Drawing requires every active constant word.");
+        words = Object.freeze(Array.from({ length: count }, (_, index) => bank[index] ?? 0));
+      }
+      return [Object.freeze({ uniform, words })];
+    }));
+    const validateDrawPlan = (plan) => {
+      const { ctx, sub, program, shaders, banks } = plan;
+      require(context(ctx.id) === ctx && ctx.subs.get(sub.id) === sub && ctx.current === sub.id,
+        "stale-context", "Draw context or subcontext identity changed.");
+      require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
+        sub.programs.get(program.key) === program && programs.has(program) &&
+        sub.constants.every((bank, stage) => bank === banks[stage]),
+      "stale-draw", "Draw shader, program or constant-bank identity changed.");
+    };
+    const restore = (sub, plan = null) => {
       check(); vertexLayout(sub);
-      const program = selectedProgram(sub);
+      if (plan) validateDrawPlan(plan);
+      const program = plan ? plan.program : selectedProgram(sub);
+      const uploads = plan ? plan.uploads : constantUploads(program, sub.constants, false);
       gl.bindVertexArray(sub.vao);
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
@@ -466,9 +495,8 @@ function createRenderer(options, drawing, asynchronous = false) {
           gl.bindBuffer(gl.UNIFORM_BUFFER, block.buffer); gl.bufferSubData(gl.UNIFORM_BUFFER, 0, block.data);
           gl.uniformBlockBinding(program.native, block.index, 0); gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, block.buffer);
         }
-        for (const uniform of program.uniforms) {
-          const words = new Uint32Array(uniform.uploadCount * 4);
-          words.set(sub.constants[uniform.stage].slice(0, words.length));
+        for (const upload of uploads) {
+          const uniform = upload.uniform, words = new Uint32Array(upload.words);
           gl.uniform4uiv(uniform.location, words);
         }
         for (const sampler of program.samplers) gl.uniform1i(sampler.location, sampler.unit);
@@ -519,8 +547,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(sub.surfaces[0] && sub.viewport && sub.vertexElements && sub.indexBuffer,
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and index buffer.");
       const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
-      for (const uniform of program.uniforms) require(sub.constants[uniform.stage].length >= uniform.uploadCount * 4,
-        "incomplete-draw", "Drawing requires every active constant word.");
+      const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
+      const uploads = constantUploads(program, banks, true);
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
@@ -542,7 +570,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
         "out-of-bounds", "Index draw range exceeds retained storage.");
       const indexByteLength = fields.count * 2;
-      return { ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength };
+      return Object.freeze({ ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength,
+        program, shaders, banks, uploads });
     };
     const issueDraw = (plan, bytes, submission) => {
       const { ctx, sub, command, fields, surface, attributes, indexStorage, indexOffset, indexByteLength } = plan;
@@ -567,7 +596,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
-      restore(sub);
+      restore(sub, plan);
       gl.drawElements(gl.TRIANGLES, fields.count, gl.UNSIGNED_SHORT, indexOffset);
       check();
       submission.indices += fields.count;

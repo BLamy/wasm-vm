@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "task": "E6-T12e6a",
+  "frozenSource": "32509356c18af1c18e59bf14375f4402b434bd7d",
+  "files": [
+    {
+      "path": "audit-cold.py",
+      "bytes": 3674,
+      "sha256": "98b03016c90baad6f3fd87efa69ee1c2bf97967ce03eecf4f5166515b0caf30c"
+    },
+    {
+      "path": "audit-fresh.py",
+      "bytes": 4192,
+      "sha256": "5d39c77cde439f555dfeef0bd036a51052d1dc66a444a5943d1e1444e33042bf"
+    },
+    {
+      "path": "browser-independent.mjs",
+      "bytes": 17419,
+      "sha256": "f2a964b478cc77ad3a7d2368640227e0ed14b24c247059e3d387281bee9a68a3"
+    },
+    {
+      "path": "cold-audit.json",
+      "bytes": 1013,
+      "sha256": "3a93405b9fb995900d5063d99384ab6ae3fb69ec1c93908f3d8c9a4d4201e2ce"
+    },
+    {
+      "path": "coverage-audit.json",
+      "bytes": 102108,
+      "sha256": "94e88423f3405be9b2a9bad0fdc77f6defcdce8bb88feca6a525d4efd677532d"
+    },
+    {
+      "path": "coverage-audit.py",
+      "bytes": 2519,
+      "sha256": "52017bf3a8128d45605ea40d7ff3d7574fa79d046e869eb721a8ff983c2c737e"
+    },
+    {
+      "path": "coverage-matrix.md",
+      "bytes": 5856,
+      "sha256": "ab405af71ac57974d88be7c3195e85b1e513119a502d22913fda3a278c770e83"
+    },
+    {
+      "path": "final-review.md",
+      "bytes": 6079,
+      "sha256": "6ea5b0c26a8d56d26b294f2c9c56aaf0736b6d1f9192d577d28ac6a03616d36f"
+    },
+    {
+      "path": "fresh-audit.json",
+      "bytes": 22116,
+      "sha256": "14878b0db5e85f4152dac946e7d62ad75a5e295644415af828a4e2958d898e53"
+    },
+    {
+      "path": "fresh-bypass/browser-coverage.json",
+      "bytes": 173614,
+      "sha256": "bf70791e5c308a73da2b484115693019c74a089e9fe0b9e64785b5b7a3b45eb7"
+    },
+    {
+      "path": "fresh-bypass/browser.png",
+      "bytes": 64441,
+      "sha256": "74312d116406b62e56b1284e4194ae090bb9c9553f3e0d4b12b4dc13e9f02ff0"
+    },
+    {
+      "path": "fresh-bypass/report.json",
+      "bytes": 18907997,
+      "sha256": "f7e916edbe7107333c52d8b849fcd6cc66a875b205234c3b59c29dabf0ed2831"
+    },
+    {
+      "path": "fresh-bypass.log",
+      "bytes": 113,
+      "sha256": "6de10349801ad6443761dacb7deab091854411f3a595b6c1e28ef34798057380"
+    },
+    {
+      "path": "fresh-sabotage/browser-coverage.json",
+      "bytes": 154906,
+      "sha256": "2332a788a782d04bf3e963dbfde5502db9631fb665bee3d77ec818d66a2db21a"
+    },
+    {
+      "path": "fresh-sabotage/failure.png",
+      "bytes": 32745,
+      "sha256": "47361efa684c5a606370331431ccb5f6d990070f9409c0d3e447bdceedf98b33"
+    },
+    {
+      "path": "fresh-sabotage/report.json",
+      "bytes": 236317,
+      "sha256": "ca0bd63972a12fba200244a52999d78230e6afced0469238f73cae377be7e358"
+    },
+    {
+      "path": "fresh-sabotage.log",
+      "bytes": 696,
+      "sha256": "63e804c544dfcd2bd5b75e931203520c50ceae541e47635c8c1169f0b4ae2757"
+    },
+    {
+      "path": "fresh-schedules/browser-coverage.json",
+      "bytes": 194295,
+      "sha256": "04f6b07ef8f11c92d47d54dc91fa7eb6d47ba5fb670962140923b6942379c21f"
+    },
+    {
+      "path": "fresh-schedules/browser.png",
+      "bytes": 77567,
+      "sha256": "e30747221be76c7aef7ae69d9353df1d7e35ec5c94b4f1ac260d40572d7d100e"
+    },
+    {
+      "path": "fresh-schedules/report.json",
+      "bytes": 31616503,
+      "sha256": "dd0b221e292f9737c4b4563e9fd6d6e7eae3ec9af622d45ed31c3fd3be733073"
+    },
+    {
+      "path": "fresh-schedules.log",
+      "bytes": 107,
+      "sha256": "c74cf3da11c0347f0376b77f27416daea9b739a277ff80d932f86e98970824b4"
+    },
+    {
+      "path": "novel-attack.mjs",
+      "bytes": 3410,
+      "sha256": "15282db04b6a94aa619ad890a165613208bbee7ba6f2415173cf28a57a23b7d1"
+    },
+    {
+      "path": "novel-report.json",
+      "bytes": 13288,
+      "sha256": "ea41926258df92c0d8a4ed26bf105e69e847d2f19b93811809901b275d9e8b5b"
+    },
+    {
+      "path": "novel.log",
+      "bytes": 101,
+      "sha256": "fd4a816864709a21c47233b04839ce39b655322da47353d2628e4b55a4d4266b"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 4162,
+      "sha256": "3b5356a81391bbbc49a4eacc05771261e97df87497e3e73701c646c981e930bb"
+    },
+    {
+      "path": "warm-audit.py",
+      "bytes": 4475,
+      "sha256": "4f934edc85f48e37019214a5898f391d6d493f84c70aeb5a1eca5bd9cd2843f9"
+    },
+    {
+      "path": "warm-audit.txt",
+      "bytes": 13054,
+      "sha256": "addd4f86768537ca074a2a80ee9ba77ebd73567d9369cc73d2f916b4c12699a7"
+    }
+  ]
+}

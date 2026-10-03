@@ -158,6 +158,30 @@
     "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
   },
   "componentShaderProfile": "virgl-webgl2-raw-bits-v5",
+  "conditionalConstantConsumer": {
+    "admission": "Trusted host compiler metadata only. Exactly one stage-local contract is required for v7; missing, duplicate, unknown or inconsistent constraints reject. Known unconditional profiles require the field to be absent. This consumer slice adds no compiler admission.",
+    "draw": "Check completeness before finiteness and before index readback. Bind the selected context, subcontext, shader/program generations and bank identities to immutable upload snapshots. Revalidate identities after asynchronous yield, restore external bindings and upload those snapshots.",
+    "extent": "Check all words in min(reflected activeCount,46) vec4s, including unused holes. Reflection cannot exceed the declared count. Declaration 47 does not authorize guest CONST46. Wholly inactive arrays require no upload; unuploaded suffixes are outside the domain.",
+    "kind": "constant-bank-finite-f32-v1",
+    "profile": "virgl-webgl2-raw-bits-v7",
+    "proof": "Native predicate/schema checks; real synchronous and varied yielding asynchronous renderer records; literal whole-frame and bit-plane oracles; raw uploads/readback; source-bound decoder and guard bypass controls; preserved legacy renderer oracles; exact-head pristine clone and fresh critic.",
+    "rawDomain": "Each u32 in the active uploaded prefix has exponent bits unequal to 0x7f800000. Positive and negative zeros and subnormals are finite and remain bit-identical in the raw channel. This is not a numeric subnormal-preservation claim.",
+    "restore": "Non-draw restoration skips incomplete or nonfinite conditional uploads while preserving command-prefix CPU state. Unconditional restoration retains its previous temporary zero defaults. A conditional DRAW always requires the complete current bank.",
+    "schema": {
+      "constantDomains": [
+        {
+          "count": "matching declared uvec4[] float32-bits extent, integer 1..47",
+          "kind": "constant-bank-finite-f32-v1",
+          "name": "vsconst0 or fsconst0 matching stage",
+          "slot": 0,
+          "stage": "vertex or fragment"
+        }
+      ]
+    },
+    "scope": "Isolated shared renderer consumer. Production negotiation remains disabled; guest Mesa support and performance remain unclaimed.",
+    "task": "E6-T12e6a",
+    "wire": "The ordinary decoder continues to reject Inf/NaN before applying any command. Isolated source-bound decoder bypass is test evidence for the independent consumer guard, not a new wire feature."
+  },
   "futureGles3HostPrerequisites": {
     "MAX_COLOR_ATTACHMENTS": 4,
     "MAX_COMBINED_UNIFORM_BLOCKS": 26,

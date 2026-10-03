@@ -1901,3 +1901,7 @@ verify-E6-T12e5:
 .PHONY: verify-E6-T12e6
 verify-E6-T12e6:
 	bash tools/verify-virgl-dot-reciprocals.sh
+
+.PHONY: verify-E6-T12e6a
+verify-E6-T12e6a:
+	bash tools/verify-virgl-constant-domains.sh

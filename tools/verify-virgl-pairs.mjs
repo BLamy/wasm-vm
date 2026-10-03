@@ -7,7 +7,7 @@ import { browserDocument, browserOptions, runVirglBrowser } from './lib/virgl-br
 import { ORIGINAL_INPUTS } from '../renderer/virgl-shader/tests/components.mjs';
 const options=browserOptions(['--sabotage']);
 assert.ok(options.sabotage===undefined||options.sabotage==='flat-reuse','--sabotage accepts flat-reuse');
-const commandPaths=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/tests/flat-pairs.mjs'];
+const commandPaths=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs','renderer/virgl-command/tests/flat-pairs.mjs'];
 const pins=await Promise.all(commandPaths.map(async path=>{const bytes=await fs.readFile(fileURLToPath(new URL(`../${path}`,import.meta.url)));return{path,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
 await runVirglBrowser({options,task:'E6-T12e2',boundary:'unchanged flat TGSI, internally derived stage interfaces and actual renderer program variants; no production 3D activation',
  reportFields:{currentGuest3dAdvertisement:false,commandStreamReplay:false},
