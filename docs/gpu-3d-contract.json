@@ -139,6 +139,25 @@
       "stage": "FRAG"
     }
   },
+  "componentShaderBoundary": {
+    "acceptance": "make verify-E6-T12e5; source-bound native/Wasm parity, independent GPU arithmetic and quotient enclosures, aliases, sampled chains, earlier regressions, fixed-memory recovery and fault controls.",
+    "bounds": "Existing112-byte instruction,26232-byte IR and fixed text/instruction/register/GLSL/JSON/Wasm limits remain. This adds no dynamic value/range instrumentation.",
+    "compatibility": "Six exact prior numeric rejection bodies are explicitly promoted and replaced in historical negative slots by source-bound adjacent rejections. Other full results, all19 original bodies and12 accepted/7 rejected original outcomes remain unchanged.",
+    "negation": "One unary minus on numeric source positions, after register/swizzle selection. Integer/bitwise, raw comparison, MOV, UCMP, sampler, absolute, repeated-sign, unary-plus and saturation modifiers remain unsupported.",
+    "operations": {
+      "DIV": "src0/src1",
+      "FRC": "fract(src0)",
+      "LRP": "mix(src2,src1,src0)",
+      "MAX": "max(src0,src1)"
+    },
+    "oracleBoundary": "Exact dyadic and endpoint witnesses have independent rational references; ordinary zero results allow either sign. Quantitative DIV witnesses use a rational enclosure derived from the specified highp error bound and explicitly recorded positive denominator range. Oracle range conditions do not restrict shader admission.",
+    "ordinaryContract": "The pinned VirGL ordinary ESSL mappings retain arithmetic latitude. They do not promise exact CPU-executor results or exceptional-payload preservation. PRECISE and LEGACY_MATH_RULES remain rejected. LRP may extrapolate; DIV is not clamped or replaced at exceptional inputs.",
+    "scope": "Isolated compiler boundary E6-T12e5; production GPU negotiation and unknown raw numeric constant admission remain gated.",
+    "selection": "Only a validated new opcode or typed numeric negation selects owned raw-bits-v5. Pure new-op/negative numeric shaders use the same checked path without requiring an integer token. Untouched legacy and earlier raw profiles retain exact output.",
+    "sourceAuthority": "The v4 ordinary source rule remains: original IN, computed/sample shadow, or raw words conservatively proved finite normal or signed zero. Ordinary IN/shadows gain no magnitude, finiteness, nonzero-divisor or interpolation-weight admission restrictions. Unknown raw numeric constants remain rejected.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
+  },
+  "componentShaderProfile": "virgl-webgl2-raw-bits-v5",
   "futureGles3HostPrerequisites": {
     "MAX_COLOR_ATTACHMENTS": 4,
     "MAX_COMBINED_UNIFORM_BLOCKS": 26,
@@ -762,7 +781,7 @@
     "integerOutputProof": "In v1/v2/v3, constant-only arithmetic/comparisons yield exact known bits. UCMP chooses a statically determined arm, otherwise intersects known bits and retains float origin only when both payload origins match. No arithmetic float-origin shortcut or arbitrary float-origin join. V4 ordinary-float authority is separately specified in numericShaderBoundary.",
     "integerSemantics": "UADD wraps modulo2^32. ISGE compares signed two\u2019s-complement values; USEQ/USNE compare raw words. Comparisons produce0xffffffff or0. UCMP chooses src1 for any nonzero condition, src2 for zero, preserving private payload bits and reading all three initialized sources before writes.",
     "limits": "All v5 limits remain:179 non-END instructions,118 TEMP registers,46 guest constants,8 other-bank entries/immediates,16KiB text,8192 tokens,256 lines,512-byte lines,64KiB GLSL,147456/295936-byte JSON buffers,16MiB fixed Wasm,256KiB stack.",
-    "mixedPrograms": "ADD/MUL/MAD and fragment 2D FLOAT TEX may combine with raw operations only under the v4 numericShaderBoundary. Other float comparisons, PRECISE, modifiers, control flow and indirect operands remain rejected. Raw SAMP/SVIEW declarations without a validated mixed numeric program remain rejected.",
+    "mixedPrograms": "ADD/MUL/MAD and fragment 2D FLOAT TEX combine with raw operations under the v4 numericShaderBoundary. DIV/MAX/FRC/LRP and typed numeric source negation extend this under componentShaderBoundary. Other modifiers, PRECISE and control flow remain unsupported. Raw SAMP/SVIEW declarations without a validated mixed numeric program remain rejected.",
     "operations": [
       "MOV",
       "AND",
@@ -778,7 +797,7 @@
     "orderedSemantics": "Pure unsigned-word binary32 classification and ordering. Every signed quiet/signalling NaN is unordered; both signed zeros compare equal; negative magnitude order reverses; infinity and subnormal encodings retain their order. Results are exactly0xffffffff or0 without converting raw source words to floats.",
     "pairing": "Per-stage backend selection preserves semantic/mask/interpolation-derived keys, exact standalone fragment output, and checked smooth/flat vertex qualifiers. No caller-selected keys or backend flags.",
     "scope": "Isolated compiler boundary; no production guest GPU negotiation or desktop performance claim.",
-    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata. A validated ADD/MUL/MAD/TEX in an owned raw stage selects raw-bits-v4; pure legacy numeric shaders remain v5.",
+    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata. A validated ADD/MUL/MAD/TEX in an owned raw stage selects raw-bits-v4; pure legacy numeric shaders remain v5. Validated DIV/MAX/FRC/LRP or numeric source negation selects owned raw-bits-v5, separately from legacy straight-line-v5.",
     "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
   },
   "rawShaderProfile": "virgl-webgl2-raw-bits-v1",

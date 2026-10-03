@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "head": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "sourcesVerified": 251,
+  "recordsVerified": 169,
+  "counts": {
+    "numeric": [
+      336,
+      38
+    ],
+    "texture": [
+      64,
+      16,
+      4096
+    ],
+    "division": {
+      "exactWords": 6,
+      "boundedWords": 42,
+      "crossDraws": 6
+    },
+    "observations": {
+      "words": 96,
+      "probes": 8,
+      "vectors": 24,
+      "requiredRawClassChecks": 4,
+      "requiredNumericClassChecks": 8
+    },
+    "interfacePixels": 29760
+  },
+  "sourceBoundSabotages": [
+    {
+      "mode": "lrp-order",
+      "program": "component-lrp-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "frc-floor",
+      "program": "component-frc-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "div-operands",
+      "program": "component-div-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "numeric-negate",
+      "program": "component-negate-mad-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    }
+  ],
+  "receiptTamper": {
+    "rejected": true,
+    "observedWord": 1077936128,
+    "message": "actual ordinary DIV captures satisfy independent rational enclosures",
+    "reason": "Actual float word, byte capture, byte digest and decoded observation were changed together; the independent rational enclosure still rejects."
+  },
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  }
+}

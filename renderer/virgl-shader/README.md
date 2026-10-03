@@ -415,6 +415,64 @@ remain accepted. The successor gate covers deterministic native/Wasm parity,
 actual hardware texture/arithmetic chains, mixed profiles, source-bound sabotage,
 fixed-memory recovery and unchanged original outcomes. Production stays off.
 
+### Componentwise ordinary arithmetic and numeric negation
+
+`virgl-webgl2-raw-bits-v5` extends the owned numeric-shadow path with DIV,
+MAX, FRC and LRP. Their checked per-lane expressions follow the pinned VirGL
+emitter: `src0 / src1`, `max(src0, src1)`, `fract(src0)`, and
+`mix(src2, src1, src0)`. LRP's first source is the weight; its second is the
+weighted endpoint. FRC subtracts floor, so a negative fractional input such as
+-1.25 produces .75. Each operation accepts the existing scalar, xy, xyz or full
+destination masks, validates only consumed swizzled lanes, reads every source
+before an aliased write, and publishes both representations through the existing
+C2 snapshot machinery. Numeric-only shaders containing a new operation enter
+the checked owned path even without an integer instruction.
+
+One optional unary `-` is accepted before a numeric source register in ADD,
+MUL, MAD, DIV, MAX, FRC, LRP and TEX coordinates. It negates the authorized float
+expression after selecting its swizzled lane. A newly computed result always
+has a float shadow; it cannot retain the original positive input's shortcut.
+All source positions are independently flagged, including LRP's weight and
+endpoints. This syntax does not extend MOV, UCMP, integer/bitwise operations,
+raw FSLT/FSGE comparisons or sampler operands. Absolute-value bars, repeated
+signs, unary plus, saturation, PRECISE and LEGACY_MATH_RULES remain unsupported.
+The latter specifies an additional zero-times-infinity rule, including LRP's
+implicit multiplication, which these ordinary expressions do not implement.
+
+The numeric authority rule is unchanged: actual original IN values, existing
+computed/sample shadows, or raw values conservatively proved finite normal or
+signed zero. Ordinary inputs and shadows have no new magnitude, finite-value,
+nonzero-divisor or weight-range admission restriction. LRP can extrapolate;
+DIV does not clamp or replace its divisor. Unknown raw CONST/TEMP values remain
+unauthorized numeric operands, including the captured `-CONST[4].xxxx` shape.
+The pending constant-domain integration remains necessary before Mesa activation.
+These are ordinary ESSL operations, not exact CPU executor or all-domain IEEE
+emulation. NaN payload/propagation, computed signed zero, retained subnormals and
+PRECISE behavior are not promised. Quantitative DIV witnesses use independently
+derived rational enclosures for the GLSL ES3.00 highp accuracy guarantee in its
+specified denominator domain; those test-oracle limits do not restrict shader
+admission. Exact dyadic MAX/FRC/LRP/negation witnesses and partial/alias/sample
+chains supplement the DIV proof.
+
+The primary equations are Mesa26.2.2's TGSI documentation (MAX, LRP, FRC and
+DIV), and the lowering is pinned `vendor/src/vrend/vrend_shader.c` at lines5580,
+5595,5702 and5752. Source negation is assembled there at4708. GLSL ES3.00
+revision6, sections4.5.1,5.11 and8.3 define the ordinary precision and builtin
+limits. The CPU executor's rearranged LRP or `fmaxf` implementation does not
+establish a stronger GLSL guarantee.
+
+Three source-negation bits occupy existing instruction flags; one spare feature
+bit records validated negation for profile selection. The checked instruction
+remains112 bytes and IR26,232 bytes, with unchanged logical shadow storage and
+native/Wasm capacities. Unmodified v1/v2/v3/v4 and legacy straight-line-v5
+programs retain exact full outputs. `tests/component-float-migrations.json`
+binds the six former C2 MAX, DIV and negated ADD rejections to their original
+bodies, newly accepted shared cases, and adjacent retained-negative replacements.
+Malformed two-source FRC and every original captured full result remain unchanged.
+The new deterministic gate combines sanitizer/Wasm parity, actual GPU results,
+independent numerical oracles, source-bound sabotage, fixed-memory recovery,
+retained regressions and a pristine clone. Production remains disabled.
+
 ### Legacy finite-float profile
 
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:

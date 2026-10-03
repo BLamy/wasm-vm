@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "message": "page.evaluate: Error: MAX-negative-source-0-alias-xyz exact lane0: expected1059061760 observed1072693248\n    at assert (eval at evaluate (:234:30), <anonymous>:2:36)\n    at eval (eval at evaluate (:234:30), <anonymous>:17:334)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+  "stack": "page.evaluate: Error: MAX-negative-source-0-alias-xyz exact lane0: expected1059061760 observed1072693248\n    at assert (eval at evaluate (:234:30), <anonymous>:2:36)\n    at eval (eval at evaluate (:234:30), <anonymous>:17:334)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-component-floats/verifier/gpu-audit.mjs:11:26",
+  "librarySha256": "1035cc087674d1ecd22dc56b47dde597f4378914a6128fc0c3622f8d972a2b07"
+}

@@ -88,9 +88,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    for (unsigned source = 0; source < 3; ++source) checked.float_modes[source] = 0;
    const struct raw_instruction *instruction = &checked;
    bool mixed = (instruction->flags & RAW_MIXED) != 0;
-   bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;
-   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT || instruction->opcode == RAW_TEX ? 1 :
-      instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD ? 3 : 2;
+   bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
+      instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ? 1 :
+      instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
    unsigned consumed = instruction->opcode == RAW_TEX ? 3u : instruction->dst.mask;
    /* Capture read authority at the use site, before any aliased destination
     * changes facts. Every numeric lane must have an enforceable domain. */
@@ -104,7 +105,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    /* Read all consumed lanes before publishing any destination lane. */
    for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) {
       struct raw_lane a = source_lane(ir, &instruction->src[0], lane), b = {0};
-      if (instruction->opcode != RAW_MOV && instruction->opcode != RAW_NOT && instruction->opcode != RAW_TEX)
+      if (sources > 1)
          b = source_lane(ir, &instruction->src[1], lane);
       switch (instruction->opcode) {
       case RAW_MOV: result[lane] = a; break;
@@ -134,6 +135,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_ADD:
       case RAW_MUL:
       case RAW_MAD:
+      case RAW_DIV:
+      case RAW_MAX:
+      case RAW_FRC:
+      case RAW_LRP:
       case RAW_TEX: result[lane].origin = RAW_FLOAT_SHADOW; break;
       }
    }
@@ -145,6 +150,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       }
    ir->instructions[ir->count++] = *instruction;
    if (instruction->opcode != RAW_MOV) ir->opcode_mask |= 1u << instruction->opcode;
+   if (instruction->flags & RAW_NEGATE_SOURCES) ir->opcode_mask |= RAW_V5_NEGATION;
    return true;
 }
 
@@ -202,10 +208,13 @@ static void float_operand(struct writer *w, const struct profile *p, const struc
 {
    unsigned mode = lane_mode(instruction, source, lane);
    const struct raw_source *r = &instruction->src[source];
+   bool negate = (instruction->flags & (RAW_NEGATE_SOURCE0 << source)) != 0;
+   if (negate) emit(w, "-(");
    if (mode == RAW_FLOAT_SHADOW) emit(w, "float_temp[%u].%c", r->index, "xyzw"[r->swizzle[lane]]);
    else if (mode == RAW_FLOAT_DECODE) {
       emit(w, "uintBitsToFloat("); operand(w, p, r, lane); emit(w, ")");
    } else input_float(w, p, (mode - 1) / 4, (mode - 1) % 4);
+   if (negate) emit(w, ")");
 }
 
 static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
@@ -232,13 +241,20 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
             float_operand(w, p, instruction, 1, lane); emit(w, " : ");
             float_operand(w, p, instruction, 2, lane);
          } else float_operand(w, p, instruction, yes ? 1 : 2, lane);
+      } else if (op == RAW_LRP) {
+         emit(w, "mix(");
+         float_operand(w, p, instruction, 2, lane); emit(w, ", ");
+         float_operand(w, p, instruction, 1, lane); emit(w, ", ");
+         float_operand(w, p, instruction, 0, lane); emit(w, ")");
       } else {
+         if (op == RAW_MAX || op == RAW_FRC) emit(w, op == RAW_MAX ? "max(" : "fract(");
          float_operand(w, p, instruction, 0, lane);
-         if (op == RAW_ADD || op == RAW_MUL || op == RAW_MAD) {
-            emit(w, op == RAW_ADD ? " + " : " * ");
+         if (op == RAW_ADD || op == RAW_MUL || op == RAW_MAD || op == RAW_DIV || op == RAW_MAX) {
+            emit(w, op == RAW_ADD ? " + " : op == RAW_DIV ? " / " : op == RAW_MAX ? ", " : " * ");
             float_operand(w, p, instruction, 1, lane);
             if (op == RAW_MAD) { emit(w, " + "); float_operand(w, p, instruction, 2, lane); }
          }
+         if (op == RAW_MAX || op == RAW_FRC) emit(w, ")");
       }
       emit(w, ")");
    }
@@ -277,11 +293,11 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
          " return selected ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
-   if (p->raw->opcode_mask & RAW_V4_OPCODES)
+   if (p->raw->opcode_mask & RAW_NUMERIC_OPCODES)
       emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
-      bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;
+      bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
       if (instruction->float_mask) float_snapshot(&w, p, instruction);
       if (numeric) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
       else {

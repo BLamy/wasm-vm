@@ -414,3 +414,29 @@ excessive generated text; additional shadow arrays are bounded logical storage,
 not a prediction of the driver's register allocation. `make verify-E6-T12e4c2`
 records these behaviors, failures, recovery and retained renderer regressions.
 Production negotiation and original captured shader outcomes remain unchanged.
+
+
+## Remaining ordinary componentwise operations
+
+E6-T12e5 adds owned DIV, MAX, FRC and LRP, plus source negation in numeric operand
+positions. It uses the pinned VirGL mappings and v4 source authority, retaining
+both snapshots before writes. Source negation applies after swizzling; the raw
+comparison, integer, MOV and UCMP modifier grammars remain unchanged. New pure
+numeric programs enter the checked owned path without needing an integer token.
+
+The ordinary contract is intentionally distinct from an exact CPU floating-point
+model. Shader admission does not impose arbitrary magnitude limits, positive
+divisors or interpolation weights in [0,1]. Unknown raw numeric constants remain
+rejected. The [GLSL ES3.00 precision rules](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf)
+limit numerical assertions: independent rational division enclosures use a
+specified input domain, while exact dyadic and texture-endpoint witnesses check
+other operations. Computed zeros may use either sign. Undefined exceptional
+results receive no invented exact payload oracle. PRECISE and the distinct
+LEGACY_MATH_RULES contract remain unsupported.
+
+The captured inventory retains all39 affected operations and six MAX source
+negations, including two CONST sites that still need the later constant boundary.
+Six newly accepted historical bodies are preserved as explicit positive fixtures;
+adjacent rejections retain the earlier negative slots. Complete original shader
+outcomes remain12/19. This compiler layer does not enable production negotiation
+or claim guest graphics speed.

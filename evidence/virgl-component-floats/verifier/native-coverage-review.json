@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "head": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "nativeReportSha256": "f7a06c2b645275543ee25324646bf79b48fb62a42f528ec396d728be6c891267",
+  "componentCases": 574,
+  "componentPairs": 37,
+  "originals": 19,
+  "stats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 2083,
+    "pairs": 162,
+    "calls": 316282,
+    "standaloneRecoveries": 164916,
+    "pairRecoveries": 137430,
+    "truncations": 7240,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "maxSingleResultBytes": 54603,
+    "maxPairResultBytes": 107416
+  },
+  "layout": {
+    "pointerBytes": 8,
+    "rawIrBytes": 26232,
+    "rawInstructionBytes": 112,
+    "rawDestinationBytes": 12,
+    "rawLaneBytes": 12,
+    "registerBytes": 36,
+    "rawSourceBytes": 24,
+    "profileBytes": 7608,
+    "rawIrBoundBytes": 32768,
+    "profileBoundBytes": 8192,
+    "fixedWasmMemoryBytes": 16777216,
+    "fixedWasmStackBytes": 262144
+  },
+  "binarySha256": "092c0d36e83b10946fe7ee9f06ae15ec32bd30fb417ad60c65905ce33e9376a0",
+  "changedRuntimeBranches": 57,
+  "bothDirectionsExecuted": true,
+  "waivers": {
+    "renderer/virgl-shader/raw_bits.h": "Enum/mask constants and compact flag definitions have no distinct executable regions. Both feature/profile directions and all new opcodes are exercised in bridge.c/raw_bits.c. Existing layout assertions and sanitizer transcript confirm112-byte instruction/26232-byte IR.",
+    "C comments and braces": "No independent runtime semantics; surrounding executable region counts carry their enclosing block evidence.",
+    "Build, Makefile, Python/JS test infrastructure and fixtures": "Evidence generation and independent checking machinery. Frozen worker and pristine-clone acceptance ran the new build/native/browser/oracle/receipt and nested-regression paths, with four source-bound operator sabotages, a fresh compiler-negation sabotage, and coherent capture tampering rejected. Non-executed diagnostic/assertion error messages do not introduce guest/runtime semantics; native product branch counters are in changed-coverage.json.",
+    "Documentation/task/queue metadata": "Non-executable contract and lifecycle material checked against pinned equations, observed boundary, and outcome records."
+  }
+}
