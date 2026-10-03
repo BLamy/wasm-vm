@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "sourceHead": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+  "recordedRuntimeHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "boundary": "Replay actual unmodified warm envelope/artifacts with final frozen receipt helpers; no relabeled worker run. Two copies reseal coverage digest after type corruption.",
+  "sources": [
+    {
+      "path": "tools/virgl-structured-conditionals/browser_receipt.py",
+      "sha256": "1f86faeebf9e7e9f878a90d5ee440503e989ff848ff19de82583657e44b26e7c"
+    },
+    {
+      "path": "tools/virgl-structured-conditionals/consumer_compat.py",
+      "sha256": "3149f1f9f2ede041fade36388fb354975da20a468703f184978d3f69727655f2"
+    }
+  ],
+  "results": [
+    {
+      "family": "structured",
+      "attack": "clean",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "family": "structured",
+      "attack": "count-bool",
+      "outcome": "REJECTED",
+      "error": "unexpected boolean/non-JSON observation at (0, 'coverage', 'functions', 0, 'ranges', 0, 'count')"
+    },
+    {
+      "family": "structured",
+      "attack": "offset-float",
+      "outcome": "REJECTED",
+      "error": "fractional value outside explicit domain attack at (0, 'coverage', 'functions', 0, 'ranges', 0, 'startOffset')"
+    },
+    {
+      "family": "consumer",
+      "attack": "clean",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "family": "consumer",
+      "attack": "count-bool",
+      "outcome": "REJECTED",
+      "error": "unexpected boolean/non-JSON observation at ('scripts', 0, 'coverage', 'functions', 0, 'ranges', 0, 'count')"
+    },
+    {
+      "family": "consumer",
+      "attack": "offset-float",
+      "outcome": "REJECTED",
+      "error": "fractional value outside explicit domain attack at ('scripts', 0, 'coverage', 'functions', 0, 'ranges', 0, 'startOffset')"
+    }
+  ]
+}

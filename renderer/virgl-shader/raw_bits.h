@@ -16,7 +16,9 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_FSLT, RAW_FSGE, RAW_ADD, RAW_MUL, RAW_MAD, RAW_TEX,
                   RAW_DIV, RAW_MAX, RAW_FRC, RAW_LRP,
                   /* Bit21 is the validated v5 negation feature, not an opcode. */
-                  RAW_DP3 = 22, RAW_RCP, RAW_RSQ };
+                  RAW_DP3 = 22, RAW_RCP, RAW_RSQ,
+                  /* Bit25 is the finite-bank feature, not an opcode. */
+                  RAW_UIF = 26, RAW_ELSE, RAW_ENDIF };
 #define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
 #define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
 #define RAW_V4_OPCODES ((1u << RAW_ADD) | (1u << RAW_MUL) | (1u << RAW_MAD) | (1u << RAW_TEX))
@@ -27,10 +29,11 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_V5_NEGATION (1u << 21)
 /* Separate from opcode bits: at least one checked numeric read used the bank. */
 #define RAW_FINITE_BANK_USED (1u << 25)
+#define RAW_STRUCTURED_OPCODES ((1u << RAW_UIF) | (1u << RAW_ELSE) | (1u << RAW_ENDIF))
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
-       RAW_CONDITIONAL = 16 };
+       RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -79,6 +82,9 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask);
  * A rejection publishes neither facts nor an instruction. */
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);
 bool raw_outputs_safe(const struct profile *profile);
+/* Only initialized predecessors are joined; structured writes have already
+ * materialized each authorized value in its destination's physical shadow. */
+struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no);
 /* Returns one owned <=64KiB NUL-terminated shader, or NULL on allocation/bound
  * failure. const_count preserves the pinned declaration extent (0..47). */
 char *raw_emit(const struct profile *profile, unsigned const_count);

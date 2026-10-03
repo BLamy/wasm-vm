@@ -278,12 +278,104 @@ static bool declaration(const char **p, struct profile *s)
    return true;
 }
 
-static bool instruction(const char **p, struct profile *s)
+enum { FLOW_DEPTH = 8 };
+struct flow_frame {
+   struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
+   unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];
+   unsigned target, else_target;
+   bool has_target, has_else, has_else_target;
+};
+struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };
+_Static_assert(sizeof(struct flow_context) <= 53248, "bounded conditional heap arena");
+
+/* A frame initially owns entry state. ELSE swaps it with the completed true
+ * predecessor, so only one snapshot per level is needed. Declarations and
+ * recorded instructions are global and never participate in this swap. */
+static void flow_snapshot(struct profile *s, struct flow_frame *frame, bool swap)
+{
+   for (unsigned file = OUT; file <= TEMP; ++file) {
+      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
+      unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
+      struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;
+      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;
+      for (unsigned index = 0; index < count; ++index) {
+         unsigned written = saved_written[index];
+         saved_written[index] = s->written[file][index];
+         if (swap) s->written[file][index] = written;
+         for (unsigned lane = 0; lane < 4; ++lane) {
+            struct raw_lane value = saved[index][lane];
+            saved[index][lane] = current[index][lane];
+            if (swap) current[index][lane] = value;
+         }
+      }
+   }
+}
+
+static void flow_join(struct profile *s, const struct flow_frame *frame)
+{
+   for (unsigned file = OUT; file <= TEMP; ++file) {
+      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
+      const unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
+      const struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;
+      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;
+      for (unsigned index = 0; index < count; ++index) {
+         s->written[file][index] &= saved_written[index];
+         for (unsigned lane = 0; lane < 4; ++lane)
+            current[index][lane] = s->written[file][index] & (1u << lane) ?
+               raw_join(current[index][lane], saved[index][lane]) : (struct raw_lane){0};
+      }
+   }
+}
+
+static bool control(const char **p, struct profile *s, struct flow_context *flow, enum raw_opcode opcode)
+{
+   failure_code = "unsupported-feature";
+   struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0])) return false;
+   unsigned target = 0;
+   bool has_target = opcode != RAW_ENDIF && punctuation(p, ':');
+   if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;
+   if (!end(p) || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;
+   if (opcode == RAW_UIF) {
+      if (flow->depth == FLOW_DEPTH) return false;
+      struct flow_frame *frame = &flow->frames[flow->depth++];
+      frame->target = target; frame->has_target = has_target;
+      frame->has_else = frame->has_else_target = false;
+      flow_snapshot(s, frame, false);
+   } else {
+      if (!flow->depth) return false;
+      struct flow_frame *frame = &flow->frames[flow->depth - 1];
+      if (opcode == RAW_ELSE) {
+         if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;
+         frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;
+         flow_snapshot(s, frame, true);
+      } else {
+         if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :
+              frame->has_target && frame->target != s->instructions)) return false;
+         flow_join(s, frame);
+         --flow->depth;
+      }
+   }
+   ++s->instructions;
+   raw_record(s->raw, &raw);
+   failure_code = "parse-error";
+   return true;
+}
+
+static bool instruction(const char **p, struct profile *s, struct flow_context *flow)
 {
    unsigned arity;
    bool tex = false, partial = false;
    struct raw_instruction raw = {0};
-   if (word(p, "END")) { s->ended = true; return end(p); }
+   if (word(p, "END")) {
+      if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
+      s->ended = true; return end(p);
+   }
+   if (flow) {
+      if (word(p, "UIF")) return control(p, s, flow, RAW_UIF);
+      if (word(p, "ELSE")) return control(p, s, flow, RAW_ELSE);
+      if (word(p, "ENDIF")) return control(p, s, flow, RAW_ENDIF);
+   }
    if (word(p, "MOV")) { arity = 1; partial = true; }
    else if (s->raw) {
       if (word(p, "AND")) raw.opcode = RAW_AND;
@@ -358,7 +450,7 @@ static bool instruction(const char **p, struct profile *s)
    return true;
 }
 
-static bool validate(char *text, struct profile *s)
+static bool validate_body(char *text, struct profile *s, struct flow_context *flow)
 {
    char *save = NULL;
    bool header = false;
@@ -407,9 +499,10 @@ static bool validate(char *text, struct profile *s)
             }
             if (label != s->instructions || !punctuation(&p, ':')) return false;
          }
-         if (!instruction(&p, s)) return false;
+         if (!instruction(&p, s, flow)) return false;
       }
    }
+   if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
@@ -418,6 +511,18 @@ static bool validate(char *text, struct profile *s)
       return false;
    }
    return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
+}
+
+static bool validate(char *text, struct profile *s)
+{
+   struct flow_context *flow = NULL;
+   if (s->raw_flags & RAW_STRUCTURED) {
+      flow = calloc(1, sizeof(*flow));
+      if (!flow) { failure_code = "translation-error"; return false; }
+   }
+   bool valid = validate_body(text, s, flow);
+   free(flow);
+   return valid;
 }
 
 static void io_metadata(const struct profile *s, enum file f)
@@ -489,7 +594,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
     * admits a shader or selects emitted semantics. Only fully validated new
     * instructions plus a complete output proof authorize the owned backend.
     * Texts without such opcode tokens retain the exact legacy validator path. */
-   bool candidate = false, numeric_candidate = false;
+   bool candidate = false, numeric_candidate = false, structured_candidate = false;
    char *save = NULL;
    for (char *line = strtok_r(checked, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
       const char *p = line;
@@ -498,7 +603,9 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          while (isdigit((unsigned char)*p)) ++p;
          if (!punctuation(&p, ':')) continue;
       }
-      if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
+      if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
+         candidate = structured_candidate = true;
+      } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
           word(&p, "FSLT") || word(&p, "FSGE")) {
          candidate = true;
@@ -517,7 +624,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       }
    }
    if (candidate) {
-      profile->raw_flags = numeric_candidate ? RAW_MIXED : 0;
+      profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
+         (structured_candidate ? RAW_STRUCTURED : 0);
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
    }
@@ -526,13 +634,15 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    missing_numeric_authority = false;
    if (validate(checked, profile)) return NULL;
    if (!missing_numeric_authority)
-      return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
+      return error(failure_code, !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
+         "TGSI is malformed or outside the documented straight-line profile.");
    /* The ordinary result wins whenever it succeeds. A failed domain use gets
     * one fresh whole-text attempt: no first-pass facts or borrowed response
     * pointer survive, and no concurrent second IR grows the storage budget. */
    int stage = profile->stage;
    free(profile->raw);
-   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL};
+   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |
+      (structured_candidate ? RAW_STRUCTURED : 0)};
    profile->raw = calloc(1, sizeof(*profile->raw));
    if (!profile->raw) return numeric_rejection();
    memcpy(checked, text, length); checked[length] = 0;
@@ -656,6 +766,8 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
+         (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v9" : "virgl-webgl2-raw-bits-v8") :
       c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v7" :
       c->profile.raw->opcode_mask & RAW_V6_OPCODES ? "virgl-webgl2-raw-bits-v6" :
       c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :

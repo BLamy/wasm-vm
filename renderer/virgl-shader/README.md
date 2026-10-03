@@ -687,3 +687,44 @@ predecessor regressions. Positive GPU tests inject neither GLSL nor metadata.
 The separate retained consumer regression is explicitly a trusted-host metadata
 harness and makes no additional compiler claim. Production guest negotiation
 remains disabled.
+
+### Structured unsigned shader conditionals
+
+E6-T12e7 adds the bounded UIF/ELSE/ENDIF family to the owned backend. UIF tests
+only the unsigned post-swizzle x word against zero; it does not use floating-point
+truthiness or require a canonical all-ones boolean. Optional target labels must
+identify the actual matching ELSE/ENDIF, every delimiter must balance before END,
+and nesting is limited to eight. IF, arbitrary jumps, loops and indirect operands
+remain unsupported.
+
+Validation saves entry state per nesting level, swaps it with the completed true
+predecessor at ELSE, then intersects initialized lanes at ENDIF. Without ELSE the
+other predecessor is the entry state. A lane written on one path cannot become
+initialized on another. The validator conservatively considers both syntactic
+paths and does not infer predicate correlations. Each structured write with
+numeric authority stores its actual value in a physical float shadow, allowing
+joins to preserve distinct input origins and computed values correctly. Ordinary
+output permission must hold on both paths; finite-bank dependence is retained
+from either path. No missing lane is filled with zero.
+
+The closed compiler profiles are raw-bits-v8 for unconditional structured code
+and raw-bits-v9 for structured code with the existing finite-bank obligation.
+The consumer requires the complete contract for both v7 and v9 and rejects a
+contract on v8. Its finite-word predicate, immutable bank ownership and draw-time
+checks are unchanged. The temporary control-flow arena is heap allocated, capped
+at 53,248 bytes and freed within each validation attempt, preserving the existing
+instruction/IR/profile layouts and fixed Wasm memory and stack limits.
+
+The captured shaders include one-sided lane definitions that a conservative join
+cannot accept. They remain original-hash PRECISE rejections here; later full-corpus
+work must prove path-sensitive definedness or observational irrelevance before
+admitting them. This slice uses independently authored nested shaders, literal
+per-lane colors and raw-word atlases on actual hardware, plus separately compiled
+branch-polarity and initialization-union faults. Production guest negotiation
+remains disabled pending the remaining shader and live Mesa milestones.
+
+The deterministic acceptance command is `make verify-E6-T12e7`. Its final record
+includes native/Wasm complete results, allocation and retry recovery, actual
+compiler-derived metadata consumed by the shared renderer, a pristine clone and
+independent adversarial verification. Existing shader inputs and full results are
+preserved; positive tests do not inject metadata or modify captured source text.

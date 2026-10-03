@@ -919,6 +919,22 @@
     "rejected": "No accepted semantics-preserving mapping in this contract; do not advertise.",
     "supported": "Current bounded literal bridge feature only, never general guest/corpus support."
   },
+  "structuredConditionals": {
+    "bounds": "One validation-owned heap arena with 8 single-predecessor snapshots, capped at 53248 bytes and freed on every success or failure. Instruction, IR and profile layouts are unchanged; maximum 179 non-END instructions, fixed 16 MiB Wasm memory and 256 KiB stack.",
+    "compatibility": "All 3151 predecessor single cases, 221 pairs and 19 original captured shaders retain their full results. Captured PRECISE and one-sided initialization gaps remain rejected; no original body is rewritten to claim admission.",
+    "contracts": "Raw-v7 and raw-v9 both require the existing exact stage-local finite constant-bank record. Raw-v8 rejects such a record. Missing, unknown or inconsistent contracts fail before native shader allocation; current-bank validation and immutable uploads are unchanged.",
+    "initialization": "Both syntactic predecessors must establish each later consumed lane. No predicate correlation, constant-branch elimination or implicit temporary initialization is used. A no-ELSE branch joins against entry state.",
+    "joins": "Each authorized structured write materializes its actual numeric value in the destination physical shadow. Initialized lanes and ordinary-output authority intersect at joins; surviving numeric finite-bank dependencies combine by union. Raw words and pre-write aliases remain distinct from numeric shadows.",
+    "predicate": "The post-swizzle x lane is an unsigned 32-bit word compared with zero. Noncanonical integer true values remain true; other source lanes do not affect the test.",
+    "profiles": {
+      "conditional": "virgl-webgl2-raw-bits-v9",
+      "unconditional": "virgl-webgl2-raw-bits-v8"
+    },
+    "proof": "Full sanitized native/Wasm parity and allocation recovery; literal nested branch, per-lane color and word-atlas GPU results through decoded sync/async commands; independent exact numerical/reference interpretation; actual compiled polarity and written-mask-union faults; exact-source pristine-clone recording and fresh critic.",
+    "scope": "Authored structured shader support in the isolated compiler/shared renderer. No PRECISE, indirect addressing, loop or original rejected Mesa admission; production guest GPU negotiation remains disabled.",
+    "syntax": "Owned UIF, ELSE and ENDIF only, complete balanced structure, maximum depth 8. Optional UIF targets name the matching ELSE or ENDIF; optional ELSE targets name the matching ENDIF. No arbitrary jumps, IF, CONT or loops.",
+    "task": "E6-T12e7"
+  },
   "unsupportedExecution": [
     "compute",
     "geometry",

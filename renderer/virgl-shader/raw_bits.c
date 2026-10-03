@@ -76,6 +76,15 @@ static bool output_legal(struct raw_lane value)
    return (value.origin & RAW_OUTPUT) || safe_raw_float(value);
 }
 
+struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no)
+{
+   unsigned origin = 0;
+   if (float_mode(yes) && float_mode(no))
+      origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |
+         (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);
+   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
+}
+
 static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no, bool mixed)
 {
    if (condition.zero == UINT32_MAX) return no;
@@ -101,12 +110,18 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
 
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
+   if ((1u << input->opcode) & RAW_STRUCTURED_OPCODES) {
+      ir->instructions[ir->count++] = *input;
+      ir->opcode_mask |= 1u << input->opcode;
+      return true;
+   }
    struct raw_instruction checked = *input;
    checked.float_mask = 0;
    for (unsigned source = 0; source < 3; ++source) checked.float_modes[source] = 0;
    const struct raw_instruction *instruction = &checked;
    bool mixed = (instruction->flags & RAW_MIXED) != 0;
    bool conditional = (instruction->flags & RAW_CONDITIONAL) != 0;
+   bool structured = (instruction->flags & RAW_STRUCTURED) != 0;
    bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
    unsigned dependency = 0;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
@@ -125,7 +140,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       }
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
-   if (conditional && instruction->opcode == RAW_UCMP)
+   if ((conditional || structured) && instruction->opcode == RAW_UCMP)
       for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
          struct raw_lane condition = source_lane(ir, &instruction->src[0], lane, conditional);
          if (condition.zero == UINT32_MAX || condition.one) {
@@ -183,7 +198,16 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
          break;
+      case RAW_UIF:
+      case RAW_ELSE:
+      case RAW_ENDIF: break; /* Recorded above without a destination. */
       }
+      /* Each structured predecessor owns a physical shadow for every value
+       * with numerical authority. A join can therefore retain a value without
+       * borrowing another arm's IN locator or decoding a computed raw value. */
+      if (structured && float_mode(result[lane]))
+         result[lane].origin = RAW_FLOAT_SHADOW | (result[lane].origin & RAW_BANK_DEPENDENCY) |
+            (output_legal(result[lane]) ? RAW_OUTPUT : 0);
    }
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
    for (unsigned lane = 0; lane < 4; ++lane)
@@ -358,12 +382,20 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
          " return selected ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
-   if (p->raw->opcode_mask & RAW_NUMERIC_OPCODES)
+   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES))
       emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
+      if (instruction->opcode == RAW_UIF) {
+         emit(&w, " if ("); operand(&w, p, &instruction->src[0], 0); emit(&w, " != 0u) {\n");
+         continue;
+      }
+      if (instruction->opcode == RAW_ELSE) { emit(&w, " } else {\n"); continue; }
+      if (instruction->opcode == RAW_ENDIF) { emit(&w, " }\n"); continue; }
       bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
-      if (instruction->float_mask) float_snapshot(&w, p, instruction);
+      bool raw_shadow = (instruction->flags & RAW_STRUCTURED) && !numeric &&
+         instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP;
+      if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
       if (numeric) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
       else {
          emit(&w, " raw_rhs = uvec4(");
@@ -399,7 +431,17 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             emit(&w, ")");
          }
       }
-      emit(&w, ");\n raw_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
+      emit(&w, ");\n");
+      if (instruction->float_mask && raw_shadow) {
+         emit(&w, " float_rhs = vec4(");
+         for (unsigned lane = 0; lane < 4; ++lane) {
+            if (lane) emit(&w, ", ");
+            if (instruction->float_mask & (1u << lane)) emit(&w, "uintBitsToFloat(raw_rhs.%c)", "xyzw"[lane]);
+            else emit(&w, "0.0");
+         }
+         emit(&w, ");\n");
+      }
+      emit(&w, " raw_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
       for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
       emit(&w, " = raw_rhs.");
       for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
