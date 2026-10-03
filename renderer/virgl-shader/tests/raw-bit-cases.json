@@ -1,0 +1,2125 @@
+[
+  {
+    "name": "finite-normal-base-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-word-0-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-1-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2147483647-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483647, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2147483648-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483648, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-4294967295-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2139095040-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095040, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-4286578688-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4286578688, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2143289345-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2143289345, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2139095039-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095039, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-8388607-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388607, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-8388608-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388608, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-1431655765-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1431655765, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2863311530-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2863311530, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "bad-uint-'4294967296'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967296, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'9999999999'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {9999999999, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'00000000000'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {00000000000, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'-1'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {-1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'+1'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {+1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1e0'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1e0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1u'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1u, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'0x1'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0x1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1.0'-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1.0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-''-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "safe-output-0-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-2147483648-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483648, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-1065353216-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1065353216, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-3212836864-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {3212836864, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-8388608-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388608, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-2130706432-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2130706432, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "unsafe-output-1-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-8388607-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388607, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2147483649-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483649, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2139095040-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095040, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-4286578688-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4286578688, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2143289345-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2143289345, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-4294967295-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unknown-constant-output-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], CONST[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "raw-zero-dynamic-count-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nSHL TEMP[0], IMM[0].xxxx, CONST[45]\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-zero-dynamic-right-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nUSHR TEMP[0], IMM[0].xxxx, CONST[45]\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "unsafe-dynamic-count-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nSHL TEMP[0], IMM[0].yyyy, CONST[45]\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-dynamic-right-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nUSHR TEMP[0], IMM[0].yyyy, CONST[45]\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "partial-AND-x-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-y-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-z-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-w-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-xy-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-xyz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-x-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-y-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-z-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-w-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-xy-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-xyz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-x-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].x, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-y-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].y, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-z-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].z, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-w-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].w, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-xy-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].xy, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-xyz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].xyz, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-x-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-y-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-z-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-w-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-xy-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-xyz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-x-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-y-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-z-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-w-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-xy-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-xyz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "bad-mask-xz-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xz, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-yw-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].yw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-zw-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].zw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-xx-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xx, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-mask-yx-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].yx, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-mask-xyzw-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xyzw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-xq-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xq, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "consumed-lane-only-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].x, IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, TEMP[0].xyzw\nMOV TEMP[117].y, IMM[0].yyyy\nMOV TEMP[117].z, IMM[0].yyyy\nMOV TEMP[117].w, IMM[0].yyyy\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "consumed-uninitialized-lane-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].x, IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, TEMP[0].yyyy\nMOV OUT[1], IMM[0].yyyy\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "alias-snapshot-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, IMM[0].xxxx\nMOV TEMP[117].xy, TEMP[117].yxzw\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "not-inverts-known-bits-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nNOT TEMP[0], IMM[0].zzzz\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "overwritten-unsafe-output-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], CONST[45]\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "reject-mixed-ADD-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nADD OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MUL-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMUL OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MAD-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMAD OUT[1], IMM[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-TEX-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nTEX OUT[1], IMM[0], SAMP[0], 2D\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-UADD-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nUADD OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-UCMP-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nUCMP OUT[1], IMM[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-ISGE-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nISGE OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-FSLT-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSLT OUT[1], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MOV_PRECISE-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV_PRECISE OUT[1], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[118]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[118].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[011]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[011].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[1000]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[1000].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[-1]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[-1].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-CONST[46]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], CONST[46].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-IMM[8]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[8].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-IN[8]-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IN[8].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "duplicate-constant0-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0]\nDCL CONST[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "constant45-then0-extent47-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nDCL CONST[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 47
+    }
+  },
+  {
+    "name": "constant0-then45-extent46-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0]\nDCL CONST[45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "unused-constant45-extent46-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "no-constant-bank-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-flt32-immediates-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] FLT32 {0, 1, -1, 0.5}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-float-over-limit-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] FLT32 {0, 1000001, -1, 0.5}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-end-tail-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\nOR TEMP[0], IMM[0], IMM[0]\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-no-end-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-bad-label-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\n1: OR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-valid-label-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\n0: OR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw180-instructions-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "legacy-finite-unchanged-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 1065353216, 0}\nMOV TEMP[0], IMM[0].yyyy\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-straight-line-v5"
+    }
+  },
+  {
+    "name": "legacy-full-raw-not-admitted-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 1065353216, 1065353216, 0}\nMOV TEMP[0], IMM[0].yyyy\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "float-origin-swizzled-mov-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117], IN[0].wzyx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "float-origin-bitwise-lost-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IN[0], IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "finite-normal-base-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "raw-word-0-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-1-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2147483647-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483647, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2147483648-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483648, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-4294967295-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2139095040-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095040, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-4286578688-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4286578688, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2143289345-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2143289345, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2139095039-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095039, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-8388607-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388607, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-8388608-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388608, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-1431655765-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1431655765, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-word-2863311530-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2863311530, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "bad-uint-'4294967296'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967296, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'9999999999'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {9999999999, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'00000000000'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {00000000000, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'-1'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {-1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'+1'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {+1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1e0'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1e0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1u'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1u, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'0x1'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0x1, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-'1.0'-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1.0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-uint-''-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "safe-output-0-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-2147483648-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483648, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-1065353216-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1065353216, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-3212836864-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {3212836864, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-8388608-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388608, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "safe-output-2130706432-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2130706432, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "unsafe-output-1-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {1, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-8388607-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {8388607, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2147483649-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2147483649, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2139095040-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2139095040, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-4286578688-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4286578688, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-2143289345-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {2143289345, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-output-4294967295-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 0, 0, 0}\nOR TEMP[0], IMM[0].xxxx, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unknown-constant-output-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], CONST[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "raw-zero-dynamic-count-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nSHL TEMP[0], IMM[0].xxxx, CONST[45]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-zero-dynamic-right-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nUSHR TEMP[0], IMM[0].xxxx, CONST[45]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "unsafe-dynamic-count-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nSHL TEMP[0], IMM[0].yyyy, CONST[45]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "unsafe-dynamic-right-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nUSHR TEMP[0], IMM[0].yyyy, CONST[45]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "partial-AND-x-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-y-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-z-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-w-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-xy-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-AND-xyz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-x-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-y-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-z-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-w-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-xy-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-OR-xyz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-x-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].x, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-y-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].y, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-z-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].z, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-w-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].w, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-xy-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].xy, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-NOT-xyz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nNOT TEMP[117].xyz, IMM[0].yyyy\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-x-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-y-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-z-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-w-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-xy-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-SHL-xyz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nSHL TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-x-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].x, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-y-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].y, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-z-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].z, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-w-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].w, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-xy-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].xy, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "partial-USHR-xyz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nUSHR TEMP[117].xyz, IMM[0].yyyy, IMM[0].xxxx\nAND TEMP[117], TEMP[117], IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "bad-mask-xz-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xz, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-yw-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].yw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-zw-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].zw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-xx-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xx, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-mask-yx-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].yx, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "bad-mask-xyzw-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xyzw, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-mask-xq-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].xq, IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "consumed-lane-only-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].x, IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, TEMP[0].xyzw\nMOV TEMP[117].y, IMM[0].yyyy\nMOV TEMP[117].z, IMM[0].yyyy\nMOV TEMP[117].w, IMM[0].yyyy\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "consumed-uninitialized-lane-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0].x, IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, TEMP[0].yyyy\nMOV OUT[0], IMM[0].yyyy\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "alias-snapshot-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[117], IMM[0].yyyy, IMM[0].xxxx\nMOV TEMP[117].x, IMM[0].xxxx\nMOV TEMP[117].xy, TEMP[117].yxzw\nMOV OUT[0], TEMP[117]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "not-inverts-known-bits-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nNOT TEMP[0], IMM[0].zzzz\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "overwritten-unsafe-output-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], CONST[45]\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "reject-mixed-ADD-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nADD OUT[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MUL-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMUL OUT[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MAD-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMAD OUT[0], IMM[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-TEX-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nTEX OUT[0], IMM[0], SAMP[0], 2D\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-UADD-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nUADD OUT[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-UCMP-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nUCMP OUT[0], IMM[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-ISGE-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nISGE OUT[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-FSLT-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nFSLT OUT[0], IMM[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "reject-mixed-MOV_PRECISE-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV_PRECISE OUT[0], IMM[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[118]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[118].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[011]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[011].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[1000]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[1000].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-TEMP[-1]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], TEMP[-1].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-CONST[46]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], CONST[46].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-IMM[8]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[8].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "bad-register-IN[8]-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IN[8].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "duplicate-constant0-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0]\nDCL CONST[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "constant45-then0-extent47-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 47
+    }
+  },
+  {
+    "name": "constant0-then45-extent46-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0]\nDCL CONST[45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "unused-constant45-extent46-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "constantCount": 46
+    }
+  },
+  {
+    "name": "no-constant-bank-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-flt32-immediates-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] FLT32 {0, 1, -1, 0.5}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-float-over-limit-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] FLT32 {0, 1000001, -1, 0.5}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-end-tail-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\nOR TEMP[0], IMM[0], IMM[0]\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-no-end-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-bad-label-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\n1: OR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "raw-valid-label-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\n0: OR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw180-instructions-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "parse-error"
+    }
+  },
+  {
+    "name": "legacy-finite-unchanged-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 1065353216, 0}\nMOV TEMP[0], IMM[0].yyyy\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-straight-line-v5"
+    }
+  },
+  {
+    "name": "legacy-full-raw-not-admitted-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {4294967295, 1065353216, 1065353216, 0}\nMOV TEMP[0], IMM[0].yyyy\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "fragment-float-origin-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[3], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], IN[0].xyxy\nEND\n",
+    "ok": true,
+    "expected": {
+      "profile": "virgl-webgl2-raw-bits-v1"
+    }
+  },
+  {
+    "name": "raw-unused-samp-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL SAMP[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "raw-unused-sview-vertex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "raw-unused-samp-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  },
+  {
+    "name": "raw-unused-sview-fragment",
+    "stage": "fragment",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL SVIEW[0], 2D, FLOAT\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1065353216, 4294967295, 255}\nOR TEMP[0], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[0]\nEND\n",
+    "ok": false,
+    "expected": {
+      "errorCode": "unsupported-feature"
+    }
+  }
+]

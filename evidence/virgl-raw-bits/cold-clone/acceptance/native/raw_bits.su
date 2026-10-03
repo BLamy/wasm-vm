@@ -1,0 +1,10 @@
+raw_bits.c:40:raw_record	240	static
+raw_bits.c:7:source_lane	64	static
+raw_bits.c:64:raw_outputs_safe	176	static
+raw_bits.c:111:raw_emit	352	dynamic
+raw_bits.c:81:emit	160	dynamic
+raw_bits.c:98:operand	96	static
+raw_bits.c:92:input_float	96	static
+raw_bits.c:__llvm_profile_runtime_user	0	static
+raw_bits.c:asan.module_ctor	16	static
+raw_bits.c:asan.module_dtor	16	static

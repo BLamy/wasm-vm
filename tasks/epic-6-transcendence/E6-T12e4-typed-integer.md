@@ -3,12 +3,20 @@ id: E6-T12e4
 epic: 6
 title: Preserve straight-line TGSI 32-bit integer and mask semantics
 priority: 525.0269904
-status: pending
+status: cancelled
 depends_on: [E6-T12e3b]
 estimate: S
 risk: high
 capstone: false
 ---
+
+## Execution slices
+
+Replaced by ordered S/high boundaries E6-T12e4a, E6-T12e4b and E6-T12e4c.
+The pinned converter stores integer results in float TEMP registers, which cannot
+promise every raw32-bit value under ESSL300. An owned raw representation and
+explicit float-IO policy must be proven before arithmetic/masks and mixed use.
+The original opcode family remains the combined scope of these replacements.
 
 ## Boundary
 
@@ -40,4 +48,8 @@ oracle. Sabotage a bitcast, mask or signed comparison and require failure.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — decomposed before activation
+
+Read-only source/spec audit identified independent storage, arithmetic and mixed
+comparison boundaries. This planning container never entered the active lane.
+See the replacement task files for independent acceptance commands and scopes.
