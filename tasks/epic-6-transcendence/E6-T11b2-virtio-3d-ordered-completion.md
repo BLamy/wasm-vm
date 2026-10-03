@@ -3,7 +3,7 @@ id: E6-T11b2
 epic: 6
 title: Complete guest 3D submissions and DMA through ordered asynchronous jobs
 priority: 525.026972
-status: pending
+status: in-progress
 depends_on: [E6-T11b1]
 estimate: S
 risk: high
@@ -33,6 +33,16 @@ old queue ownership and releases pending host jobs; late or duplicate completion
 must not touch RAM or old/new used rings. Unsupported commands and host failures
 produce explicit errors and replayable diagnostics. Production 3D negotiation
 remains disabled pending the truthful capability milestone.
+
+## Admission and ownership
+
+The transport admits one owned control head at a time. Descriptors behind that
+head remain in the available ring; their request bytes and response spans are
+snapshotted only when admitted. The renderer runs outside `Machine.run`; owned
+DMA exchanges use explicit Machine methods, and a capacity-one completion
+mailbox wakes the next bounded run without another guest kick. Reset and queue
+configuration changes revoke pending ownership before late callbacks can DMA or
+publish a used entry.
 
 ## Deterministic acceptance
 

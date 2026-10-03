@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11b2** — Complete guest 3D submissions and DMA through ordered asynchronous jobs
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -528,7 +527,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [-] `525.02697` [E6-T11b](epic-6-transcendence/E6-T11b-virtio-3d-submit-fences.md) — Complete VirGL submissions and transfers through asynchronous ordered fences *(deps: E6-T11a)*
 - [x] `525.026971` [E6-T11b1](epic-6-transcendence/E6-T11b1-async-renderer-jobs.md) — Execute renderer jobs with staged GPU readback and explicit DMA handshakes *(deps: E6-T11a)*
-- [ ] `525.026972` [E6-T11b2](epic-6-transcendence/E6-T11b2-virtio-3d-ordered-completion.md) — Complete guest 3D submissions and DMA through ordered asynchronous jobs *(deps: E6-T11b1)*
+- [~] `525.026972` [E6-T11b2](epic-6-transcendence/E6-T11b2-virtio-3d-ordered-completion.md) — Complete guest 3D submissions and DMA through ordered asynchronous jobs *(deps: E6-T11b1)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
