@@ -9,7 +9,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Next up (deps satisfied, in priority order)
 
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
-1. **E6-T10b** — Capture the current guest graphics driver and command requirements
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -504,7 +503,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Epic 6 — `epic-6-transcendence`
 
 - [x] `525.02701` [E6-T10a](epic-6-transcendence/E6-T10a-virgl-shader-bridge.md) — Reuse VirGL TGSI shader translation in a bounded browser module *(deps: E5-T06b, E5.5-T03bg)*
-- [ ] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*
+- [~] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*
 - [ ] `525.02703` [E6-T10c](epic-6-transcendence/E6-T10c-browser-renderer-contract.md) — Freeze browser renderer capabilities against the captured guest corpus *(deps: E6-T10b)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`

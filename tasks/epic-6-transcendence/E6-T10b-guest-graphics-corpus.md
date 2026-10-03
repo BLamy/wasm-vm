@@ -3,7 +3,7 @@ id: E6-T10b
 epic: 6
 title: Capture the current guest graphics driver and command requirements
 priority: 525.02702
-status: pending
+status: in-progress
 depends_on: [E6-T10a]
 estimate: S
 risk: medium
@@ -30,4 +30,14 @@ Verify Mesa actually selected virgl; software fallback is a failed capture. Chec
 captures contain draw work, textures, fences and real shader bodies.
 
 ## Verification log
-(empty)
+
+### 2026-10-03 — worker — activated
+
+Parent `cad9e11702fb3f4b3791d6144ec9d63c01e080d8` (verified E6-T10a,
+PR #403). Disposable Linux ARM64 QEMU plus pinned virglrenderer 1.3.0 can
+boot the sanitized Arch image and run the actual Mesa 26.2.2 / Hyprland 0.56.2
+stack through VirGL. The original ext4 is mounted read-only and a qcow2 overlay
+receives all writes. The reference host uses llvmpipe; browser hardware proof
+is separate. Existing exploratory debug logs are incomplete and are not this
+task's framed corpus. Implementation will capture full submissions, resource
+and transfer data, shader continuation framing and finite workload markers.
