@@ -1,0 +1,37 @@
+{
+  "schema": "wasm-vm-captured-native-v1",
+  "status": "passed",
+  "command": [
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm/renderer/virgl-shader/build/captured-sanitize/captured-test",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm/evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm/evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi"
+  ],
+  "inputs": [
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "bytes": 256,
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "bytes": 261,
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+    }
+  ],
+  "negativeCases": 112,
+  "negativeFixtureSha256": "7a2524ec56b2cad12cc919411ce3984e91d61e66968cdcf43158c05cc5b7ad55",
+  "streamSha256": "331c69dbbdfbbfbde5586fb106aa51c016f59b5b81eb29bd10716cf9c7db80e3",
+  "logSha256": "1efee7d0b5f11a6afae314c0aa68ecc39c62c5b0e460e1193d6d869a6d451885",
+  "binarySha256": "04a238bc21f93984f85ee21eabe8c304cf29c5796af6dab1781904c2b8584805",
+  "seeds": [
+    "18a9e24d",
+    "4c907fb3",
+    "c31e7d82",
+    "9b4260a5"
+  ],
+  "mutationsPerSeed": 2048,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ]
+}
