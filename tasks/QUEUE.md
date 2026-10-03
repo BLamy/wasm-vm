@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12e9** — Execute structured loops only with established execution and address bounds
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -568,7 +567,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02699062` [E6-T12e6b](epic-6-transcendence/E6-T12e6b-constant-domain-compiler.md) — Derive conditional finite constant authority in the owned compiler *(deps: E6-T12e6a)*
 - [x] `525.0269907` [E6-T12e7](epic-6-transcendence/E6-T12e7-structured-conditional.md) — Validate and execute structured TGSI unsigned conditionals *(deps: E6-T12e6b)*
 - [x] `525.0269908` [E6-T12e8](epic-6-transcendence/E6-T12e8-indirect-constants.md) — Admit proven-bounded TGSI indirect constant access *(deps: E6-T12e7)*
-- [ ] `525.0269909` [E6-T12e9](epic-6-transcendence/E6-T12e9-bounded-loops.md) — Execute structured loops only with established execution and address bounds *(deps: E6-T12e8)*
+- [~] `525.0269909` [E6-T12e9](epic-6-transcendence/E6-T12e9-bounded-loops.md) — Execute structured loops only with established execution and address bounds *(deps: E6-T12e8)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
