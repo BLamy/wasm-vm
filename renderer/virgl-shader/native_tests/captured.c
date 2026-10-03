@@ -189,7 +189,7 @@ int main(int argc, char **argv)
       captured[stage][captured_length[stage]] = 0;
       const char *result = translate(stage, captured[stage], captured_length[stage]);
       require(strstr(result, "\"ok\":true,") && strstr(result, "#version 300 es"), "unmodified captured shader accepted");
-      require(strstr(result, "\"profile\":\"virgl-webgl2-straight-line-v2\"") != NULL, "versioned component metadata");
+      require(strstr(result, "\"profile\":\"virgl-webgl2-straight-line-v3\"") != NULL, "versioned component metadata");
       require(strstr(result, "\"semantic\":\"GENERIC\",\"semanticIndex\":0,\"componentMask\":3") != NULL,
               "captured generic declaration retains exactly xy");
       require(strstr(result, stage ? "\"semantic\":\"COLOR\",\"semanticIndex\":0,\"componentMask\":15,\"writtenMask\":15"

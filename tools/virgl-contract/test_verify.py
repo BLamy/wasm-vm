@@ -59,6 +59,16 @@ class ContractGate(unittest.TestCase):
             path.write_text('{"caps": 0, "caps": 2}')
             with self.assertRaises(ValueError): verify.read_json(path)
 
+    def test_component_execution_scope_cannot_move_between_originals(self):
+        self.check(self.contract)
+        for digest in self.contract['capturedShaders']:
+            changed = deepcopy(self.contract)
+            row = changed['capturedShaders'][digest]
+            row['executionEvidence'] = ('not-executed' if digest in verify.COMPONENT_SHADERS
+                                        else 'component-fixture-four-bodies')
+            with self.subTest(digest=digest), self.assertRaises(ValueError):
+                self.check(changed)
+
 
 if __name__ == '__main__':
     unittest.main()

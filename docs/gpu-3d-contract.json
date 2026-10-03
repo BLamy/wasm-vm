@@ -36,9 +36,8 @@
   },
   "capturedShaders": {
     "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
-      "currentBridge": "rejected",
-      "executionEvidence": "not-executed",
-      "rejectionCode": "unsupported-feature",
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
       "stage": "FRAG"
     },
     "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": {
@@ -64,9 +63,8 @@
       "stage": "VERT"
     },
     "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": {
-      "currentBridge": "rejected",
-      "executionEvidence": "not-executed",
-      "rejectionCode": "unsupported-feature",
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
       "stage": "VERT"
     },
     "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": {
@@ -93,9 +91,8 @@
       "stage": "FRAG"
     },
     "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": {
-      "currentBridge": "rejected",
-      "executionEvidence": "not-executed",
-      "rejectionCode": "unsupported-feature",
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
       "stage": "FRAG"
     },
     "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": {
@@ -132,9 +129,8 @@
       "stage": "VERT"
     },
     "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": {
-      "currentBridge": "rejected",
-      "executionEvidence": "not-executed",
-      "rejectionCode": "unsupported-feature",
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
       "stage": "VERT"
     },
     "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": {
@@ -733,11 +729,11 @@
   },
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Isolated prototype and planned renderer mappings; no guest renderer implementation or desktop acceleration claim.",
-  "shaderProfile": "virgl-webgl2-straight-line-v2",
+  "shaderProfile": "virgl-webgl2-straight-line-v3",
   "shaderSyntax": {
     "FS_COLOR0_WRITES_ALL_CBUFS": {
       "mapping": "Exactly one fragment property with value1 before instructions supported under fixed one-target configuration; no MRT support.",
-      "scope": "bounded-v2-subset-only",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "PRECISE": {
@@ -750,17 +746,17 @@
     },
     "UINT32-immediates": {
       "mapping": "Four checked decimal words are preserved as float bits; finite magnitude<=1e6 only, no nonzero subnormals. Integer operations remain rejected.",
-      "scope": "bounded-v2-subset-only",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "declaration-masks": {
-      "mapping": "Generic VS output and perspective FS input .xy supported; all other declarations stay full-width.",
-      "scope": "bounded-v2-subset-only",
+      "mapping": "Generic VS outputs and perspective FS inputs may declare .xy or .xyz; all other declarations stay full-width.",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "declaration-ranges-and-order": {
-      "mapping": "TEMP-only ranges within0..7, including declarations after immediates, are supported. Other file ranges, address registers and larger temporaries remain rejected.",
-      "scope": "bounded-v2-subset-only",
+      "mapping": "Non-overlapping TEMP ranges within0..9 and CONST ranges within0..7 are supported, including declarations after immediates. Other file ranges, address registers and larger banks remain rejected.",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "indirect-constant-index": {
@@ -768,8 +764,8 @@
       "status": "implementable"
     },
     "partial-destination-writes": {
-      "mapping": "Only MOV to OUT .xy/.z/.w supported; complete POSITION/COLOR and declared generic outputs required. TEMP writes remain full.",
-      "scope": "bounded-v2-subset-only",
+      "mapping": "MOV/ADD/MUL accept TEMP/OUT masks x/y/z/w/xy/xyz, tracking initialized lanes. Complete POSITION/COLOR and every declared generic output lane are required. MAD/TEX retain full-width destinations.",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "semantics-and-interpolation": {
@@ -777,8 +773,8 @@
       "status": "implementable"
     },
     "source-swizzles-and-negation": {
-      "mapping": "Exactly four xyzw selectors supported; every selected component must be declared regardless of destination lanes. Negation/modifiers remain rejected.",
-      "scope": "bounded-v2-subset-only",
+      "mapping": "Exactly four xyzw selectors supported. Consumed source lanes follow destination masks for componentwise operations and xy for 2D TEX, then swizzles select declared and initialized lanes. Negation/modifiers remain rejected.",
+      "scope": "bounded-v3-subset-only",
       "status": "supported"
     },
     "structured-target-annotations": {

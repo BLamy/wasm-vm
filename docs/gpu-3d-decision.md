@@ -33,13 +33,19 @@ require another shader translation stage and additional GL coordinate, binding
 and rasterization conversions. It is not selected by this contract. WebGL2 still
 needs explicit lowering where its semantics differ from native GL.
 
-The v2 shader bridge translates **seven of 19 captured shader bodies** and rejects
-the remaining twelve (eleven unsupported-feature, one parse-error). The exact
-textured-scene pair has a dedicated three-phase pixel proof; the other five
-translated bodies have no execution claim. The nine literal shader regressions
-remain a separate frontend/API baseline. Limited TEMP ranges, generic `.xy`
-declarations, MOV output masks, four-lane source swizzles, finite UINT32 float bits
-and the one-target fragment property are now supported.
+The v3 shader bridge translates **eleven of 19 captured shader bodies** and
+rejects eight (seven unsupported-feature, one parse-error). The original
+textured-scene pair retains its three-phase pixel proof. E6-T12e1 adds independent
+pixel fixtures for two original texture/intensity fragments and two original
+affine/matrix vertex bodies; the other five accepted bodies have no execution
+claim. These explicit bindings do not establish a complete original workload.
+The nine literal shader regressions remain a separate frontend/API baseline.
+The profile now admits bounded CONST ranges, TEMP indices through9, generic
+`.xy`/`.xyz` declarations and MOV/ADD/MUL component writes with definite lane
+initialization. Consumed lanes are checked after applying the source swizzle;
+2D texture coordinates consume xy. Integer/control flow, flat interpolation and
+PRECISE remain rejected. See the exact four hashes and profile limits in
+`tasks/epic-6-transcendence/E6-T12e1-ranges-components.md`.
 No general Mesa capset can honestly describe that frontend: pinned Mesa assumes
 256 temporaries, indirect temporary/constant access and control-flow depth 32
 regardless of many advertised bits.
