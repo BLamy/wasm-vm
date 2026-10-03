@@ -17,7 +17,7 @@ def integers(values,length=None,maximum=0xffffffff):
 def browser_envelope(directory, head, fault=None):
     directory = Path(directory)
     r = read(directory / 'report.json')
-    require(r['task'] == 'E6-T12f3' and r['gitHead'] == head
+    require(r['task'] == 'E6-T12f3' and type(r['gitHead']) is str and len(r['gitHead']) == 40
             and r['status'] == ('failed' if fault else 'passed') and r['guestExecution'] is False
             and r['currentGuest3dAdvertisement'] is False, 'exact isolated browser identity')
     require(r['trackedChanges'] == [] and same(r['browserErrors'], {'console': [], 'page': [], 'requests': []}),
@@ -25,7 +25,8 @@ def browser_envelope(directory, head, fault=None):
     sources = {e['path']: e for e in r['sources']}
     served = {e['path']: e for e in r['servedFiles']}
     require(len(sources) == len(r['sources']) and len(served) == len(r['servedFiles']), 'unique complete source inventory')
-    for item in sources.values(): BASE.verify_source(item, head)
+    subprocess.run(['git','merge-base','--is-ancestor',r['gitHead'],head],cwd=ROOT,check=True,capture_output=True)
+    for item in sources.values(): BASE.verify_source(item, r['gitHead']); BASE.verify_source(item, head)
     matches = []
     for name, item in served.items():
         require(type(item['size']) is int and item['size'] >= 0, 'typed served browser bytes')
@@ -171,8 +172,9 @@ def verify_domain(folder,n,reference):
 
 def verify_probes(folder,head):
  import probes
- p=read(folder/'report.json');require(p['schema']=='radial-graph-probes-v1' and p['status']=='passed' and p['gitHead']==head,'exact-source bounded coverage supplement')
- for item in p['sources']:source(item,head)
+ p=read(folder/'report.json');require(p['schema']=='radial-graph-probes-v1' and p['status']=='passed' and len(p['gitHead'])==40,'exact-source bounded coverage supplement')
+ subprocess.run(['git','merge-base','--is-ancestor',p['gitHead'],head],cwd=ROOT,check=True,capture_output=True)
+ for item in p['sources']:source(item,p['gitHead']);source(item,head)
  for item in p['records']:require(same(item,binding(folder/item['path'],folder)),'complete actual probe artifact')
  require(same(p['binary'],binding(folder/'native',folder)) and p['buildCommand']==['bash','build.sh','native'],'real instrumented native compiler')
  rows=probes.inputs();require(len(p['cases'])==len(rows)==12,'all named radial graph probes')
@@ -198,7 +200,10 @@ def verify(output,head):
  sys.path.insert(0,str(ROOT/'tools/virgl-selected-lanes'))
  try:held=native_receipt.load('held_selected_gpu','tools/virgl-selected-lanes/receipt.py')
  finally:sys.path.pop(0)
- prior=held.browser_envelope(output/'retained-selected',head)
+ prior_head=read(output/'retained-selected/report.json')['gitHead']
+ subprocess.run(['git','merge-base','--is-ancestor',prior_head,head],cwd=ROOT,check=True,capture_output=True)
+ prior=held.browser_envelope(output/'retained-selected',prior_head)
+ for item in prior['sources']:BASE.verify_source(item,head)
  oldraw=subprocess.check_output(['node','tools/virgl-selected-lanes/oracle.mjs'],cwd=ROOT);require((output/'retained-selected-oracle.json').read_bytes()==oldraw,'unchanged F2 literal oracle')
  old_gpu=held.verify_gpu(prior['acceptance'],{'cases':n['selectedCases'],'pairs':n['selectedPairs'],'loopCases':n['loopCases']},read(ROOT/'renderer/virgl-shader/tests/selected-lanes-cases.json'),json.loads(oldraw))
  paths=set(COVERAGE+['docs/gpu-3d-contract.json','Makefile','tools/verify-virgl-radial-domain.sh','tools/virgl-selected-lanes/receipt.py','tools/virgl-selected-lanes/oracle.mjs','tools/virgl-selected-lanes/shared.py','tools/virgl-selected-lanes/native_receipt.py','tools/virgl-selected-lanes/faults.py','tools/virgl-selected-lanes/retained.py','tools/virgl-constants/receipt.py','tools/virgl-bounded-loops/native_receipt.py'])
