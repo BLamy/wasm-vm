@@ -1,0 +1,66 @@
+Cloning into '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm'...
+done.
+HEAD is now at b2636b50 gpu: decode bounded VirGL command submissions before dispatch
+bash tools/verify-virgl-command-decoder.sh
+
+added 7 packages in 414ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
++ git rev-parse HEAD
+b2636b5073b1e81f2172b6b0b268fea7ce381f0d
++ node --check renderer/virgl-command/decoder.mjs
++ node --check renderer/virgl-command/tests/acceptance.mjs
++ node --check tools/virgl-command/fixtures.mjs
++ node --check tools/verify-virgl-command-decoder.mjs
++ python3 -m py_compile tools/virgl-command/receipt.py tools/virgl-command/coverage.py tools/virgl-command/cold.py
++ python3 -m unittest discover -s tools/virgl-capture/tests -p 'test_*.py' -v
+test_real_capture_continuation_and_provenance_mutations (test_corpus_verifier.CorpusVerifierTests) ... ok
+test_api_error_and_footer_failure (test_events.EventTests) ... ok
+test_complete_nested_forwarding_and_legacy_fence (test_events.EventTests) ... ok
+test_corrupt_and_missing_blob (test_events.EventTests) ... ok
+test_each_missing_event_fails_even_after_sequence_repair (test_events.EventTests) ... ok
+test_json_duplicate_keys_and_path_escape (test_events.EventTests) ... ok
+test_nested_identity_and_thread_tampering (test_events.EventTests) ... ok
+test_recomputed_blob_digest_cannot_hide_iov_omission (test_events.EventTests) ... ok
+test_stale_backing_does_not_satisfy_second_submit (test_events.EventTests) ... ok
+test_compute_local_memory_is_not_streamout_count (test_validate.FramingTests) ... ok
+test_context_and_subcontext_isolation (test_validate.FramingTests) ... ok
+test_continuation_offset_and_handle_are_not_trusted (test_validate.FramingTests) ... ok
+test_cross_submission_continuation_and_padding (test_validate.FramingTests) ... ok
+test_declared_length_and_terminal_nul (test_validate.FramingTests) ... ok
+test_every_non_word_boundary_rejected (test_validate.FramingTests) ... ok
+test_overlapping_creation_and_context_destruction (test_validate.FramingTests) ... ok
+test_pin_enum_has_expected_wire_numbers (test_validate.FramingTests) ... ok
+test_shader_stage_and_end_required (test_validate.FramingTests) ... ok
+test_small_submission_includes_first_command_and_full_shader (test_validate.FramingTests) ... ok
+test_streamout_header_offset_and_truncation (test_validate.FramingTests) ... ok
+test_unknown_codes_and_trailing_data (test_validate.FramingTests) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.333s
+
+OK
++ python3 tools/virgl-capture/validate.py evidence/virgl-corpus/captures
+{"draws": 3, "events": 283, "manifestSha256": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf", "shaders": 2, "workload": "textured-scene"}
+{"draws": 48, "events": 291, "manifestSha256": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f", "shaders": 2, "workload": "kmscube"}
+{"draws": 4870, "events": 5847, "manifestSha256": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263", "shaders": 15, "workload": "glmark2-es2"}
+{"draws": 2241, "events": 2707, "manifestSha256": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c", "shaders": 7, "workload": "compositor"}
+++ mktemp -d /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T//wasm-vm-virgl-command-coverage.XXXXXX
++ coverage_dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T//wasm-vm-virgl-command-coverage.4FWFis
++ NODE_V8_COVERAGE=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T//wasm-vm-virgl-command-coverage.4FWFis
++ node tools/verify-virgl-command-decoder.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm/target/evidence/virgl-command-cold/parity
+Node command acceptance passed (767 ms)
+Browser parity passed (572 ms)
++ python3 tools/virgl-command/coverage.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T//wasm-vm-virgl-command-coverage.4FWFis /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm/target/evidence/virgl-command-cold/coverage.json
+Recorded V8 counters for 46 decoder functions
++ node tools/verify-virgl-command-decoder.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm/target/evidence/virgl-command-cold/sabotage --sabotage packet-length
+Node command acceptance passed (564 ms)
+AssertionError [ERR_ASSERTION]: capture event 161 command 0 packet byteLength: expected 56, got 60
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm/tools/verify-virgl-command-decoder.mjs:137:12
++ python3 tools/virgl-command/receipt.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-command-cold-pi39cywp/wasm-vm/target/evidence/virgl-command-cold
+E6-T12a receipt passed: original commands, Node/browser parity and packet-length sabotage
