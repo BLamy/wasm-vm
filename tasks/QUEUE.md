@@ -570,7 +570,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269908` [E6-T12e8](epic-6-transcendence/E6-T12e8-indirect-constants.md) — Admit proven-bounded TGSI indirect constant access *(deps: E6-T12e7)*
 - [x] `525.0269909` [E6-T12e9](epic-6-transcendence/E6-T12e9-bounded-loops.md) — Execute structured loops only with established execution and address bounds *(deps: E6-T12e8)*
 - [x] `525.0269911` [E6-T12f1](epic-6-transcendence/E6-T12f1-raw-float-equality.md) — Implement raw FSEQ and FSNE masks without changing precision semantics *(deps: E6-T12e9)*
-- [~] `525.0269912` [E6-T12f2](epic-6-transcendence/E6-T12f2-selected-lane-definedness.md) — Prove selected-away interpolation lanes without inventing values *(deps: E6-T12f1)*
+- [?] `525.0269912` [E6-T12f2](epic-6-transcendence/E6-T12f2-selected-lane-definedness.md) — Prove selected-away interpolation lanes without inventing values *(deps: E6-T12f1)*
 - [ ] `525.0269913` [E6-T12f3](epic-6-transcendence/E6-T12f3-radial-definedness-domain.md) — Establish an explicit admission contract for radial shader definedness *(deps: E6-T12f2)*
 - [ ] `525.0269914` [E6-T12f4](epic-6-transcendence/E6-T12f4-precise-word-operations.md) — Preserve PRECISE comparison selection and copy semantics on the GPU *(deps: E6-T12f1)*
 - [ ] `525.0269915` [E6-T12f5](epic-6-transcendence/E6-T12f5-precise-binary32-arithmetic.md) — Execute PRECISE ADD and MUL with explicit binary32 rounding *(deps: E6-T12f4)*
