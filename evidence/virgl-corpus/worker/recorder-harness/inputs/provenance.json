@@ -1,0 +1,8 @@
+{
+  "mockBoundary": "librecorder_fake.so substitutes renderer API only",
+  "publicHeaders": "byte-identical pinned shader bridge vendor extraction; original license notices preserved",
+  "rootGitHead": "9a1551b7ac591302d768ca97724433ce4592098d",
+  "version": "1.3.0",
+  "versionHeader": "pinned Meson template with version1.3.0 substitutions",
+  "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa"
+}

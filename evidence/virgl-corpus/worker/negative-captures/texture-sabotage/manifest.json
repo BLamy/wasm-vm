@@ -1,0 +1,248 @@
+{
+  "schema": "wasm-vm-virgl-capture-v1",
+  "workload": "textured-scene",
+  "versions": {
+    "host": {
+      "virglrenderer": "1.3.0",
+      "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+      "architecture": "aarch64",
+      "renderer": "llvmpipe"
+    },
+    "guest": {
+      "mesa": "1:26.2.2-1",
+      "hyprland": "0.56.2-3",
+      "architecture": "riscv64"
+    }
+  },
+  "events": {
+    "path": "events.jsonl",
+    "sha256": "c919f3a8fc8b5200a2efc22bcae005b8850903b0f9fb38554040ad8e80367954",
+    "bytes": 36522
+  },
+  "artifacts": [
+    {
+      "role": "command.json",
+      "path": "command.json",
+      "sha256": "d266a4ab20b7a079ddb6178f9651f8facf66a37833b39923c3857062336ae8ac",
+      "bytes": 1702
+    },
+    {
+      "role": "guest-cmdline.txt",
+      "path": "guest-cmdline.txt",
+      "sha256": "1963c8a52e188f77c032faa9f52795cf1c4c47691090c3aad32d3382f32660cb",
+      "bytes": 46
+    },
+    {
+      "role": "guest-dmesg.txt",
+      "path": "guest-dmesg.txt",
+      "sha256": "802f6d2d85b0f9589349eec39ccf0b12456f2529c9d6b27859d39a2bf25a8078",
+      "bytes": 12904
+    },
+    {
+      "role": "guest-exit-code.txt",
+      "path": "guest-exit-code.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    {
+      "role": "guest-libraries.sha256",
+      "path": "guest-libraries.sha256",
+      "sha256": "ccb2b92739a330d4ae3937c7dc07c156a81005a997d355a21db6799bfe88a38a",
+      "bytes": 367
+    },
+    {
+      "role": "guest-packages.txt",
+      "path": "guest-packages.txt",
+      "sha256": "abab2879b2c03afa911d973c9217025817af7619d470b67abda0414bbd4ee49c",
+      "bytes": 7571
+    },
+    {
+      "role": "guest-serial.log",
+      "path": "guest-serial.log",
+      "sha256": "74d1a0b0c7019518be769f447bdf04bb8a099c9d8289afea14aba2f03eccb7bb",
+      "bytes": 15442
+    },
+    {
+      "role": "guest.sh",
+      "path": "guest.sh",
+      "sha256": "cd9ccddc58fc3188391d47f8f5f4685b3777851ba59d699353b482734e02c10d",
+      "bytes": 985
+    },
+    {
+      "role": "host-library-maps.txt",
+      "path": "host-library-maps.txt",
+      "sha256": "74818543c6e6860e0b93c31153160d8364a941857ed9a43c3bc2cf3a9a773964",
+      "bytes": 1400
+    },
+    {
+      "role": "host-packages.txt",
+      "path": "host-packages.txt",
+      "sha256": "2da3d209f16542b80836d7652b5a2957038f752fe9f6a05503a3a1f2ec86d4cc",
+      "bytes": 181
+    },
+    {
+      "role": "host.log",
+      "path": "host.log",
+      "sha256": "04d04e37fa034782512d4e8fd12f64758dff615d396bf5fa7c144495f7325af3",
+      "bytes": 225
+    },
+    {
+      "role": "capture.py",
+      "path": "payload/capture.py",
+      "sha256": "e2d2ead96ae72b2fbc470ef3ac1331a93651cd57ab1ffa4e9fcb4649010dbe67",
+      "bytes": 15758
+    },
+    {
+      "role": "recorder.build.sh",
+      "path": "payload/recorder.build.sh",
+      "sha256": "557d41a8552cb0e51bc38008bd8e71c46f1a6488d8e0f27fa046162634b09593",
+      "bytes": 442
+    },
+    {
+      "role": "recorder.c",
+      "path": "payload/recorder.c",
+      "sha256": "95faa3bd0bd8027949a0ec23eee1290c84b1f0c1d6d3c280c58469fd3c133f8f",
+      "bytes": 23137
+    },
+    {
+      "role": "recorder.so",
+      "path": "payload/recorder.so",
+      "sha256": "a0fc221b807e2ea11862b538f5562400d5af52e7d2bbda965e170510b26eb413",
+      "bytes": 124320
+    },
+    {
+      "role": "virgl-textured-scene-sabotage",
+      "path": "payload/virgl-textured-scene-sabotage",
+      "sha256": "35413b4a3bd5a526de67451ce19e9076b9b3115165ad37ae2571ca6a9f1809de",
+      "bytes": 19960
+    },
+    {
+      "role": "workloads-build-manifest.json",
+      "path": "payload/workloads-build-manifest.json",
+      "sha256": "b1769e9e00d8bad62e95988df2b9c5ece59d8ae6b062ba0facec7099b650cb77",
+      "bytes": 5015
+    },
+    {
+      "role": "workload.log",
+      "path": "workload.log",
+      "sha256": "fac5adf9a7fbef65b8f7986eb2d1d0f2e0afed6a444bedc37f7ae6d0659e4f11",
+      "bytes": 251
+    }
+  ],
+  "inputs": [
+    {
+      "role": "rootfs",
+      "sourcePath": "/reference/omarchy.ext4",
+      "sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+      "bytes": 4294967296
+    },
+    {
+      "role": "kernel",
+      "sourcePath": "/kernel/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    {
+      "role": "hostRenderer",
+      "sourcePath": "/build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0",
+      "sha256": "2ba77dd6f0493c8caa4a9e92746bb94c4381d09f1244fd671e82b01c27c28a52",
+      "bytes": 2621216
+    },
+    {
+      "role": "recorder",
+      "sourcePath": "/capture/recorder.so",
+      "sha256": "a0fc221b807e2ea11862b538f5562400d5af52e7d2bbda965e170510b26eb413",
+      "bytes": 124320
+    },
+    {
+      "role": "qemu",
+      "sourcePath": "/usr/bin/qemu-system-riscv64",
+      "sha256": "0f2ad624f9028dfa27d12249b7e46e41fa8a9f5a2bfdc68588234a3d17ee33d4",
+      "bytes": 15482976
+    },
+    {
+      "role": "qemuGpuModule",
+      "sourcePath": "/usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so",
+      "sha256": "e30d71f6805a6123fb1eefd6803ba486560eb8a90990856ac822c6a4ca24385a",
+      "bytes": 67816
+    }
+  ],
+  "command": {
+    "argv": [
+      "qemu-system-riscv64",
+      "-machine",
+      "virt",
+      "-accel",
+      "tcg",
+      "-cpu",
+      "rv64",
+      "-smp",
+      "4",
+      "-m",
+      "2048",
+      "-global",
+      "virtio-mmio.force-legacy=false",
+      "-bios",
+      "default",
+      "-kernel",
+      "/kernel/Image",
+      "-append",
+      "root=/dev/vda rw console=ttyS0 init=/bin/bash",
+      "-drive",
+      "file=/capture/negative-final/texture-sabotage/overlay.qcow2,format=qcow2,if=none,id=root",
+      "-device",
+      "virtio-blk-device,drive=root",
+      "-device",
+      "virtio-gpu-gl-device",
+      "-device",
+      "virtio-keyboard-device",
+      "-device",
+      "virtio-tablet-device",
+      "-fsdev",
+      "local,id=capture,path=/capture,security_model=none",
+      "-device",
+      "virtio-9p-device,fsdev=capture,mount_tag=capture",
+      "-display",
+      "gtk,gl=on,show-cursor=on",
+      "-serial",
+      "unix:/capture/negative-final/texture-sabotage/serial.sock,server=on,wait=on",
+      "-monitor",
+      "none",
+      "-no-reboot"
+    ],
+    "env": {
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "HOME": "/root",
+      "LANG": "C.UTF-8",
+      "MESA_SHADER_CACHE_DISABLE": "true",
+      "DISPLAY": ":1",
+      "LIBGL_ALWAYS_SOFTWARE": "1",
+      "GALLIUM_DRIVER": "llvmpipe",
+      "LD_LIBRARY_PATH": "/build-virgl-1.3.0/src",
+      "LD_PRELOAD": "/capture/recorder.so",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/build-virgl-1.3.0/src/libvirglrenderer.so.1",
+      "VIRGL_CAPTURE_DIR": "/capture/negative-final/texture-sabotage",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene",
+      "VIRGL_CAPTURE_MAX_EVENTS": "100000",
+      "VIRGL_CAPTURE_MAX_BLOB_BYTES": "536870912",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "67108864"
+    },
+    "guestScript": "guest.sh"
+  },
+  "limits": {
+    "timeoutSeconds": 120,
+    "events": 100000,
+    "blobBytes": 536870912,
+    "eventBytes": 67108864,
+    "logBytes": 8388608
+  },
+  "result": {
+    "qemuExitCode": 0,
+    "guestExitCode": 1,
+    "guestBegin": true,
+    "guestEnd": false,
+    "workloadPass": false,
+    "complete": false,
+    "error": null
+  }
+}

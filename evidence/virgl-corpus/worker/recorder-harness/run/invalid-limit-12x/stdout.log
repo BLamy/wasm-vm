@@ -1,0 +1,2 @@
+FAKE_FORWARD caps
+HARNESS_FORWARDING_PASS scenario=caps calls=1

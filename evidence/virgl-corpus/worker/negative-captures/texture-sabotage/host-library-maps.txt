@@ -1,0 +1,12 @@
+e7a368d10000-e7a368da1000 r-xp 00000000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+e7a368da1000-e7a368db2000 ---p 00091000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+e7a368db2000-e7a368dc0000 r--p 00092000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+e7a368dc0000-e7a368dc4000 rw-p 000a0000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+e7a368dd0000-e7a368dd7000 r-xp 00000000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+e7a368dd7000-e7a368def000 ---p 00007000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+e7a368def000-e7a368df0000 r--p 0000f000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+e7a368df0000-e7a368df1000 rw-p 00010000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+e7a3809c0000-e7a3809c6000 r-xp 00000000 00:2a 19744                      /capture/recorder.so
+e7a3809c6000-e7a3809df000 ---p 00006000 00:2a 19744                      /capture/recorder.so
+e7a3809df000-e7a3809e0000 r--p 0000f000 00:2a 19744                      /capture/recorder.so
+e7a3809e0000-e7a3809e1000 rw-p 00010000 00:2a 19744                      /capture/recorder.so

@@ -1,0 +1,2 @@
+FAKE_FORWARD submit
+HARNESS_FORWARDING_PASS scenario=submit-null calls=1

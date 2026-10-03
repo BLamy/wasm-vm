@@ -1,0 +1,15 @@
+{"seq":1,"type":"begin","schema":"wasm-vm-virgl-capture-v1","workload":"textured-scene","byteOrder":"little","limits":{"events":100000,"blobBytes":1,"eventBytes":67108864,"singleBlobBytes":67108864,"resources":4096,"iovs":16384},"blobs":[]}
+{"seq":2,"type":"get_cap_set","phase":"enter","threadId":1,"parentCallSeq":0,"set":2,"blobs":[]}
+{"seq":3,"type":"get_cap_set","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":2,"version":2,"bytes":1408,"result":0,"blobs":[]}
+{"seq":4,"type":"init","phase":"enter","threadId":1,"parentCallSeq":0,"flags":0,"callbackVersion":1,"blobs":[]}
+{"seq":5,"type":"init","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":4,"result":0,"blobs":[]}
+{"seq":6,"type":"get_cap_set","phase":"enter","threadId":1,"parentCallSeq":0,"set":1,"blobs":[]}
+{"seq":7,"type":"get_cap_set","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":6,"version":1,"bytes":308,"result":0,"blobs":[]}
+{"seq":8,"type":"get_cap_set","phase":"enter","threadId":1,"parentCallSeq":0,"set":2,"blobs":[]}
+{"seq":9,"type":"get_cap_set","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":8,"version":2,"bytes":1408,"result":0,"blobs":[]}
+{"seq":10,"type":"resource_create","phase":"enter","threadId":1,"parentCallSeq":0,"resourceId":2,"target":2,"format":2,"bind":2,"width":1280,"height":800,"depth":1,"arraySize":1,"lastLevel":0,"nrSamples":0,"flags":1,"iovCount":0,"blobs":[]}
+{"seq":11,"type":"resource_create","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":10,"result":0,"blobs":[]}
+{"seq":12,"type":"resource_attach_iov","phase":"enter","threadId":1,"parentCallSeq":0,"resourceId":2,"iovCount":2,"blobs":[]}
+{"seq":13,"type":"backing_snapshot","resourceId":2,"reason":"attach","iovLengths":[69632,4026368],"blobs":[]}
+{"seq":14,"type":"failure","reason":"backing snapshot failed or exceeded limit","blobs":[]}
+{"seq":15,"type":"end","complete":false,"normalExit":true,"cleanupSeen":false,"openCalls":0,"droppedRecords":0,"blobBytes":0,"workload":"textured-scene","blobs":[]}
