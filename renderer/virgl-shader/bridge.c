@@ -466,7 +466,8 @@ static bool radial_recognize(struct raw_ir *ir)
    for (unsigned pc = 0; pc + 2 < ir->count; ++pc) {
       const struct raw_instruction *v = &ir->instructions[pc];
       unsigned magnitude = loop_scalar(&v[0]), condition = loop_scalar(&v[1]);
-      if (v[0].opcode != RAW_MAX || v[1].opcode != RAW_FSLT || v[2].opcode != RAW_UIF ||
+      if ((v[0].opcode != RAW_MAX && v[0].opcode != RAW_MAX_PRECISE) ||
+          v[1].opcode != RAW_FSLT || v[2].opcode != RAW_UIF ||
           magnitude == UINT16_MAX || condition == UINT16_MAX ||
           (v[0].flags & RAW_NEGATE_SOURCES) != (RAW_NEGATE_SOURCE0 << 1) ||
           (v[1].flags & RAW_NEGATE_SOURCES) ||
@@ -796,9 +797,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (word(p, "ELSE")) return control(p, s, flow, RAW_ELSE);
       if (word(p, "ENDIF")) return control(p, s, flow, RAW_ENDIF);
    }
-   if (word(p, "MOV")) { arity = 1; partial = true; }
+   if (s->raw && word(p, "MOV_PRECISE")) {
+      arity = 1; partial = true; raw.flags = RAW_PRECISE;
+   } else if (word(p, "MOV")) { arity = 1; partial = true; }
    else if (s->raw) {
-      if (word(p, "UARL")) raw.opcode = RAW_UARL;
+      if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
+      else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "UARL")) raw.opcode = RAW_UARL;
       else if (word(p, "AND")) raw.opcode = RAW_AND;
       else if (word(p, "OR")) raw.opcode = RAW_OR;
       else if (word(p, "NOT")) raw.opcode = RAW_NOT;
@@ -851,7 +857,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (!punctuation(p, ',')) return false;
       /* A modifier belongs only to a numeric operand; samplers, raw selectors
        * and bitwise payloads never pass through this typed minus parser. */
-      if (s->raw && ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
+      if (s->raw && (((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) ||
+          raw.opcode == RAW_MAX_PRECISE) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
       if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL, raw.opcode, i)) return false;
    }
@@ -1103,6 +1110,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = loop_candidate = true;
       } else if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
          candidate = structured_candidate = true;
+      } else if (word(&p, "MOV_PRECISE") || word(&p, "FSEQ_PRECISE") || word(&p, "FSNE_PRECISE")) {
+         candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
           word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "FSEQ") || word(&p, "FSNE") || word(&p, "UARL")) {
@@ -1116,7 +1125,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
             ++p; space(&p);
             if (*p == '-') candidate = true;
          }
-      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "FRC") || word(&p, "LRP") ||
+      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "MAX_PRECISE") || word(&p, "FRC") || word(&p, "LRP") ||
                  word(&p, "DP3") || word(&p, "RCP") || word(&p, "RSQ")) {
          candidate = numeric_candidate = true;
       }
@@ -1293,6 +1302,39 @@ static void constant_domain(int stage, int count)
       stage ? "fragment" : "vertex", stage ? "fs" : "vs", count);
 }
 
+/* The outer profile keeps every simultaneous obligation mandatory. A precision
+ * record cannot replace a finite/indirect/loop/radial admission contract. */
+static const char *precise_profile(const struct raw_ir *ir)
+{
+   if (ir->radial.used) return ir->loop.checked ? "virgl-webgl2-raw-bits-v26" :
+      ir->indirect_indices ? "virgl-webgl2-raw-bits-v25" : "virgl-webgl2-raw-bits-v24";
+   if (ir->loop.checked) return "virgl-webgl2-raw-bits-v23";
+   if (ir->indirect_indices) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
+      "virgl-webgl2-raw-bits-v22" : "virgl-webgl2-raw-bits-v21";
+   if (ir->opcode_mask & RAW_STRUCTURED_OPCODES) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
+      "virgl-webgl2-raw-bits-v20" : "virgl-webgl2-raw-bits-v19";
+   return ir->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v18" : "virgl-webgl2-raw-bits-v17";
+}
+
+static void precise_contract(const struct profile *profile)
+{
+   bool used[4] = {false};
+   for (unsigned i = 0; i < profile->raw->count; ++i) {
+      const struct raw_instruction *instruction = &profile->raw->instructions[i];
+      if (!(instruction->flags & RAW_PRECISE)) continue;
+      used[instruction->opcode == RAW_FSEQ ? 0 : instruction->opcode == RAW_FSNE ? 1 :
+         instruction->opcode == RAW_MAX_PRECISE ? 2 : 3] = true;
+   }
+   append(",\"preciseWordContract\":{\"kind\":\"tgsi-precise-word-local-v1\",\"stage\":\"%s\",\"operations\":[",
+      profile->stage ? "fragment" : "vertex");
+   static const char *names[] = {"FSEQ", "FSNE", "MAX", "MOV"};
+   bool comma = false;
+   for (unsigned i = 0; i < 4; ++i) if (used[i]) {
+      append("%s\"%s\"", comma ? "," : "", names[i]); comma = true;
+   }
+   append("]}");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1308,6 +1350,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      profile->raw->opcode_mask & RAW_PRECISE_WORD_USED ? precise_profile(profile->raw) :
       profile->raw->radial.used ? (profile->raw->loop.checked ? "virgl-webgl2-raw-bits-v16" :
          profile->raw->indirect_indices ? "virgl-webgl2-raw-bits-v15" : "virgl-webgl2-raw-bits-v14") :
       c->profile.raw->loop.checked ? "virgl-webgl2-raw-bits-v12" :
@@ -1355,6 +1398,7 @@ static void stage_result(const struct conversion *c)
    if (profile->raw && profile->raw->radial.used)
       append(",\"constantRadialDomains\":[{\"kind\":\"constant-bank-radial-coefficient-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":4,\"component\":0,\"minimumMagnitude\":925353388}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+   if (profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_WORD_USED)) precise_contract(profile);
    append("}");
 }
 

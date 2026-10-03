@@ -839,6 +839,34 @@
     "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
     "virglrenderer": "1.3.0"
   },
+  "preciseWordOperations": {
+    "contract": "Every new family requires a closed stage-local nonempty sorted unique operation record. Finite, indirect, count and radial obligations remain mandatory; older families forbid the precision record.",
+    "kind": "tgsi-precise-word-local-v1",
+    "limits": "Unchanged 179 non-END instructions, 112-byte instruction, 26480-byte IR, 16MiB Wasm memory, 256KiB stack.",
+    "operations": [
+      "FSEQ_PRECISE",
+      "FSNE_PRECISE",
+      "MAX_PRECISE",
+      "MOV_PRECISE"
+    ],
+    "originals": "Unchanged literal capture hashes and bodies; 12/19 accepted. Mask, owned-bank raster authority and ADD_PRECISE/MUL_PRECISE remain separately gated.",
+    "profiles": {
+      "countedTable": 23,
+      "finite": 18,
+      "indirect": 21,
+      "indirectFinite": 22,
+      "ordinary": 17,
+      "radial": 24,
+      "radialCountedTable": 26,
+      "radialIndirect": 25,
+      "structured": 19,
+      "structuredFinite": 20
+    },
+    "proof": "make verify-E6-T12f4; pinned token/semantic audit, independent rational literal word oracle, sanitizer/Wasm parity, all unchanged or explicitly inventoried predecessor outcomes, 3320 actual shared-renderer GPU words, real source faults and pristine clone.",
+    "scope": "isolated compiler/shared renderer; production guest negotiation remains disabled",
+    "semantics": "Instruction-local retained flag. Ordered binary32 FSEQ, unordered FSNE, strict ordered MAX source0>source1 selecting source1 unchanged on ties/unordered, and exact raw MOV. Numeric/output authority and consumed-lane pre-write aliases are preserved. No exact backward RSQ/DP3 cone or arithmetic admission.",
+    "task": "E6-T12f4"
+  },
   "production": {
     "capsets": [],
     "guestRendererImplemented": false,
@@ -1026,7 +1054,7 @@
     "indirect draw",
     "active polygon stipple",
     "non-default sample shading",
-    "strict PRECISE",
+    "PRECISE arithmetic and unsupported PRECISE operations",
     "Z32_UNORM",
     "unvalidated command/object/format/state enum"
   ],

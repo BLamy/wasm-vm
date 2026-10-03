@@ -142,10 +142,14 @@ export async function runVirglBrowser(suite) {
       await coverageSession.send("Profiler.enable");
       await coverageSession.send("Profiler.startPreciseCoverage", { callCount: true, detailed: true });
     }
-    report.acceptance = await withDeadline(90_000, page.evaluate(async ({ modulePath, arguments: options }) => {
+    const acceptance = await withDeadline(90_000, page.evaluate(async ({ modulePath, arguments: options, serialized }) => {
       const { runAcceptance } = await import(modulePath);
-      return await runAcceptance(options);
-    }, { modulePath: suite.modulePath, arguments: suite.browserArguments ?? {} }));
+      const result = await runAcceptance(options);
+      // Full word atlases contain millions of pixel numbers. Transfer one
+      // lossless JSON string instead of a CDP object for every array element.
+      return serialized ? JSON.stringify(result) : result;
+    }, { modulePath: suite.modulePath, arguments: suite.browserArguments ?? {}, serialized: suite.serializedAcceptance === true }));
+    report.acceptance = suite.serializedAcceptance === true ? JSON.parse(acceptance) : acceptance;
     assert.equal(report.acceptance.status, "passed");
     assert.equal(report.acceptance.guestExecution, false);
     suite.validate(report.acceptance);
@@ -169,7 +173,11 @@ export async function runVirglBrowser(suite) {
     report.status = "failed";
     report.failure = { message: error.message, stack: error.stack };
     if (page) {
-      report.acceptance = await withDeadline(3_000, page.evaluate((key) => window[key] ?? null, suite.windowReportKey)).catch(() => report.acceptance);
+      report.acceptance = await withDeadline(3_000, page.evaluate(({ key, serialized }) => {
+        const result = window[key] ?? null;
+        return serialized ? JSON.stringify(result) : result;
+      }, { key: suite.windowReportKey, serialized: suite.serializedAcceptance === true }))
+        .then((result) => suite.serializedAcceptance === true ? JSON.parse(result) : result).catch(() => report.acceptance);
       await page.screenshot({ path: path.join(output, "failure.png"), fullPage: true, timeout: 3_000 }).then(async () => {
         report.failureScreenshot = { path: "failure.png", sha256: hash(await fs.readFile(path.join(output, "failure.png"))) };
       }).catch(() => {});
