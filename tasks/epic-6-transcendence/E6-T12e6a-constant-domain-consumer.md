@@ -3,7 +3,7 @@ id: E6-T12e6a
 epic: 6
 title: Enforce compiler constant-domain contracts at shared draw issue
 priority: 525.02699061
-status: in-progress
+status: implemented
 depends_on: [E6-T12e6]
 estimate: S
 risk: high
@@ -87,4 +87,93 @@ receipt's policy. Compiler semantics are unchanged from verified E6.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — implementation and recorded submission
+
+Frozen source: `32509356c18af1c18e59bf14375f4402b434bd7d` (parent verified E6:
+`5561bf3d8a16d2e847b7772909bf772f2c8c57d5`). This consumer-only change adds
+strict raw-v7 metadata validation, a bitwise finite-binary32 domain and immutable
+constant snapshots bound to the selected shared renderer identities. Non-draw
+restoration skips incomplete/nonfinite conditional uploads; normal predecode
+and unconditional restoration preserve their earlier behavior. Compiler source,
+guest transport and production negotiation are unchanged.
+
+Commands:
+
+- `node --check` for changed runtime/harness modules; `python3 -m py_compile
+  tools/virgl-constant-domains/*.py`; `bash -n
+  tools/verify-virgl-constant-domains.sh`; `git diff --check`.
+- `VIRGL_CONSTANT_DOMAIN_EVIDENCE_DIR=evidence/virgl-constant-domains/worker
+  EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc make verify-E6-T12e6a` — passed.
+  This builds native/Wasm shader artifacts and runs the complete affected
+  decoder/resources/state/draw/async workload, both async source controls, flat
+  pair tests, retained constant tests and high-upload control before the new
+  normal, decoder-bypass and combined-bypass recordings.
+- `python3 tools/virgl-constant-domains/cold.py --output
+  evidence/virgl-constant-domains/cold-clone` — passed.
+
+Warm receipt: `evidence/virgl-constant-domains/worker/receipt.json`, SHA256
+`2563c8497152ab17497c205edf8c78577e7b7cc34e566eef73915454615c0012`.
+It binds 245 committed sources and 45 evidence records (48 files including logs).
+The independent Python receipts reconstruct 1,549 predicate cases, 95 metadata
+cases, 109 bank cases and four ownership cases; 14 real native/Wasm stage
+translations; exact host metadata transformations and flat pair specialization;
+all raw commands, selected identities, actual native shader attachments, uploads,
+GPU readback, framebuffers and fence order. Every previous compiler source is
+pinned to verified E6; 27 retained native outputs remain byte-exact to E3b/E6.
+
+Normal hardware execution records 1,411 submissions, 3,367 commands and 612 actual
+draws: 110,592 independently checked pixels and 64 reconstructed raw words,
+including both signs of zero and subnormals at C0/C45 in both stages. It includes
+28 malformed-metadata cases, 120 real invalid-wire cases, four varied yielding
+schedules, ten lifecycle transitions and four busy-lock/external-binding attacks.
+The 967 real fences include 1,452 deliberately withheld already-signaled polls;
+no readiness is fabricated. Native reflection retains 46 entries for the low-use
+program here, so the proof makes no claim of driver pruning. Unit evidence covers
+every relevant inactive/pruned prefix rule. Declaration47 padding remains outside
+all guest uploads.
+
+With only the constant decoder finite check bypassed, 120 complete raw bad banks
+are honestly stored in CPU state and their subsequent draws reject before index
+readback/staging/dispatch, with zero invalid native upload and unchanged complete
+framebuffers. Ten recovery draws check 10,240 pixels. Removing only the new
+finite predicate's exponent condition then produces one observed native upload
+of `0x7f800000`; `getUniform` independently reads back the same u32. This fault
+witness is upload-only, with no exceptional numeric rendering claim. All runs
+have zero browser console/page/request errors and complete owned-object cleanup.
+
+Warm report digests:
+
+- Node: `3ca5d637bcba3fd38f518be8cdb474670e17883ba4e4b7f8a1d9fd910d634bbf`.
+- Native: `34ef80a97a8fa779a2e54516ef6923e7c1eb093c3665d1a03e1ed5c93fc7d8a3`.
+- Normal GPU: `2a402e13d660648c441b97e18079b5f0f0e76d6fbe293ef19df7e711941998a1`.
+- Decoder bypass: `d0b79bed15b09971f6692c55a363d2d42089b19472d811339063c9a5ad60606f`.
+- Combined fault: `4c666d7112ecce2cb9f3fec0f937a863bb5a1dd4f7dfa23090081d5e3f55d853`.
+- Screenshot: `e30747221be76c7aef7ae69d9353df1d7e35ec5c94b4f1ac260d40572d7d100e`,
+  visually inspected (byte-identical to the reviewed final preview capture).
+
+Native executable SHA256:
+`6cc0045302f3cd52b5d99e7071e010b8569e8fa27f3aa39683927941bc6ec7df`.
+Wasm SHA256:
+`4287e738fe2653fe43f03aec2bade254855ea6e47f94451e5f3ad16f9adc01e7`.
+The source-bound legacy adapter preserves the historical E3b receipt unchanged;
+it independently checks 45,056 retained constant pixels, 114 pair cases/52 pair
+draws, 210 original async packets/768 literal interior pixels and all 93 bounded
+async rejection cases. No historical receipt is retagged as proof of this change.
+
+Final pristine-clone run passed at the same frozen source, with empty Git status
+before and after execution and all 48 copied acceptance files independently
+rehash-checked. Environment scrubbing removed `GIT_PAGER` and `RUST_LOG`; the
+remaining documented compiler/runtime override names were absent. Cold report:
+`evidence/virgl-constant-domains/cold-clone/report.json`, SHA256
+`d877a5c5d25bf88b68887d6a820658bc9a01e29d53c3cf85d4e4abe39be7f95c`.
+Its receipt SHA256 is
+`c910b5fac8ba5e11d2b0e8388268d9f6fbf2d1f5a4738b7fb4b1162d0e6563e6`;
+its log SHA256 is
+`c2adbd2a4578fcc1818294fc6b6ab9a5d01e60396a51fba2b8911eec9bf76814`.
+The isolated retained checkout is named in that report. This recording repeats
+the entire acceptance from source without relying on the warm build products.
+
+The ordinary demo does not yet negotiate guest 3D, and this isolated consumer
+proof changes no reachable production demo capability. No Mesa execution,
+desktop FPS, or MIPS claim follows from this task. Compiler derivation is the next
+gated layer, E6-T12e6b.
