@@ -17,6 +17,30 @@ producer=load('equality_producer','tools/virgl-raw-equality/native.py')
 held=load('e9_native_primitives','tools/virgl-bounded-loops/native_receipt.py')
 require,sha,exact=producer.require,producer.sha,producer.exact
 
+def verify_maxima(report,by_kind):
+ """Derive sizes from the transcript-checked results, never the claimed maxima."""
+ claimed=report['recordedMaxima'];held.integer_fields(claimed,'native.recordedMaxima')
+ maxima={
+  'singleResultBytes':max(e['resultBytes'] for e in by_kind['ORIGINAL']+by_kind['CASE']),
+  'pairResultBytes':max(e['resultBytes'] for e in by_kind['PAIR']),
+  'stageGlslBytes':max(len(stage['glsl'].encode()) for entries in by_kind.values() for e in entries if e['result']['ok']
+   for stage in ([e['result']['vertex'],e['result']['fragment']] if 'vertex' in e['result'] else [e['result']]))}
+ require(exact(claimed,maxima) and maxima['singleResultBytes']<=report['stats']['maxSingleResultBytes']<147456
+  and maxima['pairResultBytes']<=report['stats']['maxPairResultBytes']<295936 and maxima['stageGlslBytes']<=65536,'exact reconstructed bounded native maxima')
+
+def verify_sources(report,head):
+ paths=sorted(p for pattern in ('*.c','*.h') for p in (ROOT/'renderer/virgl-shader').glob(pattern))+[ROOT/p for p in producer.SOURCES]
+ require(exact(report['sources'],[producer.describe(p) for p in paths]),'complete ordered compiler/harness source inventory')
+ for item in report['sources']:
+  path=ROOT/item['path'];require(subprocess.check_output(['git','show',f'{head}:{item["path"]}'],cwd=ROOT)==path.read_bytes(),'exact committed compiler/harness source')
+
+def verify_coverage_sources(coverage,exported):
+ paths={ROOT/'renderer/virgl-shader/bridge.c',ROOT/'renderer/virgl-shader/raw_bits.c'}
+ files=exported['data'][0]['files']
+ require(len(files)==2 and {Path(e['filename']).resolve() for e in files}==paths,'LLVM filenames bind exactly both implementation sources')
+ expected=[dict(producer.describe(Path(e['filename']).resolve()),summary=e['summary']) for e in files]
+ require(exact(coverage['sources'],expected),'complete exact LLVM source bytes/digests and exported summaries')
+
 def verify(directory,head):
  directory=Path(directory).resolve();r=json.loads((directory/'native-report.json').read_bytes())
  require(r['schema']=='wasm-vm-raw-equality-native-v1' and r['status']=='passed','complete raw equality native run')
@@ -59,8 +83,9 @@ def verify(directory,head):
  require(stats['standaloneRecoveries']==expected_recoveries*28 and stats['pairRecoveries']==expected_recoveries*26,'every failure recovered through all14 profiles')
  require(stats['calls']==19+len(cases)+len(pairs)+28+324+stats['truncations']+4096+16+stats['standaloneRecoveries']+stats['pairRecoveries'],'actual total API calls')
  require(len(faults)==16 and all(f['attempts']==f['failAt'] and f['result']['ok'] is False for f in faults),'actual owned allocation failures')
- for item in r['sources']:
-  path=ROOT/item['path'];require(exact(producer.describe(path),item) and subprocess.check_output(['git','show',f'{head}:{item["path"]}'],cwd=ROOT)==path.read_bytes(),'exact committed compiler/harness source')
+ verify_maxima(r,by_kind)
+ verify_sources(r,head)
  held.verify_records(directory,r['coverage']);exported=json.loads((directory/'coverage.json').read_bytes());held.coverage_primitives(r['coverage'],exported)
+ verify_coverage_sources(r['coverage'],exported)
  require(any(f['name']=='raw_bits.c:equal_float_mask' and f['count']>0 for f in exported['data'][0]['functions']),'new compile-time known-fact predicate executed')
  return r

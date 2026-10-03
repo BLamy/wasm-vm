@@ -8,6 +8,7 @@ import sys
 from shared import ROOT,require,sha,read,binding,source,same,git
 import native_receipt
 import wasm_receipt
+import consumer_receipt
 import faults
 
 def browser_envelope(directory,head,base,fault):
@@ -112,14 +113,7 @@ def verify(output,head):
   r=browser_envelope(output/('fault-'+mode),head,base,rec)
   proof=r['acceptance'];require(proof['fault']==mode and proof['faultWasmSha256']==rec['wasm']['sha256'] and 'independent' in proof['failure']['message'] and 'actual compile' not in proof['failure']['message'] and 'actual link' not in proof['failure']['message'],'each actual compiler fault reaches independent GPU oracle failure')
   require(all(r['browser'][k]==primary['browser'][k] for k in ('version','executableSha256')) and same(r['browser']['gpu']['devices'],primary['browser']['gpu']['devices']),'same actual fault/positive hardware dependencies');fault_reports.append(dict(mode=mode,report=binding(output/('fault-'+mode)/'report.json',output)))
- consumer=read(output/'consumer/report.json');require(consumer['status']=='passed' and consumer['getters']==0,'current strict profile/metadata parser and zero invoked getters')
- for e in consumer['checks']:require(type(e['result']['ok']) is bool and (e['result']['ok'] is False if e['name'].startswith(('forbidden13-','unknown14')) else e['result']['ok'] is True),'typed consumer result')
- coverage_files=list((output/'consumer/v8').glob('*.json'));require(coverage_files,'actual consumer V8 counters')
- scripts=[script for path in coverage_files for script in read(path)['result'] if script['url'].endswith('/renderer/virgl-command/constant-domain.mjs')]
- require(len(scripts)==1,'one recorded consumer module')
- for function in scripts[0]['functions']:
-  for region in function['ranges']:require(all(type(region[k]) is int and region[k]>=0 for k in ('startOffset','endOffset','count')) and region['endOffset']>=region['startOffset'],'typed consumer V8 counters')
- require(any(f['functionName']=='parseConstantDomain' and f['ranges'][0]['count']>=len(consumer['checks']) for f in scripts[0]['functions']),'all actual current compiler metadata exercised in consumer')
+ consumer=consumer_receipt.verify(output/'consumer',head,n)
  # Close the exact committed source inventory before a recorded claim.
  paths={str(p.relative_to(ROOT)) for directory in (ROOT/'tools/virgl-raw-equality',ROOT/'renderer/virgl-shader') for p in directory.rglob('*') if p.is_file() and not any(part in ('build','__pycache__') or part.startswith('.') for part in p.relative_to(directory).parts)}
  paths.update(['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/bounded-loops-oracle.mjs','tools/lib/virgl-browser-runner.mjs','Makefile','docs/gpu-3d-contract.json','docs/gpu-3d-decision.md','tools/verify-virgl-raw-equality.sh','tools/virgl-bounded-loops/native_receipt.py','tools/virgl-bounded-loops/compat_common.py','tools/virgl-bounded-loops/shader_compat.py'])

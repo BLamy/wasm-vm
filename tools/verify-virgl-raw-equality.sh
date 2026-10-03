@@ -31,3 +31,7 @@ for mode in nan-guard zero-sign ne-complement mask-one; do
  fi
 done
 python3 tools/virgl-raw-equality/receipt.py "$evidence_dir"
+python3 tools/virgl-raw-equality/receipt_attacks.py --evidence "$evidence_dir" --output "$evidence_dir/negative-receipts.json"
+# Seal the negative checks along with the positive run in the final receipt.
+cp "$evidence_dir/receipt.json" "$evidence_dir/positive-receipt.json"
+python3 tools/virgl-raw-equality/receipt.py "$evidence_dir"

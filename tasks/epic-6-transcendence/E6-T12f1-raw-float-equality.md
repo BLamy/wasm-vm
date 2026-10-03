@@ -226,3 +226,24 @@ is `a7be954c1f3bea9dd1e96522e890fa012197c6fe`, not the earlier warm harness.
   for the repaired negative gate. No product claim was contradicted; repair only
   the affected proof harness and rerun its missing proof/checks. Do not restart
   unrelated runtime/workspace gates or the already-held final pristine clone.
+
+### 2026-10-03 — worker — proof-only response freeze
+
+Respond to F1–F3 without changing the compiler, metadata consumer, fixtures or
+historical recordings. Native audit now reconstructs all three bounded maxima,
+requires the complete ordered source inventory, and matches both actual LLVM
+filenames and source byte/digest/summary records. The consumer auditor derives
+all 2,535 ordered checks independently of the parser, enforces the closed schema
+and exact sources, and binds typed V8 counters to both real modules, the exact
+parse-call schedule and the unique throwing getter's zero execution count.
+Promote the critic's native/full forgeries, including correctly propagated Wasm
+cross-links, into `tools/virgl-raw-equality/receipt_attacks.py`.
+
+Prechecks: Python compilation, shell syntax and `git diff --check` pass; the new
+maxima and complete consumer ledger reconstruct the held final recording
+exactly. Record the affected F1 submission at the frozen proof-source head so
+all existing exact-source/cross-link guards remain active; preserve the initial
+positive receipt and seal the negative checks in the final receipt. The already
+held pristine-clone, product-hunk coverage and novel attacks carry forward;
+no second cold clone or unrelated workspace gate is requested. Status remains
+evidence-needed until this missing proof is recorded and independently reviewed.
