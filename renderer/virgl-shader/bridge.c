@@ -228,7 +228,7 @@ static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
    if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
-   if (s->raw && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
+   if (s->raw && !s->mixed_candidate && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
    bool flat = false;
@@ -295,9 +295,17 @@ static bool instruction(const char **p, struct profile *s)
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
       else if (word(p, "FSLT")) raw.opcode = RAW_FSLT;
       else if (word(p, "FSGE")) raw.opcode = RAW_FSGE;
+      else if (word(p, "ADD")) raw.opcode = RAW_ADD;
+      else if (word(p, "MUL")) raw.opcode = RAW_MUL;
+      else if (word(p, "MAD")) raw.opcode = RAW_MAD;
+      else if (word(p, "TEX")) raw.opcode = RAW_TEX;
       else { failure_code = "unsupported-feature"; return false; }
-      arity = raw.opcode == RAW_NOT ? 1 : raw.opcode == RAW_UCMP ? 3 : 2;
-      partial = true;
+      tex = raw.opcode == RAW_TEX;
+      arity = raw.opcode == RAW_NOT || tex ? 1 : raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD ? 3 : 2;
+      partial = !tex && raw.opcode != RAW_MAD;
+      /* These formerly unsupported numeric tokens retain that error category
+       * for malformed syntax and unproven domains in an owned raw stage. */
+      if ((1u << raw.opcode) & RAW_V4_OPCODES) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -314,10 +322,16 @@ static bool instruction(const char **p, struct profile *s)
       struct reg sampler;
       if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
           !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
+      raw.sampler = sampler.index;
    }
    if (!end(p)) return false;
-   if (s->raw) { raw.dst = dst; raw_record(s->raw, &raw); }
+   if (s->raw) {
+      raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
+      raw.flags = s->mixed_candidate ? RAW_MIXED : 0;
+      if (!raw_record(s->raw, &raw)) { failure_code = "unsupported-feature"; return false; }
+   }
    s->written[dst.file][dst.index] |= dst.mask;
+   failure_code = "parse-error";
    return true;
 }
 
@@ -447,7 +461,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
     * admits a shader or selects emitted semantics. Only fully validated new
     * instructions plus a complete output proof authorize the owned backend.
     * Texts without such opcode tokens retain the exact legacy validator path. */
-   bool candidate = false;
+   bool candidate = false, numeric_candidate = false;
    char *save = NULL;
    for (char *line = strtok_r(checked, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
       const char *p = line;
@@ -460,10 +474,12 @@ static const char *check_input(struct profile *profile, const char *text, size_t
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
           word(&p, "FSLT") || word(&p, "FSGE")) {
          candidate = true;
-         break;
+      } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {
+         numeric_candidate = true;
       }
    }
    if (candidate) {
+      profile->mixed_candidate = numeric_candidate;
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
    }
@@ -480,6 +496,9 @@ static const char *convert(struct conversion *c, const char *text, size_t length
       /* Raw stages never enter the float-backed upstream emitter. These are
        * value-only metadata from declarations already checked by our guard. */
       c->info.num_consts = (int)c->profile.constant_extent;
+      for (unsigned i = 0; i < c->profile.raw->count; ++i)
+         if (c->profile.raw->instructions[i].opcode == RAW_TEX)
+            c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;
       if (c->profile.stage) {
          struct vrend_fs_shader_info *fs = &c->variable.fs_info;
          for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i]) {
@@ -583,6 +602,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
       c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
       c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", name, stage ? "fragment" : "vertex");
