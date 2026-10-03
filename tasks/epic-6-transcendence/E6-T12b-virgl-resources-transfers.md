@@ -3,7 +3,7 @@ id: E6-T12b
 epic: 6
 title: Replay bounded resource backing and VirGL uploads and readbacks
 priority: 525.02693
-status: implemented
+status: verified
 depends_on: [E6-T12a]
 estimate: S
 risk: high
@@ -120,3 +120,57 @@ memory transport, asynchronous queue/fence acceptance, production capsets and an
 FPS or desktop-acceleration claim remain gated by their later tasks. Production
 web/Rust/Wasm surfaces and shader compiler were not changed. Fresh independent
 verification must judge the evidence and remaining defensive coverage waivers.
+
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+- P1 provenance/cold clone — HELD. Read task/diff and wrote predictions before
+  evidence. Independently recomputed 251 source, raw/decoded input, served-byte,
+  record, screenshot and cold-clone checks (`verifier/audit.json`). Worker and
+  cold receipts match the frozen `fadf4ba8` sources; retained clone independently
+  reports the exact head and empty status. Final attacks at evidence-only
+  submission `b52c2cbd` use identical implementation/harness bytes.
+- P2–P4 actual transfer bounds — HELD. Original snapshot events 156/157/160,
+  offsets zero and 64/12/16 selected bytes match actual GL objects; logical GPU
+  bytes remain 4188 versus 1064960 backing bytes. Node/browser results agree and
+  hardware browser errors are empty (`worker/hardware/report.json:1215`). Overflow,
+  overlap, invalid format/level, short IOV and logical-buffer errors reject.
+  Five independent seeds produced 8192 deterministic mutations/recoveries:
+  2474 accepted, 5718 rejected (`verifier/attacks.json:417`). Pinned reference
+  source confirms COPY validates the GPU box and secondary staging IOV range.
+- P5–P7 identities/lifetimes/budgets — HELD. Prepared snapshots resist backing
+  mutation; revoked/replaced backing, memberships and numeric generations reject
+  before GPU calls. Foreign/single-use tokens reject; public unref retains leased
+  real storage and final release deletes it. All counters return to zero. Trusted
+  allocation-fault injection proves scratch rollback without ticket/reference
+  publication (`verifier/attacks.json:1675`, `:1686`).
+- P8–P10 contamination/state/failures — HELD. All 12288 comparison-output bytes
+  are poisoned without changing original uploads; genuine texture/index input
+  corruptions fail the independent GPU oracles (expected 255/observed 254 and
+  expected 0/observed 1). Hostile GL state, index buffer classification, byte-view
+  mutation/rejection, backend faults and actual disposal remain correct.
+- P11 coverage — HELD. Exact-source Node/CDP counters plus independent fault
+  probes cover all 81 runtime functions and all detailed V8 ranges; no uncovered
+  runtime span remains (`verifier/audit.json`, coverage result). Per-file audit
+  and diagnostic/declarative harness waivers are in `verifier/review.md`.
+- P12–P13 novel attacks/sabotage — HELD. Independent direct framebuffer oracles
+  pass 72 varied rectangle/stride/offset/SG round-trips across both transfer
+  variants with 3424 assertions and no browser errors (`verifier/attacks.json:584`).
+  Temporary runtime mutations of default stride and membership revocation each
+  fail their intended assertion (`:447`). Worker and verifier captures were
+  visually inspected.
+- SUITE: retain `make verify-E6-T12b`, promote the reproducible independent
+  `verifier/attack-cases.mjs` and `verifier/run-attacks.mjs` regression artifact,
+  and retain the original-byte and runtime-sabotage controls. No implementation
+  code changed during verification. This verdict covers isolated GPU resource
+  storage/transfers only; guest activation, draws, fences and FPS remain gated.
+
+Commands: `node evidence/virgl-resources/verifier/run-attacks.mjs`;
+`python3 evidence/virgl-resources/verifier/audit-evidence.py`.
+Independent attack report SHA-256
+`8637975189bfc27a510d08c8ac6f02d6a13ba2820862a866ded61fa496dcaf31`;
+audit SHA-256 `cb2e5708314805444727eca420bd7bab4907999aac853c117b702ff27876ac02`;
+coverage SHA-256 `20aae27ce8081dd1f65cff20560fc92b447a298ce121ee5549ed595e2c42fe95`.
+Detailed predictions, per-point citations, coverage and limitations:
+`evidence/virgl-resources/verifier/review.md`.

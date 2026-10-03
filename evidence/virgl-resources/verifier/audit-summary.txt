@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "checks": 251,
+  "receipts": {
+    "worker": {
+      "sha256": "f60289206aad7af60256d204360e6ab727d0f07cbb23c9850a607db6413f4f86",
+      "nodeAssertions": 9258,
+      "gpuAssertions": 25361,
+      "cases": 87,
+      "inputs": [
+        {
+          "event": 156,
+          "resourceId": 3,
+          "sourceSha256": "f5eeb6294d3e81fcce432bf79250004844f5597b62ba7c1843780c14a3dec751",
+          "offset": 0,
+          "bytes": 64
+        },
+        {
+          "event": 157,
+          "resourceId": 4,
+          "sourceSha256": "3fa8bf0940bec2c126815596ab68436434c8acc27d52289d182b06f52c4165ab",
+          "offset": 0,
+          "bytes": 12
+        },
+        {
+          "event": 160,
+          "resourceId": 7,
+          "sourceSha256": "da1741f5aaf544e3609af2515998cdf6673735dd64691c22ea78a1d8efbfb50f",
+          "offset": 0,
+          "bytes": 16
+        }
+      ]
+    },
+    "cold-clone/acceptance": {
+      "sha256": "02bffa033604a70e703db734dbd1d4b004ec525fea036fb247448c0a16d478d1",
+      "nodeAssertions": 9258,
+      "gpuAssertions": 25361,
+      "cases": 87,
+      "inputs": [
+        {
+          "event": 156,
+          "resourceId": 3,
+          "sourceSha256": "f5eeb6294d3e81fcce432bf79250004844f5597b62ba7c1843780c14a3dec751",
+          "offset": 0,
+          "bytes": 64
+        },
+        {
+          "event": 157,
+          "resourceId": 4,
+          "sourceSha256": "3fa8bf0940bec2c126815596ab68436434c8acc27d52289d182b06f52c4165ab",
+          "offset": 0,
+          "bytes": 12
+        },
+        {
+          "event": 160,
+          "resourceId": 7,
+          "sourceSha256": "da1741f5aaf544e3609af2515998cdf6673735dd64691c22ea78a1d8efbfb50f",
+          "offset": 0,
+          "bytes": 16
+        }
+      ]
+    }
+  },
+  "coverage": {
+    "allFunctions": 81,
+    "unexecutedFunctions": {},
+    "uncoveredSpans": []
+  }
+}
