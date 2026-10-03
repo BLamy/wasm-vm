@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11c** — Present retained 3D resources through the existing virtio scanout path
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -536,7 +535,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.02698` [E6-T11c](epic-6-transcendence/E6-T11c-virgl-scanout.md) — Present retained 3D resources through the existing virtio scanout path *(deps: E6-T11b2)*
+- [~] `525.02698` [E6-T11c](epic-6-transcendence/E6-T11c-virgl-scanout.md) — Present retained 3D resources through the existing virtio scanout path *(deps: E6-T11b2)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

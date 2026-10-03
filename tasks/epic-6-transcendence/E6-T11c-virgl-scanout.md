@@ -3,7 +3,7 @@ id: E6-T11c
 epic: 6
 title: Present retained 3D resources through the existing virtio scanout path
 priority: 525.02698
-status: pending
+status: in-progress
 depends_on: [E6-T11b2]
 estimate: S
 risk: high
@@ -18,6 +18,30 @@ public unref and asynchronous presentation; define orientation and scanout
 format conversion. Avoid an extra copy where the measured WebGL2/browser path
 allows it, and document necessary copies honestly. Preserve ordinary 2D scanout
 and explicit failure behavior; production negotiation is still disabled.
+
+## Presentation completion and bounded profile
+
+The initial compatible path uses scanout 0 and existing single-level RGBA8 2D
+renderer textures. SET_SCANOUT accepts a whole-resource rectangle; unsupported
+formats, cropped bindings and invalid dimensions fail before changing the
+previous binding. Ordinary 2D scanout keeps its existing contract.
+
+A guest FLUSH completes after its retained GPU snapshot is ready and its owned
+pixels have been accepted by the bounded presenter. A separate frame ticket
+remains until actual canvas draw, explicit supersession, cancellation or failure.
+The device response does not claim physical presentation. Acceptance separately
+requires a frame-correlated canvas draw, including guest unref/rebind before rAF.
+A successful enqueue alone is not evidence that pixels reached the canvas.
+
+The scanout binding retains the accepted resource generation independently of its
+public ID and context membership. Rendering membership checks stay unchanged.
+The presenter keeps at most one pending frame, routes 2D and 3D through the same
+display owner, and rejects stale generations after rebinding or reset. Captures
+use bounded PBO/fence staging; already issued snapshots have explicit lifetime
+semantics independent of later content revisions. Canonical top-down BGRA words
+feed the existing built presentation controller, with channel and Y conversion
+performed exactly once before that contract. The evidence reports readback,
+conversion, ownership copies and presentation upload bytes; no zero-copy claim.
 
 ## Deterministic acceptance
 
