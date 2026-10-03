@@ -547,7 +547,7 @@
   {
     "name": "integer-opcode-remains-rejected",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nUADD OUT[0], IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nUMUL OUT[0], IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
   },
   {
     "name": "indirect-source-remains-rejected",

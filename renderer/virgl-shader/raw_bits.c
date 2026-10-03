@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static struct raw_lane source_lane(const struct raw_ir *ir, const struct reg *r, unsigned lane)
+static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_source *r, unsigned lane)
 {
    unsigned component = r->swizzle[lane];
    if (r->file == TEMP) return ir->temporary[r->index][component];
@@ -37,6 +37,26 @@ static struct raw_lane shifted(struct raw_lane a, struct raw_lane b, bool left)
    return result;
 }
 
+static struct raw_lane known_word(uint32_t word)
+{
+   return (struct raw_lane){.zero = ~word, .one = word};
+}
+
+static bool known_operands(struct raw_lane a, struct raw_lane b)
+{
+   return (a.zero | a.one) == UINT32_MAX && (b.zero | b.one) == UINT32_MAX;
+}
+
+static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no)
+{
+   if (condition.zero == UINT32_MAX) return no;
+   if (condition.one) return yes;
+   /* An unknown selector retains only facts true for BOTH payloads. Distinct
+    * float origins cannot become one input identity merely by being floats. */
+   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one,
+      .origin = yes.origin == no.origin ? yes.origin : 0};
+}
+
 void raw_record(struct raw_ir *ir, const struct raw_instruction *instruction)
 {
    struct raw_lane result[4] = {{0}};
@@ -52,13 +72,27 @@ void raw_record(struct raw_ir *ir, const struct raw_instruction *instruction)
       case RAW_NOT: result[lane] = (struct raw_lane){.zero = a.one, .one = a.zero}; break;
       case RAW_SHL: result[lane] = shifted(a, b, true); break;
       case RAW_USHR: result[lane] = shifted(a, b, false); break;
+      case RAW_UADD:
+         if (known_operands(a, b)) result[lane] = known_word(a.one + b.one);
+         break;
+      case RAW_ISGE:
+         if (known_operands(a, b)) result[lane] = known_word(
+            (a.one ^ UINT32_C(0x80000000)) >= (b.one ^ UINT32_C(0x80000000)) ? UINT32_MAX : 0);
+         break;
+      case RAW_USEQ:
+         if (known_operands(a, b)) result[lane] = known_word(a.one == b.one ? UINT32_MAX : 0);
+         break;
+      case RAW_USNE:
+         if (known_operands(a, b)) result[lane] = known_word(a.one != b.one ? UINT32_MAX : 0);
+         break;
+      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane)); break;
       }
    }
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
    for (unsigned lane = 0; lane < 4; ++lane)
       if (instruction->dst.mask & (1u << lane)) destination[lane] = result[lane];
    ir->instructions[ir->count++] = *instruction;
-   ir->bitwise_count += instruction->opcode != RAW_MOV;
+   if (instruction->opcode != RAW_MOV) ir->opcode_mask |= 1u << instruction->opcode;
 }
 
 bool raw_outputs_safe(const struct profile *p)
@@ -95,7 +129,7 @@ static void input_float(struct writer *w, const struct profile *p, unsigned inde
    else emit(w, "in_%u.%c", index, "xyzw"[component]);
 }
 
-static void operand(struct writer *w, const struct profile *p, const struct reg *r, unsigned lane)
+static void operand(struct writer *w, const struct profile *p, const struct raw_source *r, unsigned lane)
 {
    unsigned component = r->swizzle[lane];
    switch (r->file) {
@@ -134,12 +168,24 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          enum raw_opcode op = instruction->opcode;
          emit(&w, "(");
          if (op == RAW_NOT) emit(&w, "~");
+         if (op == RAW_ISGE) emit(&w, "(");
          operand(&w, p, &instruction->src[0], lane);
          if (op == RAW_AND || op == RAW_OR) {
             emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
          } else if (op == RAW_SHL || op == RAW_USHR) {
             emit(&w, op == RAW_SHL ? " << (" : " >> (");
             operand(&w, p, &instruction->src[1], lane); emit(&w, " & 31u)");
+         } else if (op == RAW_UADD) {
+            emit(&w, " + "); operand(&w, p, &instruction->src[1], lane);
+         } else if (op == RAW_ISGE) {
+            emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
+            emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
+         } else if (op == RAW_USEQ || op == RAW_USNE) {
+            emit(&w, op == RAW_USEQ ? " == " : " != "); operand(&w, p, &instruction->src[1], lane);
+            emit(&w, " ? 4294967295u : 0u");
+         } else if (op == RAW_UCMP) {
+            emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
+            emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
          }
          emit(&w, ")");
       }

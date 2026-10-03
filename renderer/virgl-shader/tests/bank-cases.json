@@ -1998,9 +1998,9 @@
     "ok": false
   },
   {
-    "name": "vertex-unsupported-UADD",
+    "name": "vertex-unsupported-UMUL",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUADD TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUMUL TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {
@@ -2586,9 +2586,9 @@
     "ok": false
   },
   {
-    "name": "fragment-unsupported-UADD",
+    "name": "fragment-unsupported-UMUL",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUADD TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nUMUL TEMP[117], CONST[45]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false
   },
   {
