@@ -9,6 +9,12 @@
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
+# Isolated upstream TGSI translator: native hostile-input sanitizers and real
+# hardware WebGL2 pixel oracles. Does not change the emulator or demo device.
+.PHONY: verify-E6-T10a
+verify-E6-T10a:
+	bash tools/verify-virgl-shader.sh
+
 # E5.5-T03bf: shared literal-oracle fixtures run on both native and wasm engines.
 .PHONY: verify-E5.5-T03bf
 verify-E5.5-T03bf:
