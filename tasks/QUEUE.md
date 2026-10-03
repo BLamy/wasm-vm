@@ -469,7 +469,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.0269` [E6-T10c](epic-6-transcendence/E6-T10c-browser-renderer-contract.md) — Freeze browser renderer capabilities against the captured guest corpus *(deps: E6-T10b)*
+- [?] `525.0269` [E6-T10c](epic-6-transcendence/E6-T10c-browser-renderer-contract.md) — Freeze browser renderer capabilities against the captured guest corpus *(deps: E6-T10b)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
