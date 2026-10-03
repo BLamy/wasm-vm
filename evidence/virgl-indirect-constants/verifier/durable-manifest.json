@@ -1,0 +1,133 @@
+{
+  "schema": 1,
+  "status": "verified",
+  "frozenHead": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "workerCommit": "c4e7683c989c5fab3adb1b492d47071d9fbaeb53",
+  "records": [
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/predictions.md",
+      "bytes": 5613,
+      "sha256": "433c42dfc15e7e7f79fdda729aab1c52e17fede9e1648f5166090312880af877"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/verification-ledger.md",
+      "bytes": 6870,
+      "sha256": "9f5a31bd34439a90223d559d1ab02a7a925c76209d634eabee2ce42ff36905e3"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/receipt-findings.md",
+      "bytes": 2357,
+      "sha256": "09fef16c3bebd0da8cdd6d5f1b7301d5b21d154dfd035b6d8c43c4a5acdbb4e2"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-native.py",
+      "bytes": 8103,
+      "sha256": "2b6f66d00a35d08b3693cd681656c665f23e2b9915c211f2f3c52374b2c2f7c3"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-consumer.mjs",
+      "bytes": 3924,
+      "sha256": "86285e65ef9bad1cf94971af66ab8eee8e9480abcec63eb73705670b02ec0fa2"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-receipts.py",
+      "bytes": 4631,
+      "sha256": "1a3b2f5a81a9a140806faaca0bee77eed5b4a7d19cfe96e881490c76ed77b0d1"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-browser-receipts.py",
+      "bytes": 1744,
+      "sha256": "ada40de8981dc52b1de02bc3aed593ceb8220e6dc602455fef5e8d501d083165"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-coverage.py",
+      "bytes": 4656,
+      "sha256": "a503ce1e6460286385a2738e001be104b340d234bc99a4136475e8e3c0940f68"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/current-attack-report.json",
+      "bytes": 7258,
+      "sha256": "a1518fd65c231c44447560a0f18cf3a0f1dd72e2f92f4600fd27775d144ea184"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/join-fault-attack-report.json",
+      "bytes": 2121582,
+      "sha256": "f3a7356ad43ca8d746692b79b373419a879ea8002280015f9c86df2286cd06b2"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/current-attack-cases.jsonl.gz",
+      "bytes": 553254,
+      "sha256": "f5bd97320a814e37c9721a6a6e9e7efa588047f5bc39ec0b7d3d68ebb9525057"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/join-fault-attack-cases.jsonl.gz",
+      "bytes": 560307,
+      "sha256": "d22ed1d501546cbccb9d7c790b88c3293f4ed1eebe29227fc42f984aa0237f41"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/consumer-attack-report.json",
+      "bytes": 1064981,
+      "sha256": "e39aa2b45ee461091b40adcf3b7763f13b117ff5a3619b406822dfb37d3be7a8"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/independent-case-bindings.json",
+      "bytes": 680,
+      "sha256": "56e264e7d20c9a902674c9f932a565d9f359815a8c8e4242a11ef3d5b1a6ffc9"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/independent-source-bindings.json",
+      "bytes": 970,
+      "sha256": "c7a99e95074d9578f4f8f9dbf74ccdef62da905f474a0acdf66e5ad05d822106"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/current-coverage.json",
+      "bytes": 1373387,
+      "sha256": "71c80c9a4d830121b047626d87d4f95d76c4ac7bef7ae76eac63b7488b2341bf"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/coverage-audit.json",
+      "bytes": 47221,
+      "sha256": "58f20451c250aff385e718896f55621ff5a60b5a279f282b86efdc2966d253c0"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/independent-aggregate.json",
+      "bytes": 173075,
+      "sha256": "1228079b139a3c0d8c1aff48acfdfbbf20bb0e3e1c1fb8885807a6dd3d8b0219"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/final-receipt-attacks.json",
+      "bytes": 2361,
+      "sha256": "b419eb290a03fa8c3a7a1506a3f52a101e208f1e6f53dbb71f6959a3830d7763"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/final-receipt-attacks.log",
+      "bytes": 2361,
+      "sha256": "b419eb290a03fa8c3a7a1506a3f52a101e208f1e6f53dbb71f6959a3830d7763"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/browser-receipt-attacks.json",
+      "bytes": 677,
+      "sha256": "32a37a73c0fc54ae3bee4b9784b4b8e981768598f5e39b5312d8ac2499990252"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/audit-cold.py",
+      "bytes": 3776,
+      "sha256": "3d82464ff9a12ff14a62a750f1adc031bdd247f8d6e3be7a3969ef8d45ff5d93"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/cold-audit.json",
+      "bytes": 622,
+      "sha256": "a956f57d084128e2ab8a290d5a0c3440f2c698e022c2934b098919098b636fb4"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/cold-audit.log",
+      "bytes": 622,
+      "sha256": "a956f57d084128e2ab8a290d5a0c3440f2c698e022c2934b098919098b636fb4"
+    },
+    {
+      "path": "evidence/virgl-indirect-constants/verifier/independent-cold-aggregate.json",
+      "bytes": 173075,
+      "sha256": "b8aba573e74f650d1737c4fabc15ffa10922615348bc451c95be71b2bfd96946"
+    }
+  ]
+}

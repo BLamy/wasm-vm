@@ -3,7 +3,7 @@ id: E6-T12e8
 epic: 6
 title: Admit proven-bounded TGSI indirect constant access
 priority: 525.0269908
-status: implemented
+status: verified
 depends_on: [E6-T12e7]
 estimate: S
 risk: high
@@ -170,3 +170,76 @@ Original outcomes and prior successful complete results remain exact. This is an
 isolated compiler/shared-renderer result, not live Mesa, guest desktop graphics,
 300-MIPS throughput or an FPS improvement. Fresh adversarial verdict pending.
 
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Reviewed the full task and diff before evidence; falsifiable predictions are in
+`evidence/virgl-indirect-constants/verifier/predictions.md`. Verified frozen
+source `b4ee940d78f651553c2b900be95f8b083085cdf9` and worker submission
+`c4e7683c989c5fab3adb1b492d47071d9fbaeb53`. The latter changes no runtime/harness
+source. Full prediction outcomes, individual changed-line classifications and
+artifact digests are in the verifier ledger and durable manifest.
+
+- **P1–P3 HELD — complete address authority.** Independently authored 9,088
+  public-bridge cases passed (3,265 accepts with exact candidate sets; 5,823
+  rejects): exhaustive six-bit mask/OR sets in both stages, 768 seeded joins,
+  unwritten/one-sided/stale addresses, sparse declarations, wrong buffers,
+  UINT32 boundaries and swizzles. Transcript line 4,097 rejects a possible
+  address 53; dropping predecessor joins in a private compiler copy admits it
+  and produces 544 independent counterexamples. See
+  `verifier/current-attack-cases.jsonl.gz` and
+  `verifier/join-fault-attack-cases.jsonl.gz`, with decompressed digests in
+  `verifier/independent-case-bindings.json`. All runtime attack digests match
+  the frozen Git blobs.
+- **P4–P6 HELD — immutable complete bank and dispatch boundary.** Independent
+  consumer audit passed 3,603 typed metadata, full-prefix, all-lane nonfinite
+  and ownership checks. Hardware `raw-vertex`/`raw-fragment` short-bank attacks
+  and `coupled-sync` missing-C45 attacks record zero GL events, unchanged state
+  and pixels. Decoder-bypass proof reaches the real consumer and rejects the
+  poisoned unselected/suffix lanes. Both recorded async schedules reject busy
+  mutations at waiting-index and restore poisoned native uniform state from
+  the owned draw snapshot. See worker hardware reports (normal SHA-256
+  `e841e61df5b8c7e303f5ff3a933447298042f6f625061a59461a13897b1d9c18`).
+- **P7–P8 HELD — hardware, parity, budgets and recovery.** Independently replayed
+  aggregate: 31 actual Apple M4 Max GPU draws, 1,216 words and 126,976 pixels,
+  zero browser errors/mismatches; compiled index sabotage fails at 48 words.
+  First/interior/last words are distinct in both stage atlases. Native transcript
+  lines 1/4,117/4,118 record layout/arena/accounting (SHA-256
+  `0f54d1b8de22c89579998e1b3355c1db2350e008c8163af4d9275e00d90122b9`):
+  603,728 calls, actual 26,256/7,616/52,612-byte IR/profile/flow, all 3,466/236
+  retained results exact and 12/19 originals unchanged. Wasm records 21,165
+  calls, 33 allocation-pressure phases and stable 16 MiB memory. Native/Wasm
+  recovery, PRECISE/loop rejections and full results were checked directly.
+- **P9 HELD — evidence and pristine replay.** Four clean final receipt controls
+  pass; 13 copied-record corruptions reject for the intended typed-counter,
+  metadata, result and source-binding checks. Three actual-browser observation
+  corruptions also reject. The verifier discovered three proof-only numeric
+  aliases before freeze; worker hardening and final clean/corrupt controls close
+  them without a runtime semantic repair. Independently reran the full cold
+  aggregate inside its preserved clone, verified all 152 copied files and 379
+  source identities, and compared all 4,085 complete native entries and every
+  GPU pixel byte with warm proof: exact matches. See `verifier/cold-audit.json`;
+  cold receipt SHA-256
+  `b8aba573e74f650d1737c4fabc15ffa10922615348bc451c95be71b2bfd96946`.
+- **P10 HELD — sufficiency.** `verifier/coverage-audit.json` maps all 178 added
+  runtime/type lines: 160 executed, 18 narrowly waived, zero unexplained gaps.
+  Waivers cover comments/blank lines, type/layout declarations and the exhaustive
+  UARL enum arm bypassed by the earlier dedicated return. Both changed consumer
+  files have current-source Node/browser coverage; no unchanged-consumer claim
+  was inherited. Other changed hunks are exercised test/build/receipt plumbing
+  or declarative documentation/configuration, which do not introduce hidden
+  product behavior. Production negotiation remains disabled.
+- **SUITE:** retain the independent native/consumer attack generators, exact
+  transcript digests, private-copy sabotage report, receipt falsifiers, coverage
+  mapper and cold checker; retain `make verify-E6-T12e8` and its deterministic
+  worker oracles. Compiled verifier binaries, private source copies and mutated
+  receipt scratch directories are reproducible scratch and are not promoted.
+
+Verifier commands: `python3 evidence/virgl-indirect-constants/verifier/audit-native.py
+current` and `join-fault`; `node evidence/virgl-indirect-constants/verifier/audit-consumer.mjs`;
+`audit-receipts.py <worker> <frozen-head>`; `audit-coverage.py <worker> <frozen-head>`;
+independent `receipt.verify(...)` in both recording checkouts; `audit-cold.py <cold-clone>`.
+Browser corruption control and exact commands are captured by
+`audit-browser-receipts.py`. Only verifier evidence, this log/status and regenerated
+queue are changed by the verifier commit. No unresolved finding remains.

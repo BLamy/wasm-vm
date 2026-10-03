@@ -1,0 +1,30 @@
+{
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "3c71d3b8772ebdb916c4e4585be0a7fccdd89df3aff379c10c938a4e9dfd516b"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "916491e77f8b2483d16cac9b53f96cbd19153d4410f36ee2dc2bde379d3c6902"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "9ea2d4992daf4e484d8c8708e3bd0e52669ad803e6615c67926b153594ca612a"
+    }
+  ],
+  "nativeCases": 9088,
+  "consumerCases": 3603,
+  "sabotageCounterexamples": 544,
+  "frozenHead": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "consumerSource": {
+    "path": "renderer/virgl-command/constant-domain.mjs",
+    "bytes": 9008,
+    "sha256": "7cdc84075d9bee633e437b9ffe14459d9d26af18f688861c3776a68627c4363e"
+  },
+  "runtimeSourcesMatchFrozenHead": true
+}
