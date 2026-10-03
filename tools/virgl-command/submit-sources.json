@@ -24,7 +24,7 @@
   "renderer/virgl-command/decoder.mjs",
   "renderer/virgl-command/resources.mjs",
   "renderer/virgl-command/scanout.mjs",
-  "renderer/virgl-command/state.mjs",
+  "renderer/virgl-command/constant-domain.mjs", "renderer/virgl-command/state.mjs",
   "renderer/virgl-command/submit-README.md",
   "renderer/virgl-command/tests/control-acceptance.mjs",
   "renderer/virgl-command/tests/submit-acceptance.mjs",

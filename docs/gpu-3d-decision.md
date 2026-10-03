@@ -472,3 +472,33 @@ hardware oracle. It does not pretend the preceding task's fixed six-migration
 receipt accepts a different history. Full original outcomes remain 12/19, and
 production graphics remains disabled. Numeric constant-domain enforcement follows
 this scalar layer before control-flow and original-corpus closure.
+
+### Stage-local constant requirements at draw issue
+
+E6-T12e6a adds the consumer for `virgl-webgl2-raw-bits-v7`. Its sole
+`constant-bank-finite-f32-v1` record identifies the stage, slot zero, exact bank
+name and declared extent. The renderer validates that record against the
+compiler uniform metadata and actual reflection. The checked upload is the
+active prefix, capped at the 46 guest-addressable registers, including unused
+holes. A retained declaration of 47 never exposes CONST46 to the guest.
+
+Completeness is independent of the finite-word check. Every uploaded raw u32
+must have exponent bits other than all ones; signed zero and all subnormals
+qualify without float conversion. This preserves their raw encodings and makes
+no promise that ordinary GPU arithmetic retains subnormal results. A short
+replacement bank cannot acquire authority from temporary restoration zeros.
+
+The strict draw plan binds immutable checked prefixes to the selected context,
+subcontext, shaders, program and constant bank identities. After an asynchronous
+yield, identity validation and external binding restoration precede upload of
+that snapshot. Non-draw restoration skips unusable conditional banks while
+retaining the applied CPU command prefix. Unconditional restoration keeps its
+existing behavior. Normal decoder Inf/NaN rejection remains unchanged.
+
+The consumer proof uses an explicitly trusted host metadata wrapper over real
+compiler results; it changes no TGSI or GLSL and enables no new compiler input.
+The missing-contract test retains v7, and the inconsistent-profile test retains
+the contract. Removing both from a formerly unconditional result is outside
+this trusted-host contract; the renderer cannot authenticate arbitrary host
+metadata by inspecting generated GLSL. Actual compiler derivation follows in
+E6-T12e6b. Production guest graphics remains disabled.

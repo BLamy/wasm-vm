@@ -143,7 +143,7 @@ async function runVirglBrowser(suite) {
       await coverageSession.send("Profiler.enable");
       await coverageSession.send("Profiler.startPreciseCoverage", { callCount: true, detailed: true });
     }
-    report.acceptance = await withDeadline(90_000, page.evaluate(async ({ modulePath, arguments: options }) => {
+    report.acceptance = await withDeadline(180_000, page.evaluate(async ({ modulePath, arguments: options }) => {
       const { runAcceptance } = await import(modulePath);
       return await runAcceptance(options);
     }, { modulePath: suite.modulePath, arguments: suite.browserArguments ?? {} }));
@@ -201,7 +201,7 @@ async function runVirglBrowser(suite) {
     }
     report.servedFiles = [...servedFiles.values()].sort((a, b) => a.path.localeCompare(b.path));
     report.finishedAt = new Date().toISOString();
-    await fs.writeFile(path.join(output, "report.json"), `${JSON.stringify(report, null, 2)}\n`);
+    await fs.writeFile(path.join(output, "report.json"), `${JSON.stringify(report)}\n`);
     await browser?.close().catch(() => {});
     if (server) await new Promise((resolve) => server.close(resolve));
   }
@@ -219,24 +219,23 @@ figcaption{font-size:13px;margin-top:10px}#gpu{position:absolute;width:1px;heigh
 <p id="status">Running hardware acceptance…</p><p id="renderer"></p><canvas id="gpu"></canvas><main id="draws"></main>`;
 }
 
-const options = browserOptions(['--sabotage']);
-assert.ok(options.sabotage === undefined || options.sabotage === 'high-upload', 'known sabotage high-upload');
-function mutateServed(filename, original, report) {
-  if (options.sabotage !== 'high-upload' || filename !== 'renderer/virgl-command/state.mjs') return original;
-  const text = original.toString('utf8'), before = 'gl.uniform4uiv(uniform.location, words);', after = 'gl.uniform4uiv(uniform.location, words.subarray(0, Math.min(words.length, 180)));';
-  assert.equal(text.split(before).length, 2, 'exact one upload sabotage site');
-  const altered = Buffer.from(text.replace(before, after));
-  const hash = bytes => createHash('sha256').update(bytes).digest('hex');
-  report.sabotage = {mode:'high-upload', source:filename, before, after, originalSha256:hash(original), servedSha256:hash(altered), expectedFailure:{name:'A first high-bank draw',pixel:[0,0],expected:[64,191,128,191],observed:[0,0,255,255]}, boundary:'served-source upload prefix shortened; authored packets, compiler and linked GLSL unchanged'};
-  return altered;
+const options=browserOptions(['--mode']);
+options.mode??='normal';assert.ok(['normal','decoder-bypass','decoder-and-guard-bypass'].includes(options.mode),'known domain proof mode');
+function mutateServed(filename,original,report){
+  const definitions=[];
+  if(options.mode!=='normal'&&filename==='renderer/virgl-command/decoder.mjs')definitions.push({path:filename,before:'this.require(Number.isFinite(value), "invalid-value", "Non-finite float field.");',after:'this.require(this.opcode === 12 || Number.isFinite(value), "invalid-value", "Non-finite float field.");'});
+  if(options.mode==='decoder-and-guard-bypass'&&filename==='renderer/virgl-command/constant-domain.mjs')definitions.push({path:filename,before:'return Number.isInteger(word) && word >= 0 && word <= 0xffffffff && (word & 0x7f800000) !== 0x7f800000;',after:'return Number.isInteger(word) && word >= 0 && word <= 0xffffffff;'});
+  if(definitions.length===0)return original;
+  let text=original.toString('utf8');for(const definition of definitions){assert.equal(text.split(definition.before).length,2,'one exact served-source mutation site');text=text.replace(definition.before,definition.after);const entry={...definition,matches:1,originalSha256:createHash('sha256').update(original).digest('hex'),servedSha256:createHash('sha256').update(text).digest('hex')};report.mutations??=[];if(!report.mutations.some(x=>x.path===filename))report.mutations.push(entry);else assert.deepEqual(report.mutations.find(x=>x.path===filename),entry);}
+  return Buffer.from(text);
 }
-const { ORIGINAL_INPUTS } = await import('../renderer/virgl-shader/tests/components.mjs');
-const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs'];
-const runtimePins = await Promise.all(runtime.map(async filename => {const bytes=await fs.readFile(path.join(repo,filename));return {path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
-await runVirglBrowser({options,task:'E6-T12e3b',boundary:'authored raw184-word constant packets; actual command renderer; conservative active-prefix reflection; production disabled',
- reportFields:{currentGuest3dAdvertisement:false}, modulePath:'/renderer/virgl-command/tests/constants.mjs',windowReportKey:'__virglConstantsReport',
- servedFiles:[...ORIGINAL_INPUTS.map(value=>value.path),...runtime],pinnedFiles:[...ORIGINAL_INPUTS,...runtimePins],coveragePaths:['renderer/virgl-command/state.mjs','renderer/virgl-command/decoder.mjs'],
- html:browserDocument({title:'E6-T12e3b constant transport proof',heading:'Bounded guest constant transport',description:'184 words per stage · real command renderer · high-index geometry and color · isolated state and active reflection'}),
- validate(acceptance) {assert.equal(acceptance.schema,'wasm-vm-constant-browser-v1');assert.equal(acceptance.corpus.length,19);assert.equal(acceptance.corpus.filter(value=>value.result.ok).length,12);assert.equal(acceptance.shaderFixtures.length,8);assert.equal(acceptance.rigs.length,10);assert.equal(acceptance.validationRigs.length,25);assert.equal(acceptance.productionVirgl,false);assert.ok(acceptance.checkedPixels>30000);},
- successMessage:acceptance=>`E6-T12e3b: ${acceptance.checkedPixels} exact hardware pixels; full constant transport, reflection and ownership passed.`,
+const {ORIGINAL_INPUTS}=await import('../renderer/virgl-shader/tests/components.mjs');
+const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-domains.mjs','renderer/virgl-command/tests/constant-domain-shaders.json'];
+const runtimePins=await Promise.all(runtime.map(async filename=>{const bytes=await fs.readFile(path.join(repo,filename));return {path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
+await runVirglBrowser({options,task:'E6-T12e6a',boundary:'trusted host conditional metadata; real decoded constant packets and shared sync/async draw consumer; compiler and guest transport unchanged',
+  reportFields:{currentGuest3dAdvertisement:false,trustedHostMetadataWrapper:true,mode:options.mode,mutations:[]},modulePath:'/renderer/virgl-command/tests/constant-domains.mjs',windowReportKey:'__virglConstantDomainsReport',browserArguments:{mode:options.mode},
+  servedFiles:[...ORIGINAL_INPUTS.map(x=>x.path),...runtime],pinnedFiles:[...ORIGINAL_INPUTS,...runtimePins],coveragePaths:['renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/tests/constant-domains.mjs'],
+  html:browserDocument({title:'E6-T12e6a constant domains',heading:'Conditional constant-bank consumer',description:'Trusted host contract harness · actual command renderer · immutable current words · raw signed zeros and subnormals · production graphics remains off'}),
+  validate(a){assert.equal(a.schema,'wasm-vm-constant-domain-browser-v1');assert.equal(a.mode,options.mode);assert.equal(a.shaderFixtures.length,14);assert.equal(a.corpus.filter(x=>x.result.ok).length,12);assert.equal(a.invalidCases,120);assert.equal(a.rawWords,options.mode==='normal'?64:0);assert.equal(a.metadataRigs.length,options.mode==='normal'?28:0);for(const r of [...a.rigs,...a.metadataRigs]){assert.equal(r.glObjects.live,0);assert.ok(Object.values(r.finalBudgets).every(x=>x===0));assert.ok(Object.values(r.finalResourceBudgets).every(x=>x===0));}},
+  successMessage:a=>`E6-T12e6a ${a.mode}: ${a.checkedPixels} whole-frame pixels; ${a.rawWords} exact raw words; ${a.invalidCases} invalid-bank cases; complete cleanup.`,
 });
