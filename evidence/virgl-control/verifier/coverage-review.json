@@ -1,0 +1,4915 @@
+{
+  "schema": 1,
+  "frozenHead": "252b5eaba8135967c29938e7a5a4709c4d22473d",
+  "baseline": "0b7c9341",
+  "hunks": [
+    {
+      "path": "Makefile",
+      "start": 1846,
+      "length": 5
+    },
+    {
+      "path": "crates/core/Cargo.toml",
+      "start": 24,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/desktop_restore.rs",
+      "start": 601,
+      "length": 4
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "start": 1,
+      "length": 628
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 7,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 295,
+      "length": 3
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 319,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 366,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 547,
+      "length": 4
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 583,
+      "length": 14
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 632,
+      "length": 12
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 718,
+      "length": 4
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 1062,
+      "length": 47
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 1553,
+      "length": 35
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "start": 1638,
+      "length": 1
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/protocol.rs",
+      "start": 28,
+      "length": 14
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "start": 33,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "start": 103,
+      "length": 2
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "start": 133,
+      "length": 4
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "start": 212,
+      "length": 4
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 1695,
+      "length": 29
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 1732,
+      "length": 0
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 1745,
+      "length": 9
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 2147,
+      "length": 6
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 2258,
+      "length": 8
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 2914,
+      "length": 6
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "start": 3138,
+      "length": 6
+    },
+    {
+      "path": "crates/core/tests/virtio_gpu_control3d.rs",
+      "start": 1,
+      "length": 857
+    },
+    {
+      "path": "crates/wasm/Cargo.toml",
+      "start": 68,
+      "length": 2
+    },
+    {
+      "path": "crates/wasm/src/lib.rs",
+      "start": 13,
+      "length": 7
+    },
+    {
+      "path": "crates/wasm/src/virgl_control_proof.rs",
+      "start": 1,
+      "length": 363
+    },
+    {
+      "path": "renderer/virgl-command/control-README.md",
+      "start": 1,
+      "length": 96
+    },
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "start": 1,
+      "length": 199
+    },
+    {
+      "path": "renderer/virgl-command/tests/control-acceptance.mjs",
+      "start": 1,
+      "length": 409
+    },
+    {
+      "path": "tools/verify-virgl-control.mjs",
+      "start": 1,
+      "length": 159
+    },
+    {
+      "path": "tools/verify-virgl-control.sh",
+      "start": 1,
+      "length": 46
+    },
+    {
+      "path": "tools/verify-virgl-default-demo.mjs",
+      "start": 1,
+      "length": 65
+    },
+    {
+      "path": "tools/virgl-command/control-cold.py",
+      "start": 1,
+      "length": 77
+    },
+    {
+      "path": "tools/virgl-command/control-receipt.py",
+      "start": 1,
+      "length": 219
+    },
+    {
+      "path": "web/dist/sw.js",
+      "start": 21,
+      "length": 1
+    }
+  ],
+  "native": [
+    {
+      "path": "crates/core/src/desktop_restore.rs",
+      "sha256": "e4e50597ab48ffd03f35bfbc7235bd220daeb19d2171aa39bb24546592c4019e",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "functions": {
+          "count": 42,
+          "covered": 4,
+          "percent": 9.523809523809524
+        },
+        "instantiations": {
+          "count": 128,
+          "covered": 4,
+          "percent": 3.125
+        },
+        "lines": {
+          "count": 527,
+          "covered": 28,
+          "percent": 5.313092979127135
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 577,
+          "covered": 20,
+          "notcovered": 557,
+          "percent": 3.466204506065858
+        }
+      },
+      "changedLines": [
+        {
+          "line": 601,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 602,
+          "count": 1,
+          "text": "if gpu.borrow().control3d_proof_installed() {"
+        },
+        {
+          "line": 603,
+          "count": 1,
+          "text": "return Err(RestoreCallbackError::new(\"proof_3d_installed\"));"
+        },
+        {
+          "line": 604,
+          "count": 0,
+          "text": "}"
+        }
+      ],
+      "unhitSegments": [
+        {
+          "start": [
+            604,
+            9
+          ],
+          "end": [
+            604,
+            10
+          ],
+          "text": "}"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "sha256": "dfa882405ac50cba79aadd63c2803b853c4da9e7dc91160f9585034f4d9b8afe",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "functions": {
+          "count": 27,
+          "covered": 27,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 90,
+          "covered": 58,
+          "percent": 64.44444444444444
+        },
+        "lines": {
+          "count": 430,
+          "covered": 424,
+          "percent": 98.6046511627907
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 664,
+          "covered": 630,
+          "notcovered": 34,
+          "percent": 94.87951807228916
+        }
+      },
+      "changedLines": [
+        {
+          "line": 1,
+          "count": null,
+          "text": "//! Synchronous, proof-only virtio 3D control ownership. No submit, DMA or fences."
+        },
+        {
+          "line": 2,
+          "count": null,
+          "text": "//!"
+        },
+        {
+          "line": 3,
+          "count": null,
+          "text": "//! Guest addresses remain transport metadata. Attach events copy initial bytes;"
+        },
+        {
+          "line": 4,
+          "count": null,
+          "text": "//! these copies are not authoritative for future DMA. A sink's ordinary error"
+        },
+        {
+          "line": 5,
+          "count": null,
+          "text": "//! promises failure atomicity. An unexpected host failure must return"
+        },
+        {
+          "line": 6,
+          "count": null,
+          "text": "//! `BridgePoisoned`, preventing further control work until an explicit reset."
+        },
+        {
+          "line": 7,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 8,
+          "count": null,
+          "text": "use alloc::{boxed::Box, string::String, vec::Vec};"
+        },
+        {
+          "line": 9,
+          "count": null,
+          "text": "use sha2::{Digest, Sha256};"
+        },
+        {
+          "line": 10,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 11,
+          "count": null,
+          "text": "use super::{protocol as p, read_readable_at, readable_len, resources::ResourceMap};"
+        },
+        {
+          "line": 12,
+          "count": null,
+          "text": "use crate::{bus::Bus, dev::virtio::queue::DescriptorChain, mmio::SystemBus};"
+        },
+        {
+          "line": 13,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 14,
+          "count": null,
+          "text": "pub const MAX_CONTEXTS: usize = 8;"
+        },
+        {
+          "line": 15,
+          "count": null,
+          "text": "pub const MAX_RESOURCES: usize = 16;"
+        },
+        {
+          "line": 16,
+          "count": null,
+          "text": "pub const MAX_BACKING_ENTRIES: usize = 256;"
+        },
+        {
+          "line": 17,
+          "count": null,
+          "text": "pub const MAX_RESOURCE_BYTES: u64 = 4 * 1024 * 1024;"
+        },
+        {
+          "line": 18,
+          "count": null,
+          "text": "pub const MAX_GPU_BYTES: u64 = 32 * 1024 * 1024;"
+        },
+        {
+          "line": 19,
+          "count": null,
+          "text": "pub const MAX_BACKING_BYTES: u64 = 32 * 1024 * 1024;"
+        },
+        {
+          "line": 20,
+          "count": null,
+          "text": "pub const MAX_TEXTURE_SIZE: u32 = 16_384;"
+        },
+        {
+          "line": 21,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 22,
+          "count": null,
+          "text": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]"
+        },
+        {
+          "line": 23,
+          "count": null,
+          "text": "pub struct Control3dId {"
+        },
+        {
+          "line": 24,
+          "count": null,
+          "text": "pub id: u32,"
+        },
+        {
+          "line": 25,
+          "count": null,
+          "text": "pub generation: u64,"
+        },
+        {
+          "line": 26,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 27,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 28,
+          "count": null,
+          "text": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]"
+        },
+        {
+          "line": 29,
+          "count": null,
+          "text": "pub struct Resource3dMetadata {"
+        },
+        {
+          "line": 30,
+          "count": null,
+          "text": "pub resource_id: u32,"
+        },
+        {
+          "line": 31,
+          "count": null,
+          "text": "pub target: u32,"
+        },
+        {
+          "line": 32,
+          "count": null,
+          "text": "pub format: u32,"
+        },
+        {
+          "line": 33,
+          "count": null,
+          "text": "pub bind: u32,"
+        },
+        {
+          "line": 34,
+          "count": null,
+          "text": "pub width: u32,"
+        },
+        {
+          "line": 35,
+          "count": null,
+          "text": "pub height: u32,"
+        },
+        {
+          "line": 36,
+          "count": null,
+          "text": "pub depth: u32,"
+        },
+        {
+          "line": 37,
+          "count": null,
+          "text": "pub array_size: u32,"
+        },
+        {
+          "line": 38,
+          "count": null,
+          "text": "pub last_level: u32,"
+        },
+        {
+          "line": 39,
+          "count": null,
+          "text": "pub nr_samples: u32,"
+        },
+        {
+          "line": 40,
+          "count": null,
+          "text": "pub flags: u32,"
+        },
+        {
+          "line": 41,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 42,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 43,
+          "count": null,
+          "text": "impl Resource3dMetadata {"
+        },
+        {
+          "line": 44,
+          "count": null,
+          "text": "/// Same bounded resource classes as the verified renderer; no GL dependency."
+        },
+        {
+          "line": 45,
+          "count": 88,
+          "text": "fn sizes(self) -> Result<(u64, u64), Control3dError> {"
+        },
+        {
+          "line": 46,
+          "count": 88,
+          "text": "if self.width == 0"
+        },
+        {
+          "line": 47,
+          "count": 87,
+          "text": "|| self.height == 0"
+        },
+        {
+          "line": 48,
+          "count": 86,
+          "text": "|| self.depth != 1"
+        },
+        {
+          "line": 49,
+          "count": 85,
+          "text": "|| self.array_size != 1"
+        },
+        {
+          "line": 50,
+          "count": 84,
+          "text": "|| self.last_level != 0"
+        },
+        {
+          "line": 51,
+          "count": 83,
+          "text": "|| self.nr_samples != 0"
+        },
+        {
+          "line": 52,
+          "count": 82,
+          "text": "|| self.flags != 0"
+        },
+        {
+          "line": 53,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 54,
+          "count": 7,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 55,
+          "count": 81,
+          "text": "}"
+        },
+        {
+          "line": 56,
+          "count": 81,
+          "text": "let (bytes, staging) = match (self.target, self.format, self.bind) {"
+        },
+        {
+          "line": 57,
+          "count": 38,
+          "text": "(0, 64, 16 | 32 | 524_288) if self.height == 1 => {"
+        },
+        {
+          "line": 58,
+          "count": 60,
+          "text": "(u64::from(self.width), self.bind == 524_288)"
+        },
+        {
+          "line": 59,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 60,
+          "count": 18,
+          "text": "(2, 67, 10) if self.width <= MAX_TEXTURE_SIZE && self.height <= MAX_TEXTURE_SIZE => {"
+        },
+        {
+          "line": 61,
+          "count": 18,
+          "text": "(u64::from(self.width) * u64::from(self.height) * 4, false)"
+        },
+        {
+          "line": 62,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 63,
+          "count": 3,
+          "text": "_ => return Err(Control3dError::InvalidParameter),"
+        },
+        {
+          "line": 64,
+          "count": null,
+          "text": "};"
+        },
+        {
+          "line": 65,
+          "count": 78,
+          "text": "if bytes > MAX_RESOURCE_BYTES {"
+        },
+        {
+          "line": 66,
+          "count": 1,
+          "text": "return Err(Control3dError::OutOfMemory);"
+        },
+        {
+          "line": 67,
+          "count": 77,
+          "text": "}"
+        },
+        {
+          "line": 68,
+          "count": 77,
+          "text": "Ok((bytes, if staging { 0 } else { bytes }))"
+        },
+        {
+          "line": 69,
+          "count": 88,
+          "text": "}"
+        },
+        {
+          "line": 70,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 71,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 72,
+          "count": null,
+          "text": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]"
+        },
+        {
+          "line": 73,
+          "count": null,
+          "text": "pub struct BackingEntry {"
+        },
+        {
+          "line": 74,
+          "count": null,
+          "text": "pub addr: u64,"
+        },
+        {
+          "line": 75,
+          "count": null,
+          "text": "pub length: u32,"
+        },
+        {
+          "line": 76,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 77,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 78,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 79,
+          "count": null,
+          "text": "pub struct BackingSegment {"
+        },
+        {
+          "line": 80,
+          "count": null,
+          "text": "pub addr: u64,"
+        },
+        {
+          "line": 81,
+          "count": null,
+          "text": "pub length: u32,"
+        },
+        {
+          "line": 82,
+          "count": null,
+          "text": "pub bytes: Vec<u8>,"
+        },
+        {
+          "line": 83,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 84,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 85,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 86,
+          "count": null,
+          "text": "pub enum Control3dOperation {"
+        },
+        {
+          "line": 87,
+          "count": null,
+          "text": "CreateContext {"
+        },
+        {
+          "line": 88,
+          "count": null,
+          "text": "context: Control3dId,"
+        },
+        {
+          "line": 89,
+          "count": null,
+          "text": "debug_name: Vec<u8>,"
+        },
+        {
+          "line": 90,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 91,
+          "count": null,
+          "text": "DestroyContext {"
+        },
+        {
+          "line": 92,
+          "count": null,
+          "text": "context: Control3dId,"
+        },
+        {
+          "line": 93,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 94,
+          "count": null,
+          "text": "CreateResource {"
+        },
+        {
+          "line": 95,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 96,
+          "count": null,
+          "text": "metadata: Resource3dMetadata,"
+        },
+        {
+          "line": 97,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 98,
+          "count": null,
+          "text": "AttachResource {"
+        },
+        {
+          "line": 99,
+          "count": null,
+          "text": "context: Control3dId,"
+        },
+        {
+          "line": 100,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 101,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 102,
+          "count": null,
+          "text": "DetachResource {"
+        },
+        {
+          "line": 103,
+          "count": null,
+          "text": "context: Control3dId,"
+        },
+        {
+          "line": 104,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 105,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 106,
+          "count": null,
+          "text": "AttachBacking {"
+        },
+        {
+          "line": 107,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 108,
+          "count": null,
+          "text": "segments: Vec<BackingSegment>,"
+        },
+        {
+          "line": 109,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 110,
+          "count": null,
+          "text": "DetachBacking {"
+        },
+        {
+          "line": 111,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 112,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 113,
+          "count": null,
+          "text": "UnrefResource {"
+        },
+        {
+          "line": 114,
+          "count": null,
+          "text": "resource: Control3dId,"
+        },
+        {
+          "line": 115,
+          "count": null,
+          "text": "},"
+        },
+        {
+          "line": 116,
+          "count": null,
+          "text": "Reset,"
+        },
+        {
+          "line": 117,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 118,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 119,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 120,
+          "count": null,
+          "text": "pub struct Control3dEvent {"
+        },
+        {
+          "line": 121,
+          "count": null,
+          "text": "pub epoch: u64,"
+        },
+        {
+          "line": 122,
+          "count": null,
+          "text": "pub operation: Control3dOperation,"
+        },
+        {
+          "line": 123,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 124,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 125,
+          "count": null,
+          "text": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]"
+        },
+        {
+          "line": 126,
+          "count": null,
+          "text": "pub enum Control3dError {"
+        },
+        {
+          "line": 127,
+          "count": null,
+          "text": "InvalidContextId,"
+        },
+        {
+          "line": 128,
+          "count": null,
+          "text": "InvalidResourceId,"
+        },
+        {
+          "line": 129,
+          "count": null,
+          "text": "InvalidParameter,"
+        },
+        {
+          "line": 130,
+          "count": null,
+          "text": "OutOfMemory,"
+        },
+        {
+          "line": 131,
+          "count": null,
+          "text": "Unspecified,"
+        },
+        {
+          "line": 132,
+          "count": null,
+          "text": "BridgePoisoned,"
+        },
+        {
+          "line": 133,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 134,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 135,
+          "count": null,
+          "text": "impl Control3dError {"
+        },
+        {
+          "line": 136,
+          "count": 6,
+          "text": "pub const fn code(self) -> &'static str {"
+        },
+        {
+          "line": 137,
+          "count": 6,
+          "text": "match self {"
+        },
+        {
+          "line": 138,
+          "count": 1,
+          "text": "Self::InvalidContextId => \"invalid-context-id\","
+        },
+        {
+          "line": 139,
+          "count": 1,
+          "text": "Self::InvalidResourceId => \"invalid-resource-id\","
+        },
+        {
+          "line": 140,
+          "count": 1,
+          "text": "Self::InvalidParameter => \"invalid-parameter\","
+        },
+        {
+          "line": 141,
+          "count": 1,
+          "text": "Self::OutOfMemory => \"out-of-memory\","
+        },
+        {
+          "line": 142,
+          "count": 1,
+          "text": "Self::Unspecified => \"unspecified\","
+        },
+        {
+          "line": 143,
+          "count": 1,
+          "text": "Self::BridgePoisoned => \"bridge-poisoned\","
+        },
+        {
+          "line": 144,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 145,
+          "count": 6,
+          "text": "}"
+        },
+        {
+          "line": 146,
+          "count": 108,
+          "text": "pub const fn response_type(self) -> u32 {"
+        },
+        {
+          "line": 147,
+          "count": 108,
+          "text": "match self {"
+        },
+        {
+          "line": 148,
+          "count": 5,
+          "text": "Self::InvalidContextId => p::RESP_ERR_INVALID_CONTEXT_ID,"
+        },
+        {
+          "line": 149,
+          "count": 5,
+          "text": "Self::InvalidResourceId => p::RESP_ERR_INVALID_RESOURCE_ID,"
+        },
+        {
+          "line": 150,
+          "count": 78,
+          "text": "Self::InvalidParameter => p::RESP_ERR_INVALID_PARAMETER,"
+        },
+        {
+          "line": 151,
+          "count": 7,
+          "text": "Self::OutOfMemory => p::RESP_ERR_OUT_OF_MEMORY,"
+        },
+        {
+          "line": 152,
+          "count": 13,
+          "text": "Self::Unspecified | Self::BridgePoisoned => p::RESP_ERR_UNSPEC,"
+        },
+        {
+          "line": 153,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 154,
+          "count": 108,
+          "text": "}"
+        },
+        {
+          "line": 155,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 156,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 157,
+          "count": null,
+          "text": "/// Trusted host boundary: success means the synchronous operation completed."
+        },
+        {
+          "line": 158,
+          "count": null,
+          "text": "/// Ordinary errors must not mutate host ownership; uncertain outcomes poison."
+        },
+        {
+          "line": 159,
+          "count": null,
+          "text": "pub trait Control3dSink {"
+        },
+        {
+          "line": 160,
+          "count": null,
+          "text": "fn apply(&mut self, event: &Control3dEvent) -> Result<(), Control3dError>;"
+        },
+        {
+          "line": 161,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 162,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 163,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 164,
+          "count": null,
+          "text": "pub struct Context3dSnapshot {"
+        },
+        {
+          "line": 165,
+          "count": null,
+          "text": "pub identity: Control3dId,"
+        },
+        {
+          "line": 166,
+          "count": null,
+          "text": "pub debug_name: Vec<u8>,"
+        },
+        {
+          "line": 167,
+          "count": null,
+          "text": "pub resources: Vec<Control3dId>,"
+        },
+        {
+          "line": 168,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 169,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 170,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 171,
+          "count": null,
+          "text": "pub struct Resource3dSnapshot {"
+        },
+        {
+          "line": 172,
+          "count": null,
+          "text": "pub identity: Control3dId,"
+        },
+        {
+          "line": 173,
+          "count": null,
+          "text": "pub metadata: Resource3dMetadata,"
+        },
+        {
+          "line": 174,
+          "count": null,
+          "text": "pub backing: Option<Vec<BackingEntry>>,"
+        },
+        {
+          "line": 175,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 176,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 177,
+          "count": null,
+          "text": "/// Transport diagnostics only. Retired renderer leases remain renderer-owned."
+        },
+        {
+          "line": 178,
+          "count": null,
+          "text": "#[derive(Debug, Clone, PartialEq, Eq)]"
+        },
+        {
+          "line": 179,
+          "count": null,
+          "text": "pub struct Control3dSnapshot {"
+        },
+        {
+          "line": 180,
+          "count": null,
+          "text": "pub epoch: u64,"
+        },
+        {
+          "line": 181,
+          "count": null,
+          "text": "pub next_generation: u64,"
+        },
+        {
+          "line": 182,
+          "count": null,
+          "text": "pub poisoned: bool,"
+        },
+        {
+          "line": 183,
+          "count": null,
+          "text": "pub contexts: Vec<Context3dSnapshot>,"
+        },
+        {
+          "line": 184,
+          "count": null,
+          "text": "pub resources: Vec<Resource3dSnapshot>,"
+        },
+        {
+          "line": 185,
+          "count": null,
+          "text": "pub logical_bytes: u64,"
+        },
+        {
+          "line": 186,
+          "count": null,
+          "text": "pub gpu_bytes: u64,"
+        },
+        {
+          "line": 187,
+          "count": null,
+          "text": "pub backing_bytes: u64,"
+        },
+        {
+          "line": 188,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 189,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 190,
+          "count": null,
+          "text": "impl Control3dSnapshot {"
+        },
+        {
+          "line": 191,
+          "count": null,
+          "text": "/// Versioned little-endian diagnostic encoding, independent of host layout."
+        },
+        {
+          "line": 192,
+          "count": 534,
+          "text": "pub fn canonical_bytes(&self) -> Vec<u8> {"
+        },
+        {
+          "line": 193,
+          "count": 1416,
+          "text": "fn id(out: &mut Vec<u8>, value: Control3dId) {"
+        },
+        {
+          "line": 194,
+          "count": 1416,
+          "text": "out.extend_from_slice(&value.id.to_le_bytes());"
+        },
+        {
+          "line": 195,
+          "count": 1416,
+          "text": "out.extend_from_slice(&value.generation.to_le_bytes());"
+        },
+        {
+          "line": 196,
+          "count": 1416,
+          "text": "}"
+        },
+        {
+          "line": 197,
+          "count": 534,
+          "text": "let mut out = Vec::new();"
+        },
+        {
+          "line": 198,
+          "count": 534,
+          "text": "out.extend_from_slice(b\"WV3DCTL1\");"
+        },
+        {
+          "line": 199,
+          "count": 2670,
+          "text": "for value in ["
+        },
+        {
+          "line": 200,
+          "count": 534,
+          "text": "self.epoch,"
+        },
+        {
+          "line": 201,
+          "count": 534,
+          "text": "self.next_generation,"
+        },
+        {
+          "line": 202,
+          "count": 534,
+          "text": "self.logical_bytes,"
+        },
+        {
+          "line": 203,
+          "count": 534,
+          "text": "self.gpu_bytes,"
+        },
+        {
+          "line": 204,
+          "count": 534,
+          "text": "self.backing_bytes,"
+        },
+        {
+          "line": 205,
+          "count": 2670,
+          "text": "] {"
+        },
+        {
+          "line": 206,
+          "count": 2670,
+          "text": "out.extend_from_slice(&value.to_le_bytes());"
+        },
+        {
+          "line": 207,
+          "count": 2670,
+          "text": "}"
+        },
+        {
+          "line": 208,
+          "count": 534,
+          "text": "out.push(u8::from(self.poisoned));"
+        },
+        {
+          "line": 209,
+          "count": 534,
+          "text": "out.extend_from_slice(&(self.contexts.len() as u32).to_le_bytes());"
+        },
+        {
+          "line": 210,
+          "count": 534,
+          "text": "for context in &self.contexts {"
+        },
+        {
+          "line": 211,
+          "count": 390,
+          "text": "id(&mut out, context.identity);"
+        },
+        {
+          "line": 212,
+          "count": 390,
+          "text": "out.extend_from_slice(&(context.debug_name.len() as u32).to_le_bytes());"
+        },
+        {
+          "line": 213,
+          "count": 390,
+          "text": "out.extend_from_slice(&context.debug_name);"
+        },
+        {
+          "line": 214,
+          "count": 390,
+          "text": "out.extend_from_slice(&(context.resources.len() as u32).to_le_bytes());"
+        },
+        {
+          "line": 215,
+          "count": 390,
+          "text": "for resource in &context.resources {"
+        },
+        {
+          "line": 216,
+          "count": 132,
+          "text": "id(&mut out, *resource);"
+        },
+        {
+          "line": 217,
+          "count": 132,
+          "text": "}"
+        },
+        {
+          "line": 218,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 219,
+          "count": 534,
+          "text": "out.extend_from_slice(&(self.resources.len() as u32).to_le_bytes());"
+        },
+        {
+          "line": 220,
+          "count": 894,
+          "text": "for resource in &self.resources {"
+        },
+        {
+          "line": 221,
+          "count": 894,
+          "text": "id(&mut out, resource.identity);"
+        },
+        {
+          "line": 222,
+          "count": 894,
+          "text": "let m = resource.metadata;"
+        },
+        {
+          "line": 223,
+          "count": 9834,
+          "text": "for value in ["
+        },
+        {
+          "line": 224,
+          "count": 894,
+          "text": "m.resource_id,"
+        },
+        {
+          "line": 225,
+          "count": 894,
+          "text": "m.target,"
+        },
+        {
+          "line": 226,
+          "count": 894,
+          "text": "m.format,"
+        },
+        {
+          "line": 227,
+          "count": 894,
+          "text": "m.bind,"
+        },
+        {
+          "line": 228,
+          "count": 894,
+          "text": "m.width,"
+        },
+        {
+          "line": 229,
+          "count": 894,
+          "text": "m.height,"
+        },
+        {
+          "line": 230,
+          "count": 894,
+          "text": "m.depth,"
+        },
+        {
+          "line": 231,
+          "count": 894,
+          "text": "m.array_size,"
+        },
+        {
+          "line": 232,
+          "count": 894,
+          "text": "m.last_level,"
+        },
+        {
+          "line": 233,
+          "count": 894,
+          "text": "m.nr_samples,"
+        },
+        {
+          "line": 234,
+          "count": 894,
+          "text": "m.flags,"
+        },
+        {
+          "line": 235,
+          "count": 9834,
+          "text": "] {"
+        },
+        {
+          "line": 236,
+          "count": 9834,
+          "text": "out.extend_from_slice(&value.to_le_bytes());"
+        },
+        {
+          "line": 237,
+          "count": 9834,
+          "text": "}"
+        },
+        {
+          "line": 238,
+          "count": 894,
+          "text": "out.push(u8::from(resource.backing.is_some()));"
+        },
+        {
+          "line": 239,
+          "count": 894,
+          "text": "if let Some(entries) = &resource.backing {"
+        },
+        {
+          "line": 240,
+          "count": 42,
+          "text": "out.extend_from_slice(&(entries.len() as u32).to_le_bytes());"
+        },
+        {
+          "line": 241,
+          "count": 68,
+          "text": "for entry in entries {"
+        },
+        {
+          "line": 242,
+          "count": 68,
+          "text": "out.extend_from_slice(&entry.addr.to_le_bytes());"
+        },
+        {
+          "line": 243,
+          "count": 68,
+          "text": "out.extend_from_slice(&entry.length.to_le_bytes());"
+        },
+        {
+          "line": 244,
+          "count": 68,
+          "text": "}"
+        },
+        {
+          "line": 245,
+          "count": 852,
+          "text": "}"
+        },
+        {
+          "line": 246,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 247,
+          "count": 534,
+          "text": "out"
+        },
+        {
+          "line": 248,
+          "count": 534,
+          "text": "}"
+        },
+        {
+          "line": 249,
+          "count": 165,
+          "text": "pub fn hex_digest(&self) -> String {"
+        },
+        {
+          "line": 250,
+          "count": null,
+          "text": "use core::fmt::Write;"
+        },
+        {
+          "line": 251,
+          "count": 165,
+          "text": "let mut out = String::with_capacity(64);"
+        },
+        {
+          "line": 252,
+          "count": 5280,
+          "text": "for byte in Sha256::digest(self.canonical_bytes()) {"
+        },
+        {
+          "line": 253,
+          "count": 5280,
+          "text": "let _ = write!(&mut out, \"{byte:02x}\");"
+        },
+        {
+          "line": 254,
+          "count": 5280,
+          "text": "}"
+        },
+        {
+          "line": 255,
+          "count": 165,
+          "text": "out"
+        },
+        {
+          "line": 256,
+          "count": 165,
+          "text": "}"
+        },
+        {
+          "line": 257,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 258,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 259,
+          "count": null,
+          "text": "pub(crate) struct Control3dState {"
+        },
+        {
+          "line": 260,
+          "count": null,
+          "text": "sink: Box<dyn Control3dSink>,"
+        },
+        {
+          "line": 261,
+          "count": null,
+          "text": "epoch: u64,"
+        },
+        {
+          "line": 262,
+          "count": null,
+          "text": "next_generation: u64,"
+        },
+        {
+          "line": 263,
+          "count": null,
+          "text": "poisoned: bool,"
+        },
+        {
+          "line": 264,
+          "count": null,
+          "text": "contexts: Vec<Context3dSnapshot>,"
+        },
+        {
+          "line": 265,
+          "count": null,
+          "text": "resources: Vec<Resource3dSnapshot>,"
+        },
+        {
+          "line": 266,
+          "count": null,
+          "text": "logical_bytes: u64,"
+        },
+        {
+          "line": 267,
+          "count": null,
+          "text": "gpu_bytes: u64,"
+        },
+        {
+          "line": 268,
+          "count": null,
+          "text": "backing_bytes: u64,"
+        },
+        {
+          "line": 269,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 270,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 271,
+          "count": null,
+          "text": "impl Control3dState {"
+        },
+        {
+          "line": 272,
+          "count": 55,
+          "text": "pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {"
+        },
+        {
+          "line": 273,
+          "count": 55,
+          "text": "Self {"
+        },
+        {
+          "line": 274,
+          "count": 55,
+          "text": "sink,"
+        },
+        {
+          "line": 275,
+          "count": 55,
+          "text": "epoch: 1,"
+        },
+        {
+          "line": 276,
+          "count": 55,
+          "text": "next_generation: 1,"
+        },
+        {
+          "line": 277,
+          "count": 55,
+          "text": "poisoned: false,"
+        },
+        {
+          "line": 278,
+          "count": 55,
+          "text": "contexts: Vec::new(),"
+        },
+        {
+          "line": 279,
+          "count": 55,
+          "text": "resources: Vec::new(),"
+        },
+        {
+          "line": 280,
+          "count": 55,
+          "text": "logical_bytes: 0,"
+        },
+        {
+          "line": 281,
+          "count": 55,
+          "text": "gpu_bytes: 0,"
+        },
+        {
+          "line": 282,
+          "count": 55,
+          "text": "backing_bytes: 0,"
+        },
+        {
+          "line": 283,
+          "count": 55,
+          "text": "}"
+        },
+        {
+          "line": 284,
+          "count": 55,
+          "text": "}"
+        },
+        {
+          "line": 285,
+          "count": 142,
+          "text": "pub(crate) fn contains(&self, id: u32) -> bool {"
+        },
+        {
+          "line": 286,
+          "count": 297,
+          "text": "self.resources.iter().any(|r| r.identity.id == id)"
+        },
+        {
+          "line": 287,
+          "count": 142,
+          "text": "}"
+        },
+        {
+          "line": 288,
+          "count": 395,
+          "text": "pub(crate) fn snapshot(&self) -> Control3dSnapshot {"
+        },
+        {
+          "line": 289,
+          "count": 395,
+          "text": "let mut contexts = self.contexts.clone();"
+        },
+        {
+          "line": 290,
+          "count": 395,
+          "text": "contexts.sort_by_key(|c| c.identity.id);"
+        },
+        {
+          "line": 291,
+          "count": 395,
+          "text": "for c in &mut contexts {"
+        },
+        {
+          "line": 292,
+          "count": 251,
+          "text": "c.resources.sort_by_key(|r| r.id);"
+        },
+        {
+          "line": 293,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 294,
+          "count": 395,
+          "text": "let mut resources = self.resources.clone();"
+        },
+        {
+          "line": 295,
+          "count": 395,
+          "text": "resources.sort_by_key(|r| r.identity.id);"
+        },
+        {
+          "line": 296,
+          "count": 395,
+          "text": "Control3dSnapshot {"
+        },
+        {
+          "line": 297,
+          "count": 395,
+          "text": "epoch: self.epoch,"
+        },
+        {
+          "line": 298,
+          "count": 395,
+          "text": "next_generation: self.next_generation,"
+        },
+        {
+          "line": 299,
+          "count": 395,
+          "text": "poisoned: self.poisoned,"
+        },
+        {
+          "line": 300,
+          "count": 395,
+          "text": "contexts,"
+        },
+        {
+          "line": 301,
+          "count": 395,
+          "text": "resources,"
+        },
+        {
+          "line": 302,
+          "count": 395,
+          "text": "logical_bytes: self.logical_bytes,"
+        },
+        {
+          "line": 303,
+          "count": 395,
+          "text": "gpu_bytes: self.gpu_bytes,"
+        },
+        {
+          "line": 304,
+          "count": 395,
+          "text": "backing_bytes: self.backing_bytes,"
+        },
+        {
+          "line": 305,
+          "count": 395,
+          "text": "}"
+        },
+        {
+          "line": 306,
+          "count": 395,
+          "text": "}"
+        },
+        {
+          "line": 307,
+          "count": 185,
+          "text": "fn send(&mut self, operation: Control3dOperation) -> Result<(), Control3dError> {"
+        },
+        {
+          "line": 308,
+          "count": 185,
+          "text": "let result = self.sink.apply(&Control3dEvent {"
+        },
+        {
+          "line": 309,
+          "count": 185,
+          "text": "epoch: self.epoch,"
+        },
+        {
+          "line": 310,
+          "count": 185,
+          "text": "operation,"
+        },
+        {
+          "line": 311,
+          "count": 185,
+          "text": "});"
+        },
+        {
+          "line": 312,
+          "count": 185,
+          "text": "if result == Err(Control3dError::BridgePoisoned) {"
+        },
+        {
+          "line": 313,
+          "count": 1,
+          "text": "self.poisoned = true;"
+        },
+        {
+          "line": 314,
+          "count": 184,
+          "text": "}"
+        },
+        {
+          "line": 315,
+          "count": 185,
+          "text": "result"
+        },
+        {
+          "line": 316,
+          "count": 185,
+          "text": "}"
+        },
+        {
+          "line": 317,
+          "count": 4,
+          "text": "pub(crate) fn reset(&mut self) {"
+        },
+        {
+          "line": 318,
+          "count": 4,
+          "text": "self.contexts.clear();"
+        },
+        {
+          "line": 319,
+          "count": 4,
+          "text": "self.resources.clear();"
+        },
+        {
+          "line": 320,
+          "count": 4,
+          "text": "self.logical_bytes = 0;"
+        },
+        {
+          "line": 321,
+          "count": 4,
+          "text": "self.gpu_bytes = 0;"
+        },
+        {
+          "line": 322,
+          "count": 4,
+          "text": "self.backing_bytes = 0;"
+        },
+        {
+          "line": 323,
+          "count": 4,
+          "text": "self.poisoned = true;"
+        },
+        {
+          "line": 324,
+          "count": 4,
+          "text": "if let Some(next) = self.epoch.checked_add(1) {"
+        },
+        {
+          "line": 325,
+          "count": 4,
+          "text": "self.epoch = next;"
+        },
+        {
+          "line": 326,
+          "count": 4,
+          "text": "if self.send(Control3dOperation::Reset).is_ok() {"
+        },
+        {
+          "line": 327,
+          "count": 3,
+          "text": "self.poisoned = false;"
+        },
+        {
+          "line": 328,
+          "count": 1,
+          "text": "}"
+        },
+        {
+          "line": 329,
+          "count": 0,
+          "text": "}"
+        },
+        {
+          "line": 330,
+          "count": 4,
+          "text": "}"
+        },
+        {
+          "line": 331,
+          "count": 116,
+          "text": "fn identity(&self, id: u32) -> Result<Control3dId, Control3dError> {"
+        },
+        {
+          "line": 332,
+          "count": 116,
+          "text": "self.next_generation"
+        },
+        {
+          "line": 333,
+          "count": 116,
+          "text": ".checked_add(1)"
+        },
+        {
+          "line": 334,
+          "count": 116,
+          "text": ".ok_or(Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 335,
+          "count": 116,
+          "text": "Ok(Control3dId {"
+        },
+        {
+          "line": 336,
+          "count": 116,
+          "text": "id,"
+        },
+        {
+          "line": 337,
+          "count": 116,
+          "text": "generation: self.next_generation,"
+        },
+        {
+          "line": 338,
+          "count": 116,
+          "text": "})"
+        },
+        {
+          "line": 339,
+          "count": 116,
+          "text": "}"
+        },
+        {
+          "line": 340,
+          "count": 33,
+          "text": "fn context_index(&self, id: u32) -> Result<usize, Control3dError> {"
+        },
+        {
+          "line": 341,
+          "count": 33,
+          "text": "self.contexts"
+        },
+        {
+          "line": 342,
+          "count": 33,
+          "text": ".iter()"
+        },
+        {
+          "line": 343,
+          "count": 41,
+          "text": ".position(|c| c.identity.id == id)"
+        },
+        {
+          "line": 344,
+          "count": 33,
+          "text": ".ok_or(Control3dError::InvalidContextId)"
+        },
+        {
+          "line": 345,
+          "count": 33,
+          "text": "}"
+        },
+        {
+          "line": 346,
+          "count": 81,
+          "text": "fn resource_index(&self, id: u32) -> Result<usize, Control3dError> {"
+        },
+        {
+          "line": 347,
+          "count": 81,
+          "text": "self.resources"
+        },
+        {
+          "line": 348,
+          "count": 81,
+          "text": ".iter()"
+        },
+        {
+          "line": 349,
+          "count": 125,
+          "text": ".position(|r| r.identity.id == id)"
+        },
+        {
+          "line": 350,
+          "count": 81,
+          "text": ".ok_or(Control3dError::InvalidResourceId)"
+        },
+        {
+          "line": 351,
+          "count": 81,
+          "text": "}"
+        },
+        {
+          "line": 352,
+          "count": 273,
+          "text": "pub(crate) fn execute("
+        },
+        {
+          "line": 353,
+          "count": 273,
+          "text": "&mut self,"
+        },
+        {
+          "line": 354,
+          "count": 273,
+          "text": "chain: &DescriptorChain,"
+        },
+        {
+          "line": 355,
+          "count": 273,
+          "text": "bus: &mut SystemBus,"
+        },
+        {
+          "line": 356,
+          "count": 273,
+          "text": "header: p::CtrlHeader,"
+        },
+        {
+          "line": 357,
+          "count": 273,
+          "text": "negotiated: bool,"
+        },
+        {
+          "line": 358,
+          "count": 273,
+          "text": "two_d: &ResourceMap,"
+        },
+        {
+          "line": 359,
+          "count": 273,
+          "text": ") -> Result<(), Control3dError> {"
+        },
+        {
+          "line": 360,
+          "count": null,
+          "text": "// Queue validation covers every span, but the new mutation boundary also requires"
+        },
+        {
+          "line": 361,
+          "count": null,
+          "text": "// a complete response header. Existing 2D truncated-response behavior is unchanged."
+        },
+        {
+          "line": 362,
+          "count": 273,
+          "text": "if chain.writable_len() < p::CTRL_HDR_SIZE as u64"
+        },
+        {
+          "line": 363,
+          "count": 250,
+          "text": "|| chain"
+        },
+        {
+          "line": 364,
+          "count": 250,
+          "text": ".writable()"
+        },
+        {
+          "line": 365,
+          "count": 343,
+          "text": ".any(|s| !bus.ram().ram_contains(s.addr, u64::from(s.len)))"
+        },
+        {
+          "line": 366,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 367,
+          "count": 23,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 368,
+          "count": 250,
+          "text": "}"
+        },
+        {
+          "line": 369,
+          "count": 250,
+          "text": "if !negotiated {"
+        },
+        {
+          "line": 370,
+          "count": 1,
+          "text": "return Err(Control3dError::Unspecified);"
+        },
+        {
+          "line": 371,
+          "count": 249,
+          "text": "}"
+        },
+        {
+          "line": 372,
+          "count": 249,
+          "text": "if self.poisoned {"
+        },
+        {
+          "line": 373,
+          "count": 1,
+          "text": "return Err(Control3dError::BridgePoisoned);"
+        },
+        {
+          "line": 374,
+          "count": 248,
+          "text": "}"
+        },
+        {
+          "line": 375,
+          "count": 248,
+          "text": "if header.flags != 0 || header.ring_idx != 0 || header.padding != [0; 3] {"
+        },
+        {
+          "line": 376,
+          "count": 3,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 377,
+          "count": 245,
+          "text": "}"
+        },
+        {
+          "line": 378,
+          "count": 245,
+          "text": "let context_command = matches!("
+        },
+        {
+          "line": 379,
+          "count": 245,
+          "text": "header.ty,"
+        },
+        {
+          "line": 380,
+          "count": null,
+          "text": "p::CMD_CTX_CREATE"
+        },
+        {
+          "line": 381,
+          "count": null,
+          "text": "| p::CMD_CTX_DESTROY"
+        },
+        {
+          "line": 382,
+          "count": null,
+          "text": "| p::CMD_CTX_ATTACH_RESOURCE"
+        },
+        {
+          "line": 383,
+          "count": null,
+          "text": "| p::CMD_CTX_DETACH_RESOURCE"
+        },
+        {
+          "line": 384,
+          "count": null,
+          "text": ");"
+        },
+        {
+          "line": 385,
+          "count": 245,
+          "text": "if context_command && header.ctx_id == 0 {"
+        },
+        {
+          "line": 386,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidContextId);"
+        },
+        {
+          "line": 387,
+          "count": 244,
+          "text": "}"
+        },
+        {
+          "line": 388,
+          "count": 244,
+          "text": "if !context_command && header.ctx_id != 0 {"
+        },
+        {
+          "line": 389,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 390,
+          "count": 243,
+          "text": "}"
+        },
+        {
+          "line": 391,
+          "count": 243,
+          "text": "match header.ty {"
+        },
+        {
+          "line": 392,
+          "count": null,
+          "text": "p::CMD_CTX_CREATE => {"
+        },
+        {
+          "line": 393,
+          "count": 60,
+          "text": "let bytes = fixed::<{ p::CTX_CREATE_SIZE }>(chain, bus)?;"
+        },
+        {
+          "line": 394,
+          "count": 55,
+          "text": "let len = word(&bytes, 24) as usize;"
+        },
+        {
+          "line": 395,
+          "count": 55,
+          "text": "if len > 64 || word(&bytes, 28) != 0 {"
+        },
+        {
+          "line": 396,
+          "count": 2,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 397,
+          "count": 53,
+          "text": "}"
+        },
+        {
+          "line": 398,
+          "count": 53,
+          "text": "if self.contexts.iter().any(|c| c.identity.id == header.ctx_id) {"
+        },
+        {
+          "line": 399,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidContextId);"
+        },
+        {
+          "line": 400,
+          "count": 52,
+          "text": "}"
+        },
+        {
+          "line": 401,
+          "count": 52,
+          "text": "if self.contexts.len() >= MAX_CONTEXTS {"
+        },
+        {
+          "line": 402,
+          "count": 1,
+          "text": "return Err(Control3dError::OutOfMemory);"
+        },
+        {
+          "line": 403,
+          "count": 51,
+          "text": "}"
+        },
+        {
+          "line": 404,
+          "count": 51,
+          "text": "self.contexts"
+        },
+        {
+          "line": 405,
+          "count": 51,
+          "text": ".try_reserve(1)"
+        },
+        {
+          "line": 406,
+          "count": 51,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 407,
+          "count": 51,
+          "text": "let context = self.identity(header.ctx_id)?;"
+        },
+        {
+          "line": 408,
+          "count": 51,
+          "text": "let mut debug_name = Vec::new();"
+        },
+        {
+          "line": 409,
+          "count": 51,
+          "text": "debug_name"
+        },
+        {
+          "line": 410,
+          "count": 51,
+          "text": ".try_reserve_exact(len)"
+        },
+        {
+          "line": 411,
+          "count": 51,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 412,
+          "count": 51,
+          "text": "debug_name.extend_from_slice(&bytes[32..32 + len]);"
+        },
+        {
+          "line": 413,
+          "count": null,
+          "text": "// Allocate both copies before asking the host to create anything."
+        },
+        {
+          "line": 414,
+          "count": 51,
+          "text": "let mut name_for_host = Vec::new();"
+        },
+        {
+          "line": 415,
+          "count": 51,
+          "text": "name_for_host"
+        },
+        {
+          "line": 416,
+          "count": 51,
+          "text": ".try_reserve_exact(len)"
+        },
+        {
+          "line": 417,
+          "count": 51,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 418,
+          "count": 51,
+          "text": "name_for_host.extend_from_slice(&debug_name);"
+        },
+        {
+          "line": 419,
+          "count": 51,
+          "text": "self.send(Control3dOperation::CreateContext {"
+        },
+        {
+          "line": 420,
+          "count": 51,
+          "text": "context,"
+        },
+        {
+          "line": 421,
+          "count": 51,
+          "text": "debug_name: name_for_host,"
+        },
+        {
+          "line": 422,
+          "count": 51,
+          "text": "})?;"
+        },
+        {
+          "line": 423,
+          "count": 50,
+          "text": "self.contexts.push(Context3dSnapshot {"
+        },
+        {
+          "line": 424,
+          "count": 50,
+          "text": "identity: context,"
+        },
+        {
+          "line": 425,
+          "count": 50,
+          "text": "debug_name,"
+        },
+        {
+          "line": 426,
+          "count": 50,
+          "text": "resources: Vec::new(),"
+        },
+        {
+          "line": 427,
+          "count": 50,
+          "text": "});"
+        },
+        {
+          "line": 428,
+          "count": 50,
+          "text": "self.next_generation += 1;"
+        },
+        {
+          "line": 429,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 430,
+          "count": null,
+          "text": "p::CMD_CTX_DESTROY => {"
+        },
+        {
+          "line": 431,
+          "count": 7,
+          "text": "fixed::<{ p::CTX_DESTROY_SIZE }>(chain, bus)?;"
+        },
+        {
+          "line": 432,
+          "count": 6,
+          "text": "let index = self.context_index(header.ctx_id)?;"
+        },
+        {
+          "line": 433,
+          "count": 5,
+          "text": "self.send(Control3dOperation::DestroyContext {"
+        },
+        {
+          "line": 434,
+          "count": 5,
+          "text": "context: self.contexts[index].identity,"
+        },
+        {
+          "line": 435,
+          "count": 5,
+          "text": "})?;"
+        },
+        {
+          "line": 436,
+          "count": 4,
+          "text": "self.contexts.remove(index);"
+        },
+        {
+          "line": 437,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 438,
+          "count": null,
+          "text": "p::CMD_CTX_ATTACH_RESOURCE | p::CMD_CTX_DETACH_RESOURCE => {"
+        },
+        {
+          "line": 439,
+          "count": 30,
+          "text": "let bytes = fixed::<{ p::CTX_RESOURCE_SIZE }>(chain, bus)?;"
+        },
+        {
+          "line": 440,
+          "count": 29,
+          "text": "if word(&bytes, 28) != 0 {"
+        },
+        {
+          "line": 441,
+          "count": 2,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 442,
+          "count": 27,
+          "text": "}"
+        },
+        {
+          "line": 443,
+          "count": 27,
+          "text": "let ci = self.context_index(header.ctx_id)?;"
+        },
+        {
+          "line": 444,
+          "count": 26,
+          "text": "let ri = self.resource_index(word(&bytes, 24))?;"
+        },
+        {
+          "line": 445,
+          "count": 25,
+          "text": "let context = self.contexts[ci].identity;"
+        },
+        {
+          "line": 446,
+          "count": 25,
+          "text": "let resource = self.resources[ri].identity;"
+        },
+        {
+          "line": 447,
+          "count": 25,
+          "text": "let attached = self.contexts[ci]"
+        },
+        {
+          "line": 448,
+          "count": 25,
+          "text": ".resources"
+        },
+        {
+          "line": 449,
+          "count": 25,
+          "text": ".iter()"
+        },
+        {
+          "line": 450,
+          "count": 25,
+          "text": ".position(|r| *r == resource);"
+        },
+        {
+          "line": 451,
+          "count": 25,
+          "text": "if header.ty == p::CMD_CTX_ATTACH_RESOURCE {"
+        },
+        {
+          "line": 452,
+          "count": 19,
+          "text": "if attached.is_some() {"
+        },
+        {
+          "line": 453,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 454,
+          "count": 18,
+          "text": "}"
+        },
+        {
+          "line": 455,
+          "count": 18,
+          "text": "self.contexts[ci]"
+        },
+        {
+          "line": 456,
+          "count": 18,
+          "text": ".resources"
+        },
+        {
+          "line": 457,
+          "count": 18,
+          "text": ".try_reserve(1)"
+        },
+        {
+          "line": 458,
+          "count": 18,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 459,
+          "count": 18,
+          "text": "self.send(Control3dOperation::AttachResource { context, resource })?;"
+        },
+        {
+          "line": 460,
+          "count": 17,
+          "text": "self.contexts[ci].resources.push(resource);"
+        },
+        {
+          "line": 461,
+          "count": null,
+          "text": "} else {"
+        },
+        {
+          "line": 462,
+          "count": 6,
+          "text": "let index = attached.ok_or(Control3dError::InvalidParameter)?;"
+        },
+        {
+          "line": 463,
+          "count": 3,
+          "text": "self.send(Control3dOperation::DetachResource { context, resource })?;"
+        },
+        {
+          "line": 464,
+          "count": 2,
+          "text": "self.contexts[ci].resources.remove(index);"
+        },
+        {
+          "line": 465,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 466,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 467,
+          "count": null,
+          "text": "p::CMD_RESOURCE_CREATE_3D => {"
+        },
+        {
+          "line": 468,
+          "count": 87,
+          "text": "let bytes = fixed::<{ p::RESOURCE_CREATE_3D_SIZE }>(chain, bus)?;"
+        },
+        {
+          "line": 469,
+          "count": 82,
+          "text": "if word(&bytes, 68) != 0 {"
+        },
+        {
+          "line": 470,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 471,
+          "count": 81,
+          "text": "}"
+        },
+        {
+          "line": 472,
+          "count": 81,
+          "text": "let metadata = Resource3dMetadata {"
+        },
+        {
+          "line": 473,
+          "count": 81,
+          "text": "resource_id: word(&bytes, 24),"
+        },
+        {
+          "line": 474,
+          "count": 81,
+          "text": "target: word(&bytes, 28),"
+        },
+        {
+          "line": 475,
+          "count": 81,
+          "text": "format: word(&bytes, 32),"
+        },
+        {
+          "line": 476,
+          "count": 81,
+          "text": "bind: word(&bytes, 36),"
+        },
+        {
+          "line": 477,
+          "count": 81,
+          "text": "width: word(&bytes, 40),"
+        },
+        {
+          "line": 478,
+          "count": 81,
+          "text": "height: word(&bytes, 44),"
+        },
+        {
+          "line": 479,
+          "count": 81,
+          "text": "depth: word(&bytes, 48),"
+        },
+        {
+          "line": 480,
+          "count": 81,
+          "text": "array_size: word(&bytes, 52),"
+        },
+        {
+          "line": 481,
+          "count": 81,
+          "text": "last_level: word(&bytes, 56),"
+        },
+        {
+          "line": 482,
+          "count": 81,
+          "text": "nr_samples: word(&bytes, 60),"
+        },
+        {
+          "line": 483,
+          "count": 81,
+          "text": "flags: word(&bytes, 64),"
+        },
+        {
+          "line": 484,
+          "count": 81,
+          "text": "};"
+        },
+        {
+          "line": 485,
+          "count": 81,
+          "text": "if metadata.resource_id == 0"
+        },
+        {
+          "line": 486,
+          "count": 80,
+          "text": "|| self.contains(metadata.resource_id)"
+        },
+        {
+          "line": 487,
+          "count": 79,
+          "text": "|| two_d.get(metadata.resource_id).is_some()"
+        },
+        {
+          "line": 488,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 489,
+          "count": 3,
+          "text": "return Err(Control3dError::InvalidResourceId);"
+        },
+        {
+          "line": 490,
+          "count": 78,
+          "text": "}"
+        },
+        {
+          "line": 491,
+          "count": 78,
+          "text": "let (logical, gpu) = metadata.sizes()?;"
+        },
+        {
+          "line": 492,
+          "count": 67,
+          "text": "if self.resources.len() >= MAX_RESOURCES || gpu > MAX_GPU_BYTES - self.gpu_bytes {"
+        },
+        {
+          "line": 493,
+          "count": 2,
+          "text": "return Err(Control3dError::OutOfMemory);"
+        },
+        {
+          "line": 494,
+          "count": 65,
+          "text": "}"
+        },
+        {
+          "line": 495,
+          "count": 65,
+          "text": "self.resources"
+        },
+        {
+          "line": 496,
+          "count": 65,
+          "text": ".try_reserve(1)"
+        },
+        {
+          "line": 497,
+          "count": 65,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 498,
+          "count": 65,
+          "text": "let resource = self.identity(metadata.resource_id)?;"
+        },
+        {
+          "line": 499,
+          "count": 65,
+          "text": "self.send(Control3dOperation::CreateResource { resource, metadata })?;"
+        },
+        {
+          "line": 500,
+          "count": 57,
+          "text": "self.resources.push(Resource3dSnapshot {"
+        },
+        {
+          "line": 501,
+          "count": 57,
+          "text": "identity: resource,"
+        },
+        {
+          "line": 502,
+          "count": 57,
+          "text": "metadata,"
+        },
+        {
+          "line": 503,
+          "count": 57,
+          "text": "backing: None,"
+        },
+        {
+          "line": 504,
+          "count": 57,
+          "text": "});"
+        },
+        {
+          "line": 505,
+          "count": 57,
+          "text": "self.next_generation += 1;"
+        },
+        {
+          "line": 506,
+          "count": 57,
+          "text": "self.logical_bytes += logical;"
+        },
+        {
+          "line": 507,
+          "count": 57,
+          "text": "self.gpu_bytes += gpu;"
+        },
+        {
+          "line": 508,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 509,
+          "count": 37,
+          "text": "p::CMD_RESOURCE_ATTACH_BACKING => self.attach_backing(chain, bus)?,"
+        },
+        {
+          "line": 510,
+          "count": null,
+          "text": "p::CMD_RESOURCE_DETACH_BACKING | p::CMD_RESOURCE_UNREF => {"
+        },
+        {
+          "line": 511,
+          "count": 22,
+          "text": "let bytes = fixed::<32>(chain, bus)?;"
+        },
+        {
+          "line": 512,
+          "count": 21,
+          "text": "if word(&bytes, 28) != 0 {"
+        },
+        {
+          "line": 513,
+          "count": 2,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 514,
+          "count": 19,
+          "text": "}"
+        },
+        {
+          "line": 515,
+          "count": 19,
+          "text": "let index = self.resource_index(word(&bytes, 24))?;"
+        },
+        {
+          "line": 516,
+          "count": 19,
+          "text": "let resource = self.resources[index].identity;"
+        },
+        {
+          "line": 517,
+          "count": 19,
+          "text": "let backing_bytes = self.resources[index].backing.as_ref().map_or(0, |entries| {"
+        },
+        {
+          "line": 518,
+          "count": 21,
+          "text": "entries.iter().map(|e| u64::from(e.length)).sum()"
+        },
+        {
+          "line": 519,
+          "count": 11,
+          "text": "});"
+        },
+        {
+          "line": 520,
+          "count": 19,
+          "text": "if header.ty == p::CMD_RESOURCE_DETACH_BACKING {"
+        },
+        {
+          "line": 521,
+          "count": 9,
+          "text": "if self.resources[index].backing.is_none() {"
+        },
+        {
+          "line": 522,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 523,
+          "count": 8,
+          "text": "}"
+        },
+        {
+          "line": 524,
+          "count": 8,
+          "text": "self.send(Control3dOperation::DetachBacking { resource })?;"
+        },
+        {
+          "line": 525,
+          "count": 7,
+          "text": "self.resources[index].backing = None;"
+        },
+        {
+          "line": 526,
+          "count": null,
+          "text": "} else {"
+        },
+        {
+          "line": 527,
+          "count": 10,
+          "text": "let (logical, gpu) = self.resources[index].metadata.sizes()?;"
+        },
+        {
+          "line": 528,
+          "count": 10,
+          "text": "self.send(Control3dOperation::UnrefResource { resource })?;"
+        },
+        {
+          "line": 529,
+          "count": 9,
+          "text": "self.resources.remove(index);"
+        },
+        {
+          "line": 530,
+          "count": 9,
+          "text": "for context in &mut self.contexts {"
+        },
+        {
+          "line": 531,
+          "count": 7,
+          "text": "context.resources.retain(|r| *r != resource);"
+        },
+        {
+          "line": 532,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 533,
+          "count": 9,
+          "text": "self.logical_bytes -= logical;"
+        },
+        {
+          "line": 534,
+          "count": 9,
+          "text": "self.gpu_bytes -= gpu;"
+        },
+        {
+          "line": 535,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 536,
+          "count": 16,
+          "text": "self.backing_bytes -= backing_bytes;"
+        },
+        {
+          "line": 537,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 538,
+          "count": 0,
+          "text": "_ => return Err(Control3dError::Unspecified),"
+        },
+        {
+          "line": 539,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 540,
+          "count": 166,
+          "text": "Ok(())"
+        },
+        {
+          "line": 541,
+          "count": 273,
+          "text": "}"
+        },
+        {
+          "line": 542,
+          "count": 37,
+          "text": "fn attach_backing("
+        },
+        {
+          "line": 543,
+          "count": 37,
+          "text": "&mut self,"
+        },
+        {
+          "line": 544,
+          "count": 37,
+          "text": "chain: &DescriptorChain,"
+        },
+        {
+          "line": 545,
+          "count": 37,
+          "text": "bus: &mut SystemBus,"
+        },
+        {
+          "line": 546,
+          "count": 37,
+          "text": ") -> Result<(), Control3dError> {"
+        },
+        {
+          "line": 547,
+          "count": 36,
+          "text": "let bytes ="
+        },
+        {
+          "line": 548,
+          "count": 37,
+          "text": "read_readable_at::<32>(chain, bus, 0).ok_or(Control3dError::InvalidParameter)?;"
+        },
+        {
+          "line": 549,
+          "count": 36,
+          "text": "let index = self.resource_index(word(&bytes, 24))?;"
+        },
+        {
+          "line": 550,
+          "count": 36,
+          "text": "if self.resources[index].backing.is_some() {"
+        },
+        {
+          "line": 551,
+          "count": 1,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 552,
+          "count": 35,
+          "text": "}"
+        },
+        {
+          "line": 553,
+          "count": 35,
+          "text": "let count = word(&bytes, 28) as usize;"
+        },
+        {
+          "line": 554,
+          "count": 35,
+          "text": "if count == 0"
+        },
+        {
+          "line": 555,
+          "count": 34,
+          "text": "|| count > MAX_BACKING_ENTRIES"
+        },
+        {
+          "line": 556,
+          "count": 33,
+          "text": "|| readable_len(chain) != Some(32 + count as u64 * 16)"
+        },
+        {
+          "line": 557,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 558,
+          "count": 3,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 559,
+          "count": 32,
+          "text": "}"
+        },
+        {
+          "line": 560,
+          "count": 32,
+          "text": "let mut entries = Vec::new();"
+        },
+        {
+          "line": 561,
+          "count": 32,
+          "text": "entries"
+        },
+        {
+          "line": 562,
+          "count": 32,
+          "text": ".try_reserve_exact(count)"
+        },
+        {
+          "line": 563,
+          "count": 32,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 564,
+          "count": 32,
+          "text": "let mut total = 0u64;"
+        },
+        {
+          "line": 565,
+          "count": 48,
+          "text": "for i in 0..count {"
+        },
+        {
+          "line": 566,
+          "count": 48,
+          "text": "let bytes = read_readable_at::<16>(chain, bus, 32 + i as u64 * 16)"
+        },
+        {
+          "line": 567,
+          "count": 48,
+          "text": ".ok_or(Control3dError::InvalidParameter)?;"
+        },
+        {
+          "line": 568,
+          "count": 48,
+          "text": "let addr = u64::from_le_bytes(bytes[..8].try_into().expect(\"fixed entry address\"));"
+        },
+        {
+          "line": 569,
+          "count": 48,
+          "text": "let length = word(&bytes, 8);"
+        },
+        {
+          "line": 570,
+          "count": 48,
+          "text": "if word(&bytes, 12) != 0"
+        },
+        {
+          "line": 571,
+          "count": 47,
+          "text": "|| length == 0"
+        },
+        {
+          "line": 572,
+          "count": 46,
+          "text": "|| !bus.ram().ram_contains(addr, u64::from(length))"
+        },
+        {
+          "line": 573,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 574,
+          "count": 10,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 575,
+          "count": 38,
+          "text": "}"
+        },
+        {
+          "line": 576,
+          "count": 38,
+          "text": "total += u64::from(length);"
+        },
+        {
+          "line": 577,
+          "count": 38,
+          "text": "if total > MAX_RESOURCE_BYTES || total > MAX_BACKING_BYTES - self.backing_bytes {"
+        },
+        {
+          "line": 578,
+          "count": 1,
+          "text": "return Err(Control3dError::OutOfMemory);"
+        },
+        {
+          "line": 579,
+          "count": 37,
+          "text": "}"
+        },
+        {
+          "line": 580,
+          "count": 37,
+          "text": "entries.push(BackingEntry { addr, length });"
+        },
+        {
+          "line": 581,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 582,
+          "count": null,
+          "text": "// All ranges and budgets precede data reads. The event owns its initial copy;"
+        },
+        {
+          "line": 583,
+          "count": null,
+          "text": "// only exact u64 RAM metadata is retained after synchronous completion."
+        },
+        {
+          "line": 584,
+          "count": 21,
+          "text": "let mut segments = Vec::new();"
+        },
+        {
+          "line": 585,
+          "count": 21,
+          "text": "segments"
+        },
+        {
+          "line": 586,
+          "count": 21,
+          "text": ".try_reserve_exact(count)"
+        },
+        {
+          "line": 587,
+          "count": 21,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 588,
+          "count": 31,
+          "text": "for entry in &entries {"
+        },
+        {
+          "line": 589,
+          "count": 31,
+          "text": "let mut bytes = Vec::new();"
+        },
+        {
+          "line": 590,
+          "count": 31,
+          "text": "bytes"
+        },
+        {
+          "line": 591,
+          "count": 31,
+          "text": ".try_reserve_exact(entry.length as usize)"
+        },
+        {
+          "line": 592,
+          "count": 31,
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "line": 593,
+          "count": 31,
+          "text": "bytes.resize(entry.length as usize, 0);"
+        },
+        {
+          "line": 594,
+          "count": 31,
+          "text": "bus.ram()"
+        },
+        {
+          "line": 595,
+          "count": 31,
+          "text": ".read_slice(entry.addr, &mut bytes)"
+        },
+        {
+          "line": 596,
+          "count": 31,
+          "text": ".map_err(|_| Control3dError::InvalidParameter)?;"
+        },
+        {
+          "line": 597,
+          "count": 31,
+          "text": "segments.push(BackingSegment {"
+        },
+        {
+          "line": 598,
+          "count": 31,
+          "text": "addr: entry.addr,"
+        },
+        {
+          "line": 599,
+          "count": 31,
+          "text": "length: entry.length,"
+        },
+        {
+          "line": 600,
+          "count": 31,
+          "text": "bytes,"
+        },
+        {
+          "line": 601,
+          "count": 31,
+          "text": "});"
+        },
+        {
+          "line": 602,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 603,
+          "count": 21,
+          "text": "self.send(Control3dOperation::AttachBacking {"
+        },
+        {
+          "line": 604,
+          "count": 21,
+          "text": "resource: self.resources[index].identity,"
+        },
+        {
+          "line": 605,
+          "count": 21,
+          "text": "segments,"
+        },
+        {
+          "line": 606,
+          "count": 21,
+          "text": "})?;"
+        },
+        {
+          "line": 607,
+          "count": 20,
+          "text": "self.resources[index].backing = Some(entries);"
+        },
+        {
+          "line": 608,
+          "count": 20,
+          "text": "self.backing_bytes += total;"
+        },
+        {
+          "line": 609,
+          "count": 20,
+          "text": "Ok(())"
+        },
+        {
+          "line": 610,
+          "count": 37,
+          "text": "}"
+        },
+        {
+          "line": 611,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 612,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 613,
+          "count": 1344,
+          "text": "fn word(bytes: &[u8], offset: usize) -> u32 {"
+        },
+        {
+          "line": 614,
+          "count": 1344,
+          "text": "u32::from_le_bytes("
+        },
+        {
+          "line": 615,
+          "count": 1344,
+          "text": "bytes[offset..offset + 4]"
+        },
+        {
+          "line": 616,
+          "count": 1344,
+          "text": ".try_into()"
+        },
+        {
+          "line": 617,
+          "count": 1344,
+          "text": ".expect(\"fixed protocol field\"),"
+        },
+        {
+          "line": 618,
+          "count": null,
+          "text": ")"
+        },
+        {
+          "line": 619,
+          "count": 1344,
+          "text": "}"
+        },
+        {
+          "line": 620,
+          "count": 206,
+          "text": "fn fixed<const N: usize>("
+        },
+        {
+          "line": 621,
+          "count": 206,
+          "text": "chain: &DescriptorChain,"
+        },
+        {
+          "line": 622,
+          "count": 206,
+          "text": "bus: &mut SystemBus,"
+        },
+        {
+          "line": 623,
+          "count": 206,
+          "text": ") -> Result<[u8; N], Control3dError> {"
+        },
+        {
+          "line": 624,
+          "count": 206,
+          "text": "if readable_len(chain) != Some(N as u64) {"
+        },
+        {
+          "line": 625,
+          "count": 13,
+          "text": "return Err(Control3dError::InvalidParameter);"
+        },
+        {
+          "line": 626,
+          "count": 193,
+          "text": "}"
+        },
+        {
+          "line": 627,
+          "count": 193,
+          "text": "read_readable_at::<N>(chain, bus, 0).ok_or(Control3dError::InvalidParameter)"
+        },
+        {
+          "line": 628,
+          "count": 206,
+          "text": "}"
+        }
+      ],
+      "unhitSegments": [
+        {
+          "start": [
+            329,
+            9
+          ],
+          "end": [
+            329,
+            10
+          ],
+          "text": "}"
+        },
+        {
+          "start": [
+            334,
+            48
+          ],
+          "end": [
+            334,
+            49
+          ],
+          "text": ".ok_or(Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            406,
+            62
+          ],
+          "end": [
+            406,
+            63
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            407,
+            59
+          ],
+          "end": [
+            407,
+            60
+          ],
+          "text": "let context = self.identity(header.ctx_id)?;"
+        },
+        {
+          "start": [
+            411,
+            62
+          ],
+          "end": [
+            411,
+            63
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            417,
+            62
+          ],
+          "end": [
+            417,
+            63
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            458,
+            66
+          ],
+          "end": [
+            458,
+            67
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            497,
+            62
+          ],
+          "end": [
+            497,
+            63
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            498,
+            67
+          ],
+          "end": [
+            498,
+            68
+          ],
+          "text": "let resource = self.identity(metadata.resource_id)?;"
+        },
+        {
+          "start": [
+            515,
+            66
+          ],
+          "end": [
+            515,
+            67
+          ],
+          "text": "let index = self.resource_index(word(&bytes, 24))?;"
+        },
+        {
+          "start": [
+            527,
+            80
+          ],
+          "end": [
+            527,
+            81
+          ],
+          "text": "let (logical, gpu) = self.resources[index].metadata.sizes()?;"
+        },
+        {
+          "start": [
+            538,
+            25
+          ],
+          "end": [
+            538,
+            57
+          ],
+          "text": "_ => return Err(Control3dError::Unspecified),"
+        },
+        {
+          "start": [
+            549,
+            58
+          ],
+          "end": [
+            549,
+            59
+          ],
+          "text": "let index = self.resource_index(word(&bytes, 24))?;"
+        },
+        {
+          "start": [
+            563,
+            54
+          ],
+          "end": [
+            563,
+            55
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            567,
+            57
+          ],
+          "end": [
+            567,
+            58
+          ],
+          "text": ".ok_or(Control3dError::InvalidParameter)?;"
+        },
+        {
+          "start": [
+            587,
+            54
+          ],
+          "end": [
+            587,
+            55
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            592,
+            58
+          ],
+          "end": [
+            592,
+            59
+          ],
+          "text": ".map_err(|_| Control3dError::OutOfMemory)?;"
+        },
+        {
+          "start": [
+            596,
+            63
+          ],
+          "end": [
+            596,
+            64
+          ],
+          "text": ".map_err(|_| Control3dError::InvalidParameter)?;"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "sha256": "f3fdf384d7ad1c0c7f4b19ad7af786424ef2877e2d568f49b6fe5063d244ee0a",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "functions": {
+          "count": 184,
+          "covered": 171,
+          "percent": 92.93478260869566
+        },
+        "instantiations": {
+          "count": 458,
+          "covered": 283,
+          "percent": 61.79039301310044
+        },
+        "lines": {
+          "count": 3479,
+          "covered": 3334,
+          "percent": 95.83213567116987
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 4824,
+          "covered": 4606,
+          "notcovered": 218,
+          "percent": 95.48092868988391
+        }
+      },
+      "changedLines": [
+        {
+          "line": 7,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 8,
+          "count": null,
+          "text": "pub mod control3d;"
+        },
+        {
+          "line": 295,
+          "count": null,
+          "text": "/// Offered only by the explicit proof constructor, never the default device."
+        },
+        {
+          "line": 296,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 297,
+          "count": null,
+          "text": "pub const VIRTIO_GPU_F_VIRGL: u64 = 1;"
+        },
+        {
+          "line": 319,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 320,
+          "count": null,
+          "text": "control3d: Option<control3d::Control3dState>,"
+        },
+        {
+          "line": 366,
+          "count": 122,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 367,
+          "count": 122,
+          "text": "control3d: None,"
+        },
+        {
+          "line": 547,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 548,
+          "count": 2012,
+          "text": "if let Some(control) = &mut self.control3d {"
+        },
+        {
+          "line": 549,
+          "count": 4,
+          "text": "control.reset();"
+        },
+        {
+          "line": 550,
+          "count": 2008,
+          "text": "}"
+        },
+        {
+          "line": 583,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 584,
+          "count": null,
+          "text": "/// A proof owner cannot be represented by the existing 2D snapshot codec."
+        },
+        {
+          "line": 585,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 586,
+          "count": 161,
+          "text": "pub fn control3d_proof_installed(&self) -> bool {"
+        },
+        {
+          "line": 587,
+          "count": 161,
+          "text": "self.control3d.is_some()"
+        },
+        {
+          "line": 588,
+          "count": 161,
+          "text": "}"
+        },
+        {
+          "line": 589,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 590,
+          "count": null,
+          "text": "/// Bounded copied diagnostics, separate from renderer-owned retained storage."
+        },
+        {
+          "line": 591,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 592,
+          "count": 396,
+          "text": "pub fn control3d_snapshot(&self) -> Option<control3d::Control3dSnapshot> {"
+        },
+        {
+          "line": 593,
+          "count": 396,
+          "text": "self.control3d"
+        },
+        {
+          "line": 594,
+          "count": 396,
+          "text": ".as_ref()"
+        },
+        {
+          "line": 595,
+          "count": 396,
+          "text": ".map(control3d::Control3dState::snapshot)"
+        },
+        {
+          "line": 596,
+          "count": 396,
+          "text": "}"
+        },
+        {
+          "line": 632,
+          "count": null,
+          "text": "/// Test-only negotiated control transport. Merely compiling the feature does"
+        },
+        {
+          "line": 633,
+          "count": null,
+          "text": "/// not change any existing constructor or advertise capsets."
+        },
+        {
+          "line": 634,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 635,
+          "count": 55,
+          "text": "pub fn new_with_control3d_proof_state("
+        },
+        {
+          "line": 636,
+          "count": 55,
+          "text": "frame_sink: Box<dyn FrameSink>,"
+        },
+        {
+          "line": 637,
+          "count": 55,
+          "text": "control_sink: Box<dyn control3d::Control3dSink>,"
+        },
+        {
+          "line": 638,
+          "count": 55,
+          "text": ") -> (Self, Rc<RefCell<GpuState>>) {"
+        },
+        {
+          "line": 639,
+          "count": 55,
+          "text": "let (device, state) = Self::new_with_sink_state(frame_sink);"
+        },
+        {
+          "line": 640,
+          "count": 55,
+          "text": "state.borrow_mut().control3d = Some(control3d::Control3dState::new(control_sink));"
+        },
+        {
+          "line": 641,
+          "count": 55,
+          "text": "(device, state)"
+        },
+        {
+          "line": 642,
+          "count": 55,
+          "text": "}"
+        },
+        {
+          "line": 643,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 718,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 719,
+          "count": 123,
+          "text": "if self.state.borrow().control3d_proof_installed() {"
+        },
+        {
+          "line": 720,
+          "count": 113,
+          "text": "return VIRTIO_GPU_F_EDID | VIRTIO_GPU_F_VIRGL;"
+        },
+        {
+          "line": 721,
+          "count": 10,
+          "text": "}"
+        },
+        {
+          "line": 1062,
+          "count": 11,
+          "text": "fn create_2d_resource(state: &mut GpuState, create: protocol::ResourceCreate2d) -> u32 {"
+        },
+        {
+          "line": 1063,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 1064,
+          "count": 11,
+          "text": "if state"
+        },
+        {
+          "line": 1065,
+          "count": 11,
+          "text": ".control3d"
+        },
+        {
+          "line": 1066,
+          "count": 11,
+          "text": ".as_ref()"
+        },
+        {
+          "line": 1067,
+          "count": 11,
+          "text": ".is_some_and(|control| control.contains(create.resource_id))"
+        },
+        {
+          "line": 1068,
+          "count": null,
+          "text": "{"
+        },
+        {
+          "line": 1069,
+          "count": 1,
+          "text": "return protocol::RESP_ERR_INVALID_RESOURCE_ID;"
+        },
+        {
+          "line": 1070,
+          "count": 10,
+          "text": "}"
+        },
+        {
+          "line": 1071,
+          "count": 10,
+          "text": "match state.resources.create("
+        },
+        {
+          "line": 1072,
+          "count": 10,
+          "text": "create.resource_id,"
+        },
+        {
+          "line": 1073,
+          "count": 10,
+          "text": "create.format,"
+        },
+        {
+          "line": 1074,
+          "count": 10,
+          "text": "create.width,"
+        },
+        {
+          "line": 1075,
+          "count": 10,
+          "text": "create.height,"
+        },
+        {
+          "line": 1076,
+          "count": 10,
+          "text": ") {"
+        },
+        {
+          "line": 1077,
+          "count": 9,
+          "text": "Ok(_) => protocol::RESP_OK_NODATA,"
+        },
+        {
+          "line": 1078,
+          "count": 1,
+          "text": "Err(error) => create_error_response(error),"
+        },
+        {
+          "line": 1079,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1080,
+          "count": 11,
+          "text": "}"
+        },
+        {
+          "line": 1081,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 1082,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 1083,
+          "count": 363,
+          "text": "fn is_control3d_request("
+        },
+        {
+          "line": 1084,
+          "count": 363,
+          "text": "chain: &DescriptorChain,"
+        },
+        {
+          "line": 1085,
+          "count": 363,
+          "text": "bus: &mut SystemBus,"
+        },
+        {
+          "line": 1086,
+          "count": 363,
+          "text": "state: &GpuState,"
+        },
+        {
+          "line": 1087,
+          "count": 363,
+          "text": "header: protocol::CtrlHeader,"
+        },
+        {
+          "line": 1088,
+          "count": 363,
+          "text": ") -> bool {"
+        },
+        {
+          "line": 1089,
+          "count": 363,
+          "text": "match header.ty {"
+        },
+        {
+          "line": 1090,
+          "count": null,
+          "text": "protocol::CMD_CTX_CREATE"
+        },
+        {
+          "line": 1091,
+          "count": null,
+          "text": "| protocol::CMD_CTX_DESTROY"
+        },
+        {
+          "line": 1092,
+          "count": null,
+          "text": "| protocol::CMD_CTX_ATTACH_RESOURCE"
+        },
+        {
+          "line": 1093,
+          "count": null,
+          "text": "| protocol::CMD_CTX_DETACH_RESOURCE"
+        },
+        {
+          "line": 1094,
+          "count": 215,
+          "text": "| protocol::CMD_RESOURCE_CREATE_3D => true,"
+        },
+        {
+          "line": 1095,
+          "count": null,
+          "text": "protocol::CMD_RESOURCE_ATTACH_BACKING"
+        },
+        {
+          "line": 1096,
+          "count": null,
+          "text": "| protocol::CMD_RESOURCE_DETACH_BACKING"
+        },
+        {
+          "line": 1097,
+          "count": null,
+          "text": "| protocol::CMD_RESOURCE_UNREF => {"
+        },
+        {
+          "line": 1098,
+          "count": 77,
+          "text": "read_readable_at::<4>(chain, bus, 24).is_some_and(|bytes| {"
+        },
+        {
+          "line": 1099,
+          "count": 76,
+          "text": "state"
+        },
+        {
+          "line": 1100,
+          "count": 76,
+          "text": ".control3d"
+        },
+        {
+          "line": 1101,
+          "count": 76,
+          "text": ".as_ref()"
+        },
+        {
+          "line": 1102,
+          "count": 76,
+          "text": ".is_some_and(|control| control.contains(u32::from_le_bytes(bytes)))"
+        },
+        {
+          "line": 1103,
+          "count": 76,
+          "text": "})"
+        },
+        {
+          "line": 1104,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1105,
+          "count": 71,
+          "text": "_ => false,"
+        },
+        {
+          "line": 1106,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1107,
+          "count": 363,
+          "text": "}"
+        },
+        {
+          "line": 1108,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 1553,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 1554,
+          "count": 363,
+          "text": "Some(request) if is_control3d_request(&chain, bus, &state.borrow(), request) => {"
+        },
+        {
+          "line": 1555,
+          "count": 274,
+          "text": "let negotiated = slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL);"
+        },
+        {
+          "line": 1556,
+          "count": 274,
+          "text": "let result = {"
+        },
+        {
+          "line": 1557,
+          "count": 274,
+          "text": "let mut state = state.borrow_mut();"
+        },
+        {
+          "line": 1558,
+          "count": null,
+          "text": "let GpuState {"
+        },
+        {
+          "line": 1559,
+          "count": 274,
+          "text": "control3d,"
+        },
+        {
+          "line": 1560,
+          "count": 274,
+          "text": "resources,"
+        },
+        {
+          "line": 1561,
+          "count": null,
+          "text": ".."
+        },
+        {
+          "line": 1562,
+          "count": 274,
+          "text": "} = &mut *state;"
+        },
+        {
+          "line": 1563,
+          "count": 274,
+          "text": "match control3d {"
+        },
+        {
+          "line": 1564,
+          "count": 273,
+          "text": "Some(control) => {"
+        },
+        {
+          "line": 1565,
+          "count": 273,
+          "text": "control.execute(&chain, bus, request, negotiated, resources)"
+        },
+        {
+          "line": 1566,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1567,
+          "count": 1,
+          "text": "None => Err(control3d::Control3dError::Unspecified),"
+        },
+        {
+          "line": 1568,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1569,
+          "count": null,
+          "text": "};"
+        },
+        {
+          "line": 1570,
+          "count": 274,
+          "text": "let response_type = result"
+        },
+        {
+          "line": 1571,
+          "count": 274,
+          "text": ".map_or_else(control3d::Control3dError::response_type, |()| {"
+        },
+        {
+          "line": 1572,
+          "count": 166,
+          "text": "protocol::RESP_OK_NODATA"
+        },
+        {
+          "line": 1573,
+          "count": 166,
+          "text": "});"
+        },
+        {
+          "line": 1574,
+          "count": 274,
+          "text": "let response = response_header(request, response_type).to_bytes();"
+        },
+        {
+          "line": 1575,
+          "count": 274,
+          "text": "match if chain.writable_len() < protocol::CTRL_HDR_SIZE as u64 {"
+        },
+        {
+          "line": 1576,
+          "count": 23,
+          "text": "Ok(0)"
+        },
+        {
+          "line": 1577,
+          "count": null,
+          "text": "} else {"
+        },
+        {
+          "line": 1578,
+          "count": 251,
+          "text": "write_prefix(&chain, bus, &response)"
+        },
+        {
+          "line": 1579,
+          "count": null,
+          "text": "} {"
+        },
+        {
+          "line": 1580,
+          "count": 274,
+          "text": "Ok(written) => written,"
+        },
+        {
+          "line": 1581,
+          "count": null,
+          "text": "Err(()) => {"
+        },
+        {
+          "line": 1582,
+          "count": 0,
+          "text": "slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 1583,
+          "count": 0,
+          "text": "*vq = None;"
+        },
+        {
+          "line": 1584,
+          "count": 0,
+          "text": "return;"
+        },
+        {
+          "line": 1585,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1586,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1587,
+          "count": null,
+          "text": "}"
+        },
+        {
+          "line": 1638,
+          "count": 11,
+          "text": "Some(create) => create_2d_resource(&mut state.borrow_mut(), create),"
+        }
+      ],
+      "unhitSegments": [
+        {
+          "start": [
+            1582,
+            25
+          ],
+          "end": [
+            1582,
+            63
+          ],
+          "text": "slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "start": [
+            1583,
+            25
+          ],
+          "end": [
+            1583,
+            35
+          ],
+          "text": "*vq = None;"
+        },
+        {
+          "start": [
+            1584,
+            25
+          ],
+          "end": [
+            1584,
+            31
+          ],
+          "text": "return;"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/snapshot.rs",
+      "sha256": "6729c22d7c5c4340724a99e7795be9d7bf119c955400a1b7aedb41349de96e64",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "functions": {
+          "count": 41,
+          "covered": 38,
+          "percent": 92.6829268292683
+        },
+        "instantiations": {
+          "count": 103,
+          "covered": 46,
+          "percent": 44.66019417475729
+        },
+        "lines": {
+          "count": 724,
+          "covered": 620,
+          "percent": 85.6353591160221
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 1222,
+          "covered": 1083,
+          "notcovered": 139,
+          "percent": 88.62520458265139
+        }
+      },
+      "changedLines": [
+        {
+          "line": 33,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 34,
+          "count": null,
+          "text": "Proof3dInstalled,"
+        },
+        {
+          "line": 103,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 104,
+          "count": 1,
+          "text": "Self::Proof3dInstalled => \"proof_3d_installed\","
+        },
+        {
+          "line": 133,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 134,
+          "count": 12,
+          "text": "if state.control3d_proof_installed() {"
+        },
+        {
+          "line": 135,
+          "count": 4,
+          "text": "return Err(GpuSnapshotError::Proof3dInstalled);"
+        },
+        {
+          "line": 136,
+          "count": 8,
+          "text": "}"
+        },
+        {
+          "line": 212,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 213,
+          "count": 15,
+          "text": "if state.control3d_proof_installed() {"
+        },
+        {
+          "line": 214,
+          "count": 2,
+          "text": "return Err(GpuSnapshotError::Proof3dInstalled);"
+        },
+        {
+          "line": 215,
+          "count": 13,
+          "text": "}"
+        }
+      ],
+      "unhitSegments": []
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sha256": "00e6a0d1abd1f2c80f64be703b863612cfe4972f09dbe48a5a2877aee758559b",
+      "summary": {
+        "branches": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "functions": {
+          "count": 350,
+          "covered": 38,
+          "percent": 10.857142857142858
+        },
+        "instantiations": {
+          "count": 952,
+          "covered": 73,
+          "percent": 7.668067226890757
+        },
+        "lines": {
+          "count": 4075,
+          "covered": 448,
+          "percent": 10.993865030674847
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 6281,
+          "covered": 548,
+          "notcovered": 5733,
+          "percent": 8.724725362203472
+        }
+      },
+      "changedLines": [
+        {
+          "line": 1695,
+          "count": 5,
+          "text": ")> {"
+        },
+        {
+          "line": 1696,
+          "count": 5,
+          "text": "let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);"
+        },
+        {
+          "line": 1697,
+          "count": 5,
+          "text": "self.install_virtio_gpu(device, state)"
+        },
+        {
+          "line": 1698,
+          "count": 5,
+          "text": "}"
+        },
+        {
+          "line": 1699,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 1700,
+          "count": null,
+          "text": "/// Explicit proof-only constructor; default assembly remains unaccelerated."
+        },
+        {
+          "line": 1701,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 1702,
+          "count": null,
+          "text": "#[allow(clippy::type_complexity)]"
+        },
+        {
+          "line": 1703,
+          "count": 55,
+          "text": "pub fn enable_virtio_gpu_control3d_proof("
+        },
+        {
+          "line": 1704,
+          "count": 55,
+          "text": "&mut self,"
+        },
+        {
+          "line": 1705,
+          "count": 55,
+          "text": "frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,"
+        },
+        {
+          "line": 1706,
+          "count": 55,
+          "text": "control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,"
+        },
+        {
+          "line": 1707,
+          "count": 55,
+          "text": ") -> Option<("
+        },
+        {
+          "line": 1708,
+          "count": 55,
+          "text": "alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,"
+        },
+        {
+          "line": 1709,
+          "count": 55,
+          "text": "alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,"
+        },
+        {
+          "line": 1710,
+          "count": 55,
+          "text": ")> {"
+        },
+        {
+          "line": 1711,
+          "count": 55,
+          "text": "let (device, state) ="
+        },
+        {
+          "line": 1712,
+          "count": 55,
+          "text": "dev::virtio::gpu::VirtioGpu::new_with_control3d_proof_state(frame_sink, control_sink);"
+        },
+        {
+          "line": 1713,
+          "count": 55,
+          "text": "self.install_virtio_gpu(device, state)"
+        },
+        {
+          "line": 1714,
+          "count": 55,
+          "text": "}"
+        },
+        {
+          "line": 1715,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 1716,
+          "count": null,
+          "text": "#[allow(clippy::type_complexity)]"
+        },
+        {
+          "line": 1717,
+          "count": 60,
+          "text": "fn install_virtio_gpu("
+        },
+        {
+          "line": 1718,
+          "count": 60,
+          "text": "&mut self,"
+        },
+        {
+          "line": 1719,
+          "count": 60,
+          "text": "device: dev::virtio::gpu::VirtioGpu,"
+        },
+        {
+          "line": 1720,
+          "count": 60,
+          "text": "state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,"
+        },
+        {
+          "line": 1721,
+          "count": 60,
+          "text": ") -> Option<("
+        },
+        {
+          "line": 1722,
+          "count": 60,
+          "text": "alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,"
+        },
+        {
+          "line": 1723,
+          "count": 60,
+          "text": "alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,"
+        },
+        {
+          "line": 1745,
+          "count": null,
+          "text": "/// Snapshots cannot describe the installed proof renderer, even when its"
+        },
+        {
+          "line": 1746,
+          "count": null,
+          "text": "/// public maps are empty: independent renderer leases may still exist."
+        },
+        {
+          "line": 1747,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 1748,
+          "count": 10,
+          "text": "pub fn control3d_proof_installed(&self) -> bool {"
+        },
+        {
+          "line": 1749,
+          "count": 10,
+          "text": "self.gpu"
+        },
+        {
+          "line": 1750,
+          "count": 10,
+          "text": ".as_ref()"
+        },
+        {
+          "line": 1751,
+          "count": 10,
+          "text": ".is_some_and(|(state, ..)| state.borrow().control3d_proof_installed())"
+        },
+        {
+          "line": 1752,
+          "count": 10,
+          "text": "}"
+        },
+        {
+          "line": 1753,
+          "count": null,
+          "text": ""
+        },
+        {
+          "line": 2147,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 2148,
+          "count": 2,
+          "text": "if self.control3d_proof_installed() {"
+        },
+        {
+          "line": 2149,
+          "count": 2,
+          "text": "return Err(desktop_restore::DesktopRestoreError::CommitRefused {"
+        },
+        {
+          "line": 2150,
+          "count": 2,
+          "text": "code: \"proof_3d_installed\","
+        },
+        {
+          "line": 2151,
+          "count": 2,
+          "text": "});"
+        },
+        {
+          "line": 2152,
+          "count": 0,
+          "text": "}"
+        },
+        {
+          "line": 2258,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 2259,
+          "count": 2,
+          "text": "if self.control3d_proof_installed() {"
+        },
+        {
+          "line": 2260,
+          "count": 2,
+          "text": "return Err("
+        },
+        {
+          "line": 2261,
+          "count": 2,
+          "text": "desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {"
+        },
+        {
+          "line": 2262,
+          "count": 2,
+          "text": "tag: desktop_snapshot::section::GPU,"
+        },
+        {
+          "line": 2263,
+          "count": 2,
+          "text": "},"
+        },
+        {
+          "line": 2264,
+          "count": 2,
+          "text": ");"
+        },
+        {
+          "line": 2265,
+          "count": 0,
+          "text": "}"
+        },
+        {
+          "line": 2914,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 2915,
+          "count": 3,
+          "text": "if self.control3d_proof_installed() {"
+        },
+        {
+          "line": 2916,
+          "count": 2,
+          "text": "return Err(crate::resume::SnapshotError::BadComponentState {"
+        },
+        {
+          "line": 2917,
+          "count": 2,
+          "text": "tag: crate::resume::section::VIRTIO_GPU,"
+        },
+        {
+          "line": 2918,
+          "count": 2,
+          "text": "});"
+        },
+        {
+          "line": 2919,
+          "count": 1,
+          "text": "}"
+        },
+        {
+          "line": 3138,
+          "count": null,
+          "text": "#[cfg(feature = \"virgl-control-proof\")]"
+        },
+        {
+          "line": 3139,
+          "count": 3,
+          "text": "if self.control3d_proof_installed() {"
+        },
+        {
+          "line": 3140,
+          "count": 3,
+          "text": "return Err(crate::resume::SnapshotError::BadComponentState {"
+        },
+        {
+          "line": 3141,
+          "count": 3,
+          "text": "tag: crate::resume::section::VIRTIO_GPU,"
+        },
+        {
+          "line": 3142,
+          "count": 3,
+          "text": "});"
+        },
+        {
+          "line": 3143,
+          "count": 0,
+          "text": "}"
+        }
+      ],
+      "unhitSegments": [
+        {
+          "start": [
+            2152,
+            9
+          ],
+          "end": [
+            2152,
+            10
+          ],
+          "text": "}"
+        },
+        {
+          "start": [
+            2265,
+            9
+          ],
+          "end": [
+            2265,
+            10
+          ],
+          "text": "}"
+        },
+        {
+          "start": [
+            3143,
+            9
+          ],
+          "end": [
+            3143,
+            10
+          ],
+          "text": "}"
+        }
+      ]
+    }
+  ],
+  "js": [
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "sha256": "d759365af8168202cfe687cea5b659a197d675013e7296e663498f3c598f4744",
+      "unhitNonWhitespace": [],
+      "recordings": 2
+    },
+    {
+      "path": "target/virgl-control/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "unhitNonWhitespace": [],
+      "recordings": 2
+    }
+  ],
+  "summary": {
+    "crates/core/src/desktop_restore.rs": {
+      "changed": 4,
+      "hit": 2,
+      "zero": 1,
+      "noninstrumented": 1
+    },
+    "crates/core/src/dev/virtio/gpu/control3d.rs": {
+      "changed": 628,
+      "hit": 419,
+      "zero": 2,
+      "noninstrumented": 207
+    },
+    "crates/core/src/dev/virtio/gpu/mod.rs": {
+      "changed": 126,
+      "hit": 77,
+      "zero": 3,
+      "noninstrumented": 46
+    },
+    "crates/core/src/dev/virtio/gpu/snapshot.rs": {
+      "changed": 12,
+      "hit": 7,
+      "zero": 0,
+      "noninstrumented": 5
+    },
+    "crates/core/src/lib.rs": {
+      "changed": 64,
+      "hit": 47,
+      "zero": 3,
+      "noninstrumented": 14
+    }
+  },
+  "interpretation": "Counts are executed LLVM/CDP ranges, not blanket branch coverage. Review.md gives narrow reasons for all remaining zero/defensive and noninstrumented ranges; Wasm Rust wrapper maps to recorded API/event scenarios rather than native LLVM."
+}

@@ -3,7 +3,7 @@ id: E6-T11a
 epic: 6
 title: Connect validated virtio 3D context and resource control to the renderer
 priority: 525.02696
-status: implemented
+status: verified
 depends_on: [E6-T12d]
 estimate: S
 risk: high
@@ -131,3 +131,34 @@ the actual fetched Wasm to
 `worker/deploy.log` SHA-256:
 `c177c1ca4b345001263757c3f58f6b97c5879471787e797726491cc73c17b522`.
 The live report also binds its screenshot. Independent verdict remains pending.
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- P01–P17 **HELD** against frozen runtime/harness `252b5eab`. Detailed predictions,
+  evidence points and every-hunk coverage classification are in
+  `evidence/virgl-control/verifier/review.md`; original prediction SHA remains
+  `f0b28f69fca2185a9872733b4d27b4ea314c928736d58d8fc846b6f67b5e1aab`.
+- Independent hardware run passed 645 assertions, 44 attacks and 79 literal wire
+  records with zero browser errors and final GL objects. Novel reply/SG aliasing,
+  retained GPU identity, raw callback arrays across actual Wasm memory growth,
+  apply-then-throw/reset retry, and both owner teardown failures held. Skipping
+  backing publication and retaining stale reset highwater both failed their oracles.
+- Four independent native tests passed, including full-RAM/CPU/transport
+  preservation across pending-kick snapshot refusals and failure/retry for every
+  control operation. Instrumented replay also passed seven control, four Machine
+  and 80 GPU tests. Actual LLVM/CDP coverage is source-bound; only the explicitly
+  documented type/host-defense ranges are waived. Prior unchanged renderer proofs
+  carry forward.
+- `audit.json` passed 1,631 digest/source/receipt/parity/cold-clone/deployment checks.
+  Worker/cold receipts match the claim; clean clone is still clean at `252b5eab`.
+  Browser report SHA: `4c74ef3cd6a78e1505c40d2da69b47d913995b482282f7ec0ccead02663599b5`.
+  Coverage census SHA: `698aab6e1d1155f9422cbae46b2b0c64d34a852e7e261e733cb4b855f674c5c8`.
+  Audit SHA: `2fb8ecbe4f7140f8f238d9af49b18c6d7552f9102475cdcdcb4bc2e8ba4ae50d`.
+- SUITE: retain verifier native/browser regressions, two sabotage controls,
+  replay/audit scripts and recordings; compiled artifacts stay ignored. No
+  implementation edits and no production VIRGL, SUBMIT, DMA, fence or live Mesa claim.
+
+Commands: `node evidence/virgl-control/verifier/run-browser.mjs`;
+`bash evidence/virgl-control/verifier/run-native-coverage.sh`;
+`python3 evidence/virgl-control/verifier/audit-coverage.py`;
+`python3 evidence/virgl-control/verifier/audit-evidence.py`.
