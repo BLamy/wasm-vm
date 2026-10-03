@@ -20,6 +20,11 @@ does not establish an address bound. Do not clamp, wrap, substitute zero, or
 silently drop an out-of-profile access. Reject unsupported address forms before
 GPU dispatch. Keep loops and PRECISE rejected.
 
+Bind the complete proved dynamic address set and its finite numeric domain to
+the same immutable draw snapshot. Address validity is independent of numerical
+validity. Missing guest words, zero defaults, index clamping, or checking only
+one observed index cannot establish this proof.
+
 ## Deterministic acceptance
 
 `make verify-E6-T12e8` records native/Wasm parity and hardware pixel/bit oracles

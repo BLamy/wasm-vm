@@ -1,0 +1,18 @@
+{
+  "/tmp/virgl-mesa-26.2.2-tgsi.rst": {
+    "bytes": 98804,
+    "sha256": "6ec695d90ea0b3a5d471aab114352cc2431bcfc589f6b6e6ca88e4e1ca0caabe"
+  },
+  "/tmp/virgl-mesa-26.2.2-tgsi_exec.c": {
+    "bytes": 186722,
+    "sha256": "1b6b9e60cb84688d98ad53a60c435062851037404d8a39c5cc2c72bbe6a9f6e2"
+  },
+  "/tmp/virgl-mesa-26.2.2-tgsi_info_opcodes.h": {
+    "bytes": 7227,
+    "sha256": "5b9cee863a43ebcde73368f5257fd43fb7609e811e5981ffcbdf882efd20550c"
+  },
+  "/tmp/virgl-mesa-26.2.2-tgsi_util.c": {
+    "bytes": 13581,
+    "sha256": "9083dd6f8b4c32c8700eac0876a6737cdc55e4da1a4a9f102d7c39e21a0c4128"
+  }
+}

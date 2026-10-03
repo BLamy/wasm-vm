@@ -1,0 +1,24 @@
+{
+  "schema": "wasm-vm-dot-reciprocal-migrations-v1",
+  "parentHead": "3adaa72f95fd88b8fefd5caa32d6407df22af1dd",
+  "migrations": [
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-DP3-vertex",
+      "oldInputSha256": "3e5d239909767760f1b8d6ef9136fea7811a75cd1e22c3a781eba1ccd1a97271",
+      "replacementName": "unsupported-DP3-absolute-vertex",
+      "replacementInputSha256": "c4c606d1d7959be60df3acbcbd1a536526cf3f3b57a0fecb9f37ae7e24f67f0c",
+      "promotedCase": "historical-e5-unsupported-DP3-vertex",
+      "profile": "virgl-webgl2-raw-bits-v6"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-DP3-fragment",
+      "oldInputSha256": "d8468edd9066c831de839d2ae4acc3e8a9274d6b5d2ef81aa97d5a56f44b62de",
+      "replacementName": "unsupported-DP3-absolute-fragment",
+      "replacementInputSha256": "e7f02ca9b37646782d8174fc50f29f5564a5e5c1a9a2943d7e224c46262b99fa",
+      "promotedCase": "historical-e5-unsupported-DP3-fragment",
+      "profile": "virgl-webgl2-raw-bits-v6"
+    }
+  ]
+}

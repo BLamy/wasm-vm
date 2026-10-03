@@ -81,6 +81,15 @@ static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, 
          yes.origin == no.origin ? yes.origin : 0};
 }
 
+unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
+{
+   /* TGSI scalar operations consume post-swizzle x/xyz independently of the
+    * written lanes. Use the same rule for initialization and float authority. */
+   if (opcode == RAW_DP3) return 7u;
+   if (opcode == RAW_RCP || opcode == RAW_RSQ) return 1u;
+   return opcode == RAW_TEX ? 3u : destination_mask;
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    struct raw_instruction checked = *input;
@@ -90,9 +99,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool mixed = (instruction->flags & RAW_MIXED) != 0;
    bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
-      instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ? 1 :
+      instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ||
+      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ? 1 :
       instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
-   unsigned consumed = instruction->opcode == RAW_TEX ? 3u : instruction->dst.mask;
+   unsigned consumed = raw_consumed_mask(instruction->opcode, instruction->dst.mask);
    /* Capture read authority at the use site, before any aliased destination
     * changes facts. Every numeric lane must have an enforceable domain. */
    for (unsigned source = 0; source < sources; ++source)
@@ -104,9 +114,11 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    struct raw_lane result[4] = {{0}};
    /* Read all consumed lanes before publishing any destination lane. */
    for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) {
-      struct raw_lane a = source_lane(ir, &instruction->src[0], lane), b = {0};
-      if (sources > 1)
-         b = source_lane(ir, &instruction->src[1], lane);
+      struct raw_lane a = {0}, b = {0};
+      if (!numeric) {
+         a = source_lane(ir, &instruction->src[0], lane);
+         if (sources > 1) b = source_lane(ir, &instruction->src[1], lane);
+      }
       switch (instruction->opcode) {
       case RAW_MOV: result[lane] = a; break;
       case RAW_AND: result[lane] = (struct raw_lane){.zero = a.zero | b.zero, .one = a.one & b.one}; break;
@@ -139,6 +151,9 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_MAX:
       case RAW_FRC:
       case RAW_LRP:
+      case RAW_DP3:
+      case RAW_RCP:
+      case RAW_RSQ:
       case RAW_TEX: result[lane].origin = RAW_FLOAT_SHADOW; break;
       }
    }
@@ -225,6 +240,28 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
       emit(w, " float_rhs = texture(fssamp%u, vec2(", instruction->sampler);
       float_operand(w, p, instruction, 0, 0); emit(w, ", ");
       float_operand(w, p, instruction, 0, 1); emit(w, "));\n");
+      return;
+   }
+   if ((1u << op) & RAW_V6_OPCODES) {
+      /* Evaluate once, then broadcast before either view is published. In
+       * particular RCP reads source x even when its destination is only w. */
+      emit(w, " float_rhs = vec4(");
+      if (op == RAW_DP3) {
+         emit(w, "dot(");
+         for (unsigned source = 0; source < 2; ++source) {
+            if (source) emit(w, ", ");
+            emit(w, "vec3(");
+            for (unsigned lane = 0; lane < 3; ++lane) {
+               if (lane) emit(w, ", ");
+               float_operand(w, p, instruction, source, lane);
+            }
+            emit(w, ")");
+         }
+      } else {
+         emit(w, op == RAW_RCP ? "1.0 / (" : "inversesqrt(");
+         float_operand(w, p, instruction, 0, 0);
+      }
+      emit(w, "));\n");
       return;
    }
    emit(w, " float_rhs = vec4(");

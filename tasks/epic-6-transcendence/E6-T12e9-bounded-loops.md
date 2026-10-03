@@ -26,6 +26,10 @@ literal bounded-loop demonstration is only a separate profile proof; it does
 not establish support for these original bodies. PRECISE remains rejected, so
 neither captured loop body is counted as accepted by this prerequisite.
 
+Loop counts, address bounds and finite numeric constant obligations must derive
+from the same immutable current bank generations. Integer loop/count values
+remain exact raw-u32 data, including encodings that are subnormal as floats.
+
 ## Deterministic acceptance
 
 `make verify-E6-T12e9` records the admitted loop-form contract, an independently

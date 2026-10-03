@@ -440,3 +440,35 @@ Six newly accepted historical bodies are preserved as explicit positive fixtures
 adjacent rejections retain the earlier negative slots. Complete original shader
 outcomes remain12/19. This compiler layer does not enable production negotiation
 or claim guest graphics speed.
+
+### Ordinary scalar reduction and reciprocal operations
+
+E6-T12e6 extends the checked owned compiler with DP3, RCP and RSQ. DP3 consumes
+post-swizzle xyz; RCP/RSQ consume the first post-swizzle lane. Each evaluates one
+scalar result and replicates it before committing only the enabled destination
+lanes. Initialization and numeric-authority checks use the same consumed lanes.
+This preserves aliases, ignored source components and typed source negation.
+
+The scalar RCP rule is supported by [Mesa 26.2.2](https://archive.mesa3d.org/mesa-26.2.2.tar.xz):
+`docs/gallium/tgsi.rst` (RCP/RSQ/DP3), `src/gallium/auxiliary/tgsi/tgsi_exec.c`,
+`tgsi_info_opcodes.h` and `tgsi_util.c` agree on scalar replication and consumed lanes. The older pinned VirGL RCP emitter uses
+a componentwise shortcut; the owned lowering deliberately follows the TGSI scalar
+contract. Both original captured RCP instructions already select xxxx and write x,
+so this discrepancy does not justify dropping or rewriting a captured operation.
+
+The [GLSL ES3.00 precision contract](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf)
+§4.5.1 permits approximation. Independent dot controls have exact products and
+partial sums under every association;
+reciprocal checks use rational 2.5 ULP enclosures over the specified positive-divisor
+domain. Inverse-root references use an integer square-root bracket and a 2 ULP
+allowance. No host sqrt is an exact oracle, and perfect mathematical roots alone
+do not establish exact GPU output bits. These ranges qualify tests, not shader
+admission. Ordinary exceptional behavior receives no invented payload guarantee.
+
+Two historical DP3 bodies become explicit positives. An explicitly named
+compatibility run preserves the full preceding native workload with exactly two
+adjacent rejection substitutions, unchanged anchors/seeds, and every unchanged
+hardware oracle. It does not pretend the preceding task's fixed six-migration
+receipt accepts a different history. Full original outcomes remain 12/19, and
+production graphics remains disabled. Numeric constant-domain enforcement follows
+this scalar layer before control-flow and original-corpus closure.

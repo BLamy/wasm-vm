@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "gitHead": "cb6726dc68eebecdaf9b848ea846e525003e86c9",
+  "counts": {
+    "numeric": [
+      248,
+      30
+    ],
+    "textures": {
+      "exactWords": 32,
+      "boundedWords": 64,
+      "crossDraws": 24,
+      "pixels": 6144
+    },
+    "reciprocals": {
+      "exactWords": 30,
+      "boundedWords": 114,
+      "crossDraws": 18
+    },
+    "observations": {
+      "words": 72,
+      "probes": 6,
+      "vectors": 18,
+      "requiredRawClassChecks": 8,
+      "requiredNumericClassChecks": 16
+    },
+    "interfacePixels": 33728
+  },
+  "functionsEntered": 151,
+  "reports": [
+    {
+      "path": "hardware/report.json",
+      "bytes": 11996821,
+      "sha256": "e079ad1b8537d5a53077288b017c32701868c57f96a4c7f2ef4b9f8fa96393aa"
+    },
+    {
+      "path": "sabotage-dp3-lane/report.json",
+      "bytes": 3174034,
+      "sha256": "5db9dc24a223a6937d6af088f10761e08a794ab43b3352b0156a45b67e955567"
+    },
+    {
+      "path": "sabotage-rcp-source/report.json",
+      "bytes": 5376863,
+      "sha256": "648bba7c3373f0d0b00de45640635f983f1f8351b5c5cd9e5ca85e72c3ae4d11"
+    },
+    {
+      "path": "sabotage-rsq-operation/report.json",
+      "bytes": 6337792,
+      "sha256": "598ecce3d55180b1e7a76fc8f2e2b1f22be4d687c988d918bb94ba090bb121b0"
+    },
+    {
+      "path": "sabotage-numeric-negate/report.json",
+      "bytes": 3386561,
+      "sha256": "6f30b803f9053870fbfeca4f5e47921640a5786a3ff14a2a63795aea20bbd009"
+    }
+  ]
+}

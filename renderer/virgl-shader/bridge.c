@@ -303,9 +303,13 @@ static bool instruction(const char **p, struct profile *s)
       else if (word(p, "MAX")) raw.opcode = RAW_MAX;
       else if (word(p, "FRC")) raw.opcode = RAW_FRC;
       else if (word(p, "LRP")) raw.opcode = RAW_LRP;
+      else if (word(p, "DP3")) raw.opcode = RAW_DP3;
+      else if (word(p, "RCP")) raw.opcode = RAW_RCP;
+      else if (word(p, "RSQ")) raw.opcode = RAW_RSQ;
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
-      arity = raw.opcode == RAW_NOT || raw.opcode == RAW_FRC || tex ? 1 :
+      arity = raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
+         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
@@ -321,13 +325,14 @@ static bool instruction(const char **p, struct profile *s)
    if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||
        !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
    if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
+   unsigned consumed = s->raw ? raw_consumed_mask(raw.opcode, dst.mask) : tex ? 3u : dst.mask;
    for (unsigned i = 0; i < arity; ++i) {
       if (!punctuation(p, ',')) return false;
       /* A modifier belongs only to a numeric operand; samplers, raw selectors
        * and bitwise payloads never pass through this typed minus parser. */
       if (s->raw && ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
-      if (!source(p, s, tex ? 3u : dst.mask, s->raw ? &raw.src[i] : NULL)) return false;
+      if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL)) return false;
    }
    if (tex) {
       struct reg sampler;
@@ -494,7 +499,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
             ++p; space(&p);
             if (*p == '-') candidate = true;
          }
-      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "FRC") || word(&p, "LRP")) {
+      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "FRC") || word(&p, "LRP") ||
+                 word(&p, "DP3") || word(&p, "RCP") || word(&p, "RSQ")) {
          candidate = numeric_candidate = true;
       }
    }
@@ -622,6 +628,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_V6_OPCODES ? "virgl-webgl2-raw-bits-v6" :
       c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :
       c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
       c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :

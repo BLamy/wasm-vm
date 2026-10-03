@@ -801,6 +801,24 @@
     "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
   },
   "rawShaderProfile": "virgl-webgl2-raw-bits-v1",
+  "scalarShaderBoundary": {
+    "acceptance": "make verify-E6-T12e6; actual native/Wasm results, independent GPU exact/rational oracles, explicit predecessor compatibility and pristine-clone proof.",
+    "authority": "Retain ordinary IN, computed/sample shadow and statically proved finite-normal/signed-zero raw authority. No new magnitude, positive-value, finite-value or divisor admission guards. Unknown raw numeric CONST remains separately gated.",
+    "bounds": "Reserve the validated-negation opcode-mask bit 21. Keep 112-byte instructions, 26232-byte IR and existing text/instruction/register/GLSL/JSON/Wasm capacities.",
+    "compatibility": "Exactly two historical valid DP3 negatives are explicitly promoted with source-bound adjacent replacements. Malformed two-source RCP/RSQ cases retain complete errors. All 19 full original results remain unchanged at 12 accepted / 7 unsupported.",
+    "consumption": "Shared initialization/authority masks: DP3 xyz, RCP/RSQ x after swizzling. Destination masks do not redefine scalar source consumption. Typed negation precedes evaluation; aliased sources use pre-write values.",
+    "operations": {
+      "DP3": "dot(src0.xyz,src1.xyz), using post-swizzle lanes; replicate one scalar result",
+      "RCP": "1/src0.x, using the first post-swizzle lane; replicate one scalar result",
+      "RSQ": "inversesqrt(src0.x), using the first post-swizzle lane; replicate one scalar result"
+    },
+    "oracleBoundary": "Exact dyadic dot witnesses; quantitative positive-divisor reciprocal witnesses with 2.5 ULP enclosures; positive-normal inverse-root witnesses with integer-derived rational brackets widened by 2 ULP. Computed zero signs and undefined exceptional payloads are not fixed by the oracle. These witness domains do not limit shader admission.",
+    "ordinaryContract": "DP3 inherits ordinary ESSL arithmetic latitude; RCP uses ordinary division, RSQ ordinary inverse square root. PRECISE, absolute, saturation and LEGACY_MATH_RULES remain unsupported; no clamp or special-input replacement.",
+    "scope": "Isolated ordinary scalar compiler proof only; numeric-constant contracts, production guest graphics, Mesa and MIPS claims remain gated.",
+    "sourceContract": "Mesa 26.2.2 TGSI documentation, interpreter, opcode metadata and source-use rules establish scalar RCP/RSQ and xyz DP3. The old pinned VirGL componentwise RCP shortcut is not used. Both captured RCP sources are explicitly xxxx.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
+  },
+  "scalarShaderProfile": "virgl-webgl2-raw-bits-v6",
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
   "shaderProfile": "virgl-webgl2-straight-line-v5",

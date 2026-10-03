@@ -1,0 +1,237 @@
+{
+  "sourceHead": "72a8695ba92d734a6bead0c42ead3089d8611806",
+  "resolutionHead": "cb6726dc68eebecdaf9b848ea846e525003e86c9",
+  "ranges": [
+    {
+      "start": 2844,
+      "end": 2896,
+      "line": 35,
+      "text": "catch(error){gl.deleteProgram(program);throw error;}",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 11552,
+      "end": 11571,
+      "line": 95,
+      "text": "(n,d=1n)=>SCALE*n/d",
+      "classification": "resolved: sole unreferenced function removed in cb6726dc"
+    },
+    {
+      "start": 13299,
+      "end": 13320,
+      "line": 117,
+      "text": "&&actual===0x80000000",
+      "classification": "waived: accepting the permitted opposite computed-zero sign; observations need not produce both legal signs"
+    },
+    {
+      "start": 13472,
+      "end": 13525,
+      "line": 118,
+      "text": "||(classify(word)==='zero'&&classify(first)==='zero')",
+      "classification": "waived: accepting the permitted opposite computed-zero sign; observations need not produce both legal signs"
+    },
+    {
+      "start": 14702,
+      "end": 14707,
+      "line": 124,
+      "text": ":null",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    },
+    {
+      "start": 20592,
+      "end": 20649,
+      "line": 157,
+      "text": "||(oracle.words[i]===0&&selector===24&&word===0x3f400000)",
+      "classification": "waived: accepting the permitted opposite computed-zero sign; observations need not produce both legal signs"
+    },
+    {
+      "start": 21580,
+      "end": 21606,
+      "line": 161,
+      "text": "gl.endTransformFeedback();",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 24260,
+      "end": 24318,
+      "line": 172,
+      "text": "||(!cross&&oracle.words[i]===0&&selector===31&&byte===255)",
+      "classification": "waived: accepting the permitted opposite computed-zero sign; observations need not produce both legal signs"
+    },
+    {
+      "start": 24330,
+      "end": 24373,
+      "line": 172,
+      "text": "draw.failure={expectedBytes,observedBytes};",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 28578,
+      "end": 28640,
+      "line": 193,
+      "text": "||(i>=4&&i<8&&record.oracle.words[i-4]===0&&word===0x80000000)",
+      "classification": "waived: accepting the permitted opposite computed-zero sign; observations need not produce both legal signs"
+    },
+    {
+      "start": 28725,
+      "end": 28751,
+      "line": 195,
+      "text": "gl.endTransformFeedback();",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 29598,
+      "end": 29600,
+      "line": 202,
+      "text": ":5",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    },
+    {
+      "start": 31832,
+      "end": 31834,
+      "line": 214,
+      "text": ":1",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    },
+    {
+      "start": 33918,
+      "end": 33936,
+      "line": 226,
+      "text": "&&value!==0?-value",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    },
+    {
+      "start": 35197,
+      "end": 35250,
+      "line": 228,
+      "text": "record.failure={pixel:[x,y],texel,expected,observed};",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 35887,
+      "end": 35899,
+      "line": 232,
+      "text": "{n=-n;d=-d;}",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 36437,
+      "end": 36449,
+      "line": 235,
+      "text": "?'subnormal'",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 36723,
+      "end": 36732,
+      "line": 236,
+      "text": "?mantissa",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 36770,
+      "end": 36775,
+      "line": 236,
+      "text": "?-149",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 36841,
+      "end": 36850,
+      "line": 237,
+      "text": "?-value.n",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 37037,
+      "end": 37046,
+      "line": 238,
+      "text": "return 0;",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 37086,
+      "end": 37095,
+      "line": 238,
+      "text": "?-value.n",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 37179,
+      "end": 37183,
+      "line": 238,
+      "text": "?!up",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 37336,
+      "end": 37347,
+      "line": 238,
+      "text": "?2147483648",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 37554,
+      "end": 37559,
+      "line": 239,
+      "text": "?-q.n",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 38134,
+      "end": 38143,
+      "line": 242,
+      "text": "return n;",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 40673,
+      "end": 40732,
+      "line": 258,
+      "text": "\n  else throw new Error('unknown reciprocal oracle '+name);",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 41092,
+      "end": 41095,
+      "line": 263,
+      "text": ":{}",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 41188,
+      "end": 41265,
+      "line": 264,
+      "text": "return {...lane,observedWord:word,classification:kind,withinEnclosure:false};",
+      "classification": "waived: generic rational decode/rounding support beyond positive-normal witness domains, or defensive unknown/exception classification; no stronger numerical claim"
+    },
+    {
+      "start": 45195,
+      "end": 45221,
+      "line": 275,
+      "text": "gl.endTransformFeedback();",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 54185,
+      "end": 54211,
+      "line": 297,
+      "text": "gl.endTransformFeedback();",
+      "classification": "waived: defensive GL exception cleanup or failure diagnostics; no claimed runtime behavior"
+    },
+    {
+      "start": 61635,
+      "end": 61746,
+      "line": 330,
+      "text": "equal(result.metadata?.uniforms[0]?.count,test.expected.constantCount,`${test.name} declared constant extent`);",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    },
+    {
+      "start": 62040,
+      "end": 62043,
+      "line": 330,
+      "text": ":{}",
+      "classification": "waived: optional harness metadata, null/default fallback or alternate permitted input path outside this declared workload; no product/runtime behavior added"
+    }
+  ]
+}

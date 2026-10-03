@@ -4,7 +4,7 @@ epic: 6
 title: Validate and execute structured TGSI unsigned conditionals
 priority: 525.0269907
 status: pending
-depends_on: [E6-T12e6]
+depends_on: [E6-T12e6b]
 estimate: S
 risk: high
 capstone: false
@@ -20,6 +20,10 @@ Carry declared/initialized lane facts through actual control-flow predecessors;
 one branch's write cannot establish a value on the other branch. Check captured
 dataflow before choosing a validator that would silently initialize or alter
 undefined/conditionally defined lanes. No generic IF, CONT or loops are added.
+
+Conditional numeric authority from finite-bank contracts must join soundly with
+initialization and ordinary-output authority. An unexecuted branch cannot donate
+facts; every potentially selected bank word stays within the enforced domain.
 
 ## Deterministic acceptance
 
