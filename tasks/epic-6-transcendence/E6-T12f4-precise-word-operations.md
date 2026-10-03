@@ -3,7 +3,7 @@ id: E6-T12f4
 epic: 6
 title: Preserve PRECISE comparison selection and copy semantics on the GPU
 priority: 525.0269914
-status: implemented
+status: verified
 depends_on: [E6-T12f1]
 estimate: S
 risk: high
@@ -157,3 +157,113 @@ accepted. New arithmetic, mask and output-authority boundaries remain separate.
 No arbitrary NaN/subnormal raster transport, exact backward RSQ/DP3 cone,
 production guest GPU negotiation, deployment or desktop 300 MIPS is claimed.
 The fresh verifier must judge this diff and recording before setting verified.
+
+### 2026-10-03 — independent verifier
+
+VERDICT: verified
+
+Frozen implementation/harness: `09afcaa29bda5206b98fb14e019f41395d669fec`;
+base `220c2640d8c75df4decae10a3aa12a7be150897f`; worker submission
+`8322ee6c6c6fc2148d7b4bc70cc567f09879e87b`. Read the whole task and diff
+before evidence and recorded ten falsifiable predictions before inspection.
+All ten are HELD; no refutation or unexecuted product hunk remains.
+[Structured verdict](../../evidence/virgl-precise-word/verifier-verdict.json)
+binds each observation and exact raw citation.
+
+- SEMANTICS — HELD. Predicted per-instruction flags without backward propagation;
+  `worker.tar.gz::semantic/tokens.jsonl` lines1–2 show four true then five false
+  flags in each stage (SHA-256 `d182d2523fc925ecb08526914ad48fc6ed90b1daa2dd77b385ad891898c550f8`). The pinned Mesa strict ordered MAX
+  definition agrees with source1 selection on ties/unordered. Arithmetic suffixes
+  remain gated. No further evidence demanded.
+- WORDS / ALIASES — HELD. Predicted source1 word identity, opposite-zero equality,
+  unordered inequality and pre-write aliases. Re-read all 830 actual hardware
+  draws, 3,320 words and 3,399,680 RGBA pixels. In `worker.tar.gz::gpu/report.json`,
+  line34120 gives MAX zero ties `[80000000,00000000,00000000,80000000]`;
+  line67122 retains source1 NaN words; line2997852 gives all-one FSEQ zero masks;
+  line4408423 gives all-one FSNE two-NaN masks; line5736477 retains MOV signaling
+  NaNs internally. GPU report SHA-256 `c1635f95ff92cf161653afcfa3088c9d1e5d95c21acb191383de8b8b50b9b003`; `verifier.tar.gz::trace-points.jsonl`
+  supplies 90 line/pointer/word/readback citations. Carry 131,136 independent host
+  checks and both independent seeds (`ae95384f`, `6b31fdc9`, each 828 draws/3,312
+  words) across unchanged precision code. The bounded novel negated MAX,
+  partial-destination alias and bank-authority attack passes 72 draws/288 words.
+  No arbitrary exceptional floating raster transport is inferred.
+- CONTRACTS / REGRESSIONS — HELD. Predicted all simultaneous precision, finite,
+  indirect, count and radial obligations remain mandatory. All ten new profiles
+  in both stages pass; independent attacks accept 300 valid operation subsets,
+  reject 314 hostile variants, preserve 20 owned frozen records and invoke zero
+  getters (`verifier.tar.gz::metadata-attack-report.json`, digest in the verdict).
+  Unauthorized output, undefined lanes and gated arithmetic/suffixes reject.
+  All 19 original bodies/hashes remain identical (12 accepted); full predecessor
+  results survive apart from inventoried migrations. Canonical retained equality
+  640 words, selected 1,216 words/1,245,184 pixels, and radial 565,248 pixels pass;
+  full result arrays match cold (`final-review-record-audit.json`,
+  `final-review-cold-audit.json` in the verifier archive). No further evidence demanded.
+- ALLOCATION — HELD at repaired source. Predicted every nonzero actual upstream
+  allocation failure rejects without publishing partial GLSL and fully recovers.
+  Canonical 229 failures include 20 upstream sites; every 58 single/56 pair anchor
+  recovers. Independent ten-witness attack rejects 455 malloc/realloc failures
+  with 4,550 full recoveries. `verifier.tar.gz::allocation-attack.jsonl` line37
+  rejects an ignored 128-byte texture constructor (SHA-256
+  `98154dbae79848fa2b553accabadc224e0466c6ae3d97dec7e1a0cbf6d235fb1`).
+  `worker.tar.gz::wasm/calls.jsonl` line24440 now rejects and line24441 fully
+  recovers (SHA-256 `7b2ca5b7078b2d1ffd045e4cf46bf800c2a60ad8cb9c2cc4a160095c3f850b95`).
+  The prior b874 FAILED outcome is retained separately; no allocation result is
+  carried across that repair. Removing the actual latch reproduces forbidden
+  partial success and trips the regression.
+- BOUNDS / COVERAGE — HELD. Predicted positive source-bound counters for every
+  changed behavior and measured bounded storage. `worker.tar.gz::native/native.log`
+  lines1/5197/5198 show IR26,480, instruction112, profile7,616, flow arena52,644
+  within53,248/depth8 and 1,404,199 calls (SHA-256
+  `a9a62f476d9bc867dfb0b7cad483eddf480964f11f9c66f7863165de730163a7`).
+  Native result maxima63,369/109,235 and stage GLSL58,201 stay bounded. The 24,556
+  Wasm calls retain the same 16 MiB backing buffer through 64 stress/31 pressure
+  calls. All changed runtime C regions, ten profile arms and 44/44 owned-wrapper
+  lines execute; most-specific V8 ranges cover every new consumer expression
+  (`changed-c-coverage-09afcaa2.json`, SHA-256 `f339963b5b6f985c2fd0980ae28cab975d5073bcf5da5520840a4c227136a9c2`;
+  `changed-v8-coverage.json`). `coverage-scope.md` classifies every remaining hunk:
+  headers/constants/reference data and build configuration are static waivers;
+  proof-tool setup/version/timeout diagnostics are infrastructure waivers.
+  Zero-size allocation alternatives and pinned so_info calloc are unreachable
+  under admitted positive allocations and the owned zeroed shader-info/key.
+  Stack evidence is only per-function observation; no aggregate stack claim is made.
+- FAULTS / COLD — HELD. Predicted actual source faults and digest-consistent proof
+  forgeries are caught. Reversed MAX order, conflated zeros and erased FSNE
+  unordered truth each produce physical mismatches. Dropped MOV flags and removed
+  allocation latch trip promoted tests; eight receipt/schema attacks reject
+  (`receipt-attack-report.json`, exact bindings in the verdict). Final canonical
+  acceptance passes directly in a scrubbed clean detached clone at frozen09af;
+  independently rechecked clean afterward. Entire native/Wasm transcripts are
+  byte-identical to worker. All 526 worker, 528 cold and 16 refuted archive members,
+  saved native/token/Wasm binaries and receipts are lossless and digest-bound
+  (`final-review-cold-audit.json`, `final-review-package-audit.json`). No further
+  broad acceptance run is needed for this evidence/test-only promotion.
+- SUITE — promote `renderer/virgl-command/tests/precise-word-regressions.mjs` and
+  `renderer/virgl-shader/native_tests/precise_upstream_allocations.{c,sh}`.
+  Narrow validation passes 40 literal admissions, 174 hostile contract variants,
+  20 ownership checks, zero getter calls; ASan/UBSan passes 54 real upstream
+  failures/216 complete recoveries across four ordinary/mixed witnesses.
+  Actual compiler flag/latch sabotage fails these tests at the intended assertion;
+  raw binaries, source faults and outcomes are retained. These tests use literal
+  assertions and actual allocation faults, not emitted GLSL as a numerical oracle.
+
+Independent recordings, scripts, counters, predictions, raw hardware pixels and
+source-fault proofs are losslessly committed in
+[verifier.tar.gz](../../evidence/virgl-precise-word/verifier.tar.gz): 220 files,
+SHA-256 `2b967384003681a3e96c7bd4a6064ecd81378e58c34a3a01a3631830eb5f2207`.
+[verifier-manifest.json](../../evidence/virgl-precise-word/verifier-manifest.json)
+binds every member; the final audit and verdict preserve the carry-forward boundary.
+No runtime or shared build artifact was changed by this verifier.
+
+Promotion commands:
+
+```sh
+node --check renderer/virgl-command/tests/precise-word-regressions.mjs
+node renderer/virgl-command/tests/precise-word-regressions.mjs
+bash -n renderer/virgl-shader/native_tests/precise_upstream_allocations.sh
+bash renderer/virgl-shader/native_tests/precise_upstream_allocations.sh target/evidence/virgl-precise-word-verifier/final-promoted-native
+```
+
+The verified scope remains isolated instruction-local comparison/selection/copy
+with original bank/control/output authority. Guest GPU negotiation, public deploy,
+desktop throughput, ADD/MUL exact arithmetic and backward RSQ/DP3 precision are
+outside this task. Update task policy and regenerate the queue before committing.
