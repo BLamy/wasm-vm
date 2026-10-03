@@ -41,7 +41,7 @@ def main():
     require(regression['capturedPixels'] == 768 and regression['literalPixels'] == 4336
             and regression['wasmAttacks'] == 112 and regression['wasmRecoveries'] == 1792,
             'prior shader regression coverage')
-    expected_outcomes = {'translated': 11, 'unsupported-feature': 7, 'parse-error': 1}
+    expected_outcomes = {'translated': 12, 'unsupported-feature': 7}
     require(regression['shaderOutcomes'] == expected_outcomes, 'original 19-hash outcomes')
     corpus = read_json(output / 'regression/contract/receipt.json')['capturedShaderResults']
     require(set(corpus) == set(contract['capturedShaders']) and len(corpus) == 19,
@@ -113,13 +113,13 @@ def main():
     records = [binding(path, output) for path in sorted(output.rglob('*'))
                if path.is_file() and path != output / 'receipt.json' and path.name != 'acceptance.log']
     receipt = {'schema': 1, 'task': 'E6-T12e1', 'status': 'passed', 'gitHead': head,
-               'boundary': 'Four unchanged captured shader bodies through bounded v3 frontend and independent hardware pixels; no guest GPU activation.',
+               'boundary': 'Four unchanged captured shader bodies through bounded v4 frontend and independent hardware pixels; no guest GPU activation.',
                'sources': sources, 'records': records, 'shaderOutcomes': expected_outcomes,
                'production': contract['production'], 'nativeCases': len(fixtures),
                'newOriginalHashes': sorted(gate.COMPONENT_SHADERS),
                'compilerSha256': regression['compilerSha256']}
     (output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
-    print('E6-T12e1 passed: 11/19 original shaders, four new hardware shader oracles, native/Wasm parity and bounded grammar attacks.')
+    print('E6-T12e1 passed: 12/19 original shaders, four new hardware shader oracles, native/Wasm parity and bounded grammar attacks.')
 
 
 def verify_browser(hardware, sabotage, corpus, fixtures, native):

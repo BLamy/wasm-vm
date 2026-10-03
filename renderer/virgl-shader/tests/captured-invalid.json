@@ -530,9 +530,9 @@
     "text": "FRAG\nDCL IN[0].xy, GENERIC[0], LINEAR\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
   },
   {
-    "name": "interpolation-constant",
+    "name": "unsupported-flat-centroid",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], CONSTANT, CENTROID\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
   },
   {
     "name": "precise-remains-rejected",

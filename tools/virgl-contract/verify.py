@@ -29,6 +29,7 @@ COMPONENT_SHADERS = {
     '403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c',
     'e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551',
 }
+FLAT_SHADER = '67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa'
 
 
 def require(value, message):
@@ -76,7 +77,8 @@ def check_matrix(contract, totals, manifests, shaders, vertices):
         require(row['stage'] == info['stage'] and row['currentBridge'] in ('translated', 'rejected'),
                 'captured shader stage/status differs')
         require(row['executionEvidence'] == ('textured-scene-three-phases' if digest in PIXEL_PAIR else
-                'component-fixture-four-bodies' if digest in COMPONENT_SHADERS else 'not-executed'),
+                'component-fixture-four-bodies' if digest in COMPONENT_SHADERS else
+                'flat-pair-renderer-pixels' if digest == FLAT_SHADER else 'not-executed'),
                 'shader execution scope')
         if row['currentBridge'] == 'rejected':
             require(row['executionEvidence'] == 'not-executed' and

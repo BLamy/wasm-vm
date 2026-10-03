@@ -27,7 +27,7 @@ export const ORIGINAL_INPUTS = Object.freeze(corpus.map(([sha256,size,stage,work
   sha256, size, stage, path: `evidence/virgl-corpus/captures/${workload}/shaders/${sha256}.tgsi`,
 })));
 export const NEW_HASHES = Object.freeze([corpus[0][0], corpus[10][0], corpus[5][0], corpus[17][0]]);
-const ACCEPTED = new Set([0,1,3,5,9,10,12,13,16,17,18].map((index) => corpus[index][0]));
+const ACCEPTED = new Set([0,1,3,5,8,9,10,12,13,16,17,18].map((index) => corpus[index][0]));
 const WIDTH = 32, HEIGHT = 32;
 const require = (condition, message) => { if (!condition) throw new Error(message); };
 const equal = (actual, expected, label) => require(JSON.stringify(actual) === JSON.stringify(expected),
@@ -68,13 +68,13 @@ async function readOriginals(bridge, report) {
     const translated = bridge.translate({ stage: input.stage, text });
     equal(translated.ok, ACCEPTED.has(input.sha256), `original ${input.sha256} unchanged outcome`);
     if (translated.ok) {
-      equal(translated.metadata.profile, 'virgl-webgl2-straight-line-v3', 'component profile');
+      equal(translated.metadata.profile, 'virgl-webgl2-straight-line-v4', 'component profile');
       equal(translated.metadata.stage, input.stage, 'original stage');
       require(translated.glsl.length > 0 && translated.glsl.length <= LIMITS.glslBytes, 'bounded GLSL');
     } else {
-      equal(translated.error?.code, input.sha256 === corpus[8][0] ? 'parse-error' : 'unsupported-feature',
+      equal(translated.error?.code, 'unsupported-feature',
         `original ${input.sha256} exact remaining rejection`);
-      if (input.sha256 !== corpus[8][0]) require(text.includes('PRECISE'), 'unsupported original retains PRECISE');
+      require(text.includes('PRECISE'), 'unsupported original retains PRECISE');
       require(!Object.hasOwn(translated, 'glsl'), 'rejection cannot substitute GLSL');
     }
     const entry = { path: input.path, sha256: input.sha256, bytes: bytes.length, stage: input.stage,
@@ -84,7 +84,7 @@ async function readOriginals(bridge, report) {
       report.translations.push(entry); result.set(input.sha256, { text, ...translated });
     }
   }
-  equal(report.corpus.filter((entry) => entry.result.ok).length, 11, 'exactly eleven original acceptances');
+  equal(report.corpus.filter((entry) => entry.result.ok).length, 12, 'exactly twelve original acceptances');
   equal(report.translations.length, 4, 'four newly accepted originals');
   return result;
 }
@@ -297,7 +297,7 @@ export async function runAcceptance({ sabotage = null } = {}) {
     equal(report.omissions.length, 0, 'an omission control cannot claim success');
     report.checkedPixels = report.draws.reduce((sum, entry) => sum + entry.checkedPixels, 0);
     report.status = 'passed';
-    document.querySelector('#status').textContent = `11/19 unchanged original bodies · four new originals · ten draws · ${report.checkedPixels} independent pixels`;
+    document.querySelector('#status').textContent = `12/19 unchanged original bodies · four new originals · ten draws · ${report.checkedPixels} independent pixels`;
     document.querySelector('#renderer').textContent = report.renderer.renderer;
     return report;
   } catch (error) { report.status = 'failed'; report.failure = { message: error.message, stack: error.stack }; throw error; }

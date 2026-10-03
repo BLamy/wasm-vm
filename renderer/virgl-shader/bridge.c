@@ -27,12 +27,16 @@ struct profile {
    unsigned written[FILE_COUNT][TEMP_REGISTERS];
    unsigned semantic[2][8]; /* 0 attribute, 1 POSITION, 2 GENERIC, 3 COLOR */
    unsigned semantic_index[2][8];
+   bool flat[2][8];
    unsigned instructions, immediates;
    bool ended, started, color0_property;
    int stage;
 };
 
-static char response[BRIDGE_MAX_GLSL * 2 + 16384];
+static char single_response[BRIDGE_MAX_RESULT];
+static char pair_response[BRIDGE_MAX_PAIR_RESULT];
+static char *response = single_response;
+static size_t response_capacity = sizeof(single_response);
 static size_t response_used;
 static bool response_overflow;
 static bool upstream_logged;
@@ -62,9 +66,9 @@ static void append(const char *fmt, ...)
    if (response_overflow) return;
    va_list args;
    va_start(args, fmt);
-   int n = vsnprintf(response + response_used, sizeof(response) - response_used, fmt, args);
+   int n = vsnprintf(response + response_used, response_capacity - response_used, fmt, args);
    va_end(args);
-   if (n < 0 || (size_t)n >= sizeof(response) - response_used) {
+   if (n < 0 || (size_t)n >= response_capacity - response_used) {
       response_overflow = true;
       return;
    }
@@ -208,6 +212,7 @@ static bool declaration(const char **p, struct profile *s)
    if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
    for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
+   bool flat = false;
    if (r.file == OUT || (r.file == IN && s->stage == 1)) {
       if (!punctuation(p, ',')) return false;
       if (word(p, "POSITION")) {
@@ -223,7 +228,11 @@ static bool declaration(const char **p, struct profile *s)
       } else { failure_code = "unsupported-feature"; return false; }
       for (unsigned i = 0; i < 8; ++i)
          if (s->declared[r.file][i] && s->semantic[r.file][i] == semantic && s->semantic_index[r.file][i] == sid) return false;
-      if (s->stage == 1 && r.file == IN && (!punctuation(p, ',') || !word(p, "PERSPECTIVE"))) return false;
+      if (s->stage == 1 && r.file == IN) {
+         if (!punctuation(p, ',')) return false;
+         if (word(p, "CONSTANT")) flat = true;
+         else if (!word(p, "PERSPECTIVE")) return false;
+      }
    } else if (r.file == SVIEW) {
       if (s->stage != 1 || !punctuation(p, ',') || !word(p, "2D") || !punctuation(p, ',') || !word(p, "FLOAT")) return false;
    } else if (r.file == SAMP && s->stage != 1) return false;
@@ -236,6 +245,7 @@ static bool declaration(const char **p, struct profile *s)
    if (r.file <= OUT) {
       s->semantic[r.file][r.index] = semantic;
       s->semantic_index[r.file][r.index] = sid;
+      s->flat[r.file][r.index] = flat;
    }
    return true;
 }
@@ -337,15 +347,39 @@ static void io_metadata(const struct profile *s, enum file f)
       else snprintf(name, sizeof(name), "fsout_c0");
       append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u", comma ? "," : "", i, name, names[semantic], sid, s->components[f][i]);
       if (f == OUT) append(",\"writtenMask\":%u", s->written[f][i]);
+      if (semantic == 2) append(",\"interpolation\":\"%s\"", s->flat[f][i] ? "flat" : "smooth");
       append("}");
       comma = true;
    }
    append("]");
 }
 
-const char *bridge_translate(int stage, const char *text, size_t length)
+/* Each conversion owns only upstream outputs. Text/token workspaces live in
+ * sequential helper calls, so a pair never doubles their Wasm stack footprint. */
+struct conversion {
+   struct profile profile;
+   struct vrend_shader_info info;
+   struct vrend_variable_shader_info variable;
+   struct vrend_strarray shader;
+};
+
+static void cleanup(struct conversion *c)
 {
-   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   strarray_free(&c->shader, true);
+   free(c->info.sampler_arrays);
+   free(c->info.image_arrays);
+}
+
+static void begin_response(bool pair)
+{
+   response = pair ? pair_response : single_response;
+   response_capacity = pair ? sizeof(pair_response) : sizeof(single_response);
+   response_used = 0;
+   response_overflow = false;
+}
+
+static const char *check_input(struct profile *profile, const char *text, size_t length)
+{
    if (!text) return error("invalid-input", "TGSI text is required.");
    if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 16384 bytes.");
    for (size_t i = 0; i < length; ++i) {
@@ -353,56 +387,152 @@ const char *bridge_translate(int stage, const char *text, size_t length)
       if ((c < 32 && c != '\n' && c != '\t' && c != '\r') || c > 126)
          return error("invalid-input", "TGSI must contain printable ASCII and ordinary whitespace, without NUL bytes.");
    }
-   char checked[BRIDGE_MAX_TEXT + 1], input[BRIDGE_MAX_TEXT + 1];
-   memcpy(input, text, length); input[length] = 0;
-   memcpy(checked, input, length + 1);
-   struct profile profile = {.stage = stage};
+   char checked[BRIDGE_MAX_TEXT + 1];
+   memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
-   if (!validate(checked, &profile)) return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
-   struct tgsi_token tokens[BRIDGE_MAX_TOKENS];
-   memset(tokens, 0, sizeof(tokens));
+   if (!validate(checked, profile)) return error(failure_code, "TGSI is malformed or outside the documented straight-line profile.");
+   return NULL;
+}
+
+static const char *convert(struct conversion *c, const char *text, size_t length,
+                           const struct vrend_fs_shader_info *fragment_interface)
+{
+   char input[BRIDGE_MAX_TEXT + 1];
+   memcpy(input, text, length); input[length] = 0;
+   struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
    upstream_logged = false;
    if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return error("parse-error", "Upstream TGSI validation rejected the shader.");
    struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 1, .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
    struct vrend_shader_key key = {0};
-   if (stage == 1) key.fs.lower_left_origin = 1;
-   struct vrend_shader_info info = {0};
-   struct vrend_variable_shader_info variable = {0};
-   struct vrend_strarray shader = {0};
-   if (!strarray_alloc(&shader, SHADER_MAX_STRINGS)) return error("translation-error", "Shader output allocation failed.");
-   bool converted = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &info, &variable, &shader);
+   if (c->profile.stage == 1) key.fs.lower_left_origin = 1;
+   if (fragment_interface) key.fs_info = *fragment_interface;
+   if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS)) return error("translation-error", "Shader output allocation failed.");
+   bool converted = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
    size_t total = 0;
-   for (int i = 0; i < shader.num_strings; ++i) total += strlen(shader.strings[i].buf);
-   if (!converted || upstream_logged || total > BRIDGE_MAX_GLSL) {
-      strarray_free(&shader, true); free(info.sampler_arrays); free(info.image_arrays);
+   for (int i = 0; i < c->shader.num_strings; ++i) total += strlen(c->shader.strings[i].buf);
+   if (!converted || upstream_logged || total > BRIDGE_MAX_GLSL)
       return error("translation-error", "Upstream translation failed, logged a diagnostic, or exceeded the output bound.");
+   return NULL;
+}
+
+/* The profile permits only GENERIC fragment inputs, all centered and either
+ * PERSPECTIVE or CONSTANT. Cross-check upstream's value-only export before it
+ * becomes a vertex key; never accept caller keys or copy owned shader pointers. */
+static bool checked_fragment_interface(const struct conversion *fragment)
+{
+   const struct profile *p = &fragment->profile;
+   const struct vrend_fs_shader_info *info = &fragment->variable.fs_info;
+   unsigned count = 0;
+   bool seen[FILE_REGISTERS] = {0};
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i];
+   if (info->num_interps != (int)count || info->has_sample_input || info->has_noperspective) return false;
+   for (unsigned i = 0; i < count; ++i) {
+      const struct vrend_interp_info *entry = &info->interpinfo[i];
+      if (entry->semantic_name != TGSI_SEMANTIC_GENERIC || entry->semantic_index >= FILE_REGISTERS ||
+          entry->location != TGSI_INTERPOLATE_LOC_CENTER || seen[entry->semantic_index]) return false;
+      seen[entry->semantic_index] = true;
+      bool matched = false;
+      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic_index[IN][j] == entry->semantic_index) {
+         unsigned expected = p->flat[IN][j] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
+         if (entry->interpolate != expected) return false;
+         matched = true;
+      }
+      if (!matched) return false;
    }
-   response_used = 0; response_overflow = false;
-   append("{\"ok\":true,\"glsl\":\"");
-   for (int i = 0; i < shader.num_strings; ++i) {
-      /* Append one JSON string's contents without its surrounding quotes. */
-      for (const char *p = shader.strings[i].buf; *p; ++p) {
-         unsigned char c = (unsigned char)*p;
-         if (c == '"' || c == '\\') append("\\%c", c);
-         else if (c < 32) append("\\u%04x", c);
-         else append("%c", c);
+   return true;
+}
+
+static bool match_interface(struct profile *vertex, const struct profile *fragment)
+{
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i]) {
+      bool matched = false;
+      for (unsigned j = 0; j < FILE_REGISTERS; ++j) {
+         if (!vertex->declared[OUT][j] || vertex->semantic[OUT][j] != 2 ||
+             vertex->semantic_index[OUT][j] != fragment->semantic_index[IN][i]) continue;
+         if ((fragment->components[IN][i] & vertex->written[OUT][j]) != fragment->components[IN][i]) return false;
+         vertex->flat[OUT][j] = fragment->flat[IN][i];
+         matched = true;
+      }
+      if (!matched) return false;
+   }
+   return true;
+}
+
+static void interface_key(const struct profile *fragment)
+{
+   append("\"generic-interpolation-v1:");
+   bool comma = false;
+   for (unsigned sid = 0; sid < FILE_REGISTERS; ++sid)
+      for (unsigned i = 0; i < FILE_REGISTERS; ++i)
+         if (fragment->declared[IN][i] && fragment->semantic_index[IN][i] == sid) {
+            append("%sg%u/%u/%s", comma ? ";" : "", sid, fragment->components[IN][i], fragment->flat[IN][i] ? "flat" : "smooth");
+            comma = true;
+         }
+   append("\"");
+}
+
+static void stage_result(const struct conversion *c)
+{
+   const struct profile *profile = &c->profile;
+   const struct vrend_shader_info *info = &c->info;
+   int stage = profile->stage;
+   append("\"glsl\":\"");
+   for (int i = 0; i < c->shader.num_strings; ++i) {
+      for (const char *p = c->shader.strings[i].buf; *p; ++p) {
+         unsigned char byte = (unsigned char)*p;
+         if (byte == '"' || byte == '\\') append("\\%c", byte);
+         else if (byte < 32) append("\\u%04x", byte);
+         else append("%c", byte);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v3\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
-   io_metadata(&profile, IN); append(",\"outputs\":"); io_metadata(&profile, OUT);
+   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v4\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
+   io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
-   if (!stage) io_metadata(&profile, IN); else append("[]");
+   if (!stage) io_metadata(profile, IN); else append("[]");
    append(",\"uniforms\":[");
-   if (info.num_consts) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%d,\"encoding\":\"float32-bits\"}", stage ? "fs" : "vs", info.num_consts);
+   if (info->num_consts) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%d,\"encoding\":\"float32-bits\"}", stage ? "fs" : "vs", info->num_consts);
    append("],\"samplers\":[");
    bool comma = false;
-   for (unsigned i = 0; i < 8; ++i) if (info.samplers_used_mask & (1u << i)) {
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (info->samplers_used_mask & (1u << i)) {
       append("%s{\"index\":%u,\"name\":\"fssamp%u\",\"type\":\"sampler2D\"}", comma ? "," : "", i, i); comma = true;
    }
    append("],\"uniformBlocks\":[");
    if (!stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}" );
-   append("]}}");
-   strarray_free(&shader, true); free(info.sampler_arrays); free(info.image_arrays);
+   append("]}");
+}
+
+const char *bridge_translate(int stage, const char *text, size_t length)
+{
+   begin_response(false);
+   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   struct conversion c = {.profile = {.stage = stage}};
+   const char *failed = check_input(&c.profile, text, length);
+   if (!failed) failed = convert(&c, text, length, NULL);
+   if (!failed) { append("{\"ok\":true,"); stage_result(&c); append("}"); }
+   cleanup(&c);
+   if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+   return response;
+}
+
+const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
+                                  const char *fragment_text, size_t fragment_length)
+{
+   begin_response(true);
+   struct conversion vertex = {.profile = {.stage = 0}}, fragment = {.profile = {.stage = 1}};
+   const char *failed = check_input(&vertex.profile, vertex_text, vertex_length);
+   if (!failed) failed = check_input(&fragment.profile, fragment_text, fragment_length);
+   if (!failed && !match_interface(&vertex.profile, &fragment.profile))
+      failed = error("incompatible-interface", "Fragment GENERIC inputs require matching fully written vertex outputs.");
+   if (!failed) failed = convert(&fragment, fragment_text, fragment_length, NULL);
+   if (!failed && !checked_fragment_interface(&fragment))
+      failed = error("translation-error", "Upstream fragment interpolation metadata differs from the checked interface.");
+   if (!failed) failed = convert(&vertex, vertex_text, vertex_length, &fragment.variable.fs_info);
+   if (!failed) {
+      append("{\"ok\":true,\"vertex\":{"); stage_result(&vertex);
+      append("},\"fragment\":{"); stage_result(&fragment);
+      append("},\"interfaceKey\":"); interface_key(&fragment.profile); append("}");
+   }
+   cleanup(&vertex); cleanup(&fragment);
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
    return response;
 }

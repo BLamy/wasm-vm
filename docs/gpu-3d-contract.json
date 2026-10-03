@@ -1,8 +1,8 @@
 {
   "activationBlockers": [
-    "Twelve captured shaders are still rejected; seven translate, and only the textured-scene pair has dedicated execution evidence.",
+    "Seven PRECISE-bearing captured shaders remain rejected; twelve translate with execution proof limited to the textured-scene pair, four component fixtures, and the flat fragment paired with a literal translated vertex shader.",
     "PRECISE semantics have no approved lowering.",
-    "No production command renderer, transport or GPU scanout exists.",
+    "Command execution, transport and retained scanout have isolated proof paths; production GPU negotiation and a real Mesa guest remain gated.",
     "Mesa has unconditional capabilities not suppressible by zero capset fields.",
     "Reduced capset requires new guest initialization and reduced-profile captures.",
     "Future GLES3 requires transform feedback, UBOs, MRT, format and draw semantics proof."
@@ -80,9 +80,8 @@
       "stage": "FRAG"
     },
     "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": {
-      "currentBridge": "rejected",
-      "executionEvidence": "not-executed",
-      "rejectionCode": "parse-error",
+      "currentBridge": "translated",
+      "executionEvidence": "flat-pair-renderer-pixels",
       "stage": "FRAG"
     },
     "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
@@ -692,12 +691,12 @@
     "shaderStageCounts": {
       "FRAG": {
         "corpusOccurrences": 15,
-        "mapping": "Bounded literal and captured textured-scene FRAG stage support; seven corpus bodies translate, twelve remain rejected. Only the captured scene pair has dedicated pixel proof.",
+        "mapping": "Bounded FRAG stage support; twelve of nineteen captured bodies translate and seven PRECISE bodies remain rejected. Dedicated execution proof is scoped to the textured-scene pair, four component fixtures and the flat fragment paired with a translated literal vertex stage.",
         "status": "supported"
       },
       "VERT": {
         "corpusOccurrences": 11,
-        "mapping": "Bounded literal and captured textured-scene VERT stage support; seven corpus bodies translate, twelve remain rejected. Only the captured scene pair has dedicated pixel proof.",
+        "mapping": "Bounded VERT stage support; twelve of nineteen captured bodies translate and seven PRECISE bodies remain rejected. Dedicated execution proof is scoped to the textured-scene pair, four component fixtures and the flat fragment paired with a translated literal vertex stage.",
         "status": "supported"
       }
     }
@@ -728,12 +727,12 @@
     "virglFeature": false
   },
   "schema": "wasm-vm-virgl-browser-contract-v1",
-  "scope": "Isolated prototype and planned renderer mappings; no guest renderer implementation or desktop acceleration claim.",
-  "shaderProfile": "virgl-webgl2-straight-line-v3",
+  "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
+  "shaderProfile": "virgl-webgl2-straight-line-v4",
   "shaderSyntax": {
     "FS_COLOR0_WRITES_ALL_CBUFS": {
       "mapping": "Exactly one fragment property with value1 before instructions supported under fixed one-target configuration; no MRT support.",
-      "scope": "bounded-v3-subset-only",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "PRECISE": {
@@ -746,17 +745,17 @@
     },
     "UINT32-immediates": {
       "mapping": "Four checked decimal words are preserved as float bits; finite magnitude<=1e6 only, no nonzero subnormals. Integer operations remain rejected.",
-      "scope": "bounded-v3-subset-only",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "declaration-masks": {
-      "mapping": "Generic VS outputs and perspective FS inputs may declare .xy or .xyz; all other declarations stay full-width.",
-      "scope": "bounded-v3-subset-only",
+      "mapping": "Generic VS outputs and smooth or flat FS inputs may declare .xy or .xyz; all other declarations stay full-width.",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "declaration-ranges-and-order": {
       "mapping": "Non-overlapping TEMP ranges within0..9 and CONST ranges within0..7 are supported, including declarations after immediates. Other file ranges, address registers and larger banks remain rejected.",
-      "scope": "bounded-v3-subset-only",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "indirect-constant-index": {
@@ -765,16 +764,17 @@
     },
     "partial-destination-writes": {
       "mapping": "MOV/ADD/MUL accept TEMP/OUT masks x/y/z/w/xy/xyz, tracking initialized lanes. Complete POSITION/COLOR and every declared generic output lane are required. MAD/TEX retain full-width destinations.",
-      "scope": "bounded-v3-subset-only",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "semantics-and-interpolation": {
-      "mapping": "POSITION/COLOR/GENERIC[0], PERSPECTIVE and CONSTANT; flat linkage requires matching VS/FS qualifiers.",
-      "status": "implementable"
+      "mapping": "POSITION/COLOR and GENERIC0..7 with PERSPECTIVE or CONSTANT fragment interpolation. Bounded pair translation derives matching vertex qualifiers and a canonical semantic/mask/mode identity; no caller compiler keys.",
+      "scope": "bounded-v4-subset-only",
+      "status": "supported"
     },
     "source-swizzles-and-negation": {
       "mapping": "Exactly four xyzw selectors supported. Consumed source lanes follow destination masks for componentwise operations and xy for 2D TEX, then swizzles select declared and initialized lanes. Negation/modifiers remain rejected.",
-      "scope": "bounded-v3-subset-only",
+      "scope": "bounded-v4-subset-only",
       "status": "supported"
     },
     "structured-target-annotations": {

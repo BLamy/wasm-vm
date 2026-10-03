@@ -1458,9 +1458,9 @@
     "ok": false
   },
   {
-    "name": "unsupported-flat",
+    "name": "unsupported-flat-centroid",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyzz\nEND\n",
+    "text": "FRAG\nDCL IN[0].xyz, GENERIC[0], CONSTANT, CENTROID\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyzz\nEND\n",
     "ok": false
   },
   {
