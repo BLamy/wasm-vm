@@ -314,6 +314,39 @@ Mixed legacy/owned pairs derive the existing smooth/flat interface key internall
 The native sanitizer, fixed16MiB Wasm, unchanged legacy suites and actual GPU
 output are bound to the frozen source by `make verify-E6-T12e4a`.
 
-Integer arithmetic and masks, then mixed float operations and comparisons, remain
-separate successors. PRECISE, control flow and raw-stage sampler declarations still reject. This isolated shader
+Mixed float operations and comparisons remain a separate successor. PRECISE,
+control flow and raw-stage sampler declarations still reject. This isolated shader
 boundary does not activate a guest renderer or establish a MIPS/FPS improvement.
+
+
+## Integer arithmetic, masks and selection
+
+E6-T12e4b adds `virgl-webgl2-raw-bits-v2` only to stages containing a validated
+UADD, ISGE, USEQ, USNE or UCMP. Existing v1 and legacy v5 stages retain their full
+serialized results. UADD wraps modulo2^32. ISGE uses signed32 ordering, while
+USEQ and USNE compare raw words, including distinct positive/negative zero and
+identical NaN bit patterns. Every true comparison returns all32 bits set. UCMP
+selects the raw second operand for any nonzero condition, otherwise the third;
+conditions need not be canonical comparison masks. All consumed operands are
+validated and read before partial or aliased destination writes.
+
+The compiler emits only integer operations over private uint values. It computes
+signed ordering by XORing the sign bit before an unsigned comparison. The
+independent hardware oracle instead uses signed mathematical integers. The
+compact checked source representation adds a third operand without increasing
+the112-byte instruction or26,232-byte IR allocation.
+
+Output proof remains conservative. Fully known arithmetic/comparison operands
+produce exact known bits; other results need a proven safe carrier. A statically
+determined UCMP condition preserves its selected payload proof. An unknown
+condition intersects both payloads' known bits and preserves an input origin only
+when both payloads name that same origin. Both payloads must be initialized, even
+when the condition is constant. Selecting different unknown float origins or
+adding zero does not grant an unproven float-output exemption.
+
+`make verify-E6-T12e4b` records native sanitizer/Wasm parity, exact prior results,
+dynamic hardware execution of every operation in both stages, all32 output bits,
+mixed stage interfaces, bounded failures/recovery and intentionally incorrect
+GPU lowerings. Direct arbitrary host uniforms remain compiler probes. The guest
+constant command policy, production negotiation and original19 shader bodies are
+unchanged. Float comparisons, mixed float arithmetic and PRECISE remain gated.

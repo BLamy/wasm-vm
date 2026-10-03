@@ -164,7 +164,7 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
    }
    return true;
 }
-static bool source(const char **p, struct profile *s, unsigned consumed, struct reg *operand)
+static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand)
 {
    struct reg r;
    if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index]) return false;
@@ -175,7 +175,11 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
       if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
    if ((s->components[r.file][r.index] & needed) != needed) return false;
    if (r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
-   if (operand) *operand = r;
+   if (operand) {
+      operand->file = r.file;
+      operand->index = r.index;
+      memcpy(operand->swizzle, r.swizzle, sizeof(operand->swizzle));
+   }
    return true;
 }
 static bool literal_float(const char **p, uint32_t *bits)
@@ -284,8 +288,13 @@ static bool instruction(const char **p, struct profile *s)
       else if (word(p, "NOT")) raw.opcode = RAW_NOT;
       else if (word(p, "SHL")) raw.opcode = RAW_SHL;
       else if (word(p, "USHR")) raw.opcode = RAW_USHR;
+      else if (word(p, "UADD")) raw.opcode = RAW_UADD;
+      else if (word(p, "ISGE")) raw.opcode = RAW_ISGE;
+      else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
+      else if (word(p, "USNE")) raw.opcode = RAW_USNE;
+      else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
       else { failure_code = "unsupported-feature"; return false; }
-      arity = raw.opcode == RAW_NOT ? 1 : 2;
+      arity = raw.opcode == RAW_NOT ? 1 : raw.opcode == RAW_UCMP ? 3 : 2;
       partial = true;
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
@@ -365,7 +374,7 @@ static bool validate(char *text, struct profile *s)
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
-   if (s->raw && (!s->raw->bitwise_count || !raw_outputs_safe(s))) {
+   if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s))) {
       failure_code = "unsupported-feature";
       return false;
    }
@@ -445,7 +454,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          while (isdigit((unsigned char)*p)) ++p;
          if (!punctuation(&p, ':')) continue;
       }
-      if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR")) {
+      if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
+          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP")) {
          candidate = true;
          break;
       }
@@ -569,7 +579,9 @@ static void stage_result(const struct conversion *c)
          else append("%c", byte);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", c->owned_shader ? "virgl-webgl2-raw-bits-v1" : "virgl-webgl2-straight-line-v5", stage ? "fragment" : "vertex");
+   const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", name, stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(profile, IN); else append("[]");

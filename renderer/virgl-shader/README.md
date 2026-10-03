@@ -20,6 +20,7 @@ make verify-E6-T12e1
 make verify-E6-T12e2
 make verify-E6-T12e3
 make verify-E6-T12e4a
+make verify-E6-T12e4b
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -182,17 +183,17 @@ in `finally` and owns all returned JSON data.
 
 ### Private raw lanes
 
-`virgl-webgl2-raw-bits-v1` is selected internally for fully validated programs
-containing AND, OR, NOT, SHL or USHR. A bounded lexical probe chooses which guard
+`virgl-webgl2-raw-bits-v1` identifies fully validated programs containing AND,
+OR, NOT, SHL or USHR, without any v2 operation described below. A bounded lexical probe chooses which guard
 to attempt; it does not admit an instruction or select returned semantics.
-Programs without these instruction tokens take the original v5 path, preserving
+Programs without any admitted raw instruction tokens take the original v5 path, preserving
 its full GLSL, metadata and error results, including its finite UINT32-immediate
 policy. A raw-domain immediate alone does not opt a program into the new profile.
 There is no caller backend flag, vendor patch or generated-source rewrite.
 
-The owned path permits MOV and the five bitwise operations. ADD, MUL, MAD and
+The v1 owned path permits MOV and the five bitwise operations. ADD, MUL, MAD and
 TEX cannot be mixed into it; SAMP/SVIEW declarations also reject in this profile.
-UADD, comparisons, UCMP, PRECISE, modifiers, control
+PRECISE, modifiers, control
 flow, indirect addressing and ADDR remain unsupported. It retains the v5 bank,
 line, text, instruction, component and initialization bounds. All decimal UINT32
 words from 0 through 4294967295 are permitted in raw immediates; signs, exponent
@@ -251,6 +252,59 @@ the hardware fixtures and all19 unchanged original bodies. The hardware gate
 reconstructs u32 words from finite-normal vertex transform-feedback carriers
 and exact0/255 fragment bit planes, with independent expected words and dynamic
 uniforms. It also records real fixed-memory allocation failure and recovery.
+
+### Wrapping arithmetic, masks and raw selection
+
+`virgl-webgl2-raw-bits-v2` extends the owned profile with UADD, ISGE, USEQ, USNE
+and UCMP. A stage reports v2 only when a new instruction validates; old v1 and
+legacy v5 programs retain their full GLSL/metadata/error results. A pair selects
+the profile independently for each stage, with the same derived interface key.
+Raw immediates alone still do not select an owned backend. FSLT/FSGE, mixed
+floating-point arithmetic, PRECISE, control flow and integer IO remain excluded.
+
+UADD computes the low32 bits using unsigned addition. ISGE orders two's-complement
+words by XORing each sign bit with `2147483648u` and comparing the unsigned results.
+USEQ and USNE compare raw words. All three predicates produce exactly
+`4294967295u` or `0u`. UCMP selects src1 when the corresponding src0 word is
+nonzero, otherwise src2; every noncanonical true word is valid. Selected payloads
+stay unsigned even when their bits encode NaNs, infinities or subnormals. No
+float mix, numerical float conversion or signed overflowing C expression carries
+these values. The private raw guarantee and existing float-output boundary remain
+separate.
+
+The safety proof computes exact UADD/comparison bits only when both inputs are
+fully known. Otherwise those bits are unknown, and these operations always clear
+float origin. Output encoders can re-establish safe bounds with AND/OR operations.
+For UCMP, a known-zero condition copies src2's proof; any definitely set condition
+bit selects src1's proof. An unknown condition intersects both arms' known-zero
+and known-one bits and keeps float origin only when both name the same original
+input register/lane. Dynamic selection between different unknown float origins
+therefore does not authorize float output. Both arms must be declared and their
+consumed lanes initialized even if a constant condition chooses only one arm.
+The complete RHS snapshot precedes all writes, including three-source aliases.
+
+Checked sources now retain only file, index and four swizzle selectors:24 bytes
+each. Three fit the old two36-byte parser-register slots. The full parser still
+checks range, mask and spelling before recording any source. Instructions remain
+112 bytes, the IR remains26,232 bytes, and no allocation or capacity increases.
+The existing opcode counter slot becomes a presence mask; no profile-version field
+is added. Native/Wasm layout and allocation-pressure proof continue to bind these
+sizes. Long three-source expressions can reach the unchanged64KiB GLSL bound;
+they return `translation-error`, release both allocations and recover normally.
+The179-instruction cap does not override the independent output-size cap.
+
+`tests/integer-mask-cases.json` covers constant and dynamic proof paths, exact
+comparison masks, selection/origin joins, aliasing, third-source initialization,
+arity errors and capacity boundaries. One formerly rejected captured-fixture
+UADD program becomes a positive: its final MOV overwrites the raw result with an
+ordinary input origin. Its historical rejection slot now uses unsupported UMUL.
+The two historical one-source UADD bank negatives likewise become UMUL slots;
+their exact old malformed UADD texts are new explicit `parse-error` cases. The
+old v1 UADD/ISGE/UCMP negative programs still reject because their final lanes are
+unsafe float outputs. Historical counts and all19 original body results remain
+unchanged. The hardware proof reconstructs every result bit using the v1 output
+encodings and independent integer oracles, including dynamic operands in both
+stages and mixed-profile pairs.
 
 ### Legacy finite-float profile
 

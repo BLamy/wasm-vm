@@ -3,7 +3,7 @@ id: E6-T12e4b
 epic: 6
 title: Preserve wrapping integer arithmetic masks and selection
 priority: 525.02699042
-status: pending
+status: verified
 depends_on: [E6-T12e4a]
 estimate: S
 risk: high
@@ -39,4 +39,153 @@ independent actual hardware bit failure. Audit all changed executable paths.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — bounded integer masks and raw selection
+
+Runtime, fixtures and acceptance harness frozen at
+`1e8f2586a125efd91460db3a7e11049855acb495` (parent verified raw-bit head
+`98314e2ddb082cf372a46ab90871b7cfdb77d587`). The new v2 stage profile is selected
+only by validated UADD, ISGE, USEQ, USNE or UCMP. Private values remain highp
+unsigned words. Addition wraps; signed comparison uses a sign-bit order transform;
+comparison true masks are all ones; UCMP treats every nonzero condition as true.
+The complete RHS is read before partial writes. Compact three-source storage
+preserves112-byte instructions,26,232-byte IR and7,608-byte native profiles.
+
+Known-bit output analysis admits exact constant arithmetic/comparisons, known
+UCMP arms and conservative unknown-arm joins, with an ordinary float origin only
+when the selected/merged value is proven to be the same input. It rejects unsafe
+raw float outputs, uninitialized consumed lanes, unsupported float/control/PRECISE
+features and excessive generated GLSL. The three migrated historical UADD inputs
+remain in the new fixture with their exact now-supported or malformed outcomes;
+only their old unsupported-op slots become adjacent UMUL negatives.
+
+Recorded native sanitizer run:705 cases (279 retained +426 new),47 pairs (22
+retained +25 new),84,167 calls,45,870 exact standalone recoveries,30,580 exact pair
+recoveries,2,520 truncations,324 hostile calls and4,096 mutations across four
+seeds. All retained full results and all19 originals remain identical. New shared
+cases:377 (197 accept/180 reject), plus49 hardware programs. Native LLVM counters
+and sanitizer stack observations are recorded; they are not a total or Wasm stack
+measurement. Runtime maxima are54,603/107,416 serialized bytes and51,845 GLSL bytes.
+
+Hardware proof reconstructs704 raw words using352 byte-carrier vertex feedback
+captures and2,816 fragment bitplanes;8 vectors for each of11 operation/alias/stress
+probes execute in both stages. Direct finite UCMP outputs add8 captures and8
+pixel draws. Eighteen v5/v1/v2 smooth/flat full and partial-interface draws produce
+17,856 independently checked nonedge pixels. Actual uniform uploads/readbacks,
+source identities, system-block orientation, all object ownership and fixed16MiB
+allocation failure/recovery are recorded. Three source-bound corruptions must
+compile/link and fail actual GPU results: signed comparison, all-ones mask and
+UCMP condition. Guest constant transport and production GPU negotiation remain
+unchanged; no Mesa-guest activation or MIPS/FPS claim is made.
+
+Final recorded commands (both passed at the frozen head):
+
+```sh
+EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc VIRGL_INTEGER_MASKS_EVIDENCE_DIR=evidence/virgl-integer-masks/worker make verify-E6-T12e4b
+python3 tools/virgl-integer-masks/cold.py --output evidence/virgl-integer-masks/cold-clone
+```
+
+The full gate includes the prior E4a gate (including original captured shaders,
+components, pairs, banks, command state/draw, constants and asynchronous renderer
+jobs), then all new hardware probes and three expected sabotage failures. No
+historical receipt was weakened. Both recorded runs have zero browser console,
+page and request errors. All362 new-proof GL objects are released. The final
+screenshots were visually inspected through an identical development capture
+and their byte-identical worker/cold PNGs; the final hash is recorded below.
+
+Evidence paths under `evidence/virgl-integer-masks/` (SHA256):
+
+- `worker/receipt.json`:
+  `e4cf1d4710acb1c954be20182b6fd9e74db15aca318b01b50eafb59f612b2320`
+- `worker/native/native-report.json`:
+  `a61a45c7f3a4eadb09d535acca247edc515d3bdb644ab37ff8bf5919e48ca0b4`
+- `worker/hardware/report.json`:
+  `4dd3db917f3b9179aaca695f4427b60c4f39f9d475ff2828c728620f45cc37f4`
+- `worker/sabotage-signed-compare/report.json`:
+  `5330960d9546101a13cda24c825987db8bb799ee9220696e41f12527a07c6e48`
+- `worker/sabotage-all-ones-mask/report.json`:
+  `e5931938d638213d294a6d48e4351c8b19125a68d5809898830e06bedf09f170`
+- `worker/sabotage-ucmp-selection/report.json`:
+  `45c1b1ead5253a7954f3a23e451fae2e4a5997a074f2e1896c03e59000c12b85`
+- `cold-clone/report.json`:
+  `bddb7ed52873ed04be221f4e3bb828ed6f9ed95cf833d7db90d0e78a248f61c7`
+- `cold-clone/acceptance/receipt.json`:
+  `07cc0df293e60d9be178be948fbe05cec5b1d59e1978cf2ee1045c9d4797cb92`
+- `cold-clone/acceptance/native/native-report.json`:
+  `85a413dd282f97e8a2311f4185fadc7bb1ccf94a2f84b2e1913f2f4df8c594ca`
+- `cold-clone/acceptance/hardware/report.json`:
+  `3fea47ae1264797d5dc595948ed1758a7b8b2f108949d1eb22a765a7db158f3b`
+- `cold-clone/cold.log`:
+  `119740475be98f1c7c272edb56594d9c7353680ae9bf5984ce9074f7a4081b3d`
+- Identical worker/cold `hardware/browser.png`:
+  `d492f6549ceddb5220ff21bf02b9a14b81804bb5cf761835a3cce859334b2fa8`
+
+The worker independently rechecked all118 receipt record digests. The pristine
+clone began and ended clean at the same head; all127 copied acceptance files and
+all118 cold receipt records were rechecked. Both builds emitted identical Wasm
+`d007009e9fd7a2685dfe87f83fd69da1ed3fd35d178a856e73485e4a19d328cc`.
+Worker sanitizer binary:
+`a21971951d96eb9a3ce43f3bc4267c9a5cb1326a992890372831cff6223b488d`.
+Retained clone:
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-integer-masks-cold-7s5htub_/wasm-vm`.
+
+This is an isolated compiler proof; neither the default demo bundle nor guest
+capsets changed. It does not assert live Mesa or guest instruction throughput.
+Independent verifier evidence and status remain the critic's responsibility.
+
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- P01–P20 **HELD**. The pre-evidence predictions were recorded before worker output
+  inspection in `evidence/virgl-integer-masks/verifier/predictions.md`, SHA256
+  `bff2edc72af60100ba0641e6a8752ad545b839cc325f14cbafeb5911b4d805c9`.
+  `verifier/VERIFICATION.md` gives each concrete recording point and disposition.
+  Frozen implementation `1e8f2586a125efd91460db3a7e11049855acb495` and worker
+  submission `8c2644f8` survived independent examination; no product changes were
+  made by the critic.
+- **Falsification:** separately compiled current/baseline sanitizer binaries
+  agreed on 298 full old results, including all 19 originals. Fresh source3,
+  initialization, masks, origins and malformed-input attacks produced 1,586
+  native/Wasm full-result matches, 4,758 native calls and 3,172 exact recoveries.
+  Five fresh abstract-state seeds and 32 concrete schedules over 51,200
+  instructions passed 3,500,032 known-bit checks, 112,288 origin assertions and
+  45,248 safe-output checks (`verifier/knowledge-report.json`).
+- **Actual GPU:** a separate composed five-op alias program passed 128 complete
+  words across 16 new vectors in both stages. Its source-bound UCMP arm swap
+  compiled and linked, then contradicted the independent TF oracle at
+  `verifier/sabotage/report.json#/acceptance/vertex/0/vectors/0/rawWords/4`:
+  expected `0x3f7f8000`, observed `0x3f000000`. Position and trailing guard words
+  remained intact. Worker TGSI was separately interpreted to recompute all 704
+  GPU words, 352 TF captures and 2,816 fragment bitplanes. All 17,856 non-diagonal
+  mixed-pair pixels and 16 direct finite UCMP selections were independently
+  recomputed; worker screenshot visually inspected.
+- **Sufficiency:** all 56 changed executable C lines have nonzero recorded LLVM
+  counts; all 22 added non-executable C/header lines are explicitly classified
+  in `verifier/worker-semantics.json`. Build/test/tooling/document hunks and narrow
+  proof-tool diagnostic waivers are listed in `verifier/VERIFICATION.md`. Prior
+  unchanged boundaries retain HELD authority; compact source storage, v2 profile
+  choice, known-bit/origin propagation and emitted operations were reattacked.
+- **Identity/portability:** `verifier/binding-audit.json` independently checks
+  37,282 value/shape/hash assertions and 9,439 repeated nested file bindings,
+  every frozen source, all native stream/log results and full browser parity.
+  All 127 copied cold artifacts match the retained clean clone; complete native
+  and GPU proof agrees with the worker and the Wasm hash is identical. A synthetic
+  poisoned-environment attack confirms the scrubbed environment reaches the
+  acceptance child. No worker receipt verification functions were imported.
+- **Scope/SUITE:** retain the fresh deterministic abstract-state attack, alias GPU
+  shaders, seeds, source3 corpus and full transcripts as repeatable verifier
+  regressions. The existing `make verify-E6-T12e4b` target is the recurring gate.
+  Production stays off; this verdict makes no live Mesa, guest graphics offload,
+  frame-rate or MIPS claim. No unrelated requirement was added.
+
+Verifier evidence manifest: `evidence/virgl-integer-masks/verifier/manifest.json`,
+SHA256 `4012f9aba301f1ce5d106901e61133ba8b4d83ced1f7ed15d2edeefe91dd3705`.
+Key report SHA256s: binding audit
+`c6f9bb8052d29f9b3f7c3e34fd4f01ecb8999b040eb82734488624dc6459320c`;
+independent native
+`1e1a3ebc6ae3d287715032240d12edd0e42d12d70a5c306b2efb74da1d21d94d`;
+independent hardware
+`c8f742f953160c6d45b8643b66a13255fd0f507c82a4f566720947a7e3ebd537`;
+independent sabotage
+`6cca0aa1e745444424380e108dba7f5e533ed8d953493d2329e2fbf79a8ee7ae`.
+Exact reproducible commands are in `verifier/VERIFICATION.md`; the sabotage
+command is required to fail at the cited actual GPU mismatch.

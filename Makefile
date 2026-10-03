@@ -1881,3 +1881,7 @@ verify-E6-T12e3b:
 .PHONY: verify-E6-T12e4a
 verify-E6-T12e4a:
 	bash tools/verify-virgl-raw-bits.sh
+
+.PHONY: verify-E6-T12e4b
+verify-E6-T12e4b:
+	bash tools/verify-virgl-integer-masks.sh

@@ -1,0 +1,177 @@
+{
+  "task": "E6-T12e4b",
+  "verdict": "verified",
+  "frozenHead": "1e8f2586a125efd91460db3a7e11049855acb495",
+  "predictionSha256": "bff2edc72af60100ba0641e6a8752ad545b839cc325f14cbafeb5911b4d805c9",
+  "records": [
+    {
+      "path": "VERIFICATION.md",
+      "bytes": 11235,
+      "sha256": "4f2437d78016269b5dfd5c6bf73d477e001c4e8038daab4c01502f7fee2bcbf2"
+    },
+    {
+      "path": "audit-native.input",
+      "bytes": 659724,
+      "sha256": "5daed913c470e7467de2a4382883f6e58741ca19768525d046eee50721c2fb3f"
+    },
+    {
+      "path": "audit-native.jsonl",
+      "bytes": 6109648,
+      "sha256": "38cfc2bca75c23eb4cf4f3d4d27e470a7b79d21d833551196c50994049d12ff0"
+    },
+    {
+      "path": "audit-native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "audit-parent.input",
+      "bytes": 122552,
+      "sha256": "9a1ef7763ca67c134d6a9983867ea3476ca93b3fab39aedad0448b8f7bd34ffd"
+    },
+    {
+      "path": "audit-parent.jsonl",
+      "bytes": 1372504,
+      "sha256": "cb77048b5308df4815bf8b6d1ca893521cfffec10f735c6662db947e08bdd887"
+    },
+    {
+      "path": "audit-parent.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "binding-audit.json",
+      "bytes": 2533,
+      "sha256": "c6f9bb8052d29f9b3f7c3e34fd4f01ecb8999b040eb82734488624dc6459320c"
+    },
+    {
+      "path": "binding-audit.py",
+      "bytes": 15304,
+      "sha256": "bcb6cbde49d36a2d6c2978b487c706d35c3589a214787786c17056c0c238bad9"
+    },
+    {
+      "path": "browser_audit.mjs",
+      "bytes": 10430,
+      "sha256": "37478d7e0916e9517313f8889d643dbd70f0bde2acc02c59cd57676cb0668e8a"
+    },
+    {
+      "path": "driver.c",
+      "bytes": 738,
+      "sha256": "599467fdd3e83d6d618b620a7d216757417f2e7afb48d86ad5d978c3007ab5ed"
+    },
+    {
+      "path": "hardware/browser.png",
+      "bytes": 37906,
+      "sha256": "8729f310a4261cc4a74e897780c7abf34f8f554e433df6fae5b6069cf17ef338"
+    },
+    {
+      "path": "hardware/report.json",
+      "bytes": 853564,
+      "sha256": "c8f742f953160c6d45b8643b66a13255fd0f507c82a4f566720947a7e3ebd537"
+    },
+    {
+      "path": "hardware-details.json",
+      "bytes": 1749,
+      "sha256": "1e9131fb936d4932a7068cb8d2a8c5b0e529a9ad76a4e1e62b34ea9792e47a69"
+    },
+    {
+      "path": "hardware-fixture.json",
+      "bytes": 14615,
+      "sha256": "12408b7228dfee68cf9304433055ad9bdfec9744d2ce199824a850b97685e2f9"
+    },
+    {
+      "path": "hardware_details.py",
+      "bytes": 3459,
+      "sha256": "1f652f7aaaa667202bbcdadb65212f2bd5db66dc08fe5ad221c1bdf717edef68"
+    },
+    {
+      "path": "hardware_fixture.py",
+      "bytes": 3204,
+      "sha256": "e537a2f2e226df64763c46afff6f263a59891c29d870a6d57c2ead4bc3044242"
+    },
+    {
+      "path": "knowledge-report.json",
+      "bytes": 1381,
+      "sha256": "cf9ff4808cf026711831fe5998eec02f671497b803e0ed9365cd66ec058a9989"
+    },
+    {
+      "path": "knowledge_attack.c",
+      "bytes": 6917,
+      "sha256": "4f778552e46995f8f5a9bf472765c580880135cc532e6e6b52c5bdb913148d0a"
+    },
+    {
+      "path": "native-cases.json",
+      "bytes": 901956,
+      "sha256": "810a96d955fc1ccdb7d5d7f32dc14975b0cb511ab43927503920c1cff49da0ce"
+    },
+    {
+      "path": "native-report.json",
+      "bytes": 9289,
+      "sha256": "1e1a3ebc6ae3d287715032240d12edd0e42d12d70a5c306b2efb74da1d21d94d"
+    },
+    {
+      "path": "native_audit.py",
+      "bytes": 9599,
+      "sha256": "4cca25f9fe34513d6d256565455e1c6a374797c82698b5ae02b0cd72d5440b8e"
+    },
+    {
+      "path": "parent/bridge.c",
+      "bytes": 27475,
+      "sha256": "cd93e40e913290552a9eaf0eacb7272b6e54ffee863929e106b96755ef2f1778"
+    },
+    {
+      "path": "parent/bridge.h",
+      "bytes": 1061,
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "parent/raw_bits.c",
+      "bytes": 8415,
+      "sha256": "754359c34956612478c3bab9415f0ab8a1fd1bffabe44e2f1a08154e0e53bf62"
+    },
+    {
+      "path": "parent/raw_bits.h",
+      "bytes": 2199,
+      "sha256": "cb55fbabb674313eb04b2df6c1cec17ca78530f429342e81cc6c38568297efe5"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 8915,
+      "sha256": "bff2edc72af60100ba0641e6a8752ad545b839cc325f14cbafeb5911b4d805c9"
+    },
+    {
+      "path": "run_browser.mjs",
+      "bytes": 1333,
+      "sha256": "65d0fb45d9fe12c305d404e69bd86b8bf44196bfa19a28c155dfbeb2aee547d7"
+    },
+    {
+      "path": "sabotage/failure.png",
+      "bytes": 24009,
+      "sha256": "e988a4143d2f713354cef2017b670dc6fe0ab0b0c3e70620e0ed4707daa3e101"
+    },
+    {
+      "path": "sabotage/report.json",
+      "bytes": 326594,
+      "sha256": "6cca0aa1e745444424380e108dba7f5e533ed8d953493d2329e2fbf79a8ee7ae"
+    },
+    {
+      "path": "worker-semantics.json",
+      "bytes": 16353,
+      "sha256": "1d42c1fd79259bac9669d65224a060d173d3ddbcbd275493760d59a017a7e57b"
+    },
+    {
+      "path": "worker_semantics.py",
+      "bytes": 6012,
+      "sha256": "e00e799ed7f0a1c52a6d644df974a341de8a79a86064ba2d1513e38c922d1613"
+    }
+  ],
+  "sabotage": {
+    "status": "expected-failure",
+    "sourceBound": true,
+    "compiled": true,
+    "linked": true,
+    "expectedCarrier": "0x3f7f8000",
+    "observedCarrier": "0x3f000000"
+  },
+  "scope": "Isolated shader compiler; production disabled; no Mesa activation or throughput claim"
+}
