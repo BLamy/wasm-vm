@@ -3,7 +3,7 @@ id: E6-T12e6b
 epic: 6
 title: Derive conditional finite constant authority in the owned compiler
 priority: 525.02699062
-status: implemented
+status: verified
 depends_on: [E6-T12e6a]
 estimate: S
 risk: high
@@ -169,3 +169,84 @@ unchanged. Numerical subnormal/reciprocal checks use the stated allowed outcomes
 no exact computed-zero-sign or NaN/Inf arithmetic promise is made. Defensive JSON-
 overflow branches are not claimed as executed. Fresh adversarial verification is
 required before this task can become verified.
+
+
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+Predictions were recorded in `verifier/predictions.json` before opening worker
+recordings. Reviewed the task and runtime diff from verified parent `9497f3da`
+to `f81c83b7`; carried HELD predictions across only the two evidence-adapter fixes
+at final source `d3565d11c2133aacbaa628ffa82342b5d308ab10`. The worker claim is
+submission `5dc8bbe01df31d7b0672d1ae55e6dd076da7fca2`. No implementation edits were
+made by this verifier, and the preliminary failed top-level receipt remains
+explicitly preliminary.
+
+- **P1/P5 — HELD, exact compatibility and native/Wasm obligations.** Independently
+  reconstructed the native stream and serialized results, including all 19
+  originals, 2,699 retained cases/203 pairs, 452 new cases/18 pairs, exactly 105
+  promoted historical bodies/adjacent negatives, and two pair substitutions.
+  Actual Wasm full outputs and owned results match; 24 allocator-pressure calls
+  restore capacity. Final `cold-clone/acceptance/native/native.log:3409` records
+  526,760 calls, and `cold-clone/acceptance/wasm/report.json` records 17,738 calls.
+  `verifier/final-cold-audit.json` binds the independent full receipt recomputation.
+- **P2/P3/P4/P10 — HELD, authority, aliases, retry and independent attacks.** The
+  verifier's 800 pre-predicted arm/selector/output-or-numeric/partial-write cases
+  pass 2,400 calls under independent shuffled seeds `8319bb27`, `562dee19`,
+  `c7a5026b`; `verifier/independent-calls.jsonl` retains every full result and
+  `independent-report.json` binds source/binary/input/log hashes. The same oracle
+  catches a copied-source fault granting ordinary output permission to a
+  conditional-only origin. Eight further standalone extent cases and all 16
+  pair combinations preserve exact stage/name/count obligations for extents
+  1/46/47 (`verifier/extent-report.json`). Recorded allocator failures at final
+  `native/native.log:3393` through `:3404`, malformed/PRECISE suffix cases and
+  exact recoveries show rollback without partial response. The unknown-domain
+  and raw-clobber witnesses are at `native/native.log:3200` and `:3346`.
+- **P6/P7 — HELD, real compiler/shared-renderer proof and current banks.** Verified
+  exact compiler GLSL/metadata against actual shaderSource, linked native objects,
+  independently framed packets, uniform readbacks and every framebuffer byte.
+  Final hardware has 27 draws, 1,152 words, 110,592 pixels, zero mismatches,
+  44 fences/66 delayed completed polls and six short-bank rejections. Subnormal
+  raw words stay exact while numeric results obey the explicitly derived
+  preserved/flush set; ordinary and reciprocal/root oracles remain independent.
+  The missing-contract compiled fault rejects before allocation; the wrong-index
+  compiled fault produces 35 word mismatches with exact raw/orientation pages.
+  `verifier/browser-audit.json` cites all four bound reports and eight additional
+  receipt-tamper probes that all reject. Inspected the recorded screenshot;
+  it agrees with the measured atlas/coupled workload. Six predecessor GPU oracle
+  suites and the named consumer/legacy regressions pass unchanged comparisons.
+- **P8 — HELD, changed-hunk coverage and fixed bounds.** Every added executable
+  compiler C line has nonzero LLVM counts, including retry allocation failure,
+  failed full revalidation, selected-arm pruning, emitted obligations and failed
+  pair cleanup. `verifier/changed-line-coverage.json` classifies each added line,
+  final adapter hunk, and explicit non-runtime waivers. The successful-retry
+  no-bank check is an invariant guard, and unreachable JSON-overflow arms remain
+  defensive under earlier GLSL/result bounds; they are not claimed executed.
+  Final `native/native.log:1` proves 112-byte instructions, 12-byte facts,
+  26,232-byte IR and 7,608-byte profiles. Wasm retains one 16 MiB buffer and its
+  prescribed 256 KiB stack setting throughout the recorded workload.
+- **P9 — HELD, final exact-head provenance and cold isolation.** Recomputed the
+  entire receipt using the preserved clone's own module, native binaries and
+  original command paths, without path rewriting. It equals the recorded receipt
+  (`e1777763c18addfb174eb113be8362b8bec5238ef496c0d4e9baba387c07c63b`). Independently
+  hashed all 103 copied artifacts (185,528,347 bytes), checked all 340 source
+  bindings against the frozen Git source, and confirmed the clone remains clean.
+  Cold report digest is
+  `b2eaf6b831051c118dbeb55b36b48736ece6b6b608e6fa859d5daef6dffbf97e`.
+  `verifier/final-cold-audit.json` and `final-cold-receipt-replay.log` retain the
+  audit. The two adapter findings were evidence-only, repaired, and exercised by
+  this final run; all unchanged HELD results were carried forward.
+
+**SUITE:** retain `make verify-E6-T12e6b`, its independently checked exact migration
+corpus, rational/bitplane oracles and compiled faults; retain the verifier's
+public-API matrix, extent corpus, source fault and receipt-tamper scripts as
+reproducible adversarial evidence. `verifier/evidence-digests.json` binds every
+committed verifier artifact. No production guest graphics, PRECISE, captured Mesa
+execution or throughput claim is added. No remaining finding or proof gap.
+
+Verifier commands: `python3 evidence/virgl-constant-compiler/verifier/independent_attack.py`;
+`python3 evidence/virgl-constant-compiler/verifier/extent_attack.py`;
+`python3 evidence/virgl-constant-compiler/verifier/browser_audit.py`;
+`python3 evidence/virgl-constant-compiler/verifier/final_cold_audit.py`;
+independent `native_receipt.verify` / `wasm_receipt.verify` calls; LLVM changed-line
+coverage audit; then `python3 tools/check_task_policy.py` and
+`python3 tools/build_queue.py`.

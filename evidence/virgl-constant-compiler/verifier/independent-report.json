@@ -1,0 +1,170 @@
+{
+  "sourceHead": "f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2",
+  "sources": {
+    "bridge.c": "ab7fcfc276a258d89e56b9d6954ebd4f9d9abab2f6063d8c4411d4aebeb3ea60",
+    "raw_bits.c": "f291f781b95ee51dafefb3e5e44d355e2832f03af4a6d877b3e0d48d2517901e",
+    "raw_bits.h": "c4d703c339eb31839b4596ce3c41ffdf4ae14cc7b9818668bb8fe5b9d7d5c25c"
+  },
+  "oracleCases": 800,
+  "calls": 2400,
+  "seeds": [
+    2199501607,
+    1445850649,
+    3349480043
+  ],
+  "build": {
+    "command": [
+      "clang",
+      "-std=gnu11",
+      "-D_GNU_SOURCE",
+      "-D_DARWIN_C_SOURCE",
+      "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+      "-DUTIL_ARCH_BIG_ENDIAN=0",
+      "-DHAVE___BUILTIN_CLZ=1",
+      "-DHAVE___BUILTIN_CLZLL=1",
+      "-DHAVE___BUILTIN_POPCOUNT=1",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/pipe",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/compat",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/include",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/util",
+      "-g",
+      "-O1",
+      "-dynamiclib",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated/u_format_table.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "-lm",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-compiler/verifier/audit-current.dylib"
+    ],
+    "sha256": "53066a3b7306ad3e23505a3e3a4a6a9ddab0c4278858e29390b5d6bb1798b2ac",
+    "buildLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "faultBuild": {
+    "command": [
+      "clang",
+      "-std=gnu11",
+      "-D_GNU_SOURCE",
+      "-D_DARWIN_C_SOURCE",
+      "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+      "-DUTIL_ARCH_BIG_ENDIAN=0",
+      "-DHAVE___BUILTIN_CLZ=1",
+      "-DHAVE___BUILTIN_CLZLL=1",
+      "-DHAVE___BUILTIN_POPCOUNT=1",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/pipe",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/compat",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/include",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/util",
+      "-g",
+      "-O1",
+      "-dynamiclib",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-compiler/verifier/fault-output-permission.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated/u_format_table.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "-lm",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-compiler/verifier/audit-output-fault.dylib"
+    ],
+    "sha256": "7bbbb1a3110aac37265380e2fa0e335cada9e89c9bdf7e0d87ab29eb63f74320",
+    "buildLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "failures": [],
+  "faults": [
+    {
+      "name": "join-1-dynamic-constant-input-False",
+      "expectedOk": false,
+      "actual": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((fsconst0[0].x & 4294967295u), (fsconst0[0].y & 4294967295u), (fsconst0[0].z & 4294967295u), (fsconst0[0].w & 4294967295u));\n raw_temp[8].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + vso_g0.x), (uintBitsToFloat(fsconst0[0].y) + vso_g0.y), (uintBitsToFloat(fsconst0[0].z) + vso_g0.z), (uintBitsToFloat(fsconst0[0].w) + vso_g0.w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[7].xyzw = raw_rhs.xyzw;\n float_temp[7].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((fsconst0[45].x), (fsconst0[45].y), (fsconst0[45].z), (fsconst0[45].w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(vso_g0.x)), (floatBitsToUint(vso_g0.y)), (floatBitsToUint(vso_g0.z)), (floatBitsToUint(vso_g0.w)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((fsconst0[0].x != 0u ? uintBitsToFloat(raw_temp[0].w) : vso_g0.y), (fsconst0[0].y != 0u ? uintBitsToFloat(raw_temp[0].z) : vso_g0.x), (fsconst0[0].z != 0u ? uintBitsToFloat(raw_temp[0].y) : vso_g0.w), (fsconst0[0].w != 0u ? uintBitsToFloat(raw_temp[0].x) : vso_g0.z));\n raw_rhs = uvec4((fsconst0[0].x != 0u ? raw_temp[0].w : raw_temp[1].y), (fsconst0[0].y != 0u ? raw_temp[0].z : raw_temp[1].x), (fsconst0[0].z != 0u ? raw_temp[0].y : raw_temp[1].w), (fsconst0[0].w != 0u ? raw_temp[0].x : raw_temp[1].z));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n float_temp[2].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[2].w), (float_temp[2].z), (float_temp[2].y), (float_temp[2].x));\n raw_rhs = uvec4((raw_temp[2].w), (raw_temp[2].z), (raw_temp[2].y), (raw_temp[2].x));\n raw_temp[3].xyzw = raw_rhs.xyzw;\n float_temp[3].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[3].y), (float_temp[3].x), (float_temp[3].w), (float_temp[3].z));\n raw_rhs = uvec4((raw_temp[3].y), (raw_temp[3].x), (raw_temp[3].w), (raw_temp[3].z));\n raw_temp[2].xyzw = raw_rhs.xyzw;\n float_temp[2].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[2].x), (float_temp[2].y), (float_temp[2].z), (float_temp[2].w));\n raw_rhs = uvec4((raw_temp[2].x), (raw_temp[2].y), (raw_temp[2].z), (raw_temp[2].w));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ]
+        }
+      },
+      "caught": true,
+      "inputSha256": "595f7f114d42391a88c69d4c7eb541d871d7c962bd7bd0d4967736e8b2a07cf6"
+    }
+  ],
+  "inputsSha256": "bddbbceeca4e5d89c4c2def06c6580e86d57fc17d081c7725c19050210c79c35",
+  "callsSha256": "e41e56aa6662f8ce726d0ef679fe506ecfb4969535cefbab6ef6cec299745cdd"
+}
