@@ -1,0 +1,41 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling libm v0.2.16
+   Compiling autocfg v1.5.1
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling cast v0.3.0
+   Compiling oorandom v11.1.5
+   Compiling nu-ansi-term v0.50.3
+   Compiling num-traits v0.2.19
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.14s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/gpu_protocol.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/target/wasm32-unknown-unknown/debug/deps/gpu_protocol-8ed9e588f4d12e67.wasm)
+running 6 tests
+Invoking test: gpu_wire_fixture_is_little_endian_on_wasm32
+test gpu_wire_fixture_is_little_endian_on_wasm32 ... ok
+Invoking test: gpu_transfer_source_offset_is_independent_of_destination_on_wasm32
+test gpu_transfer_source_offset_is_independent_of_destination_on_wasm32 ... ok
+Invoking test: gpu_mmio_identity_and_config_on_wasm32
+test gpu_mmio_identity_and_config_on_wasm32 ... ok
+Invoking test: gpu_flush_golden_crc_fixtures_on_wasm32
+test gpu_flush_golden_crc_fixtures_on_wasm32 ... ok
+Invoking test: gpu_edid_resize_fixture_on_wasm32
+test gpu_edid_resize_fixture_on_wasm32 ... ok
+Invoking test: gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary
+test gpu_cursorq_sequence_matches_native_through_wasm_machine_boundary ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.07s
+

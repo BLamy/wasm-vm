@@ -1,0 +1,11 @@
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.11s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[INFO]: License key is set in Cargo.toml but no LICENSE file(s) were found; Please add the LICENSE file(s) to your project directory
+[INFO]: ✨   Done in 5.54s
+[INFO]: 📦   Your wasm pkg is ready to publish at target/virgl-control/pkg.
