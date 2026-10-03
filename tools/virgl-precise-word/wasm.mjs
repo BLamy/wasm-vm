@@ -24,7 +24,7 @@ for(const entry of native.cases)cases.set(entry.name,entry);
 for(const entry of native.pairs)pairs.set(entry.name,entry);
 require(cases.size===4344+native.cases.length&&pairs.size===429+native.pairs.length,'complete unique retained/new input matrix');
 require(native.recoverySingles.length===58&&native.recoveryPairs.length===56,'complete counted-loop and historical recovery set');
-const sourceNames=['renderer/virgl-shader/index.mjs','renderer/virgl-shader/bridge.c','renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/raw_bits.h','renderer/virgl-shader/bridge.h','renderer/virgl-shader/build.sh',
+const sourceNames=['renderer/virgl-shader/index.mjs','renderer/virgl-shader/bridge.c','renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/raw_bits.h','renderer/virgl-shader/bridge.h','renderer/virgl-shader/checked_upstream.c','renderer/virgl-shader/checked_upstream.h','renderer/virgl-shader/build.sh',
  'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
  'tools/virgl-precise-word/wasm.mjs','tools/virgl-precise-word/wasm_receipt.py',...native.originals.map(entry=>entry.path)];
 const report={schema:'wasm-vm-precise-word-wasm-v1',status:'running',node:{version:process.version,platform:process.platform,arch:process.arch},

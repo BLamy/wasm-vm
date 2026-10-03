@@ -23,6 +23,25 @@ static size_t max_single, max_pair;
  * calloc calls here. Production/native CLI/Wasm have no injection API. */
 static unsigned allocation_attempts, fail_allocation, allocation_faults;
 static size_t requested_allocation, flow_arena_bytes;
+static unsigned upstream_attempts, upstream_fail, upstream_hit, upstream_faults;
+static size_t upstream_failed_bytes;
+static const char *upstream_failed_allocator;
+void *precise_word_upstream_malloc(size_t bytes)
+{
+   if (++upstream_attempts == upstream_fail) {
+      upstream_hit = upstream_attempts; upstream_failed_bytes = bytes;
+      upstream_failed_allocator = "malloc"; return NULL;
+   }
+   return malloc(bytes);
+}
+void *precise_word_upstream_realloc(void *pointer, size_t bytes)
+{
+   if (++upstream_attempts == upstream_fail) {
+      upstream_hit = upstream_attempts; upstream_failed_bytes = bytes;
+      upstream_failed_allocator = "realloc"; return NULL;
+   }
+   return realloc(pointer, bytes);
+}
 void *precise_word_calloc(size_t count, size_t bytes)
 {
    ++allocation_attempts;
@@ -71,6 +90,46 @@ static void recover(void)
    for (unsigned i = 0; i < PAIR_ANCHORS; ++i) {
       require(!strcmp(pair(&pairs[pair_anchors[i]]), pairs[pair_anchors[i]].baseline), "exact mixed-backend pair recovery");
       ++pair_recoveries;
+   }
+}
+static void upstream_allocation_failures(void)
+{
+   const char *names[] = {"pass-vertex", "pass-fragment", "profile-26-vertex-mixed-pair", "profile-26-fragment-mixed-pair"};
+   for (unsigned target = 0; target < 4; ++target) {
+      const struct test_case *single_case = NULL;
+      const struct pair_case *pair_case = NULL;
+      if (target < 2) {
+         for (unsigned i = 0; i < MAX_CASES && cases[i].text; ++i)
+            if (!strcmp(cases[i].name, names[target])) single_case = &cases[i];
+      } else {
+         for (unsigned i = 0; i < pair_count; ++i)
+            if (!strcmp(pairs[i].name, names[target])) pair_case = &pairs[i];
+      }
+      require(single_case || pair_case, "actual legacy and mixed allocation witness");
+      current = names[target]; upstream_attempts = 0; upstream_fail = 0;
+      const char *result = single_case ? single(single_case->stage, single_case->text, single_case->length) : pair(pair_case);
+      require(strstr(result, "\"ok\":true,") && !strstr(result, "(null)"), "healthy upstream calibration");
+      char *baseline = strdup(result); require(baseline != NULL, "owned upstream calibration");
+      unsigned sites = upstream_attempts;
+      require(sites > 4 && sites < 128, "bounded actual upstream allocation sites");
+      printf("UPSTREAM %u {\"kind\":\"%s\",\"case\":\"%s\",\"allocations\":%u,\"result\":%s}\n", target,
+             single_case ? "single" : "pair", names[target], sites, baseline);
+      for (unsigned site = 1; site <= sites; ++site) {
+         upstream_attempts = upstream_hit = 0; upstream_fail = site;
+         result = single_case ? single(single_case->stage, single_case->text, single_case->length) : pair(pair_case);
+         upstream_fail = 0;
+         require(upstream_hit == site && upstream_attempts >= site && upstream_failed_bytes > 0,
+                 "intended nonzero upstream allocation failed");
+         require(strstr(result, "\"ok\":false,") && !strstr(result, "(null)"), "never publish a successful partial upstream shader");
+         require(strstr(result, single_case ? "translation-error" : "unsupported-feature") != NULL, "transactional upstream allocation failure");
+         printf("FAULT %u {\"kind\":\"upstream-%s\",\"case\":\"%s\",\"upstream\":true,\"failAt\":%u,\"attempts\":%u,\"requestedBytes\":%zu,\"allocator\":\"%s\",\"result\":%s}\n",
+                allocation_faults++, single_case ? "single" : "pair", names[target], site, upstream_attempts,
+                upstream_failed_bytes, upstream_failed_allocator, result);
+         ++upstream_faults; recover();
+      }
+      require(!strcmp(single_case ? single(single_case->stage, single_case->text, single_case->length) : pair(pair_case), baseline),
+              "exact upstream calibration result recovers");
+      free(baseline);
    }
 }
 static uint32_t u32(void)
@@ -311,13 +370,13 @@ int main(int argc, char **argv)
       else require(strstr(result, "\"code\":\"parse-error\"") || strstr(result, "\"code\":\"unsupported-feature\"") || strstr(result, "\"code\":\"translation-error\"") || strstr(result, "\"code\":\"input-too-large\""), "structured rejection");
       printf("CASE %u %s\n", i, result); if (!smoke) recover();
    }
-   allocation_failures();
+   allocation_failures(); upstream_allocation_failures();
    if (!smoke) { hostile(); mutate(); }
    printf("FLOW {\"arenaBytes\":%zu,\"arenaBoundBytes\":53248,\"depthLimit\":8}\n", flow_arena_bytes);
    for (unsigned i = 0; i < count; ++i) { free(cases[i].text); free(cases[i].baseline); }
    for (unsigned i = 0; i < pair_count; ++i) free(pairs[i].baseline);
    if (smoke) { printf("SMOKE calls=%u cases=%u pairs=%u allocationFaults=%u passed\n", calls, count, pair_count, allocation_faults); return 0; }
-   printf("STATS {\"originals\":19,\"acceptedOriginals\":12,\"cases\":%u,\"pairs\":%u,\"calls\":%u,\"standaloneRecoveries\":%u,\"pairRecoveries\":%u,\"truncations\":%u,\"hostileCases\":%u,\"mutations\":4096,\"allocationFaults\":%u,\"maxSingleResultBytes\":%zu,\"maxPairResultBytes\":%zu}\n",
-          count, pair_count, calls, recoveries, pair_recoveries, truncations, hostile_cases, allocation_faults, max_single, max_pair);
+   printf("STATS {\"originals\":19,\"acceptedOriginals\":12,\"cases\":%u,\"pairs\":%u,\"calls\":%u,\"standaloneRecoveries\":%u,\"pairRecoveries\":%u,\"truncations\":%u,\"hostileCases\":%u,\"mutations\":4096,\"allocationFaults\":%u,\"upstreamAllocationFaults\":%u,\"maxSingleResultBytes\":%zu,\"maxPairResultBytes\":%zu}\n",
+          count, pair_count, calls, recoveries, pair_recoveries, truncations, hostile_cases, allocation_faults, upstream_faults, max_single, max_pair);
    return 0;
 }

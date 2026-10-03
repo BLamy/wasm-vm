@@ -840,6 +840,7 @@
     "virglrenderer": "1.3.0"
   },
   "preciseWordOperations": {
+    "allocationFailure": "An owned wrapper around the unchanged pinned ordinary translator latches failed nonzero malloc/realloc calls and initializes failed string buffers safely. The bridge resets/checks it for each ordinary conversion, rejects a partial mixed pair and recovers at the same fixed Wasm memory cap.",
     "contract": "Every new family requires a closed stage-local nonempty sorted unique operation record. Finite, indirect, count and radial obligations remain mandatory; older families forbid the precision record.",
     "kind": "tgsi-precise-word-local-v1",
     "limits": "Unchanged 179 non-END instructions, 112-byte instruction, 26480-byte IR, 16MiB Wasm memory, 256KiB stack.",

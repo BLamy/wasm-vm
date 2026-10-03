@@ -63,3 +63,34 @@ sabotage, sanitizer/Wasm parity, retained independent leaves, caps and a final
 pristine clone. Original bodies retain their capture hashes. This isolated
 compiler/shared-renderer slice neither enables guest negotiation nor claims
 desktop 300 MIPS; original radial output authority remains its own boundary.
+
+### 2026-10-03 — worker — fixed-heap refutation and semantic repair
+
+The first canonical run at `b8743ae4f6417017fd3f15693ac11d6813ac5787`
+passed the pinned token audit, native ASan/UBSan with 1,401,891 calls, and normal
+Wasm agreement for all 19 originals, 4,428 cases and 511 pairs. It then failed
+the unchanged fixed-memory pressure schedule: `wasm/calls.jsonl` line24440,
+index24439, `profile-26-fragment-mixed-pair` returned `ok:true` with four
+`(null)` source operands in its ordinary vertex GLSL. The complete call log
+SHA-256 is `df4b20b9f9bf4bdadd65959f355d0d20279fd6deec23f29ea14aaa44685f9450`;
+the serialized erroneous result digest is
+`14ae1b6e8515afac1bc08b5d4e91e82cca71b49827e892c4564016df58d4beeb`.
+The raw failed run remains in
+`target/evidence/virgl-precise-word-worker-b8743ae4` and is retained with the
+final evidence submission. This was a runtime refutation, not a proof-reader
+repair; no final cold run has yet been counted.
+
+An owned wrapper now compiles the unchanged pinned translator with checked
+nonzero malloc/realloc failure latching. It safely initializes ignored strbuf
+failures and reserves lazily grown operand storage before formatting. The
+bridge resets and checks the latch around each ordinary conversion, before
+another stage can clear it or a partial shader can be published. The pinned
+so_info calloc is unreachable with the bridge's zeroed, owned shader-info key;
+it is not a new allocation API. Production exposes no fault-injection control.
+
+Strict guard checking and ASan/UBSan smoke preserve every complete healthy
+original/case/pair result, exercise 209 existing owned allocation failures plus
+all 20 malloc/realloc sites in four ordinary/mixed witnesses, and recover every
+58 single/56 paired profile anchor. The selected high-risk submission will be
+repeated at the repaired frozen head, including LLVM counters for the wrapper,
+the original fixed-heap pressure schedule and the final pristine clone.

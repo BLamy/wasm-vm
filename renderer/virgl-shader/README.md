@@ -953,6 +953,15 @@ kernels exercise 3,320 words through actual decoded shared-renderer draws.
 Actual compiler-source faults for MAX source order, zero equality and FSNE
 unordered behavior must fail the independent rational word oracle.
 
+Mixed pairs also retain the ordinary translator's allocation boundary. An owned
+wrapper compiles the unchanged pinned source through checked malloc/realloc and
+safe string-buffer initialization. Each upstream conversion resets and checks
+the failure latch before a successful result can be published. Failed operand
+buffers stay empty and cannot expose uninitialized fields or NULL printf sources.
+The recording forces all five actual allocation sites in each of four ordinary
+and mixed witnesses, then recovers every profile. The identical fixed-heap Wasm
+schedule must fail cleanly and later return the complete healthy paired result.
+
 The original capture bodies and hashes remain unchanged; they still compile
 12/19. Remaining destination-mask, owned-bank raster authority and exact
 arithmetic work have separate tasks. This isolated boundary keeps production

@@ -4,7 +4,7 @@ import json
 from shared import ROOT, require, sha, read, binding, source
 
 LABELS = ['raw','integer','float','numeric','component','dot','constant','structured','indirect','loop','equality','selected','radial']
-SOURCES = ['renderer/virgl-shader/index.mjs','renderer/virgl-shader/bridge.c','renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/raw_bits.h','renderer/virgl-shader/bridge.h','renderer/virgl-shader/build.sh',
+SOURCES = ['renderer/virgl-shader/index.mjs','renderer/virgl-shader/bridge.c','renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/raw_bits.h','renderer/virgl-shader/bridge.h','renderer/virgl-shader/checked_upstream.c','renderer/virgl-shader/checked_upstream.h','renderer/virgl-shader/build.sh',
  'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
  'tools/virgl-precise-word/wasm.mjs','tools/virgl-precise-word/wasm_receipt.py']
 LIMITS = {'textBytes':16384,'tokens':8192,'glslBytes':65536,'instructions':179,'registerIndex':7,'temporaryRegisterIndex':117,'constantRegisterIndex':45}

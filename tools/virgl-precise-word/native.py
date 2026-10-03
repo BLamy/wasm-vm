@@ -187,7 +187,7 @@ def main():
     (args.output / 'native.log').write_bytes(run.stdout)
     require(run.returncode == 0, f'sanitizer failed: {run.returncode}; inspect native.log')
     entries = {'ORIGINAL': report['originals'], 'CASE': [e for _, e in cases], 'PAIR': [e for _, _, e in pairs]}
-    seen = {k: set() for k in entries}; faults = []; seeds = []
+    seen = {k: set() for k in entries}; faults = []; seeds = []; upstream = []
     for line in run.stdout.decode('ascii').splitlines():
         match = re.fullmatch(r'(ORIGINAL|CASE|PAIR) ([0-9]+) (.+)', line)
         if match:
@@ -200,6 +200,8 @@ def main():
             entry.update(result=result, resultBytes=len(raw), resultSha256=sha(raw))
         elif line.startswith('FAULT '):
             _, index, raw = line.split(' ', 2); require(int(index) == len(faults), 'ordered actual allocation fault'); faults.append(json.loads(raw))
+        elif line.startswith('UPSTREAM '):
+            _, index, raw = line.split(' ', 2); require(int(index) == len(upstream), 'ordered upstream allocation calibration'); upstream.append(json.loads(raw))
         elif line.startswith('LAYOUT '): report['layout'] = json.loads(line[7:])
         elif line.startswith('FLOW '): report['flow'] = json.loads(line[5:])
         elif line.startswith('STATS '): report['stats'] = json.loads(line[6:])
@@ -216,7 +218,7 @@ def main():
     require(sha(binary.read_bytes()) == binary_sha, 'native artifact unchanged')
     report.update(schema='wasm-vm-precise-word-native-v1', status='passed', command=[str(binary)],
                   binarySha256=binary_sha, streamSha256=sha(stream), logSha256=sha(run.stdout), allocationFaults=faults,
-                  seeds=SEEDS, mutationsPerSeed=1024, sanitizers=['address', 'undefined'], coverage=coverage(binary, args.output),
+                  upstreamCalibrations=upstream, seeds=SEEDS, mutationsPerSeed=1024, sanitizers=['address', 'undefined'], coverage=coverage(binary, args.output),
                   compatibility={'heldHead': HELD_HEAD, 'retainedCases': 4344, 'retainedPairs': 429,
                                  'singleMigrations': 20, 'rejectionMigrations': 2, 'pairMigrations': 2, 'predecessorFullGateClaimed': False})
     (args.output / 'native-report.json').write_text(json.dumps(report, indent=2) + '\n')
@@ -242,7 +244,7 @@ def coverage(binary, output):
         return run.stdout
 
     record([str(profdata), 'merge', '-sparse', str(raw), '-o', str(profile)], 'coverage-merge.log')
-    paths = [ROOT / 'renderer/virgl-shader/bridge.c', ROOT / 'renderer/virgl-shader/raw_bits.c']
+    paths = [ROOT / 'renderer/virgl-shader/bridge.c', ROOT / 'renderer/virgl-shader/raw_bits.c', ROOT / 'renderer/virgl-shader/checked_upstream.c']
     arguments = [str(binary), '-instr-profile=' + str(profile), *map(str, paths)]
     exported = json.loads(record([str(cov), 'export', *arguments], 'coverage.json'))
     record([str(cov), 'report', *arguments], 'coverage-report.txt')
@@ -251,7 +253,7 @@ def coverage(binary, output):
             'one complete LLVM coverage export')
     files = exported['data'][0]['files']
     require({Path(entry['filename']).resolve() for entry in files} == {path.resolve() for path in paths},
-            'coverage binds exactly both changed C implementation files')
+            'coverage binds exactly the three changed C implementation files')
     summaries = []
     for entry in files:
         path = Path(entry['filename']).resolve()
@@ -260,7 +262,7 @@ def coverage(binary, output):
     names = ['native.profraw', 'native.profdata', 'coverage-merge.log', 'coverage.json',
              'coverage-report.txt', 'coverage-show.txt']
     stack_records = []
-    for filename in ('bridge.su', 'raw_bits.su'):
+    for filename in ('bridge.su', 'raw_bits.su', 'checked_upstream.su'):
         path = binary.parent / filename
         raw_stack = path.read_bytes()
         require(raw_stack, 'compiler emitted native stack observations')

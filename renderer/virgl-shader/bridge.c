@@ -6,6 +6,7 @@
  * Checked indirect constants use the owned raw backend exclusively.
  */
 #include "bridge.h"
+#include "checked_upstream.h"
 #include "raw_bits.h"
 #include "vrend/vrend_shader.h"
 #include "tgsi/tgsi_text.h"
@@ -1232,10 +1233,11 @@ static const char *convert(struct conversion *c, const char *text, size_t length
    if (c->profile.stage == 1) key.fs.lower_left_origin = 1;
    if (fragment_interface) key.fs_info = *fragment_interface;
    if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS)) return error("translation-error", "Shader output allocation failed.");
+   bridge_upstream_allocation_begin();
    bool converted = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
    size_t total = 0;
    for (int i = 0; i < c->shader.num_strings; ++i) total += strlen(c->shader.strings[i].buf);
-   if (!converted || upstream_logged || total > BRIDGE_MAX_GLSL)
+   if (!converted || bridge_upstream_allocation_failed() || upstream_logged || total > BRIDGE_MAX_GLSL)
       return error("translation-error", "Upstream translation failed, logged a diagnostic, or exceeded the output bound.");
    return NULL;
 }
