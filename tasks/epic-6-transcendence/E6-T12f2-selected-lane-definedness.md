@@ -3,7 +3,7 @@ id: E6-T12f2
 epic: 6
 title: Prove selected-away interpolation lanes without inventing values
 priority: 525.0269912
-status: pending
+status: in-progress
 depends_on: [E6-T12f1]
 estimate: S
 risk: high
@@ -42,4 +42,16 @@ no shader-hash allowlist or manufactured initialization is permitted.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+Dependency E6-T12f1 is verified at
+`2a0d0359de37452d5a78bb9ab6fbf8583c69cb7c`. Implement the one captured
+join/weight/interpolation/selection family with an owned bounded certificate,
+guarded interpolation publication and lazy final selection. Initialization
+masks stay intersected; unrelated missing reads, the radial gap and PRECISE
+remain rejected. Preserve all full F1 recorded stage/pair/original outcomes.
+Submit sanitizer/counter, fixed-memory Wasm, independent hardware word/pixel,
+actual certificate/emitter fault and pristine-clone evidence for a fresh critic.
+
+The compiler remains isolated from the demo's guest negotiation, so this slice
+does not deploy or claim guest execution, all19 closure or desktop 300 MIPS.
