@@ -3,7 +3,7 @@ id: E6-T12e2
 epic: 6
 title: Derive flat vertex-fragment interfaces from accepted shader pairs
 priority: 525.0269902
-status: pending
+status: in-progress
 depends_on: [E6-T12e1]
 estimate: S
 risk: high
@@ -46,4 +46,20 @@ pixel oracle to fail. Translation alone is not compositor or Mesa bring-up.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+E6-T12e1 is independently verified at
+`d1fd813b786fd6ca5337b4d0f861aaa9aed97037`. This S/high slice adds only
+fragment CONSTANT interpolation, a bounded internally derived two-stage API,
+and owned vertex variants in the existing command renderer. It does not enable
+production GPU negotiation. The accepted language and interpolation metadata
+advance explicitly to `virgl-webgl2-straight-line-v4`.
+
+Selected gates: C guard/native ASan+UBSan and fixed-memory Wasm build; exact
+native/Wasm shader-pair parity and hostile pair inputs; real hardware smooth,
+flat and mixed-interface pixels through both the pair API and actual command
+renderer; program identity, allocation budget and cleanup attacks; prior shader,
+state and draw acceptance; intended stale-program pixel sabotage; frozen-head
+receipt and one scrubbed pristine clone. Unchanged Rust/device/default-web
+boundaries carry forward. A fresh independent critic records the final verdict.
+
