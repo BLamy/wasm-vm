@@ -1,0 +1,36 @@
++ git rev-parse HEAD
+fadf4ba813fa31694fb0a560f89c61c740ea3643
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/tests/resources-acceptance.mjs
++ node --check tools/virgl-command/resource-fixtures.mjs
++ node --check tools/verify-virgl-resource-transfers.mjs
++ python3 -m py_compile tools/virgl-command/resources-receipt.py tools/virgl-command/resources-cold.py tools/virgl-command/resources-coverage.py
++ node tools/verify-virgl-command-decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker/decoder --node-only true
+Node command acceptance passed (564 ms)
+++ mktemp -d
++ coverage_dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.HOVLkEBWWH
++ NODE_V8_COVERAGE=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.HOVLkEBWWH
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker/hardware
+Node resource acceptance passed (70 ms)
+Hardware resource acceptance passed (144 ms)
++ python3 tools/virgl-command/resources-coverage.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.HOVLkEBWWH /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker/node-coverage.json
+Recorded V8 counters for 73 resource functions
++ rm -rf /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.HOVLkEBWWH
++ for attack in texture-texel index-byte
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker/sabotage-texture-texel --sabotage texture-texel
+Node resource acceptance passed (60 ms)
+AssertionError [ERR_ASSERTION]: original texture GPU bytes byte 0: expected 255, got 254
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-resource-transfers.mjs:159:12
++ for attack in texture-texel index-byte
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker/sabotage-index-byte --sabotage index-byte
+Node resource acceptance passed (60 ms)
+AssertionError [ERR_ASSERTION]: original index GPU bytes byte 0: expected 0, got 1
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-resource-transfers.mjs:159:12
++ python3 tools/virgl-command/resources-receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-resources/worker
+E6-T12b receipt passed: actual GPU transfers/lifetimes and two input sabotage controls
