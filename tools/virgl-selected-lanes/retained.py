@@ -1,5 +1,6 @@
 """Retain the verified F1 physical-word oracle on the successor compiler."""
 import struct
+import json
 import subprocess
 from shared import ROOT,require,sha,read,binding,same
 import native_receipt
