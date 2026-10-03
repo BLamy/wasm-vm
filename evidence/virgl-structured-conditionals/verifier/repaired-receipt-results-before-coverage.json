@@ -1,0 +1,143 @@
+{
+  "status": "passed",
+  "boundary": "Independent typed-tamper regression of detached prior recordings.\n\nDevelopment-only: receipt helper bindings are updated in temporary copies to\ninterrogate current validators. Original observations/artifacts stay untouched;\nthis does not relabel the original run or claim new exact-head evidence.\n",
+  "originalRuntimeHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "receiptHelpersSha256": {
+    "native_receipt.py": "94edfd285ba662b98c51075ae674d897b3816148367f1bda1e1dacb5e587b88f",
+    "wasm_receipt.py": "d5aa2ce8e1680934707796aac7f24cf2c358cc55df37ad2228232516d487ed4c",
+    "browser_receipt.py": "0d7aa864dab9b70f535c1dba9c2a7e1a5b20dbabe50f47a8b505d36b18b204cf",
+    "consumer_compat.py": "a4c2127018ef4687b29469db5661fba4dd9d9e0994b333c98bf67a8b275411d9",
+    "faults.py": "4e639d674b8106a69143e3f23f0fc97d5feffd1ee00cc1f6ae5086dd8fc0a3ac",
+    "profiles_receipt.py": "a65beea9fcafb29b8ef3f2b5805befbc9aaf665f2576955630907ebf61e20bd3"
+  },
+  "results": [
+    {
+      "name": "native-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "native-domain-slot-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "compiler-derived domain equals actual declared stage bank"
+    },
+    {
+      "name": "native-input-index-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "actual serialized result exact"
+    },
+    {
+      "name": "native-call-counter-float",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "actual compact layouts unchanged"
+    },
+    {
+      "name": "native-omitted-source",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "both changed C files recorded"
+    },
+    {
+      "name": "wasm-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "wasm-schedule-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "bounded real allocator pressure matrix"
+    },
+    {
+      "name": "wasm-bytes-float",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "real bounded malloc capacity record"
+    },
+    {
+      "name": "browser-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "browser-taken-int",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "boolean observation at ('rigs', 0, 'atlases', 0, 'branches', 0, 'taken')"
+    },
+    {
+      "name": "browser-pixel-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "byte observations contain only integer octets"
+    },
+    {
+      "name": "browser-pixel-change",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "complete actual framebuffer binding"
+    },
+    {
+      "name": "browser-count-float",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "fractional value outside explicit domain attack at ('drawCount',)"
+    },
+    {
+      "name": "consumer-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "consumer-result-ok-int",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "boolean observation at ('cases', 0, 'result', 'ok')"
+    },
+    {
+      "name": "fault-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "fault-schema-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "frozen isolated compiler fault identity"
+    },
+    {
+      "name": "fault-wasm-stability-int",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "fixed memory during fault ABI calls"
+    },
+    {
+      "name": "fault-native-exit-bool",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "complete native fault serialization"
+    },
+    {
+      "name": "profile-clean",
+      "expected": "ACCEPTED",
+      "outcome": "ACCEPTED",
+      "error": null
+    },
+    {
+      "name": "profile-counter-float",
+      "expected": "REJECTED",
+      "outcome": "REJECTED",
+      "error": "all 50 public parser calls recorded"
+    }
+  ],
+  "passed": 21,
+  "artifactDirectory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e7-verifier-repaired-fz69ocax"
+}

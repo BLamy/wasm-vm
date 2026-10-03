@@ -1,0 +1,86 @@
+{
+  "head": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "results": [
+    {
+      "attack": "browser-clean",
+      "outcome": "ACCEPTED",
+      "mutation": {},
+      "error": null
+    },
+    {
+      "attack": "browser-taken-int",
+      "outcome": "REJECTED",
+      "mutation": {
+        "field": "rigs[0].atlases[0].branches[0].taken",
+        "before": false,
+        "after": 0
+      },
+      "error": "boolean observation at ('rigs', 0, 'atlases', 0, 'branches', 0, 'taken')"
+    },
+    {
+      "attack": "browser-taken-inverted",
+      "outcome": "REJECTED",
+      "mutation": {
+        "field": "rigs[0].atlases[0].branches[0].taken",
+        "before": false,
+        "after": true
+      },
+      "error": "independently recursively selected literal branches"
+    },
+    {
+      "attack": "browser-pixel-bool",
+      "outcome": "REJECTED",
+      "mutation": {
+        "field": "rigs[0].atlases[0].rgbaBytes[2]",
+        "before": 0,
+        "after": false
+      },
+      "error": "byte observations contain only integer octets"
+    },
+    {
+      "attack": "wasm-clean",
+      "outcome": "REJECTED",
+      "mutation": {
+        "operation": "clean"
+      },
+      "error": "exact Wasm runtime/harness identities and bounds"
+    },
+    {
+      "attack": "wasm-schedule-bool",
+      "outcome": "REJECTED",
+      "mutation": {
+        "operation": "schedule-bool"
+      },
+      "error": "exact Wasm runtime/harness identities and bounds"
+    },
+    {
+      "attack": "wasm-requested-bytes-float",
+      "outcome": "REJECTED",
+      "mutation": {
+        "operation": "requested-bytes-float"
+      },
+      "error": "exact Wasm runtime/harness identities and bounds"
+    },
+    {
+      "attack": "consumer-clean",
+      "outcome": "ACCEPTED",
+      "mutation": {
+        "operation": "clean"
+      },
+      "error": null
+    },
+    {
+      "attack": "consumer-result-ok-int",
+      "outcome": "REJECTED",
+      "mutation": {
+        "operation": "result-ok-int"
+      },
+      "error": "boolean observation at ('cases', 0, 'result', 'ok')"
+    }
+  ],
+  "provenance": {
+    "producer": "worker rerun of verifier script after receipt edits",
+    "historicalFindingRecord": false,
+    "note": "This replaced the initial verifier-generated file. Its Wasm clean control rejects because it binds the historical recording to changed helpers; this rerun is not proof of the Wasm repair. The separate verifier repaired-receipt-results.json records clean acceptance plus targeted typed rejection with an explicit development-only boundary."
+  }
+}

@@ -3,7 +3,7 @@ id: E6-T12e7
 epic: 6
 title: Validate and execute structured TGSI unsigned conditionals
 priority: 525.0269907
-status: implemented
+status: verified
 depends_on: [E6-T12e6b]
 estimate: S
 risk: high
@@ -155,3 +155,80 @@ control return; the verifier must classify this explicitly. The fresh critic's
 17,904 independent cases, source sabotage and repaired typed-evidence attacks
 are separate artifacts under `verifier/`, awaiting its final verdict. No desktop
 FPS, guest GPU enablement, full original-corpus support, or 300-MIPS claim is made.
+
+
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+Worker submission: `a3f25a8adceec96493a351fe8811a330cb19ec37`.
+Verified frozen source: `e0bdfe31f959547a1794de5027187ef29abe3d42`.
+Predictions were written before inspecting recordings in
+`evidence/virgl-structured-conditionals/verifier/predictions.md`. This verifier
+made no implementation edits. The worker submission adds only evidence and task
+metadata after the frozen source; every final cold-manifest file is tracked.
+
+- P1/P3/P10 structure and initialization — HELD. An independently authored model
+  agreed with 17,904 actual public-bridge calls: 16,384 exhaustive incoming/true/
+  false/lane masks, 1,500 nested ASTs from seed `b39d0271`, and 20 structural,
+  label, depth and uninitialized-predicate attacks. See
+  `verifier/independent-summary.json` and its digest-bound complete
+  `independent-results.jsonl.gz`; this model imports no worker fixture or oracle.
+- P2/P4 unsigned selection and authority — HELD. The final native/Wasm results,
+  literal GPU word interpreter and independent rational color checks preserve
+  x-lane unsigned truth, noncanonical true words, y-only false, explicit y
+  swizzles, nested arms, float shadows, output-authority intersection and finite
+  bank dependencies. The final hardware report at
+  `cold-clone/acceptance/hardware/report.json:1` records 39 draws, 1,088 words and
+  159,744 pixels without mismatches; its screenshot was inspected. All 50 closed
+  profile checks retain mandatory v7/v9 domains and reject domains on v8.
+- P5/P6 bounds, recovery and compatibility — HELD. Recomputed native and Wasm
+  receipts prove 790,883/16,557 calls, 26 injected allocation failures, 33 real
+  Wasm pressure calls, complete recovery, a 52,516-byte heap flow arena and fixed
+  16 MiB Wasm memory. All 3,151 historical singles, 221 pairs and 19 original
+  hashes remain unchanged, with twelve accepted and seven PRECISE rejected.
+  Explicit successor adapters retain the old independent renderer oracles.
+  Production graphics remains disabled; no guest desktop or performance claim
+  is verified by this task.
+- P7 oracle sensitivity — HELD. Three fresh one-sided-predicate witnesses reject
+  on the healthy compiler and become accepted after an isolated `&=` to `|=`
+  initialization-join sabotage (`verifier/sabotage-results.json`). Separately,
+  the actual compiled polarity fault produces 48 GPU word mismatches in
+  `cold-clone/acceptance/sabotage-branch-polarity/report.json:1`. The worker
+  source-fault suite runs both compiler mutations as native and Wasm; positive
+  shaders and metadata are not patched.
+- P8 evidence integrity — HELD after repair. Initial Python boolean/integer
+  aliases were proof gaps, not semantic refutations. Six receipt-only repairs
+  leave runtime and fixtures unchanged. At the final frozen helper digests,
+  27 independent controls accept eight clean records and reject nineteen typed,
+  missing-coverage, changed-pixel and resealed-coverage corruptions. See
+  `verifier/repaired-receipt-results.json` and
+  `verifier/final-coverage-type-results.json`. The initial extra-results file was
+  overwritten by a worker rerun; `verifier/preliminary.md` and
+  `worker-rerun-extra-results.json` explicitly preserve that provenance, and
+  neither is substituted for the independent post-repair controls.
+- P9 changed-code coverage — HELD. The final LLVM export reproduces all 96
+  changed C branch counters from the held recording. Every reachable added
+  executable region and both outcomes of its branches ran. Explicit waiver:
+  `raw_bits.c:201–203` are exhaustive switch labels made unreachable by the
+  earlier destination-free control-opcode return, which ran 736,990 times.
+  Comments, declarations, enum/prototype additions and static layout assertions
+  are non-runtime lines checked by the native/Wasm builds. See
+  `verifier/coverage-audit.json` and `verifier/final-coverage-continuity.json`.
+- Final pristine proof — HELD. `verifier/final-cold-audit.json` independently
+  hashes all 126 acceptance files (202,717,058 bytes), compares their preserved
+  clone copies, checks the clone is still clean, and recomputes the entire
+  receipt using that clone's own modules and actual build paths. Its result is
+  type-exactly identical to the saved receipt. Final receipt SHA-256:
+  `e009cdbc56f728247f02cd69da53fb8789d71b07e6514f4144f6ea6d720be865`.
+  The original warm source remains historical; it was not relabeled.
+- SUITE: retain the independent deterministic model, compressed complete
+  transcript, sabotage witnesses, typed-tamper recipes and coverage audits as
+  reproducible verifier artifacts. The existing `make verify-E6-T12e7` remains
+  the permanent full acceptance target with the repaired proof validators.
+
+Verifier commands: `python3 evidence/virgl-structured-conditionals/verifier/independent_audit.py`;
+`python3 evidence/virgl-structured-conditionals/verifier/sabotage_audit.py`;
+`python3 evidence/virgl-structured-conditionals/verifier/repaired_receipt_audit.py`;
+`python3 evidence/virgl-structured-conditionals/verifier/final_coverage_type_audit.py`;
+`python3 evidence/virgl-structured-conditionals/verifier/final_cold_audit.py`;
+`python3 evidence/virgl-structured-conditionals/verifier/final_coverage_continuity.py`;
+`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`; `git diff --check`.

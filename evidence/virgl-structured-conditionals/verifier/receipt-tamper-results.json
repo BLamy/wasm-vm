@@ -1,0 +1,41 @@
+{
+  "head": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "nativeReportSha256": "406ed3cb32937729d83348b7f25fe181f74e868dea7ffe3e2e239bba1ce64822",
+  "results": [
+    {
+      "attack": "clean",
+      "outcome": "ACCEPTED",
+      "operation": "unchanged"
+    },
+    {
+      "attack": "domain-slot-bool",
+      "outcome": "ACCEPTED",
+      "case": "join-in-const-vertex",
+      "field": "result.metadata.constantDomains[0].slot",
+      "before": 0,
+      "after": false
+    },
+    {
+      "attack": "input-index-bool",
+      "outcome": "ACCEPTED",
+      "case": "predicate-IMM1.xxxx-vertex",
+      "field": "result.metadata.inputs[1].index",
+      "before": 1,
+      "after": true
+    },
+    {
+      "attack": "omitted-coverage-source",
+      "outcome": "REJECTED",
+      "field": "coverage.sources[0]",
+      "operation": "deleted",
+      "error": "both changed C files recorded"
+    },
+    {
+      "attack": "counter-plus-one",
+      "outcome": "REJECTED",
+      "field": "stats.calls",
+      "operation": "incremented",
+      "error": "actual compact layouts unchanged"
+    }
+  ]
+}
