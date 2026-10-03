@@ -1,0 +1,12 @@
+VERT
+DCL IN[0]
+DCL IN[1]
+DCL OUT[0], POSITION
+DCL OUT[1].xy, GENERIC[0]
+IMM[0] UINT32 {0, 1065353216, 0, 0}
+DCL TEMP[0..3]
+  0: MOV OUT[0].xy, IN[0].xyxx
+  1: MOV OUT[0].z, IMM[0].xxxx
+  2: MOV OUT[0].w, IMM[0].yyyy
+  3: MOV OUT[1].xy, IN[1].xyxx
+  4: END
