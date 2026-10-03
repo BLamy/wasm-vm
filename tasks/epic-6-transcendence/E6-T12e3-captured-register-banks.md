@@ -3,7 +3,7 @@ id: E6-T12e3
 epic: 6
 title: Bound declaration banks and static budgets for the remaining corpus
 priority: 525.0269903
-status: implemented
+status: verified
 depends_on: [E6-T12e2]
 estimate: S
 risk: high
@@ -139,3 +139,63 @@ renderer-state and original draw acceptance and sabotage oracle. Command
 constant transport and renderer reflection were not widened; E3b owns that
 boundary. No default web/device change, production GPU enablement, new original
 workload execution, deployment or performance claim is made by this slice.
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+Frozen implementation `f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91` and committed
+worker claim `3f698836903fc9e455f29cb009f7a04d545f5be1` survived independent
+falsification and coverage review. No runtime changes or missing proof remain.
+The full prediction-by-prediction report is
+`evidence/virgl-banks/verifier/review.md`.
+
+- **Grammar, banks and recovery — HELD.**3,603 independent cases produce14,415
+  ASan/UBSan translations and10,809 exact single/pair recoveries under four new
+  seeds. Every TEMP/CONST address, adjacent rejection, noncanonical numeric,
+  range overlap, initialized-lane/file alias, 179/180 instruction and unchanged
+  fixed-text/line boundary holds. Valid excluded UINT32/ADDR diagnostics retain
+  unsupported-feature; malformed words/overflow remain parse-error. Citation:
+  `verifier/native.json:6315` (TEMP117), `:42140`/`:42414` (179/180), SHA
+  `55fa684f47c3cecb2ea46d271a9a1bedf512c6a605c313ef617e71fcd7d3d3e1`.
+- **Independent real hardware — HELD.**2,174 complete native/Wasm cases and six
+  further exact hardware shader inputs match. Independent dyadic arithmetic
+  executes TEMP117/17 and CONST45/44/5 in both stages:48 exact float32 words,
+  16 untouched buffer guards and1,024 RGBA pixels. Both VS/FS declared47
+  preserve their truthful reflected47; two poison patterns in unaddressable
+  host element46 leave output unchanged. The pre-evidence active-count
+  assumption was explicitly amended before result inspection. Citation:
+  `verifier/gpu.json:13691`/`:28142`, SHA
+  `eb9a96bc1c3f21eff9152c3a94c76cdcf766abc6f37d4292f5db282cd3b3abea`.
+- **Novel sabotage — HELD.** A TEMP117-to-TEMP17 generated-main mutation compiles
+  and links, then fails exactly at the independently predicted y feedback word:
+  expected0x3e400000, observed0x3e800000. Citation:
+  `verifier/gpu-sabotage.json:9448`, SHA
+  `4649e8bfd22b2357832c30f0fbdc2685845d4e01a974dc4129d875d7828a7629`.
+  Both baseline and sabotage have zero browser errors.
+- **Coverage — HELD.** All25 changed executable C lines execute. File-specific
+  choices and meaningful new guard outcomes have both paths covered. Only
+  compile-time generic-macro/type/config/documentation and test-only reporting
+  scaffolding are waived with reasons in `verifier/coverage-review.md`.
+  Census SHA `05f8d2b459756a7ffb328b850b468ec253d345aed1f429e4ab79055f42bfc60a`.
+- **Frozen evidence and cold clone — HELD.** A fresh binding helper independently
+  checks33,230 facts: all404 cases/four pairs/19 unchanged originals, exactly12
+  accepts, complete native/Wasm outputs, inventory, frozen/served compiler
+  bytes,69 records per run and76 cold copies. Independent TGSI arithmetic
+  reconstructs96 worker TF words and all five full framebuffer hashes,
+  including padding poison and179-instruction/max-text stress. The first cold
+  run passes at the frozen head with clean status. `verifier/binding-audit.json`
+  SHA `b204ddb3a1544a6d9a30a3519384460b7b2d7584cd2ba5569ac23b8da40b6929`;
+  final verifier audit SHA
+  `589315fe087ac9020166df1f3cb7f5ead210dbb970ff49069fe041a4df10ba06`.
+
+Commands: `python3 evidence/virgl-banks/verifier/build-native.py`;
+`python3 evidence/virgl-banks/verifier/native-attacks.py`;
+`node evidence/virgl-banks/verifier/run-gpu.mjs` (baseline and
+`temp-register-alias`); `python3 evidence/virgl-banks/verifier/extra-native-parity.py`;
+`python3 evidence/virgl-banks/verifier/binding-audit.py`;
+`python3 evidence/virgl-banks/verifier/final-audit.py`.
+LLVM source coverage was recorded from the independent sanitized binary.
+The independent corpus/seeds, literal hardware oracles, sabotage and replay
+scripts are promoted as committed verifier artifacts; the existing acceptance
+Make target remains. Scope is the frontend/storage boundary only; E3b still owns
+command constants/reflection. Production remains disabled. No desktop/MIPS
+claim is made.
