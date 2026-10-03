@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 353,
-    "total": 530
+    "total": 531
   },
   "epics": [
     {
@@ -23640,6 +23640,39 @@
       "firstActivity": "2026-10-02",
       "lastActivity": "2026-10-02",
       "commitCount": 3
+    },
+    {
+      "id": "E5.5-T03bg",
+      "epic": "5.5",
+      "epicKey": "5.5",
+      "title": "Remove browser JIT memory-import JavaScript trampolines",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5.5-T03bf"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-10-02 — worker — activated\n\nSelected one measured-cost boundary under the user's renewed throughput priority.\nParent is `96f30bdee9d0a98672336b223004054677baee36` (verified E5.5-T03bf).\nThe baseline wasm is preserved in `/tmp/wasm-vm-direct-memory-baseline` and bound\nby `evidence/jit-direct-memory/baseline.json`. The prior MIPS task remains unchanged.",
+      "adversarial": "A fresh verifier predicts before inspecting evidence. Attack null/stale host\ncontexts, signature mismatches and trampoline substitution, memory faults after\nretired prefixes, high-bit addresses/values, reservation lifecycle, MMIO and\nSMC invalidation, and imported outer-memory growth. Check every changed helper executes\nin recorded acceptance, including each atomic chain-abort path. Invent one\nbounded novel attack and sabotage one assertion in isolation. Recalculate the\npaired performance samples and verify the baseline is PR #401's exact runtime.\nOnly the verifier sets verified; no merge is authorized.",
+      "file": "tasks/epic-5.5-omarchy/E5.5-T03bg-direct-memory-imports.md",
+      "activity": [
+        {
+          "date": "2026-10-02",
+          "commits": 1,
+          "labels": [
+            "task: isolate direct wasm JIT memory imports"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-02",
+      "lastActivity": "2026-10-02",
+      "commitCount": 1
     },
     {
       "id": "E5.5-T03c",

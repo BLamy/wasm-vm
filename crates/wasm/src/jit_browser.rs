@@ -19,12 +19,13 @@
 //!    `wasmtime::Module` + `Instance`. Both are synchronous (`js_sys::WebAssembly::Module::new` /
 //!    `Instance::new`), which is legal off the main thread (the E4-T22 CPU worker) and fine for the
 //!    per-block/per-batch module sizes.
-//! 2. **the load/store/AMO/LR/SC imports** — plain JS functions (wasm-bindgen [`Closure`]s) that
-//!    route through a thread-local raw pointer to the live [`Hart`]/[`SystemBus`] (mirroring the
+//! 2. **the load/store/AMO/LR/SC imports** — raw scalar exports of this owning wasm instance that
+//!    route through guarded thread-local pointers to the live [`Hart`]/[`SystemBus`] (mirroring the
 //!    native `HostCtx`), calling the interpreter's OWN `Hart::jit_load`/`jit_store`/… so a JIT
 //!    load/store is translated + PMP-checked + bus-routed byte-identically to the interpreter. A fault
 //!    records the precise [`Trap`] and throws, unwinding the module call exactly like the native
-//!    `Err`-unwind (E4-T12 precise memory-fault side-exit).
+//!    `Err`-unwind (E4-T12 precise memory-fault side-exit). Successful accesses stay in wasm without
+//!    a JavaScript/BigInt trampoline.
 //! 3. **CpuState sync** — one stable `Uint8Array` view per batch bulk-copies the frozen handoff
 //!    region, instead of crossing the JS boundary once per register.
 //!
@@ -131,6 +132,33 @@ fn set_fp_helper_imports(env: &Object) {
             .dyn_into()
             .unwrap_throw();
         Reflect::set(env, &JsValue::from_str(import), function.as_ref()).unwrap_throw();
+    }
+}
+
+fn set_memory_helper_imports(env: &Object, inline_tlb: bool) {
+    let exports = wasm_bindgen::exports();
+    for (import, export) in [
+        ("load", "__jit_load"),
+        ("store", "__jit_store"),
+        ("amo", "__jit_amo"),
+        ("lr", "__jit_lr"),
+        ("sc", "__jit_sc"),
+    ] {
+        let function: Function = Reflect::get(&exports, &JsValue::from_str(export))
+            .unwrap_throw()
+            .dyn_into()
+            .unwrap_throw();
+        Reflect::set(env, &JsValue::from_str(import), function.as_ref()).unwrap_throw();
+        if inline_tlb {
+            let alias = match import {
+                "load" => Some("softmmu_load"),
+                "store" => Some("softmmu_store"),
+                _ => None,
+            };
+            if let Some(alias) = alias {
+                Reflect::set(env, &JsValue::from_str(alias), function.as_ref()).unwrap_throw();
+            }
+        }
     }
 }
 
@@ -708,9 +736,9 @@ impl StaticLinkCache {
 
 // ── the live-guest bridge for the load/store/AMO/LR/SC imports ───────────────
 //
-// Exactly the native `HostCtx` pattern, but reached through a thread-local because the JS import
-// closures cannot carry a Rust borrow across the JS boundary. The wasm module is single-threaded and
-// cannot re-enter, so there is at most one live `run` call and one set of pointers at any instant.
+// Exactly the native `HostCtx` pattern, reached through a thread-local because the raw scalar
+// imports cannot carry a Rust borrow. Exported entrypoints reject an inactive context before any
+// pointer dereference. The wasm module cannot re-enter, so each thread has at most one live `run`.
 struct HostCtx {
     hart: *mut Hart,
     bus: *mut SystemBus,
@@ -767,6 +795,57 @@ fn throw_jit_sentinel() -> ! {
     unsafe { core::hint::unreachable_unchecked() }
 }
 
+/// The raw helpers are public wasm exports as well as generated-module imports. An ordinary JS
+/// caller may reach them before a machine exists or after its last compiled call. Reject that
+/// case before touching any guest, timing, TLB or chain pointer; release the RefCell borrow before
+/// throwing so a later legitimate compiled invocation can still install its context.
+#[inline]
+fn require_active_host() {
+    let active = HOST.with(|context| {
+        let context = context.borrow();
+        !context.hart.is_null() && !context.bus.is_null()
+    });
+    if !active {
+        throw_jit_sentinel();
+    }
+}
+
+#[unsafe(export_name = "__jit_load")]
+pub extern "C" fn jit_load(addr: i64, kind: i32) -> i64 {
+    require_active_host();
+    with_ctx_load(addr, kind)
+}
+
+#[unsafe(export_name = "__jit_store")]
+pub extern "C" fn jit_store(addr: i64, val: i64, width: i32) {
+    require_active_host();
+    with_ctx_store(addr, val, width);
+}
+
+#[unsafe(export_name = "__jit_amo")]
+pub extern "C" fn jit_amo(addr: i64, val: i64, op: i32, width: i32) -> i64 {
+    require_active_host();
+    let value = with_ctx(|h, b| h.jit_amo(b, addr as u64, val, op, width));
+    mark_chain_abort();
+    value
+}
+
+#[unsafe(export_name = "__jit_lr")]
+pub extern "C" fn jit_lr(addr: i64, width: i32) -> i64 {
+    require_active_host();
+    let value = with_ctx(|h, b| h.jit_lr(b, addr as u64, width));
+    mark_chain_abort();
+    value
+}
+
+#[unsafe(export_name = "__jit_sc")]
+pub extern "C" fn jit_sc(addr: i64, val: i64, width: i32) -> i64 {
+    require_active_host();
+    let value = with_ctx(|h, b| h.jit_sc(b, addr as u64, val, width));
+    mark_chain_abort();
+    value
+}
+
 /// Run `f` against the live guest for a value-returning import (load/AMO/LR/SC). On a fault it records
 /// the precise trap and throws a JS exception, which unwinds the compiled module call (a wasm trap)
 /// so `execute` can side-exit precisely — the browser analogue of the native `Err`-unwind.
@@ -778,9 +857,9 @@ where
         let c = c.borrow();
         (c.hart, c.bus)
     });
-    // SAFETY: `hart`/`bus` are set to live `&mut` borrows for the enclosing `run` call and cleared
-    // immediately after it returns; the module is single-threaded and cannot re-enter, so there is
-    // exactly one live mutable use at a time.
+    // SAFETY: each exported entrypoint checks the context before reaching this helper. `hart`/`bus`
+    // are set to live `&mut` borrows for the enclosing `run` call and cleared immediately after it
+    // returns; the module cannot re-enter, so there is exactly one live mutable use at a time.
     let hart = unsafe { &mut *hart };
     let bus = unsafe { &mut *bus };
     match f(hart, bus) {
@@ -1055,13 +1134,6 @@ pub struct BrowserExecutor {
     /// Shared memory/atomic imports and pure software FP helpers.
     /// Inline-TLB instances additionally import the outer wasm memory as `env.mem`.
     imports: Object,
-    /// The import closures, kept alive for the executor's lifetime (dropping them would invalidate
-    /// the JS functions the live instances import).
-    _closures_load: Closure<dyn FnMut(i64, i32) -> i64>,
-    _closures_store: Closure<dyn FnMut(i64, i64, i32)>,
-    _closures_amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64>,
-    _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
-    _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
     /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
     /// fixed externref floor and is refreshed only if outer memory growth detached it.
     handoff: BrowserHandoff,
@@ -1215,41 +1287,8 @@ impl BrowserExecutor {
             },
             _ => Abi::FROZEN,
         };
-        let load: Closure<dyn FnMut(i64, i32) -> i64> =
-            Closure::new(|addr: i64, kind: i32| with_ctx_load(addr, kind));
-        let store: Closure<dyn FnMut(i64, i64, i32)> =
-            Closure::new(|addr: i64, val: i64, width: i32| with_ctx_store(addr, val, width));
-        let amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64> =
-            Closure::new(|addr: i64, val: i64, op: i32, width: i32| {
-                let value = with_ctx(|h, b| h.jit_amo(b, addr as u64, val, op, width));
-                mark_chain_abort();
-                value
-            });
-        let lr: Closure<dyn FnMut(i64, i32) -> i64> = Closure::new(|addr: i64, width: i32| {
-            let value = with_ctx(|h, b| h.jit_lr(b, addr as u64, width));
-            mark_chain_abort();
-            value
-        });
-        let sc: Closure<dyn FnMut(i64, i64, i32) -> i64> =
-            Closure::new(|addr: i64, val: i64, width: i32| {
-                let value = with_ctx(|h, b| h.jit_sc(b, addr as u64, val, width));
-                mark_chain_abort();
-                value
-            });
-
         let env = Object::new();
-        set_fn(&env, "load", &load);
-        set_fn(&env, "store", &store);
-        if inline_tlb.is_some() {
-            // The inline-TLB translator still routes slow/miss paths through the
-            // SoftMMU import ABI. Keep both names available so the same Rust
-            // callbacks serve the fallback and inline memories.
-            set_fn(&env, "softmmu_load", &load);
-            set_fn(&env, "softmmu_store", &store);
-        }
-        set_fn(&env, "amo", &amo);
-        set_fn(&env, "lr", &lr);
-        set_fn(&env, "sc", &sc);
+        set_memory_helper_imports(&env, inline_tlb.is_some());
         set_fp_helper_imports(&env);
         if inline_tlb.is_some() {
             let memory = wasm_bindgen::memory();
@@ -1263,11 +1302,6 @@ impl BrowserExecutor {
 
         BrowserExecutor {
             imports,
-            _closures_load: load,
-            _closures_store: store,
-            _closures_amo: amo,
-            _closures_lr: lr,
-            _closures_sc: sc,
             handoff: BrowserHandoff::new(),
             abi,
             inline_tlb,
@@ -1749,17 +1783,6 @@ impl BrowserExecutor {
         }
         handoff.image.clear_jit_store_log();
     }
-}
-
-/// Attach a closure to `obj[name]` as a plain JS function (the raw module imports it and calls it
-/// with BigInt i64 args — the closure marshals them back to Rust `i64`).
-fn set_fn<T: ?Sized>(obj: &Object, name: &str, closure: &Closure<T>) {
-    Reflect::set(
-        obj,
-        &JsValue::from_str(name),
-        closure.as_ref().unchecked_ref::<Function>(),
-    )
-    .unwrap_throw();
 }
 
 impl BrowserExecutor {

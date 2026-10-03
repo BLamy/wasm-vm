@@ -15,6 +15,16 @@ verify-E5.5-T03bf:
 	cargo test -p wasm-vm-core --features trace --test integer_replay --test integer_replay_alias -- --nocapture
 	wasm-pack test --node crates/wasm --test integer_replay
 
+# E5.5-T03bg: actual raw-memory import ABI, inactive guards, directed state
+# differentials, independent lifetime attacks, and the existing browser wall.
+.PHONY: verify-E5.5-T03bg
+verify-E5.5-T03bg:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings
+	wasm-pack test --node crates/wasm --test jit_memory_direct_imports -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_memory_direct_imports_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_browser_parity
+
 fmt:
 	cargo fmt --all --check
 
