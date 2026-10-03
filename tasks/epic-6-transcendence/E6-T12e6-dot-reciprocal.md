@@ -3,7 +3,7 @@ id: E6-T12e6
 epic: 6
 title: Preserve captured dot-product and reciprocal float operations
 priority: 525.0269906
-status: in-progress
+status: implemented
 depends_on: [E6-T12e5]
 estimate: S
 risk: high
@@ -83,4 +83,84 @@ results, stream bytes, anchors, seeds and digests.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — implemented
+
+Final frozen implementation: `cb6726dc68eebecdaf9b848ea846e525003e86c9`.
+Initial full warm gate: `72a8695ba92d734a6bead0c42ead3089d8611806` (parent
+`3adaa72f95fd88b8fefd5caa32d6407df22af1dd`; activation/planning commit
+`2ac2a275`). This is an isolated compiler capability; production negotiation,
+web deployment, guest Mesa execution and MIPS claims are unchanged.
+
+Commands:
+- `python3 tools/check_task_policy.py`; Python/Node/Bash syntax checks; `git diff --check`.
+- `VIRGL_DOT_RECIPROCALS_EVIDENCE_DIR=evidence/virgl-dot-reciprocals/worker make verify-E6-T12e6`.
+- `node tools/verify-virgl-dot-reciprocals.mjs --output evidence/virgl-dot-reciprocals/worker-incremental/hardware`, followed by the same command with `--sabotage` for `dp3-lane`, `rcp-source`, `rsq-operation`, and `numeric-negate`; recheck with `python3 evidence/virgl-dot-reciprocals/worker-incremental/check.py`.
+- `python3 tools/virgl-dot-reciprocals/cold.py --output evidence/virgl-dot-reciprocals/cold-clone`.
+
+The first full warm receipt remains bound to its actual `72a8695` head. The
+fresh verifier found one never-entered browser helper (`fraction`); `cb6726dc`
+deletes that single unused line and changes no runtime/native/oracle code or
+fixture. The affected hardware run and all four controls were recorded again in
+`worker-incremental/` at `cb6726dc`; all 151 remaining browser functions entered.
+Earlier HELD runtime/native checks are carried forward without retagging their
+records. The final pristine clone runs the entire acceptance at `cb6726dc` and
+is the complete final-head authority. A pre-cleanup cold attempt was stopped and
+is not claimed as acceptance evidence.
+
+The recordings bind both changed C sources and fixtures to the frozen commits.
+Native ASan/UBSan exercises 2,699 cases, 203 pairs and 435,179 calls, including
+8,990 truncations, 225,526 standalone recoveries, 193,308 pair recoveries,
+324 hostile cases and 4,096 seeded mutations. Every added executable runtime
+line and both outcomes of all 40 changed branch records executed. Maximum
+single/pair JSON sizes are 63,369 / 109,235 bytes; maximum emitted GLSL is
+58,201 bytes, all within unchanged capacities.
+The independently checked predecessor compatibility stream retains the unchanged
+E5 C harness and all 2,083 predecessor cases / 162 pairs, with exactly two
+source-bound DP3 substitutions. The complete C2 gate and every earlier oracle,
+plus the unchanged E5 hardware and four fault controls, run on the current
+compiler. No historical E5 full-gate receipt is fabricated.
+
+Actual Apple M4 Max WebGL2 captures exercise 310 exact and 178 bounded words,
+72 limited exceptional observations, 72 joint ordinary/raw consumer draws,
+6,144 texture pixels, 33,728 interface pixels and two orientation captures.
+DP3 controls distinguish xyz from poison w, remain exact under every addition
+association, and cover swizzles, partial writes, aliases and sampled inputs.
+RCP and RSQ use scalar post-swizzle x and independent rational/ULP enclosures;
+the inverse-root oracle uses integer square-root brackets, not host sqrt.
+The four GLSL source controls fail at independently reconstructed actual GPU
+output mismatches. All objects are released and browser consoles remain clean.
+The hardware screenshot was inspected. Quantitative domains qualify witnesses,
+not admission, and no PRECISE guarantee is asserted.
+
+All 19 full originals remain byte-exact at 12 accepted / 7 unsupported. Scalar
+opcodes avoid the existing bit-21 negation marker; 112-byte instructions,
+26,232-byte IR, fixed 16 MiB memory and existing source/output capacities hold.
+The older pinned RCP shortcut disagrees with Mesa 26.2.2 TGSI documentation,
+interpreter, opcode metadata and source-use analysis; this compiler follows
+scalar TGSI semantics, and both captured RCP sites already use xxxx into x.
+
+Initial warm receipt: `35493421001e40f03d65d21b0f2e6078570294e461b2bae803e4568967540062`
+(268 source bindings / 195 records). Initial native report:
+`781960b68e1cb49d03b02ec4e6264183dc52fec408825d37ecb93daa7f189dcb`.
+Final-head incremental hardware report:
+`e079ad1b8537d5a53077288b017c32701868c57f96a4c7f2ef4b9f8fa96393aa`;
+inspected screenshot: `140e7396a1be34e6394c4947654dca0a86f57c201cec4bdcbb987a6f6058f3c5`.
+The independent recheck caption is `worker-incremental/check.json`, SHA
+`0b9ea54fc05303eb9da6db0ab3d027eb97015d797a132a9bd72773764894de57`;
+its reproducible checker is `check.py`, SHA
+`872cb00f4a78aff33cb6717741badb326d89be24c9dd665345b5f171a14e9796`.
+These do not replace or retag the earlier receipt.
+Final pristine clone passed from a scrubbed environment, with clean tracked
+and untracked status before and after, and 205 copied evidence files. Retained
+checkout: `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm`.
+`cold-clone/report.json`: `dcf7972d3ffabd2c448017d3c1304da081a9af980665ae9c13411daf960e099b`;
+`cold-clone/cold.log`: `425cd1636c5a0f9375fd480f93ae2ebb85187f2ba76623de987da0962352272e`;
+`cold-clone/acceptance/receipt.json`: `42532735ad1bb140a4b0a5df551d4b9b6c0f4f0f67484d25446f7273c2d108f5`
+(268 source bindings / 195 records);
+`cold-clone/acceptance/native/native-report.json`: `52c950cf999bd0335e2c647a71e6390537743a9d013c0c3a8fcf4bfcbef0e211`;
+`cold-clone/acceptance/hardware/report.json`: `c87ace0046d526ddbd7a7e16194e392e9c4694df6c6dc5308378aa907f06b30d`.
+Final native sanitizer binary: `a6ea1a633f59025154c31e1e1c834c5749cb7eb1afbfcffa5a2dd04dc80e521c`;
+Wasm: `4287e738fe2653fe43f03aec2bade254855ea6e47f94451e5f3ad16f9adc01e7`.
+Raw compiler coverage output is retained byte-for-byte, including its trailing
+whitespace, rather than formatting recorded tool output.
+
