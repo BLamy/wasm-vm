@@ -13,11 +13,17 @@ enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
 struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
 enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP,
-                  RAW_FSLT, RAW_FSGE, RAW_ADD, RAW_MUL, RAW_MAD, RAW_TEX };
+                  RAW_FSLT, RAW_FSGE, RAW_ADD, RAW_MUL, RAW_MAD, RAW_TEX,
+                  RAW_DIV, RAW_MAX, RAW_FRC, RAW_LRP };
 #define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
 #define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
 #define RAW_V4_OPCODES ((1u << RAW_ADD) | (1u << RAW_MUL) | (1u << RAW_MAD) | (1u << RAW_TEX))
-enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_MIXED = 1 };
+#define RAW_V5_OPCODES ((1u << RAW_DIV) | (1u << RAW_MAX) | (1u << RAW_FRC) | (1u << RAW_LRP))
+#define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES)
+/* The remaining mask bit records a validated numeric modifier, not an opcode. */
+#define RAW_V5_NEGATION (1u << 21)
+enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_MIXED = 1,
+       RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };

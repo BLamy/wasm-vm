@@ -1893,3 +1893,7 @@ verify-E6-T12e4c1:
 .PHONY: verify-E6-T12e4c2
 verify-E6-T12e4c2:
 	bash tools/verify-virgl-numeric-floats.sh
+
+.PHONY: verify-E6-T12e5
+verify-E6-T12e5:
+	bash tools/verify-virgl-component-floats.sh

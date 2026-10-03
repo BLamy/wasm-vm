@@ -1,0 +1,1622 @@
+{
+  "schema": "wasm-vm-component-float-hardware-v1",
+  "shaders": [
+    {
+      "name": "component-max-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAX TEMP[117], IN[1], IN[2]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-max-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAX TEMP[117], IN[2], IN[3]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-max-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAX TEMP[117], IN[2], IN[3]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-frc-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nFRC TEMP[117], IN[1]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-frc-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nFRC TEMP[117], IN[2]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-frc-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nFRC TEMP[117], IN[2]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-lrp-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[1], IN[2], IN[3]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-lrp-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[2], IN[3], IN[4]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-lrp-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[2], IN[3], IN[4]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-lrp-alias-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nLRP TEMP[117].xy, IN[1].yxzw, TEMP[117].wzyx, IN[3].zwxy\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-lrp-alias-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[3], IMM[3].xxxx\nLRP TEMP[117].xy, IN[2].yxzw, TEMP[117].wzyx, IN[4].zwxy\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 18
+    },
+    {
+      "name": "component-lrp-alias-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[3], IMM[3].xxxx\nLRP TEMP[117].xy, IN[2].yxzw, TEMP[117].wzyx, IN[4].zwxy\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 11
+    },
+    {
+      "name": "component-max-alias-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[1], IMM[3].xxxx\nMAX TEMP[117].xyz, IN[2].wxyz, -TEMP[117].zyxw\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-max-alias-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nMAX TEMP[117].xyz, IN[3].wxyz, -TEMP[117].zyxw\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 18
+    },
+    {
+      "name": "component-max-alias-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nMAX TEMP[117].xyz, IN[3].wxyz, -TEMP[117].zyxw\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 11
+    },
+    {
+      "name": "component-frc-alias-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[1], IMM[3].xxxx\nFRC TEMP[117].xy, -TEMP[117].yxzw\nMOV TEMP[9], TEMP[117].wzyx\nADD TEMP[117], TEMP[9], IMM[4].wwww\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 12
+    },
+    {
+      "name": "component-frc-alias-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nFRC TEMP[117].xy, -TEMP[117].yxzw\nMOV TEMP[9], TEMP[117].wzyx\nADD TEMP[117], TEMP[9], IMM[4].wwww\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 20
+    },
+    {
+      "name": "component-frc-alias-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nFRC TEMP[117].xy, -TEMP[117].yxzw\nMOV TEMP[9], TEMP[117].wzyx\nADD TEMP[117], TEMP[9], IMM[4].wwww\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 13
+    },
+    {
+      "name": "component-negate-add-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], -IN[1].zyxw, IN[2].wxyz\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-negate-add-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], -IN[2].zyxw, IN[3].wxyz\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-negate-add-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], -IN[2].zyxw, IN[3].wxyz\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-negate-mad-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAD TEMP[117], -IN[1].wzyx, -IN[2].yxwz, -IN[3].zwxy\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-negate-mad-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAD TEMP[117], -IN[2].wzyx, -IN[3].yxwz, -IN[4].zwxy\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-negate-mad-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nMAD TEMP[117], -IN[2].wzyx, -IN[3].yxwz, -IN[4].zwxy\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-safe-negate-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nAND TEMP[9], CONST[45], IMM[5].xxxx\nOR TEMP[9], TEMP[9], IMM[5].yyyy\nMAX TEMP[117], IN[2], -TEMP[9]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 11
+    },
+    {
+      "name": "component-safe-negate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nAND TEMP[9], CONST[45], IMM[5].xxxx\nOR TEMP[9], TEMP[9], IMM[5].yyyy\nMAX TEMP[117], IN[3], -TEMP[9]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 19
+    },
+    {
+      "name": "component-safe-negate-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nAND TEMP[9], CONST[45], IMM[5].xxxx\nOR TEMP[9], TEMP[9], IMM[5].yyyy\nMAX TEMP[117], IN[3], -TEMP[9]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 12
+    },
+    {
+      "name": "component-maximal-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[1], IN[2], IN[3]\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 179
+    },
+    {
+      "name": "component-maximal-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[2], IN[3], IN[4]\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 179
+    },
+    {
+      "name": "component-div-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nDIV TEMP[117], IN[1], IN[2]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "component-div-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nDIV TEMP[117], IN[2], IN[3]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "component-div-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nDIV TEMP[117], IN[2], IN[3]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[42], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[41]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[40], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 10
+    },
+    {
+      "name": "component-div-alias-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[1], IMM[3].xxxx\nDIV TEMP[117].xy, TEMP[117].yxzw, IN[2].zwxy\nDIV TEMP[117].z, -TEMP[117].wwww, IN[2].xxxx\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 11
+    },
+    {
+      "name": "component-div-alias-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nDIV TEMP[117].xy, TEMP[117].yxzw, IN[3].zwxy\nDIV TEMP[117].z, -TEMP[117].wwww, IN[3].xxxx\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 19
+    },
+    {
+      "name": "component-div-alias-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nADD TEMP[117], IN[2], IMM[3].xxxx\nDIV TEMP[117].xy, TEMP[117].yxzw, IN[3].zwxy\nDIV TEMP[117].z, -TEMP[117].wwww, IN[3].xxxx\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[42], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[41]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[40], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 12
+    },
+    {
+      "name": "legacy-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL OUT[4], GENERIC[6]\nDCL OUT[5], GENERIC[7]\nMOV OUT[0], IN[0]\nMOV OUT[3], IN[1]\nMOV OUT[4], IN[2]\nMOV OUT[5], IN[3]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 4
+    },
+    {
+      "name": "legacy-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "raw-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[1], IN[2], IN[3]\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "raw-maximal-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[5]\nDCL OUT[2], GENERIC[6]\nDCL OUT[3], GENERIC[7]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[1], IN[2], IN[3]\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMOV OUT[1], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[2], TEMP[116]\nMOV OUT[3], IN[3]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 179
+    },
+    {
+      "name": "raw-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[2], IN[3], IN[4]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 17
+    },
+    {
+      "name": "raw-maximal-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nLRP TEMP[117], IN[2], IN[3], IN[4]\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nMAX TEMP[117].x, TEMP[117].xxxx, TEMP[117].xxxx\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 179
+    },
+    {
+      "name": "v5-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nMOV OUT[0], IN[0]\nMOV OUT[3], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "v5-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "v5-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "v1-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[3], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "v1-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 2
+    },
+    {
+      "name": "v1-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 2
+    },
+    {
+      "name": "v2-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nUADD TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[3], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "instructions": 3
+    },
+    {
+      "name": "v2-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nUADD TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "instructions": 2
+    },
+    {
+      "name": "v2-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nUADD TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "instructions": 2
+    },
+    {
+      "name": "v3-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[3], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v3",
+      "instructions": 3
+    },
+    {
+      "name": "v3-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v3",
+      "instructions": 2
+    },
+    {
+      "name": "v3-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v3",
+      "instructions": 2
+    },
+    {
+      "name": "v4-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nADD OUT[3], IN[1], IMM[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v4",
+      "instructions": 3
+    },
+    {
+      "name": "v4-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nADD OUT[0], IN[2], IMM[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v4",
+      "instructions": 2
+    },
+    {
+      "name": "v4-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nADD OUT[0], IN[2], IMM[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v4",
+      "instructions": 2
+    },
+    {
+      "name": "raw5-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3], GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMAX OUT[3], IN[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "raw5-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMAX OUT[0], IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 2
+    },
+    {
+      "name": "raw5-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMAX OUT[0], IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-v5-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xy, GENERIC[5]\nMOV OUT[0], IN[0]\nMOV OUT[3].xy, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-v5-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-v5-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-raw5-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xy, GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMAX OUT[3].xy, IN[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xy-raw5-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMAX OUT[0].xy, IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xy-raw5-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMAX OUT[0].xy, IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-v5-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xyz, GENERIC[5]\nMOV OUT[0], IN[0]\nMOV OUT[3].xyz, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-v5-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-v5-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-raw5-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xyz, GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMAX OUT[3].xyz, IN[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-raw5-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMAX OUT[0].xyz, IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-raw5-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nFSLT TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMAX OUT[0].xyz, IN[2], IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 3
+    },
+    {
+      "name": "tex-frc-lrp-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], -TEMP[117], IMM[3].xxxx\nFRC TEMP[117], TEMP[117]\nLRP TEMP[117], TEMP[117], IMM[4].yyyy, IMM[4].xxxx\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 21
+    },
+    {
+      "name": "tex-frc-lrp-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], -TEMP[117], IMM[3].xxxx\nFRC TEMP[117], TEMP[117]\nLRP TEMP[117], TEMP[117], IMM[4].yyyy, IMM[4].xxxx\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 14
+    },
+    {
+      "name": "tex-frc-lrp-direct",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], -TEMP[117], IMM[3].xxxx\nFRC TEMP[117], TEMP[117]\nLRP TEMP[117], TEMP[117], IMM[4].yyyy, IMM[4].xxxx\nMAD TEMP[9], TEMP[117], IMM[3].zzzz, IMM[3].wwww\nMUL TEMP[17], TEMP[9], IMM[4].zzzz\nADD TEMP[17], TEMP[17], IMM[4].yyyy\nUCMP OUT[0], CONST[1], TEMP[9], TEMP[17]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 9
+    },
+    {
+      "name": "tex-negate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], -IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], TEMP[117], IMM[3].xxxx\nMAX TEMP[117], TEMP[117], -TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 20
+    },
+    {
+      "name": "tex-negate-cross",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], -IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], TEMP[117], IMM[3].xxxx\nMAX TEMP[117], TEMP[117], -TEMP[117]\nFSGE TEMP[116], TEMP[117], CONST[43]\nFSGE TEMP[17], CONST[43], TEMP[117]\nAND TEMP[116], TEMP[116], TEMP[17]\nMUL TEMP[9], TEMP[117], IMM[3].zzzz\nFSGE TEMP[17], TEMP[9], CONST[42]\nAND TEMP[116], TEMP[116], TEMP[17]\nFSGE TEMP[17], CONST[42], TEMP[9]\nAND TEMP[116], TEMP[116], TEMP[17]\nUCMP OUT[0], TEMP[116], IMM[4].yyyy, IMM[4].xxxx\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 13
+    },
+    {
+      "name": "tex-negate-direct",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2], GENERIC[5], PERSPECTIVE\nDCL IN[3], GENERIC[6], PERSPECTIVE\nDCL IN[4], GENERIC[7], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] FLT32 {0.25, 0.5, 2, -0.5}\nIMM[4] FLT32 {0, 1, -1, 0.125}\nIMM[5] UINT32 {8388607, 1056964608, 1061158912, 0}\nTEX TEMP[117], -IN[2], SAMP[7], 2D\nMUL TEMP[117], TEMP[117], IMM[3].yyyy\nADD TEMP[117], TEMP[117], IMM[3].xxxx\nMAX TEMP[117], TEMP[117], -TEMP[117]\nMAD TEMP[9], TEMP[117], IMM[3].zzzz, IMM[3].wwww\nMUL TEMP[17], TEMP[9], IMM[4].zzzz\nADD TEMP[17], TEMP[17], IMM[4].yyyy\nUCMP OUT[0], CONST[1], TEMP[9], TEMP[17]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v5",
+      "instructions": 8
+    }
+  ],
+  "pairs": [
+    {
+      "name": "recovery-legacy-pair",
+      "vertex": "legacy-vertex",
+      "fragment": "legacy-fragment",
+      "interfaceKey": "generic-interpolation-v1:"
+    },
+    {
+      "name": "recovery-raw-pair",
+      "vertex": "raw-vertex",
+      "fragment": "raw-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth;g6/15/smooth;g7/15/smooth"
+    },
+    {
+      "name": "maximal-raw-pair",
+      "vertex": "raw-maximal-vertex",
+      "fragment": "raw-maximal-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth;g6/15/smooth;g7/15/smooth"
+    },
+    {
+      "name": "raw5-v5-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-v1-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v1-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-v2-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v2-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-v3-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v3-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-v4-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v4-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-raw5-smooth",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "v5-raw5-smooth",
+      "vertex": "v5-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "v1-raw5-smooth",
+      "vertex": "v1-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "v2-raw5-smooth",
+      "vertex": "v2-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "v3-raw5-smooth",
+      "vertex": "v3-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "v4-raw5-smooth",
+      "vertex": "v4-varying-vertex",
+      "fragment": "raw5-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/smooth"
+    },
+    {
+      "name": "raw5-v5-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "raw5-v1-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v1-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "raw5-v2-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v2-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "raw5-v3-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v3-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "raw5-v4-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "v4-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "raw5-raw5-flat",
+      "vertex": "raw5-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "v5-raw5-flat",
+      "vertex": "v5-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "v1-raw5-flat",
+      "vertex": "v1-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "v2-raw5-flat",
+      "vertex": "v2-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "v3-raw5-flat",
+      "vertex": "v3-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "v4-raw5-flat",
+      "vertex": "v4-varying-vertex",
+      "fragment": "raw5-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/15/flat"
+    },
+    {
+      "name": "partial-xy-raw5-v5-smooth",
+      "vertex": "partial-xy-raw5-vertex",
+      "fragment": "partial-xy-v5-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/smooth"
+    },
+    {
+      "name": "partial-xy-v5-raw5-smooth",
+      "vertex": "partial-xy-v5-vertex",
+      "fragment": "partial-xy-raw5-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/smooth"
+    },
+    {
+      "name": "partial-xy-raw5-v5-flat",
+      "vertex": "partial-xy-raw5-vertex",
+      "fragment": "partial-xy-v5-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/flat"
+    },
+    {
+      "name": "partial-xy-v5-raw5-flat",
+      "vertex": "partial-xy-v5-vertex",
+      "fragment": "partial-xy-raw5-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/flat"
+    },
+    {
+      "name": "partial-xyz-raw5-v5-smooth",
+      "vertex": "partial-xyz-raw5-vertex",
+      "fragment": "partial-xyz-v5-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/smooth"
+    },
+    {
+      "name": "partial-xyz-v5-raw5-smooth",
+      "vertex": "partial-xyz-v5-vertex",
+      "fragment": "partial-xyz-raw5-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/smooth"
+    },
+    {
+      "name": "partial-xyz-raw5-v5-flat",
+      "vertex": "partial-xyz-raw5-vertex",
+      "fragment": "partial-xyz-v5-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/flat"
+    },
+    {
+      "name": "partial-xyz-v5-raw5-flat",
+      "vertex": "partial-xyz-v5-vertex",
+      "fragment": "partial-xyz-raw5-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/flat"
+    }
+  ],
+  "numericPrograms": [
+    {
+      "name": "max",
+      "oracle": "max",
+      "vertex": "component-max-vertex",
+      "fragment": "component-max-fragment",
+      "cross": "component-max-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "frc",
+      "oracle": "frc",
+      "vertex": "component-frc-vertex",
+      "fragment": "component-frc-fragment",
+      "cross": "component-frc-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide",
+        "large-frc",
+        "negative-large-frc"
+      ]
+    },
+    {
+      "name": "lrp",
+      "oracle": "lrp",
+      "vertex": "component-lrp-vertex",
+      "fragment": "component-lrp-fragment",
+      "cross": "component-lrp-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "lrp-alias",
+      "oracle": "lrp-alias",
+      "vertex": "component-lrp-alias-vertex",
+      "fragment": "component-lrp-alias-fragment",
+      "cross": "component-lrp-alias-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "max-alias",
+      "oracle": "max-alias",
+      "vertex": "component-max-alias-vertex",
+      "fragment": "component-max-alias-fragment",
+      "cross": "component-max-alias-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "frc-alias",
+      "oracle": "frc-alias",
+      "vertex": "component-frc-alias-vertex",
+      "fragment": "component-frc-alias-fragment",
+      "cross": "component-frc-alias-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "negate-add",
+      "oracle": "negate-add",
+      "vertex": "component-negate-add-vertex",
+      "fragment": "component-negate-add-fragment",
+      "cross": "component-negate-add-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "negate-mad",
+      "oracle": "negate-mad",
+      "vertex": "component-negate-mad-vertex",
+      "fragment": "component-negate-mad-fragment",
+      "cross": "component-negate-mad-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "safe-negate",
+      "oracle": "safe-negate",
+      "vertex": "component-safe-negate-vertex",
+      "fragment": "component-safe-negate-fragment",
+      "cross": "component-safe-negate-cross",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    },
+    {
+      "name": "maximal",
+      "oracle": "maximal",
+      "vertex": "component-maximal-vertex",
+      "fragment": "component-maximal-fragment",
+      "vectors": [
+        "weights",
+        "negative-fractions",
+        "zeros-equal",
+        "wide"
+      ]
+    }
+  ],
+  "numericVectors": [
+    {
+      "name": "weights",
+      "a": [
+        -1,
+        0.25,
+        0.5,
+        2
+      ],
+      "b": [
+        0.25,
+        0.75,
+        -0.5,
+        1.25
+      ],
+      "c": [
+        1.5,
+        -0.25,
+        0.5,
+        -0.75
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "negative-fractions",
+      "a": [
+        -1.25,
+        0.75,
+        -2.75,
+        1.25
+      ],
+      "b": [
+        -0.5,
+        -1.5,
+        -3,
+        -2
+      ],
+      "c": [
+        0.25,
+        0.5,
+        0.75,
+        -0.5
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "zeros-equal",
+      "a": [
+        0,
+        1,
+        2,
+        -1
+      ],
+      "b": [
+        0,
+        1,
+        -2,
+        -1
+      ],
+      "c": [
+        1,
+        0.5,
+        0.25,
+        -0.5
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "wide",
+      "a": [
+        4.5,
+        -2.25,
+        0.125,
+        1.5
+      ],
+      "b": [
+        -2,
+        3,
+        0.375,
+        -0.75
+      ],
+      "c": [
+        1.25,
+        -0.5,
+        2,
+        -1
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "large-frc",
+      "a": [
+        8388607.5,
+        8388608,
+        8388609,
+        16777216
+      ],
+      "b": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "c": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "negative-large-frc",
+      "a": [
+        -8388607.5,
+        -8388608,
+        -8388609,
+        -16777216
+      ],
+      "b": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "c": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    }
+  ],
+  "divisionPrograms": [
+    {
+      "name": "div",
+      "oracle": "div",
+      "vertex": "component-div-vertex",
+      "fragment": "component-div-fragment",
+      "cross": "component-div-cross",
+      "vectors": [
+        "interior",
+        "powers",
+        "wide-division"
+      ]
+    },
+    {
+      "name": "div-alias",
+      "oracle": "div-alias",
+      "vertex": "component-div-alias-vertex",
+      "fragment": "component-div-alias-fragment",
+      "cross": "component-div-alias-cross",
+      "vectors": [
+        "interior",
+        "powers",
+        "wide-division"
+      ]
+    }
+  ],
+  "divisionVectors": [
+    {
+      "name": "interior",
+      "a": [
+        1.25,
+        -2.75,
+        3.5,
+        -0.875
+      ],
+      "b": [
+        0.75,
+        1.5,
+        2.5,
+        3
+      ],
+      "c": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "powers",
+      "a": [
+        1,
+        -1,
+        2,
+        -2
+      ],
+      "b": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "c": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    },
+    {
+      "name": "wide-division",
+      "a": [
+        7.25,
+        -3.125,
+        5.5,
+        -0.625
+      ],
+      "b": [
+        0.625,
+        0.875,
+        1.75,
+        1.5
+      ],
+      "c": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "condition": [
+        0,
+        1,
+        2,
+        2147483648
+      ],
+      "raw": [
+        0,
+        2143289345,
+        2139095040,
+        4294967295
+      ]
+    }
+  ],
+  "observationPrograms": [
+    {
+      "name": "div",
+      "vertex": "component-div-vertex",
+      "fragment": "component-div-fragment",
+      "vectors": [
+        "zero-boundaries",
+        "exceptional",
+        "subnormal-negative-denominator"
+      ]
+    },
+    {
+      "name": "max",
+      "vertex": "component-max-vertex",
+      "fragment": "component-max-fragment",
+      "vectors": [
+        "zero-boundaries",
+        "exceptional",
+        "subnormal-negative-denominator"
+      ]
+    },
+    {
+      "name": "frc",
+      "vertex": "component-frc-vertex",
+      "fragment": "component-frc-fragment",
+      "vectors": [
+        "zero-boundaries",
+        "exceptional",
+        "subnormal-negative-denominator"
+      ]
+    },
+    {
+      "name": "lrp",
+      "vertex": "component-lrp-vertex",
+      "fragment": "component-lrp-fragment",
+      "vectors": [
+        "zero-boundaries",
+        "exceptional",
+        "subnormal-negative-denominator"
+      ]
+    }
+  ],
+  "observationVectors": [
+    {
+      "name": "zero-boundaries",
+      "aWords": [
+        1065353216,
+        3212836864,
+        0,
+        2147483648
+      ],
+      "bWords": [
+        0,
+        2147483648,
+        0,
+        2147483648
+      ],
+      "cWords": [
+        1056964608,
+        1056964608,
+        1056964608,
+        1056964608
+      ]
+    },
+    {
+      "name": "exceptional",
+      "aWords": [
+        2139095040,
+        4286578688,
+        2143289345,
+        1065353216
+      ],
+      "bWords": [
+        1065353216,
+        2139095040,
+        1065353216,
+        2143289345
+      ],
+      "cWords": [
+        1056964608,
+        1056964608,
+        1056964608,
+        1056964608
+      ]
+    },
+    {
+      "name": "subnormal-negative-denominator",
+      "aWords": [
+        1,
+        2147483649,
+        1065353216,
+        3212836864
+      ],
+      "bWords": [
+        3212836864,
+        3221225472,
+        3225419776,
+        3204448256
+      ],
+      "cWords": [
+        1056964608,
+        1056964608,
+        1056964608,
+        1056964608
+      ]
+    }
+  ],
+  "texturePrograms": [
+    {
+      "name": "tex-frc-lrp",
+      "oracle": "tex-frc-lrp",
+      "fragment": "tex-frc-lrp-fragment",
+      "cross": "tex-frc-lrp-cross",
+      "direct": "tex-frc-lrp-direct",
+      "textureCalls": 1,
+      "samplers": [
+        7
+      ],
+      "coordinateNegated": false
+    },
+    {
+      "name": "tex-negate",
+      "oracle": "tex-negate",
+      "fragment": "tex-negate-fragment",
+      "cross": "tex-negate-cross",
+      "direct": "tex-negate-direct",
+      "textureCalls": 1,
+      "samplers": [
+        7
+      ],
+      "coordinateNegated": true
+    }
+  ],
+  "textures": [
+    {
+      "name": "primary",
+      "width": 2,
+      "height": 2,
+      "bytes": [
+        0,
+        255,
+        0,
+        255,
+        255,
+        0,
+        0,
+        255,
+        0,
+        0,
+        255,
+        255,
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "name": "alternate",
+      "width": 2,
+      "height": 2,
+      "bytes": [
+        255,
+        0,
+        255,
+        0,
+        0,
+        255,
+        255,
+        0,
+        255,
+        255,
+        0,
+        0,
+        0,
+        0,
+        0,
+        255
+      ]
+    }
+  ],
+  "operationDefinitions": {
+    "max": {
+      "instructions": [
+        "MAX TEMP[117], A, B"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "frc": {
+      "instructions": [
+        "FRC TEMP[117], A"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "lrp": {
+      "instructions": [
+        "LRP TEMP[117], A, B, C"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "lrp-alias": {
+      "instructions": [
+        "ADD TEMP[117], B, IMM[3].xxxx",
+        "LRP TEMP[117].xy, A.yxzw, TEMP[117].wzyx, C.zwxy"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "max-alias": {
+      "instructions": [
+        "ADD TEMP[117], A, IMM[3].xxxx",
+        "MAX TEMP[117].xyz, B.wxyz, -TEMP[117].zyxw"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "frc-alias": {
+      "instructions": [
+        "ADD TEMP[117], A, IMM[3].xxxx",
+        "FRC TEMP[117].xy, -TEMP[117].yxzw",
+        "MOV TEMP[9], TEMP[117].wzyx",
+        "ADD TEMP[117], TEMP[9], IMM[4].wwww"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "negate-add": {
+      "instructions": [
+        "ADD TEMP[117], -A.zyxw, B.wxyz"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "negate-mad": {
+      "instructions": [
+        "MAD TEMP[117], -A.wzyx, -B.yxwz, -C.zwxy"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "safe-negate": {
+      "instructions": [
+        "AND TEMP[9], CONST[45], IMM[5].xxxx",
+        "OR TEMP[9], TEMP[9], IMM[5].yyyy",
+        "MAX TEMP[117], B, -TEMP[9]"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "maximal": {
+      "instructions": [
+        "LRP TEMP[117], A, B, C"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "div": {
+      "instructions": [
+        "DIV TEMP[117], A, B"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    },
+    "div-alias": {
+      "instructions": [
+        "ADD TEMP[117], A, IMM[3].xxxx",
+        "DIV TEMP[117].xy, TEMP[117].yxzw, B.zwxy",
+        "DIV TEMP[117].z, -TEMP[117].wwww, B.xxxx"
+      ],
+      "result": "TEMP[117]",
+      "A": {
+        "vertex": "IN[1]",
+        "fragment": "IN[2]"
+      },
+      "B": {
+        "vertex": "IN[2]",
+        "fragment": "IN[3]"
+      },
+      "C": {
+        "vertex": "IN[3]",
+        "fragment": "IN[4]"
+      }
+    }
+  },
+  "recoverySingles": [
+    "legacy-vertex",
+    "legacy-fragment",
+    "raw-vertex",
+    "raw-fragment"
+  ],
+  "recoveryPairs": [
+    "raw5-v5-flat",
+    "v5-raw5-smooth"
+  ]
+}

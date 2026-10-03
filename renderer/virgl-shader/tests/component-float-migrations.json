@@ -1,0 +1,60 @@
+{
+  "schema": "wasm-vm-component-float-migrations-v1",
+  "parentHead": "67ca333c05fb70d719c49b3dc5cb8c1f8bb2f6de",
+  "migrations": [
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-MAX-vertex",
+      "oldInputSha256": "d2714680ab783d56dbf2741e12fb841bc4491817b1e18904a72fcfa66428484c",
+      "replacementName": "unsupported-MAX-absolute-vertex",
+      "replacementInputSha256": "008133a901fe11b6f18374c8d8f86ff6103c5dc724e02044bdd63acc8e68c194",
+      "promotedCase": "historical-c2-unsupported-MAX-vertex",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-DIV-vertex",
+      "oldInputSha256": "b62696b208fe09d9ea051edb8474fce3d82e995e09b047c0a7ce9552c37ea644",
+      "replacementName": "unsupported-DIV-absolute-vertex",
+      "replacementInputSha256": "3606dd8031d058b93057ca3947e70ba1d654e3f36cec39027ef4534fc942249d",
+      "promotedCase": "historical-c2-unsupported-DIV-vertex",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-numeric-source--IN[1]-vertex",
+      "oldInputSha256": "9d002ee880d0cd3ab08b5ef5caf4ee7f54c13e719736c005011cdd2f839f2a85",
+      "replacementName": "unsupported-numeric-source-repeated-minus-vertex",
+      "replacementInputSha256": "d4b36a530477b16662b8c42972eac4301adf60c02b8a710c4ddfbd05af73819b",
+      "promotedCase": "historical-c2-unsupported-numeric-source--IN[1]-vertex",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-MAX-fragment",
+      "oldInputSha256": "4f5b986a8d96e0016145d55f889f45629146fbda34c6d44aaa2cafd3928ab0fd",
+      "replacementName": "unsupported-MAX-absolute-fragment",
+      "replacementInputSha256": "aee8b1282fcab3565fb5a866904dbd2800348791ffb8ed91b42ee77310bf0cf5",
+      "promotedCase": "historical-c2-unsupported-MAX-fragment",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-DIV-fragment",
+      "oldInputSha256": "9338ac1ae22e97f3d0b41d333cb5db85de294c2618198655258b84ba30a8ec79",
+      "replacementName": "unsupported-DIV-absolute-fragment",
+      "replacementInputSha256": "a72264b555c4310acff8206a00b1f03ea9c9792bb6233147557fbe2acffe5dda",
+      "promotedCase": "historical-c2-unsupported-DIV-fragment",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    },
+    {
+      "fixture": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "oldName": "unsupported-numeric-source--IN[1]-fragment",
+      "oldInputSha256": "89d2d8bae081258d70ae14eab57ac43efe74c8352e8af9d7bc88cb439c4dd8c8",
+      "replacementName": "unsupported-numeric-source-repeated-minus-fragment",
+      "replacementInputSha256": "7aaf57987905a5cdcc35069d46c0266c44d2c6595efd931cb1fc4a7a3bf11e7a",
+      "promotedCase": "historical-c2-unsupported-numeric-source--IN[1]-fragment",
+      "profile": "virgl-webgl2-raw-bits-v5"
+    }
+  ]
+}

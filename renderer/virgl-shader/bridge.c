@@ -299,13 +299,18 @@ static bool instruction(const char **p, struct profile *s)
       else if (word(p, "MUL")) raw.opcode = RAW_MUL;
       else if (word(p, "MAD")) raw.opcode = RAW_MAD;
       else if (word(p, "TEX")) raw.opcode = RAW_TEX;
+      else if (word(p, "DIV")) raw.opcode = RAW_DIV;
+      else if (word(p, "MAX")) raw.opcode = RAW_MAX;
+      else if (word(p, "FRC")) raw.opcode = RAW_FRC;
+      else if (word(p, "LRP")) raw.opcode = RAW_LRP;
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
-      arity = raw.opcode == RAW_NOT || tex ? 1 : raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD ? 3 : 2;
+      arity = raw.opcode == RAW_NOT || raw.opcode == RAW_FRC || tex ? 1 :
+         raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if ((1u << raw.opcode) & RAW_V4_OPCODES) failure_code = "unsupported-feature";
+      if ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -316,8 +321,14 @@ static bool instruction(const char **p, struct profile *s)
    if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||
        !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
    if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
-   for (unsigned i = 0; i < arity; ++i)
-      if (!punctuation(p, ',') || !source(p, s, tex ? 3u : dst.mask, s->raw ? &raw.src[i] : NULL)) return false;
+   for (unsigned i = 0; i < arity; ++i) {
+      if (!punctuation(p, ',')) return false;
+      /* A modifier belongs only to a numeric operand; samplers, raw selectors
+       * and bitwise payloads never pass through this typed minus parser. */
+      if (s->raw && ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
+         raw.flags |= RAW_NEGATE_SOURCE0 << i;
+      if (!source(p, s, tex ? 3u : dst.mask, s->raw ? &raw.src[i] : NULL)) return false;
+   }
    if (tex) {
       struct reg sampler;
       if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
@@ -327,7 +338,7 @@ static bool instruction(const char **p, struct profile *s)
    if (!end(p)) return false;
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
-      raw.flags = s->mixed_candidate ? RAW_MIXED : 0;
+      raw.flags |= s->mixed_candidate ? RAW_MIXED : 0;
       if (!raw_record(s->raw, &raw)) { failure_code = "unsupported-feature"; return false; }
    }
    s->written[dst.file][dst.index] |= dst.mask;
@@ -476,6 +487,15 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = true;
       } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {
          numeric_candidate = true;
+         /* Probe source positions only. A '-' in a literal/declaration or
+          * unrelated token cannot move an ordinary legacy program here. The
+          * complete typed parser below remains the sole admission authority. */
+         while ((p = strchr(p, ','))) {
+            ++p; space(&p);
+            if (*p == '-') candidate = true;
+         }
+      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "FRC") || word(&p, "LRP")) {
+         candidate = numeric_candidate = true;
       }
    }
    if (candidate) {
@@ -602,6 +622,7 @@ static void stage_result(const struct conversion *c)
       }
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+      c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :
       c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
       c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
       c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
