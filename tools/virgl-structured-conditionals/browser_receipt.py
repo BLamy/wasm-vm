@@ -25,6 +25,59 @@ SCHEDULES=[{'seed':0x7c1209ad,'commandsPerStep':1},{'seed':0xea016f35,'commandsP
 COLORS=[[159,48,64,255],[48,96,143,96],[159,96,16,255],[128,128,80,143]]
 MOV_COLORS=[[128,32,0,255],[128,32,0,255],[64,191,0,255],[64,191,0,255]]
 
+def canonical(value):
+    """JSON's scalar types are evidence: Python's False == 0 is not equality."""
+    return json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)
+
+
+def same(actual,expected):return canonical(actual)==canonical(expected)
+
+
+def byte_values(value):
+    require(type(value)is list and all(type(v)is int and 0<=v<=255 for v in value),
+            'byte observations contain only integer octets')
+    return bytes(value)
+
+
+def strict_observations(value,*,fractional_domains=False):
+    """Type-check the closed browser observation schema before held leaf oracles.
+
+    All words, IDs, counters, lengths and packet bytes are JSON integers. The
+    only ordinary fractional observations are the authored viewport half-depths.
+    E6a's deliberate fractional-domain attack is retained as one explicit input,
+    never as an allowance for accounting or GPU values.
+    """
+    booleans={'guestExecution','productionVirgl','trustedHostMetadataWrapper',
+              'compilerAdmissionUnchanged','ok','present','taken','disposed','public',
+              'programNull','framebufferNull','vertexArrayNull','gpuComplete',
+              'inspectionMutationRejected','optional','predecessorFullGateClaimed','isBlockCoverage'}
+    byte_fields={'bytes','rgbaBytes','pixelsBefore','pixelsAfter','inputAfter',
+                 'callerBytesAfter','packetBytes'}
+    def walk(item,path=(),boolean=False):
+        if boolean:
+            require(type(item)is bool,'boolean observation at '+str(path));return
+        if type(item)is dict:
+            require(all(type(k)is str for k in item),'string observation keys')
+            for key,child in item.items():
+                flag=key in booleans or (key=='status' and item.get('call') in ('compileShader','linkProgram'))
+                walk(child,path+(key,),flag)
+        elif type(item)is list:
+            if path and path[-1]=='colorMask':
+                require(len(item)==4 and all(type(v)is bool for v in item),'four boolean color-mask observations');return
+            if path and path[-1] in byte_fields:byte_values(item)
+            for index,child in enumerate(item):walk(child,path+(index,))
+        elif len(path)>=3 and path[-3:] in (('viewport','scale',2),('viewport','translate',2)):
+            require(type(item)is float and same(item,0.5),'authored fractional viewport depth')
+        elif type(item)is float:
+            allowed=(fractional_domains and len(path)>=8 and path[0]=='metadataRigs'
+                     and path[2]=='translations' and path[-5:]==('result','metadata','constantDomains',0,'count')
+                     and value['metadataRigs'][path[1]]['name'] in ('vertex-count-fraction','fragment-count-fraction'))
+            require(allowed and same(item,1.5),'fractional value outside explicit domain attack at '+str(path))
+        else:
+            require(type(item) in (str,int,type(None)),'unexpected boolean/non-JSON observation at '+str(path))
+    walk(value)
+
+
 def read(path):return json.loads(Path(path).read_bytes())
 def sha(raw):return hashlib.sha256(raw).hexdigest()
 def binding(path,base=ROOT):
@@ -44,47 +97,48 @@ def geometry(rig,rows):
     vertices=[]
     for i in range(len(positions)//2):vertices.extend(positions[2*i:2*i+2]+selectors[2*i:2*i+2]+inputs[2*i:2*i+2]+others[2*i:2*i+2])
     expected={'rows':rows,'width':64,'height':64,'stride':32,'positionWords':positions,'selectorWords':selectors,'inputWords':inputs,'otherWords':others,'vertexWords':vertices,'indexWords':indices}
-    require(rig['geometry']==expected,'literal position/selector/two independent input meshes')
+    require(same(rig['geometry'],expected),'literal position/selector/two independent input meshes')
     raw_vertices=struct.pack('<'+'I'*len(vertices),*vertices);raw_indices=struct.pack('<'+'H'*len(indices),*indices)
     wanted=[(101,0,64,16,len(raw_vertices),1,raw_vertices),(102,0,64,32,len(raw_indices),1,raw_indices),(103,2,67,10,64,64,bytes(16384))]
     require(len(rig['resourceInputs'])==3,'exact three resource definitions')
     for entry,(identity,target,fmt,bind,width,height,raw) in zip(rig['resourceInputs'],wanted):
-        require(entry=={'id':identity,'target':target,'format':fmt,'bind':bind,'width':width,'height':height,'bytes':list(raw)},'all literal decoded resource bytes')
+        require(same(entry,{'id':identity,'target':target,'format':fmt,'bind':bind,'width':width,'height':height,'bytes':list(raw)}),'all literal decoded resource bytes')
     require(len(rig['bufferReadbacks'])==2 and rig['textureReadbacks']==[],'two actual independent native buffer readbacks')
-    for entry,raw in zip(rig['bufferReadbacks'],(raw_vertices,raw_indices)):require(bytes(entry['bytes'])==raw and entry['nativeId'].startswith('Buffer:'),'actual uploaded native inputs')
+    for entry,raw in zip(rig['bufferReadbacks'],(raw_vertices,raw_indices)):require(byte_values(entry['bytes'])==raw and entry['nativeId'].startswith('Buffer:'),'actual uploaded native inputs')
 
 
 def atlas(draw,kernel,vector,fixture,failure=False):
-    require(draw['kernel']==kernel['name'] and draw['vector']==vector and draw['checkedPixels']==4096,'exact literal kernel/vector capture')
+    require(draw['kernel']==kernel['name'] and same(draw['vector'],vector) and draw['checkedPixels']==4096,'exact literal kernel/vector capture')
+    byte_values(draw['rgbaBytes'])
     pixels=draw['rgbaBytes'];actual=[[0]*4 for _ in kernel['pages']]
     for y in range(64):
         for x in range(64):
             page,bit=y//2,x//2;pixel=pixels[4*(64*y+x):4*(64*y+x+1)]
-            if page>=len(actual):require(pixel==[0,0,255,255],'unused full atlas cells remain clear');continue
+            if page>=len(actual):require(same(pixel,[0,0,255,255]),'unused full atlas cells remain clear');continue
             require(all(v in (0,255) for v in pixel),'actual endpoint bitplane bytes')
             anchor=pixels[4*(64*page*2+bit*2):4*(64*page*2+bit*2+1)]
-            require(pixel==anchor,'all four pixels in each actual bit cell agree')
+            require(same(pixel,anchor),'all four pixels in each actual bit cell agree')
             if x%2==0 and y%2==0:
                 for lane,v in enumerate(pixel):actual[page][lane]|=(v//255)<<bit
     expected,branches=math.pages(kernel,vector,fixture)
-    require(draw['branches']==branches,'independently recursively selected literal branches')
+    require(same(draw['branches'],branches),'independently recursively selected literal branches')
     if kernel['family']=='raw':
         a=[1,2143289345,2147483648,4294967295];b=[8388607,1065353216,0,305419896]
         require(expected[1:9]==[b,a,a,a,a,b,a,a],'explicit unsigned x-lane truth table including y-only false and swizzled y true')
     failures=[]
     require(len(draw['pages'])==len(expected),'all declared full-word pages')
     for row,(definition,entry,wanted,words) in enumerate(zip(kernel['pages'],draw['pages'],expected,actual)):
-        require(entry=={**definition,'observedWords':words,'expectedWords':wanted},'producer expectation independently reconstructed from literal TGSI')
+        require(same(entry,{**definition,'observedWords':words,'expectedWords':wanted}),'producer expectation independently reconstructed from literal TGSI')
         for lane,(a,b) in enumerate(zip(wanted,words)):
             if a!=b:failures.append({'page':row,'lane':lane,'name':definition['name'],'expectedWord':a,'observedWord':b})
-    require(draw.get('failures',[])==failures and bool(failures)==failure,'branch source fault has a measured raw-word counterexample')
+    require(same(draw.get('failures',[]),failures) and bool(failures)==failure,'branch source fault has a measured raw-word counterexample')
     require(not any(f['page']==0 for f in failures),'literal orientation remains exact under branch fault')
     return {'pixels':4096,'words':4*len(actual),'mismatches':len(failures)}
 
 
 def color(draw,vector,family,fixture):
     index=fixture['vectors']['branches'].index(vector);wanted=(COLORS if family=='coupled' else MOV_COLORS)[index]
-    require(vector['coupledColor']==COLORS[index] and vector['movColor']==MOV_COLORS[index],'independently authored literal per-lane colors')
+    require(same(vector['coupledColor'],COLORS[index]) and same(vector['movColor'],MOV_COLORS[index]),'independently authored literal per-lane colors')
     inputs={0:[0,0,0,0x3f800000],1:[0,0,0,0x3f800000],2:[0x3e800000,0x3f400000,0,0x3f800000],3:[0x3f000000,0x3e000000,0,0x3f800000]}
     if family=='coupled':
         vertex=next(s for s in fixture['shaders'] if s['name']=='coupled-vertex');fragment=next(s for s in fixture['shaders'] if s['name']=='coupled-fragment')
@@ -94,19 +148,21 @@ def color(draw,vector,family,fixture):
         shader=next(s for s in fixture['shaders'] if s['name']=='mov-color-fragment');source,_,_=math.interpret(shader['text'],inputs,math.bank(vector));words=[source('OUT[0]',lane) for lane in range(4)]
     independently=[int(min(1,max(0,math.rational(word)))*255+math.Fraction(1,2)) for word in words]
     require(independently==wanted,'literal table agrees with recursive actual branch semantics')
-    require(draw['family']==family and draw['vector']==vector and draw['color']==wanted and draw['checkedPixels']==4096 and draw['rgbaBytes']==wanted*4096,'every native color pixel matches literal branch outcome')
+    require(draw['family']==family and same(draw['vector'],vector) and same(draw['color'],wanted) and draw['checkedPixels']==4096 and same(draw['rgbaBytes'],wanted*4096),'every native color pixel matches literal branch outcome')
 
 
 def envelope(directory,head,mode,fault_manifest,preview):
     report=read(directory/'report.json');failed=mode=='branch-polarity'
-    require(report['schema']==1 and report['task']=='E6-T12e7' and report['gitHead']==head and report['mode']==mode and report['status']==('failed' if failed else 'passed'),'browser exact-head mode and outcome')
+    for field in ('sources','servedFiles','browserCoverage','faultManifestBinding'):
+        strict_observations(report[field])
+    require(same(report['schema'],1) and report['task']=='E6-T12e7' and report['gitHead']==head and report['mode']==mode and report['status']==('failed' if failed else 'passed'),'browser exact-head mode and outcome')
     require((preview or report['trackedChanges']==[]) and report['guestExecution']is False and report['trustedHostMetadataWrapper']is False and report['currentGuest3dAdvertisement']is False,'frozen compiler proof with production disabled')
-    require(report['browserErrors']=={'console':[],'page':[],'requests':[]},'zero native browser errors')
+    require(same(report['browserErrors'],{'console':[],'page':[],'requests':[]}),'zero native browser errors')
     sources={}
     for entry in report['sources']:
         raw=(ROOT/entry['path']).read_bytes();require(entry['size']==len(raw) and entry['sha256']==sha(raw),'actual source binding')
-        require(entry['path'] not in sources or sources[entry['path']]==entry,'unique consistent source identity');sources[entry['path']]=entry
-    require(report['faultManifest']==(fault_manifest if failed else None),'exact selected isolated compiler fault manifest')
+        require(entry['path'] not in sources or same(sources[entry['path']],entry),'unique consistent source identity');sources[entry['path']]=entry
+    require(same(report['faultManifest'],fault_manifest if failed else None),'exact selected isolated compiler fault manifest')
     fault_directory=Path(fault_manifest['outputDirectory']) if preview else directory.parent/'fault-artifacts'
     if failed:
         raw=(fault_directory/'manifest.json').read_bytes();require(report['faultManifestBinding']['sha256']==sha(raw) and report['faultManifestBinding']['bytes']==len(raw),'actual served fault manifest')
@@ -119,6 +175,7 @@ def envelope(directory,head,mode,fault_manifest,preview):
         require(entry['sha256']==sha(raw) and entry['size']==len(raw),'exact served source/artifact bytes')
     require(set(RUNTIME+[FIXTURE,'renderer/virgl-shader/build/wasm/virgl-shader.wasm'])<=set(served),'actual compiler, fixture and complete shared pipeline consumed')
     entry=report['browserCoverage'];raw=(directory/entry['path']).read_bytes();require(sha(raw)==entry['sha256'],'actual recorded coverage');scripts=json.loads(raw)['scripts']
+    strict_observations(scripts)
     require({s['source'] for s in scripts}==set(RUNTIME),'coverage includes all newly authored helpers and real renderer')
     for script in scripts:require(script['sha256']==served[script['source']]['sha256'] and script['originalSha256']==sources[script['source']]['sha256'] and any(any(r['count']>0 for r in f['ranges']) for f in script['coverage']['functions']),'executed source-bound browser coverage')
     entry=report['failureScreenshot' if failed else 'screenshot'];require(sha((directory/entry['path']).read_bytes())==entry['sha256'],'actual GPU screenshot')
@@ -127,16 +184,33 @@ def envelope(directory,head,mode,fault_manifest,preview):
 
 
 def verify_proof(proof,fixture,cases,pairs,originals,fault_cases=None):
+    strict_observations(proof)
     require(proof['schema']=='wasm-vm-structured-conditional-browser-v1' and proof['trustedHostMetadataWrapper']is False and proof['productionVirgl']is False and proof['guestExecution']is False,'honest isolated structured compiler boundary')
-    require(proof['fixture']==binding(ROOT/FIXTURE),'all literal input bytes bound')
+    require(same(proof['fixture'],binding(ROOT/FIXTURE)),'all literal input bytes bound')
+    expected_cases={e['name']:e['result'] for e in fault_cases} if fault_cases is not None else cases
+    for item in proof['shaderFixtures']:
+        require(same(item['result'],expected_cases[item['name']]),'typed complete native/Wasm shader result')
+    for item in proof['negativeFixtures']:
+        require(same(item['result'],cases[item['name']]),'typed complete rejected shader result')
+    for item in proof['corpus']:
+        require(same(item['result'],originals[item['sha256']]),'typed complete original shader result')
+    for item in proof['pairFixtures']:
+        expected=(legacy.specialized_pair(expected_cases[item['vertex']],expected_cases[item['fragment']])
+                  if fault_cases is not None else pairs[item['name']])
+        require(same(item['result'],expected),'typed complete native/Wasm pair result')
     by_body,by_pair=legacy.translations(proof,fixture,cases,pairs,originals,fault_cases)
+    for rig in proof['rigs']:
+        for entry in rig['translations']:
+            request=entry['request']
+            expected=by_body[(request['stage'],request['text'])] if entry['kind']=='single' else by_pair[(request['vertexText'],request['fragmentText'])]
+            require(same(entry['result'],expected),'typed unmodified actual compiler result at renderer boundary')
     mode=proof['mode'];fault=mode=='branch-polarity';kernel_map={k['name']:k for k in fixture['kernels']};shaders={s['name']:s for s in fixture['shaders']}
     names=['raw-vertex'] if fault else [k['name'] for k in fixture['kernels']]+['mov-color-vertex','mov-color-fragment','coupled-sync']+[f'coupled-async-{s["seed"]:x}' for s in SCHEDULES]
     require([r['name'] for r in proof['rigs']]==names,'complete bounded independent workload inventory')
     counts={'draws':0,'pixels':0,'words':0,'mismatches':0,'fences':0,'withheldPolls':0,'rejections':0}
     for rig in proof['rigs']:
         kernel=kernel_map.get(rig['name']);geometry(rig,len(kernel['pages']) if kernel else None);programs=legacy.native_events(rig)
-        schedule=next((s for s in SCHEDULES if rig['name']==f'coupled-async-{s["seed"]:x}'),None);require(rig.get('schedule')==schedule,'declared bounded independent async schedule')
+        schedule=next((s for s in SCHEDULES if rig['name']==f'coupled-async-{s["seed"]:x}'),None);require(same(rig.get('schedule'),schedule),'declared bounded independent async schedule')
         summary=life.verify(rig,'normal',globals())
         for key in ('fences','withheldPolls','rejections'):counts[key]+=summary[key]
         pair_name=kernel['pair'] if kernel else rig['name']+'-pair' if rig['name'].startswith('mov-color') else 'coupled-pair'

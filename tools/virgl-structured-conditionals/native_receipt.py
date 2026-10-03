@@ -30,6 +30,12 @@ require, sha, read, binding, git = base.require, base.sha, base.read, base.bindi
 verify_source, verify_records = base.verify_source, base.verify_records
 
 
+def exact(actual, expected):
+    """Preserve JSON types; Python equality otherwise equates false/0 and true/1."""
+    return json.dumps(actual, sort_keys=True, separators=(',', ':'), allow_nan=False) == \
+        json.dumps(expected, sort_keys=True, separators=(',', ':'), allow_nan=False)
+
+
 def result_stage(result, stage, profile):
     old.result_stage(result, stage, profile)
     metadata = result['metadata']
@@ -38,8 +44,8 @@ def result_stage(result, stage, profile):
         require(set(metadata) == keys | {'constantDomains'} and len(metadata['uniforms']) == 1,
                 'one exact conditional metadata shape and bank')
         uniform = metadata['uniforms'][0]
-        require(metadata['constantDomains'] == [{'kind': 'constant-bank-finite-f32-v1', 'stage': stage, 'slot': 0,
-                'name': ('vs' if stage == 'vertex' else 'fs') + 'const0', 'count': uniform['count']}],
+        require(exact(metadata['constantDomains'], [{'kind': 'constant-bank-finite-f32-v1', 'stage': stage, 'slot': 0,
+                'name': ('vs' if stage == 'vertex' else 'fs') + 'const0', 'count': uniform['count']}]),
                 'compiler-derived domain equals actual declared stage bank')
     else:
         require(set(metadata) == keys, 'ordinary profiles have no conditional domain')
@@ -55,22 +61,22 @@ def new_workload(cases, pairs, fixtures, hardware, all_cases):
         fields = {k: fixture[k] for k in ('name', 'stage', 'text', 'ok', 'expected', 'origin')}
         fields.update(inputSha256=sha(raw), bytes=len(raw))
         if profile: fields['profile'] = profile
-        require({k:v for k,v in entry.items() if k not in ('result', 'resultBytes', 'resultSha256')} == fields, 'full exact authored case input/outcome')
+        require(exact({k:v for k,v in entry.items() if k not in ('result', 'resultBytes', 'resultSha256')}, fields), 'full exact authored case input/outcome')
         result = entry['result']; require(result['ok'] is fixture['ok'], 'literal acceptance')
         if fixture['ok']:
             require(set(result) == {'ok', 'glsl', 'metadata'} and profile in PROFILES, 'exact success fields/profile')
             result_stage({k:result[k] for k in ('glsl','metadata')}, entry['stage'], profile)
             expected = fixture['expected']
             require(set(expected) == {'profile', 'constantCount', 'constantDomains'}, 'literal bounded fixture expectations')
-            require(result['metadata'].get('constantDomains') == expected['constantDomains'], 'literal stage domain')
+            require(exact(result['metadata'].get('constantDomains'), expected['constantDomains']), 'literal stage domain')
             uniforms = result['metadata']['uniforms']; count = expected['constantCount']
-            require((len(uniforms) == 1 and uniforms[0]['count'] == count) if count else uniforms == [], 'literal declaration extent')
+            require((len(uniforms) == 1 and exact(uniforms[0]['count'], count)) if count else uniforms == [], 'literal declaration extent')
             tex = re.findall(r'^\s*(?:\d+:\s*)?TEX[^\n]*SAMP\[(\d+)\]', fixture['text'], re.M)
-            require(result['metadata']['samplers'] == [{'index':int(i),'name':f'fssamp{i}','type':'sampler2D'} for i in sorted(set(tex),key=int)], 'sampler metadata from actual source uses')
+            require(exact(result['metadata']['samplers'], [{'index':int(i),'name':f'fssamp{i}','type':'sampler2D'} for i in sorted(set(tex),key=int)]), 'sampler metadata from actual source uses')
             if profile in (PROFILES[7], PROFILES[9]): require(len(re.findall(r'\btexture\s*\(',result['glsl'])) == len(tex), 'one actual sample per TEX')
         else:
-            require(result == {'ok':False,'error':{'code':fixture['expected']['errorCode'],
-                    'message':'TGSI is malformed or outside the documented straight-line profile.'}}, 'complete exact rollback error')
+            require(exact(result, {'ok':False,'error':{'code':fixture['expected']['errorCode'],
+                    'message':'TGSI is malformed or outside the documented straight-line profile.'}}), 'complete exact rollback error')
     expected_pairs = [{'name':p['name'],'vertex':p['vertex'],'fragment':p['fragment'],'ok':True,'expected':{'interfaceKey':p['interfaceKey']}} for p in hardware['pairs']]
     for stage in ('vertex','fragment'):
         for code in ('parse-error','unsupported-feature'):
@@ -91,15 +97,15 @@ def new_workload(cases, pairs, fixtures, hardware, all_cases):
         expected = {'name':fixture['name'],'vertexCaseName':v['name'] if '::' not in fixture['vertex'] else fixture['vertex'],
                     'fragmentCaseName':f['name'] if '::' not in fixture['fragment'] else fixture['fragment'],
                     'vertexSha256':v['inputSha256'],'fragmentSha256':f['inputSha256'],'ok':fixture['ok'],'expected':fixture['expected']}
-        require({k:x for k,x in entry.items() if k not in ('result','resultBytes','resultSha256')}==expected,'full authored pair identity')
+        require(exact({k:x for k,x in entry.items() if k not in ('result','resultBytes','resultSha256')},expected),'full authored pair identity')
         result=entry['result'];require(result['ok'] is fixture['ok'],'literal pair outcome')
         if result['ok']:
             require(set(result)=={'ok','vertex','fragment','interfaceKey'} and result['interfaceKey']==fixture['expected']['interfaceKey'],'exact linked interface')
             for stage,single in [('vertex',v),('fragment',f)]:
                 result_stage(result[stage],stage,single['profile'])
-                require(result[stage]['metadata'].get('constantDomains')==single['result']['metadata'].get('constantDomains'),'single/pair domain equality')
-            require(result['fragment']=={k:f['result'][k] for k in ('glsl','metadata')},'exact standalone fragment')
-        else: require(result=={'ok':False,'error':{'code':fixture['expected']['errorCode'],'message':'TGSI is malformed or outside the documented straight-line profile.'}},'pair transaction original error')
+                require(exact(result[stage]['metadata'].get('constantDomains'),single['result']['metadata'].get('constantDomains')),'single/pair domain equality')
+            require(exact(result['fragment'],{k:f['result'][k] for k in ('glsl','metadata')}),'exact standalone fragment')
+        else: require(exact(result,{'ok':False,'error':{'code':fixture['expected']['errorCode'],'message':'TGSI is malformed or outside the documented straight-line profile.'}}),'pair transaction original error')
     return {c['name']:c for c in cases},{p['name']:p for p in pairs}
 
 
@@ -111,23 +117,23 @@ def verify_recording(output):
     directory=Path(output);directory=directory if (directory/'native-report.json').is_file() else directory/'native'
     native=read(directory/'native-report.json')
     require(native['schema']=='wasm-vm-structured-conditionals-native-v1' and native['status']=='passed','native schema/outcome')
-    require(native['sanitizers']==['address','undefined'] and native['seeds']==SEEDS and native['mutationsPerSeed']==1024,'actual varied sanitizer workload')
+    require(native['sanitizers']==['address','undefined'] and native['seeds']==SEEDS and exact(native['mutationsPerSeed'],1024),'actual varied sanitizer workload')
     held,_=retained(native)
-    require(native['compatibility']=={'heldHead':HELD_HEAD,'retainedCases':3151,'retainedPairs':221,'migrations':0,'predecessorFullGateClaimed':False},'complete unchanged retained boundary')
-    require(native['constantBaseline']==binding(ROOT/'evidence/virgl-constant-compiler/cold-clone/acceptance/native/native-report.json'),'verified baseline binding')
+    require(exact(native['compatibility'],{'heldHead':HELD_HEAD,'retainedCases':3151,'retainedPairs':221,'migrations':0,'predecessorFullGateClaimed':False}),'complete unchanged retained boundary')
+    require(exact(native['constantBaseline'],binding(ROOT/'evidence/virgl-constant-compiler/cold-clone/acceptance/native/native-report.json')),'verified baseline binding')
     groups=[];all_cases={}
     for label,stem,count,pair_count in GROUPS:
         require(len(native[label+'Cases'])==count and len(native[label+'Pairs'])==pair_count,'complete retained cardinalities')
         groups.append((label+'::',native[label+'Cases'],native[label+'Pairs']))
         all_cases.update({label+'::'+e['name']:e for e in native[label+'Cases']})
     identities=[binding(ROOT/'renderer/virgl-shader/tests/structured-conditional-cases.json'),binding(ROOT/'renderer/virgl-command/tests/structured-conditionals-shaders.json')]
-    require(native['fixtures']==identities,'new authored source bindings')
+    require(exact(native['fixtures'],identities),'new authored source bindings')
     fixtures,hardware=[read(ROOT/e['path']) for e in identities]
     all_cases.update({e['name']:e for e in native['cases']})
     cases,pairs=new_workload(native['cases'],native['pairs'],fixtures,hardware,all_cases)
     groups.append(('',native['cases'],native['pairs']))
     for entry in source_bindings(native):
-        require({k:entry[k] for k in ('path','bytes','sha256')}==binding(ROOT/entry['path']),'current source identity')
+        require(exact({k:entry[k] for k in ('path','bytes','sha256')},binding(ROOT/entry['path'])),'current source identity')
     expected_sources={str(p.relative_to(ROOT)) for pattern in ('*.c','*.h') for p in (ROOT/'renderer/virgl-shader').glob(pattern)}|{
         'renderer/virgl-shader/build.sh','renderer/virgl-shader/index.mjs','renderer/virgl-shader/native_tests/structured_conditionals.c',
         'renderer/virgl-shader/README.md','renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/verify_sources.py',
@@ -163,7 +169,7 @@ def verify_recording(output):
         m=re.fullmatch(r'(ORIGINAL|CASE|PAIR) ([0-9]+) (.+)',line)
         if m:
             kind,i,raw=m[1],int(m[2]),m[3].encode('ascii');require(i<len(transcript[kind]),'bounded transcript index');e=transcript[kind][i]
-            require((json.loads(raw),len(raw),sha(raw))==(e['result'],e['resultBytes'],e['resultSha256']),'actual serialized result exact')
+            require(exact((json.loads(raw),len(raw),sha(raw)),(e['result'],e['resultBytes'],e['resultSha256'])),'actual serialized result exact')
             order.append((kind,i))
         elif line.startswith('FAULT '):
             _,i,raw=line.split(' ',2);require(int(i)==len(faults),'allocation fault order');faults.append(json.loads(raw))
@@ -185,20 +191,20 @@ def verify_recording(output):
         expected_faults.append({'kind':'pair','failAt':site,'attempts':site,'requestedBytes':size,'result':{'ok':False,'error':{
           'code':'translation-error' if site<=2 else 'unsupported-feature','message':'Raw IR allocation failed.' if site==1 else
           'Structured flow allocation failed.' if site==2 else 'TGSI is malformed or outside the documented straight-line profile.'}}})
-    require(faults==native['allocationFaults']==expected_faults,'all twenty-six actual allocations and public transaction errors')
-    require(observed=={'LAYOUT':native['layout'],'STATS':native['stats'],'FLOW':native['flow']} and native['layout']==held['layout'],'actual compact layouts unchanged')
-    require(native['flow']=={'arenaBytes':arena,'arenaBoundBytes':53248,'depthLimit':8},'actual bounded snapshot arena allocation')
+    require(exact(faults,native['allocationFaults']) and exact(faults,expected_faults),'all twenty-six actual allocations and public transaction errors')
+    require(exact(observed,{'LAYOUT':native['layout'],'STATS':native['stats'],'FLOW':native['flow']}) and exact(native['layout'],held['layout']),'actual compact layouts unchanged')
+    require(exact(native['flow'],{'arenaBytes':arena,'arenaBoundBytes':53248,'depthLimit':8}),'actual bounded snapshot arena allocation')
     expected_truncations=singles+['nested-full-labels-vertex','nested-full-labels-fragment','depth-8-vertex','depth-8-fragment']
     require(native['truncationCases']==expected_truncations,'all profile, labelled and maximal-depth truncation bodies')
     truncations=sum(all_cases[name]['bytes'] for name in expected_truncations);attacks=len(flat_cases)+truncations+324+4096+26
     stats={'originals':19,'acceptedOriginals':12,'cases':len(flat_cases),'pairs':len(flat_pairs),
            'calls':19+len(flat_pairs)+20+attacks*39,'standaloneRecoveries':attacks*20,'pairRecoveries':attacks*18,
            'truncations':truncations,'hostileCases':324,'mutations':4096,'allocationFaults':26}
-    require(set(native['stats'])==set(stats)|{'maxSingleResultBytes','maxPairResultBytes'} and all(native['stats'][k]==v for k,v in stats.items()),'derived execution and recovery accounting')
+    require(set(native['stats'])==set(stats)|{'maxSingleResultBytes','maxPairResultBytes'} and exact({k:native['stats'][k] for k in stats},stats),'derived execution and recovery accounting')
     every=transcript['ORIGINAL']+transcript['CASE'];pair_entries=transcript['PAIR']
     maxima={'singleResultBytes':max(e['resultBytes'] for e in every),'pairResultBytes':max(e['resultBytes'] for e in pair_entries),
       'stageGlslBytes':max(len(s['glsl'].encode()) for e in every+pair_entries if e['result']['ok'] for s in ([e['result']['vertex'],e['result']['fragment']] if 'vertex' in e['result'] else [e['result']]))}
-    require(native['recordedMaxima']==maxima and maxima['singleResultBytes']<=native['stats']['maxSingleResultBytes']<147456 and maxima['pairResultBytes']<=native['stats']['maxPairResultBytes']<295936 and maxima['stageGlslBytes']<=65536,'actual serialization bounds')
+    require(exact(native['recordedMaxima'],maxima) and maxima['singleResultBytes']<=native['stats']['maxSingleResultBytes']<147456 and maxima['pairResultBytes']<=native['stats']['maxPairResultBytes']<295936 and maxima['stageGlslBytes']<=65536,'actual serialization bounds')
     verify_records(directory,native['coverage'])
     return native,fixtures,hardware,cases,pairs,{e['sha256']:e for e in native['originals']}
 
@@ -218,7 +224,7 @@ def stages_by_sha(native):
     result={}
     for key in [label+'Cases' for label,*_ in GROUPS]+['cases']:
         for entry in native[key]:
-            digest=entry['inputSha256'];require(digest not in result or result[digest]['result']==entry['result'],'same body same full result');result[digest]=entry
+            digest=entry['inputSha256'];require(digest not in result or exact(result[digest]['result'],entry['result']),'same body same full result');result[digest]=entry
     return result
 
 
@@ -226,7 +232,7 @@ def pairs_by_sha(native):
     result={}
     for key in [label+'Pairs' for label,*_ in GROUPS]+['pairs']:
         for entry in native[key]:
-            digest=(entry['vertexSha256'],entry['fragmentSha256']);require(digest not in result or result[digest]['result']==entry['result'],'same pair same full result');result[digest]=entry
+            digest=(entry['vertexSha256'],entry['fragmentSha256']);require(digest not in result or exact(result[digest]['result'],entry['result']),'same pair same full result');result[digest]=entry
     return result
 
 
@@ -247,7 +253,7 @@ def verify_coverage(native, directory, head):
     recorded = {item['path']: item for item in coverage['sources']}
     for item in files:
         path = str(Path(item['filename']).resolve().relative_to(ROOT))
-        require(item['summary'] == recorded[path]['summary'] and item['segments'] and
+        require(exact(item['summary'], recorded[path]['summary']) and item['segments'] and
                 item['summary']['lines']['covered'] > 0, 'recorded source counters and summary agree')
     for tool in coverage['tools']:
         require(sha(Path(tool['path']).read_bytes()) == tool['sha256'] and tool['version'], 'coverage tool identity')
@@ -261,6 +267,6 @@ def verify_coverage(native, directory, head):
             function, size, kind = line.split('\t')
             require(size.isdecimal() and kind in ('static', 'dynamic', 'dynamic,bounded'), 'literal stack record')
             decoded.append({'function': function, 'bytes': int(size), 'kind': kind})
-        require(decoded == record['functions'] and record['source'] == 'renderer/virgl-shader/' + record['path'][:-3] + '.c',
+        require(exact(decoded, record['functions']) and record['source'] == 'renderer/virgl-shader/' + record['path'][:-3] + '.c',
                 'compiler stack transcript exactly represented')
 

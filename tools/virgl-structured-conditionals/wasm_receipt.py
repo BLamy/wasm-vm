@@ -13,7 +13,7 @@ LIMITS = {'textBytes':16384,'tokens':8192,'glslBytes':65536,'instructions':179,'
 def encoded(value): return json.dumps(value,separators=(',',':'),ensure_ascii=False).encode()
 
 def same_json(actual,expected):
-    return json.dumps(actual,sort_keys=True,separators=(',',':')) == json.dumps(expected,sort_keys=True,separators=(',',':'))
+    return json.dumps(actual,sort_keys=True,separators=(',',':'),allow_nan=False) == json.dumps(expected,sort_keys=True,separators=(',',':'),allow_nan=False)
 
 
 def verify(directory,head,native):
@@ -32,11 +32,11 @@ def _verify(directory,head,native):
     require(set(report)=={'schema','status','node','nativeReport','sources','limits','counts','ownership','stress','allocationPressure','maxima','memory','records'},'complete Wasm report shape')
     require(report['schema']=='wasm-vm-structured-conditionals-wasm-v1' and report['status']=='passed','completed Wasm recording')
     require(set(report['node'])=={'version','platform','arch'} and all(isinstance(v,str) and v for v in report['node'].values()),'recorded Node environment')
-    require(report['limits']==LIMITS and report['sources']==[binding(ROOT/p) for p in SOURCES+[entry['path'] for entry in native['originals']]],'exact Wasm runtime/harness identities and bounds')
+    require(same_json(report['limits'],LIMITS) and same_json(report['sources'],[binding(ROOT/p) for p in SOURCES+[entry['path'] for entry in native['originals']]]),'exact Wasm runtime/harness identities and bounds')
     if head is not None:
         for entry in report['sources']: source(entry,head)
     native_source=report['nativeReport'];raw=(directory/native_source['path']).read_bytes()
-    require(native_source=={'path':'../native/native-report.json','bytes':len(raw),'sha256':sha(raw)} and json.loads(raw)==native,'actual independently checked native baseline')
+    require(same_json(native_source,{'path':'../native/native-report.json','bytes':len(raw),'sha256':sha(raw)}) and same_json(json.loads(raw),native),'actual independently checked native baseline')
     cases={};pairs={}
     def reference(label,name):return name if '::' in name else label+'::'+name
     for label in LABELS:
@@ -46,7 +46,7 @@ def _verify(directory,head,native):
     require(len(cases)==3151+len(native['cases']) and len(pairs)==221+len(native['pairs']),'full retained/new unique matrix')
     require(len(native['recoverySingles'])==20 and len(native['recoveryPairs'])==18,'complete structured and historical recovery set')
     log=(directory/'calls.jsonl').read_bytes()
-    require(report['records']==[{'path':'calls.jsonl','bytes':len(log),'sha256':sha(log)}],'complete raw call log binding')
+    require(same_json(report['records'],[{'path':'calls.jsonl','bytes':len(log),'sha256':sha(log)}]),'complete raw call log binding')
     lines=iter(log.splitlines());index=0;maxima={'singleJSBytes':0,'pairJSBytes':0,'glslBytes':0};recoveries=0
     def consume(kind,name,result,full):
         nonlocal index
@@ -92,20 +92,20 @@ def _verify(directory,head,native):
         recover()
     require(same_json(report['stress'],stress),'exact maximal text/instruction ownership stress')
     pressure=report['allocationPressure'];schedule=[0,1,4,8,12,13,14,16,20,24,32,40,48,64,96,128]
-    require(set(pressure)=={'chunkBytes','releaseSchedule','targets'} and pressure['chunkBytes']==4096 and pressure['releaseSchedule']==schedule and len(pressure['targets'])==3,'bounded real allocator pressure matrix')
+    require(set(pressure)=={'chunkBytes','releaseSchedule','targets'} and same_json(pressure['chunkBytes'],4096) and same_json(pressure['releaseSchedule'],schedule) and len(pressure['targets'])==3,'bounded real allocator pressure matrix')
     pressure_calls=0;error_codes=set()
     def capacity(value):
-        require(set(value)=={'chunkBytes','availableChunks','availableRequestedBytes'} and value['chunkBytes']==4096 and type(value['availableChunks']) is int and 0<=value['availableChunks']<4096 and value['availableRequestedBytes']==value['availableChunks']*4096,'real bounded malloc capacity record')
+        require(set(value)=={'chunkBytes','availableChunks','availableRequestedBytes'} and same_json(value['chunkBytes'],4096) and type(value['availableChunks']) is int and 0<=value['availableChunks']<4096 and same_json(value['availableRequestedBytes'],value['availableChunks']*4096),'real bounded malloc capacity record')
     for record,(kind,name) in zip(pressure['targets'],[('single','coupled-vertex'),('single','coupled-fragment'),('pair','coupled-pair')]):
         entry=(cases if kind=='single' else pairs)[name]
         require(set(record)=={'kind','name','capacityBefore','reservedChunks','releasedChunks','attempts','capacityAfter','recoveredResult'} and record['kind']==kind and record['name']==name,'exact pressure target')
         capacity(record['capacityBefore']);capacity(record['capacityAfter'])
-        require(record['capacityBefore']==record['capacityAfter'] and record['reservedChunks']==record['capacityBefore']['availableChunks']==record['releasedChunks']>128,'whole requested capacity reserved and released')
+        require(same_json(record['capacityBefore'],record['capacityAfter']) and same_json(record['reservedChunks'],record['capacityBefore']['availableChunks']) and same_json(record['reservedChunks'],record['releasedChunks']) and record['releasedChunks']>128,'whole requested capacity reserved and released')
         attempts=record['attempts'];require(2<=len(attempts)<=len(schedule),'pressure observes failure then bounded success')
         for attempt,release in zip(attempts,schedule):
-            require(set(attempt)=={'releasedChunks','heldChunks','capacityBefore','capacityAfter','result'} and attempt['releasedChunks']==release and attempt['heldChunks']==record['reservedChunks']-release,'literal sequential release schedule')
+            require(set(attempt)=={'releasedChunks','heldChunks','capacityBefore','capacityAfter','result'} and same_json(attempt['releasedChunks'],release) and same_json(attempt['heldChunks'],record['reservedChunks']-release),'literal sequential release schedule')
             capacity(attempt['capacityBefore']);capacity(attempt['capacityAfter'])
-            require(attempt['capacityBefore']==attempt['capacityAfter'],'each call restores malloc capacity')
+            require(same_json(attempt['capacityBefore'],attempt['capacityAfter']),'each call restores malloc capacity')
             result=attempt['result'];consume('pressure',name,result,True);pressure_calls+=1
             if attempt is attempts[-1]:require(same_json(result,entry['result']),'last pressure attempt full native success')
             else:

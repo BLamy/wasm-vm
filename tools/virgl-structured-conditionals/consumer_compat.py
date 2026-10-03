@@ -4,10 +4,12 @@ The historical harness's compilerAdmissionUnchanged flag describes its fourteen
 unchanged inputs. This wrapper proves that limited statement with full native
 and Wasm results, and makes no unchanged-compiler or historical full-gate claim.
 """
+import copy
 import json
 from pathlib import Path
 import re
 import unit_compat
+from browser_receipt import same, strict_observations, legacy as structured_legacy
 
 from compat_common import (ROOT, BASE, E6B, HELD_HEAD, require, sha, read, binding,
                            held, source, unchanged, consumer_modules, load, git, consumer_source, profile_delta)
@@ -22,17 +24,19 @@ RUNTIME, MUTATIONS = browser.RUNTIME, browser.MUTATIONS
 
 def envelope(directory, head, contract, mode):
     report = read(directory / 'report.json')
+    for field in ('sources', 'servedFiles', 'mutations', 'browserCoverage', 'compatibility'):
+        strict_observations(report[field])
     status = 'failed' if mode == 'decoder-and-guard-bypass' else 'passed'
-    require(report['task'] == 'E6-T12e7-consumer-regression' and report['schema'] == 1 and report['gitHead'] == head
+    require(report['task'] == 'E6-T12e7-consumer-regression' and same(report['schema'], 1) and report['gitHead'] == head
             and report['status'] == status and report['mode'] == mode, 'browser task/head/mode/outcome')
     require(report['trackedChanges'] == [] and report['guestExecution'] is False
             and report['currentGuest3dAdvertisement'] is False and report['trustedHostMetadataWrapper'] is True,
             'frozen isolated host contract proof')
-    require(report['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'browser has zero errors')
+    require(same(report['browserErrors'], {'console': [], 'page': [], 'requests': []}), 'browser has zero errors')
     sources = {}
     for item in report['sources']:
         source(item, head)
-        require(item['path'] not in sources or item == sources[item['path']], 'consistent repeated source binding')
+        require(item['path'] not in sources or same(item, sources[item['path']]), 'consistent repeated source binding')
         sources[item['path']] = item
     mutations = {}
     for path, before, after in MUTATIONS[:0 if mode == 'normal' else 1 if mode == 'decoder-bypass' else 2]:
@@ -41,7 +45,7 @@ def envelope(directory, head, contract, mode):
         mutations[path] = {'path': path, 'before': before, 'after': after, 'matches': 1,
                            'originalSha256': sha(raw), 'servedSha256': sha(raw.replace(before.encode(), after.encode()))}
     require(len(report['mutations']) == len(mutations)
-            and {item['path']: item for item in report['mutations']} == mutations, 'complete exact source faults')
+            and same({item['path']: item for item in report['mutations']}, mutations), 'complete exact source faults')
     served = {item['path']: item for item in report['servedFiles']}
     require(len(served) == len(report['servedFiles']), 'unique served files')
     for path, item in served.items():
@@ -54,6 +58,7 @@ def envelope(directory, head, contract, mode):
     require(set(RUNTIME + [FIXTURE, 'renderer/virgl-shader/build/wasm/virgl-shader.wasm']) <= set(served),
             'actual runtime, fixture and built Wasm consumed')
     coverage = json.loads(artifact(directory, report['browserCoverage']))
+    strict_observations(coverage)
     require({item['source'] for item in coverage['scripts']} == set(RUNTIME), 'complete browser coverage sources')
     for item in coverage['scripts']:
         require(item['sha256'] == served[item['source']]['sha256']
@@ -68,19 +73,20 @@ def envelope(directory, head, contract, mode):
     qualified = {'browserVersion': browser['version'],
                  **{key: report['host'][key] for key in ('platform', 'architecture', 'release')},
                  'renderer': report['acceptance']['renderer']['renderer']}
-    require(qualified in contract['browserMatrix']['qualified'], 'qualified GPU/browser tuple')
+    require(any(same(qualified, item) for item in contract['browserMatrix']['qualified']), 'qualified GPU/browser tuple')
     return report
 
 
 def verify_native(directory, head):
     report = read(directory / 'native-report.json')
+    strict_observations(report)
     baseline = held(BASE + '/native/native-report.json')
     require(report['schema'] == SCHEMA and report['status'] == 'passed' and report['gitHead'] == head
             and report['heldHead'] == HELD_HEAD and report['predecessorFullGateClaimed'] is False,
             'explicit current-head successor native identity')
-    require(report['baseline'] == binding(ROOT / BASE / 'native/native-report.json')
-            and report['fixture'] == baseline['fixture'] == binding(ROOT / FIXTURE)
-            and report['cases'] == baseline['cases'] and report['calls'] == 14,
+    require(same(report['baseline'], binding(ROOT / BASE / 'native/native-report.json'))
+            and same(report['fixture'], baseline['fixture']) and same(report['fixture'], binding(ROOT / FIXTURE))
+            and same(report['cases'], baseline['cases']) and report['calls'] == 14,
             'all fourteen full native results and exact old input identities preserved')
     require(Path(report['binary']).resolve() == ROOT / 'renderer/virgl-shader/build/native/virgl-shader'
             and sha(Path(report['binary']).read_bytes()) == report['binarySha256'], 'actual current native compiler')
@@ -93,6 +99,7 @@ def verify_native(directory, head):
     raw = (directory / 'native.log').read_bytes()
     require(sha(raw) == report['logSha256'], 'complete current native transcript')
     records = [json.loads(line) for line in raw.splitlines()]
+    strict_observations(records)
     fixtures = read(ROOT / FIXTURE)
     require(len(records) == len(fixtures) == len(report['cases']) == 14, 'complete native call sequence')
     for record, fixture, case in zip(records, fixtures, report['cases']):
@@ -103,8 +110,32 @@ def verify_native(directory, head):
                 and record['returnCode'] == 0 and record['stderr'] == ''
                 and stdout.count(b'\n') == 1 and stdout.endswith(b'\n')
                 and sha(stdout) == case['stdoutSha256'] and len(stdout) - 1 == case['resultBytes']
-                and json.loads(stdout) == case['result'], 'actual full native input/result serialization')
+                and same(json.loads(stdout), case['result']), 'actual full native input/result serialization')
     return report, {case['name']: case for case in report['cases']}
+
+
+def typed_translations(proof, cases, originals):
+    strict_observations(proof, fractional_domains=True)
+    by_body = browser.translations(proof, cases, originals)
+    for entry in proof['shaderFixtures']:
+        require(same(entry['original'], cases[entry['name']]['result']), 'typed complete consumer native/Wasm result')
+    for entry in proof['corpus']:
+        require(same(entry['result'], originals[entry['sha256']]), 'typed complete consumer original result')
+    for rig in proof['rigs'] + proof['metadataRigs']:
+        for entry in rig['translations']:
+            request = entry['request']
+            if entry['kind'] == 'single':
+                original = by_body[(request['stage'], request['text'])]
+                expected = browser.wrapped(original, request['stage'], entry['contractStages'], entry['fault'], entry['faultStage'])
+            else:
+                original = structured_legacy.specialized_pair(by_body[('vertex', request['vertexText'])],
+                                                             by_body[('fragment', request['fragmentText'])])
+                expected = copy.deepcopy(original)
+                for stage in ('vertex', 'fragment'):
+                    expected[stage] = browser.wrapped(original[stage], stage, entry['contractStages'], entry['fault'], entry['faultStage'])
+            require(same(entry['original'], original) and same(entry['result'], expected),
+                    'typed complete original and exact declared consumer metadata transformation')
+    return by_body
 
 
 def verify(output, head, contract):
@@ -143,7 +174,7 @@ def verify(output, head, contract):
         metadata_names = [f'{stage}-{fault}' for stage in ('vertex', 'fragment') for fault in browser.FAULTS]
         require([rig['name'] for rig in proof['metadataRigs']] == (metadata_names if mode == 'normal' else []),
                 'complete metadata attack matrix')
-        by_body = browser.translations(proof, cases, originals)
+        by_body = typed_translations(proof, cases, originals)
         total = {'pixels': 0, 'rawWords': 0, 'invalidUploads': 0}
         lifecycle = []
         for rig in proof['rigs'] + proof['metadataRigs']:
@@ -154,32 +185,34 @@ def verify(output, head, contract):
             if rig['name'] == 'raw-async':
                 seed, budget = browser.SCHEDULES[1]
                 schedule = {'seed': seed, 'commandsPerStep': budget}
-            require(rig.get('schedule') == schedule, 'four explicit varied command/fence schedules')
+            require(same(rig.get('schedule'), schedule), 'four explicit varied command/fence schedules')
             counts = browser.gpu(rig, mode, by_body)
             for key, value in counts.items(): total[key] += value
             lifecycle.append({'name': rig['name'], **lifecycle_receipt.verify_rig(rig, mode)})
         if mode == 'decoder-and-guard-bypass':
-            require(total == {'pixels': 1024, 'rawWords': 0, 'invalidUploads': 1}
+            require(same(total, {'pixels': 1024, 'rawWords': 0, 'invalidUploads': 1})
                     and 'finite guard omission: actual invalid conditional uniform upload' in proof['failure']['message']
                     and 'finite guard omission: actual invalid conditional uniform upload' in report['failure']['message'],
                     'only the measured invalid native upload refutes the deliberate source fault')
         else:
             expected_pixels, expected_raw = (110592, 64) if mode == 'normal' else (10240, 0)
-            require(total == {'pixels': expected_pixels, 'rawWords': expected_raw, 'invalidUploads': 0}
+            require(same(total, {'pixels': expected_pixels, 'rawWords': expected_raw, 'invalidUploads': 0})
                     and proof['checkedPixels'] == expected_pixels and proof['rawWords'] == expected_raw
                     and proof['invalidCases'] == 120, 'independently reconstructed complete hardware counts')
         summaries.append({'mode': mode, **total, 'rigs': lifecycle,
                           'report': binding(output / path / 'report.json', output)})
-    require(all(report['sources'] == reports[0]['sources'] for report in reports[1:]), 'fault runs preserve every original source/input')
+    require(all(same(report['sources'], reports[0]['sources']) for report in reports[1:]), 'fault runs preserve every original source/input')
     for report in reports:
-        require(report['compatibility'] == {'schema': 'wasm-vm-e6a-structured-consumer-replay-v1',
-                'heldHead': HELD_HEAD, 'predecessorFullGateClaimed': False}, 'explicit successor browser claim')
+        require(same(report['compatibility'], {'schema': 'wasm-vm-e6a-structured-consumer-replay-v1',
+                'heldHead': HELD_HEAD, 'predecessorFullGateClaimed': False}), 'explicit successor browser claim')
     names = {item['path'] for report in reports for item in report['sources']}
     names.update(item['path'] for item in native['sources'] + unit['sources'])
     names.update([E6B + '/receipt.json', BASE + '/native/native-report.json',
                   'tools/virgl-structured-conditionals/consumer_compat.py',
                   'tools/virgl-structured-conditionals/consumer_compat.mjs',
-                  'tools/virgl-structured-conditionals/compat_common.py'])
+                  'tools/virgl-structured-conditionals/compat_common.py',
+                  'tools/virgl-structured-conditionals/browser_receipt.py',
+                  'tools/virgl-structured-conditionals/oracle.py'])
     names.update(str(path.relative_to(ROOT)) for path in (ROOT / 'tools/virgl-constant-domains').glob('*') if path.is_file())
     sources = []
     for name in sorted(names):

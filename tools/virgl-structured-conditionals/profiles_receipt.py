@@ -119,19 +119,19 @@ def _verify(directory, head):
     require(report['schema'] == 'wasm-vm-structured-profiles-v1' and report['task'] == 'E6-T12e7'
             and report['status'] == 'passed', 'profile proof identity and success')
     require(same(report['cases'], expected_cases()), 'all 50 exact typed public profile inputs and results')
-    require(report['sources'] == [binding(ROOT / name) for name in FILES], 'profile recorder and consumer sources')
+    require(same(report['sources'], [binding(ROOT / name) for name in FILES]), 'profile recorder and consumer sources')
     sources = report['sources'] + [binding(Path(__file__).resolve())]
     if head is not None:
         require(report['gitHead'] == head, 'profile proof frozen head')
         for item in sources:
             require(subprocess.check_output(['git', 'show', f'{head}:{item["path"]}'], cwd=ROOT)
                     == (ROOT / item['path']).read_bytes(), 'profile source equals frozen head')
-    require(report['coverage'] == binding(directory / 'coverage.json', directory), 'actual consumer coverage digest')
+    require(same(report['coverage'], binding(directory / 'coverage.json', directory)), 'actual consumer coverage digest')
     coverage = json.loads((directory / 'coverage.json').read_bytes())
     require(len(coverage) == 1 and coverage[0]['url'].endswith('/renderer/virgl-command/constant-domain.mjs'),
             'coverage belongs to actual consumer')
     functions = [entry for entry in coverage[0]['functions'] if entry['functionName'] == 'parseConstantDomain']
-    require(len(functions) == 1 and functions[0]['ranges'][0]['count'] == 50, 'all 50 public parser calls recorded')
+    require(len(functions) == 1 and same(functions[0]['ranges'][0]['count'], 50), 'all 50 public parser calls recorded')
     return {'status': 'passed', 'cases': 50, 'profiles': [7, 8, 9], 'unknownProfileRejected': 10,
             'mandatoryDomains': [7, 9], 'sources': sources,
             'records': [binding(directory / name, directory) for name in ('report.json', 'coverage.json')]}

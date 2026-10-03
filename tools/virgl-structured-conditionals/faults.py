@@ -61,15 +61,15 @@ def verify_recording(output, clean_by_sha):
 def _verify(output, head, clean_by_sha):
     output = Path(output).resolve()
     report = json.loads((output / 'manifest.json').read_bytes())
-    require(report['schema'] == 1 and report['task'] == 'E6-T12e7'
+    require(same(report['schema'], 1) and report['task'] == 'E6-T12e7'
             and report['status'] == 'passed' and (head is None or report['gitHead'] == head),
             'frozen isolated compiler fault identity')
-    require(report['fixture'] == binding(FIXTURE)
-            and report['wasmHarness'] == binding(ROOT / 'tools/virgl-structured-conditionals/fault_wasm.mjs')
-            and report['harness'] == binding(Path(__file__).resolve()), 'fault recorder and literal inputs')
+    require(same(report['fixture'], binding(FIXTURE))
+            and same(report['wasmHarness'], binding(ROOT / 'tools/virgl-structured-conditionals/fault_wasm.mjs'))
+            and same(report['harness'], binding(Path(__file__).resolve())), 'fault recorder and literal inputs')
     for item in report['sources'] + [report['fixture'], report['harness'], report['wasmHarness']]:
         raw = (ROOT / item['path']).read_bytes()
-        require(binding(ROOT / item['path']) == item, 'current fault source binding')
+        require(same(binding(ROOT / item['path']), item), 'current fault source binding')
         if head is not None:
             require(subprocess.check_output(['git', 'show', f'{head}:{item["path"]}'], cwd=ROOT) == raw,
                     'fault source equals committed head')
@@ -86,7 +86,7 @@ def _verify(output, head, clean_by_sha):
     def artifact(item):
         path = output / item['path']
         require(path.resolve().is_relative_to(output), 'fault evidence path stays inside recording')
-        require(binding(path, output) == item, 'fault artifact bytes and digest')
+        require(same(binding(path, output), item), 'fault artifact bytes and digest')
         return path
 
     for mode, definition in MUTATIONS.items():
@@ -98,13 +98,13 @@ def _verify(output, head, clean_by_sha):
         require(len(record['mutations']) == 1, 'one compiler mutation per fault')
         mutation = record['mutations'][0]
         source_record = mutation['recordedSource']
-        require(mutation == {**definition, 'matches': 1, 'originalSha256': sha(original),
-                             'mutatedSha256': sha(altered), 'recordedSource': source_record},
+        require(same(mutation, {**definition, 'matches': 1, 'originalSha256': sha(original),
+                             'mutatedSha256': sha(altered), 'recordedSource': source_record}),
                 'exact declared compiler source mutation')
         require(artifact(source_record).read_bytes() == altered, 'complete mutated C source recorded')
         expected_sources = [{**item, 'bytes': len(altered), 'sha256': sha(altered)}
                             if item['path'] == definition['path'] else item for item in report['sources']]
-        require(record['sources'] == expected_sources, 'no other compiler source altered')
+        require(same(record['sources'], expected_sources), 'no other compiler source altered')
         require(set(record['artifacts']) == {'module', 'wasm', 'native'}, 'all actual fault artifacts')
         for item in record['artifacts'].values():
             artifact(item)
@@ -121,12 +121,12 @@ def _verify(output, head, clean_by_sha):
         for shader, observed in zip(shaders, records):
             body = shader['text'].encode('ascii')
             require(observed['name'] == shader['name'] and observed['stage'] == shader['stage']
-                    and observed['inputSha256'] == sha(body) and observed['inputBytes'] == len(body),
+                    and observed['inputSha256'] == sha(body) and same(observed['inputBytes'], len(body)),
                     'fault native translations use unchanged literal inputs')
             require(observed['command'] == [str(Path(report['outputDirectory']) / record['artifacts']['native']['path']),
                                              shader['stage']], 'exact recorded native artifact command')
             stdout = observed['stdout']
-            require(observed['returnCode'] == 0 and observed['stderr'] == ''
+            require(same(observed['returnCode'], 0) and observed['stderr'] == ''
                     and stdout.endswith('\n') and stdout.count('\n') == 1
                     and same(json.loads(stdout), observed['result']), 'complete native fault serialization')
             clean = clean_by_sha[sha(body)]
@@ -151,14 +151,14 @@ def _verify(output, head, clean_by_sha):
         require(wasm_record['schema'] == 'wasm-vm-structured-fault-wasm-v1'
                 and wasm_record['mode'] == mode and wasm_record['status'] == 'passed',
                 'actual fault Wasm ABI run')
-        require(wasm_record['fixture'] == binding(FIXTURE)
-                and wasm_record['harness'] == binding(ROOT / 'tools/virgl-structured-conditionals/fault_wasm.mjs'),
+        require(same(wasm_record['fixture'], binding(FIXTURE))
+                and same(wasm_record['harness'], binding(ROOT / 'tools/virgl-structured-conditionals/fault_wasm.mjs')),
                 'fault Wasm literal inputs and recorder')
-        require(wasm_record['artifacts'] == record['artifacts']
-                and wasm_record['nativeTranslations'] == record['nativeTranslations'],
+        require(same(wasm_record['artifacts'], record['artifacts'])
+                and same(wasm_record['nativeTranslations'], record['nativeTranslations']),
                 'same compiled fault artifacts and native transcript')
-        require(wasm_record['memory'] == {'initialBytes': 16777216, 'finalBytes': 16777216,
-                                       'bufferIdentityStable': True}, 'fixed memory during fault ABI calls')
+        require(same(wasm_record['memory'], {'initialBytes': 16777216, 'finalBytes': 16777216,
+                                       'bufferIdentityStable': True}), 'fixed memory during fault ABI calls')
         require(same(wasm_record['calls'], [{'name': row['name'], 'stage': row['stage'],
                 'inputSha256': row['inputSha256'], 'inputBytes': row['inputBytes'], 'result': row['result']}
                 for row in records]), 'all actual fault Wasm results exactly match native')
