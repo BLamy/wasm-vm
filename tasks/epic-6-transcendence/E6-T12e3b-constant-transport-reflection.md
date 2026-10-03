@@ -3,7 +3,7 @@ id: E6-T12e3b
 epic: 6
 title: Bound high constant uploads and active renderer reflection
 priority: 525.02699035
-status: implemented
+status: verified
 depends_on: [E6-T12e3]
 estimate: S
 risk: high
@@ -159,3 +159,72 @@ translator or decoder as its oracle. Driver-pruning wrappers are validation-only
 only actual inactive declarations and actual retained extents are GPU facts.
 This remains an isolated renderer proof: no new guest execution, production
 advertisement, live deployment, FPS improvement or300-MIPS desktop claim.
+
+### 2026-10-03 — verifier — VERDICT: verified
+
+Fresh independent critic `/root/constant_transport_verifier` recorded 20
+predictions before inspecting the implementation/evidence, then reviewed the
+diff from verified `5af5600c33c69e926c96a3dc82369c31da391565` to frozen
+`81cd3a4c403176be4b0191fa00ed37f4fd1e1e35`. Worker claim
+`68186f6edf63a6f3c0e2160892a2bc5b868ab8f8` changes no runtime/harness after
+that freeze. A separate read-only helper audited evidence/source/clone binding.
+No implementation fixes were made by either verifier.
+
+- P01–P04 — HELD. Independent decoder sweep passed 1,046 cases with four new
+  seeds, including exact limits, finite raw bits, non-finites, truncations and
+  detached ownership. Recorded malformed tails apply zero commands; semantic
+  failure after valid short prefixes preserves their truthful applied counts.
+  Every runtime upload is bounded to 184 words; all 432 worker native objects
+  and all state/resource budgets are released.
+- P05–P10 — HELD. Full native/Wasm/actual-GL text binding holds for 19 originals
+  and 8 exact fixtures. Actual extents are 46/46/46, 47/47/46 and 46/0/0 as
+  claimed. Both poisoned host-only elements 46 remain unchanged. Independent
+  stage-limit neighbors reject 183/187 and accept 184/188, respectively, in both
+  VS and FS. Additional invalid metadata and host-limit attacks reject with
+  exact late-VS-UBO cleanup; all 15 worker reflection rollback cases hold.
+- P11–P17 — HELD. The helper independently interprets original TGSI/raw packets
+  and reconstructs every byte of all 44 worker and cold framebuffers, without
+  generated GLSL or reported expected colors as its oracle. Independent new
+  asymmetric VS/FS owner attacks pass 19,654 assertions / 19,456 hardware pixels,
+  including short replacement, A/B/A switching, numeric-ID reuse and detached
+  async input at seeds `6da0c389`/`db81295b`, step budgets 4/7. Short state fails
+  before index staging/draw; the pre-existing async drain fence may still be
+  issued and collected. Independent served-source FS CONST45→CONST5 upload
+  sabotage compiles, links and draws, then fails at pixel (4,12): expected
+  [96,128,159,159], observed [191,223,255,159].
+- P18–P20 — HELD. Source-bound V8 evidence accounts for all 20 added executable
+  runtime lines, with no executable runtime waiver. The helper verified 431
+  source bindings, 32 worker records, 35 copied cold artifacts against the
+  retained clean frozen clone, hostile environment scrubbing and all 13 claim
+  digests. Production activation remains disabled; no desktop performance or
+  real Mesa execution claim is made.
+- SUITE: committed verifier-owned raw decoder sweep, asymmetric hardware/async
+  attacks, exact component-limit neighbors and alias sensitivity test are
+  promoted as repeatable deterministic harnesses. Binding/coverage audits stay
+  as reproducible frozen-record checks. See verifier `README.md` for commands
+  and `findings.md` for all prediction citations and diff classifications.
+
+Commands (repository root):
+
+```sh
+node evidence/virgl-constants/verifier/decoder-attacks.mjs
+node evidence/virgl-constants/verifier/run-attacks.mjs normal
+node evidence/virgl-constants/verifier/run-attacks.mjs alias-sabotage
+python3 evidence/virgl-constants/verifier/coverage-audit.py
+python3 evidence/virgl-constants/verifier/binding-audit.py
+python3 evidence/virgl-constants/verifier/binding-audit.py evidence/virgl-constants/cold-clone/acceptance evidence/virgl-constants/verifier/binding-cold-acceptance-audit.json
+python3 evidence/virgl-constants/verifier/binding-cold-claim-audit.py
+python3 evidence/virgl-constants/verifier/final-audit.py
+```
+
+Evidence under `evidence/virgl-constants/verifier/`:
+
+- `final-audit.json`: `07fde5d83336cd29e7c4b271bab7bfd1be9b70aa1bff6e4afca0c8bfd4b9bacf`.
+- `findings.md`: `f8612dbb103db9017f0b5f7c8b42c30bded88bb1117ba73a71bc1f4b170666ac`.
+- `normal/report.json`: `6847cad502aa615bac799bb7ff0e123b1be3b2f1a4bca356ce1056873c94a38c`.
+- `alias-sabotage/report.json`: `0a291b4217a6ceace7bf0fccf23592259855e070d1a24c3e9947f333ac2115bb`.
+- `decoder-attacks.json`: `bdc65c03ff34dffebc569fc455a43dc83db29706be387d389b4f253478f4b202`.
+- `coverage-audit.json`: `1b73b69eb038529d49e83cd81fd5415f417a40379a1872032af0888e6bbf91d2`.
+- `binding-worker-audit.json`: `356f2691034b652399e9d5bdbdd1db21bbf3c73ab934979c29b79d25aaaf579d`.
+- `binding-cold-acceptance-audit.json`: `048f4089c498e2a1584c0c9cd71f488ef2266af9a2dd5ba2b030884b823543f3`.
+- `binding-cold-claim-audit.json`: `f8c9067fd9c54f9d5781ececb3310e3a9aa429c54ac7754b505dbfd86e399ae8`.
