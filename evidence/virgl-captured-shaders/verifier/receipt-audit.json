@@ -1,0 +1,176 @@
+{
+  "coldCloneBindings": "HELD; 102 identical source digests; clean before/after",
+  "head": "8759a30622e6604b8cd3d5c35d110260c6fd1943",
+  "heldT10a": {
+    "evidenceDigests": 25,
+    "literalRegression": "Six identical source/GLSL hashes; nine identical RGBA hashes/pixel counts",
+    "productionDiffFromParent": "empty",
+    "unchangedBoundaries": [
+      "renderer/virgl-shader/vendor",
+      "renderer/virgl-shader/generated",
+      "renderer/virgl-shader/UPSTREAM.json",
+      "renderer/virgl-shader/index.mjs",
+      "renderer/virgl-shader/bridge.h",
+      "renderer/virgl-shader/cli.c",
+      "renderer/virgl-shader/verify_sources.py",
+      "renderer/virgl-shader/regenerate.py",
+      "renderer/virgl-shader/tests/corpus.mjs",
+      "tools/setup-virgl-emsdk.sh"
+    ]
+  },
+  "independentNativeOutcomeCounts": {
+    "parse-error": 1,
+    "translated": 7,
+    "unsupported-feature": 11
+  },
+  "independentNativeOutcomes": {
+    "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": "unsupported-feature",
+    "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": "translated",
+    "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373": "unsupported-feature",
+    "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3": "translated",
+    "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572": "unsupported-feature",
+    "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": "unsupported-feature",
+    "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": "unsupported-feature",
+    "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad": "unsupported-feature",
+    "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": "parse-error",
+    "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": "translated",
+    "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": "unsupported-feature",
+    "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": "unsupported-feature",
+    "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030": "translated",
+    "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518": "translated",
+    "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": "unsupported-feature",
+    "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51": "unsupported-feature",
+    "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": "translated",
+    "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": "unsupported-feature",
+    "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": "translated"
+  },
+  "status": "passed",
+  "tiers": {
+    "cold-clone/acceptance": {
+      "browsers": {
+        "captured": {
+          "checkedPixels": 768,
+          "reportSha256": "abb523fe8dabac1de3fc54baa1529d95b3cceb9411c6a236d0515341a90ab24f",
+          "served": 9,
+          "sources": 95,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "contract/browser": {
+          "checkedPixels": 4336,
+          "reportSha256": "e5bfc77000edc5d77d4bc5f6d6e7c46037ec0cf6cf440da974a6e71e284916fb",
+          "served": 12,
+          "sources": 92,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "literal": {
+          "checkedPixels": 4336,
+          "reportSha256": "b065acbfbef1e601e7360619e2a98b585787f4c705542f1889686be69280570c",
+          "served": 11,
+          "sources": 92,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "sabotage": {
+          "checkedPixels": null,
+          "reportSha256": "6fb86e91c096e5b1e598287f4524bcd95838bd9ee83f624ddb57903f8239b497",
+          "served": 9,
+          "sources": 95,
+          "status": "failed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        }
+      },
+      "compilers": 6,
+      "reports": 6,
+      "sources": 102
+    },
+    "worker": {
+      "browsers": {
+        "captured": {
+          "checkedPixels": 768,
+          "reportSha256": "61e53c09c248bb57cb268449051a344e65439d8f77f1b1e0a658b9ac0a89c1d8",
+          "served": 9,
+          "sources": 95,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "contract/browser": {
+          "checkedPixels": 4336,
+          "reportSha256": "b087cd61aad35832f592ee85e0457523ce06e6210f1f2839fcb2f8c72198e28b",
+          "served": 12,
+          "sources": 92,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "literal": {
+          "checkedPixels": 4336,
+          "reportSha256": "9ea0d16dd92f21d217271326c7b034423986bddf73fcaab99dd63f14d8b48cbe",
+          "served": 11,
+          "sources": 92,
+          "status": "passed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        },
+        "sabotage": {
+          "checkedPixels": null,
+          "reportSha256": "7c3040a8cd2fc0357e81ac36dacb7da561f233e1bcb1846e26106b88e22ac0cd",
+          "served": 9,
+          "sources": 95,
+          "status": "failed",
+          "wasm": [
+            {
+              "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+              "sha256": "ef4e5567cee381cffc19aece8c92671dca3707e7c8f21feb15a3eaa55f71642f",
+              "size": 258304
+            }
+          ]
+        }
+      },
+      "compilers": 6,
+      "reports": 6,
+      "sources": 102
+    }
+  }
+}

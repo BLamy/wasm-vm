@@ -3,7 +3,7 @@ id: E6-T10d
 epic: 6
 title: Execute the captured textured-scene shaders through the bounded browser bridge
 priority: 525.02691
-status: implemented
+status: verified
 depends_on: [E6-T10c]
 estimate: S
 risk: high
@@ -123,3 +123,60 @@ the frozen head; unchanged Rust/production web targets do not require unrelated
 workspace or deployment runs. Two obsolete v1 negative tests (newly valid MOV
 mask/source swizzle) were replaced with adjacent still-invalid ADD mask/short
 swizzle cases; new tests cover the expanded boundary instead of suppressing it.
+
+### 2026-10-03 — fresh verifier — VERDICT: verified (UTC)
+
+VERDICT: verified
+
+Independent verifier session, frozen runtime `8759a30622e6604b8cd3d5c35d110260c6fd1943`
+and worker handoff `b29ef95e`. Read the task and diff against `d0a5b1fc` first;
+recorded predictions before inspecting worker evidence. Evidence below is under
+`evidence/virgl-captured-shaders/verifier/`; `digests.json` binds 23 artifacts
+(SHA256 `acbddd65a3faee6356e360214cde2479a5a181654f6499ab7f76c34bf506da14`).
+No implementation changes were made.
+
+- **P1 exact bytes/provenance — HELD.** Both captured hashes match; native/Wasm
+  outputs agree. Independently recomputed 102 frozen source hashes, six compiler
+  hashes, subordinate reports, screenshots, native binaries/logs, and all eight
+  worker/cold browser report identities. The scrubbed cold clone is clean before
+  and after its passing full acceptance (`receipt-audit.json`, `receipt-audit.md`).
+- **P2 captured hardware semantics — HELD.** Fresh headed Chrome/Apple M4 Max
+  execution matches 768 independent literal pixels in three u16 indexed draws.
+  Actual vec4 attributes/varying, original two-component interleaved bindings,
+  component/written masks, sampler2D and single COLOR0 output match the claim
+  (`captured/report.json:695`, `:783`, `:2525`, `:2622`). Tint update and
+  quarter-alpha blending use the same program. Browser errors are empty and the
+  screenshot was inspected.
+- **P3/P4 new guard boundaries/recovery — HELD.** All 112 malformed fixtures and
+  302 positive boundaries pass under ASan/UBSan with four fresh seeds, 8,192
+  mutations, 517 truncations and 18,246 exact captured-pair recoveries
+  (`native-independent.log:115` through `:125`). The fresh hardware/Wasm run
+  records 1,792 repeated recoveries. Range bounds/overlap, UINT32 overflow and
+  nonfinite/subnormal values, invalid swizzles/masks, undeclared reads, missing
+  output components, partial TEMP writes and invalid properties all reject.
+- **P5 scope/regression — HELD.** Independently replayed all 19 native bodies:
+  seven translate, eleven reject unsupported features, one rejects malformed
+  syntax. Only the captured pair has this execution claim. All six original
+  literal GLSL hashes and nine RGBA hashes/4,336 pixels match T10a. All 25 prior
+  verifier evidence digests are intact; only unchanged boundary proofs carry
+  forward. PRECISE/Z32_UNORM remain rejected and production 3D is disabled
+  (`receipt-audit.json`, incremental proof table in `receipt-audit.md`).
+- **P6 sabotage sensitivity — HELD.** Independently corrupted one texture texel.
+  The compiled program fails at phase 0, pixel(4,4): expected [255,0,0,255],
+  observed [0,0,0,255] (`sabotage/report.json:905`; exit 1, failure screenshot).
+- **P7 bounded novel attack — HELD.** An independent integer IEEE-bit predicate
+  and exhaustive 256-swizzle xy-declaration sweep predict all 1,850 native/Wasm
+  cases: 914 accepted, 936 rejected, 7,400 identical valid recoveries
+  (`numeric-attack.json:4`, `:7`). This includes every sign/exponent at three
+  mantissa boundaries, padded words, overflowing aliases, and operand ranges.
+- **COVERAGE — SUFFICIENT.** LLVM counters exercise all 81 added executable C
+  lines; no changed executable line has zero hits (`changed-coverage.json`).
+  Every new dynamic guard outcome is covered. The compiler-folded `isfinite`
+  macro arms and declaration-mask defensive redundancy at bridge.c:223 are
+  structurally unreachable and explicitly waived. README's per-hunk table and
+  `receipt-audit.md` classify comments/types/config and harness-only diagnostic
+  failures. No product-claim path is left unproven.
+- **SUITE.** Retain `make verify-E6-T10d`, its 112-case grammar corpus and literal
+  pixel sabotage; promote the verifier's IEEE/component sweep and four fresh
+  mutation seeds. Replay commands, oracle independence and scope are in
+  `README.md`. No findings requiring implementation changes remain.
