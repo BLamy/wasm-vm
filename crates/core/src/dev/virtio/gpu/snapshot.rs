@@ -30,6 +30,8 @@ const MAX_SNAPSHOT_RESOURCES: u32 = 1 << 20;
 /// A GPU snapshot rejection.  All variants have stable [`Self::code`] values for host logs.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum GpuSnapshotError {
+    #[cfg(feature = "virgl-control-proof")]
+    Proof3dInstalled,
     Truncated,
     BadMagic,
     UnsupportedVersion {
@@ -98,6 +100,8 @@ impl GpuSnapshotError {
     /// Stable, machine-readable error code.
     pub const fn code(&self) -> &'static str {
         match self {
+            #[cfg(feature = "virgl-control-proof")]
+            Self::Proof3dInstalled => "proof_3d_installed",
             Self::Truncated => "truncated",
             Self::BadMagic => "bad_magic",
             Self::UnsupportedVersion { .. } => "unsupported_version",
@@ -126,6 +130,10 @@ impl GpuSnapshotError {
 
 /// Encode the complete host-owned GPU state in deterministic resource-id order.
 pub(crate) fn encode(state: &GpuState) -> Result<Vec<u8>, GpuSnapshotError> {
+    #[cfg(feature = "virgl-control-proof")]
+    if state.control3d_proof_installed() {
+        return Err(GpuSnapshotError::Proof3dInstalled);
+    }
     let records = state.resources.snapshot_records();
     let resource_count =
         u32::try_from(records.len()).map_err(|_| GpuSnapshotError::InvalidCount)?;
@@ -201,6 +209,10 @@ fn push_resource_header(
 
 /// Decode into a detached map, validate every binding, and only then replace live state.
 pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnapshotError> {
+    #[cfg(feature = "virgl-control-proof")]
+    if state.control3d_proof_installed() {
+        return Err(GpuSnapshotError::Proof3dInstalled);
+    }
     let parsed = parse(bytes)?;
     let resources = ResourceMap::from_snapshot_records(&parsed.records).map_err(|reason| {
         let resource_id = resource_id_from_reason(reason);

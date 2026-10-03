@@ -1843,3 +1843,8 @@ verify-E6-T12c:
 .PHONY: verify-E6-T12d
 verify-E6-T12d:
 	bash tools/verify-virgl-draw-replay.sh
+
+# Proof-only live virtio 3D context/resource control; no production activation.
+.PHONY: verify-E6-T11a
+verify-E6-T11a:
+	bash tools/verify-virgl-control.sh

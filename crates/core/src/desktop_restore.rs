@@ -598,6 +598,10 @@ impl VirtioDesktopRestoreBackend {
         agent: Option<Rc<RefCell<ConsoleState>>>,
         host: Rc<RefCell<DesktopRestoreHostState>>,
     ) -> Result<Self, RestoreCallbackError> {
+        #[cfg(feature = "virgl-control-proof")]
+        if gpu.borrow().control3d_proof_installed() {
+            return Err(RestoreCallbackError::new("proof_3d_installed"));
+        }
         // Cold fallback means power-on state, not whatever dirty state happened to be live when
         // the adapter was assembled. Fresh headless devices provide only those baseline payloads;
         // the live handles retain their real sinks and queue capabilities.
