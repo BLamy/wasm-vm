@@ -1,0 +1,147 @@
+{
+  "prediction": "exact text/line/instruction limits accept; one-past rejects; native/wasm success payloads match; retained JS outputs and independent instances survive hostile calls",
+  "status": "passed",
+  "cases": [
+    {
+      "name": "baseline",
+      "bytes": 58,
+      "ok": true,
+      "sha256": "399ecf2f53d6b05029b6e3495dbeddc85eb26e670e09068f52a7121c73a598c4"
+    },
+    {
+      "name": "exact-text-bound",
+      "bytes": 16384,
+      "ok": true,
+      "sha256": "9bce3265b452aead62576e44d9ed6d1e5625a8796c32b2c82b1f59c155067b2f"
+    },
+    {
+      "name": "text-over-bound",
+      "bytes": 16385,
+      "ok": false,
+      "code": "input-too-large",
+      "sha256": "ff7a05958acc05e618499da3ff0dca6ce1f8c505c6ffb51fa15b72171137ad8b"
+    },
+    {
+      "name": "max-instructions",
+      "bytes": 2344,
+      "ok": true,
+      "sha256": "6f2a61ed3ee0ad60a89746e48a3d4e81681dfdaf0a67544a1a05774d58e14613"
+    },
+    {
+      "name": "max-labeled-instructions",
+      "bytes": 2879,
+      "ok": true,
+      "sha256": "2dd2dea7b6ec37e4a9f71b1e504f467d65785be98cf1a8507602d13e34dc33bc"
+    },
+    {
+      "name": "excess-instructions",
+      "bytes": 2362,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "c7e7b9d0ab5190a095f62c77d5415995ad8dde188570985921d57863078986a5"
+    },
+    {
+      "name": "skipped-label",
+      "bytes": 85,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "2915d35bfc87ae4a8a055d6849f40a68468154359b4648f6dd313c7291129c44"
+    },
+    {
+      "name": "exact-line-bound",
+      "bytes": 553,
+      "ok": true,
+      "sha256": "d74b23046a5befd5c8e3440f75a57caf46e317a2f19547faa9db1677afb16583"
+    },
+    {
+      "name": "line-over-bound",
+      "bytes": 554,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "1f236f2e082f24335fd8b4ba21eb3926dc8a87e4dd48528d2e86bc92806d6824"
+    },
+    {
+      "name": "unknown-property",
+      "bytes": 77,
+      "ok": false,
+      "code": "unsupported-feature",
+      "sha256": "043fa98a6f9c58353f85ac13e7178df64ac16b22a8e99be084bc8309e4b07ccf"
+    },
+    {
+      "name": "unknown-property-after-end",
+      "bytes": 77,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "b6e90297dcb4ca88a11a119334ddf649c3f111ae8a395e10a055493a0da5056c"
+    },
+    {
+      "name": "overflow-index",
+      "bytes": 76,
+      "ok": false,
+      "code": "unsupported-feature",
+      "sha256": "58b569c5ae5f26d2c76edb339067422b46a00e61f9472265dd270a4a497fdc08"
+    },
+    {
+      "name": "negative-index",
+      "bytes": 60,
+      "ok": false,
+      "code": "unsupported-feature",
+      "sha256": "7c43db97cb6fa7162375ffe5eb44904da49d5a0769e8f623f2d977b34a970b4e"
+    },
+    {
+      "name": "range-index",
+      "bytes": 61,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "7ba15f903f81ba537f55dc40246859c013bdd33cdc06c60ec619f521b2bec12f"
+    },
+    {
+      "name": "embedded-nul",
+      "bytes": 66,
+      "ok": false,
+      "code": "invalid-input",
+      "sha256": "710bcf70aa23fea8407fcd91bc39df08aac1cabb1d67f79a8d103203631bfe57"
+    },
+    {
+      "name": "temp-uninitialized",
+      "bytes": 62,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "833639ace1e4bfa6bab26f2fd326633d2ceebe760e470c891ba3d8528ddd700f"
+    },
+    {
+      "name": "unwritten-output",
+      "bytes": 81,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "cd3099c0223cf70269c46b326a64d7ebd07983ecd0f68be025285650db3c5a0c"
+    },
+    {
+      "name": "indirect-read",
+      "bytes": 66,
+      "ok": false,
+      "code": "unsupported-feature",
+      "sha256": "05bb5702f9b456334bce46a0fc25131db1269c24805f037d375e5d42f6d383c8"
+    },
+    {
+      "name": "sampler-vertex",
+      "bytes": 70,
+      "ok": false,
+      "code": "parse-error",
+      "sha256": "5bf723c865d109af23159f08a9d1f0b419c3bc6f1022ecb75a272348d8ccb9a1"
+    },
+    {
+      "name": "unsupported-opcode",
+      "bytes": 59,
+      "ok": false,
+      "code": "unsupported-feature",
+      "sha256": "914a7dc8bab9af4aac0186d4e86e45c8f1b44bee3b5a786d1cf7e6457fb96003"
+    }
+  ],
+  "mutationSeed": "bace9137",
+  "mutations": 1536,
+  "accepted": 16,
+  "rejected": 1520,
+  "recoverySuccesses": 1556,
+  "retainedOutputSha256": "98fe602a1a10180385ee42deccb743f4c0df1b98d395b489baca30f7df825f72"
+}
