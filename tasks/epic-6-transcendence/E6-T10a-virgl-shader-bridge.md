@@ -3,7 +3,7 @@ id: E6-T10a
 epic: 6
 title: Reuse VirGL TGSI shader translation in a bounded browser module
 priority: 525.02701
-status: implemented
+status: verified
 depends_on: [E5-T06b, E5.5-T03bg]
 estimate: S
 risk: high
@@ -91,3 +91,53 @@ and three native deprecation warnings are preserved with the pin. Runtime Rust,
 its dependencies and production web bytes are unchanged, so unrelated emulator
 gates carry forward. This is isolated renderer tooling, not a guest graphics
 offload or compositor-performance claim. Awaiting the separate critic.
+
+
+### 2026-10-03 — verifier — VERDICT: verified
+
+Independent verifier session; runtime `6993efb1540cf7f5a01f6c82b8dac32cee734b39`
+and worker handoff `a6980be3`. Predictions were recorded before inspecting the
+worker evidence; the novel literal pixel and sabotage predictions were written
+before their respective runs. Evidence below is under
+`evidence/virgl-shader/verifier/`; `digests.json` binds every cited artifact.
+
+- **P1 provenance — HELD.** Predicted exact source/toolchain/module identity and
+  preserved licenses. Independently rechecked 93 source, seven build, six compiler
+  and 99 browser records; all 67 vendored files match the pinned upstream commit
+  byte-for-byte (`identity.json`). Repeated generation matches (`regeneration.log`).
+- **P2 hardware semantics — HELD.** Original six shaders/nine draws retain 4,336
+  exact pixels. Independently predicted a new MAD plus source-over-red result
+  [128,64,128,255] before execution (`novel-pixel-prediction.txt`); all 576 interior
+  pixels match at `novel-browser/report.json:2128` and `:2157`. Actual renderer is
+  Apple M4 Max ANGLE Metal, with zero browser errors. This is shader tooling;
+  no guest frame or compositor acceleration is claimed.
+- **P3 bounded rejection/recovery — HELD.** Exact text/line/instruction boundaries
+  accept and one-past limits reject; overflow/negative/range indices, unknown
+  properties, NUL, indirect addressing, uninitialized temporaries and unwritten
+  outputs reject. Native/Wasm results agree (`boundary-attacks.json`), and seed
+  `bace9137` adds 1,536 mutations/1,556 successful recoveries.
+- **P4 memory/lifetime — HELD.** Four independent ASan/UBSan seeds pass 8,769 calls
+  and 4,096 hostile mutations (`independent-sanitizers.log`). Saved JS results and
+  independent instances survive later calls. Injected C and JS allocation failures,
+  conversion failure, diagnostics, GLSL overflow and JSON overflow yield bounded
+  errors then identical success (`fault-guards.log`, `boundary-attacks.json`).
+- **P5 metadata/oracle sensitivity — HELD.** Actual hardware reflection confirms
+  VS/FS constants, attributes, sampler, 656-byte VirglBlock and winsys_adjust_y at
+  offset 640 (`novel-browser/report.json:1169`). Predicted fragment RGB/BGR sabotage
+  compiles/links, then fails at pixel(4,4): expected red [255,0,0,255], observed
+  blue [0,0,255,255] (`sabotage.log`, `sabotage/report.json`).
+- **P6 isolation/cold clone — HELD.** Scrubbed pristine acceptance passed with
+  matching 93 source and two Wasm/loader identities (`cold-clone-check.json` and
+  `../provenance.json`). Cargo, crates, src, web and default-2D implementation are
+  unchanged from parent. Unrelated emulator gates carry forward under the task's
+  explicit boundary and rr waiver.
+- **COVERAGE — SUFFICIENT.** Independent real-upstream and defensive-fault LLVM
+  records cover every instrumented bridge executable line (`bridge-coverage.txt`,
+  `fault-coverage.txt`, `coverage-summary.json`). README's per-hunk table explicitly
+  classifies types/config/docs and pinned dependency data; unsupported upstream
+  functionality is unreachable through the guard and is not claimed executed.
+  Browser scenarios cover every advertised instruction family and binding feature.
+- **SUITE.** Retain `make verify-E6-T10a`, the literal/hardware/hostile corpus, and
+  promoted verifier boundary/novel-pixel/sabotage scripts and independent seeds.
+  Replay commands and oracle distinctions are in the verifier README. No findings
+  requiring implementation changes remain.

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "head": "6993efb1540cf7f5a01f6c82b8dac32cee734b39",
+  "sourceDigestsCompared": 93,
+  "moduleDigestsCompared": 2,
+  "browserReportSha256": "dfb0663204e17c634273f97991369462d65469afdfe2d41df07e3672aad20acd",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+  "pixels": 4336
+}

@@ -3,14 +3,14 @@
   "task": "E6-T10a",
   "boundary": "literal TGSI -> pinned upstream converter -> GLSL ES300 -> hardware WebGL2",
   "guestExecution": false,
-  "status": "failed",
+  "status": "passed",
   "command": [
     "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
-    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-shader/verifier/sabotage-runner.mjs",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-shader/verifier/novel-browser-runner.mjs",
     "--output",
-    "evidence/virgl-shader/verifier/sabotage"
+    "evidence/virgl-shader/verifier/novel-browser"
   ],
-  "startedAt": "2026-10-03T02:16:45.570Z",
+  "startedAt": "2026-10-03T02:16:54.083Z",
   "host": {
     "platform": "darwin",
     "architecture": "arm64",
@@ -456,9 +456,9 @@
       "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
     },
     {
-      "path": "evidence/virgl-shader/verifier/sabotage-runner.mjs",
-      "size": 10736,
-      "sha256": "b0040fded1bc819a1753fa23fd879e490fda65c5b0b9bc11876be619bc42140f"
+      "path": "evidence/virgl-shader/verifier/novel-browser-runner.mjs",
+      "size": 11107,
+      "sha256": "77b3670b3ed5d5a7f6a684616b0f085aca989f102b4bb2c3c069a601214d0b21"
     }
   ],
   "servedFiles": [
@@ -489,13 +489,13 @@
     },
     {
       "path": "renderer/virgl-shader/tests/browser.mjs",
-      "size": 18114,
-      "sha256": "19e94c5991d319549484a325173db36b2b673322bf5aad84cf2064071daae576"
+      "size": 18010,
+      "sha256": "2684b44e4494beeb56f9b2b5f69c7507dc543fa09fdc103fdf9beb05a3b2d756"
     },
     {
       "path": "renderer/virgl-shader/tests/corpus.mjs",
-      "size": 4442,
-      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+      "size": 4451,
+      "sha256": "b132a4be2f67a894032218910a73a29e5b7b016330488cebeea1f2dc8d3dd7e0"
     },
     {
       "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
@@ -569,7 +569,7 @@
       "--enable-use-zoom-for-dsf=false",
       "--no-sandbox",
       "--enable-gpu",
-      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-gKOEDG",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-YeQUYI",
       "--remote-debugging-pipe",
       "--no-startup-window",
       "--flag-switches-begin",
@@ -608,7 +608,7 @@
         "glWsVendor": "",
         "glWsVersion": "",
         "inProcessGpu": false,
-        "initializationTime": 0.032832,
+        "initializationTime": 0.03567,
         "isAsan": false,
         "isClangCoverage": false,
         "jpegDecodeAcceleratorSupported": false,
@@ -651,14 +651,10 @@
     },
     "webglFeature": "webgl"
   },
-  "failure": {
-    "message": "page.evaluate: Error: generic-linkage-red pixel(4,4): expected [255,0,0,255], observed [0,0,255,255]\n    at require (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:6:65)\n    at equal (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:7:34)\n    at http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:218:11\n    at Array.map (<anonymous>)\n    at renderDraw (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:213:38)\n    at runAcceptance (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:326:57)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:12)\n    at async <anonymous>:260:30",
-    "stack": "page.evaluate: Error: generic-linkage-red pixel(4,4): expected [255,0,0,255], observed [0,0,255,255]\n    at require (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:6:65)\n    at equal (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:7:34)\n    at http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:218:11\n    at Array.map (<anonymous>)\n    at renderDraw (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:213:38)\n    at runAcceptance (http://127.0.0.1:60763/renderer/virgl-shader/tests/browser.mjs:326:57)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:12)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-shader/verifier/sabotage-runner.mjs:135:55"
-  },
   "acceptance": {
     "kind": "virgl-shader-boundary",
     "guestExecution": false,
-    "status": "running",
+    "status": "passed",
     "translations": [
       {
         "name": "passthrough",
@@ -1107,7 +1103,1131 @@
         "inputSha256": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
       }
     ],
-    "draws": [],
+    "draws": [
+      {
+        "name": "generic-linkage-red",
+        "vertex": "passthrough",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "4ab589b8423c13f8f33994356d5b696d9b3b56d968e1939f2088c53b5149e6cf",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "generic-linkage-cyan",
+        "vertex": "passthrough",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "f8189aede8290aa3c48aa45e4b7946b77aec52fe17e53e67a7166894c7ed9fde",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "uniform-mul-add-alpha",
+        "vertex": "passthrough",
+        "fragment": "arithmetic",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              128,
+              128,
+              255,
+              128
+            ],
+            "observed": [
+              128,
+              128,
+              255,
+              128
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "fcc82d7175d51ed6691cc9e40cba6e01a16f428c0e1bd01d8f1ef8c834d49cd6",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                1,
+                0,
+                1
+              ],
+              [
+                0,
+                0.25,
+                1,
+                0
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1065353216,
+              0,
+              1065353216,
+              0,
+              1048576000,
+              1065353216,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "uniform-update",
+        "vertex": "passthrough",
+        "fragment": "arithmetic",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "f8189aede8290aa3c48aa45e4b7946b77aec52fe17e53e67a7166894c7ed9fde",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                1
+              ]
+            ],
+            "bits": [
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              1065353216,
+              0,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "vertex-uniform-transform",
+        "vertex": "transform",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "checkedPixels": 368,
+        "checks": [
+          {
+            "rect": [
+              10,
+              10,
+              12,
+              12
+            ],
+            "expected": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "pixels": 144
+          },
+          {
+            "rect": [
+              2,
+              2,
+              4,
+              28
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "pixels": 112
+          },
+          {
+            "rect": [
+              26,
+              2,
+              4,
+              28
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "pixels": 112
+          }
+        ],
+        "rgbaSha256": "88dfcd2f5244be8541629fb5f2c92011d9cdaa5122cd5668a781127b1443cfc0",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "vsconst0[0]",
+            "stage": "vertex",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0.5,
+                0.5,
+                1,
+                1
+              ]
+            ],
+            "bits": [
+              1056964608,
+              1056964608,
+              1065353216,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "nearest-texture-rgba",
+        "vertex": "passthrough",
+        "fragment": "texture",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 256,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              255,
+              0,
+              128
+            ],
+            "observed": [
+              0,
+              255,
+              0,
+              128
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              4,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              64
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              64
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              255,
+              0,
+              0
+            ],
+            "observed": [
+              255,
+              255,
+              0,
+              0
+            ],
+            "pixels": 64
+          }
+        ],
+        "rgbaSha256": "469f7d0cc3d4747b2a62b05d62436f44bf474623e30dc7d29dc2632ea6ff0360",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1065353216,
+              1065353216,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [
+          {
+            "index": 0,
+            "name": "fssamp0",
+            "type": "sampler2D",
+            "texture": [
+              255,
+              0,
+              0,
+              255,
+              0,
+              255,
+              0,
+              128,
+              0,
+              0,
+              255,
+              64,
+              255,
+              255,
+              0,
+              0
+            ]
+          }
+        ],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "texture-tint-uniform",
+        "vertex": "passthrough",
+        "fragment": "texture",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 256,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              128,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              4,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "pixels": 64
+          }
+        ],
+        "rgbaSha256": "1d754556e8e0abc93bf12d0c6a44ffdbb6fe925dc7c96dbb8c30474d372d16ae",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                0.5,
+                0,
+                1
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1056964608,
+              0,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [
+          {
+            "index": 0,
+            "name": "fssamp0",
+            "type": "sampler2D",
+            "texture": [
+              255,
+              0,
+              0,
+              255,
+              0,
+              255,
+              0,
+              255,
+              0,
+              0,
+              255,
+              255,
+              255,
+              255,
+              0,
+              255
+            ]
+          }
+        ],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "mad-alpha-output",
+        "vertex": "passthrough",
+        "fragment": "alpha",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              128
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              128
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "1b7382d463433653e8b0c267108878a2226833b0bb4a05eb6bc296022e373b3d",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0.5,
+                0,
+                0,
+                0
+              ]
+            ],
+            "bits": [
+              1056964608,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "verifier-cyan-alpha-over-red",
+        "vertex": "passthrough",
+        "fragment": "alpha",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": true,
+        "clear": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              128,
+              64,
+              128,
+              255
+            ],
+            "observed": [
+              128,
+              64,
+              128,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "8fb2054b22e61db15aedede838c47958ad9316fa6235731efd2512f10b80a75a",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0,
+                0.5,
+                1,
+                0
+              ]
+            ],
+            "bits": [
+              0,
+              1056964608,
+              1065353216,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      }
+    ],
     "renderer": {
       "vendor": "Google Inc. (Apple)",
       "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
@@ -1180,7 +2300,12 @@
       "failures": 416,
       "successes": 416,
       "outputAndMetadataIdentical": true
-    }
+    },
+    "checkedPixels": 4336
   },
-  "finishedAt": "2026-10-03T02:16:46.269Z"
+  "screenshot": {
+    "path": "browser.png",
+    "sha256": "46ccb50a9c57ed577edf3ceabab44c0710b90a6256e037580a9125eb2643a821"
+  },
+  "finishedAt": "2026-10-03T02:16:54.805Z"
 }
