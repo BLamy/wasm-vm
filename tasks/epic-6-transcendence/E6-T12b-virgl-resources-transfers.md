@@ -3,7 +3,7 @@ id: E6-T12b
 epic: 6
 title: Replay bounded resource backing and VirGL uploads and readbacks
 priority: 525.02693
-status: pending
+status: in-progress
 depends_on: [E6-T12a]
 estimate: S
 risk: high
@@ -33,7 +33,11 @@ comparison evidence only, never replay inputs. No device/capset activation.
 independent transfer-box/stride/IOV cases for both directions. Record exact
 source event/hash/ranges, resulting bytes, Node/browser checks, bounded resource
 usage and zero browser errors. These isolated transfers do not claim whole-stream
-replay. Run the affected high-risk resource-boundary gates and final clean clone.
+replay. Run the affected high-risk resource-boundary gates and final clean clone:
+Node pure-layout/lifecycle checks, original decoder regression, actual hardware
+WebGL2 transfer and hostile-state proofs, bounded repeated mutation/recovery,
+input sabotage and source/evidence hashes. Production Rust, shader compiler and
+Wasm APIs are unchanged by this boundary; their proofs carry forward.
 
 ## Adversarial verification
 
@@ -46,4 +50,11 @@ one genuine input texel/index and require the independent byte oracle to fail.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activated (UTC)
+
+Follows independently verified E6-T12a (`c8a34f4a`, PR #407). This isolated S
+boundary creates resource/backing ownership and actual WebGL2 transfer storage;
+state objects and draw replay remain separate. Pending-copy attacks use prepared,
+single-use tickets, whose upload bytes are snapshotted and whose context/backing
+identity is rechecked before execution. These tickets are not accepted asynchronous
+virtio submissions; ordered fences remain E6-T11b. No other task is active.

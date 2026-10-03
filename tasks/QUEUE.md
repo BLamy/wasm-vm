@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12b** — Replay bounded resource backing and VirGL uploads and readbacks
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -494,7 +493,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.02693` [E6-T12b](epic-6-transcendence/E6-T12b-virgl-resources-transfers.md) — Replay bounded resource backing and VirGL uploads and readbacks *(deps: E6-T12a)*
+- [~] `525.02693` [E6-T12b](epic-6-transcendence/E6-T12b-virgl-resources-transfers.md) — Replay bounded resource backing and VirGL uploads and readbacks *(deps: E6-T12a)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
