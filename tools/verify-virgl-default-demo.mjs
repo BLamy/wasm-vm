@@ -8,9 +8,12 @@ import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { repo, sha256 } from './virgl-command/fixtures.mjs';
 assert.equal(process.argv[2], '--output'); assert.ok(process.argv[3]);
+assert.ok(process.argv.length === 4 || (process.argv.length === 6 && process.argv[4] === '--task'));
+const task = process.argv[5] ?? 'E6-T11a';
+assert.ok(['E6-T11a', 'E6-T11b2'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
-const report = { schema: 1, task: 'E6-T11a', status: 'running',
+const report = { schema: 1, task, status: 'running',
   gitHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
   command: [process.execPath, ...process.argv.slice(1)], startedAt: new Date().toISOString(), errors: [], served: [] };
 const served = new Map(); let browser, server, page;
@@ -40,7 +43,10 @@ try {
   report.url = `http://127.0.0.1:${server.address().port}/app.html?noAutoBoot&testHooks=1`;
   await page.goto(report.url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
-  report.proofExportAbsent = await page.evaluate(async () => !Object.hasOwn(await import('./pkg/wasm_vm_wasm.js'), 'WasmVirglControlProof'));
+  report.proofExportAbsent = await page.evaluate(async () => {
+    const module = await import('./pkg/wasm_vm_wasm.js');
+    return !Object.hasOwn(module, 'WasmVirglControlProof') && !Object.hasOwn(module, 'WasmVirglSubmitProof');
+  });
   assert.equal(report.proofExportAbsent, true, 'ordinary build must omit proof surface');
   await page.locator('#suite-run').click();
   await page.waitForFunction(() => document.querySelector('#metric-done')?.textContent === '127', null, { timeout: 600000 });

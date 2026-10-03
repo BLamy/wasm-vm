@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "task": "E6-T11b2",
+  "gitHead": "f0f125fd0578a22ce08c4bc255ca63708c6e6566",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-submit-cold-zw5058to/wasm-vm",
+  "removedEnvironmentNames": [
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T11b2"
+  ],
+  "timeoutSeconds": 1200,
+  "status": "passed",
+  "cloneHead": "f0f125fd0578a22ce08c4bc255ca63708c6e6566",
+  "statusBefore": "",
+  "exitCode": 0,
+  "statusAfter": "",
+  "receiptSha256": "c641fd81027a37278835b0866f671ac40b7808d5e14fe848b1501cf52c617478",
+  "logSha256": "2d3fb66b23448950d4fc2714b2877b49268c9b6efe462737b314a916fe87ae3e"
+}

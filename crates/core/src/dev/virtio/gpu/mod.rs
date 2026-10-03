@@ -10,6 +10,8 @@ pub mod damage;
 pub mod edid;
 pub mod protocol;
 pub mod resources;
+#[cfg(feature = "virgl-control-proof")]
+pub mod submit3d;
 pub mod tiles;
 
 mod snapshot;
@@ -78,6 +80,8 @@ pub struct CommandTraceRecord {
     pub sequence: u64,
     /// Raw `virtio_gpu_ctrl_type` request. Zero means the chain had no complete header.
     pub command_type: u32,
+    pub submit_sequence: Option<u64>,
+    pub fence_id: Option<u64>,
     /// Raw response type published in the writable response buffer. Zero means that no
     /// complete response header was available to inspect.
     pub response_type: u32,
@@ -318,6 +322,8 @@ pub struct GpuState {
     pub resources: resources::ResourceMap,
     #[cfg(feature = "virgl-control-proof")]
     control3d: Option<control3d::Control3dState>,
+    #[cfg(feature = "virgl-control-proof")]
+    submit3d: Option<submit3d::Submit3dState>,
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
@@ -365,6 +371,8 @@ impl GpuState {
             resources: resources::ResourceMap::new(),
             #[cfg(feature = "virgl-control-proof")]
             control3d: None,
+            #[cfg(feature = "virgl-control-proof")]
+            submit3d: None,
             scanout_resource: None,
             cursor_states: [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize],
             frame_sink: sink,
@@ -517,6 +525,8 @@ impl GpuState {
         self.command_trace.push(CommandTraceRecord {
             sequence,
             command_type: meta.command_type,
+            submit_sequence: meta.submit_sequence,
+            fence_id: meta.fence_id,
             response_type,
             scanout: meta.scanout,
             resource_id: meta.resource_id,
@@ -544,6 +554,10 @@ impl GpuState {
     }
 
     fn reset(&mut self) {
+        #[cfg(feature = "virgl-control-proof")]
+        if let Some(submit) = &mut self.submit3d {
+            submit.revoke();
+        }
         #[cfg(feature = "virgl-control-proof")]
         if let Some(control) = &mut self.control3d {
             control.reset();
@@ -594,6 +608,21 @@ impl GpuState {
             .as_ref()
             .map(control3d::Control3dState::snapshot)
     }
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn submit3d_snapshot(&self) -> Option<submit3d::Submit3dSnapshot> {
+        self.submit3d
+            .as_ref()
+            .map(submit3d::Submit3dState::snapshot)
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    fn revoke_submit3d(&mut self) {
+        if let Some(submit) = &mut self.submit3d {
+            submit.revoke();
+        }
+        if let Some(control) = &mut self.control3d {
+            control.poison();
+        }
+    }
 }
 
 /// A minimal virtio-gpu device.  Queue state remains owned by the generic virtio-mmio transport;
@@ -638,6 +667,19 @@ impl VirtioGpu {
     ) -> (Self, Rc<RefCell<GpuState>>) {
         let (device, state) = Self::new_with_sink_state(frame_sink);
         state.borrow_mut().control3d = Some(control3d::Control3dState::new(control_sink));
+        (device, state)
+    }
+
+    /// Explicit asynchronous proof assembly; all existing constructors stay synchronous.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_submit3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_control3d_proof_state(frame_sink, control_sink);
+        state.borrow_mut().submit3d = Some(submit3d::Submit3dState::new(submit_sink, mailbox));
         (device, state)
     }
 
@@ -890,8 +932,10 @@ fn read_writable_at<const N: usize>(
 /// id/dimension annotation while the completion ordering remains owned by `service`.
 #[cfg(feature = "gpu-trace")]
 #[derive(Clone, Copy, Default)]
-struct CommandTraceMeta {
+pub(crate) struct CommandTraceMeta {
     command_type: u32,
+    submit_sequence: Option<u64>,
+    fence_id: Option<u64>,
     scanout: Option<u32>,
     resource_id: Option<u32>,
     resource_width: Option<u32>,
@@ -910,6 +954,7 @@ fn command_trace_meta(
     };
     let mut meta = CommandTraceMeta {
         command_type: request.ty,
+        fence_id: (request.flags & protocol::FLAG_FENCE != 0).then_some(request.fence_id),
         ..CommandTraceMeta::default()
     };
 
@@ -1495,6 +1540,16 @@ pub fn service(
     // Host APIs retain only the GPU state handle.  Let the transport turn a pending state change
     // into its latched config interrupt before queue work (or an early no-kick return) is handled.
     let latched = slot.borrow_mut().sync_backend_config_irq();
+    #[cfg(feature = "virgl-control-proof")]
+    match service_submit3d_completion(slot, vq, state, bus) {
+        PendingService::Waiting => {
+            state.borrow_mut().kicked = false;
+            return !latched;
+        }
+        PendingService::Revoked => return false,
+        PendingService::Completed => state.borrow_mut().kicked = true,
+        PendingService::Absent => {}
+    }
     {
         let mut state = state.borrow_mut();
         let reset = state.reset_pending;
@@ -1523,6 +1578,22 @@ fn service_kicked(
         *vq = None;
         return;
     }
+    #[cfg(feature = "virgl-control-proof")]
+    if state.borrow().submit3d.is_some()
+        && !bus
+            .ram()
+            .ram_contains(queue_state.device, 4 + u64::from(queue_state.num) * 8)
+    {
+        slot.borrow_mut().protocol_violation();
+        *vq = None;
+        return;
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    if state.borrow().submit3d.is_some()
+        && vq.as_ref().is_some_and(|q| !q.matches_state(&queue_state))
+    {
+        *vq = None;
+    }
     if vq.is_none() {
         match Virtqueue::new(&queue_state, 256) {
             Ok(queue) => *vq = Some(queue),
@@ -1550,6 +1621,62 @@ fn service_kicked(
         #[cfg(feature = "gpu-trace")]
         let trace_meta = command_trace_meta(&chain, bus, state, request);
         let written = match request {
+            #[cfg(feature = "virgl-control-proof")]
+            Some(request) if is_submit3d_type(request.ty) && state.borrow().submit3d.is_some() => {
+                let admitted = {
+                    let state_ref = state.borrow();
+                    let transport = slot.borrow();
+                    submit3d::admit(
+                        state_ref.submit3d.as_ref().expect("async proof"),
+                        state_ref
+                            .control3d
+                            .as_ref()
+                            .expect("proof control")
+                            .snapshot(),
+                        chain.clone(),
+                        bus,
+                        request,
+                        transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                        transport.queue_generation(0),
+                    )
+                };
+                let error = match admitted {
+                    Ok(pending) => {
+                        #[cfg(feature = "gpu-trace")]
+                        let pending = {
+                            let mut pending = pending;
+                            pending.trace = trace_meta;
+                            pending.trace.submit_sequence = Some(pending.request.key.sequence);
+                            pending
+                        };
+                        state
+                            .borrow_mut()
+                            .submit3d
+                            .as_mut()
+                            .expect("async proof")
+                            .begin(pending);
+                        // Do not lose IRQs for synchronous heads completed before this parked head.
+                        if delivered_work && queue.interrupt_needed(bus) {
+                            slot.borrow_mut().raise_used_irq();
+                        }
+                        return;
+                    }
+                    Err(error) => error,
+                };
+                let response = response_header(request, error.response_type()).to_bytes();
+                match if chain.writable_len() < 24 {
+                    Ok(0)
+                } else {
+                    write_prefix(&chain, bus, &response)
+                } {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
             #[cfg(feature = "virgl-control-proof")]
             Some(request) if is_control3d_request(&chain, bus, &state.borrow(), request) => {
                 let negotiated = slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL);
@@ -4711,4 +4838,182 @@ mod tests {
             );
         }
     }
+}
+
+#[cfg(feature = "virgl-control-proof")]
+fn is_submit3d_type(ty: u32) -> bool {
+    matches!(
+        ty,
+        protocol::CMD_SUBMIT_3D
+            | protocol::CMD_TRANSFER_TO_HOST_3D
+            | protocol::CMD_TRANSFER_FROM_HOST_3D
+    )
+}
+#[cfg(feature = "virgl-control-proof")]
+enum PendingService {
+    Absent,
+    Waiting,
+    Completed,
+    Revoked,
+}
+#[cfg(feature = "virgl-control-proof")]
+fn service_submit3d_completion(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) -> PendingService {
+    let (generation, ready) = {
+        let s = state.borrow();
+        let Some(submit) = s.submit3d.as_ref() else {
+            return PendingService::Absent;
+        };
+        let Some(pending) = submit.pending.as_ref() else {
+            return PendingService::Absent;
+        };
+        (pending.queue_generation, submit.mailbox.inspect().ready)
+    };
+    if slot.borrow().queue_generation(0) != Some(generation) || vq.is_none() {
+        state.borrow_mut().revoke_submit3d();
+        slot.borrow_mut().protocol_violation();
+        *vq = None;
+        return PendingService::Revoked;
+    }
+    if !ready {
+        return PendingService::Waiting;
+    }
+    let (pending, completion) = state
+        .borrow_mut()
+        .submit3d
+        .as_mut()
+        .expect("pending owner")
+        .take_ready()
+        .expect("ready mailbox");
+    if completion.outcome == Err(control3d::Control3dError::BridgePoisoned) {
+        state
+            .borrow_mut()
+            .control3d
+            .as_mut()
+            .expect("proof control")
+            .poison();
+    }
+    let response_type = completion
+        .outcome
+        .map_or_else(control3d::Control3dError::response_type, |()| {
+            protocol::RESP_OK_NODATA
+        });
+    let response = response_header(pending.request.header, response_type).to_bytes();
+    // The immutable descriptor snapshot remains authoritative; guest rewrites to
+    // its descriptor table cannot redirect either response or used publication.
+    if pending.chain.writable_len() < 24
+        || pending
+            .chain
+            .writable()
+            .any(|s| !bus.ram().ram_contains(s.addr, u64::from(s.len)))
+    {
+        state.borrow_mut().revoke_submit3d();
+        slot.borrow_mut().protocol_violation();
+        *vq = None;
+        return PendingService::Revoked;
+    }
+    let Ok(written) = write_prefix(&pending.chain, bus, &response) else {
+        state.borrow_mut().revoke_submit3d();
+        slot.borrow_mut().protocol_violation();
+        *vq = None;
+        return PendingService::Revoked;
+    };
+    let queue = vq.as_mut().expect("pending cached queue");
+    if queue.push_used(bus, pending.chain.head, written).is_err() {
+        state.borrow_mut().revoke_submit3d();
+        slot.borrow_mut().protocol_violation();
+        *vq = None;
+        return PendingService::Revoked;
+    }
+    #[cfg(feature = "gpu-trace")]
+    {
+        let (avail_idx, used_idx) = queue.ring_indices();
+        state.borrow_mut().record_command(
+            pending.trace,
+            response_type,
+            avail_idx,
+            used_idx,
+            pending.chain.head,
+            written,
+        );
+    }
+    state
+        .borrow_mut()
+        .submit3d
+        .as_mut()
+        .expect("pending owner")
+        .completed(completion);
+    if queue.interrupt_needed(bus) {
+        slot.borrow_mut().raise_used_irq();
+    }
+    PendingService::Completed
+}
+
+/// Fresh DMA, callable only by the host outside Machine::run. Every row and SG
+/// span is checked before access; scatter uses checked Bus spans to invalidate caches.
+#[cfg(feature = "virgl-control-proof")]
+pub(crate) fn submit3d_dma(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+    exchange: &submit3d::Submit3dExchange,
+    output: Option<&[u8]>,
+) -> Result<Vec<u8>, control3d::Control3dError> {
+    use control3d::Control3dError as E;
+    let generation = state
+        .borrow()
+        .submit3d
+        .as_ref()
+        .and_then(|s| s.pending.as_ref())
+        .map(|p| p.queue_generation)
+        .ok_or(E::InvalidParameter)?;
+    if slot.borrow().queue_generation(0) != Some(generation) {
+        state.borrow_mut().revoke_submit3d();
+        slot.borrow_mut().protocol_violation();
+        return Err(E::BridgePoisoned);
+    }
+    let (spans, length) = {
+        let s = state.borrow();
+        s.submit3d.as_ref().ok_or(E::InvalidParameter)?.dma_spans(
+            exchange,
+            &s.control3d.as_ref().ok_or(E::InvalidParameter)?.snapshot(),
+        )?
+    };
+    if output.is_some_and(|bytes| bytes.len() != length)
+        || spans
+            .iter()
+            .any(|(addr, len)| !bus.ram().ram_contains(*addr, *len as u64))
+    {
+        return Err(E::InvalidParameter);
+    }
+    let mut bytes = Vec::new();
+    if output.is_none() {
+        bytes
+            .try_reserve_exact(length)
+            .map_err(|_| E::OutOfMemory)?;
+        bytes.resize(length, 0);
+    }
+    let mut at = 0;
+    for (addr, len) in spans {
+        if let Some(source) = output {
+            bus.write_ram_slice(addr, &source[at..at + len])
+                .map_err(|_| E::BridgePoisoned)?;
+        } else {
+            bus.ram()
+                .read_slice(addr, &mut bytes[at..at + len])
+                .map_err(|_| E::BridgePoisoned)?;
+        }
+        at += len;
+    }
+    state
+        .borrow_mut()
+        .submit3d
+        .as_mut()
+        .expect("pending owner")
+        .consume_exchange(exchange.exchange_sequence, length as u64, output.is_some());
+    Ok(bytes)
 }

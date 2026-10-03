@@ -1,0 +1,284 @@
+{
+  "native": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "added": 34,
+      "positiveLineCounts": 27,
+      "zeroLines": []
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "added": 306,
+      "positiveLineCounts": 221,
+      "zeroLines": [
+        {
+          "line": 1594,
+          "text": "    {"
+        },
+        {
+          "line": 1595,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 1674,
+          "text": "                        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 1675,
+          "text": "                        *vq = None;"
+        },
+        {
+          "line": 1676,
+          "text": "                        return;"
+        },
+        {
+          "line": 4914,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4915,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4916,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4917,
+          "text": "        return PendingService::Revoked;"
+        },
+        {
+          "line": 4920,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4921,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4922,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4923,
+          "text": "        return PendingService::Revoked;"
+        },
+        {
+          "line": 4927,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4928,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4929,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4930,
+          "text": "        return PendingService::Revoked;"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "added": 655,
+      "positiveLineCounts": 405,
+      "zeroLines": [
+        {
+          "line": 210,
+          "text": "            for v in ["
+        },
+        {
+          "line": 211,
+          "text": "                p.key.epoch,"
+        },
+        {
+          "line": 212,
+          "text": "                p.key.sequence,"
+        },
+        {
+          "line": 213,
+          "text": "                p.context.generation,"
+        },
+        {
+          "line": 214,
+          "text": "                p.fence_id,"
+        },
+        {
+          "line": 215,
+          "text": "                p.byte_length,"
+        },
+        {
+          "line": 216,
+          "text": "                p.last_exchange,"
+        },
+        {
+          "line": 217,
+          "text": "            ] {"
+        },
+        {
+          "line": 218,
+          "text": "                out.extend_from_slice(&v.to_le_bytes());"
+        },
+        {
+          "line": 219,
+          "text": "            }"
+        },
+        {
+          "line": 220,
+          "text": "            for v in [p.context.id, p.command_type, p.flags, p.backing_entries] {"
+        },
+        {
+          "line": 221,
+          "text": "                out.extend_from_slice(&v.to_le_bytes());"
+        },
+        {
+          "line": 222,
+          "text": "            }"
+        },
+        {
+          "line": 223,
+          "text": "            out.push(u8::from(p.completion_ready));"
+        },
+        {
+          "line": 269,
+          "text": "                key: p.request.key,"
+        },
+        {
+          "line": 270,
+          "text": "                context: p.request.context,"
+        },
+        {
+          "line": 271,
+          "text": "                command_type: p.request.header.ty,"
+        },
+        {
+          "line": 272,
+          "text": "                fence_id: p.request.header.fence_id,"
+        },
+        {
+          "line": 273,
+          "text": "                flags: p.request.header.flags,"
+        },
+        {
+          "line": 274,
+          "text": "                byte_length: match &p.request.kind {"
+        },
+        {
+          "line": 275,
+          "text": "                    Submit3dKind::Commands(bytes) => bytes.len() as u64,"
+        },
+        {
+          "line": 276,
+          "text": "                    Submit3dKind::Transfer(_) => 72,"
+        },
+        {
+          "line": 278,
+          "text": "                backing_entries: p"
+        },
+        {
+          "line": 279,
+          "text": "                    .accepted"
+        },
+        {
+          "line": 280,
+          "text": "                    .resources"
+        },
+        {
+          "line": 281,
+          "text": "                    .iter()"
+        },
+        {
+          "line": 282,
+          "text": "                    .map(|r| r.backing.as_ref().map_or(0, |v| v.len() as u32))"
+        },
+        {
+          "line": 283,
+          "text": "                    .sum(),"
+        },
+        {
+          "line": 284,
+          "text": "                last_exchange: mailbox.last_exchange,"
+        },
+        {
+          "line": 285,
+          "text": "                completion_ready: mailbox.ready,"
+        },
+        {
+          "line": 286,
+          "text": "            }),"
+        },
+        {
+          "line": 382,
+          "text": "            return Err(Control3dError::BridgePoisoned);"
+        },
+        {
+          "line": 474,
+          "text": "            return Err(bad);"
+        },
+        {
+          "line": 496,
+          "text": "        return Err(Control3dError::BridgePoisoned);"
+        },
+        {
+          "line": 595,
+          "text": "        _ => return Err(Control3dError::Unspecified),"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/mmio.rs",
+      "added": 40,
+      "positiveLineCounts": 21,
+      "zeroLines": []
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "added": 52,
+      "positiveLineCounts": 45,
+      "zeroLines": []
+    },
+    {
+      "path": "crates/core/src/mmio.rs",
+      "added": 14,
+      "positiveLineCounts": 10,
+      "zeroLines": []
+    }
+  ],
+  "javascript": [
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "added": 197,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 132,
+          "endLine": 132,
+          "startOffset": 9255,
+          "endOffset": 9259,
+          "text": "?? 5"
+        },
+        {
+          "startLine": 228,
+          "endLine": 228,
+          "startOffset": 16740,
+          "endOffset": 16797,
+          "text": "return fail('bridge-poisoned', 'Bridge requires reset.');"
+        },
+        {
+          "startLine": 338,
+          "endLine": 338,
+          "startOffset": 24995,
+          "endOffset": 25042,
+          "text": "catch (error) { poisoned = true; throw error; }"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "added": 1,
+      "uncoveredChangedRanges": []
+    }
+  ]
+}
