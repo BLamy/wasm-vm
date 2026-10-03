@@ -1,9 +1,12 @@
 # Bounded VirGL objects and state
 
-`state.mjs` executes the state-only portion of the pinned VirGL 1.3.0 tiny
-profile on WebGL2. It consumes raw submissions using the independently verified
-`decodeSubmission` boundary. `DRAW_VBO` always returns `unsupported-draw`;
-this module does not enable a guest device or claim draw replay or acceleration.
+`createVirglStateRenderer` in `state.mjs` executes the state-only portion of the
+pinned VirGL 1.3.0 tiny profile on WebGL2. It consumes raw submissions using the
+independently verified `decodeSubmission` boundary. This factory continues to
+return `unsupported-draw` for every `DRAW_VBO`. The separate
+`createVirglDrawRenderer` shares its private engine and adds the bounded draw
+profile described in [draw-README.md](draw-README.md). Neither factory enables a
+guest device or advertises acceleration.
 
 Create a resource store and WebGL2 transfer backend as described in
 `resources-README.md`, initialize `createVirglShaderBridge` from
