@@ -33,7 +33,7 @@ verified evidence is rewritten and no future capability is advertised here.
    asynchronous fences and 3D scanout while production capabilities stay off.
 5. [E6-T12e — shader control flow](E6-T12e-captured-shader-control-flow.md):
    bounded captured integer/comparison/IF/LOOP semantics and independent pixels.
-6. [E6-T12f — full-corpus shader semantics](E6-T12f-complete-corpus-shader-semantics.md):
+6. [E6-T12f6 — full-corpus shader closure](E6-T12f6-original-shader-closure.md):
    resolve strict PRECISE faithfully and require all nineteen original bodies,
    unchanged, to translate and compile/link in WebGL2 with semantic oracles.
    Dropping qualifiers, substituting recaptures or testing only already-supported
