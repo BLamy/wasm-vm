@@ -213,8 +213,32 @@ demo or claim a MIPS/FPS gain.
 After the captured simple-shader slice, implementation continues in small
 boundaries: bounded command decoding; virtual resources/state and replayed pixels;
 async virtio transport; direct GPU scanout; then reduced-profile Mesa guest proof.
-PRECISE and the expanded GLES3 promises gate desktop activation. The old broad
-WebGPU tasks must be decomposed around this contract before entering the queue.
+PRECISE and the expanded GLES3 promises gate desktop activation. The broad transport and WebGPU planning containers are replaced by ordered
+S tasks E6-T11a–e and E6-T12a–m, preserving the live guest and performance milestones.
+
+## Captured command boundary
+
+`renderer/virgl-command/decoder.mjs` adds the isolated `virgl-tiny-commands-v1`
+wire profile. `make verify-E6-T12a` checks all eight unmodified textured-scene
+submissions (42,380 bytes, 210 packets, 32 families, eight object types) in Node
+and a browser. Typed field extraction and whole-submission validation precede
+any future resource lookup or execution. Caller-provided capture labels are
+not authenticated by the runtime decoder; the acceptance loader separately
+verifies every raw input hash. No guest capabilities change.
+
+The `END_TRANSFERS` payload is opaque padding up to the declared packet end;
+Mesa reserves a transfer prefix and may leave nonzero stale words in it. Only
+outer framing governs the next command. The earlier contract's “empty marker”
+wording was incorrect and is corrected here. See the pinned protocol's
+`VIRGL_CCMD_END_TRANSFERS`, upstream 1.3.0 `vrend_decode_dummy` dispatch, and
+Mesa 26.2.2 `virgl_encode_end_transfers`. This is not a completion fence.
+
+Resource replay must distinguish CPU upload inputs from completed reference
+readbacks. The tiny scene's initial upload ranges are in snapshot events
+156/157/160. Later snapshots 184/208/232 contain the three reference images;
+those bytes are comparison evidence only. Copying every later backing snapshot
+into renderer storage would preload the expected output and invalidate the
+replay proof. Command decoding itself consumes no backing-memory snapshots.
 
 ## Source anchors
 

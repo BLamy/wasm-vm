@@ -1823,3 +1823,8 @@ verify-E6-T10c:
 .PHONY: verify-E6-T10d
 verify-E6-T10d:
 	bash tools/verify-virgl-captured-shaders.sh
+
+# Bounded portable command parsing; no production GPU feature activation.
+.PHONY: verify-E6-T12a
+verify-E6-T12a:
+	bash tools/verify-virgl-command-decoder.sh

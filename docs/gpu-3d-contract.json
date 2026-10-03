@@ -336,7 +336,7 @@
       },
       "END_TRANSFERS": {
         "corpusOccurrences": 241,
-        "mapping": "Validate empty marker and ordered transfer visibility; not a GPU-completion fence.",
+        "mapping": "Validate outer packet bounds and preserve ordered transfer visibility; payload is opaque transfer-prefix padding (including stale nonzero command words), never recursively decoded or required zero. Not a GPU-completion fence.",
         "status": "implementable"
       },
       "LINK_SHADER": {

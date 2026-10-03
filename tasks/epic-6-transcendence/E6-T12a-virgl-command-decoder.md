@@ -30,9 +30,11 @@ Document the accepted profile and distinguish structural errors from unsupported
 features. Resource handles remain bounded wire integers; existence, type,
 attachment, ownership and draw-state compatibility are explicitly deferred.
 
-Success returns the whole validated submission with command provenance: original
-submission SHA256, capture event, byte offset, payload dword length and packet
-byte length. Failure returns a structured error with its location and no partial
+Success returns the whole validated submission with command provenance labels:
+caller-supplied source SHA256 and capture event, plus decoded byte offset, payload
+dword length and packet byte length. The synchronous runtime validates label
+syntax only; the acceptance loader computes/verifies the original submission
+hash before providing that label and separately hashes the browser transport. Failure returns a structured error with its location and no partial
 command result or externally visible side effect. Bound input bytes, packet
 count, text and allocation; decoded data must not change when callers mutate
 their input after the call. Define the public API and error schema in the module
@@ -68,8 +70,9 @@ forward; this parser-only task does not rebuild or deploy production web code.
 Require the untouched events 161/173/185/197/209/221/233/249 to decode into
 39/3/6/3/8/3/6/142 packets respectively: 42,380 bytes, exactly 210 packets,
 32 command families and eight created object types. Independently check typed
-fields and original shader bytes, command order, offsets, lengths and computed
-SHA256 provenance against the raw protocol/corpus. Record Node/browser results,
+fields and original shader bytes, command order, offsets, lengths and acceptance-loader-computed
+SHA256 provenance against the raw protocol/corpus. Do not present a caller label
+as a runtime-authenticated hash. Record Node/browser results,
 served source hashes, zero browser errors and matching canonical results.
 
 Valid structural variations must not be rejected solely for differing from
