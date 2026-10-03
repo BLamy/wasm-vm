@@ -1,0 +1,260 @@
+
+OpenSBI v1.1
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : riscv-virtio,qemu
+Platform Features         : medeleg
+Platform HART Count       : 4
+Platform IPI Device       : aclint-mswi
+Platform Timer Device     : aclint-mtimer @ 10000000Hz
+Platform Console Device   : uart8250
+Platform HSM Device       : ---
+Platform Reboot Device    : sifive_test
+Platform Shutdown Device  : sifive_test
+Firmware Base             : 0x80000000
+Firmware Size             : 312 KB
+Runtime SBI Version       : 1.0
+
+Domain0 Name              : root
+Domain0 Boot HART         : 3
+Domain0 HARTs             : 0*,1*,2*,3*
+Domain0 Region00          : 0x0000000002000000-0x000000000200ffff (I)
+Domain0 Region01          : 0x0000000080000000-0x000000008007ffff ()
+Domain0 Region02          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
+Domain0 Next Address      : 0x0000000080200000
+Domain0 Next Arg1         : 0x00000000bfe00000
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+
+Boot HART ID              : 3
+Boot HART Domain          : root
+Boot HART Priv Version    : v1.12
+Boot HART Base ISA        : rv64imafdch
+Boot HART ISA Extensions  : time,sstc
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 4
+Boot HART PMP Address Bits: 54
+Boot HART MHPM Count      : 16
+Boot HART MIDELEG         : 0x0000000000001666
+Boot HART MEDELEG         : 0x0000000000f0b509
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] random: crng init done
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v1.0 detected
+[    0.000000] SBI implementation ID=0x1 Version=0x10001
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] efi: UEFI not found.
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x000000008007ffff (512 KiB) map non-reusable mmode_resv0@80000000
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfhim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s42104 r0 d31624 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 init=/bin/bash
+[    0.000000] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 516096
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff0179e000 - 0xffffffff80000000   (2024 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000080000000   (2048 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 2019408K/2097152K available (10367K kernel code, 5056K rwdata, 4096K rodata, 2201K init, 539K bss, 77744K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=4.
+[    0.000000] rcu: 	RCU debug extended QS entry/exit.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 96 interrupts with 4 handlers for 8 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000041] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.000103] riscv-timer: Timer interrupt in S-mode is available via sstc extension
+[    0.003458] Console: colour dummy device 80x25
+[    0.004365] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.004440] pid_max: default: 32768 minimum: 301
+[    0.006947] LSM: initializing lsm=capability,integrity
+[    0.008106] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.008126] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.026744] RCU Tasks Trace: Setting shift to 2 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=4.
+[    0.027062] riscv: ELF compat mode supported
+[    0.027295] ASID allocator using 16 bits (65536 entries)
+[    0.027982] rcu: Hierarchical SRCU implementation.
+[    0.028006] rcu: 	Max phase no-delay instances is 1000.
+[    0.029150] EFI services will not be available.
+[    0.030872] smp: Bringing up secondary CPUs ...
+[    0.059767] cpu1: Ratio of byte access time to unaligned word access is 8.14, unaligned accesses are fast
+[    0.092974] cpu2: Ratio of byte access time to unaligned word access is 7.50, unaligned accesses are fast
+[    0.121062] cpu3: Ratio of byte access time to unaligned word access is 8.42, unaligned accesses are fast
+[    0.121648] smp: Brought up 1 node, 4 CPUs
+[    0.132782] devtmpfs: initialized
+[    0.137637] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.137760] futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.139146] pinctrl core: initialized pinctrl subsystem
+[    0.142846] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.145156] DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
+[    0.146082] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.146305] audit: initializing netlink subsys (disabled)
+[    0.147442] audit: type=2000 audit(0.120:1): state=initialized audit_enabled=0 res=1
+[    0.149211] thermal_sys: Registered thermal governor 'step_wise'
+[    0.149699] cpuidle: using governor menu
+[    0.176939] cpu0: Ratio of byte access time to unaligned word access is 8.00, unaligned accesses are fast
+[    0.185987] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.186024] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.266993] raid6: int64x8  gen()  1052 MB/s
+[    0.347455] raid6: int64x4  gen()  3396 MB/s
+[    0.427474] raid6: int64x2  gen()  4584 MB/s
+[    0.510236] raid6: int64x1  gen()  4142 MB/s
+[    0.510284] raid6: using algorithm int64x2 gen() 4584 MB/s
+[    0.588924] raid6: .... xor() 2484 MB/s, rmw enabled
+[    0.589010] raid6: using intx1 recovery algorithm
+[    0.589779] ACPI: Interpreter disabled.
+[    0.590027] iommu: Default domain type: Translated
+[    0.590051] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.591495] SCSI subsystem initialized
+[    0.593477] Advanced Linux Sound Architecture Driver Initialized.
+[    0.599923] clocksource: Switched to clocksource riscv_clocksource
+[    0.601083] pnp: PnP ACPI: disabled
+[    0.620976] NET: Registered PF_INET protocol family
+[    0.621562] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.625016] tcp_listen_portaddr_hash hash table entries: 1024 (order: 3, 32768 bytes, linear)
+[    0.625092] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.625121] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.625256] TCP bind hash table entries: 16384 (order: 8, 1048576 bytes, linear)
+[    0.625913] TCP: Hash tables configured (established 16384 bind 16384)
+[    0.626560] UDP hash table entries: 1024 (order: 4, 98304 bytes, linear)
+[    0.626752] UDP-Lite hash table entries: 1024 (order: 4, 98304 bytes, linear)
+[    0.627433] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.630010] RPC: Registered named UNIX socket transport module.
+[    0.630053] RPC: Registered udp transport module.
+[    0.630061] RPC: Registered tcp transport module.
+[    0.630065] RPC: Registered tcp-with-tls transport module.
+[    0.630070] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.630491] kvm [1]: hypervisor extension available
+[    0.630531] kvm [1]: using Sv57x4 G-stage page table format
+[    0.630547] kvm [1]: VMID 14 bits available
+[    0.633825] workingset: timestamp_bits=46 max_order=19 bucket_order=0
+[    0.636346] NFS: Registering the id_resolver key type
+[    0.636861] Key type id_resolver registered
+[    0.636879] Key type id_legacy registered
+[    0.637022] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.637173] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.637645] 9p: Installing v9fs 9p2000 file system support
+[    0.687035] NET: Registered PF_ALG protocol family
+[    0.687164] xor: measuring software checksum speed
+[    0.687801]    8regs           :  5647 MB/sec
+[    0.688394]    8regs_prefetch  :  5900 MB/sec
+[    0.689078]    32regs          :  4974 MB/sec
+[    0.689643]    32regs_prefetch :  6042 MB/sec
+[    0.689664] xor: using function: 32regs_prefetch (6042 MB/sec)
+[    0.689911] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    0.689996] io scheduler mq-deadline registered
+[    0.690029] io scheduler kyber registered
+[    0.690110] io scheduler bfq registered
+[    0.700095] input: QEMU Virtio Keyboard as /devices/platform/soc/10006000.virtio_mmio/virtio2/input/input0
+[    0.701645] input: QEMU Virtio Tablet as /devices/platform/soc/10005000.virtio_mmio/virtio3/input/input1
+[    0.740420] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.746004] printk: console [ttyS0] disabled
+[    0.747606] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 14, base_baud = 230400) is a 16550A
+[    0.748307] printk: console [ttyS0] enabled
+[    0.760525] SuperH (H)SCI(F) driver initialized
+[    0.762995] [drm] features: +virgl +edid -resource_blob -host_visible
+[    0.763033] [drm] features: -context_init
+[    0.764321] [drm] number of scanouts: 1
+[    0.764387] [drm] number of cap sets: 2
+[    0.771181] [drm] cap set 0: id 1, max-version 1, max-size 308
+[    0.771471] [drm] cap set 1: id 2, max-version 2, max-size 1408
+[    0.775118] [drm] Initialized virtio_gpu 0.1.0 0 for 10007000.virtio_mmio on minor 0
+[    0.864678] Console: switching to colour frame buffer device 160x50
+[    0.870103] virtio-mmio 10007000.virtio_mmio: [drm] fb0: virtio_gpudrmfb frame buffer device
+[    0.891212] loop: module loaded
+[    0.891617] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.893330] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    0.907924] mousedev: PS/2 mouse device common for all mice
+[    0.911327] goldfish_rtc 101000.rtc: registered as rtc0
+[    0.911698] goldfish_rtc 101000.rtc: setting system clock to 2026-10-03T02:42:25 UTC (1790995345)
+[    0.913695] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    0.914078] syscon-poweroff: probe of poweroff failed with error -16
+[    0.914944] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.917255] sdhci: Secure Digital Host Controller Interface driver
+[    0.917368] sdhci: Copyright(c) Pierre Ossman
+[    0.917592] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.918092] riscv-pmu-sbi: SBI PMU extension is available
+[    0.918397] riscv-pmu-sbi: 16 firmware and 18 hardware counters
+[    0.918477] riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
+[    0.922970] IPVS: Registered protocols (TCP, UDP)
+[    0.923142] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    0.925086] IPVS: ipvs loaded.
+[    0.925285] IPVS: [rr] scheduler registered.
+[    0.926141] Initializing XFRM netlink socket
+[    0.926458] NET: Registered PF_INET6 protocol family
+[    0.931451] Segment Routing with IPv6
+[    0.931623] In-situ OAM (IOAM) with IPv6
+[    0.932220] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.935151] NET: Registered PF_PACKET protocol family
+[    0.935691] Bridge firewalling registered
+[    0.936135] 8021q: 802.1Q VLAN Support v1.8
+[    0.936832] 9pnet: Installing 9P2000 support
+[    0.937687] Key type dns_resolver registered
+[    0.957542] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    0.962481] Btrfs loaded, zoned=no, fsverity=no
+[    0.966283] clk: Disabling unused clocks
+[    0.966567] ALSA device list:
+[    0.966911]   No soundcards found.
+[    0.993228] EXT4-fs (vda): mounted filesystem 8b9bcd29-4e60-45e5-99a2-5efda1cea95e r/w with ordered data mode. Quota mode: disabled.
+[    0.993695] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    0.995336] devtmpfs: mounted
+[    1.017910] Freeing unused kernel image (initmem) memory: 2200K
+[    1.018555] Run /bin/bash as init process
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+[?2004h[root@(none) /]# mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t deevtmpfs devtmpfs /dev; mkdir -p /dev/shm /hostcapture; mount -t tmpfs -o mode=17777,nosuid,nodev tmpfs /dev/shm; mount -t 9p -o trans=virtio,version=9p2000.L captture /hostcapture; bash /hostcapture/final-corpus/kmscube/guest.sh
+[?2004lVIRGL_CORPUS_BEGIN kmscube
+warning: database file for 'core' does not exist (use '-Sy' to download)
+warning: database file for 'extra' does not exist (use '-Sy' to download)
+Using display 0x5555890da0f0 with EGL version 1.5
+===================================
+EGL information:
+  version: "1.5"
+  vendor: "Mesa Project"
+  client extensions: "EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless"
+  display extensions: "EGL_ANDROID_blob_cache EGL_ANDROID_native_fence_sync EGL_EXT_buffer_age EGL_EXT_config_select_group EGL_EXT_image_dma_buf_import EGL_EXT_image_dma_buf_import_modifiers EGL_EXT_surface_compression EGL_KHR_cl_event2 EGL_KHR_config_attribs EGL_KHR_context_flush_control EGL_KHR_create_context EGL_KHR_create_context_no_error EGL_KHR_fence_sync EGL_KHR_get_all_proc_addresses EGL_KHR_gl_colorspace EGL_KHR_gl_renderbuffer_image EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_3D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_image EGL_KHR_image_base EGL_KHR_image_pixmap EGL_KHR_no_config_context EGL_KHR_reusable_sync EGL_KHR_surfaceless_context EGL_EXT_pixel_format_float EGL_KHR_wait_sync EGL_MESA_configless_context EGL_MESA_gl_interop EGL_MESA_image_dma_buf_export EGL_MESA_query_driver EGL_MESA_x11_native_visual_id "
+===================================
+OpenGL ES 2.x information:
+  version: "OpenGL ES 3.2 Mesa 26.2.2-arch1.1"
+  shading language version: "OpenGL ES GLSL ES 3.20"
+  vendor: "Mesa"
+  renderer: "virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+  extensions: "GL_EXT_blend_minmax GL_EXT_multi_draw_arrays GL_EXT_texture_filter_anisotropic GL_EXT_texture_compression_s3tc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_format_BGRA8888 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_mapbuffer GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_stencil8 GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_vertex_half_float GL_EXT_draw_instanced GL_EXT_texture_sRGB_decode GL_OES_EGL_image GL_OES_depth_texture GL_OES_packed_depth_stencil GL_EXT_texture_type_2_10_10_10_REV GL_NV_conditional_render GL_OES_get_program_binary GL_APPLE_texture_max_level GL_EXT_discard_framebuffer GL_EXT_read_format_bgra GL_EXT_texture_storage GL_NV_pack_subimage GL_NV_texture_barrier GL_EXT_frag_depth GL_NV_fbo_color_attachments GL_OES_EGL_image_external GL_OES_EGL_sync GL_OES_vertex_array_object GL_OES_viewport_array GL_ANGLE_pack_reverse_row_order GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_EXT_occlusion_query_boolean GL_EXT_robustness GL_EXT_sRGB GL_EXT_texture_rg GL_EXT_unpack_subimage GL_NV_draw_buffers GL_NV_read_buffer GL_NV_read_depth GL_NV_read_depth_stencil GL_NV_read_stencil GL_APPLE_sync GL_EXT_draw_buffers GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_shadow_samplers GL_KHR_debug GL_KHR_robustness GL_KHR_texture_compression_astc_ldr GL_NV_generate_mipmap_sRGB GL_NV_pixel_buffer_object GL_OES_depth_texture_cube_map GL_OES_required_internalformat GL_OES_surfaceless_context GL_EXT_color_buffer_float GL_EXT_debug_label GL_EXT_sRGB_write_control GL_EXT_separate_shader_objects GL_EXT_shader_group_vote GL_EXT_shader_implicit_conversions GL_EXT_shader_integer_mix GL_EXT_tessellation_point_size GL_EXT_tessellation_shader GL_ANDROID_extension_pack_es31a GL_EXT_base_instance GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_copy_image GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_gpu_shader5 GL_EXT_multi_draw_indirect GL_EXT_polygon_offset_clamp GL_EXT_primitive_bounding_box GL_EXT_render_snorm GL_EXT_shader_io_blocks GL_EXT_texture_border_clamp GL_EXT_texture_buffer GL_EXT_texture_cube_map_array GL_EXT_texture_norm16 GL_EXT_texture_view GL_KHR_blend_equation_advanced GL_KHR_context_flush_control GL_KHR_robust_buffer_access_behavior GL_NV_image_formats GL_NV_shader_noperspective_interpolation GL_OES_copy_image GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_gpu_shader5 GL_OES_primitive_bounding_box GL_OES_sample_shading GL_OES_sample_variables GL_OES_shader_io_blocks GL_OES_shader_multisample_interpolation GL_OES_tessellation_point_size GL_OES_tessellation_shader GL_OES_texture_border_clamp GL_OES_texture_buffer GL_OES_texture_cube_map_array GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_texture_view GL_EXT_blend_func_extended GL_EXT_float_blend GL_EXT_geometry_point_size GL_EXT_geometry_shader GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_KHR_no_error GL_KHR_texture_compression_astc_sliced_3d GL_OES_EGL_image_external_essl3 GL_OES_geometry_point_size GL_OES_geometry_shader GL_OES_shader_image_atomic GL_EXT_clear_texture GL_EXT_clip_cull_distance GL_EXT_conservative_depth GL_EXT_disjoint_timer_query GL_EXT_texture_compression_s3tc_srgb GL_MESA_shader_integer_functions GL_EXT_clip_control GL_EXT_color_buffer_half_float GL_EXT_texture_compression_bptc GL_EXT_texture_mirror_clamp_to_edge GL_KHR_parallel_shader_compile GL_EXT_EGL_image_storage GL_EXT_texture_shadow_lod GL_MESA_framebuffer_flip_y GL_EXT_depth_clamp GL_EXT_texture_query_lod GL_MESA_sampler_objects GL_EXT_EGL_image_storage_compression GL_EXT_texture_storage_compression GL_MESA_bgra GL_EXT_shader_clock "
+===================================
+Rendered 7 frames in 0.037851 sec (184.936646 fps)
+VIRGL_CORPUS_END kmscube status=0
+Powering off.
+[    5.442369] kvm: exiting hardware virtualization
+[    5.442645] reboot: Power down

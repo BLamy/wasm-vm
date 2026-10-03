@@ -1,0 +1,2 @@
+FAKE_FORWARD create
+HARNESS_FORWARDING_PASS scenario=iov-array-null calls=1

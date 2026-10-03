@@ -1,0 +1,433 @@
+[
+  {
+    "argv": [
+      "cc",
+      "-std=gnu11",
+      "-O2",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/abi",
+      "-fPIC",
+      "-shared",
+      "-DRECORDER_FAKE",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/recorder_contract.c",
+      "-o",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so"
+    ],
+    "env": {}
+  },
+  {
+    "argv": [
+      "cc",
+      "-std=gnu11",
+      "-O2",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/abi",
+      "-fPIC",
+      "-shared",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/recorder.c",
+      "-o",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "-lcrypto",
+      "-ldl",
+      "-pthread"
+    ],
+    "env": {}
+  },
+  {
+    "argv": [
+      "cc",
+      "-std=gnu11",
+      "-O2",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/abi",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/recorder_contract.c",
+      "-L",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run",
+      "-lrecorder_fake",
+      "-Wl,-rpath,$ORIGIN",
+      "-o",
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver"
+    ],
+    "env": {}
+  },
+  {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "env": {}
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "happy"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/happy",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callbacks-1"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callbacks-1",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callbacks-2"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callbacks-2",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callbacks-3"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callbacks-3",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callbacks-4"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callbacks-4",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callback-invalid"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callback-invalid",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "callback-null"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/callback-null",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "blob"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/unsupported-blob",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "iov-count"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/iov-count",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "iov-size"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/iov-size",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "iov-null"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/iov-null",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "iov-array-null"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/iov-array-null",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "submit-negative"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/submit-negative",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "submit-large"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/submit-large",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "submit-null"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/submit-null",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "resource-limit"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/resource-limit",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "active-exit"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/active-exit",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/invalid-limit--1",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "-1",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/invalid-limit-0",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "0",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/invalid-limit-4294967296",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "4294967296",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/invalid-limit-12x",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "12x",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/event-count-limit",
+      "VIRGL_CAPTURE_MAX_EVENTS": "2",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "blob-limit"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/blob-limit",
+      "VIRGL_CAPTURE_MAX_BLOB_BYTES": "3",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/event-byte-limit",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "1",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/footer-baseline",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "10000",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/footer-insufficient",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "1500",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  },
+  {
+    "argv": [
+      "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder_driver",
+      "caps"
+    ],
+    "env": {
+      "LD_PRELOAD": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/recorder.so",
+      "PATH": "/usr/bin:/bin",
+      "VIRGL_CAPTURE_DIR": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/footer-exact",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "1501",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run/librecorder_fake.so",
+      "VIRGL_CAPTURE_WORKLOAD": "textured-scene"
+    }
+  }
+]

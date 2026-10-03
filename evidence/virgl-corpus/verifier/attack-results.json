@@ -1,0 +1,36 @@
+{
+  "prediction": "Valid real-body continuation splitting is accepted; an overlapping continuation, a changed pinned executable, and a software glmark2 client under a VirGL compositor are rejected even after outer hashes are repaired.",
+  "results": [
+    {
+      "continuationOffset": 16,
+      "event": 161,
+      "mutatedCommandDigest": "2f95621414cc5725bf20193992c701533ec5c9badef4abfe661440ae535dd8b7",
+      "name": "valid-real-shader-continuation",
+      "observed": "accepted with 3 draws and 2 unchanged shader bodies",
+      "originalByteOffset": 4420,
+      "originalCommandDigest": "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc",
+      "result": "HELD"
+    },
+    {
+      "continuationOffset": 12,
+      "event": 161,
+      "mutatedCommandDigest": "c90ae8cd2bef4c20f17eef00476bb124e7e17eb9828991355117b92fff0853bf",
+      "name": "overlapping-real-shader-continuation",
+      "observed": "shader continuation offset gap/overlap",
+      "originalByteOffset": 4420,
+      "originalCommandDigest": "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc",
+      "result": "HELD"
+    },
+    {
+      "name": "changed-pinned-workload-executable",
+      "observed": "captured workload executable differs from pinned build",
+      "result": "HELD"
+    },
+    {
+      "name": "software-client-with-virgl-compositor",
+      "observed": "actual guest renderer is not VirGL",
+      "result": "HELD"
+    }
+  ],
+  "source_commit": "9a1551b7ac591302d768ca97724433ce4592098d"
+}

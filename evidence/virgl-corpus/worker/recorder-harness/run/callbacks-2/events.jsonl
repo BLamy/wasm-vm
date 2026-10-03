@@ -1,0 +1,10 @@
+{"seq":1,"type":"begin","schema":"wasm-vm-virgl-capture-v1","workload":"textured-scene","byteOrder":"little","limits":{"events":100000,"blobBytes":268435456,"eventBytes":67108864,"singleBlobBytes":67108864,"resources":4096,"iovs":16384},"blobs":[]}
+{"seq":2,"type":"init","phase":"enter","threadId":1,"parentCallSeq":0,"flags":81,"callbackVersion":2,"blobs":[]}
+{"seq":3,"type":"init","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":2,"result":0,"blobs":[]}
+{"seq":4,"type":"create_fence","phase":"enter","threadId":1,"parentCallSeq":0,"fenceId":4275878552,"ctxId":19,"blobs":[]}
+{"seq":5,"type":"write_fence","phase":"enter","threadId":1,"parentCallSeq":4,"fenceId":4275878552,"blobs":[]}
+{"seq":6,"type":"write_fence","phase":"return","threadId":1,"parentCallSeq":4,"callSeq":5,"result":0,"blobs":[]}
+{"seq":7,"type":"create_fence","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":4,"result":41,"blobs":[]}
+{"seq":8,"type":"cleanup","phase":"enter","threadId":1,"parentCallSeq":0,"blobs":[]}
+{"seq":9,"type":"cleanup","phase":"return","threadId":1,"parentCallSeq":0,"callSeq":8,"result":0,"blobs":[]}
+{"seq":10,"type":"end","complete":true,"normalExit":true,"cleanupSeen":true,"openCalls":0,"droppedRecords":0,"blobBytes":0,"workload":"textured-scene","blobs":[]}

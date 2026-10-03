@@ -1,0 +1,5 @@
+{"seq":1,"type":"begin","schema":"wasm-vm-virgl-capture-v1","workload":"textured-scene","byteOrder":"little","limits":{"events":100000,"blobBytes":268435456,"eventBytes":67108864,"singleBlobBytes":67108864,"resources":4096,"iovs":16384},"blobs":[]}
+{"seq":2,"type":"resource_create","phase":"enter","threadId":1,"parentCallSeq":0,"resourceId":7,"target":2,"format":67,"bind":8,"width":17,"height":19,"depth":1,"arraySize":1,"lastLevel":2,"nrSamples":4,"flags":3,"iovCount":16385,"blobs":[]}
+{"seq":3,"type":"backing_snapshot","resourceId":7,"reason":"create","iovLengths":[],"blobs":[]}
+{"seq":4,"type":"failure","reason":"backing snapshot failed or exceeded limit","blobs":[]}
+{"seq":5,"type":"end","complete":false,"normalExit":true,"cleanupSeen":false,"openCalls":0,"droppedRecords":0,"blobBytes":0,"workload":"textured-scene","blobs":[]}
