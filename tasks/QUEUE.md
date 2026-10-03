@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12d** — Replay the original three VirGL draws and readbacks in WebGL2
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -510,7 +509,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.02695` [E6-T12d](epic-6-transcendence/E6-T12d-captured-command-pixel-replay.md) — Replay the original three VirGL draws and readbacks in WebGL2 *(deps: E6-T12c)*
+- [~] `525.02695` [E6-T12d](epic-6-transcendence/E6-T12d-captured-command-pixel-replay.md) — Replay the original three VirGL draws and readbacks in WebGL2 *(deps: E6-T12c)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

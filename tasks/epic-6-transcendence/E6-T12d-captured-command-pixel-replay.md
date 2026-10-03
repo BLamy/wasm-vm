@@ -3,7 +3,7 @@ id: E6-T12d
 epic: 6
 title: Replay the original three VirGL draws and readbacks in WebGL2
 priority: 525.02695
-status: pending
+status: in-progress
 depends_on: [E6-T12c]
 estimate: S
 risk: high
@@ -42,4 +42,15 @@ transport, production VIRGL advertisement or FPS claim follows this replay.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activated
+
+Follows independently verified object/state execution (`a768b341`, PR #409).
+One explicit draw renderer extends the shared engine while retaining the existing
+state-only factory. This slice validates actual index/vertex storage bounds and
+replays the dependency-selected original scene: chronological public resource
+initialization, eight unchanged submissions, three draws, staging readbacks and
+ordered teardown. Unrelated boot scanout/fence transport remains excluded.
+Scoped high-risk gates are the affected state/resource/decoder regressions,
+hardware WebGL2 full replay with independent pixel and bounds oracles, input
+sabotage, source-bound coverage and one final scrubbed clean clone. Production
+web/Rust/device capabilities are unchanged; no Mesa or FPS claim follows.
