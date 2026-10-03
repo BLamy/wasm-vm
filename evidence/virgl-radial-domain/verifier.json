@@ -1,0 +1,50 @@
+{
+  "schema": "radial-fresh-verifier-archive-v1",
+  "task": "E6-T12f3",
+  "verdict": "verified",
+  "proofHead": "ee23e8d63ba27afec874ec7dc63c6c6be3c7ee7a",
+  "archive": {
+    "path": "verifier.tar.gz",
+    "bytes": 5768555,
+    "sha256": "818289db824978ab6f607fbc7d18043f65c36c348913ca45d1c5932f58d8b4f0"
+  },
+  "recordedFiles": 44,
+  "allMembersIndependentlyChecked": true,
+  "workerReceiptSha256": "496522d2b5b73a17e81b37b4cb751094a171a5e300a7ed40b836fc9952cdee1f",
+  "coldReceiptSha256": "cf79cc161526ebe8d288c962b255f3a57bc9703bd1cfd0f7d09d6a1d4e0cb773",
+  "workerLosslessManifestSha256": "c36806f2fbad051b6106d60f94db8e7fbf7f75dc75198493ec1a3ad9688f2cd0",
+  "predictions": [
+    "P1: HELD",
+    "P2: HELD",
+    "P3: HELD",
+    "P4: HELD",
+    "P5: HELD",
+    "P6: HELD",
+    "P7: HELD",
+    "P8: HELD"
+  ],
+  "newAttackCounts": {
+    "independentCoefficientChecks": 4138,
+    "graphChecks": 38,
+    "metadataFailures": 96,
+    "ownership": 12,
+    "combinedCountFailures": 6,
+    "invalidExtentReturns": 7
+  },
+  "freshSeeds": {
+    "coefficients": 3822197367,
+    "async": [
+      393892065,
+      4189269005
+    ]
+  },
+  "freshHardware": {
+    "rigs": 21,
+    "draws": 138,
+    "pixels": 565248,
+    "beforeEffectFailures": 258,
+    "asyncSchedules": 6
+  },
+  "promotedTest": "renderer/virgl-command/tests/radial-domain-regressions.mjs",
+  "scope": "Restricted admission only; originals12/19. No arbitrary-finite radial workload, original PRECISE, guest deployment/negotiation or300MIPS claim."
+}

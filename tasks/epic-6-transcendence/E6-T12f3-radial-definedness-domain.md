@@ -3,7 +3,7 @@ id: E6-T12f3
 epic: 6
 title: Establish an explicit admission contract for radial shader definedness
 priority: 525.0269913
-status: implemented
+status: verified
 depends_on: [E6-T12f2]
 estimate: S
 risk: high
@@ -170,3 +170,128 @@ Untouched original corpus admission is still 12/19. This submission establishes
 neither actual radial workload banks, untouched radial shader compatibility,
 guest GPU negotiation, deployment nor desktop 300 MIPS. A fresh verifier must
 falsify the claim and audit changed-hunk coverage before setting `verified`.
+
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Read the full task and diff from `ab1f145616fc9dbf97e8113759622b6848cdfeee`
+through `ee23e8d63ba27afec874ec7dc63c6c6be3c7ee7a` before examining evidence.
+Eight falsifiable predictions were recorded first in `predictions.json` inside
+the verifier archive. Worker submission `48787ee5` changes evidence/status only;
+the runtime remains the exact frozen implementation. No implementation code was
+edited by this verifier.
+
+- **P1 coefficient predicate/counterexample — HELD.** Predicted finite admission
+  exactly when numeric abs(coefficient) reaches the captured threshold, for
+  both signs, zeros, subnormals, adjacent words, NaN and Inf. Independent seed
+  `0xe3d21a77` plus literal witnesses produced 4,138 matching actual bank checks.
+  Recomputed q=(4,0), B=4,C=16 and coefficient 2^-20: primary root2;
+  missing word0 selects transparent root4194304, word0x407ffffe selects visible
+  root0.5. Points: `attacks.json#/classification`, lines42459-42480
+  (`counterexample`), and worker `domain/report.json#/proof`.
+- **P2 exact graph/current lane/live join — HELD.** Every altered predicate,
+  threshold, constant/component, clobbered producer and unrelated missing lane
+  rejects. The novel zero-selector enclosing branch cannot grant TEMP2 to an
+  outside consumer; negated UIF and partial ELSE reject in both stages. A
+  current magnitude/predicate destination alias succeeds with profile14.
+  Eight new native/Wasm full-result comparisons and thirty retained negative
+  graph checks held. Points: `attacks.json` lines40600/40924 (dead enclosure),
+  lines40614/40938 (negated selector), and `promoted-regression.json#/normal/graphs`.
+- **P3 closed combined policy/ownership — HELD.** Predicted dropped radial,
+  finite, indirect or count contracts and every old-profile radial forgery to
+  fail; 96 independent metadata attacks held, supplementing the worker's164.
+  Twelve caller mutations leave the approved frozen coefficient unchanged;
+  six independent count failures retain the simultaneous radial obligation.
+  Points: `attacks.json#/metadata`, `/ownership`, `/combined`; worker
+  `domain/report.json#/forgeries` and `/combined`.
+- **P4 before-effects and generation identity — HELD.** Independently repeated
+  all21 physical rigs with async seeds `0x177a50e1` and `0xf9b32c0d` (one and
+  three commands per step). Observed138 admitted draws,565248 exact pixels,
+  258 before-effect failures, six async schedules, complete safe replacement
+  and restoration, real native poisoning during an index-wait yield, busy
+  mutation rejection, exact uploaded banks and matching shader generations.
+  No console/page/request errors or surviving native objects. Points:
+  `independent-gpu/report.json#/acceptance/rigs`, `independent-gpu-audit.json`;
+  its source inventory binds the actual served runtime and Wasm to the proof
+  head. Only the copied verifier test's import URLs and prescribed seeds differ.
+- **P5 parity/caps/coverage — HELD.** Reconstructed the full sealed native and
+  Wasm receipts against raw transcripts/results,182 sources and47 artifacts.
+  Native log line1 records rawIR26480/profile7616, line4919 arena52644,
+  line4920 all1,139,669 calls; 4344 stages/429 pairs and all original results
+  match. The actual retained native binary/profile independently reproduces
+  the complete LLVM export. New graph/retry/metadata hunks execute in real
+  LLVM and V8 counters. Worker browser line198's helper extent rejection was
+  unexecuted; the final promoted regression independently executes it seven
+  times in each of two recorded V8 runs. Fixed16MiB memory,256KiB stack,
+  instruction179 and output caps survive. Points: `coverage-audit.json`,
+  `archive-audit.json`, `receipt-reconstruction.json`; native log digest
+  `b19f3e0f0a01b93e596bef5cded82fed0b4cdbd64bfdfbf328b613cc3284649c`.
+- **P6 scope and unchanged predecessor — HELD.** Independently reconstructed
+  both complete port bodies using exactly PRECISE suffix removal and numeric
+  ADD-zero alpha projection; original capture digests and bytes match the
+  dependency commit. Untouched originals remain12/19. Full retained F2
+  results remain4300 stages/378 pairs byte-identical; unchanged HELD F2/F1
+  predictions and retained hardware evidence carry forward without an
+  obsolete full predecessor gate. Points: `fixture-provenance.json`, worker
+  native `compatibility` and retained-selected receipt fields. No radial
+  workload, original PRECISE, guest/deployment or300MIPS inference is made.
+- **P7 actual source sabotage — HELD.** Independently removed exactly the
+  actual consumer coefficient guard in an isolated copy. The normal helper
+  rejects2^-20; the fault admits its same owned bank and the independent
+  numeric predicate throws before any GPU call. The promoted regression
+  also fails under this source fault with `AssertionError`; GPU calls0.
+  Points: `attacks.json` line42481 (`sabotage`),
+  `promoted-regression.json` line274 (`actualSourceGuardRemoval`).
+- **P8 exact-head/cold provenance — HELD.** Independently hashed every worker
+  and cold lossless archive member (49/50), inspected ancestral binding, and
+  reconstructed the cold receipt from its own pristine clone. The canonical
+  cold command passes at exact `ee23e8d6`, exit0, clean before/after; the
+  clone remains clean on direct inspection. The harness clears RUST/CARGO_
+  and build/runtime override variables before cloning; RUST_LOG was removed.
+  Points: `cold-audit.json`, `archive-audit.json`, cold `report.json` and
+  `acceptance/receipt.json`. No stale or unexercised runtime source remains.
+
+**COVERAGE waivers.** Comments, whitespace, function declarations, typed
+certificate fields/static layout assertions and documentation are declarative;
+their matching runtime functions and measured layouts execute. The recognizer's
+`end == ir->count` defensive arm is unreachable after successful balanced-control
+syntax validation; missing ELSE and duplicate graphs are exercised. Optional
+native `--smoke` output is not a submitted product claim. Fixture generation is
+authoring support, and its resulting exact inputs all execute; both original-to-
+port operations were independently reconstructed. Acceptance/build plumbing is
+exercised in the canonical clean-clone log. All waivers and actual line/range
+counters are retained in `coverage-audit.json`; none waive changed runtime
+behavior named by the task.
+
+**SUITE.** Promoted
+`renderer/virgl-command/tests/radial-domain-regressions.mjs` preserves the novel
+live-join attacks, current producer alias, independent numeric threshold oracle,
+owned-word mutation, invalid extent/type errors and simultaneous count constraint.
+Its actual-Wasm run has8 graph cases,38 coefficient cases and7 extent failures.
+It is source-sabotage checked. No implementation edit or unrelated gate was needed.
+
+Verifier commands:
+
+```sh
+node target/evidence/radial-domain-verifier-20261003-fresh/attacks.mjs
+node target/evidence/radial-domain-verifier-20261003-fresh/browser-run.mjs
+node renderer/virgl-command/tests/radial-domain-regressions.mjs
+node --check renderer/virgl-command/tests/radial-domain-regressions.mjs
+```
+
+Additional recorded Python/Node interrogations reconstruct receipts at the frozen
+head and inside the cold clone, audit per-line LLVM/V8 counters, reproduce the
+native LLVM export from the sealed binary/profile, check archive members and
+sabotage the promoted suite. Records are losslessly preserved in
+`evidence/virgl-radial-domain/verifier.tar.gz` (44 files), SHA-256
+`818289db824978ab6f607fbc7d18043f65c36c348913ca45d1c5932f58d8b4f0`.
+`verifier.json` binds the archive and summaries, SHA-256
+`a9e9f2cf38716b3e14b4605ac12f15dfb1f5faae63851d4ba63acb8e7e7cb6b3`;
+`verifier-verdict.json` preserves all eight predictions and citations, SHA-256
+`7eb73c0c398ebd3e852b97bcb38c3fa538b886968bdcd7b828f1c2e955ed64c9`.
+Each archive member was independently compared to its original size and digest.
+The worker receipt digest remains
+`496522d2b5b73a17e81b37b4cb751094a171a5e300a7ed40b836fc9952cdee1f`;
+the pristine receipt remains
+`cf79cc161526ebe8d288c962b255f3a57bc9703bd1cfd0f7d09d6a1d4e0cb773`.
