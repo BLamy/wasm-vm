@@ -535,7 +535,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02698` [E6-T11c](epic-6-transcendence/E6-T11c-virgl-scanout.md) — Present retained 3D resources through the existing virtio scanout path *(deps: E6-T11b2)*
+- [?] `525.02698` [E6-T11c](epic-6-transcendence/E6-T11c-virgl-scanout.md) — Present retained 3D resources through the existing virtio scanout path *(deps: E6-T11b2)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

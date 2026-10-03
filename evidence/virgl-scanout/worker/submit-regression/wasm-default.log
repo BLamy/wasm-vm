@@ -1,0 +1,6 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/slirp)
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm)
+   Compiling wasm-vm-wasm-web v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm-web)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.40s

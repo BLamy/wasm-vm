@@ -1,0 +1,8 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running tests/virtio_gpu_machine.rs (target/debug/deps/virtio_gpu_machine-2040b83cb48c3458)
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

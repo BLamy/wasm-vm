@@ -1,0 +1,358 @@
+{
+  "schema": 1,
+  "task": "E6-T11c",
+  "gitHead": "85962c4956bad75c7703767650b49763fb0e5945",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-trjcf0a4/wasm-vm",
+  "retainedClone": true,
+  "invocation": [
+    "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+    "tools/virgl-command/scanout-cold.py",
+    "--output",
+    "evidence/virgl-scanout/cold-clone-final",
+    "--desktop-image",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+    "--desktop-assets",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T11c"
+  ],
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "timeoutSeconds": 1800,
+  "desktopImage": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+  "desktopAssets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+  "status": "passed",
+  "startedAt": "2026-10-03T07:28:48.833882+00:00",
+  "inputsBefore": {
+    "image": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "bytes": 1073741824,
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e"
+    },
+    "manifest": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b/manifest.json",
+      "bytes": 548948,
+      "sha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827"
+    },
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "assets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "publication": {
+      "version": 1,
+      "layout": "split",
+      "chunkSize": 131072,
+      "chunkCount": 8192,
+      "uniqueChunks": 822
+    }
+  },
+  "harness": {
+    "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-command/scanout-cold.py",
+    "bytes": 11198,
+    "sha256": "0dfd12b7d811ede50d81cb2549154b244829ef9abefef2405dc693a3ab6a1137",
+    "headSha256": "0dfd12b7d811ede50d81cb2549154b244829ef9abefef2405dc693a3ab6a1137",
+    "unchanged": true
+  },
+  "cloneHead": "85962c4956bad75c7703767650b49763fb0e5945",
+  "statusBefore": "",
+  "cloneKernelBefore": {
+    "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-trjcf0a4/wasm-vm/releases/kernel/6.6.63/Image",
+    "bytes": 24208896,
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "explicitGateEnvironment": {
+    "VIRGL_SCANOUT_DESKTOP_IMAGE": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+    "VIRGL_SCANOUT_DESKTOP_ASSETS": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "VIRGL_SCANOUT_EVIDENCE_DIR": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-trjcf0a4/wasm-vm/target/evidence/virgl-scanout-cold"
+  },
+  "exitCode": 0,
+  "cloneHeadAfter": "85962c4956bad75c7703767650b49763fb0e5945",
+  "statusAfter": "",
+  "cloneKernelAfter": {
+    "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-trjcf0a4/wasm-vm/releases/kernel/6.6.63/Image",
+    "bytes": 24208896,
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "receiptSha256": "84c6d8af8e691fc82f0d0778ab6e9a3e73b98750ef74c1d004c8075747552352",
+  "acceptanceFiles": [
+    {
+      "path": "acceptance/acceptance.log",
+      "bytes": 463614,
+      "sha256": "4bc0e7d8f48aae43e8cd521316a0bb1292dde3daae988728e8aeefed99c7e853"
+    },
+    {
+      "path": "acceptance/clippy-scanout.log",
+      "bytes": 220,
+      "sha256": "f9ccf793a032ffe2a605b9c51697b81ebbb690c5002cec9fa843725bceb9f632"
+    },
+    {
+      "path": "acceptance/desktop/browser.jsonl",
+      "bytes": 758845,
+      "sha256": "0dc3e021478901fb34ac91cb40f0c091d2518a0345af8c681ecced0eb5a2277f"
+    },
+    {
+      "path": "acceptance/desktop/desktop.png",
+      "bytes": 173057,
+      "sha256": "ef137887dc641e5856f31b444f012601d125bdf6dc1ffe5489de50a6307bf7a7"
+    },
+    {
+      "path": "acceptance/desktop/report.json",
+      "bytes": 342166,
+      "sha256": "04c04d4ac2335cbac2592542e493ab6526ecdfccdf8cfa15966a12a769b2cada"
+    },
+    {
+      "path": "acceptance/desktop/serial.log",
+      "bytes": 14355,
+      "sha256": "c1e544de3874f2c53b0ea1b81190ce9f1ac346553ea492d69e99266ceac5c919"
+    },
+    {
+      "path": "acceptance/hardware/browser-coverage.json",
+      "bytes": 186263,
+      "sha256": "1f78f57746c4bcf0bfc7b8b5d082ad80eb11c1a516ea30cf86728aacd7dbabdc"
+    },
+    {
+      "path": "acceptance/hardware/browser.png",
+      "bytes": 56631,
+      "sha256": "dd418bf73a397393479390fed163ec784fcbb85cb51a6b9d3e4362582c2b8371"
+    },
+    {
+      "path": "acceptance/hardware/report.json",
+      "bytes": 673709,
+      "sha256": "a774880b7bf7908d89d14589da3ce9d599e2efb60995067f785984028fb2d04c"
+    },
+    {
+      "path": "acceptance/native-browser-parity.json",
+      "bytes": 79588,
+      "sha256": "4df7433c765c44828e0da6f34a6e16e246a74ff3b025b6161fd21c6d8fac9990"
+    },
+    {
+      "path": "acceptance/native-scanout.log",
+      "bytes": 78880,
+      "sha256": "270d40b1ca8ae19fb79174c44231c92b15b2e99b7f703c417d1e06dddfcc2d77"
+    },
+    {
+      "path": "acceptance/presentation.log",
+      "bytes": 576,
+      "sha256": "fc1c1e120a58254afd9aea27a639d37459046b21e1db5ce52a83e55727cc614c"
+    },
+    {
+      "path": "acceptance/receipt.json",
+      "bytes": 30340,
+      "sha256": "84c6d8af8e691fc82f0d0778ab6e9a3e73b98750ef74c1d004c8075747552352"
+    },
+    {
+      "path": "acceptance/sabotage-orientation/browser-coverage.json",
+      "bytes": 135028,
+      "sha256": "1ed8da08708cc438f0f4d486b207c6c4acb5edf155774e3db1aebbce5a274c5d"
+    },
+    {
+      "path": "acceptance/sabotage-orientation/failure.png",
+      "bytes": 97542,
+      "sha256": "e8db68eaa357213d5a28b531bbb8ffe2e6e019af8ad8ed8f42078b50bf444809"
+    },
+    {
+      "path": "acceptance/sabotage-orientation/report.json",
+      "bytes": 36857,
+      "sha256": "24491a79a44a254036e5652767c1f353dec9e28a77e3e4e87b9605b75f000a79"
+    },
+    {
+      "path": "acceptance/submit-regression/acceptance.log",
+      "bytes": 379559,
+      "sha256": "7762d26f5377f8820635cf89f0b95963d5f60a4953c74a3f69513be761b6eec1"
+    },
+    {
+      "path": "acceptance/submit-regression/clippy-default.log",
+      "bytes": 664,
+      "sha256": "718f5f1157d8358aa3d2293680f73b8e365c5812ee821b0600d38be3a1c33e12"
+    },
+    {
+      "path": "acceptance/submit-regression/clippy-submit.log",
+      "bytes": 2264,
+      "sha256": "d61bca3e02a0a8a72f919e24487aeca62cd62488d74990a7fd3efd1698750975"
+    },
+    {
+      "path": "acceptance/submit-regression/clippy-wasm.log",
+      "bytes": 2664,
+      "sha256": "5873d6f3c140b4b30658ee8bc0c4d7a63eaa6d9dcf343dcd78e3a7cbe3997a43"
+    },
+    {
+      "path": "acceptance/submit-regression/control-regression/browser-coverage.json",
+      "bytes": 105104,
+      "sha256": "c782dad3b64c8e679c5a34afd19f55d1b2d7cc72981a9b16d4dd83630c23d50d"
+    },
+    {
+      "path": "acceptance/submit-regression/control-regression/browser.png",
+      "bytes": 71810,
+      "sha256": "6b19114e2fc6681611d08df25cb266b5cd624aefb6a8f17cba0f1edff84e735a"
+    },
+    {
+      "path": "acceptance/submit-regression/control-regression/report.json",
+      "bytes": 444729,
+      "sha256": "f3a276131b38ceec0d2fa067b0a56cee21f239d25f42666bfa18c51e75c469d3"
+    },
+    {
+      "path": "acceptance/submit-regression/default-demo/browser.png",
+      "bytes": 50661,
+      "sha256": "4f30f2e17c7297e51e616e363e47bc6787e2d50b7e8dc6a5854ab7b1045ac8f9"
+    },
+    {
+      "path": "acceptance/submit-regression/default-demo/report.json",
+      "bytes": 34756,
+      "sha256": "76eb17f64813dd23c6ee1af9d3e4d3c880bf3007f9b314f6e4fca0127fdd6f8f"
+    },
+    {
+      "path": "acceptance/submit-regression/format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "acceptance/submit-regression/hardware/browser-coverage.json",
+      "bytes": 163481,
+      "sha256": "dffb3409e402cbcc617bcde3ee62f0b0948915b5aa254226caf8c83383399120"
+    },
+    {
+      "path": "acceptance/submit-regression/hardware/browser.png",
+      "bytes": 91125,
+      "sha256": "6fe3bcb00bce3a397f9c2dc8c899671413118fe3a935c7a07765d7948d93eb12"
+    },
+    {
+      "path": "acceptance/submit-regression/hardware/report.json",
+      "bytes": 2198921,
+      "sha256": "67ef7848c33a467a5a286821f1255f025be2aee9c04fbe8ffd57909ca3e1f4fd"
+    },
+    {
+      "path": "acceptance/submit-regression/native-browser-parity.json",
+      "bytes": 50990,
+      "sha256": "927de35914c901df5888f44be2b3859c7f83ee07ee05deff1b64839bb15fdcf1"
+    },
+    {
+      "path": "acceptance/submit-regression/native-bus.log",
+      "bytes": 298,
+      "sha256": "f58b1c0a7b5307bf6621c14c4d61e690185cd8dd1f960bdb8210caa3a9ca68f5"
+    },
+    {
+      "path": "acceptance/submit-regression/native-control.log",
+      "bytes": 302308,
+      "sha256": "9efbba9eef632cee33e14ed5d7806dd30712571a4584fc2640ccc4349e1fe414"
+    },
+    {
+      "path": "acceptance/submit-regression/native-machine.log",
+      "bytes": 435,
+      "sha256": "aa929833e193023b918e3221905f2d2615f2c607769872e56e3b0a576de7ab51"
+    },
+    {
+      "path": "acceptance/submit-regression/native-submit.log",
+      "bytes": 53170,
+      "sha256": "05135ad6bcd53caaec66e5f8bf530e6781bcdd1369b6fbd761ae7b794d295740"
+    },
+    {
+      "path": "acceptance/submit-regression/native-virtio.log",
+      "bytes": 571,
+      "sha256": "dab76ec71a0e4c73b7c4c6e9930a268da881d7deec9f399cfc6f1fe48874ef83"
+    },
+    {
+      "path": "acceptance/submit-regression/receipt.json",
+      "bytes": 21788,
+      "sha256": "39d8d14a5f7c283ec802cc8b2cec17bdd3266b841a7d5c769351b8132a669658"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-collect/browser-coverage.json",
+      "bytes": 96124,
+      "sha256": "5e5b2af99055bcc0d96434d7059c6aa9ebd273dca00810030867b082b34e1d9c"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-collect/failure.png",
+      "bytes": 124761,
+      "sha256": "26f749e38f9f4f9953660b22515a6637fcf7bdfd363acfed9047a8e0a93f7481"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-collect/report.json",
+      "bytes": 30572,
+      "sha256": "6a9fd272e8dfa365ead38ce8c3ad93904ba3a67b36c1c94254c0fa976f7ba1fd"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-completion/browser-coverage.json",
+      "bytes": 95432,
+      "sha256": "aaa91878ec5c0e1e02d749c8a5119dae937f608f38ff785529bf20ba9115cfeb"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-completion/failure.png",
+      "bytes": 123057,
+      "sha256": "231e690ab9b47e8a9ec51439ca6fb5bbb9f077dba8af0e1dbeac377909140c73"
+    },
+    {
+      "path": "acceptance/submit-regression/sabotage-early-completion/report.json",
+      "bytes": 30618,
+      "sha256": "e9651bad939cba25c5b39c0435bd2f43ceec2dfe5ccf205f4d30d5cc1c14295d"
+    },
+    {
+      "path": "acceptance/submit-regression/shader-build.log",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8"
+    },
+    {
+      "path": "acceptance/submit-regression/wasm-control-proof.log",
+      "bytes": 1047,
+      "sha256": "7cde902e4f05101e80a0f814a5015377b36037565721b7ef5c42e1e98074229a"
+    },
+    {
+      "path": "acceptance/submit-regression/wasm-core-default.log",
+      "bytes": 570,
+      "sha256": "75a0cbfb8c0baaf833d2f0fc72145d520c86ce027eedfabe421555d0e4794e63"
+    },
+    {
+      "path": "acceptance/submit-regression/wasm-default.log",
+      "bytes": 2161,
+      "sha256": "ce1f4752e8101a00c7f369c6902e674bafde2756cde9b6302d5ad76f02ccb4a0"
+    },
+    {
+      "path": "acceptance/submit-regression/wasm-gpu-protocol.log",
+      "bytes": 2165,
+      "sha256": "8ef8384631bdedefa07e9e3d1dbf712202fa2e963c2dac4de9edb62297ffb5c2"
+    },
+    {
+      "path": "acceptance/submit-regression/wasm-proof.log",
+      "bytes": 434,
+      "sha256": "f48337f0eaef32ad639ffc1e32a985db3c5bc7f3e17e6dbec9b2a6b4d2f9e19a"
+    },
+    {
+      "path": "acceptance/wasm-proof.log",
+      "bytes": 435,
+      "sha256": "de82621d624be073cd8847e0eef791b46860178c941f4c533125e3c45c16dff5"
+    }
+  ],
+  "inputsAfter": {
+    "image": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "bytes": 1073741824,
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e"
+    },
+    "manifest": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b/manifest.json",
+      "bytes": 548948,
+      "sha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827"
+    },
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "assets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "publication": {
+      "version": 1,
+      "layout": "split",
+      "chunkSize": 131072,
+      "chunkCount": 8192,
+      "uniqueChunks": 822
+    }
+  },
+  "inputsUnchanged": true,
+  "logSha256": "b70f21ff4d25b8667235b6678aae15ec5db6cbd8a74404fd08347439f71697b7",
+  "finishedAt": "2026-10-03T07:41:13.834233+00:00"
+}
