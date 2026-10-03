@@ -1,0 +1,1680 @@
+{
+  "schema": "wasm-vm-constant-compiler-wasm-v1",
+  "status": "passed",
+  "node": {
+    "version": "v24.20.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "nativeReport": {
+    "path": "../native/native-report.json",
+    "bytes": 14543428,
+    "sha256": "35396857f6692eed05df2bd3790d17c0ad1a8b5154b4fe16f0ce4c6941d09e0f"
+  },
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "bytes": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "bytes": 1061,
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "bytes": 7535,
+      "sha256": "a7bc0a034d6a1c8c448069fdde847404eac8f931cc7e24e55a4027b7a7a60eae"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 279122,
+      "sha256": "c7411a0ef63c5e414f1ab786acd360c628f1b560a59c3eab80252a3566d3abb0"
+    },
+    {
+      "path": "tools/virgl-constant-compiler/wasm.mjs",
+      "bytes": 10061,
+      "sha256": "4e21dbd8adc84174822019f44a2120f79ce310e16b6db33f757ddb72b0087e2c"
+    },
+    {
+      "path": "tools/virgl-constant-compiler/wasm_receipt.py",
+      "bytes": 9793,
+      "sha256": "4d92887d0c4b4b964c2c697de74c2551877c6b05e8549a556d17424fdcdb5937"
+    }
+  ],
+  "limits": {
+    "textBytes": 16384,
+    "tokens": 8192,
+    "glslBytes": 65536,
+    "instructions": 179,
+    "registerIndex": 7,
+    "temporaryRegisterIndex": 117,
+    "constantRegisterIndex": 45
+  },
+  "counts": {
+    "calls": 17738,
+    "originals": 19,
+    "singles": 3151,
+    "pairs": 221,
+    "recoverySingles": 7600,
+    "recoveryPairs": 6650,
+    "stress": 64,
+    "pressure": 24
+  },
+  "ownership": [
+    {
+      "kind": "single",
+      "name": "coupled-vertex",
+      "requestAfter": {
+        "stage": "invalid",
+        "text": "invalid"
+      },
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "single",
+      "name": "coupled-fragment",
+      "requestAfter": {
+        "stage": "invalid",
+        "text": "invalid"
+      },
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ]
+        }
+      }
+    },
+    {
+      "kind": "pair",
+      "name": "coupled-pair",
+      "requestAfter": {
+        "vertexText": "invalid",
+        "fragmentText": "invalid"
+      },
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      }
+    }
+  ],
+  "stress": [
+    {
+      "name": "instruction-count-179-vertex",
+      "iterations": 32,
+      "textBytes": 16384,
+      "textSha256": "9cc95c7aa26add89fc905a379bef6ef22e24e7287aa7a32773034ac9c886f1d9",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nin vec4 in_2;\nin vec4 in_3;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((vsconst0[0].x & 8388607u), (vsconst0[0].y & 8388607u), (vsconst0[0].z & 8388607u), (vsconst0[0].w & 8388607u));\n raw_temp[116].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_1.x)), (floatBitsToUint(in_1.y)), (floatBitsToUint(in_1.z)), (floatBitsToUint(in_1.w)));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + in_1.x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(vsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[117].x), (raw_temp[117].y), (raw_temp[117].z), (raw_temp[117].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].x = float_rhs.x;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = in_1.y;\n vso_g0.z = in_1.z;\n vso_g0.w = in_1.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 2,
+              "name": "in_2",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 3,
+              "name": "in_3",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "instruction-count-179-fragment",
+      "iterations": 32,
+      "textBytes": 16384,
+      "textSha256": "5d3763008ac64b984c679f40bfde3463b70eab21d15c294f6844997a99f6d929",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nsmooth in vec4 vso_g1;\nsmooth in vec4 vso_g2;\nsmooth in vec4 vso_g3;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((fsconst0[0].x & 8388607u), (fsconst0[0].y & 8388607u), (fsconst0[0].z & 8388607u), (fsconst0[0].w & 8388607u));\n raw_temp[116].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(vso_g1.x)), (floatBitsToUint(vso_g1.y)), (floatBitsToUint(vso_g1.z)), (floatBitsToUint(vso_g1.w)));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + vso_g1.x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].x) + float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[117].x = raw_rhs.x;\n float_temp[117].x = float_rhs.x;\n float_rhs = vec4((float_temp[117].x), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[117].x), (raw_temp[117].y), (raw_temp[117].z), (raw_temp[117].w));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].x = float_rhs.x;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = vso_g1.y;\n fsout_c0.z = vso_g1.z;\n fsout_c0.w = vso_g1.w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 1,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g2",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 2,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 3,
+              "name": "vso_g3",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 3,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "allocationPressure": {
+    "chunkBytes": 4096,
+    "releaseSchedule": [
+      0,
+      1,
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      40,
+      48,
+      64
+    ],
+    "targets": [
+      {
+        "kind": "single",
+        "name": "coupled-vertex",
+        "capacityBefore": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "reservedChunks": 3894,
+        "releasedChunks": 3894,
+        "attempts": [
+          {
+            "releasedChunks": 0,
+            "heldChunks": 3894,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 1,
+            "heldChunks": 3893,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 4,
+            "heldChunks": 3890,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 8,
+            "heldChunks": 3886,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 12,
+            "heldChunks": 3882,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 16,
+            "heldChunks": 3878,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 24,
+            "heldChunks": 3870,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "result": {
+              "ok": true,
+              "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+              "metadata": {
+                "profile": "virgl-webgl2-raw-bits-v7",
+                "stage": "vertex",
+                "inputs": [
+                  {
+                    "index": 0,
+                    "name": "in_0",
+                    "type": "vec4",
+                    "semantic": "ATTRIBUTE",
+                    "semanticIndex": 0,
+                    "componentMask": 15
+                  }
+                ],
+                "outputs": [
+                  {
+                    "index": 0,
+                    "name": "gl_Position",
+                    "type": "vec4",
+                    "semantic": "POSITION",
+                    "semanticIndex": 0,
+                    "componentMask": 15,
+                    "writtenMask": 15
+                  },
+                  {
+                    "index": 1,
+                    "name": "vso_g0",
+                    "type": "vec4",
+                    "semantic": "GENERIC",
+                    "semanticIndex": 0,
+                    "componentMask": 15,
+                    "writtenMask": 15,
+                    "interpolation": "smooth"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "index": 0,
+                    "name": "in_0",
+                    "type": "vec4",
+                    "semantic": "ATTRIBUTE",
+                    "semanticIndex": 0,
+                    "componentMask": 15
+                  }
+                ],
+                "uniforms": [
+                  {
+                    "name": "vsconst0",
+                    "type": "uvec4[]",
+                    "count": 46,
+                    "encoding": "float32-bits"
+                  }
+                ],
+                "samplers": [],
+                "uniformBlocks": [
+                  {
+                    "name": "VirglBlock",
+                    "byteLength": 656,
+                    "members": [
+                      {
+                        "name": "winsys_adjust_y",
+                        "offset": 640,
+                        "type": "float",
+                        "default": 1
+                      }
+                    ]
+                  }
+                ],
+                "constantDomains": [
+                  {
+                    "kind": "constant-bank-finite-f32-v1",
+                    "stage": "vertex",
+                    "slot": 0,
+                    "name": "vsconst0",
+                    "count": 46
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "capacityAfter": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "recoveredResult": {
+          "ok": true,
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        }
+      },
+      {
+        "kind": "single",
+        "name": "coupled-fragment",
+        "capacityBefore": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "reservedChunks": 3894,
+        "releasedChunks": 3894,
+        "attempts": [
+          {
+            "releasedChunks": 0,
+            "heldChunks": 3894,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 1,
+            "heldChunks": 3893,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 4,
+            "heldChunks": 3890,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 8,
+            "heldChunks": 3886,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 12,
+            "heldChunks": 3882,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 16,
+            "heldChunks": 3878,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 24,
+            "heldChunks": 3870,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "result": {
+              "ok": true,
+              "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+              "metadata": {
+                "profile": "virgl-webgl2-raw-bits-v7",
+                "stage": "fragment",
+                "inputs": [
+                  {
+                    "index": 1,
+                    "name": "vso_g0",
+                    "type": "vec4",
+                    "semantic": "GENERIC",
+                    "semanticIndex": 0,
+                    "componentMask": 15,
+                    "interpolation": "smooth"
+                  }
+                ],
+                "outputs": [
+                  {
+                    "index": 0,
+                    "name": "fsout_c0",
+                    "type": "vec4",
+                    "semantic": "COLOR",
+                    "semanticIndex": 0,
+                    "componentMask": 15,
+                    "writtenMask": 15
+                  }
+                ],
+                "attributes": [],
+                "uniforms": [
+                  {
+                    "name": "fsconst0",
+                    "type": "uvec4[]",
+                    "count": 46,
+                    "encoding": "float32-bits"
+                  }
+                ],
+                "samplers": [],
+                "uniformBlocks": [],
+                "constantDomains": [
+                  {
+                    "kind": "constant-bank-finite-f32-v1",
+                    "stage": "fragment",
+                    "slot": 0,
+                    "name": "fsconst0",
+                    "count": 46
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "capacityAfter": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "recoveredResult": {
+          "ok": true,
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        }
+      },
+      {
+        "kind": "pair",
+        "name": "coupled-pair",
+        "capacityBefore": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "reservedChunks": 3894,
+        "releasedChunks": 3894,
+        "attempts": [
+          {
+            "releasedChunks": 0,
+            "heldChunks": 3894,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 0,
+              "availableRequestedBytes": 0
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 1,
+            "heldChunks": 3893,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 1,
+              "availableRequestedBytes": 4096
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 4,
+            "heldChunks": 3890,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 4,
+              "availableRequestedBytes": 16384
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "translation-error",
+                "message": "Raw IR allocation failed."
+              }
+            }
+          },
+          {
+            "releasedChunks": 8,
+            "heldChunks": 3886,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 8,
+              "availableRequestedBytes": 32768
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 12,
+            "heldChunks": 3882,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 12,
+              "availableRequestedBytes": 49152
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 16,
+            "heldChunks": 3878,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 16,
+              "availableRequestedBytes": 65536
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 24,
+            "heldChunks": 3870,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 24,
+              "availableRequestedBytes": 98304
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 32,
+            "heldChunks": 3862,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 32,
+              "availableRequestedBytes": 131072
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 32,
+              "availableRequestedBytes": 131072
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 40,
+            "heldChunks": 3854,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 40,
+              "availableRequestedBytes": 163840
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 40,
+              "availableRequestedBytes": 163840
+            },
+            "result": {
+              "ok": false,
+              "error": {
+                "code": "unsupported-feature",
+                "message": "TGSI is malformed or outside the documented straight-line profile."
+              }
+            }
+          },
+          {
+            "releasedChunks": 48,
+            "heldChunks": 3846,
+            "capacityBefore": {
+              "chunkBytes": 4096,
+              "availableChunks": 48,
+              "availableRequestedBytes": 196608
+            },
+            "capacityAfter": {
+              "chunkBytes": 4096,
+              "availableChunks": 48,
+              "availableRequestedBytes": 196608
+            },
+            "result": {
+              "ok": true,
+              "vertex": {
+                "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+                "metadata": {
+                  "profile": "virgl-webgl2-raw-bits-v7",
+                  "stage": "vertex",
+                  "inputs": [
+                    {
+                      "index": 0,
+                      "name": "in_0",
+                      "type": "vec4",
+                      "semantic": "ATTRIBUTE",
+                      "semanticIndex": 0,
+                      "componentMask": 15
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "index": 0,
+                      "name": "gl_Position",
+                      "type": "vec4",
+                      "semantic": "POSITION",
+                      "semanticIndex": 0,
+                      "componentMask": 15,
+                      "writtenMask": 15
+                    },
+                    {
+                      "index": 1,
+                      "name": "vso_g0",
+                      "type": "vec4",
+                      "semantic": "GENERIC",
+                      "semanticIndex": 0,
+                      "componentMask": 15,
+                      "writtenMask": 15,
+                      "interpolation": "smooth"
+                    }
+                  ],
+                  "attributes": [
+                    {
+                      "index": 0,
+                      "name": "in_0",
+                      "type": "vec4",
+                      "semantic": "ATTRIBUTE",
+                      "semanticIndex": 0,
+                      "componentMask": 15
+                    }
+                  ],
+                  "uniforms": [
+                    {
+                      "name": "vsconst0",
+                      "type": "uvec4[]",
+                      "count": 46,
+                      "encoding": "float32-bits"
+                    }
+                  ],
+                  "samplers": [],
+                  "uniformBlocks": [
+                    {
+                      "name": "VirglBlock",
+                      "byteLength": 656,
+                      "members": [
+                        {
+                          "name": "winsys_adjust_y",
+                          "offset": 640,
+                          "type": "float",
+                          "default": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "constantDomains": [
+                    {
+                      "kind": "constant-bank-finite-f32-v1",
+                      "stage": "vertex",
+                      "slot": 0,
+                      "name": "vsconst0",
+                      "count": 46
+                    }
+                  ]
+                }
+              },
+              "fragment": {
+                "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+                "metadata": {
+                  "profile": "virgl-webgl2-raw-bits-v7",
+                  "stage": "fragment",
+                  "inputs": [
+                    {
+                      "index": 1,
+                      "name": "vso_g0",
+                      "type": "vec4",
+                      "semantic": "GENERIC",
+                      "semanticIndex": 0,
+                      "componentMask": 15,
+                      "interpolation": "smooth"
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "index": 0,
+                      "name": "fsout_c0",
+                      "type": "vec4",
+                      "semantic": "COLOR",
+                      "semanticIndex": 0,
+                      "componentMask": 15,
+                      "writtenMask": 15
+                    }
+                  ],
+                  "attributes": [],
+                  "uniforms": [
+                    {
+                      "name": "fsconst0",
+                      "type": "uvec4[]",
+                      "count": 46,
+                      "encoding": "float32-bits"
+                    }
+                  ],
+                  "samplers": [],
+                  "uniformBlocks": [],
+                  "constantDomains": [
+                    {
+                      "kind": "constant-bank-finite-f32-v1",
+                      "stage": "fragment",
+                      "slot": 0,
+                      "name": "fsconst0",
+                      "count": 46
+                    }
+                  ]
+                }
+              },
+              "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+            }
+          }
+        ],
+        "capacityAfter": {
+          "chunkBytes": 4096,
+          "availableChunks": 3894,
+          "availableRequestedBytes": 15949824
+        },
+        "recoveredResult": {
+          "ok": true,
+          "vertex": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((vsconst0[44].x != 0u ? uintBitsToFloat(vsconst0[0].x) : uintBitsToFloat(vsconst0[45].x)), (vsconst0[44].y != 0u ? uintBitsToFloat(vsconst0[0].y) : uintBitsToFloat(vsconst0[45].y)), (vsconst0[44].z != 0u ? uintBitsToFloat(vsconst0[0].z) : uintBitsToFloat(vsconst0[45].z)), (vsconst0[44].w != 0u ? uintBitsToFloat(vsconst0[0].w) : uintBitsToFloat(vsconst0[45].w)));\n raw_rhs = uvec4((vsconst0[44].x != 0u ? vsconst0[0].x : vsconst0[45].x), (vsconst0[44].y != 0u ? vsconst0[0].y : vsconst0[45].y), (vsconst0[44].z != 0u ? vsconst0[0].z : vsconst0[45].z), (vsconst0[44].w != 0u ? vsconst0[0].w : vsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((in_0.x * float_temp[117].x), (in_0.y * float_temp[117].y), (in_0.z * float_temp[117].z), (in_0.w * float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[117].x * uintBitsToFloat(1048576000u)), (float_temp[117].y * uintBitsToFloat(1048576000u)), (float_temp[117].z * uintBitsToFloat(1048576000u)), (float_temp[117].w * uintBitsToFloat(1048576000u)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-raw-bits-v7",
+              "stage": "vertex",
+              "inputs": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "gl_Position",
+                  "type": "vec4",
+                  "semantic": "POSITION",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                },
+                {
+                  "index": 1,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15,
+                  "interpolation": "smooth"
+                }
+              ],
+              "attributes": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "uniforms": [
+                {
+                  "name": "vsconst0",
+                  "type": "uvec4[]",
+                  "count": 46,
+                  "encoding": "float32-bits"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [
+                {
+                  "name": "VirglBlock",
+                  "byteLength": 656,
+                  "members": [
+                    {
+                      "name": "winsys_adjust_y",
+                      "offset": 640,
+                      "type": "float",
+                      "default": 1
+                    }
+                  ]
+                }
+              ],
+              "constantDomains": [
+                {
+                  "kind": "constant-bank-finite-f32-v1",
+                  "stage": "vertex",
+                  "slot": 0,
+                  "name": "vsconst0",
+                  "count": 46
+                }
+              ]
+            }
+          },
+          "fragment": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((fsconst0[44].x != 0u ? uintBitsToFloat(fsconst0[0].x) : uintBitsToFloat(fsconst0[45].x)), (fsconst0[44].y != 0u ? uintBitsToFloat(fsconst0[0].y) : uintBitsToFloat(fsconst0[45].y)), (fsconst0[44].z != 0u ? uintBitsToFloat(fsconst0[0].z) : uintBitsToFloat(fsconst0[45].z)), (fsconst0[44].w != 0u ? uintBitsToFloat(fsconst0[0].w) : uintBitsToFloat(fsconst0[45].w)));\n raw_rhs = uvec4((fsconst0[44].x != 0u ? fsconst0[0].x : fsconst0[45].x), (fsconst0[44].y != 0u ? fsconst0[0].y : fsconst0[45].y), (fsconst0[44].z != 0u ? fsconst0[0].z : fsconst0[45].z), (fsconst0[44].w != 0u ? fsconst0[0].w : fsconst0[45].w));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n float_temp[117].xyzw = float_rhs.xyzw;\n float_rhs = vec4((vso_g0.x + float_temp[117].x), (vso_g0.y + float_temp[117].y), (vso_g0.z + float_temp[117].z), (vso_g0.w + float_temp[117].w));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-raw-bits-v7",
+              "stage": "fragment",
+              "inputs": [
+                {
+                  "index": 1,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "interpolation": "smooth"
+                }
+              ],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "fsout_c0",
+                  "type": "vec4",
+                  "semantic": "COLOR",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                }
+              ],
+              "attributes": [],
+              "uniforms": [
+                {
+                  "name": "fsconst0",
+                  "type": "uvec4[]",
+                  "count": 46,
+                  "encoding": "float32-bits"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [],
+              "constantDomains": [
+                {
+                  "kind": "constant-bank-finite-f32-v1",
+                  "stage": "fragment",
+                  "slot": 0,
+                  "name": "fsconst0",
+                  "count": 46
+                }
+              ]
+            }
+          },
+          "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+        }
+      }
+    ]
+  },
+  "maxima": {
+    "singleJSBytes": 60377,
+    "pairJSBytes": 104384,
+    "glslBytes": 58201
+  },
+  "memory": {
+    "initialBytes": 16777216,
+    "finalBytes": 16777216,
+    "bufferIdentityStable": true
+  },
+  "records": [
+    {
+      "path": "calls.jsonl",
+      "bytes": 11223784,
+      "sha256": "a62f0513dca03abda919e7645b06a72d42f30680e419e46d3febdfb331dc3e4c"
+    }
+  ]
+}
