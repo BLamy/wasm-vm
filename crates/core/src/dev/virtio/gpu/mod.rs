@@ -4,6 +4,8 @@
 //! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
 //! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
+#[cfg(feature = "virgl-control-proof")]
+pub mod control3d;
 pub mod damage;
 pub mod edid;
 pub mod protocol;
@@ -290,6 +292,9 @@ pub const DEFAULT_NUM_SCANOUTS: u32 = 1;
 pub const MAX_CURSOR_DIMENSION: u32 = 256;
 /// E5-T01a exposes no 3D capsets.
 pub const DEFAULT_NUM_CAPSETS: u32 = 0;
+/// Offered only by the explicit proof constructor, never the default device.
+#[cfg(feature = "virgl-control-proof")]
+pub const VIRTIO_GPU_F_VIRGL: u64 = 1;
 /// Preferred virtio-mmio slot for the browser display. Slot 6 is the first optional slot;
 /// callers may fall back to slot 6 when the preferred slot is already occupied by another
 /// optional device (the machine keeps the established device ordering and reserves the ninth
@@ -311,6 +316,8 @@ pub struct GpuState {
     reset_pending: bool,
     /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
     pub resources: resources::ResourceMap,
+    #[cfg(feature = "virgl-control-proof")]
+    control3d: Option<control3d::Control3dState>,
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
@@ -356,6 +363,8 @@ impl GpuState {
             cursor_kicked: false,
             reset_pending: false,
             resources: resources::ResourceMap::new(),
+            #[cfg(feature = "virgl-control-proof")]
+            control3d: None,
             scanout_resource: None,
             cursor_states: [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize],
             frame_sink: sink,
@@ -535,6 +544,10 @@ impl GpuState {
     }
 
     fn reset(&mut self) {
+        #[cfg(feature = "virgl-control-proof")]
+        if let Some(control) = &mut self.control3d {
+            control.reset();
+        }
         self.events_read = 0;
         // Device reset discards guest-owned queues/resources, not the physical
         // host monitor. Linux resets the device during initial probe, after the
@@ -566,6 +579,20 @@ impl GpuState {
     /// Atomically restore a T26b payload and publish one full repair frame when a scanout is bound.
     pub fn restore_snapshot(&mut self, payload: &[u8]) -> Result<(), GpuSnapshotError> {
         snapshot::restore(self, payload)
+    }
+
+    /// A proof owner cannot be represented by the existing 2D snapshot codec.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn control3d_proof_installed(&self) -> bool {
+        self.control3d.is_some()
+    }
+
+    /// Bounded copied diagnostics, separate from renderer-owned retained storage.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn control3d_snapshot(&self) -> Option<control3d::Control3dSnapshot> {
+        self.control3d
+            .as_ref()
+            .map(control3d::Control3dState::snapshot)
     }
 }
 
@@ -600,6 +627,18 @@ impl VirtioGpu {
             },
             state,
         )
+    }
+
+    /// Test-only negotiated control transport. Merely compiling the feature does
+    /// not change any existing constructor or advertise capsets.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_control3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_sink_state(frame_sink);
+        state.borrow_mut().control3d = Some(control3d::Control3dState::new(control_sink));
+        (device, state)
     }
 
     /// Replace the presentation sink while retaining the device's shared state.
@@ -676,6 +715,10 @@ impl VirtioDevice for VirtioGpu {
     }
 
     fn device_features(&self) -> u64 {
+        #[cfg(feature = "virgl-control-proof")]
+        if self.state.borrow().control3d_proof_installed() {
+            return VIRTIO_GPU_F_EDID | VIRTIO_GPU_F_VIRGL;
+        }
         VIRTIO_GPU_F_EDID
     }
 
@@ -1013,6 +1056,53 @@ fn create_error_response(error: resources::CreateError) -> u32 {
         resources::CreateError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
         resources::CreateError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
         resources::CreateError::OutOfMemory => protocol::RESP_ERR_OUT_OF_MEMORY,
+    }
+}
+
+fn create_2d_resource(state: &mut GpuState, create: protocol::ResourceCreate2d) -> u32 {
+    #[cfg(feature = "virgl-control-proof")]
+    if state
+        .control3d
+        .as_ref()
+        .is_some_and(|control| control.contains(create.resource_id))
+    {
+        return protocol::RESP_ERR_INVALID_RESOURCE_ID;
+    }
+    match state.resources.create(
+        create.resource_id,
+        create.format,
+        create.width,
+        create.height,
+    ) {
+        Ok(_) => protocol::RESP_OK_NODATA,
+        Err(error) => create_error_response(error),
+    }
+}
+
+#[cfg(feature = "virgl-control-proof")]
+fn is_control3d_request(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &GpuState,
+    header: protocol::CtrlHeader,
+) -> bool {
+    match header.ty {
+        protocol::CMD_CTX_CREATE
+        | protocol::CMD_CTX_DESTROY
+        | protocol::CMD_CTX_ATTACH_RESOURCE
+        | protocol::CMD_CTX_DETACH_RESOURCE
+        | protocol::CMD_RESOURCE_CREATE_3D => true,
+        protocol::CMD_RESOURCE_ATTACH_BACKING
+        | protocol::CMD_RESOURCE_DETACH_BACKING
+        | protocol::CMD_RESOURCE_UNREF => {
+            read_readable_at::<4>(chain, bus, 24).is_some_and(|bytes| {
+                state
+                    .control3d
+                    .as_ref()
+                    .is_some_and(|control| control.contains(u32::from_le_bytes(bytes)))
+            })
+        }
+        _ => false,
     }
 }
 
@@ -1460,6 +1550,41 @@ fn service_kicked(
         #[cfg(feature = "gpu-trace")]
         let trace_meta = command_trace_meta(&chain, bus, state, request);
         let written = match request {
+            #[cfg(feature = "virgl-control-proof")]
+            Some(request) if is_control3d_request(&chain, bus, &state.borrow(), request) => {
+                let negotiated = slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL);
+                let result = {
+                    let mut state = state.borrow_mut();
+                    let GpuState {
+                        control3d,
+                        resources,
+                        ..
+                    } = &mut *state;
+                    match control3d {
+                        Some(control) => {
+                            control.execute(&chain, bus, request, negotiated, resources)
+                        }
+                        None => Err(control3d::Control3dError::Unspecified),
+                    }
+                };
+                let response_type = result
+                    .map_or_else(control3d::Control3dError::response_type, |()| {
+                        protocol::RESP_OK_NODATA
+                    });
+                let response = response_header(request, response_type).to_bytes();
+                match if chain.writable_len() < protocol::CTRL_HDR_SIZE as u64 {
+                    Ok(0)
+                } else {
+                    write_prefix(&chain, bus, &response)
+                } {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
             Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
                 let (width, height) = state.borrow().display_size();
                 let response = protocol::DisplayInfoResponse::new_with_mode(
@@ -1510,15 +1635,7 @@ fn service_kicked(
                     match read_request::<{ protocol::RESOURCE_CREATE_2D_SIZE }>(&chain, bus)
                         .and_then(|bytes| protocol::ResourceCreate2d::from_bytes(&bytes))
                     {
-                        Some(create) => match state.borrow_mut().resources.create(
-                            create.resource_id,
-                            create.format,
-                            create.width,
-                            create.height,
-                        ) {
-                            Ok(_) => protocol::RESP_OK_NODATA,
-                            Err(error) => create_error_response(error),
-                        },
+                        Some(create) => create_2d_resource(&mut state.borrow_mut(), create),
                         None => protocol::RESP_ERR_INVALID_PARAMETER,
                     };
                 let response = response_header(request, response_type).to_bytes();

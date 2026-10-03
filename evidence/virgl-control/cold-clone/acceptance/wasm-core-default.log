@@ -1,0 +1,13 @@
+   Compiling typenum v1.20.1
+   Compiling smallvec v1.15.2
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.0
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-control-cold-_v2r_th3/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.48s

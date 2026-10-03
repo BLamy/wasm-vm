@@ -65,6 +65,8 @@ features = [
 ]
 
 [features]
+# Isolated control-plane proof surface; ordinary constructors still advertise no VIRGL.
+virgl-control-proof = ["wasm-vm-core/virgl-control-proof"]
 # Forwards the quarantined E0-T19 CSR stub so the wasm riscv-tests harness can run the
 # p-env binaries: `wasm-pack test --node crates/wasm --features zicsr-stub`. Off by default.
 zicsr-stub = ["wasm-vm-core/zicsr-stub"]

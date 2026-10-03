@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "deploymentUrl": "https://8774cb0b.wasm-vm.pages.dev",
+  "expectedWasmSha256": "75f405e190d96382f52d12906bd32f3ffdaf6ade3262438673c7f8e6d4ac0ed8",
+  "errors": [],
+  "startedAt": "2026-10-03T05:20:05.464Z",
+  "actualWasmSha256": "75f405e190d96382f52d12906bd32f3ffdaf6ade3262438673c7f8e6d4ac0ed8",
+  "passed": 127,
+  "failed": 0,
+  "proofExportAbsent": true,
+  "screenshot": {
+    "path": "live-browser.png",
+    "sha256": "b1e9ce233d2c16853141f7a70d975e39c1056ab9aeffb0cb6d77384bb6e7001c"
+  },
+  "finishedAt": "2026-10-03T05:20:18.739Z",
+  "deployLogSha256": "c177c1ca4b345001263757c3f58f6b97c5879471787e797726491cc73c17b522"
+}

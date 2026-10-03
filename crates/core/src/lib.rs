@@ -1693,6 +1693,35 @@ impl Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
     )> {
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);
+        self.install_virtio_gpu(device, state)
+    }
+
+    /// Explicit proof-only constructor; default assembly remains unaccelerated.
+    #[cfg(feature = "virgl-control-proof")]
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu_control3d_proof(
+        &mut self,
+        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        let (device, state) =
+            dev::virtio::gpu::VirtioGpu::new_with_control3d_proof_state(frame_sink, control_sink);
+        self.install_virtio_gpu(device, state)
+    }
+
+    #[allow(clippy::type_complexity)]
+    fn install_virtio_gpu(
+        &mut self,
+        device: dev::virtio::gpu::VirtioGpu,
+        state: alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
         assert!(
             self.virtio.len() > dev::virtio::gpu::VIRTIO_GPU_SLOT,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_gpu"
@@ -1701,7 +1730,6 @@ impl Machine {
         let slot_index = (4..=dev::virtio::gpu::VIRTIO_GPU_SLOT)
             .rev()
             .find(|&index| self.virtio[index].0.borrow().device_id() == 0)?;
-        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_sink_state(sink);
         assert!(
             self.virtio[slot_index]
                 .0
@@ -1712,6 +1740,15 @@ impl Machine {
         );
         self.gpu = Some((alloc::rc::Rc::clone(&state), None, None, slot_index));
         Some((alloc::rc::Rc::clone(&self.virtio[slot_index].0), state))
+    }
+
+    /// Snapshots cannot describe the installed proof renderer, even when its
+    /// public maps are empty: independent renderer leases may still exist.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn control3d_proof_installed(&self) -> bool {
+        self.gpu
+            .as_ref()
+            .is_some_and(|(state, ..)| state.borrow().control3d_proof_installed())
     }
 
     /// E5-T06d: replace the host presentation callback after assembly. The guest-visible GPU
@@ -2107,6 +2144,12 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        #[cfg(feature = "virgl-control-proof")]
+        if self.control3d_proof_installed() {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "proof_3d_installed",
+            });
+        }
         if self.gpu.is_none() {
             self.cold_boot_desktop_fallback();
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
@@ -2212,6 +2255,14 @@ impl Machine {
     pub fn save_desktop_snapshot(
         &mut self,
     ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
+        #[cfg(feature = "virgl-control-proof")]
+        if self.control3d_proof_installed() {
+            return Err(
+                desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
+                    tag: desktop_snapshot::section::GPU,
+                },
+            );
+        }
         self.quiesce()
             .map_err(|_| desktop_snapshot::DesktopSnapshotSaveError::BlockNotQuiesced)?;
 
@@ -2860,6 +2911,12 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        #[cfg(feature = "virgl-control-proof")]
+        if self.control3d_proof_installed() {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            });
+        }
         self.quiesce()?;
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
         let mut w = SnapshotWriter::new(
@@ -3078,6 +3135,12 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        #[cfg(feature = "virgl-control-proof")]
+        if self.control3d_proof_installed() {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            });
+        }
         use crate::resume::{ComponentSnapshot, SectionReader, section};
         let (hdr, reader) = SectionReader::new(blob)?;
         // Coherence guard BEFORE any mutation: refuse a foreign/stale snapshot up front so a failed

@@ -10,6 +10,13 @@
 //! every entry point takes `&self` + `try_borrow_mut`, so a re-entrant call throws a
 //! catchable `JsError` — never a wasm `unreachable` abort.
 
+#[cfg(all(
+    target_arch = "wasm32",
+    feature = "virgl-control-proof",
+    not(feature = "zicsr-stub")
+))]
+mod virgl_control_proof;
+
 use core::cell::RefCell;
 use core::fmt::Write as _;
 use core::sync::atomic::{AtomicBool, Ordering};

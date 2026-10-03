@@ -25,6 +25,20 @@ pub const CMD_GET_CAPSET_INFO: u32 = 0x0108;
 pub const CMD_GET_CAPSET: u32 = 0x0109;
 /// `VIRTIO_GPU_CMD_GET_EDID`.
 pub const CMD_GET_EDID: u32 = 0x010a;
+/// Virtio 1.2 / Linux v6.1 virtio_gpu.h 3D control opcodes. Production negotiation
+/// remains disabled; only the explicit proof constructor enables their handler.
+pub const CMD_CTX_CREATE: u32 = 0x0200;
+pub const CMD_CTX_DESTROY: u32 = 0x0201;
+pub const CMD_CTX_ATTACH_RESOURCE: u32 = 0x0202;
+pub const CMD_CTX_DETACH_RESOURCE: u32 = 0x0203;
+pub const CMD_RESOURCE_CREATE_3D: u32 = 0x0204;
+pub const CMD_TRANSFER_TO_HOST_3D: u32 = 0x0205;
+pub const CMD_TRANSFER_FROM_HOST_3D: u32 = 0x0206;
+pub const CMD_SUBMIT_3D: u32 = 0x0207;
+pub const CTX_CREATE_SIZE: usize = 96;
+pub const CTX_DESTROY_SIZE: usize = 24;
+pub const CTX_RESOURCE_SIZE: usize = 32;
+pub const RESOURCE_CREATE_3D_SIZE: usize = 72;
 /// `VIRTIO_GPU_CMD_UPDATE_CURSOR`.
 pub const CMD_UPDATE_CURSOR: u32 = 0x0300;
 /// `VIRTIO_GPU_CMD_MOVE_CURSOR`.
