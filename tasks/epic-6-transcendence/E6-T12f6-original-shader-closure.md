@@ -4,7 +4,7 @@ epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
 priority: 525.0269916
 status: pending
-depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f5]
+depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5]
 estimate: S
 risk: high
 capstone: false
