@@ -1873,3 +1873,7 @@ verify-E6-T12e2:
 .PHONY: verify-E6-T12e3
 verify-E6-T12e3:
 	bash tools/verify-virgl-banks.sh
+
+.PHONY: verify-E6-T12e3b
+verify-E6-T12e3b:
+	bash tools/verify-virgl-constants.sh

@@ -120,9 +120,16 @@ validation budgets, not guest-advertised capabilities:
 | Declared shader tokens | 8,192 |
 | Vertex elements / vertex buffers | 16 / 16 |
 | Sampler slots | 32 |
-| Constant buffer slots / words in active slot | 15 / 32 |
+| Constant buffer slots / words in active slot | 15 / 184 |
 | Shader storage buffer / image / atomic buffer slots | 16 / 32 / 16 |
 | Viewport / color attachment slots | 1 / 1 |
+
+Active constant data is restricted to slot zero in VS/FS, in complete vec4s.
+The 184-word (46-vec4) maximum includes finite float bit patterns without changing
+the existing empty reset policy. Decoding a shorter prefix is valid; the renderer
+separately checks draw completeness against the actual linked program. This high
+limit is proved by authored packets: original captures uploaded at most 32 VS
+words and 4 FS words, so they do not demonstrate high-constant execution.
 
 The wire's 16-bit packet length and submission bound cap opaque padding and every
 packet allocation. Array shape/count/range checks precede allocation. Slot checks
