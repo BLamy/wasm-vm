@@ -21,7 +21,8 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_DP3 = 22, RAW_RCP, RAW_RSQ,
                   /* Bit25 is the finite-bank feature, not an opcode. */
                   RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL,
-                  RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP, RAW_FSEQ, RAW_FSNE };
+                  RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP, RAW_FSEQ, RAW_FSNE,
+                  RAW_MAX_PRECISE };
 #define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP))
 #define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
 #define RAW_EQUALITY_OPCODES ((UINT64_C(1) << RAW_FSEQ) | (UINT64_C(1) << RAW_FSNE))
@@ -33,14 +34,17 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_V5_NEGATION (UINT64_C(1) << 21)
 /* Separate from opcode bits: at least one checked numeric read used the bank. */
 #define RAW_FINITE_BANK_USED (UINT64_C(1) << 25)
+/* A retained instruction-local flag, separate from every opcode/domain bit. */
+#define RAW_PRECISE_WORD_USED (UINT64_C(1) << 36)
 #define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
 #define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
 #define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
-_Static_assert(RAW_FSNE < 64, "opcode mask width");
+_Static_assert(RAW_MAX_PRECISE < 36, "opcode/precision feature separation");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
-       RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64 };
+       RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
+       RAW_PRECISE = 128 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };

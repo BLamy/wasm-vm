@@ -9,14 +9,20 @@ export const RADIAL_PROFILE = "virgl-webgl2-raw-bits-v14";
 export const RADIAL_INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v15";
 export const RADIAL_LOOP_PROFILE = "virgl-webgl2-raw-bits-v16";
 export const RADIAL_DOMAIN_KIND = "constant-bank-radial-coefficient-f32-v1";
+export const PRECISE_WORD_KIND = "tgsi-precise-word-local-v1";
 export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
 export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
 export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
-const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE]);
-const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE]);
-const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, ...RADIAL_PROFILES]);
+const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
+const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
+const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
+const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE,
+  ...rawProfiles(21, 22, 23, 25, 26)]);
+const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE,
+  ...RADIAL_PROFILES, ...rawProfiles(18, 20, 22, 23)]);
 const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
-  ...[1, 2, 3, 4, 5, 6, 13].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
+  ...rawProfiles(1, 2, 3, 4, 5, 6, 13, 17, 19, 21), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
 const DOMAIN_KEYS = ["kind", "stage", "slot", "name", "count"];
 class DomainFault extends Error {}
@@ -57,10 +63,22 @@ function failure(code, message) { return Object.freeze({ ok: false, error: Objec
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
     require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), "Unknown shader profile.");
-    const loop = value.profile === LOOP_PROFILE || value.profile === RADIAL_LOOP_PROFILE;
+    const precise = PRECISE_PROFILES.has(value.profile);
+    require(precise === Object.hasOwn(value, "preciseWordContract"), "Shader precision contract disagrees with its profile.");
+    let precision = null;
+    if (precise) {
+      precision = record(value.preciseWordContract, ["kind", "stage", "operations"]);
+      require(precision.kind === PRECISE_WORD_KIND && precision.stage === expectedStage, "Unknown or inconsistent word precision contract.");
+      const operations = array(precision.operations, 4), names = ["FSEQ", "FSNE", "MAX", "MOV"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Word precision operations must be nonempty, sorted, unique and instruction-local.");
+      precision = Object.freeze({ ...precision, operations: Object.freeze(operations) });
+    }
+    const loop = LOOP_PROFILES.has(value.profile);
     const radial = RADIAL_PROFILES.has(value.profile);
     require(radial || !Object.hasOwn(value, "constantRadialDomains"), "Shader profile forbids a radial coefficient domain.");
     require(loop || !Object.hasOwn(value, "constantConstraints"), "Shader profile forbids a constant count constraint.");
@@ -88,7 +106,7 @@ export function parseConstantDomain(metadata, expectedStage) {
     }
     if (!CONDITIONAL_PROFILES.has(value.profile)) {
       require(!Object.hasOwn(value, "constantDomains"), "Unconditional shader profile carries a conditional contract.");
-      return Object.freeze({ ok: true, domain: null, ...(indirect ? { access } : {}) });
+      return Object.freeze({ ok: true, domain: null, ...(indirect ? { access } : {}), ...(precise ? { precision } : {}) });
     }
     require(Object.hasOwn(value, "constantDomains"), "Conditional shader profile requires a constant domain.");
     const domains = array(value.constantDomains, 1), uniforms = array(value.uniforms, 1);
@@ -130,7 +148,7 @@ export function parseConstantDomain(metadata, expectedStage) {
       radialDomain = Object.freeze(radialDomain);
     }
     return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}),
-      ...(loop ? { constraint } : {}), ...(radial ? { radialDomain } : {}) });
+      ...(loop ? { constraint } : {}), ...(radial ? { radialDomain } : {}), ...(precise ? { precision } : {}) });
   } catch (error) {
     if (!(error instanceof DomainFault)) throw error;
     return failure("shader-domain-error", error.message);

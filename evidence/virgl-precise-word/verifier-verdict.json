@@ -1,0 +1,428 @@
+{
+  "schema": "wasm-vm-precise-word-independent-verdict-v1",
+  "task": "E6-T12f4",
+  "date": "2026-10-03",
+  "verdict": "verified",
+  "sourceHead": "09afcaa29bda5206b98fb14e019f41395d669fec",
+  "base": "220c2640d8c75df4decae10a3aa12a7be150897f",
+  "workerSubmission": "8322ee6c6c6fc2148d7b4bc70cc567f09879e87b",
+  "orientation": "Whole task and frozen diff read before evidence; predictions recorded before inspection. Carry HELD only across unchanged code/dependency boundaries and intact digests. Earlier b874 allocation FAILED remains archived; repaired boundary re-proven at09af.",
+  "predictions": [
+    {
+      "id": "SEMANTICS",
+      "prediction": "Pinned parser preserves exactly the first four instruction Precise bits in both stages, without flag propagation; stable doc MAX chooses second source on ties or unordered and comparison mask predicates match ordered FSEQ/unordered FSNE.",
+      "result": "HELD",
+      "observed": "Both stages preserve four true then five false instruction Precise bits. Pinned Mesa strict ordered MAX selects source1 on equal/unordered; FSEQ ordered equality and FSNE unordered inequality match integer lowering. ADD_PRECISE/MUL_PRECISE remain gated.",
+      "citations": [
+        {
+          "path": "worker.tar.gz::semantic/tokens.jsonl",
+          "bytes": 602,
+          "sha256": "d182d2523fc925ecb08526914ad48fc6ed90b1daa2dd77b385ad891898c550f8",
+          "lines": [
+            1,
+            2
+          ]
+        },
+        {
+          "path": "worker.tar.gz::semantic/report.json",
+          "bytes": 4437,
+          "sha256": "6c84898494aecbd58472b878c82a98ee6391c2793f87247afeeb9e2bb94243d5"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "WORDS",
+      "prediction": "At direct GPU witnesses MAX(+0,-0) returns 0x80000000, MAX(-0,+0) returns 0; MAX(NaN,1) returns 0x3f800000 and MAX(1,negative NaN) returns that second NaN word; FSEQ opposite zeros returns 0xffffffff, FSNE(NaN,NaN) returns 0xffffffff; MOV preserves signaling NaN word internally. Full generated word matrix agrees with independent rational literal oracle in both stages.",
+      "result": "HELD",
+      "observed": "830 hardware draws,3320 words and3399680 physical pixels agree. MAX opposite zeros preserve source1 sign and source1 NaNs retain exact payload/signaling words; FSEQ opposite zeros and FSNE two NaNs return all-one; MOV preserves signaling NaN internally. Exceptional words use finite encoded outputs, not arbitrary float raster transport.",
+      "citations": [
+        {
+          "path": "worker.tar.gz::gpu/report.json",
+          "bytes": 290635047,
+          "sha256": "c1635f95ff92cf161653afcfa3088c9d1e5d95c21acb191383de8b8b50b9b003",
+          "lines": [
+            34120,
+            67122,
+            2997852,
+            4408423,
+            5736477
+          ]
+        },
+        {
+          "path": "verifier.tar.gz::trace-points.jsonl",
+          "bytes": 45003,
+          "sha256": "af7176d1044b31f68e8b1ab44fee9a39397f9c7ae4fdd6ab4a47c305518e07ac"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "ALIASES",
+      "prediction": "Independent GPU source aliases and consumed swizzles preserve pre-write operand values and exact selected words, including computed operands and sign-bit MAX negation. Every marked instruction retains its IR flag and emitted marker.",
+      "result": "HELD",
+      "observed": "131136 independent host checks and two independent seeds each with828 draws/3312 words survive across the unchanged precision boundary. Both stages preserve aliased/computed/consumed-swizzle inputs before writes. Novel partial-destination negated MAX aliases/bank authority pass72 draws/288 words/294912 pixels.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::held-independent-word-report.json",
+          "bytes": 4708,
+          "sha256": "eb6d1c82a86980f0ecea7b05fde99265cb27df80b11306247ac6214459a1a3ed"
+        },
+        {
+          "path": "verifier.tar.gz::novel-predictions.json",
+          "bytes": 74727,
+          "sha256": "a8076689cdc1f70eed599e0b6508fdba21b81016a58ff9041e45b3ec8177510f"
+        },
+        {
+          "path": "verifier.tar.gz::novel-hardware-report.json",
+          "bytes": 1224,
+          "sha256": "de55bc572e0e3ec9883ffa4d048b396c4bf3e6f2404999e5a94f7b9697a8e4b8"
+        },
+        {
+          "path": "verifier.tar.gz::gpu-novel/report.json",
+          "bytes": 25109608,
+          "sha256": "3b569d1cf6b3ad4ace91cee64ef1831338a12214b4885239284cbe64a78851a2"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "CONTRACTS",
+      "prediction": "All ten PRECISE profiles in both stages retain their matching finite/indirect/count/radial obligations. Malformed precision records, erased obligations, unsupported arithmetic suffixes and unauthorized raster copies reject. Owned parsed records survive caller mutation.",
+      "result": "HELD",
+      "observed": "Ten precise profiles in both stages retain simultaneous finite/indirect/count/radial obligations. Independent tests accept300 operation subsets, reject314 hostile variants, preserve20 frozen owned records and invoke0 getters. Unauthorized selected NaN/subnormal outputs, undefined lanes, unsupported arithmetic and suffixes reject.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::metadata-attack-report.json",
+          "bytes": 105817,
+          "sha256": "6f84121f39f579f4665a25078fdf5ef68bb8de2face724a1d0fc73d63bab9a64"
+        },
+        {
+          "path": "verifier.tar.gz::final-promoted-js.json",
+          "bytes": 13777,
+          "sha256": "de6c78752cbe55c0743b7e18e9d765e8d159cb010e6fd22092636e0ccbcd0f12"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "REGRESSIONS",
+      "prediction": "All 19 capture bodies and SHA identities stay unchanged with 12/19 acceptance; 4344 predecessor cases and 429 pairs retain full outcomes except exactly inventoried migrations. Previous independent equality, selected and radial GPU leaves pass at frozen source.",
+      "result": "HELD",
+      "observed": "All19 capture hashes/bodies remain unchanged;12 are accepted. Full predecessor outcomes survive except inventoried migrations. Canonical retained equality640 words, selected1216 words/1245184 pixels and radial565248 pixels pass. Cold reproduces all complete original/current/retained result arrays.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::final-review-record-audit.json",
+          "bytes": 22082,
+          "sha256": "a73f1b6fd8fcbe76500f5039afbb1254aa8cbe691cf17a05307fc47af94bf071"
+        },
+        {
+          "path": "verifier.tar.gz::final-review-cold-audit.json",
+          "bytes": 3413,
+          "sha256": "d02de51f23888b7c20742f28fed42d6ddd1bcaa84442c206b08b7ad96230f0b5"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "ALLOCATION",
+      "prediction": "Every real forced nonzero upstream malloc/realloc failure rejects an ordinary or mixed conversion with no partial GLSL, null operand, or sanitizer fault; all 58 single and 56 paired anchors recover after every failure. At fixed 16 MiB Wasm pressure, every pre-success attempt fails with an owned error then returns complete healthy result without lost requested capacity.",
+      "result": "HELD",
+      "observed": "Canonical229 forced allocation failures include20 upstream sites and all58 single/56 paired anchors recover. Independent exact-source attack rejects455 actual malloc/realloc failures and recovers4550 complete results. Ignored128-byte texture constructor rejects at line37. Fixed-heap mixed pair rejects at line24440 then fully recovers at24441. Removing latch yields detected forbidden partial success.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::allocation-attack.jsonl",
+          "bytes": 153978,
+          "sha256": "98154dbae79848fa2b553accabadc224e0466c6ae3d97dec7e1a0cbf6d235fb1",
+          "lines": [
+            37,
+            466
+          ]
+        },
+        {
+          "path": "verifier.tar.gz::allocation-latch-fault-report.json",
+          "bytes": 3250,
+          "sha256": "b603e96117db52c2345e8623e7f47e1bede3e27d33519204b15a282f61e6bd00"
+        },
+        {
+          "path": "worker.tar.gz::wasm/calls.jsonl",
+          "bytes": 18392257,
+          "sha256": "7b2ca5b7078b2d1ffd045e4cf46bf800c2a60ad8cb9c2cc4a160095c3f850b95",
+          "lines": [
+            24440,
+            24441
+          ]
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "BOUNDS",
+      "prediction": "Native IR is 26480 bytes with 112-byte instructions; ordinary/precise output and storage stay within recorded caps. Fixed Wasm memory retains 16 MiB buffer identity and max instruction/text accepted inputs recover. Instrumented native stack values carry only per-function observation claims.",
+      "result": "HELD",
+      "observed": "Native raw IR26480,instruction112,profile7616,flow arena52644 within53248/depth8; maximum single63369,pair109235,GLSL58201. Wasm16777216-byte backing buffer stays identical through24556 calls,64 stress and31 pressure calls. Recorded stack claims are per-function observations only.",
+      "citations": [
+        {
+          "path": "worker.tar.gz::native/native.log",
+          "bytes": 14903378,
+          "sha256": "a9a62f476d9bc867dfb0b7cad483eddf480964f11f9c66f7863165de730163a7",
+          "lines": [
+            1,
+            5197,
+            5198
+          ]
+        },
+        {
+          "path": "verifier.tar.gz::final-review-record-audit.json",
+          "bytes": 22082,
+          "sha256": "a73f1b6fd8fcbe76500f5039afbb1254aa8cbe691cf17a05307fc47af94bf071"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "COVERAGE",
+      "prediction": "Changed C behavior has positive source-bound LLVM counters including PRECISE parse/emission, MAX selection/provenance, all precision-profile dispatch, upstream latch and safe strbuf paths. New runtime JS branches execute via actual domain or physical browser recordings; any remaining unexecuted lines are explicitly classified as type/config/logging or diagnostic-only waivers.",
+      "result": "HELD",
+      "observed": "Source-bound LLVM regions execute all changed C behavior,ten precise profile arms and44/44 owned-wrapper lines. Ignored strbuf malloc,fmt and append recovery execute. Most-specific V8 ranges show positive counts for every added consumer expression. Remaining hunks are individually classified compile/type/data/config or proof-tool diagnostics.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::changed-c-coverage-09afcaa2.json",
+          "bytes": 146823,
+          "sha256": "f339963b5b6f985c2fd0980ae28cab975d5073bcf5da5520840a4c227136a9c2"
+        },
+        {
+          "path": "verifier.tar.gz::changed-v8-coverage.json",
+          "bytes": 6769,
+          "sha256": "18ff8784189db3a23e1f8b7a11758438bebd4d4550d91a5855db92ef2a08576f"
+        },
+        {
+          "path": "verifier.tar.gz::coverage-scope.md",
+          "bytes": 6142,
+          "sha256": "ccecbc4ab8c4594acddc8a77f35b51119e0373a18c3b91e674842a54d9449e80"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "FAULTS",
+      "prediction": "Actual compiled source faults for MAX source order, signed-zero equality and FSNE unordered truth cause physical oracle mismatch; independent reviewer fault/dropped-flag/dropped-obligation regressions catch their intended sabotage. Receipt proof forgeries are rejected with no trusted-copy or correlated-result loophole.",
+      "result": "HELD",
+      "observed": "Actual source faults reversing MAX order, conflating zero encodings and erasing unordered FSNE cause physical oracle mismatches. Promoted tests detect dropped MOV_PRECISE flag and removed allocation latch. Eight transcript-consistent receipt/schema forgeries reject; raw mutated inputs and counters are retained.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::final-review-record-audit.json",
+          "bytes": 22082,
+          "sha256": "a73f1b6fd8fcbe76500f5039afbb1254aa8cbe691cf17a05307fc47af94bf071"
+        },
+        {
+          "path": "verifier.tar.gz::final-promoted-js-sabotage.json",
+          "bytes": 555,
+          "sha256": "8d76ca90e862ba692fd95bf66e353bc8188f38583dd48e9bb47eb31379288d89"
+        },
+        {
+          "path": "verifier.tar.gz::promoted-native-fault-proof/results.jsonl",
+          "bytes": 12046,
+          "sha256": "3e348709809a8a1e54688182f54f210677499d540ff95fc32c8bc34802c0a71e",
+          "lines": [
+            9
+          ]
+        },
+        {
+          "path": "verifier.tar.gz::receipt-attack-report.json",
+          "bytes": 1367,
+          "sha256": "a1e85a6ff7444c8ba0ce4116491c964743cd249ce6c1718ed92fac4898729963"
+        }
+      ],
+      "demand": "None."
+    },
+    {
+      "id": "COLD",
+      "prediction": "Pristine exact-source acceptance exits zero after environment scrub, starts and ends with clean unchanged tracked checkout, binds source head 09afcaa2 and all archived raw records by digest, and reproduces the full native/Wasm/real GPU/retained/fault acceptance.",
+      "result": "HELD",
+      "observed": "Pristine exact09af canonical acceptance exits0 under scrubbed environment with clean tracked state before/after; retained clone rechecked independently. All526 raw acceptance files bind by digest. Entire native and Wasm transcripts are byte-identical to worker. Every worker/cold/refuted archive member and saved artifact binding is lossless; submission changes no implementation/harness source.",
+      "citations": [
+        {
+          "path": "verifier.tar.gz::final-review-cold-audit.json",
+          "bytes": 3413,
+          "sha256": "d02de51f23888b7c20742f28fed42d6ddd1bcaa84442c206b08b7ad96230f0b5"
+        },
+        {
+          "path": "verifier.tar.gz::final-review-package-audit.json",
+          "bytes": 2998,
+          "sha256": "2704271798f667e3e372cf05997afd38b1c484efe49a7f6cb41fe10c57db99a6"
+        },
+        {
+          "path": "evidence/virgl-precise-word/cold-report.json",
+          "bytes": 107833,
+          "sha256": "9b7c780d15f71cdb7ca2d32d8aff2b61c0e8b1c0284995d9a84ef420c3865017"
+        },
+        {
+          "path": "evidence/virgl-precise-word/cold-receipt.json",
+          "bytes": 32577,
+          "sha256": "f579d9fd37c22a01484568861d5294928be097af034ca6ea4316b5d2daba14ca"
+        }
+      ],
+      "demand": "None."
+    }
+  ],
+  "findings": [],
+  "recordedAcceptance": {
+    "native": {
+      "originals": 19,
+      "acceptedOriginals": 12,
+      "cases": 4428,
+      "pairs": 511,
+      "calls": 1404199,
+      "standaloneRecoveries": 707890,
+      "pairRecoveries": 683480,
+      "truncations": 3128,
+      "hostileCases": 324,
+      "mutations": 4096,
+      "allocationFaults": 229,
+      "upstreamAllocationFaults": 20,
+      "maxSingleResultBytes": 63369,
+      "maxPairResultBytes": 109235
+    },
+    "wasm": {
+      "calls": 24556,
+      "originals": 19,
+      "singles": 4428,
+      "pairs": 511,
+      "recoverySingles": 9918,
+      "recoveryPairs": 9576,
+      "stress": 64,
+      "pressure": 31
+    },
+    "memory": {
+      "initialBytes": 16777216,
+      "finalBytes": 16777216,
+      "bufferIdentityStable": true
+    },
+    "physical": {
+      "status": "passed",
+      "draws": 830,
+      "words": 3320,
+      "pixels": 3399680,
+      "mismatches": []
+    }
+  },
+  "independentEvidence": {
+    "archive": {
+      "path": "verifier.tar.gz",
+      "bytes": 29604627,
+      "sha256": "2b967384003681a3e96c7bd4a6064ecd81378e58c34a3a01a3631830eb5f2207"
+    },
+    "files": 220,
+    "uncompressedBytes": 1035068076,
+    "manifest": {
+      "path": "evidence/virgl-precise-word/verifier-manifest.json",
+      "bytes": 40986,
+      "sha256": "143d4af098d56ad5712fea1c11de579423c44e9ec7c12b12aeeec4995b3f69b3"
+    },
+    "predictions": {
+      "path": "verifier.tar.gz::final-review-predictions.json",
+      "bytes": 4036,
+      "sha256": "218d85398651814e748384d8b97865131ece4a3178aef43dceaaa42735633c53"
+    },
+    "audits": [
+      {
+        "path": "verifier.tar.gz::final-review-record-audit.json",
+        "bytes": 22082,
+        "sha256": "a73f1b6fd8fcbe76500f5039afbb1254aa8cbe691cf17a05307fc47af94bf071"
+      },
+      {
+        "path": "verifier.tar.gz::final-review-cold-audit.json",
+        "bytes": 3413,
+        "sha256": "d02de51f23888b7c20742f28fed42d6ddd1bcaa84442c206b08b7ad96230f0b5"
+      },
+      {
+        "path": "verifier.tar.gz::final-review-package-audit.json",
+        "bytes": 2998,
+        "sha256": "2704271798f667e3e372cf05997afd38b1c484efe49a7f6cb41fe10c57db99a6"
+      }
+    ]
+  },
+  "carryForward": "b874-to09af allocation repair leaves raw_bits.c/.h,bridge.h,consumer/index and precise parser/emitter/profile code unchanged; complete healthy results match. Allocation failures do not carry. Existing equality/selected/radial leaves have fresh retained canonical captures.",
+  "coverageWaivers": [
+    "Braces/comments/includes/literal continuations,headers/constants/static assertions are compile/data boundaries.",
+    "Every admitted pinned allocation is positive-sized; bytes==0 null paths and so_info calloc (unreachable under owned zeroed shader-info/key) are outside the owned boundary.",
+    "Pinned translator remains unchanged; new wrapper and bridge failure behavior execute.",
+    "Make/build/cold configuration,static references,fatal version/timeout/recording diagnostics are proof-tool infrastructure or data; successful acceptance and cold exercise the product path.",
+    "Documentation/planning has no runtime claim; guest GPU negotiation remains disabled."
+  ],
+  "promotedTests": [
+    {
+      "path": "renderer/virgl-command/tests/precise-word-regressions.mjs",
+      "bytes": 7545,
+      "sha256": "230230dc14ad5a98844bd9c704452a0768ad7a9589fba29a7966a8a5dc4bcb4f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.c",
+      "bytes": 5169,
+      "sha256": "80bd380980efd72df832a52654ce00078ef3be8239e786e47e9539ca0c7cb891"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.sh",
+      "bytes": 1387,
+      "sha256": "d916319918b821f102ee9cbcce3af07daaa7ec54cbdfedba0b88cf1a5f75c651"
+    }
+  ],
+  "promotionValidation": {
+    "commands": [
+      "node --check renderer/virgl-command/tests/precise-word-regressions.mjs",
+      "node renderer/virgl-command/tests/precise-word-regressions.mjs",
+      "bash -n renderer/virgl-shader/native_tests/precise_upstream_allocations.sh",
+      "bash renderer/virgl-shader/native_tests/precise_upstream_allocations.sh target/evidence/virgl-precise-word-verifier/final-promoted-native"
+    ],
+    "js": {
+      "admissions": 40,
+      "contractAttacks": 174,
+      "ownership": 20,
+      "gettersInvoked": 0,
+      "record": {
+        "path": "verifier.tar.gz::final-promoted-js.json",
+        "bytes": 13777,
+        "sha256": "de6c78752cbe55c0743b7e18e9d765e8d159cb010e6fd22092636e0ccbcd0f12"
+      }
+    },
+    "native": {
+      "faults": 54,
+      "recoveries": 216,
+      "witnesses": 4,
+      "record": {
+        "path": "verifier.tar.gz::final-promoted-native/results.jsonl",
+        "bytes": 23736,
+        "sha256": "499f37da2bb85bd94cd4e7fbde7c97a3cf3d9ce7de56b540e62c6511eb623e0d",
+        "lines": [
+          59
+        ]
+      },
+      "sanitizers": "ASan/UBSan, no diagnostic"
+    },
+    "actualSourceSabotage": [
+      {
+        "path": "verifier.tar.gz::final-promoted-js-sabotage.json",
+        "bytes": 555,
+        "sha256": "8d76ca90e862ba692fd95bf66e353bc8188f38583dd48e9bb47eb31379288d89"
+      },
+      {
+        "path": "verifier.tar.gz::promoted-native-fault-proof/results.jsonl",
+        "bytes": 12046,
+        "sha256": "3e348709809a8a1e54688182f54f210677499d540ff95fc32c8bc34802c0a71e",
+        "lines": [
+          9
+        ]
+      }
+    ],
+    "scope": "Touched promoted tests only after frozen acceptance; no shared build artifacts rebuilt or broad acceptance repeated."
+  },
+  "scope": "Instruction-local FSEQ_PRECISE,FSNE_PRECISE,MAX_PRECISE,MOV_PRECISE in isolated compiler/shared renderer. No arbitrary NaN/subnormal raster,precise backward RSQ/DP3,ADD/MUL arithmetic,guest GPU negotiation,deployment or desktop300MIPS claim.",
+  "coldClone": {
+    "path": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-precise-words-cold-13mvxnkk/wasm-vm",
+    "sourceHead": "09afcaa29bda5206b98fb14e019f41395d669fec",
+    "currentStatus": "clean",
+    "recordedStatusBefore": "",
+    "recordedStatusAfter": ""
+  }
+}

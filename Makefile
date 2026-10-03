@@ -1933,3 +1933,8 @@ verify-E6-T12f2:
 .PHONY: verify-E6-T12f3
 verify-E6-T12f3:
 	bash tools/verify-virgl-radial-domain.sh
+
+# Exact instruction-local PRECISE comparison, selection and copy; isolated compiler.
+.PHONY: verify-E6-T12f4
+verify-E6-T12f4:
+	bash tools/verify-virgl-precise-word.sh

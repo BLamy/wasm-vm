@@ -912,3 +912,57 @@ suffixes are removed and alpha uses a numeric ADD-zero output projection. Both
 changes are inventoried; original bodies remain untouched and gated. This domain
 proves restricted admitted paths, not arbitrary finite radial input, captured
 workload banks, current guest GPU support or a300MIPS desktop.
+
+## Instruction-local PRECISE word operations — E6-T12f4
+
+FSEQ_PRECISE, FSNE_PRECISE, MAX_PRECISE and MOV_PRECISE retain the pinned
+TGSI instruction bit in the owned IR. Their copy, comparison and selection
+operate on unsigned binary32 words. MAX uses the TGSI strict ordered
+`source0 > source1` decision: equal or unordered inputs select source1,
+including its zero sign or NaN payload. FSEQ treats opposite zero signs as
+equal; FSNE returns true on unordered comparisons. Aliased operands are
+snapshotted before destination writes. Typed MAX negation flips the sign bit.
+Numeric and raster authority still follow the selected sources.
+
+The stable Mesa 24.2.8 TGSI source snapshot and an actual pinned virglrenderer
+1.3.0 token-parser recording bind this interpretation. Upstream destination
+qualifiers depend on `has_gpu_shader5`; this ESSL300 subset does not rely on a
+GLSL `precise` qualifier. The retained bit is instruction-local. This boundary
+makes no exact backward RSQ/DP3 arithmetic claim; ADD_PRECISE and MUL_PRECISE
+remain gated by their separate task.
+
+Closed raw profiles17..26 respectively describe ordinary, finite-bank,
+structured, structured-finite, indirect, indirect-finite, counted-table,
+radial, radial-indirect and radial-counted-table combinations. Each requires
+`preciseWordContract` with kind `tgsi-precise-word-local-v1`, the actual stage,
+and a nonempty sorted unique subset of FSEQ/FSNE/MAX/MOV. The existing finite,
+address, signed count and radial contracts remain mandatory in their matching
+families. Older families forbid the new record. The consumer owns and freezes
+it without relaxing the existing draw-time bank checks. Instruction/IR layouts,
+179-instruction, 16 MiB memory and 256 KiB stack caps are unchanged.
+
+`make verify-E6-T12f4` records 84 new literal cases, 82 pairs, all 4,344 historical
+case inputs and 429 historical pairs, with an explicit inventory of 20 newly
+accepted cases, two still-rejected cases whose error becomes parse-error, and
+two newly accepted radial pairs. All other complete results stay unchanged.
+The GPU observer reconstructs arbitrary source words from finite 16-bit
+carriers inside the shader and projects each result bit to ordinary zero/one
+raster values. It therefore checks NaN payloads and subnormals internally
+without promising their preservation at floating raster boundaries. Fifty
+kernels exercise 3,320 words through actual decoded shared-renderer draws.
+Actual compiler-source faults for MAX source order, zero equality and FSNE
+unordered behavior must fail the independent rational word oracle.
+
+Mixed pairs also retain the ordinary translator's allocation boundary. An owned
+wrapper compiles the unchanged pinned source through checked malloc/realloc and
+safe string-buffer initialization. Each upstream conversion resets and checks
+the failure latch before a successful result can be published. Failed operand
+buffers stay empty and cannot expose uninitialized fields or NULL printf sources.
+The recording forces all five actual allocation sites in each of four ordinary
+and mixed witnesses, then recovers every profile. The identical fixed-heap Wasm
+schedule must fail cleanly and later return the complete healthy paired result.
+
+The original capture bodies and hashes remain unchanged; they still compile
+12/19. Remaining destination-mask, owned-bank raster authority and exact
+arithmetic work have separate tasks. This isolated boundary keeps production
+guest GPU negotiation disabled and makes no desktop300MIPS claim.
