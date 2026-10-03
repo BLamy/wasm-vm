@@ -1,0 +1,81 @@
+{
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot=1",
+  "browser": "154.0.8037.93",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "detail": "E5.5-T03bg\nIN PROGRESS\n✕ Close\nRemove browser JIT memory-import JavaScript trampolines\nEpic\nE5.5 — 5.5\nStatus\nin progress\nEstimate\nS\nDepends on\nE5.5-T03bf\nVERIFICATION LOG — EVIDENCE\n### 2026-10-02 — worker — activated\n\nSelected one measured-cost boundary under the user's renewed throughput priority.\nParent is `96f30bdee9d0a98672336b223004054677baee36` (verified E5.5-T03bf).\nThe baseline wasm is preserved in `/tmp/wasm-vm-direct-memory-baseline` and bound\nby `evidence/jit-direct-memory/baseline.json`. The prior MIPS task remains unchanged.\nADVERSARIAL VERIFICATION\nA fresh verifier predicts before inspecting evidence. Attack null/stale host\ncontexts, signature mismatches and trampoline substitution, memory faults after\nretired prefixes, high-bit addresses/values, reservation lifecycle, MMIO and\nSMC invalidation, and imported outer-memory growth. Check every changed helper executes\nin recorded acceptance, including each atomic chain-abort path. Invent one\nbounded novel attack and sabotage one assertion in isolation. Recalculate the\npaired performance samples and verify the baseline is PR #401's exact runtime.\nOnly the verifier sets verified; no merge is authorized.\nsource: tasks/epic-5.5-omarchy/E5.5-T03bg-direct-memory-imports.md",
+  "capability": "Direct JIT memory imports31/31 passing · live in browser",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "https://wasm-vm.pages.dev/app?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "https://wasm-vm.pages.dev/app?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "url": "https://wasm-vm.pages.dev/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "231b5347e9574c661a2a0a51848793051cc6682e313e52b15c96c7dca8c644b6"
+}

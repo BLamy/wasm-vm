@@ -307,8 +307,14 @@ async function runSample(browser, root, server, kase, rep, opts) {
   const rec = { case: kase, label: root.label, rep, url, ok: false, loadavg1m: os.loadavg()[0] };
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: "block" });
   const page = await context.newPage();
-  const consoleErrors = [];
-  page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text().slice(0, 300)); });
+  const consoleErrors = [], consoleErrorDetails = [], httpErrors = [];
+  page.on("console", (m) => {
+    if (m.type() === "error") {
+      consoleErrors.push(m.text().slice(0, 300));
+      consoleErrorDetails.push({ text: m.text().slice(0, 300), url: m.location().url });
+    }
+  });
+  page.on("response", (r) => { if (r.status() >= 400) httpErrors.push({ url: r.url(), status: r.status() }); });
   page.on("pageerror", (e) => consoleErrors.push(`pageerror: ${String(e).slice(0, 300)}`));
   await page.addInitScript(initScript);
   const log0 = server.requests.log.length;
@@ -386,6 +392,8 @@ async function runSample(browser, root, server, kase, rep, opts) {
     } catch { /* page gone */ }
   } finally {
     rec.consoleErrors = consoleErrors.slice(0, 20);
+    rec.consoleErrorDetails = consoleErrorDetails.slice(0, 20);
+    rec.httpErrors = httpErrors.slice(0, 20);
     await context.close().catch(() => {});
   }
   return rec;
