@@ -1,0 +1,1086 @@
+{
+  "schema": "fresh-raw-equality-proof-hunk-coverage-v1",
+  "head": "02d39991b1589deff0c74ec3d62770eb09a407a8",
+  "changedLines": [
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 20,
+      "source": "def verify_maxima(report,by_kind):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 21,
+      "source": " \"\"\"Derive sizes from the transcript-checked results, never the claimed maxima.\"\"\"",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 22,
+      "source": " claimed=report['recordedMaxima'];held.integer_fields(claimed,'native.recordedMaxima')",
+      "count": 73,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 23,
+      "source": " maxima={",
+      "count": 65,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 24,
+      "source": "  'singleResultBytes':max(e['resultBytes'] for e in by_kind['ORIGINAL']+by_kind['CASE']),",
+      "count": 271245,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 25,
+      "source": "  'pairResultBytes':max(e['resultBytes'] for e in by_kind['PAIR']),",
+      "count": 19500,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 26,
+      "source": "  'stageGlslBytes':max(len(stage['glsl'].encode()) for entries in by_kind.values() for e in entries if e['result']['ok']",
+      "count": 486785,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 27,
+      "source": "   for stage in ([e['result']['vertex'],e['result']['fragment']] if 'vertex' in e['result'] else [e['result']]))}",
+      "count": 375570,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 28,
+      "source": " require(exact(claimed,maxima) and maxima['singleResultBytes']<=report['stats']['maxSingleResultBytes']<147456",
+      "count": 185,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 29,
+      "source": "  and maxima['pairResultBytes']<=report['stats']['maxPairResultBytes']<295936 and maxima['stageGlslBytes']<=65536,'exact reconstructed bounded native maxima')",
+      "count": 110,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 30,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 31,
+      "source": "def verify_sources(report,head):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 32,
+      "source": " paths=sorted(p for pattern in ('*.c','*.h') for p in (ROOT/'renderer/virgl-shader').glob(pattern))+[ROOT/p for p in producer.SOURCES]",
+      "count": 1045,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 33,
+      "source": " require(exact(report['sources'],[producer.describe(p) for p in paths]),'complete ordered compiler/harness source inventory')",
+      "count": 880,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 34,
+      "source": " for item in report['sources']:",
+      "count": 765,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 35,
+      "source": "  path=ROOT/item['path'];require(subprocess.check_output(['git','show',f'{head}:{item[\"path\"]}'],cwd=ROOT)==path.read_bytes(),'exact committed compiler/harness source')",
+      "count": 714,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 36,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 37,
+      "source": "def verify_coverage_sources(coverage,exported):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 38,
+      "source": " paths={ROOT/'renderer/virgl-shader/bridge.c',ROOT/'renderer/virgl-shader/raw_bits.c'}",
+      "count": 49,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 39,
+      "source": " files=exported['data'][0]['files']",
+      "count": 49,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 40,
+      "source": " require(len(files)==2 and {Path(e['filename']).resolve() for e in files}==paths,'LLVM filenames bind exactly both implementation sources')",
+      "count": 196,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 41,
+      "source": " expected=[dict(producer.describe(Path(e['filename']).resolve()),summary=e['summary']) for e in files]",
+      "count": 196,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 42,
+      "source": " require(exact(coverage['sources'],expected),'complete exact LLVM source bytes/digests and exported summaries')",
+      "count": 49,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 43,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 86,
+      "source": " verify_maxima(r,by_kind)",
+      "count": 74,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 87,
+      "source": " verify_sources(r,head)",
+      "count": 56,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/native_receipt.py",
+      "line": 89,
+      "source": " verify_coverage_sources(r['coverage'],exported)",
+      "count": 50,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 1,
+      "source": "\"\"\"Reconstruct the consumer ledger without executing the parser under test.\"\"\"",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 2,
+      "source": "import copy",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 3,
+      "source": "from pathlib import Path",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 4,
+      "source": "from shared import ROOT, binding, read, require, same, source",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 5,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 6,
+      "source": "SOURCES = ['renderer/virgl-command/constant-domain.mjs',",
+      "count": 2,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 7,
+      "source": "           'tools/virgl-raw-equality/consumer.mjs']",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 8,
+      "source": "GETTER = \"get(){getters++;throw new Error('invoked');}\"",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 9,
+      "source": "GROUPS = ['raw', 'integer', 'float', 'numeric', 'component', 'dot',",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 10,
+      "source": "          'constant', 'structured', 'indirect', 'loop']",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-independent continuation/closing punctuation of a declarative literal; enclosing assignment at consumer_receipt.py:9 executed in the independent trace."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 11,
+      "source": "MESSAGES = {",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 12,
+      "source": "    'constantDomains': 'Unconditional shader profile carries a conditional contract.',",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 13,
+      "source": "    'constantAccesses': 'Shader profile forbids a constant access contract.',",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 14,
+      "source": "    'constantConstraints': 'Shader profile forbids a constant count constraint.',",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 15,
+      "source": "}",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-independent continuation/closing punctuation of a declarative literal; enclosing assignment at consumer_receipt.py:11 executed in the independent trace."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 16,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 17,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 18,
+      "source": "def expected_checks(native):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 19,
+      "source": "    checks = []",
+      "count": 33,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 20,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 21,
+      "source": "    def observe(name, metadata, stage, result):",
+      "count": 33,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 22,
+      "source": "        checks.append(dict(name=name, metadata=copy.deepcopy(metadata), stage=stage,",
+      "count": 167310,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 23,
+      "source": "                           result=copy.deepcopy(result)))",
+      "count": 83655,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 24,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 25,
+      "source": "    for entry in [e for group in GROUPS for e in native[group + 'Cases']] + native['cases']:",
+      "count": 269808,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 26,
+      "source": "        if not entry['result']['ok']:",
+      "count": 137016,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 27,
+      "source": "            continue",
+      "count": 54549,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 28,
+      "source": "        metadata = entry['result']['metadata']",
+      "count": 82467,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 29,
+      "source": "        profile = metadata['profile']",
+      "count": 82467,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 30,
+      "source": "        result = {'ok': True, 'domain': metadata['constantDomains'][0]",
+      "count": 247401,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 31,
+      "source": "                  if profile.endswith(('-v7', '-v9', '-v11', '-v12')) else None}",
+      "count": 146388,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 32,
+      "source": "        if profile.endswith(('-v10', '-v11', '-v12')):",
+      "count": 82467,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 33,
+      "source": "            result['access'] = metadata['constantAccesses'][0]",
+      "count": 9504,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 34,
+      "source": "        if profile.endswith('-v12'):",
+      "count": 82467,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 35,
+      "source": "            result['constraint'] = metadata['constantConstraints'][0]",
+      "count": 1452,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 36,
+      "source": "        observe(entry['name'], metadata, entry['stage'], result)",
+      "count": 82467,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 37,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 38,
+      "source": "    def failure(message):",
+      "count": 33,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 39,
+      "source": "        return {'ok': False, 'error': {'code': 'shader-domain-error', 'message': message}}",
+      "count": 1056,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 40,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 41,
+      "source": "    singles = [e for e in native['cases'] if e['name'] in ('eq-vertex', 'eq-fragment')]",
+      "count": 4686,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 42,
+      "source": "    require([e['stage'] for e in singles] == ['vertex', 'fragment'], 'both profile13 consumer stages')",
+      "count": 132,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 43,
+      "source": "    for entry in singles:",
+      "count": 99,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 44,
+      "source": "        original, stage = entry['result']['metadata'], entry['stage']",
+      "count": 66,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 45,
+      "source": "        observe('valid13-' + stage, original, stage, {'ok': True, 'domain': None})",
+      "count": 66,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 46,
+      "source": "        for key, message in MESSAGES.items():",
+      "count": 264,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 47,
+      "source": "            for value in ([], None, {}, 0, False):",
+      "count": 1188,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 48,
+      "source": "                metadata = dict(original, **{key: value})",
+      "count": 990,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 49,
+      "source": "                observe('forbidden13-' + key, metadata, stage, failure(message))",
+      "count": 990,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 50,
+      "source": "        observe('unknown14', dict(original, profile='virgl-webgl2-raw-bits-v14'), stage,",
+      "count": 132,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 51,
+      "source": "                failure('Unknown shader profile.'))",
+      "count": 66,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 52,
+      "source": "        observe('owned13', original, stage, {'ok': True, 'domain': None})",
+      "count": 66,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 53,
+      "source": "    return checks",
+      "count": 33,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 54,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 55,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 56,
+      "source": "def verify(directory, head, native):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 57,
+      "source": "    directory = Path(directory)",
+      "count": 39,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 58,
+      "source": "    report = read(directory / 'report.json')",
+      "count": 39,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 59,
+      "source": "    require(type(report) is dict and set(report) ==",
+      "count": 117,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 60,
+      "source": "            {'schema', 'status', 'checks', 'getters', 'sources'}, 'closed consumer report')",
+      "count": 78,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 61,
+      "source": "    require(report['schema'] == 'raw-equality-consumer-v1' and report['status'] == 'passed',",
+      "count": 76,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 62,
+      "source": "            'completed current consumer recording')",
+      "count": 38,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 63,
+      "source": "    require(type(report['getters']) is int and report['getters'] == 0,",
+      "count": 74,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 64,
+      "source": "            'actual typed zero invoked getters')",
+      "count": 37,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 65,
+      "source": "    require(same(report['checks'], expected_checks(native)),",
+      "count": 68,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 66,
+      "source": "            'complete ordered source-bound consumer metadata/results and literal negative cases')",
+      "count": 34,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 67,
+      "source": "    require(same(report['sources'], [binding(ROOT / path) for path in SOURCES]),",
+      "count": 120,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 68,
+      "source": "            'complete exact consumer runtime/harness source inventory')",
+      "count": 24,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 69,
+      "source": "    for item in report['sources']:",
+      "count": 63,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 70,
+      "source": "        source(item, head)",
+      "count": 42,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 71,
+      "source": "    verify_coverage(directory, native, len(report['checks']))",
+      "count": 21,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 72,
+      "source": "    return report",
+      "count": 9,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 73,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 74,
+      "source": "",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 75,
+      "source": "def verify_coverage(directory, native, count):",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 76,
+      "source": "    files = list((Path(directory) / 'v8').glob('*.json'))",
+      "count": 21,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 77,
+      "source": "    require(files, 'actual consumer V8 counters')",
+      "count": 21,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 78,
+      "source": "    scripts = [script for path in files for script in read(path)['result']",
+      "count": 2539,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 79,
+      "source": "               if script['url'] in [(ROOT / name).as_uri() for name in SOURCES]]",
+      "count": 9740,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 80,
+      "source": "    require(len(scripts) == 2 and len({script['url'] for script in scripts}) == 2,",
+      "count": 96,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 81,
+      "source": "            'exact recorded consumer runtime and harness modules')",
+      "count": 21,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 82,
+      "source": "    selected = {}",
+      "count": 18,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 83,
+      "source": "    for script in scripts:",
+      "count": 45,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 84,
+      "source": "        require(set(script) == {'scriptId', 'url', 'functions'}, 'closed consumer V8 script')",
+      "count": 32,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 85,
+      "source": "        name = next(name for name in SOURCES if (ROOT / name).as_uri() == script['url'])",
+      "count": 82,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 86,
+      "source": "        text = (ROOT / name).read_text()",
+      "count": 32,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 87,
+      "source": "        units = len(text.encode('utf-16-le')) // 2",
+      "count": 32,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 88,
+      "source": "        require(type(script['functions']) is list and script['functions'],",
+      "count": 64,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 89,
+      "source": "                'actual consumer function coverage')",
+      "count": 32,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 90,
+      "source": "        for function in script['functions']:",
+      "count": 379,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 91,
+      "source": "            require(set(function) == {'functionName', 'ranges', 'isBlockCoverage'} and",
+      "count": 1760,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 92,
+      "source": "                    type(function['functionName']) is str and",
+      "count": 352,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 93,
+      "source": "                    type(function['isBlockCoverage']) is bool and",
+      "count": 352,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 94,
+      "source": "                    type(function['ranges']) is list and function['ranges'],",
+      "count": 704,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 95,
+      "source": "                    'closed consumer V8 function')",
+      "count": 352,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 96,
+      "source": "            for region in function['ranges']:",
+      "count": 1442,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 97,
+      "source": "                require(set(region) == {'startOffset', 'endOffset', 'count'} and",
+      "count": 3285,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 98,
+      "source": "                        all(type(region[key]) is int and region[key] >= 0",
+      "count": 9847,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 99,
+      "source": "                            for key in ('startOffset', 'endOffset', 'count')) and",
+      "count": 4378,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 100,
+      "source": "                        region['startOffset'] <= region['endOffset'] <= units,",
+      "count": 1091,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 101,
+      "source": "                        'typed bounded consumer V8 counters')",
+      "count": 1095,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 102,
+      "source": "        selected[name] = script",
+      "count": 27,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 103,
+      "source": "    runtime = selected[SOURCES[0]]['functions']",
+      "count": 13,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 104,
+      "source": "    parses = [f['ranges'][0]['count'] for f in runtime",
+      "count": 245,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 105,
+      "source": "              if f['functionName'] == 'parseConstantDomain']",
+      "count": 207,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 106,
+      "source": "    # The ledger includes one of two unknown14 calls; accessor tests and loop",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 107,
+      "source": "    # bank checks are executed but not serialized as JSON metadata checks.",
+      "count": 0,
+      "classification": "waived",
+      "reason": "Non-executable blank/comment/docstring."
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 108,
+      "source": "    loops = sum(e['name'].startswith('loop-equality') for e in native['cases'])",
+      "count": 1846,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 109,
+      "source": "    require(parses == [count + 6 + 2 + loops], 'complete exact consumer parse call schedule')",
+      "count": 13,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 110,
+      "source": "    harness = selected[SOURCES[1]]['functions']",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 111,
+      "source": "    text = (ROOT / SOURCES[1]).read_text()",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 112,
+      "source": "    require(text.count(GETTER) == 1, 'unique actual throwing getter source')",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 113,
+      "source": "    start = len(text[:text.index(GETTER)].encode('utf-16-le')) // 2",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 114,
+      "source": "    end = start + len(GETTER.encode('utf-16-le')) // 2",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 115,
+      "source": "    getters = [f for f in harness if f['functionName'] == 'get']",
+      "count": 110,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 116,
+      "source": "    require(len(getters) == 1 and same(getters[0]['ranges'],",
+      "count": 33,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 117,
+      "source": "            [{'startOffset': start, 'endOffset': end, 'count': 0}]),",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/consumer_receipt.py",
+      "line": 118,
+      "source": "            'actual source-bound getter counter remains exactly zero')",
+      "count": 11,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/receipt.py",
+      "line": 11,
+      "source": "import consumer_receipt",
+      "count": 1,
+      "classification": "executed"
+    },
+    {
+      "file": "tools/virgl-raw-equality/receipt.py",
+      "line": 116,
+      "source": " consumer=consumer_receipt.verify(output/'consumer',head,n)",
+      "count": 39,
+      "classification": "executed"
+    }
+  ],
+  "classificationTotals": {
+    "executed": 128,
+    "waived": 19
+  },
+  "independentAuditSha256": "543725027f839427bd6e095ab07fab195f4cc9a893123618a0d1831503259b87",
+  "promotedGate": {
+    "source": "tools/virgl-raw-equality/receipt_attacks.py",
+    "recording": "evidence/virgl-raw-equality/proof-response/negative-receipts.json",
+    "checks": 38,
+    "allRejected": true,
+    "sourceSha256": "346161d1bf8a77c1afe89ee92f3b564e8f7410613c746170a2c413214dc03020",
+    "errorBranchSabotage": "response-test-sabotage.json:11",
+    "reason": "Every authored mutation has an exact named recorded result; the escaped-forgery assertion also executes under the independent in-memory sabotage."
+  },
+  "recipe": {
+    "source": "tools/verify-virgl-raw-equality.sh",
+    "executedLines": [
+      34,
+      36,
+      37
+    ],
+    "waivedLines": {
+      "35": "Non-executable explanatory comment."
+    },
+    "recordingLines": [
+      119,
+      121,
+      124
+    ],
+    "recording": "evidence/virgl-raw-equality/proof-response/acceptance.log",
+    "reason": "Both positive seals and the negative control digest agree; final receipt independently reconstructs both new record bindings."
+  }
+}

@@ -3,7 +3,7 @@ id: E6-T12f1
 epic: 6
 title: Implement raw FSEQ and FSNE masks without changing precision semantics
 priority: 525.0269911
-status: implemented
+status: verified
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -277,3 +277,56 @@ five source-fault controls retain their prior outcomes. The runtime, novel
 attacks and final pristine-clone findings already HELD by the critic carry
 forward unchanged. No unrelated gates or additional pristine clone ran.
 Status is implemented for incremental independent review of F1–F3.
+
+### 2026-10-03 — fresh incremental verifier — VERDICT: verified
+
+Review `93829bad..7c606fa`, with proof source frozen at
+`02d39991b1589deff0c74ec3d62770eb09a407a8`. Predictions were written before
+opening the new recording in `evidence/virgl-raw-equality/verifier/response-predictions.md`.
+Full precise points, demands and coverage classifications are in
+`verifier/response-verdict.md`; no worker implementation was edited.
+
+- F1 — HELD. Independently reconstructed exact integer maxima
+  63,369/109,235/58,201 bytes. Bool/float/missing/extra/wrong values reject,
+  including valid propagated Wasm bindings. Points:
+  `proof-response/native/native-report.json:331634` (SHA-256 `5d64c34e653153be853bfb906d869dabc608faa81ab18b83dd0a6bc372ed9459`),
+  `verifier/response-audit.json:243`, `tools/virgl-raw-equality/native_receipt.py:20`.
+- F2 — HELD. Complete ordered native sources and exact two-file LLVM source
+  summaries reconstruct. Every omission/duplication/reorder/path/digest/length/
+  summary/type attack rejects. Independently re-exported actual recorded
+  binary/profdata byte-exactly (SHA-256 `e4174ffe453c7ff717a22a5dc00932cbe3407869dd4b870b6696d2b086e2a9b0`).
+  Points: `verifier/response-audit.json:27`, :271 and :292;
+  `tools/virgl-raw-equality/native_receipt.py:31` and :37.
+- F3 — HELD. Independently derived all2,535 name/stage/metadata/result checks,
+  all2,545 parses and the genuine getter range1830–1874/count0. Every ledger,
+  schema/source/getter/V8 mutation rejects; jointly omitting a forbidden13
+  observation and decrementing V8 also rejects. Points:
+  `verifier/response-audit.json:17`, :299, :397 and :502;
+  `tools/virgl-raw-equality/consumer_receipt.py:56` and :109.
+- Sensitivity — HELD. All64 independent forgeries reject; removing each of
+  seven proof predicates in memory makes its targeted forgery escape. The actual
+  promoted gate fails with maxima validation disabled and writes no passing
+  receipt. Restored clean controls pass. Points:
+  `verifier/response-audit.json:510`; `verifier/response-test-sabotage.json:11`
+  (SHA-256 `d8c1b0533db36b4c851ca0ccb165c83cc3f9eed1aa043a480bf9249819091b72`).
+- Closure/coverage — HELD. Final receipt regenerates exactly at SHA-256
+  `3ab15d401d6e870d082905397cfb57c3356567975f518c34467760fcc16a19ca`;
+  all177 sources/75 records and16 actual imported validators bind. Both positive
+  and negative seals agree. Independent trace executes128 changed Python
+  physical lines;19 non-executable lines are explicitly waived. Recorded38
+  negative cases and independent escaped-forgery sabotage exercise the promoted
+  matrix; shell recipe lines34/36/37 are proven by both seals and
+  `proof-response/acceptance.log:119`, :121, :124. See
+  `verifier/response-coverage.json` (SHA-256 `811d91796373dc833da02d9a40de56b674abfe1528b704e20705cb5346d1757e`).
+
+The independent audit artifact for all cited points is
+`verifier/response-audit.json`, SHA-256
+`543725027f839427bd6e095ab07fab195f4cc9a893123618a0d1831503259b87`.
+Its CLI and promoted-gate sabotage CLI passed, as did affected Python/shell
+syntax and diff checks. Preserve all prior HELD runtime, compatibility,
+profile13/authority, recovery, typed runtime coverage, native/Wasm/hardware
+sabotage and novel 3,088-call/2,112-word attacks from `93829bad`. Their code,
+dependency boundary and evidence digests are unchanged. The final a7be954c
+pristine-clone report remains authoritative; no second clone or unrelated
+workspace/historical gate ran. Guest acceleration is still disabled and no
+300 MIPS/all19/precision or grammar expansion is claimed.
