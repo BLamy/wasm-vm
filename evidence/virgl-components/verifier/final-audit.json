@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "frozenHead": "ae3bdf0f1d707f239b00907269f5c783fcf597e5",
+  "claimHead": "2b17963668dcd06f3378366478e6164b2ec2d6d4",
+  "checks": 56023,
+  "nativeCases": 34498,
+  "nativeTranslations": 55921,
+  "nativeRecoveries": 21423,
+  "browserCases": 845,
+  "browserAssertions": 7146,
+  "pixels": 6238,
+  "nativeSha256": "cfac6954f91e80a686513fb24bbf237d5a765ea4e830db1d965b2df62a5db484",
+  "gpuSha256": "5ac79a35607b9a660eef89dedb490fa09e5420b2ad9e676ee053849bccafa807",
+  "bindingAuditSha256": "f39f64bda2d0fc37d6b61e7b5d890e13241c96f6931d79431dcfb1033f1e0aef",
+  "coverageSha256": "47a81f85f752c30c771a358f8bf788552fb3bcc9c56653940530bd331585c4ef",
+  "checkedRecordLabelsSha256": "55633e65830584d3bdf0e1d1cc229408ac2f17def3c374d330c0322995d1a508"
+}

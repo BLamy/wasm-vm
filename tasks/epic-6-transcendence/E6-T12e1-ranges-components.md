@@ -3,7 +3,7 @@ id: E6-T12e1
 epic: 6
 title: Admit bounded declaration ranges and initialized component writes
 priority: 525.0269901
-status: implemented
+status: verified
 depends_on: [E6-T11c]
 estimate: S
 risk: high
@@ -149,3 +149,59 @@ Evidence roots: `evidence/virgl-components/worker/` and
 - `cold-clone/acceptance/receipt.json`: `32d2d19d454a92d977bb52193faaa7e1291a1875559a56991d416273e10be7c5`.
 - `cold-clone/acceptance/hardware/report.json`: `804cd605d72a3549afd5e58c971333cff793807f789f04c6be8b8dda326d9f4b`.
 - `cold-clone/acceptance/hardware/browser.png`: `8c709a10d2419700f4e6118022b3e67b5bddf3d712a352eac6b43964f6dfc8ad`.
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+- C01–C18 — HELD. Immutable predictions preceded worker evidence; exactly 11/19
+  unchanged originals translate, including precisely the four task hashes. All
+  seven PRECISE originals and the flat fragment remain rejected. Independent
+  exhaustive initialized-lane/ordered-swizzle/destination-mask cases, TEX xy,
+  aliasing, range/index/mask/grammar bounds and recovery survived falsification.
+- Native/GPU — HELD. Own 34,498 cases produce 55,921 ASan/UBSan translations and
+  21,423 exact recoveries with no sanitizer diagnostics. Actual hardware browser
+  has exact native/Wasm parity for 845 cases, 7,146 assertions and 6,238 checked
+  pixels; original affine/matrix clip vectors match all four preselected values.
+  Actual native GL counters return zero; browser errors are empty. Screenshot
+  was independently viewed. Prior nine literal draws and three captured phases
+  remain held through the final same-source regression.
+- C17 sensitivity — HELD. Independent consumed-selector source omission fails
+  its intended native assertion. The helper identified that a z-only swizzle
+  error could evade the worker's depth-threshold pixels; own hardware transform
+  feedback closes this gap. Corrupting only the affine z selector changes
+  expected z0.6875 to0.5625 and fails the exact vector assertion. The limitation
+  and resolution are both retained; no runtime change or worker rerun occurred.
+- COVERAGE — HELD. Source-bound Clang counters execute all 24 added executable
+  C lines and every reachable changed condition. Nine non-executable lines and
+  the single redundant parser-invariant outcome at bridge.c:230:58–69 have
+  explicit narrow classifications in `verifier/coverage-review.md`; no accepted
+  semantic behavior is waived.
+- C18 evidence/isolation — HELD. Fresh helper binding audit passes 14,355 checks,
+  main own-result audit 56,023. Worker and cold receipts bind exact frozen head
+  `ae3bdf0f`; cold runs the complete gate clean before/after with scrubbed
+  overrides. Unchanged upstream/Rust/default-web proof carries forward; no
+  additional pristine clone was needed.
+- SUITE: retain independent lane-set generator, targeted branches, original-body
+  GPU vector/pixel tests, two sabotage controls and coverage/binding audits.
+  Compiled binaries/objects/profiles remain under ignored `target/`. Production
+  3D, full workloads and flat/flow/integer/PRECISE support remain unclaimed.
+
+Full prediction points, exact commands, source/dependency classification,
+verifier-harness refinement disclosures and verdict are in
+`evidence/virgl-components/verifier/review.md` and `observations.md`. Commands:
+`python3 evidence/virgl-components/verifier/build-native.py`, `native-attacks.py`,
+`supplemental-native.py`; `node evidence/virgl-components/verifier/run-gpu.mjs`
+with `baseline` and `wrong-z-swizzle`; `python3` on verifier `coverage-audit.py`,
+`binding-audit.py`, `final-audit.py`. Only verification evidence/task/queue changed.
+SHA-256 anchors:
+
+- Predictions: `5fe2743631e39d7ae47169d728df315f41c368f82106f786ebe999e144896692`.
+- Manifest: `29732710d1cf4fad10e7ea8af4aea3eb0d486f12025fb97bf4351832628e43e0`.
+- Review: `a928013cf924db71cd48d077002bd1bcc9014e535aec7e08cbaefba036d8ae5f`.
+- Native: `cfac6954f91e80a686513fb24bbf237d5a765ea4e830db1d965b2df62a5db484`.
+- GPU: `5ac79a35607b9a660eef89dedb490fa09e5420b2ad9e676ee053849bccafa807`.
+- Coverage: `47a81f85f752c30c771a358f8bf788552fb3bcc9c56653940530bd331585c4ef`.
+- Final own audit: `20ab1d1508262e73ef4e75a978b54ee810193e8e94f0e9ed054b237138ddf872`.
+- Binding audit: `f39f64bda2d0fc37d6b61e7b5d890e13241c96f6931d79431dcfb1033f1e0aef`.
+- Final cold receipt: `32d2d19d454a92d977bb52193faaa7e1291a1875559a56991d416273e10be7c5`.
