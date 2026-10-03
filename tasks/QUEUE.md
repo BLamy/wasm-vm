@@ -509,7 +509,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02695` [E6-T12d](epic-6-transcendence/E6-T12d-captured-command-pixel-replay.md) — Replay the original three VirGL draws and readbacks in WebGL2 *(deps: E6-T12c)*
+- [?] `525.02695` [E6-T12d](epic-6-transcendence/E6-T12d-captured-command-pixel-replay.md) — Replay the original three VirGL draws and readbacks in WebGL2 *(deps: E6-T12c)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
