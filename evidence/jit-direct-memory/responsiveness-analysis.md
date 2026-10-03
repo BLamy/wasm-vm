@@ -100,5 +100,5 @@ budgets, with exact commands and unchanged artifact hashes in
 57.86 MIPS with JIT disabled. This is evidence to investigate JIT/tier/handoff
 overhead on mixed work, not proof of one particular cause. The initial
 three-pair [screen](browser-screen/browser.json), including its 3.24% slower shell,
-remains recorded separately. Publication and the final verifier verdict remain
-pending; none of these measurements establishes a broader desktop speedup.
+remains recorded separately. The runtime is published and the independent verifier marked E5.5-T03bg verified
+in `a50516b6`; none of these measurements establishes a broader desktop speedup.

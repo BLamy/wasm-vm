@@ -1,7 +1,7 @@
 # E5.5-T03bg evidence guide
 
-**Final performance acceptance passed; publication and the final verifier verdict
-are pending.** Two final microbenchmark batches and the five-pair real-workload
+**VERDICT: verified**, recorded by the independent critic in `a50516b6`.
+The runtime is published; verified demo metadata is being refreshed. Two final microbenchmark batches and the five-pair real-workload
 matrix are complete. Preliminary screens, submission gate failures and unrun
 targets are retained below. No claim of 300 MIPS on real workloads or improved
 desktop latency is made.
@@ -162,13 +162,13 @@ The gate summary cites the identical historical snapshot failure and the
 parent/current hashes of both the test and its supported-section predicate.
 These partial full-suite counts are distinct from the successful directed
 acceptance and frozen cold-clone proof above.
-**Do not interpret this draft as “all gates pass.”**
+**The scoped verdict does not claim that all broad gates pass.**
 
 The frozen local [demo receipt](demo-frozen/demo-suite.json) records 127/127 ISA
 cases, the direct-memory roadmap capability live at 31/31, and zero unexpected
 errors. The raw console retains an explicitly identified `/favicon.ico` 404.
-[Screenshot](demo-frozen/demo-suite.png). Live publication, deployed artifact
-hash matching and the final verifier verdict are pending.
+[Screenshot](demo-frozen/demo-suite.png). Live publication and deployed artifact hashes are recorded below. The fresh
+verifier marked the task verified in `a50516b6`; final status metadata follows.
 
 ## Reproduction
 
