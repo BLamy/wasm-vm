@@ -73,7 +73,7 @@ The gate passed affected format/clippy checks, seven native control tests,
 80 existing GPU unit tests, four GPU Machine regressions, six existing Wasm GPU
 protocol tests, default/proof Wasm builds and the pinned shader bridge build.
 `worker/native-control.log` records 139 nonportable command cases plus 27 shared
-native/Wasm cases. `worker/native-wasm-parity.json` compares their literal request,
+native/Wasm cases. `worker/native-browser-parity.json` compares their literal request,
 24-byte response, descriptor/avail/used ring bytes, used index, canonical transport
 bytes and SHA-256 digest exactly. Hardware acceptance ran 165 wire commands,
 2,205 assertions and 129 attacks; actual allocations included 16 buffers, six
