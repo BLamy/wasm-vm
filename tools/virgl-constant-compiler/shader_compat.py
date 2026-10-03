@@ -232,8 +232,13 @@ def verify(output, head, native, contract):
                 and [entry['name'] for entry in proof['pairs']] == [entry['name'] for entry in hardware['pairs']]
                 and [entry['sha256'] for entry in proof['corpus']] == list(originals), 'complete ordered retained Wasm inputs')
         require(proof['caseFixture'] == binding(ROOT / fixture_path)
-                and proof['hardwareFixture'] == binding(ROOT / hardware_path)
-                and proof['operationDefinitions'] == hardware['operationDefinitions'], 'exact retained fixture and operation identities')
+                and proof['hardwareFixture'] == binding(ROOT / hardware_path), 'exact retained fixture identities')
+        if label == 'raw':
+            require('operationDefinitions' not in proof and 'operationDefinitions' not in hardware,
+                    'raw predecessor schema has no operation definition table')
+        else:
+            require(proof['operationDefinitions'] == hardware['operationDefinitions'],
+                    'exact retained operation definitions')
         counts = gpu(slug, proof, hardware, cases, pairs, gate)
         require(proof['status'] == 'passed' and proof['sabotage'] is None and proof['omissions'] == []
                 and proof['objects']['live'] == 0 and proof['objects']['created'] == proof['objects']['deleted'],

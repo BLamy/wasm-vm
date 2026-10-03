@@ -24,7 +24,7 @@ def verify(output, head, contract):
             unchanged(name)
     require(contract['production'] == json.loads(base.git('show', f'{HELD_HEAD}:docs/gpu-3d-contract.json'))['production'],
             'production negotiation unchanged')
-    compiler = base.git('ls-tree', '-r', '--name-only', HELD_HEAD, '--', 'renderer/virgl-shader').decode().splitlines()
+    compiler = base.git('ls-tree', '-r', '--name-only', head, '--', 'renderer/virgl-shader').decode().splitlines()
     for path in REGISTRATIONS:
         unchanged_or_registration(path)
     native, fixtures, cases, originals = verify_native(directory, head)
