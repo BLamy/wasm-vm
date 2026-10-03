@@ -3,7 +3,7 @@ id: E6-T12d
 epic: 6
 title: Replay the original three VirGL draws and readbacks in WebGL2
 priority: 525.02695
-status: implemented
+status: verified
 depends_on: [E6-T12c]
 estimate: S
 risk: high
@@ -113,3 +113,29 @@ This proves isolated captured command replay on actual GPU storage. Guest
 virtio transport, production capability advertisement, Mesa activation and FPS
 remain gated by later tasks. Fresh verification must challenge the changed draw
 boundary and carry unchanged state/resource/compiler proofs forward.
+
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+Independent verifier; no implementation edits. Frozen source
+`ab60a54e6b3c8bd1020065b7e78b847e3d91c65f`, diff from `a768b341`.
+Predictions P1–P12 all HELD. Complete evidence points, per-hunk coverage and
+promoted test commands: `evidence/virgl-draw/verifier/review.md`.
+
+- Independent original replay executes all 210 packets and three actual draws,
+  reproduces all three image hashes and applies chronological public teardown.
+- 28,760 assertions cover 18 mutations across all six input families and three
+  seeds, 36 real GPU-index/UV-bound rejection-and-recovery rounds, CPU/GPU index
+  divergence, guarded relocated readback, subcontext restoration, retained index
+  generation reuse, invalid-tail no-draw and quota prefixes. Final budgets zero.
+- Both runtime sabotages and all worker/cold wire corruption controls are caught.
+  Original reference-output poisoning leaves actual hashes unchanged; screenshots
+  were visually inspected and baseline browser errors are empty.
+- Audit passes 852 digest/source/oracle/cold checks. Every changed executable
+  runtime range is covered; no D runtime waiver. Unchanged C proof carries forward
+  with the final same-source C regression. Retained cold clone remains clean at
+  the exact frozen head. No guest transport, capability or FPS claim follows.
+
+Commands: `node evidence/virgl-draw/verifier/run-attacks.mjs`;
+`python3 evidence/virgl-draw/verifier/audit-evidence.py`.
+Independent attacks SHA256 `fe81359740246c8e221da67ff10bbd01160fab4633a5a77746c6996c53aef9e8`;
+audit `9289ad8df75f979f406c869ce20cf44149960e01fb54bad682308e3af05fee20`.
