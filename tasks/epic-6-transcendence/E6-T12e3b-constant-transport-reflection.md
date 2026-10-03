@@ -3,7 +3,7 @@ id: E6-T12e3b
 epic: 6
 title: Bound high constant uploads and active renderer reflection
 priority: 525.02699035
-status: pending
+status: in-progress
 depends_on: [E6-T12e3]
 estimate: S
 risk: high
@@ -30,6 +30,16 @@ that an active shader can read must fail before drawing, never reuse stale
 uniforms or silently invent guest inputs. Any padding or inactive suffix policy
 must be explicit and proven separately from required data.
 
+Use the conservative reflected-prefix policy: keep compiler metadata unchanged,
+record the actual reflected extent, and require/upload min(reflected extent,46)
+vec4s. A wholly inactive array requires/uploads none. A driver retaining46
+entries for a shader reading only CONST7 still requires46 guest vec4s under
+this policy; do not claim exact source liveness. Do not upload or clear retained
+host-only element46. Query real per-stage uniform component limits and preserve
+successful linking as the authoritative packing check. Existing restoration of
+incomplete state may initialize legal missing words for safe state changes, but
+that must not satisfy draw completeness or retain an earlier guest suffix.
+
 ## Deterministic acceptance
 
 `make verify-E6-T12e3b` validates literal raw184-word packets, rejects188 words,
@@ -54,4 +64,19 @@ computed hardware output to fail. Do not use the lowering itself as the oracle.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+E6-T12e3 is independently verified at
+`5af5600c33c69e926c96a3dc82369c31da391565`. Its shader frontend remains unchanged
+for this slice. The selected implementation changes only bounded constant
+transport and shared renderer reflection/restoration/completeness. Empty and
+short uploads replace the stored prefix; a later rejected draw reports earlier
+valid applied commands truthfully. Malformed packet tails remain whole-submission
+rejections before effects. Tests isolate rejected draws after prelinking so
+program creation does not masquerade as a draw rollback failure.
+
+An independent scan of the original hashed command blobs found a maximum32
+uploaded VS words and4 FS words. The large-bank shaders were compiled but not
+executed in those captures. Therefore the184-word boundary requires authored
+literal raw packets and actual renderer output, while original captures remain
+unchanged regression inputs. No high-constant original execution is claimed.

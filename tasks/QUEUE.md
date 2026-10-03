@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12e3b** — Bound high constant uploads and active renderer reflection
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -555,7 +554,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269901` [E6-T12e1](epic-6-transcendence/E6-T12e1-ranges-components.md) — Admit bounded declaration ranges and initialized component writes *(deps: E6-T11c)*
 - [x] `525.0269902` [E6-T12e2](epic-6-transcendence/E6-T12e2-flat-stage-link.md) — Derive flat vertex-fragment interfaces from accepted shader pairs *(deps: E6-T12e1)*
 - [x] `525.0269903` [E6-T12e3](epic-6-transcendence/E6-T12e3-captured-register-banks.md) — Bound declaration banks and static budgets for the remaining corpus *(deps: E6-T12e2)*
-- [ ] `525.02699035` [E6-T12e3b](epic-6-transcendence/E6-T12e3b-constant-transport-reflection.md) — Bound high constant uploads and active renderer reflection *(deps: E6-T12e3)*
+- [~] `525.02699035` [E6-T12e3b](epic-6-transcendence/E6-T12e3b-constant-transport-reflection.md) — Bound high constant uploads and active renderer reflection *(deps: E6-T12e3)*
 - [ ] `525.0269904` [E6-T12e4](epic-6-transcendence/E6-T12e4-typed-integer.md) — Preserve straight-line TGSI 32-bit integer and mask semantics *(deps: E6-T12e3b)*
 - [ ] `525.0269905` [E6-T12e5](epic-6-transcendence/E6-T12e5-component-float.md) — Preserve the remaining componentwise float operations and negation *(deps: E6-T12e4)*
 - [ ] `525.0269906` [E6-T12e6](epic-6-transcendence/E6-T12e6-dot-reciprocal.md) — Preserve captured dot-product and reciprocal float operations *(deps: E6-T12e5)*
