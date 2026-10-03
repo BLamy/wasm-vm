@@ -3,12 +3,21 @@ id: E6-T12e4c
 epic: 6
 title: Preserve ordered float masks and explicit mixed typed use
 priority: 525.02699043
-status: pending
+status: cancelled
 depends_on: [E6-T12e4b]
 estimate: S
 risk: high
 capstone: false
 ---
+
+## Execution slices
+
+Replaced by ordered S/high tasks E6-T12e4c1 and E6-T12e4c2. Exact ordered
+comparison of raw binary32 words and preservation of ordinary computed float
+values are different representation boundaries. The first needs no float
+bitcasts. The second needs checked use-site provenance and bounded float shadows
+so texture and arithmetic chains do not lose their ordinary float values through
+raw storage. The combined scope and production activation gates remain unchanged.
 
 ## Boundary
 
