@@ -14,12 +14,15 @@ struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explic
 enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP,
                   RAW_FSLT, RAW_FSGE, RAW_ADD, RAW_MUL, RAW_MAD, RAW_TEX,
-                  RAW_DIV, RAW_MAX, RAW_FRC, RAW_LRP };
+                  RAW_DIV, RAW_MAX, RAW_FRC, RAW_LRP,
+                  /* Bit21 is the validated v5 negation feature, not an opcode. */
+                  RAW_DP3 = 22, RAW_RCP, RAW_RSQ };
 #define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
 #define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
 #define RAW_V4_OPCODES ((1u << RAW_ADD) | (1u << RAW_MUL) | (1u << RAW_MAD) | (1u << RAW_TEX))
 #define RAW_V5_OPCODES ((1u << RAW_DIV) | (1u << RAW_MAX) | (1u << RAW_FRC) | (1u << RAW_LRP))
-#define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES)
+#define RAW_V6_OPCODES ((1u << RAW_DP3) | (1u << RAW_RCP) | (1u << RAW_RSQ))
+#define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES | RAW_V6_OPCODES)
 /* The remaining mask bit records a validated numeric modifier, not an opcode. */
 #define RAW_V5_NEGATION (1u << 21)
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_MIXED = 1,
@@ -64,6 +67,8 @@ _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction lay
 _Static_assert(sizeof(struct raw_ir) == 26232, "unchanged raw IR allocation");
 _Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
 
+/* Shared post-swizzle lane selection for initialization and float authority. */
+unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask);
 /* Called after operand validation; false means a numeric use lacks authority.
  * A rejection publishes neither facts nor an instruction. */
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);

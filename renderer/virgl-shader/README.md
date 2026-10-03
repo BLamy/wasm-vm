@@ -473,6 +473,67 @@ The new deterministic gate combines sanitizer/Wasm parity, actual GPU results,
 independent numerical oracles, source-bound sabotage, fixed-memory recovery,
 retained regressions and a pristine clone. Production remains disabled.
 
+### Dot products and scalar reciprocals
+
+`virgl-webgl2-raw-bits-v6` adds DP3, RCP and RSQ to the owned ordinary
+numeric path. DP3 consumes xyz after each source swizzle; RCP and RSQ consume
+only post-swizzle x. The source mask is independent of the destination mask:
+a DP3 writing x still needs xyz, while a reciprocal writing w needs only x.
+One shared `raw_consumed_mask` rule drives both parser initialization checks
+and numeric-authority checks. Unconsumed selectors may refer to uninitialized
+TEMP lanes or unauthorized raw values without being read or decoded.
+
+The emitter evaluates one `dot(vec3(...), vec3(...))`, `1.0 / (source)` or
+`inversesqrt(source)` expression, broadcasts its scalar result into `float_rhs`,
+and captures that vec4 before publishing either destination representation.
+Only the validated destination mask is written. Aliases observe all consumed
+pre-write values; other destination lanes retain their old values and authority.
+Typed numeric negation applies after swizzling to each consumed source lane.
+No per-destination reevaluation or fourth dot-product lane is introduced.
+
+This scalar replication contract follows Mesa26.2.2 TGSI documentation at
+RCP103, RSQ112 and DP3176, `tgsi_info_opcodes.h` entries4/5/10, the contemporary
+`tgsi_util.c` source-use cases94–108/133–135, and `tgsi_exec.c`'s scalar helper
+2869–2888 and DP3 implementation3025–3052. It also matches the pinned vendor's
+REPL opcode metadata. The older pinned `vrend_shader.c`:5675 RCP expression and
+`tgsi_util.c`:185 channel-wise classification do not implement nonbroadcast RCP
+replication. The owned path follows the contemporary TGSI contract instead of
+that shortcut. Both captured RCP instructions already write x from xxxx; the
+broader scalar contract is covered by adjacent nonbroadcast y/w/full-mask tests.
+The complete capture inventory is four DP3, two RCP and four RSQ instructions
+in four PRECISE-bearing originals, whose full translations remain unchanged.
+
+Numeric authority remains original IN, computed/sample shadows, or raw values
+proved finite normal or signed zero. There is no additional value-range,
+finite-value or positivity admission guard. Unknown raw numeric CONST/TEMP
+remains unsupported, and no absolute value, clamp, zero-divisor replacement or
+PRECISE semantics is added. Ordinary RSQ results for nonpositive operands are
+undefined; exceptional observations do not assert payloads, computed zero signs
+or retained subnormals. Approximate RCP/RSQ results use the ordinary ESSL highp
+contract. Independent reciprocal witnesses use the specified positive-divisor
+2.5-ULP allowance; reciprocal-square-root witnesses use integer-derived rational
+root brackets and the specified2-ULP allowance. Those oracle ranges constrain
+the numerical proof rather than shader admission. Exact dyadic DP3 controls
+separate xyz consumption from poisoned w and exercise replication. No host
+float division or Math.sqrt defines the expected quantitative result.
+
+Opcode-mask bit21 remains the v5 negation marker; v6 opcodes use bits22–24.
+Instructions remain112 bytes, the IR26,232 bytes, and all input/instruction,
+output, shadow-storage and16MiB Wasm-memory bounds stay fixed. The two formerly
+unsupported, valid DP3 bodies are preserved as new positives with exact
+source-bound migrations in `tests/dot-reciprocal-migrations.json`. Their old
+negative slots use adjacent unsupported absolute syntax. The four old RCP/RSQ
+two-source bodies remain malformed with their complete previous errors.
+
+The successor gate retains every earlier full result except those two explicit
+admissions. A versioned proof adapter runs the unchanged E5 native harness with
+the two bound adjacent-negative inputs and its original12/10 recovery anchors;
+all earlier GPU oracles and the full C2 gate remain unchanged. New v6 evidence
+adds native/Wasm parity, consumed-lane and scalar-broadcast checks, independent
+hardware oracles, sabotage, memory/recovery coverage and a pristine clone.
+Numeric CONST integration and PRECISE support remain later boundaries before
+original closure or actual Mesa acceleration. Production stays disabled.
+
 ### Legacy finite-float profile
 
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
