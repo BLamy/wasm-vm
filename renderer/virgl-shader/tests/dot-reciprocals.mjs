@@ -92,7 +92,6 @@ function pressureProof(module,translate,translatePair,anchors,pairs,fixture,repo
 // No generated GLSL, float bitcast or driver readback participates in this oracle.
 const SCALE=1n<<24n;
 const scale=value=>{const n=value*16777216;require(Number.isSafeInteger(n),'authored exact dyadic input');return BigInt(n);};
-const fraction=(n,d=1n)=>SCALE*n/d;
 export function encodeScaled(n){
   if(n===0n)return 0;
   const sign=n<0n?0x80000000:0;if(n<0n)n=-n;
