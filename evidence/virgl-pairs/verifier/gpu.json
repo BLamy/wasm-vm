@@ -1,0 +1,4476 @@
+{
+  "status": "passed",
+  "variant": "baseline",
+  "head": "09e923695edd77d2b0500e3e81ce7cabfcc60835",
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "18cbfef017a61fce214b8f830932b5035f4500804b1ec4ab0e2b1be28f5afae7"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "3f7f91fadbc06d137bb067d862c079d717d47dc2f61f902677846ce8eb517d7f"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/gpu-attacks.mjs",
+      "sha256": "85428152eeead742a16f6e5e2aac578e9d10550bef69a80761345b6c7ebee3b6"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/browser-cases.json",
+      "sha256": "ad5fb4655ce0fd86c6e35bbc1f91d207c2f972161d0808b2b00a65fcfd569656"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/anchors.json",
+      "sha256": "9ca29d199fe87c7c4e0df836fdac5ea7acaaba60d93eaeb5508499526c63d259"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/predictions.md",
+      "sha256": "4d2edf5971eafebbf73dfe527077673907252a1ffea56af40b51888107150ba1"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/run-gpu.mjs",
+      "sha256": "df280d61de3d886958448ee960d83686c5349c153a2b5b527a26371d789a52eb"
+    }
+  ],
+  "errors": {
+    "console": [],
+    "page": [],
+    "request": []
+  },
+  "browser": {
+    "version": "154.0.8037.93",
+    "system": {
+      "gpu": {
+        "devices": [
+          {
+            "vendorId": 4203,
+            "deviceId": 0,
+            "vendorString": "Google Inc. (Apple)",
+            "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+            "driverVendor": "Apple",
+            "driverVersion": "26.6.2"
+          }
+        ],
+        "auxAttributes": {
+          "amdSwitchable": false,
+          "canSupportThreadedTextureMailbox": false,
+          "directRenderingVersion": "",
+          "displayType": "ANGLE_METAL",
+          "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+          "glImplementationParts": "(gl=egl-angle,angle=metal)",
+          "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "glResetNotificationStrategy": 33362,
+          "glVendor": "Google Inc. (Apple)",
+          "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+          "glWsExtensions": "",
+          "glWsVendor": "",
+          "glWsVersion": "",
+          "inProcessGpu": false,
+          "initializationTime": 0.03019,
+          "isAsan": false,
+          "isClangCoverage": false,
+          "jpegDecodeAcceleratorSupported": false,
+          "maxMsaaSamples": "4",
+          "optimus": false,
+          "passthroughCmdDecoder": true,
+          "pixelShaderVersion": "3.00",
+          "processCrashCount": 0,
+          "sandboxed": false,
+          "skiaBackendType": "GraphiteDawnMetal",
+          "subpixelFontRendering": true,
+          "targetCpuBits": 64,
+          "vertexShaderVersion": "3.00",
+          "visibilityCallbackCallCount": 0
+        },
+        "featureStatus": {
+          "2d_canvas": "enabled",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "enabled",
+          "multiple_raster_threads": "enabled_on",
+          "opengl": "enabled_on",
+          "rasterization": "enabled",
+          "raw_draw": "disabled_off_ok",
+          "skia_graphite": "enabled_on",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "enabled",
+          "video_encode": "enabled",
+          "webgl": "enabled",
+          "webgpu": "enabled",
+          "webnn": "disabled_off"
+        },
+        "driverBugWorkarounds": [
+          "disable_2d_canvas_auto_flush",
+          "enable_webgl_timer_query_extensions",
+          "disabled_extension_GL_KHR_blend_equation_advanced",
+          "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+        ],
+        "videoDecoding": [],
+        "videoEncoding": []
+      },
+      "modelName": "Mac",
+      "modelVersion": "16.6",
+      "commandLine": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-use-zoom-for-dsf=false --no-sandbox --enable-gpu --user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-LYWQMD --remote-debugging-pipe --no-startup-window --flag-switches-begin --flag-switches-end"
+    },
+    "commandLine": {
+      "arguments": [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "--disable-field-trial-config",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-back-forward-cache",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-component-update",
+        "--no-default-browser-check",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+        "--allow-pre-commit-input",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--no-service-autorun",
+        "--export-tagged-pdf",
+        "--disable-search-engine-choice-screen",
+        "--unsafely-disable-devtools-self-xss-warnings",
+        "--enable-use-zoom-for-dsf=false",
+        "--no-sandbox",
+        "--enable-gpu",
+        "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-LYWQMD",
+        "--remote-debugging-pipe",
+        "--no-startup-window",
+        "--flag-switches-begin",
+        "--flag-switches-end"
+      ]
+    }
+  },
+  "result": {
+    "status": "passed",
+    "assertions": 944,
+    "pixels": 84,
+    "records": [
+      {
+        "name": "exact native/Wasm parity",
+        "cases": 224
+      },
+      {
+        "name": "unchanged original fragment direct",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "unchanged original fragment direct",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "unchanged original fragment direct",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "first smooth",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 0,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 1,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1268,
+          "uniformBytes": 656
+        }
+      },
+      {
+        "name": "first smooth",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "first smooth",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "first smooth",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "first flat",
+        "program": 14,
+        "requested": 14,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "first flat",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "first flat",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "first flat",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 0",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 0",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 0",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 0",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "warm 1",
+        "program": 14,
+        "requested": 14,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 1",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 1",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 1",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 2",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 2",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 2",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 2",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "warm 3",
+        "program": 14,
+        "requested": 14,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 3",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 3",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 3",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 4",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 4",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 4",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 4",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "warm 5",
+        "program": 14,
+        "requested": 14,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 5",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 5",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 5",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 6",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 6",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 6",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "warm 6",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "warm 7",
+        "program": 14,
+        "requested": 14,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 1,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "warm 7",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 7",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "warm 7",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled key",
+        "error": {
+          "code": "shader-link-error",
+          "message": "Pair compiler output does not match the selected shader interface.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery key",
+        "program": 18,
+        "requested": 18,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 3,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery key",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery key",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery key",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled fs-source",
+        "error": {
+          "code": "shader-link-error",
+          "message": "Pair compiler output does not match the selected shader interface.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery fs-source",
+        "program": 22,
+        "requested": 22,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 5,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery fs-source",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery fs-source",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery fs-source",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled vs-version",
+        "error": {
+          "code": "shader-link-error",
+          "message": "Pair compiler output does not match the selected shader interface.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery vs-version",
+        "program": 26,
+        "requested": 26,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 7,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery vs-version",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-version",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-version",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled vs-long",
+        "error": {
+          "code": "shader-link-error",
+          "message": "Pair compiler output does not match the selected shader interface.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery vs-long",
+        "program": 30,
+        "requested": 30,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 9,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery vs-long",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-long",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-long",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled vs-output",
+        "error": {
+          "code": "shader-link-error",
+          "message": "Pair compiler output does not match the selected shader interface.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery vs-output",
+        "program": 34,
+        "requested": 34,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 11,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery vs-output",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-output",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery vs-output",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled createShader",
+        "error": {
+          "code": "backend-error",
+          "message": "Vertex variant allocation failed.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery createShader",
+        "program": 38,
+        "requested": 38,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 13,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery createShader",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createShader",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createShader",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled compile",
+        "error": {
+          "code": "shader-error",
+          "message": "WebGL vertex variant compilation failed: ",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery compile",
+        "program": 43,
+        "requested": 43,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 15,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery compile",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery compile",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery compile",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled createProgram",
+        "error": {
+          "code": "backend-error",
+          "message": "Program allocation failed.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery createProgram",
+        "program": 48,
+        "requested": 48,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 17,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery createProgram",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createProgram",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createProgram",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled link",
+        "error": {
+          "code": "shader-link-error",
+          "message": "WebGL program link failed: ",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery link",
+        "program": 54,
+        "requested": 54,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 19,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery link",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery link",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery link",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled createBuffer",
+        "error": {
+          "code": "backend-error",
+          "message": "System uniform buffer allocation failed.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery createBuffer",
+        "program": 60,
+        "requested": 60,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 21,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery createBuffer",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createBuffer",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery createBuffer",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "controlled reflection",
+        "error": {
+          "code": "shader-reflection-error",
+          "message": "Unsupported fragment output.",
+          "byteOffset": 0,
+          "opcode": 31
+        }
+      },
+      {
+        "name": "recovery reflection",
+        "program": 67,
+        "requested": 67,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 23,
+        "budgets": {
+          "contexts": 1,
+          "subContexts": 1,
+          "objects": 5,
+          "programs": 2,
+          "shaders": 3,
+          "samplers": 0,
+          "leases": 3,
+          "shaderBytes": 1729,
+          "uniformBytes": 1312
+        }
+      },
+      {
+        "name": "recovery reflection",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery reflection",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "recovery reflection",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "second context",
+        "program": 75,
+        "requested": 75,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 24,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 2,
+          "objects": 10,
+          "programs": 3,
+          "shaders": 6,
+          "samplers": 0,
+          "leases": 6,
+          "shaderBytes": 3458,
+          "uniformBytes": 1968
+        }
+      },
+      {
+        "name": "second context",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "second context",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "second context",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "subcontext7",
+        "program": 83,
+        "requested": 83,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 25,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 3,
+          "objects": 15,
+          "programs": 4,
+          "shaders": 9,
+          "samplers": 0,
+          "leases": 9,
+          "shaderBytes": 5187,
+          "uniformBytes": 2624
+        }
+      },
+      {
+        "name": "subcontext7",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "subcontext7",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "subcontext7",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "default restored",
+        "program": 75,
+        "requested": 75,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 25,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 2,
+          "objects": 10,
+          "programs": 3,
+          "shaders": 6,
+          "samplers": 0,
+          "leases": 6,
+          "shaderBytes": 3458,
+          "uniformBytes": 1968
+        }
+      },
+      {
+        "name": "default restored",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "default restored",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "default restored",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "reused context2",
+        "program": 91,
+        "requested": 91,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 26,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 2,
+          "objects": 10,
+          "programs": 3,
+          "shaders": 6,
+          "samplers": 0,
+          "leases": 6,
+          "shaderBytes": 3458,
+          "uniformBytes": 1968
+        }
+      },
+      {
+        "name": "reused context2",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "reused context2",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "reused context2",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "context1 survives",
+        "program": 11,
+        "requested": 11,
+        "imageSha256": "2fc0d54fb55864a0703c40c194bcc3d76ae1058a9f17f29e02a7c43b6dfbdaf4",
+        "pairCalls": 26,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 2,
+          "objects": 10,
+          "programs": 3,
+          "shaders": 6,
+          "samplers": 0,
+          "leases": 6,
+          "shaderBytes": 3458,
+          "uniformBytes": 1968
+        }
+      },
+      {
+        "name": "context1 survives",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          128,
+          64,
+          64,
+          255
+        ],
+        "expected": [
+          128,
+          64,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "context1 survives",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          64,
+          128,
+          64,
+          255
+        ],
+        "expected": [
+          64,
+          128,
+          64,
+          255
+        ]
+      },
+      {
+        "name": "context1 survives",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          64,
+          64,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          64,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "unused varying remains smooth",
+        "program": 97,
+        "requested": 97,
+        "imageSha256": "24dfd30b0ea996b11a511bdf5ba657f70661acfe3733887a511820461be91622",
+        "pairCalls": 27,
+        "budgets": {
+          "contexts": 2,
+          "subContexts": 2,
+          "objects": 11,
+          "programs": 5,
+          "shaders": 7,
+          "samplers": 0,
+          "leases": 6,
+          "shaderBytes": 4651,
+          "uniformBytes": 3280
+        }
+      },
+      {
+        "name": "unused varying remains smooth",
+        "point": [
+          3,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "unused varying remains smooth",
+        "point": [
+          6,
+          3
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "unused varying remains smooth",
+        "point": [
+          3,
+          6
+        ],
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      }
+    ],
+    "events": [
+      {
+        "label": "",
+        "call": "createVertexArray",
+        "id": 1
+      },
+      {
+        "label": "",
+        "call": "createFramebuffer",
+        "id": 2
+      },
+      {
+        "label": "",
+        "call": "createBuffer",
+        "id": 3
+      },
+      {
+        "label": "",
+        "call": "createBuffer",
+        "id": 4
+      },
+      {
+        "label": "",
+        "call": "createTexture",
+        "id": 5
+      },
+      {
+        "label": "",
+        "call": "createVertexArray",
+        "id": 6
+      },
+      {
+        "label": "",
+        "call": "createFramebuffer",
+        "id": 7
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 8
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 9
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 10
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "first smooth bind",
+        "call": "createProgram",
+        "id": 11
+      },
+      {
+        "label": "first smooth bind",
+        "call": "linkProgram",
+        "id": 11
+      },
+      {
+        "label": "first smooth bind",
+        "call": "createBuffer",
+        "id": 12
+      },
+      {
+        "label": "first smooth bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "first smooth clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "first smooth draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "first smooth draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "first flat bind",
+        "call": "createShader",
+        "id": 13
+      },
+      {
+        "label": "first flat bind",
+        "call": "createProgram",
+        "id": 14
+      },
+      {
+        "label": "first flat bind",
+        "call": "linkProgram",
+        "id": 14
+      },
+      {
+        "label": "first flat bind",
+        "call": "createBuffer",
+        "id": 15
+      },
+      {
+        "label": "first flat bind",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "first flat clear",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "first flat draw",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "first flat draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 14
+      },
+      {
+        "label": "warm 0 bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 0 clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 0 draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 0 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "warm 1 bind",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 1 clear",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 1 draw",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 1 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 14
+      },
+      {
+        "label": "warm 2 bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 2 clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 2 draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 2 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "warm 3 bind",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 3 clear",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 3 draw",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 3 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 14
+      },
+      {
+        "label": "warm 4 bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 4 clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 4 draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 4 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "warm 5 bind",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 5 clear",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 5 draw",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 5 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 14
+      },
+      {
+        "label": "warm 6 bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 6 clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 6 draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "warm 6 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "warm 7 bind",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 7 clear",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 7 draw",
+        "call": "useProgram",
+        "id": 14
+      },
+      {
+        "label": "warm 7 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 14
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 14
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 13
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 15
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 9
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 16
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery key bind",
+        "call": "createShader",
+        "id": 17
+      },
+      {
+        "label": "recovery key bind",
+        "call": "createProgram",
+        "id": 18
+      },
+      {
+        "label": "recovery key bind",
+        "call": "linkProgram",
+        "id": 18
+      },
+      {
+        "label": "recovery key bind",
+        "call": "createBuffer",
+        "id": 19
+      },
+      {
+        "label": "recovery key bind",
+        "call": "useProgram",
+        "id": 18
+      },
+      {
+        "label": "recovery key clear",
+        "call": "useProgram",
+        "id": 18
+      },
+      {
+        "label": "recovery key draw",
+        "call": "useProgram",
+        "id": 18
+      },
+      {
+        "label": "recovery key draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 18
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 18
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 17
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 19
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 16
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 20
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery fs-source bind",
+        "call": "createShader",
+        "id": 21
+      },
+      {
+        "label": "recovery fs-source bind",
+        "call": "createProgram",
+        "id": 22
+      },
+      {
+        "label": "recovery fs-source bind",
+        "call": "linkProgram",
+        "id": 22
+      },
+      {
+        "label": "recovery fs-source bind",
+        "call": "createBuffer",
+        "id": 23
+      },
+      {
+        "label": "recovery fs-source bind",
+        "call": "useProgram",
+        "id": 22
+      },
+      {
+        "label": "recovery fs-source clear",
+        "call": "useProgram",
+        "id": 22
+      },
+      {
+        "label": "recovery fs-source draw",
+        "call": "useProgram",
+        "id": 22
+      },
+      {
+        "label": "recovery fs-source draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 22
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 22
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 21
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 23
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 20
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 24
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery vs-version bind",
+        "call": "createShader",
+        "id": 25
+      },
+      {
+        "label": "recovery vs-version bind",
+        "call": "createProgram",
+        "id": 26
+      },
+      {
+        "label": "recovery vs-version bind",
+        "call": "linkProgram",
+        "id": 26
+      },
+      {
+        "label": "recovery vs-version bind",
+        "call": "createBuffer",
+        "id": 27
+      },
+      {
+        "label": "recovery vs-version bind",
+        "call": "useProgram",
+        "id": 26
+      },
+      {
+        "label": "recovery vs-version clear",
+        "call": "useProgram",
+        "id": 26
+      },
+      {
+        "label": "recovery vs-version draw",
+        "call": "useProgram",
+        "id": 26
+      },
+      {
+        "label": "recovery vs-version draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 26
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 26
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 25
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 27
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 24
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 28
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery vs-long bind",
+        "call": "createShader",
+        "id": 29
+      },
+      {
+        "label": "recovery vs-long bind",
+        "call": "createProgram",
+        "id": 30
+      },
+      {
+        "label": "recovery vs-long bind",
+        "call": "linkProgram",
+        "id": 30
+      },
+      {
+        "label": "recovery vs-long bind",
+        "call": "createBuffer",
+        "id": 31
+      },
+      {
+        "label": "recovery vs-long bind",
+        "call": "useProgram",
+        "id": 30
+      },
+      {
+        "label": "recovery vs-long clear",
+        "call": "useProgram",
+        "id": 30
+      },
+      {
+        "label": "recovery vs-long draw",
+        "call": "useProgram",
+        "id": 30
+      },
+      {
+        "label": "recovery vs-long draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 30
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 30
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 29
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 31
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 28
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 32
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery vs-output bind",
+        "call": "createShader",
+        "id": 33
+      },
+      {
+        "label": "recovery vs-output bind",
+        "call": "createProgram",
+        "id": 34
+      },
+      {
+        "label": "recovery vs-output bind",
+        "call": "linkProgram",
+        "id": 34
+      },
+      {
+        "label": "recovery vs-output bind",
+        "call": "createBuffer",
+        "id": 35
+      },
+      {
+        "label": "recovery vs-output bind",
+        "call": "useProgram",
+        "id": 34
+      },
+      {
+        "label": "recovery vs-output clear",
+        "call": "useProgram",
+        "id": 34
+      },
+      {
+        "label": "recovery vs-output draw",
+        "call": "useProgram",
+        "id": 34
+      },
+      {
+        "label": "recovery vs-output draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 34
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 34
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 33
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 35
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 32
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 36
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "recovery createShader bind",
+        "call": "createShader",
+        "id": 37
+      },
+      {
+        "label": "recovery createShader bind",
+        "call": "createProgram",
+        "id": 38
+      },
+      {
+        "label": "recovery createShader bind",
+        "call": "linkProgram",
+        "id": 38
+      },
+      {
+        "label": "recovery createShader bind",
+        "call": "createBuffer",
+        "id": 39
+      },
+      {
+        "label": "recovery createShader bind",
+        "call": "useProgram",
+        "id": 38
+      },
+      {
+        "label": "recovery createShader clear",
+        "call": "useProgram",
+        "id": 38
+      },
+      {
+        "label": "recovery createShader draw",
+        "call": "useProgram",
+        "id": 38
+      },
+      {
+        "label": "recovery createShader draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 38
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 38
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 37
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 39
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 36
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 40
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fault compile",
+        "call": "createShader",
+        "id": 41
+      },
+      {
+        "label": "fault compile",
+        "call": "deleteShader",
+        "id": 41
+      },
+      {
+        "label": "recovery compile bind",
+        "call": "createShader",
+        "id": 42
+      },
+      {
+        "label": "recovery compile bind",
+        "call": "createProgram",
+        "id": 43
+      },
+      {
+        "label": "recovery compile bind",
+        "call": "linkProgram",
+        "id": 43
+      },
+      {
+        "label": "recovery compile bind",
+        "call": "createBuffer",
+        "id": 44
+      },
+      {
+        "label": "recovery compile bind",
+        "call": "useProgram",
+        "id": 43
+      },
+      {
+        "label": "recovery compile clear",
+        "call": "useProgram",
+        "id": 43
+      },
+      {
+        "label": "recovery compile draw",
+        "call": "useProgram",
+        "id": 43
+      },
+      {
+        "label": "recovery compile draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 43
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 43
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 42
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 44
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 40
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 45
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fault createProgram",
+        "call": "createShader",
+        "id": 46
+      },
+      {
+        "label": "fault createProgram",
+        "call": "deleteShader",
+        "id": 46
+      },
+      {
+        "label": "recovery createProgram bind",
+        "call": "createShader",
+        "id": 47
+      },
+      {
+        "label": "recovery createProgram bind",
+        "call": "createProgram",
+        "id": 48
+      },
+      {
+        "label": "recovery createProgram bind",
+        "call": "linkProgram",
+        "id": 48
+      },
+      {
+        "label": "recovery createProgram bind",
+        "call": "createBuffer",
+        "id": 49
+      },
+      {
+        "label": "recovery createProgram bind",
+        "call": "useProgram",
+        "id": 48
+      },
+      {
+        "label": "recovery createProgram clear",
+        "call": "useProgram",
+        "id": 48
+      },
+      {
+        "label": "recovery createProgram draw",
+        "call": "useProgram",
+        "id": 48
+      },
+      {
+        "label": "recovery createProgram draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 48
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 48
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 47
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 49
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 45
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 50
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fault link",
+        "call": "createShader",
+        "id": 51
+      },
+      {
+        "label": "fault link",
+        "call": "createProgram",
+        "id": 52
+      },
+      {
+        "label": "fault link",
+        "call": "linkProgram",
+        "id": 52
+      },
+      {
+        "label": "fault link",
+        "call": "deleteProgram",
+        "id": 52
+      },
+      {
+        "label": "fault link",
+        "call": "deleteShader",
+        "id": 51
+      },
+      {
+        "label": "recovery link bind",
+        "call": "createShader",
+        "id": 53
+      },
+      {
+        "label": "recovery link bind",
+        "call": "createProgram",
+        "id": 54
+      },
+      {
+        "label": "recovery link bind",
+        "call": "linkProgram",
+        "id": 54
+      },
+      {
+        "label": "recovery link bind",
+        "call": "createBuffer",
+        "id": 55
+      },
+      {
+        "label": "recovery link bind",
+        "call": "useProgram",
+        "id": 54
+      },
+      {
+        "label": "recovery link clear",
+        "call": "useProgram",
+        "id": 54
+      },
+      {
+        "label": "recovery link draw",
+        "call": "useProgram",
+        "id": 54
+      },
+      {
+        "label": "recovery link draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 54
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 54
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 53
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 55
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 50
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 56
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fault createBuffer",
+        "call": "createShader",
+        "id": 57
+      },
+      {
+        "label": "fault createBuffer",
+        "call": "createProgram",
+        "id": 58
+      },
+      {
+        "label": "fault createBuffer",
+        "call": "linkProgram",
+        "id": 58
+      },
+      {
+        "label": "fault createBuffer",
+        "call": "deleteProgram",
+        "id": 58
+      },
+      {
+        "label": "fault createBuffer",
+        "call": "deleteShader",
+        "id": 57
+      },
+      {
+        "label": "recovery createBuffer bind",
+        "call": "createShader",
+        "id": 59
+      },
+      {
+        "label": "recovery createBuffer bind",
+        "call": "createProgram",
+        "id": 60
+      },
+      {
+        "label": "recovery createBuffer bind",
+        "call": "linkProgram",
+        "id": 60
+      },
+      {
+        "label": "recovery createBuffer bind",
+        "call": "createBuffer",
+        "id": 61
+      },
+      {
+        "label": "recovery createBuffer bind",
+        "call": "useProgram",
+        "id": 60
+      },
+      {
+        "label": "recovery createBuffer clear",
+        "call": "useProgram",
+        "id": 60
+      },
+      {
+        "label": "recovery createBuffer draw",
+        "call": "useProgram",
+        "id": 60
+      },
+      {
+        "label": "recovery createBuffer draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 60
+      },
+      {
+        "label": "fault baseline smooth",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteProgram",
+        "id": 60
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 59
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteBuffer",
+        "id": 61
+      },
+      {
+        "label": "destroy old flat",
+        "call": "deleteShader",
+        "id": 56
+      },
+      {
+        "label": "destroy old flat",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "createShader",
+        "id": 62
+      },
+      {
+        "label": "fresh flat selector",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "fault reflection",
+        "call": "createShader",
+        "id": 63
+      },
+      {
+        "label": "fault reflection",
+        "call": "createProgram",
+        "id": 64
+      },
+      {
+        "label": "fault reflection",
+        "call": "linkProgram",
+        "id": 64
+      },
+      {
+        "label": "fault reflection",
+        "call": "createBuffer",
+        "id": 65
+      },
+      {
+        "label": "fault reflection",
+        "call": "deleteProgram",
+        "id": 64
+      },
+      {
+        "label": "fault reflection",
+        "call": "deleteShader",
+        "id": 63
+      },
+      {
+        "label": "fault reflection",
+        "call": "deleteBuffer",
+        "id": 65
+      },
+      {
+        "label": "recovery reflection bind",
+        "call": "createShader",
+        "id": 66
+      },
+      {
+        "label": "recovery reflection bind",
+        "call": "createProgram",
+        "id": 67
+      },
+      {
+        "label": "recovery reflection bind",
+        "call": "linkProgram",
+        "id": 67
+      },
+      {
+        "label": "recovery reflection bind",
+        "call": "createBuffer",
+        "id": 68
+      },
+      {
+        "label": "recovery reflection bind",
+        "call": "useProgram",
+        "id": 67
+      },
+      {
+        "label": "recovery reflection clear",
+        "call": "useProgram",
+        "id": 67
+      },
+      {
+        "label": "recovery reflection draw",
+        "call": "useProgram",
+        "id": 67
+      },
+      {
+        "label": "recovery reflection draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 67
+      },
+      {
+        "label": "recovery reflection draw",
+        "call": "createVertexArray",
+        "id": 69
+      },
+      {
+        "label": "recovery reflection draw",
+        "call": "createFramebuffer",
+        "id": 70
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 71
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 72
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 73
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "second context bind",
+        "call": "createShader",
+        "id": 74
+      },
+      {
+        "label": "second context bind",
+        "call": "createProgram",
+        "id": 75
+      },
+      {
+        "label": "second context bind",
+        "call": "linkProgram",
+        "id": 75
+      },
+      {
+        "label": "second context bind",
+        "call": "createBuffer",
+        "id": 76
+      },
+      {
+        "label": "second context bind",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "second context clear",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "second context draw",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "second context draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 75
+      },
+      {
+        "label": "new subcontext",
+        "call": "createVertexArray",
+        "id": 77
+      },
+      {
+        "label": "new subcontext",
+        "call": "createFramebuffer",
+        "id": 78
+      },
+      {
+        "label": "new subcontext",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 79
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 80
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 81
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "subcontext7 bind",
+        "call": "createShader",
+        "id": 82
+      },
+      {
+        "label": "subcontext7 bind",
+        "call": "createProgram",
+        "id": 83
+      },
+      {
+        "label": "subcontext7 bind",
+        "call": "linkProgram",
+        "id": 83
+      },
+      {
+        "label": "subcontext7 bind",
+        "call": "createBuffer",
+        "id": 84
+      },
+      {
+        "label": "subcontext7 bind",
+        "call": "useProgram",
+        "id": 83
+      },
+      {
+        "label": "subcontext7 clear",
+        "call": "useProgram",
+        "id": 83
+      },
+      {
+        "label": "subcontext7 draw",
+        "call": "useProgram",
+        "id": 83
+      },
+      {
+        "label": "subcontext7 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 83
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteProgram",
+        "id": 83
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteShader",
+        "id": 82
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteBuffer",
+        "id": 84
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteShader",
+        "id": 79
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteShader",
+        "id": 80
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteShader",
+        "id": 81
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteVertexArray",
+        "id": 77
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "deleteFramebuffer",
+        "id": 78
+      },
+      {
+        "label": "destroy subcontext",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "default restored bind",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "default restored clear",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "default restored draw",
+        "call": "useProgram",
+        "id": 75
+      },
+      {
+        "label": "default restored draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 75
+      },
+      {
+        "label": "default restored draw",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteProgram",
+        "id": 75
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteShader",
+        "id": 74
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteBuffer",
+        "id": 76
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteShader",
+        "id": 71
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteShader",
+        "id": 72
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteShader",
+        "id": 73
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteVertexArray",
+        "id": 69
+      },
+      {
+        "label": "default restored draw",
+        "call": "deleteFramebuffer",
+        "id": 70
+      },
+      {
+        "label": "default restored draw",
+        "call": "createVertexArray",
+        "id": 85
+      },
+      {
+        "label": "default restored draw",
+        "call": "createFramebuffer",
+        "id": 86
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 87
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 88
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "createShader",
+        "id": 89
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "setup",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "reused context2 bind",
+        "call": "createShader",
+        "id": 90
+      },
+      {
+        "label": "reused context2 bind",
+        "call": "createProgram",
+        "id": 91
+      },
+      {
+        "label": "reused context2 bind",
+        "call": "linkProgram",
+        "id": 91
+      },
+      {
+        "label": "reused context2 bind",
+        "call": "createBuffer",
+        "id": 92
+      },
+      {
+        "label": "reused context2 bind",
+        "call": "useProgram",
+        "id": 91
+      },
+      {
+        "label": "reused context2 clear",
+        "call": "useProgram",
+        "id": 91
+      },
+      {
+        "label": "reused context2 draw",
+        "call": "useProgram",
+        "id": 91
+      },
+      {
+        "label": "reused context2 draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 91
+      },
+      {
+        "label": "context1 survives bind",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "context1 survives clear",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "context1 survives draw",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "context1 survives draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 11
+      },
+      {
+        "label": "unused smooth vertex semantic",
+        "call": "createShader",
+        "id": 93
+      },
+      {
+        "label": "unused smooth vertex semantic",
+        "call": "useProgram",
+        "id": 11
+      },
+      {
+        "label": "select extra varying vertex",
+        "call": "createProgram",
+        "id": 94
+      },
+      {
+        "label": "select extra varying vertex",
+        "call": "linkProgram",
+        "id": 94
+      },
+      {
+        "label": "select extra varying vertex",
+        "call": "createBuffer",
+        "id": 95
+      },
+      {
+        "label": "select extra varying vertex",
+        "call": "useProgram",
+        "id": 94
+      },
+      {
+        "label": "unused varying remains smooth bind",
+        "call": "createShader",
+        "id": 96
+      },
+      {
+        "label": "unused varying remains smooth bind",
+        "call": "createProgram",
+        "id": 97
+      },
+      {
+        "label": "unused varying remains smooth bind",
+        "call": "linkProgram",
+        "id": 97
+      },
+      {
+        "label": "unused varying remains smooth bind",
+        "call": "createBuffer",
+        "id": 98
+      },
+      {
+        "label": "unused varying remains smooth bind",
+        "call": "useProgram",
+        "id": 97
+      },
+      {
+        "label": "unused varying remains smooth clear",
+        "call": "useProgram",
+        "id": 97
+      },
+      {
+        "label": "unused varying remains smooth draw",
+        "call": "useProgram",
+        "id": 97
+      },
+      {
+        "label": "unused varying remains smooth draw",
+        "call": "drawElements",
+        "id": null,
+        "current": 97
+      },
+      {
+        "label": "unbind fragment",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteProgram",
+        "id": 67
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteShader",
+        "id": 66
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteBuffer",
+        "id": 68
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteProgram",
+        "id": 97
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteShader",
+        "id": 96
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteBuffer",
+        "id": 98
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "deleteShader",
+        "id": 62
+      },
+      {
+        "label": "unbound selector destroy",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "deleteProgram",
+        "id": 11
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "deleteBuffer",
+        "id": 12
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "deleteProgram",
+        "id": 94
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "deleteBuffer",
+        "id": 95
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "deleteShader",
+        "id": 10
+      },
+      {
+        "label": "smooth selector destroy",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "unbind vertex",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 8
+      },
+      {
+        "label": "vertex destroy",
+        "call": "useProgram",
+        "id": null
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteBuffer",
+        "id": 3
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteBuffer",
+        "id": 4
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteTexture",
+        "id": 5
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteVertexArray",
+        "id": 1
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteFramebuffer",
+        "id": 2
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 93
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteVertexArray",
+        "id": 6
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteFramebuffer",
+        "id": 7
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteProgram",
+        "id": 91
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 90
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteBuffer",
+        "id": 92
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 87
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 88
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteShader",
+        "id": 89
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteVertexArray",
+        "id": 85
+      },
+      {
+        "label": "vertex destroy",
+        "call": "deleteFramebuffer",
+        "id": 86
+      }
+    ],
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+    "cleanup": {
+      "budgets": {
+        "contexts": 0,
+        "subContexts": 0,
+        "objects": 0,
+        "programs": 0,
+        "shaders": 0,
+        "samplers": 0,
+        "leases": 0,
+        "shaderBytes": 0,
+        "uniformBytes": 0
+      },
+      "nativeObjects": 98,
+      "live": 0
+    }
+  }
+}

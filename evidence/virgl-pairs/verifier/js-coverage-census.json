@@ -1,0 +1,562 @@
+{
+  "inputs": [
+    {
+      "path": "evidence/virgl-pairs/worker/hardware/browser-coverage.json",
+      "sha256": "ffe9050432407f39a819ad188f81c9dc07b073b1f888025fed01ba8d3a05b607"
+    },
+    {
+      "path": "evidence/virgl-pairs/verifier/browser-coverage.json",
+      "sha256": "c6f8e412fb35d073739b70d8fb801d264d66488419cb9026a90722a1e6456077"
+    }
+  ],
+  "files": {
+    "renderer/virgl-command/state.mjs": {
+      "sha256": "18cbfef017a61fce214b8f830932b5035f4500804b1ec4ab0e2b1be28f5afae7",
+      "addedLines": [
+        3,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        198,
+        199,
+        292,
+        293,
+        294,
+        295,
+        296,
+        298,
+        299,
+        300,
+        301,
+        303,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323,
+        324,
+        326,
+        392,
+        393,
+        396,
+        397,
+        690,
+        691,
+        692
+      ],
+      "unhitChangedRanges": [],
+      "functions": [
+        {
+          "name": "",
+          "count": 1
+        },
+        {
+          "name": "freeze",
+          "count": 39410
+        },
+        {
+          "name": "success",
+          "count": 232
+        },
+        {
+          "name": "StateFault",
+          "count": 11
+        },
+        {
+          "name": "require",
+          "count": 6318
+        },
+        {
+          "name": "failure",
+          "count": 11
+        },
+        {
+          "name": "result",
+          "count": 66
+        },
+        {
+          "name": "uint",
+          "count": 182
+        },
+        {
+          "name": "dataRecord",
+          "count": 3
+        },
+        {
+          "name": "unwrap",
+          "count": 1063
+        },
+        {
+          "name": "ref",
+          "count": 8829
+        },
+        {
+          "name": "shaderInterface",
+          "count": 29
+        },
+        {
+          "name": "generic",
+          "count": 60
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "",
+          "count": 29
+        },
+        {
+          "name": "",
+          "count": 29
+        },
+        {
+          "name": "createVirglStateRenderer",
+          "count": 0
+        },
+        {
+          "name": "createVirglDrawRenderer",
+          "count": 1
+        },
+        {
+          "name": "createVirglAsyncRenderer",
+          "count": 0
+        },
+        {
+          "name": "createRenderer",
+          "count": 1
+        },
+        {
+          "name": "",
+          "count": 1
+        },
+        {
+          "name": "",
+          "count": 5
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "idle",
+          "count": 182
+        },
+        {
+          "name": "check",
+          "count": 444
+        },
+        {
+          "name": "generation",
+          "count": 39
+        },
+        {
+          "name": "alive",
+          "count": 182
+        },
+        {
+          "name": "resourceContext",
+          "count": 181
+        },
+        {
+          "name": "",
+          "count": 230
+        },
+        {
+          "name": "context",
+          "count": 178
+        },
+        {
+          "name": "resolve",
+          "count": 786
+        },
+        {
+          "name": "release",
+          "count": 12
+        },
+        {
+          "name": "retain",
+          "count": 12
+        },
+        {
+          "name": "lookup",
+          "count": 78
+        },
+        {
+          "name": "createSub",
+          "count": 4
+        },
+        {
+          "name": "deleteProgram",
+          "count": 18
+        },
+        {
+          "name": "collectObject",
+          "count": 78
+        },
+        {
+          "name": "objectRef",
+          "count": 317
+        },
+        {
+          "name": "destroyObject",
+          "count": 32
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "disposeSub",
+          "count": 4
+        },
+        {
+          "name": "createObject",
+          "count": 32
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "unitFor",
+          "count": 5344
+        },
+        {
+          "name": "link",
+          "count": 194
+        },
+        {
+          "name": "",
+          "count": 55
+        },
+        {
+          "name": "",
+          "count": 120
+        },
+        {
+          "name": "selectedProgram",
+          "count": 194
+        },
+        {
+          "name": "vertexLayout",
+          "count": 202
+        },
+        {
+          "name": "colorMask",
+          "count": 194
+        },
+        {
+          "name": "",
+          "count": 776
+        },
+        {
+          "name": "restore",
+          "count": 167
+        },
+        {
+          "name": "prepareDraw",
+          "count": 27
+        },
+        {
+          "name": "",
+          "count": 81
+        },
+        {
+          "name": "issueDraw",
+          "count": 27
+        },
+        {
+          "name": "",
+          "count": 81
+        },
+        {
+          "name": "draw",
+          "count": 27
+        },
+        {
+          "name": "apply",
+          "count": 178
+        },
+        {
+          "name": "",
+          "count": 16
+        },
+        {
+          "name": "",
+          "count": 4
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "",
+          "count": 0
+        },
+        {
+          "name": "describeSub",
+          "count": 65
+        },
+        {
+          "name": "",
+          "count": 326
+        },
+        {
+          "name": "",
+          "count": 65
+        },
+        {
+          "name": "",
+          "count": 130
+        },
+        {
+          "name": "",
+          "count": 130
+        },
+        {
+          "name": "",
+          "count": 130
+        },
+        {
+          "name": "",
+          "count": 102
+        },
+        {
+          "name": "releaseJobAccess",
+          "count": 0
+        },
+        {
+          "name": "getJob",
+          "count": 0
+        },
+        {
+          "name": "validateJob",
+          "count": 0
+        },
+        {
+          "name": "jobStatus",
+          "count": 0
+        },
+        {
+          "name": "finishJob",
+          "count": 0
+        },
+        {
+          "name": "finishOrFence",
+          "count": 0
+        },
+        {
+          "name": "failJob",
+          "count": 0
+        },
+        {
+          "name": "transferRequest",
+          "count": 0
+        },
+        {
+          "name": "stepJob",
+          "count": 0
+        },
+        {
+          "name": "createContext",
+          "count": 3
+        },
+        {
+          "name": "",
+          "count": 3
+        },
+        {
+          "name": "destroyContext",
+          "count": 1
+        },
+        {
+          "name": "",
+          "count": 1
+        },
+        {
+          "name": "executeSubmission",
+          "count": 178
+        },
+        {
+          "name": "drawResults",
+          "count": 178
+        },
+        {
+          "name": "restoreContext",
+          "count": 0
+        },
+        {
+          "name": "inspect",
+          "count": 60
+        },
+        {
+          "name": "",
+          "count": 60
+        },
+        {
+          "name": "",
+          "count": 326
+        },
+        {
+          "name": "",
+          "count": 326
+        },
+        {
+          "name": "",
+          "count": 64
+        },
+        {
+          "name": "dispose",
+          "count": 1
+        },
+        {
+          "name": "",
+          "count": 1
+        },
+        {
+          "name": "beginSubmission",
+          "count": 0
+        },
+        {
+          "name": "step",
+          "count": 0
+        },
+        {
+          "name": "provideInput",
+          "count": 0
+        },
+        {
+          "name": "acknowledgeOutput",
+          "count": 0
+        },
+        {
+          "name": "cancel",
+          "count": 0
+        }
+      ]
+    },
+    "renderer/virgl-shader/index.mjs": {
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5",
+      "addedLines": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "unhitChangedRanges": [],
+      "functions": [
+        {
+          "name": "",
+          "count": 1
+        },
+        {
+          "name": "failure",
+          "count": 19
+        },
+        {
+          "name": "createVirglShaderBridge",
+          "count": 1
+        },
+        {
+          "name": "translatePair",
+          "count": 407
+        },
+        {
+          "name": "",
+          "count": 803
+        },
+        {
+          "name": "translate",
+          "count": 152
+        },
+        {
+          "name": "",
+          "count": 304
+        }
+      ]
+    }
+  }
+}

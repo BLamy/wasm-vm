@@ -3,7 +3,7 @@ id: E6-T12e2
 epic: 6
 title: Derive flat vertex-fragment interfaces from accepted shader pairs
 priority: 525.0269902
-status: implemented
+status: verified
 depends_on: [E6-T12e1]
 estimate: S
 risk: high
@@ -152,3 +152,55 @@ Served shader Wasm:262,012bytes, SHA-256
 `2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032`.
 Retained pristine checkout: `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm`.
 Cold log SHA-256: `7d04218daa7c008d145c75dbd32e6e3689bccab2d8c214ad5273560863a53f8e`; all67 copied acceptance file digests were rechecked.
+
+
+### 2026-10-03 — independent verifier
+
+VERDICT: verified
+
+- P01–P10 — HELD. Immutable predictions SHA
+  `4d2edf5971eafebbf73dfe527077673907252a1ffea56af40b51888107150ba1`.
+  Independent ASan/UBSan run: 2,729 cases, 8,187 translations, 1,024 mutations
+  using the two preselected seeds, and exact pair/single recovery after each
+  case. All 19 original hashes remain unchanged; exactly 12 accept and seven
+  PRECISE bodies reject. Native/Wasm comparison covers 224 independently chosen
+  pair cases; strict request reflection, reentrancy and owned-response checks hold.
+- P11–P20 — HELD. Actual Chrome/ANGLE Metal M4 Max proof records 944 assertions,
+  28 draws (one direct original pair and 27 actual renderer draws), and 84 literal
+  pixels. Smooth/flat identity reuse, fresh selector generations, contexts and
+  subcontexts, eleven fault/recovery controls, external result mutation, unused
+  smooth VS varying, and store-first disposal pass. All 98 tracked native GL
+  objects are collected and every renderer budget is zero; browser errors empty.
+  Native qualifier omission is detected. Hardware stale-program sabotage requests
+  flat program14 but executes smooth program11: pixel(3,3) expects
+  `[0,0,255,255]`, observes `[128,64,64,255]`. Screenshot visually inspected.
+- P21–P22 — HELD. Independent binding audit performs 26,611 checks against all
+  156 frozen source bindings and 61 records per receipt, all 67 cold files,
+  114 native/Wasm pairs and all 52 worker draws/520 independently reconstructed
+  pixels. Prior literal/component/state/draw oracles remain bound to this source,
+  including original 210 packets/three draws and complete staging readback hashes.
+  Retained cold clone is still clean at
+  `8b7106488b84c256cae7f4eae87eee16a4f09eee`. Worker/cold receipt anchors remain
+  `d25f140bc69845e49660eb362b7f9edfd52f63e2f606241b76f2ea93b3de891a` /
+  `6bf2d0baa115bf3f312348cd2ed1f72a81bbc6222a5cb56c60314b8396ba4b9d`.
+- COVERAGE — Source-bound LLVM and CDP counters are retained. All changed JS
+  ranges execute after the verifier's unused-varying supplement. The bridge has
+  130 measured added lines and 38 structural/comment/signature lines; 19 trusted
+  defensive checks cover impossible upstream metadata and formatter escaping.
+  Seven residual native condition outcomes receive narrow format/OOM/pinned-
+  upstream diagnostic waivers, detailed in `coverage-review.md`; pair overflow
+  forwarding is also explicitly classified. No supported semantic path is waived.
+- SUITE — Retain the independent native permutation/mutation fixtures, actual
+  renderer pixel/lifecycle oracle, sabotage, replay scripts and coverage exports
+  under `evidence/virgl-pairs/verifier/`. Compiled objects/binaries/raw profiles
+  stay ignored under `target/virgl-pairs-verifier/`. No runtime files were edited.
+  Production 3D remains disabled; this is not a compositor or Mesa bring-up claim.
+
+Full per-prediction observations, commands and waiver rationale:
+`evidence/virgl-pairs/verifier/review.md` and `coverage-review.md`.
+Final audit: `evidence/virgl-pairs/verifier/final-audit.json`, SHA
+`6bc34b3bd80c2564c6e8e9e00628de8c5d71aa0d607a3ce07197470e5eb8b285`.
+Independent hardware report SHA
+`34fd7f895290b71eac150fa639c0d8f71e76aef2825493420d7920fa128afcf8`;
+independent native report SHA
+`5a047d000c9415de83922668e78948991a9a854985607af0b34c7240fbad76c9`.

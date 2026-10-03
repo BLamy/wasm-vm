@@ -1,0 +1,168 @@
+{
+  "task": "E6-T12e2",
+  "status": "bindings-held",
+  "frozenHead": "8b7106488b84c256cae7f4eae87eee16a4f09eee",
+  "checks": {
+    "cold-report-anchor": 1,
+    "cold-heads": 1,
+    "cold-clean-success": 1,
+    "retained-head": 1,
+    "retained-clean": 1,
+    "cold-frozen-harness": 1,
+    "cold-log": 1,
+    "digest": 3981,
+    "size": 3981,
+    "eleven-prior-identities": 1,
+    "pair-fixture-count": 1,
+    "receipt-anchor": 2,
+    "receipt-head": 2,
+    "receipt-source-tracked": 312,
+    "frozen-source": 3640,
+    "compiler-binding": 12,
+    "nested-report-head": 40,
+    "nested-report-clean-sources": 40,
+    "nested-browser-errors": 40,
+    "prior-draw-served-html": 20,
+    "prior-draw-served-fixture-transport": 20,
+    "all19-original-identities": 2,
+    "exact12-original-identities": 2,
+    "original-outcomes": 2,
+    "native-sanitizers": 2,
+    "native-log": 2,
+    "native-log-result-count": 4,
+    "native-log-result-parity": 266,
+    "native-binary": 2,
+    "native19-parity": 2,
+    "unchanged-original-bytes": 38,
+    "precise-remains-rejected": 14,
+    "pair-literal-outcome": 228,
+    "pair-input-digest": 456,
+    "native-stream-reconstruction": 2,
+    "hardware-webgl-enabled": 4,
+    "actual-hardware-identity": 4,
+    "served-actual-runtime": 20,
+    "wasm19-parity": 4,
+    "wasm-pair-count": 4,
+    "all114-native-wasm-parity": 456,
+    "pair-recovery-count": 4,
+    "original-flat-hardware-anchor": 2,
+    "hardware-anchor-native-parity": 8,
+    "anchor-original-text": 16,
+    "all52-draws": 2,
+    "triangle-indices": 104,
+    "triangle-viewport": 104,
+    "sample-strict-interior": 728,
+    "known-pixel-mode": 322,
+    "sample-strict-exterior": 312,
+    "complete-pixel-set": 104,
+    "independent-pixel": 1040,
+    "direct-compiled-source": 32,
+    "direct-compile-link": 16,
+    "renderer-generation-interface-key": 88,
+    "renderer-anchor-key": 88,
+    "actual-selected-program": 88,
+    "unique-actual-draw-event": 88,
+    "actual-program-draw-event": 88,
+    "actual-program-link-event": 88,
+    "smooth-flat-reuse-identities": 2,
+    "rig-cleanup": 34,
+    "renderer-real-pair-native-parity": 66,
+    "stale-program-pixel-failure": 2,
+    "stale-program-real-identity": 2,
+    "prior-shader-regression": 6,
+    "prior-shader-pixels": 9530,
+    "same-head-prior-receipt": 6,
+    "prior-draw-state-result": 8,
+    "prior-original-replay-counts": 2,
+    "prior-independent-complete-readback": 6,
+    "prior-readback-range": 6,
+    "prior-actual-draw-call": 6
+  },
+  "evidence": {
+    "worker": {
+      "receiptSha256": "d25f140bc69845e49660eb362b7f9edfd52f63e2f606241b76f2ea93b3de891a",
+      "sources": 156,
+      "records": 61,
+      "nestedReports": 20,
+      "nativeCases": 114,
+      "acceptedPairs": 75,
+      "originalOutcomes": {
+        "translated": 12,
+        "unsupported-feature": 7
+      },
+      "pairDraws": 52,
+      "pairPixels": 520,
+      "regressions": {
+        "components/regression/literal": {
+          "draws": 9,
+          "pixels": 4336
+        },
+        "components/regression/captured": {
+          "draws": 3,
+          "pixels": 768
+        },
+        "components/hardware": {
+          "draws": 10,
+          "pixels": 4736
+        },
+        "originalDrawReplay": {
+          "packets": 210,
+          "draws": 3,
+          "pixels": 768,
+          "completeReadbacks": 3
+        }
+      },
+      "servedWasm": {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+        "size": 262012,
+        "sha256": "2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032"
+      }
+    },
+    "cold-clone/acceptance": {
+      "receiptSha256": "6bf2d0baa115bf3f312348cd2ed1f72a81bbc6222a5cb56c60314b8396ba4b9d",
+      "sources": 156,
+      "records": 61,
+      "nestedReports": 20,
+      "nativeCases": 114,
+      "acceptedPairs": 75,
+      "originalOutcomes": {
+        "translated": 12,
+        "unsupported-feature": 7
+      },
+      "pairDraws": 52,
+      "pairPixels": 520,
+      "regressions": {
+        "components/regression/literal": {
+          "draws": 9,
+          "pixels": 4336
+        },
+        "components/regression/captured": {
+          "draws": 3,
+          "pixels": 768
+        },
+        "components/hardware": {
+          "draws": 10,
+          "pixels": 4736
+        },
+        "originalDrawReplay": {
+          "packets": 210,
+          "draws": 3,
+          "pixels": 768,
+          "completeReadbacks": 3
+        }
+      },
+      "servedWasm": {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+        "size": 262012,
+        "sha256": "2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032"
+      }
+    }
+  },
+  "coldClone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm",
+  "coldFiles": 67,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "scope": "Read-only bindings/parity/independent pixel oracle audit. Counts do not establish implementation coverage; main verifier owns attacks and task verdict."
+}

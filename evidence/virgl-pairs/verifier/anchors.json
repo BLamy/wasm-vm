@@ -1,0 +1,202 @@
+{
+  "vertexText": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nEND\n",
+  "fragmentText": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..3]\n  0: MOV OUT[0], IN[0]\n  1: END\n",
+  "pair": {
+    "ok": true,
+    "vertex": {
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n flat    out  vec4 vso_g0;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\nvso_g0 = vec4(((in_1)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v4",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          },
+          {
+            "index": 1,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15,
+            "interpolation": "flat"
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "fragment": {
+      "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n flat    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nvoid main(void)\n{\nfsout_c0 = vec4(((vso_g0)));\n}\n",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v4",
+        "stage": "fragment",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "interpolation": "flat"
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": []
+      }
+    },
+    "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+  },
+  "singleVertex": {
+    "ok": true,
+    "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\nvso_g0 = vec4(((in_1)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+    "metadata": {
+      "profile": "virgl-webgl2-straight-line-v4",
+      "stage": "vertex",
+      "inputs": [
+        {
+          "index": 0,
+          "name": "in_0",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15
+        },
+        {
+          "index": 1,
+          "name": "in_1",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15
+        }
+      ],
+      "outputs": [
+        {
+          "index": 0,
+          "name": "gl_Position",
+          "type": "vec4",
+          "semantic": "POSITION",
+          "semanticIndex": 0,
+          "componentMask": 15,
+          "writtenMask": 15
+        },
+        {
+          "index": 1,
+          "name": "vso_g0",
+          "type": "vec4",
+          "semantic": "GENERIC",
+          "semanticIndex": 0,
+          "componentMask": 15,
+          "writtenMask": 15,
+          "interpolation": "smooth"
+        }
+      ],
+      "attributes": [
+        {
+          "index": 0,
+          "name": "in_0",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15
+        },
+        {
+          "index": 1,
+          "name": "in_1",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15
+        }
+      ],
+      "uniforms": [],
+      "samplers": [],
+      "uniformBlocks": [
+        {
+          "name": "VirglBlock",
+          "byteLength": 656,
+          "members": [
+            {
+              "name": "winsys_adjust_y",
+              "offset": 640,
+              "type": "float",
+              "default": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
