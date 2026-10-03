@@ -1,0 +1,189 @@
+{
+  "browserReportSha256": "a51054a1a7cb449788e9a1895418de5d61a231e19016a96d6c80c325a065b160",
+  "captureManifests": {
+    "compositor": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+    "glmark2-es2": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+    "kmscube": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+    "textured-scene": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf"
+  },
+  "capturedShaderResults": {
+    "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": {
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572": {
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": {
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": {
+      "error": {
+        "code": "parse-error",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    },
+    "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": {
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "ok": false
+    }
+  },
+  "featureCounts": {
+    "apiCalls": 17,
+    "objects": 8,
+    "opcodes": 33,
+    "resourceFormats": 9,
+    "shaderInstructions": 37,
+    "shaderStageCounts": 2
+  },
+  "head": "2cd2572ec014cf19c41c2a8a32b30739a7e3c6c9",
+  "layoutSha256": "ee3daa5d82dc8402aa3b1350be2d4b0e4c032cb0c9ca0341a2549f1535f1e76f",
+  "production": {
+    "capsets": [],
+    "guestRendererImplemented": false,
+    "numCapsets": 0,
+    "virglFeature": false
+  },
+  "qualifiedPrototype": {
+    "architecture": "arm64",
+    "browserVersion": "154.0.8037.93",
+    "platform": "darwin",
+    "release": "25.6.0",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+  },
+  "rejectionsByCode": {
+    "parse-error": 4,
+    "unsupported-feature": 15
+  },
+  "scope": "Isolated prototype and planned renderer mappings; no guest renderer implementation or desktop acceleration claim.",
+  "sourceSha256": {
+    "Makefile": "0c9b1975d8e5d8559a38e884db6b4c2c6caa0a87e130cc1a318d5845f3bfa6af",
+    "docs/gpu-3d-contract.json": "8ecb46bb69fb6973ccff199c2ec078cf4a0bd7b3e0bee1d1d789ff51a3f1cb41",
+    "docs/gpu-3d-decision.md": "325ba53b3a6ed378915f8c7707e298ff47743109c680ee47b934feedbf03b9e7",
+    "renderer/virgl-contract/browser.mjs": "2c7ea7eb41fd9e3c3e8d0955c072d5bf74e1c4f4863199ea87ce8e98056c27ab",
+    "renderer/virgl-contract/capset-layout.json": "ee3daa5d82dc8402aa3b1350be2d4b0e4c032cb0c9ca0341a2549f1535f1e76f",
+    "tools/verify-virgl-contract-browser.mjs": "5978bf0c4482a750ff6e50251846f00ba8ebdc6ff986a169dfca585374dfc8ac",
+    "tools/verify-virgl-contract.sh": "d5dfc1d64ddeb3e865260ff4dc25d8910b04ce4a3f639d264a870638a71f6ceb",
+    "tools/virgl-contract/caps_layout.c": "617c52c67866c71cb5c4857cd1bdb401598df80dca1b004e846e4c2a6270646a",
+    "tools/virgl-contract/test_verify.py": "8ca0924bd62133620acfa1e48a3a820159a069b7f26f5c1051b1f6ab58a0c763",
+    "tools/virgl-contract/verify.py": "3eccd9970020bb90814b51b60d983101a7f0f4723301f618ff40892e8f3fe125"
+  },
+  "status": "passed",
+  "vertexFormats": {
+    "29": 10,
+    "30": 6
+  }
+}

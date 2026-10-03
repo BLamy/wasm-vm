@@ -1,0 +1,134 @@
+{
+  "boundSources": {
+    "browser": 89,
+    "receipt": 10,
+    "served": 12
+  },
+  "featureCounts": {
+    "apiCalls": 17,
+    "objects": 8,
+    "opcodes": 33,
+    "resourceFormats": 9,
+    "shaderInstructions": 37,
+    "shaderStageCounts": 2
+  },
+  "fencePixels": 4,
+  "freshBrowserSha256": "a51054a1a7cb449788e9a1895418de5d61a231e19016a96d6c80c325a065b160",
+  "freshReceiptSha256": "5da4df7650a3f6969f7921fbaf4072e1b5ae5eee64df92bf959616b883ed2d9c",
+  "literalDraws": 9,
+  "literalPixels": 4336,
+  "poisonedDraws": 7,
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD"
+  },
+  "probeFunctions": [
+    {
+      "count": 1,
+      "name": ""
+    },
+    {
+      "count": 315,
+      "name": "require"
+    },
+    {
+      "count": 203,
+      "name": "equal"
+    },
+    {
+      "count": 39,
+      "name": "plain"
+    },
+    {
+      "count": 14,
+      "name": "compile"
+    },
+    {
+      "count": 6,
+      "name": "program"
+    },
+    {
+      "count": 8,
+      "name": "texture"
+    },
+    {
+      "count": 4,
+      "name": "target"
+    },
+    {
+      "count": 9,
+      "name": "baseState"
+    },
+    {
+      "count": 6,
+      "name": "read"
+    },
+    {
+      "count": 4,
+      "name": "destroyTarget"
+    },
+    {
+      "count": 1,
+      "name": "limits"
+    },
+    {
+      "count": 1,
+      "name": "formats"
+    },
+    {
+      "count": 1,
+      "name": "precise"
+    },
+    {
+      "count": 1,
+      "name": "views"
+    },
+    {
+      "count": 1,
+      "name": "virtualContexts"
+    },
+    {
+      "count": 2,
+      "name": "create"
+    },
+    {
+      "count": 1,
+      "name": "fence"
+    },
+    {
+      "count": 1,
+      "name": ""
+    },
+    {
+      "count": 1,
+      "name": ""
+    },
+    {
+      "count": 7,
+      "name": ""
+    },
+    {
+      "count": 1,
+      "name": "runBackendProbes"
+    },
+    {
+      "count": 4,
+      "name": ""
+    }
+  ],
+  "rejectionsByCode": {
+    "parse-error": 4,
+    "unsupported-feature": 15
+  },
+  "sourceHashesUnchangedFromFrozenWorker": true,
+  "statePoisonSha256": "854a91e0a13ca83ce29777f5c6e0f7d155c1b6b27ee1567dc32c41646268c4f3",
+  "stateReplayPixels": 128,
+  "status": "passed",
+  "swizzlePixels": 6,
+  "workerBrowserSha256": "555ddecbf28bdf693a593247df26ff94678b583ecd28b012f96e818d7a0715b1",
+  "workerReceiptSha256": "50b671b094c04d6b1d95eea802ada0c4e1f69689ef9e1acb18c0e800723d4daf"
+}

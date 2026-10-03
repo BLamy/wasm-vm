@@ -1,0 +1,23 @@
++ git rev-parse HEAD
+2cd2572ec014cf19c41c2a8a32b30739a7e3c6c9
++ python3 -m py_compile tools/virgl-contract/verify.py tools/virgl-contract/test_verify.py
++ python3 -m unittest discover -s tools/virgl-contract -p 'test_*.py' -v
+test_caps_precise_and_depth_overclaims_rejected (test_verify.ContractGate) ... ok
+test_missing_opcode_and_false_support_rejected (test_verify.ContractGate) ... ok
+test_stale_source_and_duplicate_json_fail (test_verify.ContractGate) ... ok
+test_unqualified_browser_and_insufficient_ubo_rejected (test_verify.ContractGate) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.015s
+
+OK
++ node --check tools/verify-virgl-contract-browser.mjs
++ node --check renderer/virgl-contract/browser.mjs
++ bash renderer/virgl-shader/build.sh native
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-contract-browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-contract/verifier/acceptance/browser
+E6-T10c: 9 translated literal draws, 4336 exact pixels; actual WebGL2 limits and 4 explicit GLSL API probes passed. Guest 3D remains disabled.
++ python3 tools/virgl-contract/verify.py --browser-report /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-contract/verifier/acceptance/browser/report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-contract/verifier/acceptance/receipt.json
+{"featureCounts": {"apiCalls": 17, "objects": 8, "opcodes": 33, "resourceFormats": 9, "shaderInstructions": 37, "shaderStageCounts": 2}, "rejectionsByCode": {"parse-error": 4, "unsupported-feature": 15}, "status": "passed", "vertexFormats": {"29": 10, "30": 6}}

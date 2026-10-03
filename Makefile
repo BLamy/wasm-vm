@@ -1815,3 +1815,7 @@ verify-E6-T10b:
 	sh -n tools/virgl-capture/recorder.build.sh tools/virgl-capture/reference.sh
 	python3 -m unittest discover -s tools/virgl-capture/tests -v
 	python3 tools/virgl-capture/validate.py $(or $(VIRGL_CORPUS),evidence/virgl-corpus/captures)
+
+.PHONY: verify-E6-T10c
+verify-E6-T10c:
+	bash tools/verify-virgl-contract.sh
