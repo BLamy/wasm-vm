@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11a** — Connect validated virtio 3D context and resource control to the renderer
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -518,7 +517,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.02696` [E6-T11a](epic-6-transcendence/E6-T11a-virtio-3d-control-resources.md) — Connect validated virtio 3D context and resource control to the renderer *(deps: E6-T12d)*
+- [~] `525.02696` [E6-T11a](epic-6-transcendence/E6-T11a-virtio-3d-control-resources.md) — Connect validated virtio 3D context and resource control to the renderer *(deps: E6-T12d)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

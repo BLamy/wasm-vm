@@ -3,7 +3,7 @@ id: E6-T11a
 epic: 6
 title: Connect validated virtio 3D context and resource control to the renderer
 priority: 525.02696
-status: pending
+status: in-progress
 depends_on: [E6-T12d]
 estimate: S
 risk: high
@@ -40,4 +40,20 @@ capability claim follows a test-only control-plane fixture.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activated
+
+Follows independently verified captured draw replay (`b9a28ccd`, PR #410).
+This is the synchronous context/resource control boundary only. Add explicit
+`virgl-control-proof` feature constructors and a proof-only Wasm queue fixture;
+default device negotiation and capsets remain unchanged even in a proof build.
+Validate complete bounded request/response spans, shared 2D/3D identifiers,
+metadata and guest backing before issuing failure-atomic renderer events. Host
+generations distinguish accepted resource identities from reused numeric wire IDs.
+Unexpected callback failures poison the proof bridge until reset. Snapshots refuse
+proof ownership before any restore mutation. Actual browser queue service must
+invoke the real JS resource/state owners before guest completion; native trace
+replay alone is insufficient. Selected high-risk gates include affected core and
+Wasm format/lint/build/tests, existing 2D regressions, deterministic raw
+command/response/state evidence, hardware renderer lifecycle attacks and final
+scrubbed clean-clone acceptance. SUBMIT, DMA transfers, asynchronous fences,
+scanout and production Mesa activation remain later ordered tasks.
