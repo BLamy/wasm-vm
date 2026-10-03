@@ -18,6 +18,7 @@ bash renderer/virgl-shader/build.sh radial-domain-sanitize
 python3 tools/virgl-radial-domain/native.py --binary renderer/virgl-shader/build/radial-domain-sanitize/radial-domain-test --output "$evidence_dir/native"
 bash renderer/virgl-shader/build.sh wasm
 node tools/virgl-radial-domain/wasm.mjs --native "$evidence_dir/native/native-report.json" --output "$evidence_dir/wasm"
+python3 tools/virgl-radial-domain/probes.py --output "$evidence_dir/probes"
 node tools/virgl-radial-domain/reference.mjs > "$evidence_dir/reference.json"
 node tools/virgl-radial-domain/domain.mjs "$evidence_dir/domain"
 node tools/virgl-radial-domain/browser.mjs --output "$evidence_dir/gpu"

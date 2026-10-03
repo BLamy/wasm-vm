@@ -169,10 +169,32 @@ def verify_domain(folder,n,reference):
  require(f['bank'][16]==0x35800000 and f['result']['ok'] is True and same(f['result']['words'],f['bank']) and f['oracleAdmitted'] is False and f['caught']['name']=='AssertionError' and type(f['gpuDraws']) is int and f['gpuDraws']==0,'removed actual check admits counterexample, caught before unsafe GPU execution')
  return {'checks':count,'metadataForgeries':164,'ownership':12,'combined':3,'actualSourceFaultCaught':True}
 
+def verify_probes(folder,head):
+ import probes
+ p=read(folder/'report.json');require(p['schema']=='radial-graph-probes-v1' and p['status']=='passed' and p['gitHead']==head,'exact-source bounded coverage supplement')
+ for item in p['sources']:source(item,head)
+ for item in p['records']:require(same(item,binding(folder/item['path'],folder)),'complete actual probe artifact')
+ require(same(p['binary'],binding(folder/'native',folder)) and p['buildCommand']==['bash','build.sh','native'],'real instrumented native compiler')
+ rows=probes.inputs();require(len(p['cases'])==len(rows)==12,'all named radial graph probes')
+ for actual,wanted in zip(p['cases'],rows):
+  require(same({k:actual[k] for k in wanted},wanted) and same(json.loads(actual['stdout']),actual['result']) and actual['result']['ok'] is wanted['predictedOk'],'predicted typed graph/version result and full native serialization')
+  if wanted['predictedOk']:
+   md=actual['result']['metadata'];require(md['profile']=='virgl-webgl2-raw-bits-v14' and md['constantRadialDomains'][0]['register']==4 and md['constantRadialDomains'][0]['component']==0 and md['constantRadialDomains'][0]['minimumMagnitude']==0x3727c5ac,'same explicit coefficient policy on nested/aliased graph')
+  else:require(actual['result']['error']['code']=='unsupported-feature','unsafe certificate rejects')
+ w=read(folder/'wasm.json');require(w['schema']=='radial-probe-wasm-v1' and w['status']=='passed' and w['nativeSha256']==sha((folder/'native.json').read_bytes()) and w['wasmSha256']==sha((ROOT/'renderer/virgl-shader/build/wasm/virgl-shader.wasm').read_bytes()),'actual current Wasm supplement')
+ require(same(w['cases'],[{k:r[k] for k in ('name','inputSha256','result')} for r in p['cases']]),'all full supplemental native/Wasm outcomes')
+ x=read(folder/'coverage.json');require({Path(f['filename']).name for f in x['data'][0]['files']}=={'bridge.c','raw_bits.c'},'full actual compiler coverage source map')
+ for item in p['coverage']['sources']:
+  source({k:item[k] for k in ('path','bytes','sha256')},head);f=next(f for f in x['data'][0]['files'] if f['filename']==item['recordedFilename']);require(same(f['summary'],item['summary']),'actual bound supplemental source counters')
+ fake={'sources':[{'bytes':s['bytes'],'summary':s['summary']} for s in p['coverage']['sources']],'records':p['records'],'nativeStack':{'files':[]}}
+ native_receipt.held.coverage_primitives(fake,x)
+ require(any(f['name']=='bridge.c:radial_recognize' and f['count']>0 for f in x['data'][0]['functions']),'actual radial parser/graph coverage')
+ return {'cases':12,'positive':4,'negative':8,'nativeWasmParity':True}
+
 def verify(output,head):
  output=Path(output);n=native_receipt.verify(output/'native',head);w=wasm_receipt.verify(output/'wasm',head,n)
  raw=subprocess.check_output(['node','tools/virgl-radial-domain/reference.mjs'],cwd=ROOT);require((output/'reference.json').read_bytes()==raw,'independent literal hardware/domain reference is not derived from GPU evidence');reference=json.loads(raw)
- fixture=read(ROOT/'renderer/virgl-shader/tests/radial-domain-cases.json');envelope=browser_envelope(output/'gpu',head);gpu=verify_gpu(envelope['acceptance'],n,fixture,reference);domain=verify_domain(output/'domain',n,reference)
+ fixture=read(ROOT/'renderer/virgl-shader/tests/radial-domain-cases.json');envelope=browser_envelope(output/'gpu',head);gpu=verify_gpu(envelope['acceptance'],n,fixture,reference);domain=verify_domain(output/'domain',n,reference);probes=verify_probes(output/'probes',head)
  sys.path.insert(0,str(ROOT/'tools/virgl-selected-lanes'))
  try:held=native_receipt.load('held_selected_gpu','tools/virgl-selected-lanes/receipt.py')
  finally:sys.path.pop(0)
@@ -191,7 +213,7 @@ def verify(output,head):
   require(negative['schema']=='radial-negative-receipts-v1' and negative['status']=='passed' and [x['name'] for x in negative['results']]==names and all(x['outcome']=='rejected' and type(x['reason']) is str and x['reason'] for x in negative['results']),'all promoted physical and typed forgeries rejected')
   positive=(output/'positive-receipt.json').read_bytes();require(same(negative['positiveReceipt'],{'path':'receipt.json','bytes':len(positive),'sha256':sha(positive)}) and json.loads(positive)['gitHead']==head,'first exact-head positive proof bound')
  records=[binding(p,output) for p in sorted(output.rglob('*')) if p.is_file() and p.name not in ('receipt.json','acceptance.log')]
- return {'schema':'radial-domain-submission-v1','task':'E6-T12f3','status':'passed','gitHead':head,'heldHead':native_receipt.producer.HELD_HEAD,'guestExecution':False,'workloadCompatibilityClaimed':False,'production':production,'native':{k:n[k] for k in ('stats','layout','flow','recordedMaxima','compatibility')},'wasm':w,'gpu':gpu,'domain':domain,'retainedGpu':old_gpu,'sources':sources,'records':records}
+ return {'schema':'radial-domain-submission-v1','task':'E6-T12f3','status':'passed','gitHead':head,'heldHead':native_receipt.producer.HELD_HEAD,'guestExecution':False,'workloadCompatibilityClaimed':False,'production':production,'native':{k:n[k] for k in ('stats','layout','flow','recordedMaxima','compatibility')},'wasm':w,'gpu':gpu,'domain':domain,'probes':probes,'retainedGpu':old_gpu,'sources':sources,'records':records}
 
 if __name__=='__main__':
  output=Path(sys.argv[1]).resolve();report=verify(output,git('rev-parse','HEAD').decode().strip());(output/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');print('E6-T12f3 restricted radial admission evidence passed.')
