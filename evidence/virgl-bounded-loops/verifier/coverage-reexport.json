@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+    "export",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/build/bounded-loop-sanitize/bounded-loop-test",
+    "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/native/native.profdata",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c"
+  ],
+  "identical": true,
+  "bytes": 1594695,
+  "sha256": "81389d79aa730f154792f815436f8474f0fb173f5d0368a3eead1b66c73c0459"
+}

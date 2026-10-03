@@ -1,0 +1,221 @@
+[
+  {
+    "file": "renderer/virgl-command/state.mjs",
+    "changedLines": 6,
+    "zero": [],
+    "lines": [
+      {
+        "line": 4,
+        "bestCount": 1,
+        "source": "import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank } from \"./constant-domain.mjs\";"
+      },
+      {
+        "line": 267,
+        "bestCount": 38,
+        "source": "          object.constantConstraint = contract.constraint ?? null;"
+      },
+      {
+        "line": 446,
+        "bestCount": 402,
+        "source": "        const checked = indirectBanks?.[uniform.stage] ?? (shader.constantConstraint ?"
+      },
+      {
+        "line": 447,
+        "bestCount": 348,
+        "source": "          checkLoopBank(bank, shader.constantConstraint.count) : checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional));"
+      },
+      {
+        "line": 565,
+        "bestCount": 92,
+        "source": "        unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :"
+      },
+      {
+        "line": 566,
+        "bestCount": 59,
+        "source": "          checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));"
+      }
+    ]
+  },
+  {
+    "file": "renderer/virgl-command/constant-domain.mjs",
+    "changedLines": 35,
+    "zero": [],
+    "lines": [
+      {
+        "line": 7,
+        "bestCount": 1,
+        "source": "export const LOOP_PROFILE = \"virgl-webgl2-raw-bits-v12\";"
+      },
+      {
+        "line": 10,
+        "bestCount": 1,
+        "source": "export const CONSTANT_CONSTRAINT_KIND = \"constant-bank-counted-table-i32-v1\";"
+      },
+      {
+        "line": 11,
+        "bestCount": 1,
+        "source": "const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);"
+      },
+      {
+        "line": 12,
+        "bestCount": 1,
+        "source": "const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);"
+      },
+      {
+        "line": 55,
+        "bestCount": 235,
+        "source": "    const value = record(metadata, [...METADATA_KEYS, \"constantDomains\", \"constantAccesses\", \"constantConstraints\"], METADATA_KEYS);"
+      },
+      {
+        "line": 58,
+        "bestCount": 235,
+        "source": "    const loop = value.profile === LOOP_PROFILE;"
+      },
+      {
+        "line": 59,
+        "bestCount": 235,
+        "source": "    require(loop || !Object.hasOwn(value, \"constantConstraints\"), \"Shader profile forbids a constant count constraint.\");"
+      },
+      {
+        "line": 97,
+        "bestCount": 235,
+        "source": "    let constraint = null;"
+      },
+      {
+        "line": 98,
+        "bestCount": 235,
+        "source": "    if (loop) {"
+      },
+      {
+        "line": 99,
+        "bestCount": 171,
+        "source": "      require(Object.hasOwn(value, \"constantConstraints\"), \"Loop shader profile requires a constant count constraint.\");"
+      },
+      {
+        "line": 100,
+        "bestCount": 171,
+        "source": "      const constraints = array(value.constantConstraints, 1);"
+      },
+      {
+        "line": 101,
+        "bestCount": 171,
+        "source": "      require(constraints.length === 1, \"Loop shader requires one constant count constraint.\");"
+      },
+      {
+        "line": 102,
+        "bestCount": 171,
+        "source": "      constraint = record(constraints[0], [...DOMAIN_KEYS, \"register\", \"component\", \"maximum\"]);"
+      },
+      {
+        "line": 103,
+        "bestCount": 171,
+        "source": "      require(constraint.kind === CONSTANT_CONSTRAINT_KIND && constraint.stage === expectedStage && constraint.slot === 0 &&"
+      },
+      {
+        "line": 104,
+        "bestCount": 111,
+        "source": "        constraint.name === name && constraint.register === 9 && constraint.component === 0 && constraint.maximum === 18,"
+      },
+      {
+        "line": 105,
+        "bestCount": 171,
+        "source": "      \"Unknown or inconsistent constant count constraint.\");"
+      },
+      {
+        "line": 106,
+        "bestCount": 171,
+        "source": "      require((constraint.count === 46 || constraint.count === 47) && constraint.count === domain.count && constraint.count === access.count,"
+      },
+      {
+        "line": 107,
+        "bestCount": 171,
+        "source": "        \"Constant count constraint does not match the complete declared bank extent.\");"
+      },
+      {
+        "line": 108,
+        "bestCount": 171,
+        "source": "      require(access.indices.filter((index) => index >= 10).length === 36,"
+      },
+      {
+        "line": 109,
+        "bestCount": 171,
+        "source": "        \"Loop constant access must cover every certified index from 10 through 45.\");"
+      },
+      {
+        "line": 110,
+        "bestCount": 171,
+        "source": "      constraint = Object.freeze(constraint);"
+      },
+      {
+        "line": 111,
+        "bestCount": 171,
+        "source": "    }"
+      },
+      {
+        "line": 112,
+        "bestCount": 20,
+        "source": "    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}), ...(loop ? { constraint } : {}) });"
+      },
+      {
+        "line": 160,
+        "bestCount": 1,
+        "source": ""
+      },
+      {
+        "line": 161,
+        "bestCount": 1,
+        "source": "/** The finite prefix and raw signed count are approved on one owned snapshot. */"
+      },
+      {
+        "line": 162,
+        "bestCount": 1,
+        "source": "export function checkLoopBank(words, declaredCount) {"
+      },
+      {
+        "line": 163,
+        "bestCount": 440,
+        "source": "  if (declaredCount !== 46 && declaredCount !== 47)"
+      },
+      {
+        "line": 164,
+        "bestCount": 11,
+        "source": "    return failure(\"constant-constraint-error\", \"Invalid counted-table bank extent.\");"
+      },
+      {
+        "line": 165,
+        "bestCount": 440,
+        "source": "  const checked = checkIndirectBank(words, declaredCount, true);"
+      },
+      {
+        "line": 166,
+        "bestCount": 440,
+        "source": "  if (!checked.ok) return checked;"
+      },
+      {
+        "line": 167,
+        "bestCount": 421,
+        "source": "  const word = checked.words[36];"
+      },
+      {
+        "line": 168,
+        "bestCount": 421,
+        "source": "  if (!(word >= 0x80000000 || word <= 18))"
+      },
+      {
+        "line": 169,
+        "bestCount": 45,
+        "source": "    return failure(\"constant-constraint-error\", \"Raw signed constant count exceeds the proved maximum of 18.\");"
+      },
+      {
+        "line": 170,
+        "bestCount": 376,
+        "source": "  return checked;"
+      },
+      {
+        "line": 171,
+        "bestCount": 440,
+        "source": "}"
+      }
+    ]
+  }
+]

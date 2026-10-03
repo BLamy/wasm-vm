@@ -1,0 +1,70 @@
+[
+  {
+    "name": "consumer-unit-control",
+    "passed": true
+  },
+  {
+    "name": "consumer-unit-count-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "consumer-unit-count-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "consumer-unit-startOffset-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "consumer-unit-startOffset-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "consumer-unit-endOffset-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "consumer-unit-endOffset-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-control",
+    "passed": true
+  },
+  {
+    "name": "profiles-count-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-count-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-startOffset-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-startOffset-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-endOffset-float",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  },
+  {
+    "name": "profiles-endOffset-bool",
+    "rejected": true,
+    "message": "integer-only V8 offsets and execution counters"
+  }
+]
