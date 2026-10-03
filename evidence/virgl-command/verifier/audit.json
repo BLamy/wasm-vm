@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "runtimeHead": "b2636b5073b1e81f2172b6b0b268fea7ce381f0d",
+  "decoderSha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd",
+  "workerReceiptSha256": "d017e3cfd7176b4321dbed565c72859b8eb530c43733f0aeed429b61a9af1097",
+  "coldReceiptSha256": "1df3c66ee891cc57bab23df78ac70b9d9ddb7030e5f48505af691f9f064b6445",
+  "recheckedFiles": 35,
+  "workerNodeBrowserEqual": true,
+  "coldCloneClean": true,
+  "unchangedCRustWasmProduction": true,
+  "functionsWithPositiveCounts": 46,
+  "zeroCountRangeClassification": [
+    {
+      "function": "decodeObject",
+      "startLine": 263,
+      "endLine": 263,
+      "classification": "justified unreachable",
+      "reason": "Private dispatch default is unreachable after the outer command/object allowlists at decoder lines 493-495.",
+      "source": "default: p.fail(\"unsupported-object\", \"Unknown or unsupported object type.\");"
+    },
+    {
+      "function": "decodeFields",
+      "startLine": 431,
+      "endLine": 431,
+      "classification": "justified unreachable",
+      "reason": "Private dispatch default is unreachable after the outer command/object allowlists at decoder lines 493-495.",
+      "source": "default: p.fail(\"unsupported-command\", \"Unknown or unsupported command.\");"
+    },
+    {
+      "function": "decodeSubmission",
+      "startLine": 502,
+      "endLine": 504,
+      "classification": "justified unreachable",
+      "reason": "Unexpected implementation/platform defect rethrow cannot be induced by validated guest byte data; all guest rejection paths use DecodeFault.",
+      "source": "throw error; // Unexpected implementation defects are not disguised as guest errors.\n  }"
+    }
+  ],
+  "otherRecordedRanges": "all executed",
+  "newArtifactHashes": [
+    {
+      "path": "predictions.md",
+      "sha256": "7b461548641ea10ae49d599ca2aba5e96126a29d29e93ae31bc4d1cb79ccbeac"
+    },
+    {
+      "path": "attacks.mjs",
+      "sha256": "472c22cbb05c2e847e75e15f77c938350f38740429a428606087efccc4b90578"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "37cef8b5939ec70a802ff4119e9d99144def7a9ebeffbf2adfbae422852620ef"
+    },
+    {
+      "path": "report.json",
+      "sha256": "e8d45c7e10b1838461e77f6208581f7215890944ff22242914a0559d30fbac1f"
+    },
+    {
+      "path": "browser.png",
+      "sha256": "49d7d905a38ebc75f4b3454bf0e3d96d338536b5d7fd2c896471a4c1b9675877"
+    },
+    {
+      "path": "sabotage.mjs",
+      "sha256": "3d82e977ec43aa59924b6458208ed942c7ca510075f99820d344c75256f69279"
+    },
+    {
+      "path": "sabotage.json",
+      "sha256": "7214fb1c613d7a13c2cb06bf4207ae865c6cf82aa818c787f212960f4e77eed3"
+    }
+  ]
+}

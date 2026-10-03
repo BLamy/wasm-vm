@@ -1,0 +1,93 @@
+{
+  "gitHead": "f0cb3d61deb9a84b665dd19ea033f50cfcccf8ef",
+  "decoderSha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd",
+  "options": {
+    "seeds": [
+      324508639,
+      610839776,
+      3735928559,
+      271136839
+    ],
+    "count": 8192
+  },
+  "status": "passed",
+  "errors": [],
+  "served": [
+    {
+      "path": "/",
+      "sha256": "418c9d7009d1b9f81b5dedb67e286ba43a4247f6c8ccf8d4a2067fb487b5d676"
+    },
+    {
+      "path": "/evidence/virgl-command/verifier/attacks.mjs",
+      "sha256": "472c22cbb05c2e847e75e15f77c938350f38740429a428606087efccc4b90578"
+    },
+    {
+      "path": "/renderer/virgl-command/decoder.mjs",
+      "sha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd"
+    },
+    {
+      "path": "/renderer/virgl-command/tests/acceptance.mjs",
+      "sha256": "f16257ac2eb92018d18efd69a0767c83ab9cee7b6e5378796bd679d4cdc5516a"
+    },
+    {
+      "path": "/fixtures.json",
+      "sha256": "f433ae9df49e9286dbc48b423ce5e6a425f958a5117c13ca16197b914682621e"
+    }
+  ],
+  "startedAt": "2026-10-03T03:42:44.428Z",
+  "independent": {
+    "status": "passed",
+    "checks": 266096,
+    "payloadLengthCases": 65536,
+    "opcodeCases": 256,
+    "objectCases": 768,
+    "shaderAlphabetCases": 256,
+    "novel": "typed-array accessor and lifetime attacks"
+  },
+  "nativeCanonicalSha256": "fdf0f22ce50bff5afc4a3b0ef9c10991e24c55c7ca531429ba5aac0152a752ff",
+  "acceptance": {
+    "counts": {
+      "submissions": 8,
+      "bytes": 42380,
+      "packets": 210,
+      "families": 32,
+      "createObjectTypes": 8
+    },
+    "assertions": 762798,
+    "attacks": {
+      "named": 283,
+      "prefixCases": 42380,
+      "boundaryPrefixes": 210,
+      "mutations": 8192,
+      "acceptedMutations": 2860,
+      "rejectedMutations": 5332,
+      "recoveryChecks": 907,
+      "sharedArrayBuffer": "rejected",
+      "seeds": [
+        324508639,
+        610839776,
+        3735928559,
+        271136839
+      ]
+    },
+    "maximumCases": {
+      "acceptedSubmissionBytes": 262144,
+      "acceptedSubmissionCommands": 1,
+      "acceptedSubmissionResultJsonBytes": 355,
+      "acceptedCommandCount": 4096,
+      "commandCountSubmissionBytes": 32768,
+      "acceptedCommandCountResultJsonBytes": 645970,
+      "maximumShaderTextBytes": 16384,
+      "maximumShaderTokens": 8192,
+      "oversizedSubmissionBytes": 262148,
+      "oversizedCommandCount": 4097
+    }
+  },
+  "nativeForeignRealm": "passed",
+  "nodeMs": 1110.467375,
+  "browserCanonicalSha256": "fdf0f22ce50bff5afc4a3b0ef9c10991e24c55c7ca531429ba5aac0152a752ff",
+  "browserForeignRealm": "passed",
+  "browserVersion": "154.0.8037.93",
+  "screenshotSha256": "49d7d905a38ebc75f4b3454bf0e3d96d338536b5d7fd2c896471a4c1b9675877",
+  "finishedAt": "2026-10-03T03:42:47.144Z"
+}

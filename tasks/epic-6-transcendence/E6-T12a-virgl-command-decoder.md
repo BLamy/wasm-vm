@@ -3,7 +3,7 @@ id: E6-T12a
 epic: 6
 title: Decode captured VirGL packets with bounded portable byte parsing
 priority: 525.02692
-status: implemented
+status: verified
 depends_on: [E6-T10d]
 estimate: S
 risk: high
@@ -167,3 +167,74 @@ log SHA256 `b6d8a5745b1f053e1080cf4f3c190eebe7379533d32f5253787c83b6d6d906a9`.
 No C/Rust/Wasm or production page/device behavior changes in this slice; their
 unchanged shader/execution proofs carry forward. No GPU rendering, guest Mesa
 activation or performance gain is claimed by command decoding.
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+Fresh verifier session; no implementation edits. Predictions were sent before
+worker evidence inspection and retained in
+`evidence/virgl-command/verifier/predictions.md`. Runtime/harness reviewed at
+`b2636b5073b1e81f2172b6b0b268fea7ce381f0d`; the later `f0cb3d61` worker claim
+changes only task/evidence records. Decoder SHA256:
+`8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd`.
+
+- **P1 — HELD, original frames and typed fields.** All original hashes match;
+  eight submissions yield 39/3/6/3/8/3/6/142 packets, 42,380 bytes, 210 packets,
+  32 families and eight created types. Field indices and packed extraction were
+  reviewed against pinned `virgl_protocol.h`, `virgl_hw.h` and `p_defines.h`,
+  including CLEAR f64 words 6/7, shader framing, array strides and transfer
+  direction/flags. Independent byte/field oracles agree with original shader
+  files; hostile event-173 padding preserves outer offsets 0/4096/4104.
+  Citation: `worker/parity/report.json:208` and `verifier/report.json:49` under
+  `evidence/virgl-command/`; verifier float/packed-field assertions also held.
+- **P2 — HELD, whole submission and recovery.** All 42,380 byte prefixes were
+  repeated; exactly 210 complete boundaries including empty prefixes accept.
+  Invalid tails expose no commands and preserve the next valid call. Separate
+  seeds 13579bdf/2468ace0/deadbeef/10293847 produced 8,192 mutations: 2,860
+  accepted structural variants, 5,332 rejections, 907 recovery checks.
+  Citation: `verifier/report.json:59`.
+- **P3/P4 — HELD, hostile fields and bounds.** Novel verifier attacks exhaust
+  every 16-bit SET_SUB_CTX length, every opcode byte, 768 object/type cases,
+  every shader text byte, NUL/padding residues and random maximum padding:
+  266,096 independent assertions. Accepted/rejected maxima remain
+  262,144/262,148 bytes and 4,096/4,097 commands. Array/slot, numeric,
+  inactive/active, reserved-bit and transfer-overflow attacks held in both
+  engines. Source allocations are bounded; worker peak RSS 140,048 KiB is a
+  whole-harness observation, not per-call allocation. Citations:
+  `verifier/report.json:38`, `verifier/report.json:75`,
+  `worker/parity/report.json:7277`.
+- **P5/P6 — HELD, provenance and ownership.** The trusted loader verifies
+  original hashes; runtime labels remain explicitly unauthenticated. Rehashed
+  35 worker/clone source, input and report files. Typed-array shadow getters and
+  plain provenance accessors were never invoked; unaligned and foreign-realm
+  views decode, foreign shared memory rejects, and post-call mutation or
+  detachment cannot change frozen results. Citations: `verifier/audit.json:2`,
+  `verifier/report.json:89`, and `verifier/attacks.mjs`.
+- **P7 — HELD, parity, sabotage and isolation.** Native/headed Chrome
+  154.0.8037.93 canonical SHA256 is
+  `fdf0f22ce50bff5afc4a3b0ef9c10991e24c55c7ca531429ba5aac0152a752ff`;
+  zero console/page/request errors, matching served decoder/fixture hashes,
+  inspected screenshot. Packet-length sabotage fails at event 161 command 0
+  (expected 56, observed 60); separate +1 subContextId sabotage fails the
+  verifier's value assertion. Scrubbed exact-head clone status is clean before
+  and after, and every receipt/record hash matches. Citations:
+  `verifier/report.json:13`, `verifier/sabotage.json:2`,
+  `worker/sabotage/report.json:7298`, `cold-clone/report.json:2`.
+- **COVERAGE — HELD.** All 46 decoder functions and all recorded V8 ranges
+  execute except three justified unreachable ranges: private object default
+  at line 263 and command default at 431 are precluded by the outer allowlists
+  at 493–495; lines 502–504 rethrow unexpected implementation defects, while
+  guest failures use DecodeFault. `verifier/audit.json:11` records the complete
+  zero-count classification. Metadata/docs/Make target add no runtime path.
+  C/Rust/Wasm, shader implementation and production web/device trees have no
+  diff versus `af6b5509`; their previous proof carries forward.
+- **SUITE.** Retain deterministic attacks, alternate seeds, typed-field sabotage
+  and audit as replayable verifier artifacts alongside the permanent
+  `make verify-E6-T12a` gate. No rendering, guest acceleration, shader semantic
+  or FPS conclusion follows from this parser proof.
+
+Commands: `node evidence/virgl-command/verifier/run.mjs`;
+`node evidence/virgl-command/verifier/sabotage.mjs`;
+`python3 evidence/virgl-command/verifier/audit.py`.
+Audit SHA256 `b66f65e903013dd74d4e3d5df8a5a9e54279d58845977edc712ddcb46c8e5d76`
+binds the verifier artifacts; report SHA256
+`e8d45c7e10b1838461e77f6208581f7215890944ff22242914a0559d30fbac1f`.
