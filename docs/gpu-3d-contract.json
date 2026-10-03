@@ -1,0 +1,785 @@
+{
+  "activationBlockers": [
+    "Every captured shader is currently rejected.",
+    "PRECISE semantics have no approved lowering.",
+    "No production command renderer, transport or GPU scanout exists.",
+    "Mesa has unconditional capabilities not suppressible by zero capset fields.",
+    "Reduced capset requires new guest initialization and reduced-profile captures.",
+    "Future GLES3 requires transform feedback, UBOs, MRT, format and draw semantics proof."
+  ],
+  "backend": "WebGL2 / ESSL 3.00",
+  "browserMatrix": {
+    "default": "reject",
+    "qualificationScope": "prototype-only",
+    "qualified": [
+      {
+        "architecture": "arm64",
+        "browserVersion": "154.0.8037.93",
+        "platform": "darwin",
+        "release": "25.6.0",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      }
+    ],
+    "unqualified": [
+      "Safari",
+      "Firefox",
+      "other Chrome versions/GPUs/OS builds",
+      "software GL",
+      "headless without proven hardware GL"
+    ]
+  },
+  "captureManifests": {
+    "compositor": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+    "glmark2-es2": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+    "kmscube": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+    "textured-scene": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf"
+  },
+  "capturedShaders": {
+    "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    },
+    "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": {
+      "currentBridge": "rejected",
+      "stage": "VERT"
+    },
+    "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": {
+      "currentBridge": "rejected",
+      "stage": "FRAG"
+    }
+  },
+  "futureGles3HostPrerequisites": {
+    "MAX_COLOR_ATTACHMENTS": 4,
+    "MAX_COMBINED_UNIFORM_BLOCKS": 26,
+    "MAX_DRAW_BUFFERS": 4,
+    "MAX_FRAGMENT_UNIFORM_BLOCKS": 13,
+    "MAX_UNIFORM_BLOCK_SIZE": 16384,
+    "MAX_UNIFORM_BUFFER_BINDINGS": 25,
+    "MAX_VARYING_VECTORS": 16,
+    "MAX_VERTEX_UNIFORM_BLOCKS": 13
+  },
+  "matrix": {
+    "apiCalls": {
+      "context_create": {
+        "corpusOccurrences": 17,
+        "mapping": "Create generation-aware virtual namespace; nested reference ABI calls are one effective creation.",
+        "status": "implementable"
+      },
+      "context_create_with_flags": {
+        "corpusOccurrences": 17,
+        "mapping": "Validate version/flags/profile; do not duplicate context for nested public ABI wrapper.",
+        "status": "implementable"
+      },
+      "context_destroy": {
+        "corpusOccurrences": 13,
+        "mapping": "Remove guest lookup and fail later use; earlier accepted commands retain resources until completion.",
+        "status": "implementable"
+      },
+      "create_fence": {
+        "corpusOccurrences": 307,
+        "mapping": "Preserve u64 fence IDs with BigInt/paired u32; legacy ctxId is command type, not context identity; map submission epoch.",
+        "status": "implementable"
+      },
+      "ctx_attach_resource": {
+        "corpusOccurrences": 100,
+        "mapping": "Global resource store with per-context attachment membership; repeat/detach behavior explicitly validated.",
+        "status": "implementable"
+      },
+      "ctx_detach_resource": {
+        "corpusOccurrences": 100,
+        "mapping": "Revoke future access; queued work retains owned references; no backing use after release.",
+        "status": "implementable"
+      },
+      "fill_caps": {
+        "corpusOccurrences": 4,
+        "mapping": "Current profile has no payload. Future byte encoder must audit every field and Mesa-derived promise before enabling.",
+        "status": "implementable"
+      },
+      "get_cap_set": {
+        "corpusOccurrences": 16,
+        "mapping": "Current profile returns no 3D capsets. Wire layouts documented independently of advertisement.",
+        "status": "implementable"
+      },
+      "init": {
+        "corpusOccurrences": 4,
+        "mapping": "Initialize one physical WebGL2 context only after browser qualification; default 3D advertisement stays disabled.",
+        "status": "implementable"
+      },
+      "resource_attach_iov": {
+        "corpusOccurrences": 83,
+        "mapping": "Copy and validate guest scatter/gather descriptors; never retain borrowed Wasm views across yield.",
+        "status": "implementable"
+      },
+      "resource_create": {
+        "corpusOccurrences": 83,
+        "mapping": "Validate format/target/bind/dimensions/levels/samples and cumulative byte budget before allocating.",
+        "status": "implementable"
+      },
+      "resource_detach_iov": {
+        "corpusOccurrences": 79,
+        "mapping": "Separate guest backing lifetime from host resource; accepted transfers own their input bytes.",
+        "status": "implementable"
+      },
+      "resource_unref": {
+        "corpusOccurrences": 79,
+        "mapping": "Remove resource ID immediately; defer host deletion while views, scanout or work reference generation.",
+        "status": "implementable"
+      },
+      "submit_cmd": {
+        "corpusOccurrences": 241,
+        "mapping": "Copy bounded command bytes; validate framing and all referenced state; unknown/unsupported commands fail, never skipped.",
+        "status": "implementable"
+      },
+      "transfer_read_iov": {
+        "corpusOccurrences": 1,
+        "mapping": "Fence then readPixels/getBufferSubData, convert exact guest byte layout, write response before used ring/IRQ.",
+        "status": "implementable"
+      },
+      "transfer_write_iov": {
+        "corpusOccurrences": 122,
+        "mapping": "Snapshot bytes from checked guest IOV/box/strides; upload before later draw visibility.",
+        "status": "implementable"
+      },
+      "write_fence": {
+        "corpusOccurrences": 294,
+        "mapping": "Poll zero-timeout clientWaitSync after yielding event loop; complete control chains FIFO exactly once; discard stale epochs.",
+        "status": "implementable"
+      }
+    },
+    "objects": {
+      "BLEND": {
+        "corpusOccurrences": 8,
+        "mapping": "blendFuncSeparate/blendEquationSeparate/colorMask; initial one target, reject unsupported logic ops/dual source/independent target state.",
+        "status": "implementable"
+      },
+      "DSA": {
+        "corpusOccurrences": 5,
+        "mapping": "depthFunc/depthMask/stencilOpSeparate/stencilFuncSeparate; active alpha test needs shader specialization or rejection.",
+        "status": "implementable"
+      },
+      "RASTERIZER": {
+        "corpusOccurrences": 7,
+        "mapping": "cull/frontFace/polygonOffset/scissor state; reject unsupported depth clip, stipple, polygon mode, wide lines or point rules until lowered.",
+        "status": "implementable"
+      },
+      "SAMPLER_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "WebGLSampler; bound wrap/filter/compare/LOD; border color and unsupported wraps rejected until lowered.",
+        "status": "implementable"
+      },
+      "SAMPLER_VIEW": {
+        "corpusOccurrences": 15,
+        "mapping": "Host texture plus immutable format/level/layer/swizzle metadata; view aliasing must preserve shared backing.",
+        "status": "implementable"
+      },
+      "SHADER": {
+        "corpusOccurrences": 50,
+        "mapping": "Bounded TGSI frontend and upstream converter; full source and shader-key validation before compile/link.",
+        "status": "implementable"
+      },
+      "SURFACE": {
+        "corpusOccurrences": 611,
+        "mapping": "Validated renderable resource view held by FBO/scanout lifetime references; no arbitrary texture reinterpretation.",
+        "status": "implementable"
+      },
+      "VERTEX_ELEMENTS": {
+        "corpusOccurrences": 9,
+        "mapping": "vertexAttribPointer/IPointer/divisor; unpack unsupported formats in bounded staging or reject, including Mesa implicit vertex-format promises.",
+        "status": "implementable"
+      }
+    },
+    "opcodes": {
+      "BIND_OBJECT": {
+        "corpusOccurrences": 1822,
+        "mapping": "Resolve typed handle in active context generation/subcontext; restore its full validated state.",
+        "status": "implementable"
+      },
+      "BIND_SAMPLER_STATES": {
+        "corpusOccurrences": 1060,
+        "mapping": "Bind WebGLSampler objects per stage/unit; reject out-of-range slots and unsupported wrap/filter modes.",
+        "status": "implementable"
+      },
+      "BIND_SHADER": {
+        "corpusOccurrences": 2432,
+        "mapping": "Bind validated VS/FS handles; zero unbinds; other executable stages rejected.",
+        "status": "implementable"
+      },
+      "CLEAR": {
+        "corpusOccurrences": 217,
+        "mapping": "clearBufferfv/iv/uiv and depth/stencil clears with format-aware types, masks, scissor and framebuffer orientation.",
+        "status": "implementable"
+      },
+      "COPY_TRANSFER3D": {
+        "corpusOccurrences": 21,
+        "mapping": "Checked copies between guest staging resources and host storage; snapshot source backing before deferred work; honor strides and boxes.",
+        "status": "implementable"
+      },
+      "CREATE_OBJECT": {
+        "corpusOccurrences": 710,
+        "mapping": "Dispatch all eight recorded typed object families; complete validation before insertion; no unknown-type success.",
+        "status": "implementable"
+      },
+      "CREATE_SUB_CTX": {
+        "corpusOccurrences": 13,
+        "mapping": "Create virtual state/typed object namespace inside context generation; no separate physical WebGL context.",
+        "status": "implementable"
+      },
+      "DESTROY_OBJECT": {
+        "corpusOccurrences": 686,
+        "mapping": "Remove handle from lookup; retain GL object while queued work or bound views reference it.",
+        "status": "implementable"
+      },
+      "DESTROY_SUB_CTX": {
+        "corpusOccurrences": 9,
+        "mapping": "Invalidate subcontext handles and caches; deferred deletion preserves earlier submissions.",
+        "status": "implementable"
+      },
+      "DRAW_VBO": {
+        "corpusOccurrences": 7162,
+        "mapping": "drawArrays/drawElements and instanced variants after full state restore; lower restart, base vertex/start instance and unsupported topologies or reject before draw. No blind enum mapping.",
+        "status": "implementable"
+      },
+      "END_TRANSFERS": {
+        "corpusOccurrences": 241,
+        "mapping": "Validate empty marker and ordered transfer visibility; not a GPU-completion fence.",
+        "status": "implementable"
+      },
+      "LINK_SHADER": {
+        "corpusOccurrences": 21,
+        "mapping": "Compile/link keyed variants with attribute/linkage reflection; include per-view swizzle, formats, origin and rasterizer shader state in key.",
+        "status": "implementable"
+      },
+      "SET_ATOMIC_BUFFERS": {
+        "corpusOccurrences": 5,
+        "mapping": "Accept only validated zero bindings as inactive initialization; reject nonzero buffers and atomic execution.",
+        "status": "implementable"
+      },
+      "SET_BLEND_COLOR": {
+        "corpusOccurrences": 5,
+        "mapping": "blendColor after float-bit decode; restore on context switch.",
+        "status": "implementable"
+      },
+      "SET_CONSTANT_BUFFER": {
+        "corpusOccurrences": 4798,
+        "mapping": "Stage-specific ordinary constants via uniform4uiv float-bit encoding; bounds-check offset/length. Guest UBOs require separate support.",
+        "status": "implementable"
+      },
+      "SET_FRAMEBUFFER_STATE": {
+        "corpusOccurrences": 421,
+        "mapping": "Per-subcontext FBO from validated surface views; check completeness, dimensions, format and active target budget.",
+        "status": "implementable"
+      },
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": {
+        "corpusOccurrences": 421,
+        "mapping": "Store validated dimensions for detached FBO state; reject draws without legal attachments in initial profile.",
+        "status": "implementable"
+      },
+      "SET_INDEX_BUFFER": {
+        "corpusOccurrences": 3,
+        "mapping": "Track type/offset/resource generation; validate range at draw; rewrite restart indices when needed.",
+        "status": "implementable"
+      },
+      "SET_MIN_SAMPLES": {
+        "corpusOccurrences": 14,
+        "mapping": "Accept inactive/default value only initially; reject nontrivial minimum sample shading.",
+        "status": "implementable"
+      },
+      "SET_POLYGON_STIPPLE": {
+        "corpusOccurrences": 5,
+        "mapping": "Store bounded 32-word state; inactive rasterizer stipple only initially; active stipple rejected until shader lowering proven.",
+        "status": "implementable"
+      },
+      "SET_SAMPLER_VIEWS": {
+        "corpusOccurrences": 1006,
+        "mapping": "Validate attachments and view format/level/layers; specialize every texture sampling operation for view swizzle including forced alpha.",
+        "status": "implementable"
+      },
+      "SET_SAMPLE_MASK": {
+        "corpusOccurrences": 9,
+        "mapping": "Initial single-sample/all-enabled state only; reject active multisample masks until lowering and sample semantics proven.",
+        "status": "implementable"
+      },
+      "SET_SCISSOR_STATE": {
+        "corpusOccurrences": 6491,
+        "mapping": "scissor with checked rectangle and orientation conversion; restore every switch.",
+        "status": "implementable"
+      },
+      "SET_SHADER_BUFFERS": {
+        "corpusOccurrences": 54,
+        "mapping": "Accept validated zero bindings only; reject executable SSBOs.",
+        "status": "implementable"
+      },
+      "SET_SHADER_IMAGES": {
+        "corpusOccurrences": 108,
+        "mapping": "Accept validated zero bindings only; reject executable image load/store.",
+        "status": "implementable"
+      },
+      "SET_STENCIL_REF": {
+        "corpusOccurrences": 9,
+        "mapping": "stencilFuncSeparate using independently restored front/back references and DSA masks.",
+        "status": "implementable"
+      },
+      "SET_STREAMOUT_TARGETS": {
+        "corpusOccurrences": 9,
+        "mapping": "Zero targets only initially; reject active transform feedback until separate GLES3 tier implemented.",
+        "status": "implementable"
+      },
+      "SET_SUB_CTX": {
+        "corpusOccurrences": 241,
+        "mapping": "Select virtual state; invalid subcontext fails; selection re-established on every submission.",
+        "status": "implementable"
+      },
+      "SET_TESS_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "Validate fixed initialization payload; no-op only with absent tessellation stages; reject tessellation execution.",
+        "status": "implementable"
+      },
+      "SET_TWEAKS": {
+        "corpusOccurrences": 26,
+        "mapping": "Explicit allowlist of pinned initialization tweaks; unknown or semantics-changing tweaks rejected, never silently skipped.",
+        "status": "implementable"
+      },
+      "SET_VERTEX_BUFFERS": {
+        "corpusOccurrences": 1973,
+        "mapping": "Checked vertex buffer offset/stride/divisor; VAOs keyed by resource generations and vertex elements.",
+        "status": "implementable"
+      },
+      "SET_VIEWPORT_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "Convert Gallium scale/translate to viewport/depthRange, preserving lower-left coordinates and winding.",
+        "status": "implementable"
+      },
+      "TRANSFER3D": {
+        "corpusOccurrences": 227,
+        "mapping": "Host upload/readback with checked resource boxes, levels, row/layer stride, IOV lengths, format conversion and completion ordering.",
+        "status": "implementable"
+      }
+    },
+    "resourceFormats": {
+      "1": {
+        "corpusOccurrences": 2,
+        "mapping": "RGBA8 storage with explicit byte normalization or sample/render conversion; BGRA view swizzle specializes shader; inverse conversion on readback.",
+        "name": "B8G8R8A8_UNORM",
+        "status": "implementable"
+      },
+      "134": {
+        "corpusOccurrences": 1,
+        "mapping": "RGBA8 storage with shader/view alpha one and format-aware readback. Do not trust guest X byte as alpha.",
+        "name": "R8G8B8X8_UNORM",
+        "status": "implementable"
+      },
+      "17": {
+        "corpusOccurrences": 1,
+        "mapping": "No exact core WebGL2 32-bit fixed-point depth attachment. DEPTH_COMPONENT32F is not equivalent; do not advertise or reinterpret.",
+        "name": "Z32_UNORM",
+        "status": "rejected"
+      },
+      "177": {
+        "corpusOccurrences": 1,
+        "mapping": "R8UI/RED_INTEGER storage and usampler2D operations; preserve integer semantics, never normalized red.",
+        "name": "R8_UINT",
+        "status": "implementable"
+      },
+      "2": {
+        "corpusOccurrences": 12,
+        "mapping": "RGBA8 storage with BGR byte order and forced alpha one for sampling/render/readback; scanout alpha independent of stored X.",
+        "name": "B8G8R8X8_UNORM",
+        "status": "implementable"
+      },
+      "20": {
+        "corpusOccurrences": 2,
+        "mapping": "DEPTH24_STENCIL8 storage only with explicit guest packed-bit conversion on upload/readback; allocation success alone is not semantics proof.",
+        "name": "S8_UINT_Z24_UNORM",
+        "status": "implementable"
+      },
+      "21": {
+        "corpusOccurrences": 2,
+        "mapping": "DEPTH_COMPONENT24 candidate; strip/reconstruct guest unused byte explicitly and prove roundtrip/depth tests.",
+        "name": "Z24X8_UNORM",
+        "status": "implementable"
+      },
+      "64": {
+        "corpusOccurrences": 39,
+        "mapping": "Observed target is PIPE_BUFFER. Treat as bytes for vertex/index/staging usage; does not prove normalized R8 texture support.",
+        "name": "R8_UNORM",
+        "status": "implementable"
+      },
+      "67": {
+        "corpusOccurrences": 23,
+        "mapping": "RGBA8 storage; direct normalized color mapping, exact stride/origin/readback handling and per-view swizzle.",
+        "name": "R8G8B8A8_UNORM",
+        "status": "implementable"
+      }
+    },
+    "shaderInstructions": {
+      "ADD": {
+        "corpusOccurrences": 84,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "ADD_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "AND": {
+        "corpusOccurrences": 21,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "BGNLOOP": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "BRK": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "DIV": {
+        "corpusOccurrences": 17,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "DP3": {
+        "corpusOccurrences": 4,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "ELSE": {
+        "corpusOccurrences": 23,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "END": {
+        "corpusOccurrences": 26,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "ENDIF": {
+        "corpusOccurrences": 25,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "ENDLOOP": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "FRC": {
+        "corpusOccurrences": 8,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSEQ_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "FSGE": {
+        "corpusOccurrences": 10,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSLT": {
+        "corpusOccurrences": 34,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSNE_PRECISE": {
+        "corpusOccurrences": 4,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "ISGE": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "LRP": {
+        "corpusOccurrences": 8,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "MAX": {
+        "corpusOccurrences": 6,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "MAX_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "MOV": {
+        "corpusOccurrences": 102,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "MOV_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "MUL": {
+        "corpusOccurrences": 113,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "MUL_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "NOT": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "OR": {
+        "corpusOccurrences": 10,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "RCP": {
+        "corpusOccurrences": 2,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "RSQ": {
+        "corpusOccurrences": 4,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "SHL": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "TEX": {
+        "corpusOccurrences": 7,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "UADD": {
+        "corpusOccurrences": 10,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UARL": {
+        "corpusOccurrences": 8,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UCMP": {
+        "corpusOccurrences": 50,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UIF": {
+        "corpusOccurrences": 25,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "USEQ": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "USHR": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "USNE": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      }
+    },
+    "shaderStageCounts": {
+      "FRAG": {
+        "corpusOccurrences": 15,
+        "mapping": "Bounded literal FRAG stage implemented; current bridge rejects every unmodified captured shader.",
+        "status": "supported"
+      },
+      "VERT": {
+        "corpusOccurrences": 11,
+        "mapping": "Bounded literal VERT stage implemented; current bridge rejects every unmodified captured shader.",
+        "status": "supported"
+      }
+    }
+  },
+  "observedStateScope": {
+    "blend": "RT0 full mask; add; disabled or ONE/INV_SRC_ALPHA and SRC_ALPHA/INV_SRC_ALPHA RGB; ONE/INV_SRC_ALPHA alpha; dither0/1.",
+    "constants": "VS slot0 uploads12/16/32words, FS slot0 uploads4words; all stages0..5 slots0..14 receive empty clears.",
+    "depthStencil": "Disabled or depth test/write LEQUAL; stencil and alpha test inactive.",
+    "draws": "Triangles, triangle strip, triangle fan; tiny scene has u16 indices; instanceCount1; no active restart/baseVertex/baseInstance/indirect/streamout.",
+    "rasterizer": "Fill triangles, depthclip1, half-pixel1; cull none/back, frontCCW0/1, scissor0/1. Point/sprite knobs inactive only under validated triangle topology.",
+    "samplers": "2D nearest or linear, no mipfilter; clamp-edge S/T, repeat or clamp-edge R; compare disabled; cube flag inactive on 2D.",
+    "shaderExecution": "Four complex Xwayland FS shaders are created and linked at glmark event5462, never subsequently bound; corpus does not prove their loops/indirect paths executed.",
+    "transfers": "COPY_TRANSFER3D flags1 upload and3 synchronized readback; source backing needed even without exported transfer_write.",
+    "tweaks": "Only (id1,value1) destination BGRA swizzle and (id2,value1024) transform-feedback samples multiplier; validate exact supported meanings.",
+    "viewport": "Kmscube event176 byte4612 has negative Y scale; other captures positive. Coordinate conversion must preserve cull, scissor and readback."
+  },
+  "pins": {
+    "guestArchitecture": "riscv64",
+    "hyprland": "0.56.2-3",
+    "mesa": "1:26.2.2-1",
+    "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+    "virglrenderer": "1.3.0"
+  },
+  "production": {
+    "capsets": [],
+    "guestRendererImplemented": false,
+    "numCapsets": 0,
+    "virglFeature": false
+  },
+  "schema": "wasm-vm-virgl-browser-contract-v1",
+  "scope": "Isolated prototype and planned renderer mappings; no guest renderer implementation or desktop acceleration claim.",
+  "shaderSyntax": {
+    "FS_COLOR0_WRITES_ALL_CBUFS": {
+      "mapping": "Value1 requires actual enabled draw-buffer replication; one-target initial profile only, MRT semantics deferred.",
+      "status": "implementable"
+    },
+    "PRECISE": {
+      "mapping": "Strict precise semantics unsupported in accepted ESSL300 path; cannot discard qualifier.",
+      "status": "rejected"
+    },
+    "TEX-2D-FLOAT": {
+      "mapping": "SAMP0/SVIEW0 FLOAT 2D observed; per-view sample swizzle specialization still required.",
+      "status": "implementable"
+    },
+    "UINT32-immediates": {
+      "mapping": "Preserve four 32-bit words and reinterpret for float use; indices0..4 observed; do not numerically convert to float.",
+      "status": "implementable"
+    },
+    "declaration-masks": {
+      "mapping": "Validate xy/xyz/xyzw declaration masks and component initialization; never infer full writes from partial outputs.",
+      "status": "implementable"
+    },
+    "declaration-ranges-and-order": {
+      "mapping": "Expand bounded declarations for IN/OUT/CONST/TEMP/ADDR/SAMP/SVIEW, disjoint ranges and declarations after IMM; max observed TEMP117 is not a general Mesa limit.",
+      "status": "implementable"
+    },
+    "indirect-constant-index": {
+      "mapping": "CONST[ADDR[0].x] uses bounded index and bit-correct UARL; reject out-of-range and unsupported indirect files.",
+      "status": "implementable"
+    },
+    "partial-destination-writes": {
+      "mapping": "Merge masked destination writes with live untouched components and track initialization; ADDR/OUT/TEMP destinations.",
+      "status": "implementable"
+    },
+    "semantics-and-interpolation": {
+      "mapping": "POSITION/COLOR/GENERIC[0], PERSPECTIVE and CONSTANT; flat linkage requires matching VS/FS qualifiers.",
+      "status": "implementable"
+    },
+    "source-swizzles-and-negation": {
+      "mapping": "Validate four-component selectors and unary minus for CONST/TEMP; apply modifiers in TGSI order.",
+      "status": "implementable"
+    },
+    "structured-target-annotations": {
+      "mapping": "Validate UIF/ELSE/BGNLOOP/ENDLOOP target labels and matching stack; observed IF nesting7 and loop nesting1; bound execution work.",
+      "status": "implementable"
+    }
+  },
+  "statusMeaning": {
+    "implementable": "Concrete chosen-API mapping exists; implementation and guest proof still required.",
+    "rejected": "No accepted semantics-preserving mapping in this contract; do not advertise.",
+    "supported": "Current bounded literal bridge feature only, never general guest/corpus support."
+  },
+  "unsupportedExecution": [
+    "compute",
+    "geometry",
+    "tessellation",
+    "SSBO",
+    "image load/store",
+    "atomics",
+    "transform feedback in initial tier",
+    "indirect draw",
+    "active polygon stipple",
+    "non-default sample shading",
+    "strict PRECISE",
+    "Z32_UNORM",
+    "unvalidated command/object/format/state enum"
+  ],
+  "vertexFormats": {
+    "29": {
+      "corpusOccurrences": 10,
+      "mapping": "vertexAttribPointer with FLOAT and exact component count; validate stride, offset and all referenced vertex bytes.",
+      "name": "R32G32_FLOAT",
+      "status": "implementable"
+    },
+    "30": {
+      "corpusOccurrences": 6,
+      "mapping": "vertexAttribPointer with FLOAT and exact component count; validate stride, offset and all referenced vertex bytes.",
+      "name": "R32G32B32_FLOAT",
+      "status": "implementable"
+    }
+  }
+}
