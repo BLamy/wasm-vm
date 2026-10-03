@@ -1,0 +1,1261 @@
+{
+  "schema": "radial-domain-cases-v1",
+  "thresholdWord": 925353388,
+  "cases": [
+    {
+      "name": "plain-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "renamed-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[23].w, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[24].w, TEMP[23].wwww, IMM[0].xxxx\nUIF TEMP[24].wwww\nMOV TEMP[26], IMM[0].yyyy\nELSE\nMOV TEMP[25], CONST[5]\nENDIF\nADD TEMP[27], TEMP[25], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[27]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nUIF IMM[0].yyyy\nMOV TEMP[56], IMM[0].yyyy\nELSE\nMAX TEMP[50].y, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[51].y, TEMP[50].yyyy, IMM[0].xxxx\nUIF TEMP[51].yyyy\nMOV TEMP[53], IMM[0].yyyy\nELSE\nMOV TEMP[52], CONST[5]\nENDIF\nADD TEMP[54], TEMP[52], IMM[0].yyyy\nMOV TEMP[56], TEMP[54]\nENDIF\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[56]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "indirect-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nDCL ADDR[0]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMOV TEMP[87].x, IMM[0].wwww\nUARL ADDR[0].x, TEMP[87].xxxx\nMAX TEMP[80].z, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[81].z, TEMP[80].zzzz, IMM[0].xxxx\nUIF TEMP[81].zzzz\nMOV TEMP[83], IMM[0].yyyy\nELSE\nMOV TEMP[82], CONST[ADDR[0].x]\nENDIF\nADD TEMP[84], TEMP[82], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[84]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v15",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ],
+        "constantAccesses": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 6,
+            "kind": "constant-bank-static-indirect-v1",
+            "indices": [
+              5
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "reject-wrong-constant-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[3].xxxx, -CONST[3].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-component-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].yyyy, -CONST[4].yyyy\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-missing-negation-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-both-negative-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, -CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-threshold-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353389,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-reversed-comparison-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, IMM[0].xxxx, TEMP[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-changed-predicate-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSGE TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-selector-lane-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].yyyy\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-condition-clobber-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nMOV TEMP[1].x, IMM[0].zzzz\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-magnitude-clobber-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nMOV TEMP[0].x, IMM[0].zzzz\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-no-else-definition-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2].x, CONST[5].xxxx\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-unrelated-missing-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[8], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-precise-gated-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX_PRECISE TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-second-certificate-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nMAX TEMP[9].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[10].x, TEMP[9].xxxx, IMM[0].xxxx\nUIF TEMP[10].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[3], IMM[0].yyyy\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], IN[0]\nMOV OUT[1], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "plain-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "renamed-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[23].w, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[24].w, TEMP[23].wwww, IMM[0].xxxx\nUIF TEMP[24].wwww\nMOV TEMP[26], IMM[0].yyyy\nELSE\nMOV TEMP[25], CONST[5]\nENDIF\nADD TEMP[27], TEMP[25], IMM[0].yyyy\nMOV OUT[0], TEMP[27]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nUIF IMM[0].yyyy\nMOV TEMP[56], IMM[0].yyyy\nELSE\nMAX TEMP[50].y, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[51].y, TEMP[50].yyyy, IMM[0].xxxx\nUIF TEMP[51].yyyy\nMOV TEMP[53], IMM[0].yyyy\nELSE\nMOV TEMP[52], CONST[5]\nENDIF\nADD TEMP[54], TEMP[52], IMM[0].yyyy\nMOV TEMP[56], TEMP[54]\nENDIF\nMOV OUT[0], TEMP[56]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      }
+    },
+    {
+      "name": "indirect-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nDCL ADDR[0]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMOV TEMP[87].x, IMM[0].wwww\nUARL ADDR[0].x, TEMP[87].xxxx\nMAX TEMP[80].z, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[81].z, TEMP[80].zzzz, IMM[0].xxxx\nUIF TEMP[81].zzzz\nMOV TEMP[83], IMM[0].yyyy\nELSE\nMOV TEMP[82], CONST[ADDR[0].x]\nENDIF\nADD TEMP[84], TEMP[82], IMM[0].yyyy\nMOV OUT[0], TEMP[84]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v15",
+        "constantCount": 6,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ],
+        "constantAccesses": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 6,
+            "kind": "constant-bank-static-indirect-v1",
+            "indices": [
+              5
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "reject-wrong-constant-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[3].xxxx, -CONST[3].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-component-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].yyyy, -CONST[4].yyyy\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-missing-negation-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-both-negative-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, -CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-threshold-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353389,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-reversed-comparison-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, IMM[0].xxxx, TEMP[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-changed-predicate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSGE TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-wrong-selector-lane-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].yyyy\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-condition-clobber-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nMOV TEMP[1].x, IMM[0].zzzz\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-magnitude-clobber-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nMOV TEMP[0].x, IMM[0].zzzz\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-no-else-definition-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2].x, CONST[5].xxxx\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-unrelated-missing-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[8], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-precise-gated-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX_PRECISE TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "reject-second-certificate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..5]\nDCL TEMP[0..117]\nIMM[0] UINT32 {925353388,0,1065353216,5}\nMAX TEMP[0].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[1].x, TEMP[0].xxxx, IMM[0].xxxx\nUIF TEMP[1].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[2], CONST[5]\nENDIF\nMAX TEMP[9].x, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[10].x, TEMP[9].xxxx, IMM[0].xxxx\nUIF TEMP[10].xxxx\nMOV TEMP[3], IMM[0].yyyy\nELSE\nMOV TEMP[3], IMM[0].yyyy\nENDIF\nADD TEMP[4], TEMP[2], IMM[0].yyyy\nMOV OUT[0], TEMP[4]\nEND\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "unmarked-structural-port-nested-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..25]\nDCL TEMP[0..113]\nIMM[0] UINT32 {3212836864, 925353388, 1056964608, 0}\nIMM[1] UINT32 {1, 0, 3, 1065353216}\nIMM[2] UINT32 {1, 2, 3, 4}\nIMM[3] UINT32 {5, 6, 7, 8}\nIMM[4] UINT32 {897988541, 1073741824, 0, 0}\nDCL TEMP[114..117]\n  0: MUL TEMP[17].xyz, CONST[0].xyzz, IN[0].xxxx\n  1: MUL TEMP[18].xyz, CONST[1].xyzz, IN[0].yyyx\n  2: ADD TEMP[19].xyz, TEMP[17].xyzx, CONST[2].xyzx\n  3: ADD TEMP[20].xyz, TEMP[19].xyzx, TEMP[18].xyzx\n  4: DIV TEMP[21].xy, TEMP[20].xyyy, TEMP[20].zzxx\n  5: MUL TEMP[22].xy, CONST[5].xyxx, IMM[0].xxxx\n  6: ADD TEMP[23].xy, TEMP[21].xyxx, TEMP[22].xyxx\n  7: ADD TEMP[24].xy, CONST[7].xyyy, TEMP[22].xyxx\n  8: MUL TEMP[25].xy, TEMP[23].xyxx, TEMP[24].xyxx\n  9: ADD TEMP[26].x, TEMP[25].xxxx, TEMP[25].yxxx\n 10: MUL TEMP[27].x, CONST[6].xxxx, IMM[0].xxxx\n 11: ADD TEMP[28].x, CONST[8].xxxx, TEMP[27].xxxx\n 12: MUL TEMP[29].x, CONST[6].xxxx, TEMP[28].xxxx\n 13: ADD TEMP[30].x, TEMP[26].xxxx, TEMP[29].xxxx\n 14: MUL TEMP[31].xy, TEMP[23].xyxx, TEMP[23].xyxx\n 15: ADD TEMP[32].x, TEMP[31].xxxx, TEMP[31].yxxx\n 16: MUL TEMP[33].x, CONST[6].xxxx, CONST[6].xxxx\n 17: MUL TEMP[34].x, TEMP[33].xxxx, IMM[0].xxxx\n 18: ADD TEMP[35].x, TEMP[32].xxxx, TEMP[34].xxxx\n 19: MAX TEMP[36].x, CONST[4].xxxx, -CONST[4].xxxx\n 20: FSLT TEMP[37].x, TEMP[36].xxxx, IMM[0].yyyy\n 21: UIF TEMP[37].xxxx :27\n 22:   MUL TEMP[38].x, IMM[0].zzzz, TEMP[35].xxxx\n 23:   DIV TEMP[39].x, TEMP[38].xxxx, TEMP[30].xxxx\n 24:   FSEQ TEMP[1].x, TEMP[30].xxxx, IMM[0].wwww\n 25:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[39].xxxx\n 26:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 27: ELSE :40\n 28:   MUL TEMP[40].x, TEMP[30].xxxx, TEMP[30].xxxx\n 29:   MUL TEMP[41].x, CONST[4].xxxx, TEMP[35].xxxx\n 30:   MUL TEMP[42].x, TEMP[41].xxxx, IMM[0].xxxx\n 31:   ADD TEMP[43].x, TEMP[40].xxxx, TEMP[42].xxxx\n 32:   RSQ TEMP[44].x, TEMP[43].xxxx\n 33:   RCP TEMP[45].x, TEMP[44].xxxx\n 34:   ADD TEMP[46].x, TEMP[30].xxxx, TEMP[45].xxxx\n 35:   DIV TEMP[47].x, TEMP[46].xxxx, CONST[4].xxxx\n 36:   FSLT TEMP[1].x, TEMP[43].xxxx, IMM[0].wwww\n 37:   UCMP TEMP[2].x, TEMP[1].xxxx, TEMP[43].xxxx, TEMP[45].xxxx\n 38:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[47].xxxx\n 39:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 40: ENDIF\n 41: NOT TEMP[48].x, TEMP[1].xxxx\n 42: UIF TEMP[48].xxxx :79\n 43:   USEQ TEMP[49].xyz, CONST[3].xxxx, IMM[1].yxzy\n 44:   MOV TEMP[50].x, TEMP[49].xxxx\n 45:   UIF TEMP[50].xxxx :58\n 46:     FSLT TEMP[51].x, IMM[1].wwww, TEMP[3].xxxx\n 47:     FSGE TEMP[52].x, IMM[0].wwww, TEMP[3].xxxx\n 48:     OR TEMP[53].x, TEMP[52].xxxx, TEMP[51].xxxx\n 49:     MUL TEMP[54].x, TEMP[2].xxxx, IMM[0].xxxx\n 50:     ADD TEMP[55].x, TEMP[30].xxxx, TEMP[54].xxxx\n 51:     DIV TEMP[56].x, TEMP[55].xxxx, CONST[4].xxxx\n 52:     UCMP TEMP[4].x, TEMP[53].xxxx, TEMP[56].xxxx, TEMP[3]\n 53:     FSLT TEMP[57].x, IMM[1].wwww, TEMP[4].xxxx\n 54:     FSGE TEMP[58].x, IMM[0].wwww, TEMP[4].xxxx\n 55:     OR TEMP[6].x, TEMP[58].xxxx, TEMP[57].xxxx\n 56:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 57:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 58:   ELSE :69\n 59:     MUL TEMP[59].x, TEMP[3].xxxx, TEMP[28].xxxx\n 60:     MUL TEMP[60].x, TEMP[2].xxxx, IMM[0].xxxx\n 61:     ADD TEMP[61].x, TEMP[30].xxxx, TEMP[60].xxxx\n 62:     DIV TEMP[62].x, TEMP[61].xxxx, CONST[4].xxxx\n 63:     FSGE TEMP[63].x, TEMP[27].xxxx, TEMP[59].xxxx\n 64:     UCMP TEMP[4].x, TEMP[63].xxxx, TEMP[62].xxxx, TEMP[3]\n 65:     MUL TEMP[64].x, TEMP[4].xxxx, TEMP[28].xxxx\n 66:     FSGE TEMP[6].x, TEMP[27].xxxx, TEMP[64].xxxx\n 67:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 68:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 69:   ENDIF\n 70:   FRC TEMP[65].x, TEMP[4].xxxx\n 71:   UCMP TEMP[66].x, TEMP[49].yxxx, TEMP[65].xxxx, TEMP[4]\n 72:   MUL TEMP[67].x, TEMP[66].xxxx, IMM[0].zzzz\n 73:   ADD TEMP[68].x, TEMP[67].xxxx, IMM[0].zzzz\n 74:   FRC TEMP[69].x, TEMP[68].xxxx\n 75:   LRP TEMP[70].x, TEMP[69].xxxx, IMM[1].wwww, IMM[0].xxxx\n 76:   MAX TEMP[71].x, TEMP[70].xxxx, -TEMP[70].xxxx\n 77:   UCMP TEMP[72].x, TEMP[49].zxxx, TEMP[71].xxxx, TEMP[66].xxxx\n 78:   UCMP TEMP[13].x, TEMP[6].xxxx, TEMP[5].xxxx, TEMP[72].xxxx\n 79: ELSE :81\n 80:   MOV TEMP[13].x, IMM[0].wwww\n 81: ENDIF\n 82: USNE TEMP[73].x, TEMP[7].xxxx, IMM[1].xxxx\n 83: UIF TEMP[73].xxxx :175\n 84:   ISGE TEMP[74], CONST[9].xxxx, IMM[2]\n 85:   MOV TEMP[12].x, CONST[10].xxxx\n 86:   FSLT TEMP[75].x, TEMP[13].xxxx, TEMP[12].xxxx\n 87:   AND TEMP[76].x, TEMP[75].xxxx, TEMP[74].xxxx\n 88:   NOT TEMP[77].x, TEMP[76].xxxx\n 89:   UIF TEMP[77].xxxx :158\n 90:     MOV TEMP[11].x, CONST[11].xxxx\n 91:     FSLT TEMP[78].x, TEMP[13].xxxx, TEMP[11].xxxx\n 92:     AND TEMP[79].x, TEMP[78].xxxx, TEMP[74].yxxx\n 93:     UIF TEMP[79].xxxx :98\n 94:       MUL TEMP[80].x, TEMP[12].xxxx, IMM[0].xxxx\n 95:       ADD TEMP[14].x, TEMP[11].xxxx, TEMP[80].xxxx\n 96:       MOV TEMP[16], CONST[18]\n 97:       MOV TEMP[15], CONST[19]\n 98:     ELSE :157\n 99:       MOV TEMP[10].x, CONST[12].xxxx\n100:       FSLT TEMP[81].x, TEMP[13].xxxx, TEMP[10].xxxx\n101:       AND TEMP[82].x, TEMP[81].xxxx, TEMP[74].zxxx\n102:       UIF TEMP[82].xxxx :107\n103:         MUL TEMP[83].x, TEMP[11].xxxx, IMM[0].xxxx\n104:         ADD TEMP[14].x, TEMP[10].xxxx, TEMP[83].xxxx\n105:         MOV TEMP[16], CONST[19]\n106:         MOV TEMP[15], CONST[20]\n107:       ELSE :155\n108:         MOV TEMP[9].x, CONST[13].xxxx\n109:         FSLT TEMP[84].x, TEMP[13].xxxx, TEMP[9].xxxx\n110:         AND TEMP[85].x, TEMP[84].xxxx, TEMP[74].wxxx\n111:         UIF TEMP[85].xxxx :116\n112:           MUL TEMP[86].x, TEMP[10].xxxx, IMM[0].xxxx\n113:           ADD TEMP[14].x, TEMP[9].xxxx, TEMP[86].xxxx\n114:           MOV TEMP[16], CONST[20]\n115:           MOV TEMP[15], CONST[21]\n116:         ELSE :153\n117:           ISGE TEMP[87], CONST[9].xxxx, IMM[3]\n118:           MOV TEMP[8].x, CONST[14].xxxx\n119:           FSLT TEMP[88].x, TEMP[13].xxxx, TEMP[8].xxxx\n120:           AND TEMP[89].x, TEMP[88].xxxx, TEMP[87].xxxx\n121:           UIF TEMP[89].xxxx :126\n122:             MUL TEMP[90].x, TEMP[9].xxxx, IMM[0].xxxx\n123:             ADD TEMP[14].x, TEMP[8].xxxx, TEMP[90].xxxx\n124:             MOV TEMP[16], CONST[21]\n125:             MOV TEMP[15], CONST[22]\n126:           ELSE :151\n127:             FSLT TEMP[91].x, TEMP[13].xxxx, CONST[15].xxxx\n128:             AND TEMP[92].x, TEMP[91].xxxx, TEMP[87].yxxx\n129:             UIF TEMP[92].xxxx :134\n130:               MUL TEMP[93].x, TEMP[8].xxxx, IMM[0].xxxx\n131:               ADD TEMP[14].x, CONST[15].xxxx, TEMP[93].xxxx\n132:               MOV TEMP[16], CONST[22]\n133:               MOV TEMP[15], CONST[23]\n134:             ELSE :149\n135:               FSLT TEMP[94].x, TEMP[13].xxxx, CONST[16].xxxx\n136:               AND TEMP[95].x, TEMP[94].xxxx, TEMP[87].zxxx\n137:               MUL TEMP[96].x, CONST[15].xxxx, IMM[0].xxxx\n138:               ADD TEMP[97].x, CONST[16].xxxx, TEMP[96].xxxx\n139:               FSLT TEMP[98].x, TEMP[13].xxxx, CONST[17].xxxx\n140:               AND TEMP[99].x, TEMP[98].xxxx, TEMP[87].wxxx\n141:               MUL TEMP[100].x, CONST[16].xxxx, IMM[0].xxxx\n142:               ADD TEMP[101].x, CONST[17].xxxx, TEMP[100].xxxx\n143:               UCMP TEMP[102].x, TEMP[99].xxxx, TEMP[101].xxxx, IMM[0].wwww\n144:               UCMP TEMP[103], TEMP[99].xxxx, CONST[24], IMM[0].wwww\n145:               UCMP TEMP[8].x, TEMP[95].xxxx, CONST[15].xxxx, CONST[16].xxxx\n146:               UCMP TEMP[15], TEMP[95].xxxx, CONST[24], CONST[25]\n147:               UCMP TEMP[14].x, TEMP[95].xxxx, TEMP[97].xxxx, TEMP[102].xxxx\n148:               UCMP TEMP[16], TEMP[95].xxxx, CONST[23], TEMP[103]\n149:             ENDIF\n150:             MOV TEMP[9].x, TEMP[8].xxxx\n151:           ENDIF\n152:           MOV TEMP[10].x, TEMP[9].xxxx\n153:         ENDIF\n154:         MOV TEMP[11].x, TEMP[10].xxxx\n155:       ENDIF\n156:       MOV TEMP[12].x, TEMP[11].xxxx\n157:     ENDIF\n158:   ELSE :161\n159:     MOV TEMP[16], IMM[0].wwww\n160:     MOV TEMP[14].x, IMM[0].wwww\n161:   ENDIF\n162:   FSLT TEMP[104].x, TEMP[14].xxxx, IMM[4].xxxx\n163:   FSLT TEMP[105].x, IMM[4].yyyy, TEMP[14].xxxx\n164:   OR TEMP[106].x, TEMP[104].xxxx, TEMP[105].xxxx\n165:   MUL TEMP[107].x, TEMP[12].xxxx, IMM[0].xxxx\n166:   ADD TEMP[108].x, TEMP[13].xxxx, TEMP[107].xxxx\n167:   DIV TEMP[109].x, TEMP[108].xxxx, TEMP[14].xxxx\n168:   UCMP TEMP[110].x, TEMP[106].xxxx, IMM[0].wwww, TEMP[109].xxxx\n169:   LRP TEMP[111], TEMP[110].xxxx, TEMP[15], TEMP[16]\n170:   FSNE TEMP[112].x, TEMP[110].xxxx, IMM[0].wwww\n171:   UCMP TEMP[113], TEMP[112].xxxx, TEMP[111], TEMP[16]\n172:   MUL TEMP[0].xyz, TEMP[113].xyzx, TEMP[113].wwww\n173:   ADD TEMP[0].w, TEMP[113].xxxw, IMM[1].yyyy\n174:   MOV OUT[0], TEMP[0]\n175: ELSE :177\n176:   MOV OUT[0], IMM[0].wwww\n177: ENDIF\n178: END\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v14",
+        "constantCount": 26,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 26,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 26,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ]
+      },
+      "derivedFrom": {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e.tgsi",
+        "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+        "operation": "explicit authored removal of PRECISE suffixes and numeric ADD-zero alpha output projection; original remains gated"
+      }
+    },
+    {
+      "name": "reject-no-alpha-view-unmarked-structural-port-nested-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..25]\nDCL TEMP[0..113]\nIMM[0] UINT32 {3212836864, 925353388, 1056964608, 0}\nIMM[1] UINT32 {1, 0, 3, 1065353216}\nIMM[2] UINT32 {1, 2, 3, 4}\nIMM[3] UINT32 {5, 6, 7, 8}\nIMM[4] UINT32 {897988541, 1073741824, 0, 0}\nDCL TEMP[114..117]\n  0: MUL TEMP[17].xyz, CONST[0].xyzz, IN[0].xxxx\n  1: MUL TEMP[18].xyz, CONST[1].xyzz, IN[0].yyyx\n  2: ADD TEMP[19].xyz, TEMP[17].xyzx, CONST[2].xyzx\n  3: ADD TEMP[20].xyz, TEMP[19].xyzx, TEMP[18].xyzx\n  4: DIV TEMP[21].xy, TEMP[20].xyyy, TEMP[20].zzxx\n  5: MUL TEMP[22].xy, CONST[5].xyxx, IMM[0].xxxx\n  6: ADD TEMP[23].xy, TEMP[21].xyxx, TEMP[22].xyxx\n  7: ADD TEMP[24].xy, CONST[7].xyyy, TEMP[22].xyxx\n  8: MUL TEMP[25].xy, TEMP[23].xyxx, TEMP[24].xyxx\n  9: ADD TEMP[26].x, TEMP[25].xxxx, TEMP[25].yxxx\n 10: MUL TEMP[27].x, CONST[6].xxxx, IMM[0].xxxx\n 11: ADD TEMP[28].x, CONST[8].xxxx, TEMP[27].xxxx\n 12: MUL TEMP[29].x, CONST[6].xxxx, TEMP[28].xxxx\n 13: ADD TEMP[30].x, TEMP[26].xxxx, TEMP[29].xxxx\n 14: MUL TEMP[31].xy, TEMP[23].xyxx, TEMP[23].xyxx\n 15: ADD TEMP[32].x, TEMP[31].xxxx, TEMP[31].yxxx\n 16: MUL TEMP[33].x, CONST[6].xxxx, CONST[6].xxxx\n 17: MUL TEMP[34].x, TEMP[33].xxxx, IMM[0].xxxx\n 18: ADD TEMP[35].x, TEMP[32].xxxx, TEMP[34].xxxx\n 19: MAX TEMP[36].x, CONST[4].xxxx, -CONST[4].xxxx\n 20: FSLT TEMP[37].x, TEMP[36].xxxx, IMM[0].yyyy\n 21: UIF TEMP[37].xxxx :27\n 22:   MUL TEMP[38].x, IMM[0].zzzz, TEMP[35].xxxx\n 23:   DIV TEMP[39].x, TEMP[38].xxxx, TEMP[30].xxxx\n 24:   FSEQ TEMP[1].x, TEMP[30].xxxx, IMM[0].wwww\n 25:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[39].xxxx\n 26:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 27: ELSE :40\n 28:   MUL TEMP[40].x, TEMP[30].xxxx, TEMP[30].xxxx\n 29:   MUL TEMP[41].x, CONST[4].xxxx, TEMP[35].xxxx\n 30:   MUL TEMP[42].x, TEMP[41].xxxx, IMM[0].xxxx\n 31:   ADD TEMP[43].x, TEMP[40].xxxx, TEMP[42].xxxx\n 32:   RSQ TEMP[44].x, TEMP[43].xxxx\n 33:   RCP TEMP[45].x, TEMP[44].xxxx\n 34:   ADD TEMP[46].x, TEMP[30].xxxx, TEMP[45].xxxx\n 35:   DIV TEMP[47].x, TEMP[46].xxxx, CONST[4].xxxx\n 36:   FSLT TEMP[1].x, TEMP[43].xxxx, IMM[0].wwww\n 37:   UCMP TEMP[2].x, TEMP[1].xxxx, TEMP[43].xxxx, TEMP[45].xxxx\n 38:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[47].xxxx\n 39:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 40: ENDIF\n 41: NOT TEMP[48].x, TEMP[1].xxxx\n 42: UIF TEMP[48].xxxx :79\n 43:   USEQ TEMP[49].xyz, CONST[3].xxxx, IMM[1].yxzy\n 44:   MOV TEMP[50].x, TEMP[49].xxxx\n 45:   UIF TEMP[50].xxxx :58\n 46:     FSLT TEMP[51].x, IMM[1].wwww, TEMP[3].xxxx\n 47:     FSGE TEMP[52].x, IMM[0].wwww, TEMP[3].xxxx\n 48:     OR TEMP[53].x, TEMP[52].xxxx, TEMP[51].xxxx\n 49:     MUL TEMP[54].x, TEMP[2].xxxx, IMM[0].xxxx\n 50:     ADD TEMP[55].x, TEMP[30].xxxx, TEMP[54].xxxx\n 51:     DIV TEMP[56].x, TEMP[55].xxxx, CONST[4].xxxx\n 52:     UCMP TEMP[4].x, TEMP[53].xxxx, TEMP[56].xxxx, TEMP[3]\n 53:     FSLT TEMP[57].x, IMM[1].wwww, TEMP[4].xxxx\n 54:     FSGE TEMP[58].x, IMM[0].wwww, TEMP[4].xxxx\n 55:     OR TEMP[6].x, TEMP[58].xxxx, TEMP[57].xxxx\n 56:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 57:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 58:   ELSE :69\n 59:     MUL TEMP[59].x, TEMP[3].xxxx, TEMP[28].xxxx\n 60:     MUL TEMP[60].x, TEMP[2].xxxx, IMM[0].xxxx\n 61:     ADD TEMP[61].x, TEMP[30].xxxx, TEMP[60].xxxx\n 62:     DIV TEMP[62].x, TEMP[61].xxxx, CONST[4].xxxx\n 63:     FSGE TEMP[63].x, TEMP[27].xxxx, TEMP[59].xxxx\n 64:     UCMP TEMP[4].x, TEMP[63].xxxx, TEMP[62].xxxx, TEMP[3]\n 65:     MUL TEMP[64].x, TEMP[4].xxxx, TEMP[28].xxxx\n 66:     FSGE TEMP[6].x, TEMP[27].xxxx, TEMP[64].xxxx\n 67:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 68:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 69:   ENDIF\n 70:   FRC TEMP[65].x, TEMP[4].xxxx\n 71:   UCMP TEMP[66].x, TEMP[49].yxxx, TEMP[65].xxxx, TEMP[4]\n 72:   MUL TEMP[67].x, TEMP[66].xxxx, IMM[0].zzzz\n 73:   ADD TEMP[68].x, TEMP[67].xxxx, IMM[0].zzzz\n 74:   FRC TEMP[69].x, TEMP[68].xxxx\n 75:   LRP TEMP[70].x, TEMP[69].xxxx, IMM[1].wwww, IMM[0].xxxx\n 76:   MAX TEMP[71].x, TEMP[70].xxxx, -TEMP[70].xxxx\n 77:   UCMP TEMP[72].x, TEMP[49].zxxx, TEMP[71].xxxx, TEMP[66].xxxx\n 78:   UCMP TEMP[13].x, TEMP[6].xxxx, TEMP[5].xxxx, TEMP[72].xxxx\n 79: ELSE :81\n 80:   MOV TEMP[13].x, IMM[0].wwww\n 81: ENDIF\n 82: USNE TEMP[73].x, TEMP[7].xxxx, IMM[1].xxxx\n 83: UIF TEMP[73].xxxx :175\n 84:   ISGE TEMP[74], CONST[9].xxxx, IMM[2]\n 85:   MOV TEMP[12].x, CONST[10].xxxx\n 86:   FSLT TEMP[75].x, TEMP[13].xxxx, TEMP[12].xxxx\n 87:   AND TEMP[76].x, TEMP[75].xxxx, TEMP[74].xxxx\n 88:   NOT TEMP[77].x, TEMP[76].xxxx\n 89:   UIF TEMP[77].xxxx :158\n 90:     MOV TEMP[11].x, CONST[11].xxxx\n 91:     FSLT TEMP[78].x, TEMP[13].xxxx, TEMP[11].xxxx\n 92:     AND TEMP[79].x, TEMP[78].xxxx, TEMP[74].yxxx\n 93:     UIF TEMP[79].xxxx :98\n 94:       MUL TEMP[80].x, TEMP[12].xxxx, IMM[0].xxxx\n 95:       ADD TEMP[14].x, TEMP[11].xxxx, TEMP[80].xxxx\n 96:       MOV TEMP[16], CONST[18]\n 97:       MOV TEMP[15], CONST[19]\n 98:     ELSE :157\n 99:       MOV TEMP[10].x, CONST[12].xxxx\n100:       FSLT TEMP[81].x, TEMP[13].xxxx, TEMP[10].xxxx\n101:       AND TEMP[82].x, TEMP[81].xxxx, TEMP[74].zxxx\n102:       UIF TEMP[82].xxxx :107\n103:         MUL TEMP[83].x, TEMP[11].xxxx, IMM[0].xxxx\n104:         ADD TEMP[14].x, TEMP[10].xxxx, TEMP[83].xxxx\n105:         MOV TEMP[16], CONST[19]\n106:         MOV TEMP[15], CONST[20]\n107:       ELSE :155\n108:         MOV TEMP[9].x, CONST[13].xxxx\n109:         FSLT TEMP[84].x, TEMP[13].xxxx, TEMP[9].xxxx\n110:         AND TEMP[85].x, TEMP[84].xxxx, TEMP[74].wxxx\n111:         UIF TEMP[85].xxxx :116\n112:           MUL TEMP[86].x, TEMP[10].xxxx, IMM[0].xxxx\n113:           ADD TEMP[14].x, TEMP[9].xxxx, TEMP[86].xxxx\n114:           MOV TEMP[16], CONST[20]\n115:           MOV TEMP[15], CONST[21]\n116:         ELSE :153\n117:           ISGE TEMP[87], CONST[9].xxxx, IMM[3]\n118:           MOV TEMP[8].x, CONST[14].xxxx\n119:           FSLT TEMP[88].x, TEMP[13].xxxx, TEMP[8].xxxx\n120:           AND TEMP[89].x, TEMP[88].xxxx, TEMP[87].xxxx\n121:           UIF TEMP[89].xxxx :126\n122:             MUL TEMP[90].x, TEMP[9].xxxx, IMM[0].xxxx\n123:             ADD TEMP[14].x, TEMP[8].xxxx, TEMP[90].xxxx\n124:             MOV TEMP[16], CONST[21]\n125:             MOV TEMP[15], CONST[22]\n126:           ELSE :151\n127:             FSLT TEMP[91].x, TEMP[13].xxxx, CONST[15].xxxx\n128:             AND TEMP[92].x, TEMP[91].xxxx, TEMP[87].yxxx\n129:             UIF TEMP[92].xxxx :134\n130:               MUL TEMP[93].x, TEMP[8].xxxx, IMM[0].xxxx\n131:               ADD TEMP[14].x, CONST[15].xxxx, TEMP[93].xxxx\n132:               MOV TEMP[16], CONST[22]\n133:               MOV TEMP[15], CONST[23]\n134:             ELSE :149\n135:               FSLT TEMP[94].x, TEMP[13].xxxx, CONST[16].xxxx\n136:               AND TEMP[95].x, TEMP[94].xxxx, TEMP[87].zxxx\n137:               MUL TEMP[96].x, CONST[15].xxxx, IMM[0].xxxx\n138:               ADD TEMP[97].x, CONST[16].xxxx, TEMP[96].xxxx\n139:               FSLT TEMP[98].x, TEMP[13].xxxx, CONST[17].xxxx\n140:               AND TEMP[99].x, TEMP[98].xxxx, TEMP[87].wxxx\n141:               MUL TEMP[100].x, CONST[16].xxxx, IMM[0].xxxx\n142:               ADD TEMP[101].x, CONST[17].xxxx, TEMP[100].xxxx\n143:               UCMP TEMP[102].x, TEMP[99].xxxx, TEMP[101].xxxx, IMM[0].wwww\n144:               UCMP TEMP[103], TEMP[99].xxxx, CONST[24], IMM[0].wwww\n145:               UCMP TEMP[8].x, TEMP[95].xxxx, CONST[15].xxxx, CONST[16].xxxx\n146:               UCMP TEMP[15], TEMP[95].xxxx, CONST[24], CONST[25]\n147:               UCMP TEMP[14].x, TEMP[95].xxxx, TEMP[97].xxxx, TEMP[102].xxxx\n148:               UCMP TEMP[16], TEMP[95].xxxx, CONST[23], TEMP[103]\n149:             ENDIF\n150:             MOV TEMP[9].x, TEMP[8].xxxx\n151:           ENDIF\n152:           MOV TEMP[10].x, TEMP[9].xxxx\n153:         ENDIF\n154:         MOV TEMP[11].x, TEMP[10].xxxx\n155:       ENDIF\n156:       MOV TEMP[12].x, TEMP[11].xxxx\n157:     ENDIF\n158:   ELSE :161\n159:     MOV TEMP[16], IMM[0].wwww\n160:     MOV TEMP[14].x, IMM[0].wwww\n161:   ENDIF\n162:   FSLT TEMP[104].x, TEMP[14].xxxx, IMM[4].xxxx\n163:   FSLT TEMP[105].x, IMM[4].yyyy, TEMP[14].xxxx\n164:   OR TEMP[106].x, TEMP[104].xxxx, TEMP[105].xxxx\n165:   MUL TEMP[107].x, TEMP[12].xxxx, IMM[0].xxxx\n166:   ADD TEMP[108].x, TEMP[13].xxxx, TEMP[107].xxxx\n167:   DIV TEMP[109].x, TEMP[108].xxxx, TEMP[14].xxxx\n168:   UCMP TEMP[110].x, TEMP[106].xxxx, IMM[0].wwww, TEMP[109].xxxx\n169:   LRP TEMP[111], TEMP[110].xxxx, TEMP[15], TEMP[16]\n170:   FSNE TEMP[112].x, TEMP[110].xxxx, IMM[0].wwww\n171:   UCMP TEMP[113], TEMP[112].xxxx, TEMP[111], TEMP[16]\n172:   MUL TEMP[0].xyz, TEMP[113].xyzx, TEMP[113].wwww\n173:   MOV TEMP[0].w, TEMP[113].xxxw\n174:   MOV OUT[0], TEMP[0]\n175: ELSE :177\n176:   MOV OUT[0], IMM[0].wwww\n177: ENDIF\n178: END\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "unmarked-structural-port-loop-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..99]\nDCL ADDR[0]\nIMM[0] UINT32 {3212836864, 925353388, 1056964608, 0}\nIMM[1] UINT32 {1, 0, 3, 1065353216}\nIMM[2] UINT32 {11, 16, 4, 176}\nIMM[3] UINT32 {432, 144, 897988541, 1073741824}\nIMM[4] UINT32 {448, 0, 0, 0}\nDCL TEMP[100..103]\n  0: MUL TEMP[13].xyz, CONST[0].xyzz, IN[0].xxxx\n  1: MUL TEMP[14].xyz, CONST[1].xyzz, IN[0].yyyx\n  2: ADD TEMP[15].xyz, TEMP[13].xyzx, CONST[2].xyzx\n  3: ADD TEMP[16].xyz, TEMP[15].xyzx, TEMP[14].xyzx\n  4: DIV TEMP[17].xy, TEMP[16].xyyy, TEMP[16].zzxx\n  5: MUL TEMP[18].xy, CONST[5].xyxx, IMM[0].xxxx\n  6: ADD TEMP[19].xy, TEMP[17].xyxx, TEMP[18].xyxx\n  7: ADD TEMP[20].xy, CONST[7].xyyy, TEMP[18].xyxx\n  8: MUL TEMP[21].xy, TEMP[19].xyxx, TEMP[20].xyxx\n  9: ADD TEMP[22].x, TEMP[21].xxxx, TEMP[21].yxxx\n 10: MUL TEMP[23].x, CONST[6].xxxx, IMM[0].xxxx\n 11: ADD TEMP[24].x, CONST[8].xxxx, TEMP[23].xxxx\n 12: MUL TEMP[25].x, CONST[6].xxxx, TEMP[24].xxxx\n 13: ADD TEMP[26].x, TEMP[22].xxxx, TEMP[25].xxxx\n 14: MUL TEMP[27].xy, TEMP[19].xyxx, TEMP[19].xyxx\n 15: ADD TEMP[28].x, TEMP[27].xxxx, TEMP[27].yxxx\n 16: MUL TEMP[29].x, CONST[6].xxxx, CONST[6].xxxx\n 17: MUL TEMP[30].x, TEMP[29].xxxx, IMM[0].xxxx\n 18: ADD TEMP[31].x, TEMP[28].xxxx, TEMP[30].xxxx\n 19: MAX TEMP[32].x, CONST[4].xxxx, -CONST[4].xxxx\n 20: FSLT TEMP[33].x, TEMP[32].xxxx, IMM[0].yyyy\n 21: UIF TEMP[33].xxxx :27\n 22:   MUL TEMP[34].x, IMM[0].zzzz, TEMP[31].xxxx\n 23:   DIV TEMP[35].x, TEMP[34].xxxx, TEMP[26].xxxx\n 24:   FSEQ TEMP[1].x, TEMP[26].xxxx, IMM[0].wwww\n 25:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[35].xxxx\n 26:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 27: ELSE :40\n 28:   MUL TEMP[36].x, TEMP[26].xxxx, TEMP[26].xxxx\n 29:   MUL TEMP[37].x, CONST[4].xxxx, TEMP[31].xxxx\n 30:   MUL TEMP[38].x, TEMP[37].xxxx, IMM[0].xxxx\n 31:   ADD TEMP[39].x, TEMP[36].xxxx, TEMP[38].xxxx\n 32:   RSQ TEMP[40].x, TEMP[39].xxxx\n 33:   RCP TEMP[41].x, TEMP[40].xxxx\n 34:   ADD TEMP[42].x, TEMP[26].xxxx, TEMP[41].xxxx\n 35:   DIV TEMP[43].x, TEMP[42].xxxx, CONST[4].xxxx\n 36:   FSLT TEMP[1].x, TEMP[39].xxxx, IMM[0].wwww\n 37:   UCMP TEMP[2].x, TEMP[1].xxxx, TEMP[39].xxxx, TEMP[41].xxxx\n 38:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[43].xxxx\n 39:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 40: ENDIF\n 41: NOT TEMP[44].x, TEMP[1].xxxx\n 42: UIF TEMP[44].xxxx :79\n 43:   USEQ TEMP[45].xyz, CONST[3].xxxx, IMM[1].yxzy\n 44:   MOV TEMP[46].x, TEMP[45].xxxx\n 45:   UIF TEMP[46].xxxx :58\n 46:     FSLT TEMP[47].x, IMM[1].wwww, TEMP[3].xxxx\n 47:     FSGE TEMP[48].x, IMM[0].wwww, TEMP[3].xxxx\n 48:     OR TEMP[49].x, TEMP[48].xxxx, TEMP[47].xxxx\n 49:     MUL TEMP[50].x, TEMP[2].xxxx, IMM[0].xxxx\n 50:     ADD TEMP[51].x, TEMP[26].xxxx, TEMP[50].xxxx\n 51:     DIV TEMP[52].x, TEMP[51].xxxx, CONST[4].xxxx\n 52:     UCMP TEMP[4].x, TEMP[49].xxxx, TEMP[52].xxxx, TEMP[3]\n 53:     FSLT TEMP[53].x, IMM[1].wwww, TEMP[4].xxxx\n 54:     FSGE TEMP[54].x, IMM[0].wwww, TEMP[4].xxxx\n 55:     OR TEMP[6].x, TEMP[54].xxxx, TEMP[53].xxxx\n 56:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 57:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 58:   ELSE :69\n 59:     MUL TEMP[55].x, TEMP[3].xxxx, TEMP[24].xxxx\n 60:     MUL TEMP[56].x, TEMP[2].xxxx, IMM[0].xxxx\n 61:     ADD TEMP[57].x, TEMP[26].xxxx, TEMP[56].xxxx\n 62:     DIV TEMP[58].x, TEMP[57].xxxx, CONST[4].xxxx\n 63:     FSGE TEMP[59].x, TEMP[23].xxxx, TEMP[55].xxxx\n 64:     UCMP TEMP[4].x, TEMP[59].xxxx, TEMP[58].xxxx, TEMP[3]\n 65:     MUL TEMP[60].x, TEMP[4].xxxx, TEMP[24].xxxx\n 66:     FSGE TEMP[6].x, TEMP[23].xxxx, TEMP[60].xxxx\n 67:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 68:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 69:   ENDIF\n 70:   FRC TEMP[61].x, TEMP[4].xxxx\n 71:   UCMP TEMP[62].x, TEMP[45].yxxx, TEMP[61].xxxx, TEMP[4]\n 72:   MUL TEMP[63].x, TEMP[62].xxxx, IMM[0].zzzz\n 73:   ADD TEMP[64].x, TEMP[63].xxxx, IMM[0].zzzz\n 74:   FRC TEMP[65].x, TEMP[64].xxxx\n 75:   LRP TEMP[66].x, TEMP[65].xxxx, IMM[1].wwww, IMM[0].xxxx\n 76:   MAX TEMP[67].x, TEMP[66].xxxx, -TEMP[66].xxxx\n 77:   UCMP TEMP[68].x, TEMP[45].zxxx, TEMP[67].xxxx, TEMP[62].xxxx\n 78:   UCMP TEMP[11].x, TEMP[6].xxxx, TEMP[5].xxxx, TEMP[68].xxxx\n 79: ELSE :81\n 80:   MOV TEMP[11].x, IMM[0].wwww\n 81: ENDIF\n 82: FSGE TEMP[69].x, TEMP[11].xxxx, CONST[10].xxxx\n 83: USNE TEMP[70].x, TEMP[7].xxxx, IMM[1].xxxx\n 84: AND TEMP[71].x, TEMP[69].xxxx, TEMP[70].xxxx\n 85: UIF TEMP[71].xxxx :137\n 86:   MOV TEMP[9].x, IMM[2].xxxx\n 87:   MOV TEMP[12].x, IMM[2].yyyy\n 88:   MOV TEMP[10].x, IMM[1].xxxx\n 89:   BGNLOOP :0\n 90:     UARL ADDR[0].x, TEMP[9]\n 91:     MOV TEMP[72].x, CONST[ADDR[0].x].xxxx\n 92:     FSLT TEMP[73].x, TEMP[11].xxxx, TEMP[72].xxxx\n 93:     ISGE TEMP[74].x, TEMP[10].xxxx, CONST[9].xxxx\n 94:     OR TEMP[75].x, TEMP[73].xxxx, TEMP[74].xxxx\n 95:     UIF TEMP[75].xxxx :97\n 96:       BRK\n 97:     ENDIF\n 98:     UADD TEMP[8].x, TEMP[10].xxxx, IMM[1].xxxx\n 99:     SHL TEMP[76].x, TEMP[10].xxxx, IMM[2].zzzz\n100:     UADD TEMP[12].x, TEMP[76].xxxx, IMM[2].yyyy\n101:     UADD TEMP[77].x, IMM[2].wwww, TEMP[76].xxxx\n102:     USHR TEMP[9].x, TEMP[77].xxxx, IMM[2].zzzz\n103:     MOV TEMP[10].x, TEMP[8].xxxx\n104:   ENDLOOP :0\n105:   USNE TEMP[78].x, TEMP[10].xxxx, CONST[9].xxxx\n106:   UIF TEMP[78].xxxx :134\n107:     SHL TEMP[79].x, TEMP[10].xxxx, IMM[2].zzzz\n108:     UADD TEMP[80].xy, IMM[3].xyxx, TEMP[79].xxxx\n109:     USHR TEMP[81].xy, TEMP[80].xyxx, IMM[2].zzzz\n110:     MOV TEMP[82].x, TEMP[81].yxxx\n111:     UARL ADDR[0].x, TEMP[82].xxxx\n112:     MOV TEMP[83].x, CONST[ADDR[0].x].xxxx\n113:     MUL TEMP[84].x, TEMP[83].xxxx, IMM[0].xxxx\n114:     ADD TEMP[85].x, TEMP[72].xxxx, TEMP[84].xxxx\n115:     FSLT TEMP[86].x, TEMP[85].xxxx, IMM[3].zzzz\n116:     FSLT TEMP[87].x, IMM[3].wwww, TEMP[85].xxxx\n117:     OR TEMP[88].x, TEMP[86].xxxx, TEMP[87].xxxx\n118:     ADD TEMP[89].x, TEMP[11].xxxx, TEMP[84].xxxx\n119:     DIV TEMP[90].x, TEMP[89].xxxx, TEMP[85].xxxx\n120:     UCMP TEMP[91].x, TEMP[88].xxxx, IMM[0].wwww, TEMP[90].xxxx\n121:     UADD TEMP[92].x, IMM[4].xxxx, TEMP[12].xxxx\n122:     USHR TEMP[93].x, TEMP[92].xxxx, IMM[2].zzzz\n123:     UARL ADDR[0].x, TEMP[93].xxxx\n124:     MOV TEMP[94], CONST[ADDR[0].x]\n125:     MOV TEMP[95].x, TEMP[81].xxxx\n126:     UARL ADDR[0].x, TEMP[95].xxxx\n127:     MOV TEMP[96], CONST[ADDR[0].x]\n128:     LRP TEMP[97], TEMP[91].xxxx, TEMP[94], TEMP[96]\n129:     FSNE TEMP[98].x, TEMP[91].xxxx, IMM[0].wwww\n130:     UCMP TEMP[99], TEMP[98].xxxx, TEMP[97], TEMP[96]\n131:     MUL TEMP[0].xyz, TEMP[99].xyzx, TEMP[99].wwww\n132:     ADD TEMP[0].w, TEMP[99].xxxw, IMM[1].yyyy\n133:     MOV OUT[0], TEMP[0]\n134:   ELSE :136\n135:     MOV OUT[0], IMM[0].wwww\n136:   ENDIF\n137: ELSE :139\n138:   MOV OUT[0], IMM[0].wwww\n139: ENDIF\n140: END\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v16",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ],
+        "constantAccesses": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-static-indirect-v1",
+            "indices": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ]
+          }
+        ],
+        "constantConstraints": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-counted-table-i32-v1",
+            "register": 9,
+            "component": 0,
+            "maximum": 18
+          }
+        ]
+      },
+      "derivedFrom": {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51.tgsi",
+        "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+        "operation": "explicit authored removal of PRECISE suffixes and numeric ADD-zero alpha output projection; original remains gated"
+      }
+    },
+    {
+      "name": "reject-no-alpha-view-unmarked-structural-port-loop-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..99]\nDCL ADDR[0]\nIMM[0] UINT32 {3212836864, 925353388, 1056964608, 0}\nIMM[1] UINT32 {1, 0, 3, 1065353216}\nIMM[2] UINT32 {11, 16, 4, 176}\nIMM[3] UINT32 {432, 144, 897988541, 1073741824}\nIMM[4] UINT32 {448, 0, 0, 0}\nDCL TEMP[100..103]\n  0: MUL TEMP[13].xyz, CONST[0].xyzz, IN[0].xxxx\n  1: MUL TEMP[14].xyz, CONST[1].xyzz, IN[0].yyyx\n  2: ADD TEMP[15].xyz, TEMP[13].xyzx, CONST[2].xyzx\n  3: ADD TEMP[16].xyz, TEMP[15].xyzx, TEMP[14].xyzx\n  4: DIV TEMP[17].xy, TEMP[16].xyyy, TEMP[16].zzxx\n  5: MUL TEMP[18].xy, CONST[5].xyxx, IMM[0].xxxx\n  6: ADD TEMP[19].xy, TEMP[17].xyxx, TEMP[18].xyxx\n  7: ADD TEMP[20].xy, CONST[7].xyyy, TEMP[18].xyxx\n  8: MUL TEMP[21].xy, TEMP[19].xyxx, TEMP[20].xyxx\n  9: ADD TEMP[22].x, TEMP[21].xxxx, TEMP[21].yxxx\n 10: MUL TEMP[23].x, CONST[6].xxxx, IMM[0].xxxx\n 11: ADD TEMP[24].x, CONST[8].xxxx, TEMP[23].xxxx\n 12: MUL TEMP[25].x, CONST[6].xxxx, TEMP[24].xxxx\n 13: ADD TEMP[26].x, TEMP[22].xxxx, TEMP[25].xxxx\n 14: MUL TEMP[27].xy, TEMP[19].xyxx, TEMP[19].xyxx\n 15: ADD TEMP[28].x, TEMP[27].xxxx, TEMP[27].yxxx\n 16: MUL TEMP[29].x, CONST[6].xxxx, CONST[6].xxxx\n 17: MUL TEMP[30].x, TEMP[29].xxxx, IMM[0].xxxx\n 18: ADD TEMP[31].x, TEMP[28].xxxx, TEMP[30].xxxx\n 19: MAX TEMP[32].x, CONST[4].xxxx, -CONST[4].xxxx\n 20: FSLT TEMP[33].x, TEMP[32].xxxx, IMM[0].yyyy\n 21: UIF TEMP[33].xxxx :27\n 22:   MUL TEMP[34].x, IMM[0].zzzz, TEMP[31].xxxx\n 23:   DIV TEMP[35].x, TEMP[34].xxxx, TEMP[26].xxxx\n 24:   FSEQ TEMP[1].x, TEMP[26].xxxx, IMM[0].wwww\n 25:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[35].xxxx\n 26:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 27: ELSE :40\n 28:   MUL TEMP[36].x, TEMP[26].xxxx, TEMP[26].xxxx\n 29:   MUL TEMP[37].x, CONST[4].xxxx, TEMP[31].xxxx\n 30:   MUL TEMP[38].x, TEMP[37].xxxx, IMM[0].xxxx\n 31:   ADD TEMP[39].x, TEMP[36].xxxx, TEMP[38].xxxx\n 32:   RSQ TEMP[40].x, TEMP[39].xxxx\n 33:   RCP TEMP[41].x, TEMP[40].xxxx\n 34:   ADD TEMP[42].x, TEMP[26].xxxx, TEMP[41].xxxx\n 35:   DIV TEMP[43].x, TEMP[42].xxxx, CONST[4].xxxx\n 36:   FSLT TEMP[1].x, TEMP[39].xxxx, IMM[0].wwww\n 37:   UCMP TEMP[2].x, TEMP[1].xxxx, TEMP[39].xxxx, TEMP[41].xxxx\n 38:   UCMP TEMP[3].x, TEMP[1].xxxx, IMM[0].wwww, TEMP[43].xxxx\n 39:   AND TEMP[7].x, TEMP[1].xxxx, IMM[1].xxxx\n 40: ENDIF\n 41: NOT TEMP[44].x, TEMP[1].xxxx\n 42: UIF TEMP[44].xxxx :79\n 43:   USEQ TEMP[45].xyz, CONST[3].xxxx, IMM[1].yxzy\n 44:   MOV TEMP[46].x, TEMP[45].xxxx\n 45:   UIF TEMP[46].xxxx :58\n 46:     FSLT TEMP[47].x, IMM[1].wwww, TEMP[3].xxxx\n 47:     FSGE TEMP[48].x, IMM[0].wwww, TEMP[3].xxxx\n 48:     OR TEMP[49].x, TEMP[48].xxxx, TEMP[47].xxxx\n 49:     MUL TEMP[50].x, TEMP[2].xxxx, IMM[0].xxxx\n 50:     ADD TEMP[51].x, TEMP[26].xxxx, TEMP[50].xxxx\n 51:     DIV TEMP[52].x, TEMP[51].xxxx, CONST[4].xxxx\n 52:     UCMP TEMP[4].x, TEMP[49].xxxx, TEMP[52].xxxx, TEMP[3]\n 53:     FSLT TEMP[53].x, IMM[1].wwww, TEMP[4].xxxx\n 54:     FSGE TEMP[54].x, IMM[0].wwww, TEMP[4].xxxx\n 55:     OR TEMP[6].x, TEMP[54].xxxx, TEMP[53].xxxx\n 56:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 57:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 58:   ELSE :69\n 59:     MUL TEMP[55].x, TEMP[3].xxxx, TEMP[24].xxxx\n 60:     MUL TEMP[56].x, TEMP[2].xxxx, IMM[0].xxxx\n 61:     ADD TEMP[57].x, TEMP[26].xxxx, TEMP[56].xxxx\n 62:     DIV TEMP[58].x, TEMP[57].xxxx, CONST[4].xxxx\n 63:     FSGE TEMP[59].x, TEMP[23].xxxx, TEMP[55].xxxx\n 64:     UCMP TEMP[4].x, TEMP[59].xxxx, TEMP[58].xxxx, TEMP[3]\n 65:     MUL TEMP[60].x, TEMP[4].xxxx, TEMP[24].xxxx\n 66:     FSGE TEMP[6].x, TEMP[23].xxxx, TEMP[60].xxxx\n 67:     UCMP TEMP[5].x, TEMP[6].xxxx, TEMP[4], IMM[0].wwww\n 68:     UCMP TEMP[7].x, TEMP[6].xxxx, IMM[1].xxxx, TEMP[7]\n 69:   ENDIF\n 70:   FRC TEMP[61].x, TEMP[4].xxxx\n 71:   UCMP TEMP[62].x, TEMP[45].yxxx, TEMP[61].xxxx, TEMP[4]\n 72:   MUL TEMP[63].x, TEMP[62].xxxx, IMM[0].zzzz\n 73:   ADD TEMP[64].x, TEMP[63].xxxx, IMM[0].zzzz\n 74:   FRC TEMP[65].x, TEMP[64].xxxx\n 75:   LRP TEMP[66].x, TEMP[65].xxxx, IMM[1].wwww, IMM[0].xxxx\n 76:   MAX TEMP[67].x, TEMP[66].xxxx, -TEMP[66].xxxx\n 77:   UCMP TEMP[68].x, TEMP[45].zxxx, TEMP[67].xxxx, TEMP[62].xxxx\n 78:   UCMP TEMP[11].x, TEMP[6].xxxx, TEMP[5].xxxx, TEMP[68].xxxx\n 79: ELSE :81\n 80:   MOV TEMP[11].x, IMM[0].wwww\n 81: ENDIF\n 82: FSGE TEMP[69].x, TEMP[11].xxxx, CONST[10].xxxx\n 83: USNE TEMP[70].x, TEMP[7].xxxx, IMM[1].xxxx\n 84: AND TEMP[71].x, TEMP[69].xxxx, TEMP[70].xxxx\n 85: UIF TEMP[71].xxxx :137\n 86:   MOV TEMP[9].x, IMM[2].xxxx\n 87:   MOV TEMP[12].x, IMM[2].yyyy\n 88:   MOV TEMP[10].x, IMM[1].xxxx\n 89:   BGNLOOP :0\n 90:     UARL ADDR[0].x, TEMP[9]\n 91:     MOV TEMP[72].x, CONST[ADDR[0].x].xxxx\n 92:     FSLT TEMP[73].x, TEMP[11].xxxx, TEMP[72].xxxx\n 93:     ISGE TEMP[74].x, TEMP[10].xxxx, CONST[9].xxxx\n 94:     OR TEMP[75].x, TEMP[73].xxxx, TEMP[74].xxxx\n 95:     UIF TEMP[75].xxxx :97\n 96:       BRK\n 97:     ENDIF\n 98:     UADD TEMP[8].x, TEMP[10].xxxx, IMM[1].xxxx\n 99:     SHL TEMP[76].x, TEMP[10].xxxx, IMM[2].zzzz\n100:     UADD TEMP[12].x, TEMP[76].xxxx, IMM[2].yyyy\n101:     UADD TEMP[77].x, IMM[2].wwww, TEMP[76].xxxx\n102:     USHR TEMP[9].x, TEMP[77].xxxx, IMM[2].zzzz\n103:     MOV TEMP[10].x, TEMP[8].xxxx\n104:   ENDLOOP :0\n105:   USNE TEMP[78].x, TEMP[10].xxxx, CONST[9].xxxx\n106:   UIF TEMP[78].xxxx :134\n107:     SHL TEMP[79].x, TEMP[10].xxxx, IMM[2].zzzz\n108:     UADD TEMP[80].xy, IMM[3].xyxx, TEMP[79].xxxx\n109:     USHR TEMP[81].xy, TEMP[80].xyxx, IMM[2].zzzz\n110:     MOV TEMP[82].x, TEMP[81].yxxx\n111:     UARL ADDR[0].x, TEMP[82].xxxx\n112:     MOV TEMP[83].x, CONST[ADDR[0].x].xxxx\n113:     MUL TEMP[84].x, TEMP[83].xxxx, IMM[0].xxxx\n114:     ADD TEMP[85].x, TEMP[72].xxxx, TEMP[84].xxxx\n115:     FSLT TEMP[86].x, TEMP[85].xxxx, IMM[3].zzzz\n116:     FSLT TEMP[87].x, IMM[3].wwww, TEMP[85].xxxx\n117:     OR TEMP[88].x, TEMP[86].xxxx, TEMP[87].xxxx\n118:     ADD TEMP[89].x, TEMP[11].xxxx, TEMP[84].xxxx\n119:     DIV TEMP[90].x, TEMP[89].xxxx, TEMP[85].xxxx\n120:     UCMP TEMP[91].x, TEMP[88].xxxx, IMM[0].wwww, TEMP[90].xxxx\n121:     UADD TEMP[92].x, IMM[4].xxxx, TEMP[12].xxxx\n122:     USHR TEMP[93].x, TEMP[92].xxxx, IMM[2].zzzz\n123:     UARL ADDR[0].x, TEMP[93].xxxx\n124:     MOV TEMP[94], CONST[ADDR[0].x]\n125:     MOV TEMP[95].x, TEMP[81].xxxx\n126:     UARL ADDR[0].x, TEMP[95].xxxx\n127:     MOV TEMP[96], CONST[ADDR[0].x]\n128:     LRP TEMP[97], TEMP[91].xxxx, TEMP[94], TEMP[96]\n129:     FSNE TEMP[98].x, TEMP[91].xxxx, IMM[0].wwww\n130:     UCMP TEMP[99], TEMP[98].xxxx, TEMP[97], TEMP[96]\n131:     MUL TEMP[0].xyz, TEMP[99].xyzx, TEMP[99].wwww\n132:     MOV TEMP[0].w, TEMP[99].xxxw\n133:     MOV OUT[0], TEMP[0]\n134:   ELSE :136\n135:     MOV OUT[0], IMM[0].wwww\n136:   ENDIF\n137: ELSE :139\n138:   MOV OUT[0], IMM[0].wwww\n139: ENDIF\n140: END\n",
+      "ok": false,
+      "expected": {
+        "errorCode": "unsupported-feature"
+      }
+    },
+    {
+      "name": "loop-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL ADDR[0]\nIMM[0] UINT32 {0,1,4,16}\nIMM[1] UINT32 {11,176,432,144}\nIMM[2] UINT32 {448,8388607,1056964608,0}\nIMM[3] FLT32 {0.5,0.25,0,1}\nIMM[4] UINT32 {925353388,0,0,0}\nMAX TEMP[110].w, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[111].w, TEMP[110].wwww, IMM[4].xxxx\nUIF TEMP[111].wwww\nMOV TEMP[113], IMM[3].yyyy\nELSE\nMOV TEMP[112], CONST[5]\nENDIF\nADD TEMP[113], TEMP[112], IMM[3].zzzz\nMOV TEMP[0].x, IMM[3].zzzz\nMOV TEMP[1].x, IMM[1].xxxx\nMOV TEMP[2].x, IMM[0].wwww\nMOV TEMP[3].x, IMM[0].yyyy\nBGNLOOP :0\nUARL ADDR[0].x, TEMP[1]\nMOV TEMP[4].x, CONST[ADDR[0].x].xxxx\nFSLT TEMP[5].x, TEMP[0].xxxx, TEMP[4].xxxx\nISGE TEMP[6].x, TEMP[3].xxxx, CONST[9].xxxx\nOR TEMP[7].x, TEMP[5].xxxx, TEMP[6].xxxx\nUIF TEMP[7].xxxx\nBRK\nENDIF\nUADD TEMP[8].x, TEMP[3].xxxx, IMM[0].yyyy\nSHL TEMP[9].x, TEMP[3].xxxx, IMM[0].zzzz\nUADD TEMP[2].x, TEMP[9].xxxx, IMM[0].wwww\nUADD TEMP[10].x, IMM[1].yyyy, TEMP[9].xxxx\nUSHR TEMP[1].x, TEMP[10].xxxx, IMM[0].zzzz\nMOV TEMP[3].x, TEMP[8].xxxx\nENDLOOP :0\nUSNE TEMP[11].x, TEMP[3].xxxx, CONST[9].xxxx\nUIF TEMP[11].xxxx\nSHL TEMP[12].x, TEMP[3].xxxx, IMM[0].zzzz\nUADD TEMP[13].xy, IMM[1].zwzz, TEMP[12].xxxx\nUSHR TEMP[14].xy, TEMP[13].xyxx, IMM[0].zzzz\nMOV TEMP[15].x, TEMP[14].yxxx\nUARL ADDR[0].x, TEMP[15].xxxx\nMOV TEMP[16].x, CONST[ADDR[0].x].xxxx\nUADD TEMP[17].x, IMM[2].xxxx, TEMP[2].xxxx\nUSHR TEMP[18].x, TEMP[17].xxxx, IMM[0].zzzz\nUARL ADDR[0].x, TEMP[18].xxxx\nMOV TEMP[19], CONST[ADDR[0].x]\nMOV TEMP[20].x, TEMP[14].xxxx\nUARL ADDR[0].x, TEMP[20].xxxx\nMOV TEMP[21], CONST[ADDR[0].x]\nENDIF\nMOV OUT[1], TEMP[113]\nMOV OUT[0], IN[0]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v16",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ],
+        "constantAccesses": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46,
+            "kind": "constant-bank-static-indirect-v1",
+            "indices": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ]
+          }
+        ],
+        "constantConstraints": [
+          {
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46,
+            "kind": "constant-bank-counted-table-i32-v1",
+            "register": 9,
+            "component": 0,
+            "maximum": 18
+          }
+        ]
+      }
+    },
+    {
+      "name": "loop-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL ADDR[0]\nIMM[0] UINT32 {0,1,4,16}\nIMM[1] UINT32 {11,176,432,144}\nIMM[2] UINT32 {448,8388607,1056964608,0}\nIMM[3] FLT32 {0.5,0.25,0,1}\nIMM[4] UINT32 {925353388,0,0,0}\nMAX TEMP[110].w, CONST[4].xxxx, -CONST[4].xxxx\nFSLT TEMP[111].w, TEMP[110].wwww, IMM[4].xxxx\nUIF TEMP[111].wwww\nMOV TEMP[113], IMM[3].yyyy\nELSE\nMOV TEMP[112], CONST[5]\nENDIF\nADD TEMP[113], TEMP[112], IMM[3].zzzz\nMOV TEMP[0].x, IMM[3].zzzz\nMOV TEMP[1].x, IMM[1].xxxx\nMOV TEMP[2].x, IMM[0].wwww\nMOV TEMP[3].x, IMM[0].yyyy\nBGNLOOP :0\nUARL ADDR[0].x, TEMP[1]\nMOV TEMP[4].x, CONST[ADDR[0].x].xxxx\nFSLT TEMP[5].x, TEMP[0].xxxx, TEMP[4].xxxx\nISGE TEMP[6].x, TEMP[3].xxxx, CONST[9].xxxx\nOR TEMP[7].x, TEMP[5].xxxx, TEMP[6].xxxx\nUIF TEMP[7].xxxx\nBRK\nENDIF\nUADD TEMP[8].x, TEMP[3].xxxx, IMM[0].yyyy\nSHL TEMP[9].x, TEMP[3].xxxx, IMM[0].zzzz\nUADD TEMP[2].x, TEMP[9].xxxx, IMM[0].wwww\nUADD TEMP[10].x, IMM[1].yyyy, TEMP[9].xxxx\nUSHR TEMP[1].x, TEMP[10].xxxx, IMM[0].zzzz\nMOV TEMP[3].x, TEMP[8].xxxx\nENDLOOP :0\nUSNE TEMP[11].x, TEMP[3].xxxx, CONST[9].xxxx\nUIF TEMP[11].xxxx\nSHL TEMP[12].x, TEMP[3].xxxx, IMM[0].zzzz\nUADD TEMP[13].xy, IMM[1].zwzz, TEMP[12].xxxx\nUSHR TEMP[14].xy, TEMP[13].xyxx, IMM[0].zzzz\nMOV TEMP[15].x, TEMP[14].yxxx\nUARL ADDR[0].x, TEMP[15].xxxx\nMOV TEMP[16].x, CONST[ADDR[0].x].xxxx\nUADD TEMP[17].x, IMM[2].xxxx, TEMP[2].xxxx\nUSHR TEMP[18].x, TEMP[17].xxxx, IMM[0].zzzz\nUARL ADDR[0].x, TEMP[18].xxxx\nMOV TEMP[19], CONST[ADDR[0].x]\nMOV TEMP[20].x, TEMP[14].xxxx\nUARL ADDR[0].x, TEMP[20].xxxx\nMOV TEMP[21], CONST[ADDR[0].x]\nENDIF\nMOV OUT[0], TEMP[113]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v16",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-finite-f32-v1"
+          }
+        ],
+        "constantRadialDomains": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-radial-coefficient-f32-v1",
+            "register": 4,
+            "component": 0,
+            "minimumMagnitude": 925353388
+          }
+        ],
+        "constantAccesses": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-static-indirect-v1",
+            "indices": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ]
+          }
+        ],
+        "constantConstraints": [
+          {
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46,
+            "kind": "constant-bank-counted-table-i32-v1",
+            "register": 9,
+            "component": 0,
+            "maximum": 18
+          }
+        ]
+      }
+    },
+    {
+      "name": "pass-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL OUT[3], GENERIC[2]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nMOV OUT[2], IN[2]\nMOV OUT[3], IN[3]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "constantCount": 0
+      }
+    },
+    {
+      "name": "pass-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[1]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "constantCount": 0
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "name": "plain-pair",
+      "vertex": "plain-vertex",
+      "fragment": "plain-fragment",
+      "ok": true
+    },
+    {
+      "name": "plain-vertex-mixed-pair",
+      "vertex": "plain-vertex",
+      "fragment": "loop::loop-small-fragment",
+      "ok": true
+    },
+    {
+      "name": "plain-fragment-mixed-pair",
+      "vertex": "loop::loop-small-vertex",
+      "fragment": "plain-fragment",
+      "ok": true
+    },
+    {
+      "name": "indirect-pair",
+      "vertex": "indirect-vertex",
+      "fragment": "indirect-fragment",
+      "ok": true
+    },
+    {
+      "name": "indirect-vertex-mixed-pair",
+      "vertex": "indirect-vertex",
+      "fragment": "loop::loop-small-fragment",
+      "ok": true
+    },
+    {
+      "name": "indirect-fragment-mixed-pair",
+      "vertex": "loop::loop-small-vertex",
+      "fragment": "indirect-fragment",
+      "ok": true
+    },
+    {
+      "name": "loop-pair",
+      "vertex": "loop-vertex",
+      "fragment": "loop-fragment",
+      "ok": true
+    },
+    {
+      "name": "loop-vertex-mixed-pair",
+      "vertex": "loop-vertex",
+      "fragment": "loop::loop-small-fragment",
+      "ok": true
+    },
+    {
+      "name": "loop-fragment-mixed-pair",
+      "vertex": "loop::loop-small-vertex",
+      "fragment": "loop-fragment",
+      "ok": true
+    },
+    {
+      "name": "reject-wrong-constant-vertex-pair",
+      "vertex": "reject-wrong-constant-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-component-vertex-pair",
+      "vertex": "reject-wrong-component-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-missing-negation-vertex-pair",
+      "vertex": "reject-missing-negation-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-both-negative-vertex-pair",
+      "vertex": "reject-both-negative-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-threshold-vertex-pair",
+      "vertex": "reject-wrong-threshold-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-reversed-comparison-vertex-pair",
+      "vertex": "reject-reversed-comparison-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-changed-predicate-vertex-pair",
+      "vertex": "reject-changed-predicate-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-selector-lane-vertex-pair",
+      "vertex": "reject-wrong-selector-lane-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-condition-clobber-vertex-pair",
+      "vertex": "reject-condition-clobber-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-magnitude-clobber-vertex-pair",
+      "vertex": "reject-magnitude-clobber-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-no-else-definition-vertex-pair",
+      "vertex": "reject-no-else-definition-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-unrelated-missing-vertex-pair",
+      "vertex": "reject-unrelated-missing-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-precise-gated-vertex-pair",
+      "vertex": "reject-precise-gated-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-second-certificate-vertex-pair",
+      "vertex": "reject-second-certificate-vertex",
+      "fragment": "plain-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-constant-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-wrong-constant-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-component-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-wrong-component-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-missing-negation-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-missing-negation-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-both-negative-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-both-negative-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-threshold-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-wrong-threshold-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-reversed-comparison-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-reversed-comparison-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-changed-predicate-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-changed-predicate-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-wrong-selector-lane-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-wrong-selector-lane-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-condition-clobber-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-condition-clobber-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-magnitude-clobber-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-magnitude-clobber-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-no-else-definition-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-no-else-definition-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-unrelated-missing-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-unrelated-missing-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-precise-gated-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-precise-gated-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-second-certificate-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-second-certificate-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-no-alpha-view-unmarked-structural-port-nested-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-no-alpha-view-unmarked-structural-port-nested-fragment",
+      "ok": false
+    },
+    {
+      "name": "reject-no-alpha-view-unmarked-structural-port-loop-fragment-pair",
+      "vertex": "plain-vertex",
+      "fragment": "reject-no-alpha-view-unmarked-structural-port-loop-fragment",
+      "ok": false
+    },
+    {
+      "name": "gpu-plain-vertex-pair",
+      "vertex": "plain-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-renamed-vertex-pair",
+      "vertex": "renamed-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-nested-vertex-pair",
+      "vertex": "nested-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-indirect-vertex-pair",
+      "vertex": "indirect-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-plain-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "plain-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-renamed-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "renamed-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-nested-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "nested-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-indirect-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "indirect-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-unmarked-structural-port-nested-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "unmarked-structural-port-nested-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-unmarked-structural-port-loop-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "unmarked-structural-port-loop-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-loop-vertex-pair",
+      "vertex": "loop-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
+      "name": "gpu-loop-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "loop-fragment",
+      "ok": true
+    }
+  ],
+  "kernels": [
+    {
+      "case": "plain-vertex",
+      "stage": "vertex",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "renamed-vertex",
+      "stage": "vertex",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "nested-vertex",
+      "stage": "vertex",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "indirect-vertex",
+      "stage": "vertex",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "plain-fragment",
+      "stage": "fragment",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "renamed-fragment",
+      "stage": "fragment",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "nested-fragment",
+      "stage": "fragment",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "indirect-fragment",
+      "stage": "fragment",
+      "kind": "mini",
+      "count": 6
+    },
+    {
+      "case": "unmarked-structural-port-nested-fragment",
+      "stage": "fragment",
+      "kind": "structural-port",
+      "count": 26
+    },
+    {
+      "case": "unmarked-structural-port-loop-fragment",
+      "stage": "fragment",
+      "kind": "structural-port",
+      "count": 46
+    },
+    {
+      "case": "loop-vertex",
+      "stage": "vertex",
+      "kind": "mini",
+      "count": 46
+    },
+    {
+      "case": "loop-fragment",
+      "stage": "fragment",
+      "kind": "mini",
+      "count": 46
+    }
+  ]
+}

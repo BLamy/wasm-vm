@@ -74,6 +74,13 @@ struct demand_certificate {
    bool recognized, checked;
    unsigned char reserved[2];
 };
+/* This predicate is false only under the explicit, owned coefficient-bank
+ * contract. It never supplies a value for the excluded predecessor. */
+struct radial_certificate {
+   uint16_t magnitude, comparison, branch, otherwise, end, condition;
+   bool recognized, used;
+   unsigned char reserved[2];
+};
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
    uint32_t immediates[FILE_REGISTERS][4];
@@ -83,6 +90,7 @@ struct raw_ir {
    uint64_t opcode_mask, indirect_indices; /* Union of complete, checked use-site candidate sets. */
    struct loop_certificate loop;
    struct demand_certificate demand;
+   struct radial_certificate radial;
 };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -103,9 +111,10 @@ _Static_assert(sizeof(struct raw_ir) <= 32768, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 26464, "bounded interpolation IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 26480, "bounded radial IR allocation");
 _Static_assert(sizeof(struct loop_certificate) == 96, "compact loop certificate");
 _Static_assert(sizeof(struct demand_certificate) == 112, "compact demand certificate");
+_Static_assert(sizeof(struct radial_certificate) == 16, "compact radial certificate");
 _Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
 
 /* Shared post-swizzle lane selection for initialization and float authority. */

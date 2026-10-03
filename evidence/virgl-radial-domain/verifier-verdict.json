@@ -1,0 +1,99 @@
+{
+  "schema": "radial-fresh-verifier-verdict-v1",
+  "task": "E6-T12f3",
+  "verdict": "verified",
+  "proofHead": "ee23e8d63ba27afec874ec7dc63c6c6be3c7ee7a",
+  "workerSubmission": "48787ee5",
+  "predictions": [
+    {
+      "id": "P1",
+      "prediction": "At the radial MAX/FSLT/UIF graph, every finite coefficient with abs-word >= 0x3727c5ac takes ELSE. Both signs of threshold-1, signed zeros and subnormals reject; threshold and +1 admit. The concrete 2^-20, B=4,C=16 primary root is 2 and changing missing TEMP2 from 0 to 0x407ffffe changes transparency to root .5.",
+      "status": "HELD",
+      "evidence": [
+        "attacks.json#/classification",
+        "attacks.json#/counterexample",
+        "receipt-reconstruction.json#/summary/domain"
+      ]
+    },
+    {
+      "id": "P2",
+      "prediction": "The compiler rejects altered threshold/opcode/constant lane, consumed lane version clobbers, negated UIF and unrelated missing lanes. An aliased magnitude/predicate destination remains valid only with adjacent current versions. A radial graph hidden in a statically dead branch cannot license an outside missing lane (novel attack).",
+      "status": "HELD",
+      "evidence": [
+        "attacks.json#/graphs",
+        "promoted-regression.json#/normal/graphs",
+        "fixture-provenance.json"
+      ]
+    },
+    {
+      "id": "P3",
+      "prediction": "Profiles14/15/16 carry exactly one radial domain plus their full finite/indirect/count obligations; every prior profile forbids it. Dropped, accessor, duplicate, swapped-stage/bank or boolean/float forged policy fails. The owned approved word remains unchanged after caller mutation.",
+      "status": "HELD",
+      "evidence": [
+        "attacks.json#/metadata",
+        "attacks.json#/ownership",
+        "attacks.json#/combined",
+        "promoted-regression.json#/normal/coefficients"
+      ]
+    },
+    {
+      "id": "P4",
+      "prediction": "Unsafe bank replacement and stale shader generation cannot reach link/allocation/uniform/index/dispatch. Synchronous and two independently scheduled asynchronous paths retain the same shader/bank generation, survive native poison/restoration, and count19 fails simultaneously with radial.",
+      "status": "HELD",
+      "evidence": [
+        "independent-gpu-audit.json",
+        "independent-gpu/report.json#/acceptance/rigs",
+        "receipt-reconstruction.json#/summary/gpu"
+      ]
+    },
+    {
+      "id": "P5",
+      "prediction": "The actual native/Wasm results are equal across complete new and retained matrices; sanitizer transcript contains no diagnostics, rawIR26480/profile7616/arena52644 and fixed16MiB/256KiB/179 limits hold. All runtime diff hunks execute in actual LLVM/V8 counters or receive an explicit narrowly justified waiver.",
+      "status": "HELD",
+      "evidence": [
+        "receipt-reconstruction.json#/summary/native",
+        "coverage-audit.json",
+        "archive-audit.json",
+        "promoted-regression.json"
+      ]
+    },
+    {
+      "id": "P6",
+      "prediction": "Both full body cases equal explicitly labelled PRECISE-removal and numeric ADD-zero alpha ports of unchanged originals. The frozen original corpus is still12/19; no evidence claims workload compatibility, deployment/guest execution or300MIPS.",
+      "status": "HELD",
+      "evidence": [
+        "fixture-provenance.json",
+        "receipt-reconstruction.json#/summary/native/compatibility",
+        "receipt-reconstruction.json#/summary/retainedGpu"
+      ]
+    },
+    {
+      "id": "P7",
+      "prediction": "Removing exactly the actual consumer coefficient check admits 2^-20. An independent definedness/domain oracle fails before unsafe GPU execution; sabotage has zero GPU draws.",
+      "status": "HELD",
+      "evidence": [
+        "attacks.json#/sabotage",
+        "promoted-regression.json#/actualSourceGuardRemoval"
+      ]
+    },
+    {
+      "id": "P8",
+      "prediction": "The sealed records bind actual bytes and exact ancestral source equality to final proof head ee23e8d63ba27afec874ec7dc63c6c6be3c7ee7a. Final pristine clone runs that exact head with CARGO_/RUSTFLAGS/RUST_LOG unset and stays clean.",
+      "status": "HELD",
+      "evidence": [
+        "receipt-reconstruction.json",
+        "cold-audit.json",
+        "archive-audit.json"
+      ]
+    }
+  ],
+  "heldPredecessor": "E6-T12f2 results carry forward only where source, dependency boundary and exact result/evidence remain unchanged. No obsolete predecessor full gauntlet is claimed.",
+  "promotedTest": "renderer/virgl-command/tests/radial-domain-regressions.mjs",
+  "scope": "Restricted coefficient admission only; both complete bodies are modified structural ports. Original PRECISE support, radial workload compatibility, guest execution/deployment and300MIPS remain unclaimed.",
+  "coverageWaivers": "coverage-audit.json#/waivers",
+  "freshCoefficientSeed": 3822197367,
+  "freshAsyncSeeds": [
+    393892065,
+    4189269005
+  ]
+}

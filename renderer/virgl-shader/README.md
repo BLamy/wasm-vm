@@ -874,3 +874,41 @@ required before the task can become verified.
 Original captures stay12/19 because PRECISE is independently rejected. The
 second capture's radial TEMP2.x gap remains outside this family. Guest GPU
 negotiation and the desktop300MIPS target remain unproven.
+
+## Restricted radial coefficient admission — E6-T12f3
+
+The two captured radial structures have a real definedness gap: the small-coefficient
+linear predecessor does not write TEMP2.x, and its later alternate-root use can
+change transparency. Coefficient 2^-20, q=(4,0), B=4 and C=16 gives primary root 2;
+missing-word zero produces an out-of-range alternate root, while word0x407ffffe
+produces visible root0.5. No missing TEMP is assigned zero.
+
+A bounded typed certificate recognizes the adjacent MAX(c,-c), FSLT against
+word0x3727c5ac, and UIF consuming that exact scalar lane version, with a real
+matching ELSE/ENDIF. Both MAX inputs must be CONST4.x, only the second is negated.
+Only under the explicit admission absBits(CONST4.x)>=0x3727c5ac may the validator
+exclude the linear predecessor from the live join. Other missing lanes, clobbered
+versions, altered thresholds and a second candidate graph reject. Ordinary
+validated success keeps its prior profile.
+
+Closed profiles14/15/16 respectively combine radial admission with finite-bank
+structured, static-indirect, and counted-table obligations. Each requires exactly
+one constant-bank-radial-coefficient-f32-v1 record, naming the same stage, slot,
+bank and extent, register4/component0 and minimumMagnitude925353388. Older
+profiles forbid that field. The consumer owns one complete finite declared prefix
+and checks the coefficient and any raw signed loop count on those same words
+before link, allocation, index readback or draw dispatch. Replacement, async
+yields and restoration preserve the checked bank and shader generation.
+
+`make verify-E6-T12f3` records the independent rational domain proof and missing-value
+counterexample, native/Wasm full-result parity, immutable-bank failures, admitted
+hardware colors, retained selected-lane hardware words and a source-built domain
+sabotage caught before GPU execution. The measured raw IR is26480bytes, profile
+7616bytes and flow arena52644bytes; instruction179, memory16MiB and stack256KiB
+caps remain.
+
+The two full-body fixtures are explicitly authored structural ports: PRECISE
+suffixes are removed and alpha uses a numeric ADD-zero output projection. Both
+changes are inventoried; original bodies remain untouched and gated. This domain
+proves restricted admitted paths, not arbitrary finite radial input, captured
+workload banks, current guest GPU support or a300MIPS desktop.

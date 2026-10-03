@@ -1929,3 +1929,7 @@ verify-E6-T12f1:
 .PHONY: verify-E6-T12f2
 verify-E6-T12f2:
 	bash tools/verify-virgl-selected-lanes.sh
+
+.PHONY: verify-E6-T12f3
+verify-E6-T12f3:
+	bash tools/verify-virgl-radial-domain.sh
