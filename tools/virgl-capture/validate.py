@@ -507,7 +507,7 @@ def validate_capture(directory):
     workload_log = artifacts["workload.log"].decode(errors="replace")
     renderer_log = (artifacts.get("hyprland.log", b"").decode(errors="replace")
                     if workload == "compositor" else workload_log)
-    require(re.search(r"(?im)^.*(?:GL_RENDERER|renderer)\s*[:=]\s*virgl\b", renderer_log),
+    require(re.search(r'(?im)^.*(?:GL_RENDERER|renderer)\s*[:=]\s*"?virgl\b', renderer_log),
             "actual guest renderer is not VirGL")
     if workload == "textured-scene":
         require("TEXTURED_SCENE_END status=pass draws=3 checked_pixels=768" in workload_log

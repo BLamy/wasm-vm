@@ -116,6 +116,31 @@ class FramingTests(unittest.TestCase):
             with self.subTest(stage=stage), self.assertRaises(capture.CaptureError):
                 capture.CommandDecoder().submit(shader_packets(text=text, stage=stage)[0], 1, 1)
 
+    def test_streamout_header_offset_and_truncation(self):
+        # Literal protocol layout: four strides, then two words per output.
+        # These tests exercise extraction/framing, not streamout GPU semantics.
+        text = VERTEX + b"\0"
+        padded = text + b"\x00" * (-len(text) % 4)
+        header = struct.pack("<5I", 3, 0, len(text), 30, 2)
+        streamout = struct.pack("<8I", 16, 0, 0, 0, 0, 0, 1, 4)
+        decoder = capture.CommandDecoder()
+        decoder.submit(command(1, 4, header + streamout + padded), 1, 1)
+        occurrence = decoder.finish()["shaders"][capture.sha256(VERTEX)]["occurrences"][0]
+        self.assertEqual(occurrence["streamoutOutputs"], 2)
+        for length in (4, 8, 28, 32):
+            with self.subTest(length=length), self.assertRaises(capture.CaptureError):
+                capture.CommandDecoder().submit(command(1, 4, header + streamout[:length]), 1, 1)
+
+    def test_compute_local_memory_is_not_streamout_count(self):
+        text = b"COMP\n  0: END\n"
+        packet = bytearray(shader_packets(text=text, stage=5)[0])
+        struct.pack_into("<I", packet, 20, 65536)
+        decoder = capture.CommandDecoder()
+        decoder.submit(packet, 1, 1)
+        report = decoder.finish()
+        self.assertEqual(report["shaders"][capture.sha256(text)]["stage"], "COMP")
+        self.assertEqual(report["shaders"][capture.sha256(text)]["occurrences"][0]["streamoutOutputs"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
