@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Bind retained scanout, native/Wasm parity and an actual cold desktop boot."""
+import argparse
 import hashlib
 import importlib.util
 import json
@@ -21,8 +22,11 @@ KERNEL_SHA = 'af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce'
 
 
 def file_sha(path):
+    digest = hashlib.sha256()
     with Path(path).open('rb') as source:
-        return hashlib.file_digest(source, 'sha256').hexdigest()
+        for block in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def parity(record):
@@ -73,8 +77,21 @@ def presentation(scanout, expected):
 
 
 def main():
-    directory = Path(sys.argv[1]).resolve()
-    head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('directory', type=Path)
+    parser.add_argument('--recording-head', help='Revalidate existing recordings after a receipt-only repair')
+    args = parser.parse_args()
+    directory = args.directory.resolve()
+    validator_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    head = args.recording_head or validator_head
+    validator_path = 'tools/virgl-command/scanout-receipt.py'
+    if head != validator_head:
+        require(re.fullmatch('[0-9a-f]{40}', head), 'recording head must be an exact commit')
+        changed = subprocess.check_output(['git', 'diff', '--name-only', head, validator_head], cwd=ROOT, text=True).splitlines()
+        require(changed == [validator_path], 'incremental receipt repair may not change runtime, tests or other harnesses')
+    validator_raw = (ROOT / validator_path).read_bytes()
+    require(validator_raw == subprocess.check_output(['git', 'show', f'{validator_head}:{validator_path}'], cwd=ROOT),
+            'executed receipt validator is not frozen')
     bound = []
 
     def record(file, expected=None):
@@ -85,10 +102,15 @@ def main():
         return raw
 
     # Revalidate the nested receipt, including its exact-head source bindings.
-    subprocess.run([sys.executable, str(ROOT / 'tools/virgl-command/submit-receipt.py'),
-                    str(directory / 'submit-regression')], cwd=ROOT, check=True)
+    if head == validator_head:
+        subprocess.run([sys.executable, str(ROOT / 'tools/virgl-command/submit-receipt.py'),
+                        str(directory / 'submit-regression')], cwd=ROOT, check=True)
     regression = json.loads(record('submit-regression/receipt.json'))
     require(regression['status'] == 'passed' and regression['gitHead'] == head, 'B2 regression failed')
+    for item in regression['records']:
+        record('submit-regression/' + item['path'], item['sha256'])
+    for item in regression['sources']:
+        require(file_sha(ROOT / item['path']) == item['sha256'], 'B2 regression source drift')
     report = json.loads(record('hardware/report.json'))
     require(report['task'] == 'E6-T11c' and report['gitHead'] == head
             and report['status'] == report['browserResult']['status'] == 'passed'
@@ -109,7 +131,8 @@ def main():
     sources = {s['path']: s for s in report['sources']}
     require(len(sources) == len(report['sources']) and set(SOURCES) <= sources.keys(), 'missing/duplicate sources')
     for path, item in sources.items():
-        raw = (ROOT / path).read_bytes()
+        raw = (subprocess.check_output(['git', 'show', f'{head}:{path}'], cwd=ROOT)
+               if head != validator_head and path == validator_path else (ROOT / path).read_bytes())
         require(len(raw) == item['bytes'] and sha(raw) == item['sha256'], f'source drift: {path}')
         tracked = subprocess.run(['git', 'cat-file', '-e', f'{head}:{path}'], cwd=ROOT, capture_output=True).returncode == 0
         if tracked:
@@ -233,7 +256,8 @@ def main():
     for key in ('serial', 'screenshot', 'transcript'):
         item = desktop[key]
         record('desktop/' + item['path'], item['sha256'])
-    receipt = dict(schema=1, task='E6-T11c', gitHead=head, status='passed', portableRecords=12,
+    receipt = dict(schema=1, task='E6-T11c', gitHead=validator_head, recordingHead=head,
+                   validator=dict(path=validator_path, sha256=sha(validator_raw)), status='passed', portableRecords=12,
                    boundary='proof-only retained GPU scanout with separately acknowledged canvas paint; ordinary cold 2D desktop regression',
                    sources=report['sources'], inputs=report['inputs'], records=bound)
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
