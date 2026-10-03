@@ -3,7 +3,7 @@ id: E6-T12f1
 epic: 6
 title: Implement raw FSEQ and FSNE masks without changing precision semantics
 priority: 525.0269911
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -247,3 +247,33 @@ positive receipt and seal the negative checks in the final receipt. The already
 held pristine-clone, product-hunk coverage and novel attacks carry forward;
 no second cold clone or unrelated workspace gate is requested. Status remains
 evidence-needed until this missing proof is recorded and independently reviewed.
+
+### 2026-10-03 — worker — recorded proof-only response
+
+Frozen proof source: `02d39991` (runtime remains exactly `e535914881f6a6f1c623513f3531ad83ddcca34b`).
+Command:
+`EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc VIRGL_RAW_EQUALITY_EVIDENCE_DIR=target/evidence/raw-equality-proof-response-02d39991 make verify-E6-T12f1`
+passed; copied every final artifact to `evidence/virgl-raw-equality/proof-response/`.
+`python3 tools/check_task_policy.py`, Python compilation, shell syntax and
+`git diff --check` pass. A direct product-source diff against `e535914` is empty.
+
+Response SHA-256 digests:
+
+- Final `receipt.json`: `3ab15d401d6e870d082905397cfb57c3356567975f518c34467760fcc16a19ca`.
+- Initial `positive-receipt.json`: `0f69b58575820ee2ed81f56c44918721248ee935d55bcd1db71409c12b6cabcd`.
+- `negative-receipts.json`: `1a77143b724280a07df2dff58229cfb2e04956d6346c18538208a5cecde18630`.
+- `native/native-report.json`: `5d64c34e653153be853bfb906d869dabc608faa81ab18b83dd0a6bc372ed9459`.
+- `consumer/report.json`: `db5d5c07d91a90cbf367bc6e769f8172d5137e98d788da9ebb31dfb589589776`.
+
+The recording exercises the repaired source/LLVM/size reconstruction and full
+consumer ledger with its exact 2,545 actual parse calls and source-bound throwing
+getter counter of zero. Healthy controls pass before and after all 38 promoted
+forgeries; every native/full forgery rejects, including truthful propagation of
+the altered native report's byte length/digest into its Wasm counterpart. The
+initial positive receipt is retained for the negative report's control digest;
+the final receipt seals both and binds 177 sources/75 records. Native/Wasm
+totals, bounds, hardware words, expectation migrations, original12/19 and all
+five source-fault controls retain their prior outcomes. The runtime, novel
+attacks and final pristine-clone findings already HELD by the critic carry
+forward unchanged. No unrelated gates or additional pristine clone ran.
+Status is implemented for incremental independent review of F1–F3.
