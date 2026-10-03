@@ -125,14 +125,18 @@ async function startServer() {
         assert.ok((await fs.realpath(file)).startsWith(distReal + path.sep), 'built source symlink escaped dist');
         bytes = await fs.readFile(file);
       }
+      // Chromium can report ERR_ABORTED after a fully consumed no-store Fetch stream.
+      // The bound immutable kernel uses no-cache; the fresh context and CDP cache-disable
+      // remain authoritative. See worker/kernel-network-diagnostic for full-byte controls.
+      const cacheControl = urlPath === `/${KERNEL.url}` ? 'no-cache' : 'no-store';
       const digest = sha256(bytes), previous = served.get(urlPath);
       if (previous) assert.equal(previous.sha256, digest, `served file changed during boot: ${urlPath}`);
       else served.set(urlPath, { url: urlPath, path: file, kind, bytes: bytes.length, sha256: digest,
-        requests: 0, ...(indices ? { manifestIndices: indices } : {}), ...(kind === 'source' ? gitBinding(file, bytes) : {}) });
+        requests: 0, cacheControl, ...(indices ? { manifestIndices: indices } : {}), ...(kind === 'source' ? gitBinding(file, bytes) : {}) });
       served.get(urlPath).requests += 1;
-      record('served', { url: urlPath, kind, bytes: bytes.length, sha256: digest });
+      record('served', { url: urlPath, kind, bytes: bytes.length, sha256: digest, cacheControl });
       response.writeHead(200, { 'Content-Type': types[path.extname(file)] ?? 'application/octet-stream',
-        'Content-Length': bytes.length, 'Cache-Control': 'no-store',
+        'Content-Length': bytes.length, 'Cache-Control': cacheControl,
         'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp' }).end(bytes);
     } catch (error) {
       report.errors.server.push({ url: urlPath, message: error.message }); record('server-error', { url: urlPath, message: error.message });
@@ -219,10 +223,25 @@ async function main() {
       if (message.type() === 'error') report.errors.console.push(entry);
     });
     page.on('pageerror', (error) => { report.errors.page.push(error.message); record('pageerror', error.message); });
+    const requestIds = new WeakMap(), responses = new WeakMap(); let nextRequestId = 1;
+    const requestMetadata = (request) => {
+      if (!requestIds.has(request)) requestIds.set(request, `request-${nextRequestId++}`);
+      return { requestId: requestIds.get(request), url: request.url(), method: request.method(),
+        resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest() };
+    };
+    page.on('request', (request) => record('request', { ...requestMetadata(request), headers: request.headers() }));
+    page.on('requestfinished', (request) => record('requestfinished', { ...requestMetadata(request), timing: request.timing() }));
     page.on('requestfailed', (request) => {
-      const entry = { url: request.url(), failure: request.failure()?.errorText }; report.errors.requests.push(entry); record('requestfailed', entry);
+      const entry = { ...requestMetadata(request), failure: request.failure()?.errorText,
+        timing: request.timing(), response: responses.get(request) ?? null };
+      report.errors.requests.push(entry); record('requestfailed', entry);
     });
-    page.on('response', (response) => { if (response.status() >= 400) report.errors.http.push({ url: response.url(), status: response.status() }); });
+    page.on('response', (response) => {
+      const metadata = { status: response.status(), headers: response.headers() };
+      responses.set(response.request(), metadata);
+      record('response', { ...requestMetadata(response.request()), ...metadata });
+      if (response.status() >= 400) report.errors.http.push({ url: response.url(), status: response.status() });
+    });
     report.url = `${base}/desktop.html?e5T18a=1&jit=1&quantum=500000`;
     const started = Date.now();
     await page.goto(report.url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
