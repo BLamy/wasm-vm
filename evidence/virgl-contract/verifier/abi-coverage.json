@@ -1,0 +1,65 @@
+{
+  "functions": [
+    {
+      "count": 1,
+      "name": "main"
+    },
+    {
+      "count": 89,
+      "name": "caps_layout.c:read_le32"
+    },
+    {
+      "count": 3,
+      "name": "caps_layout.c:print_structure"
+    },
+    {
+      "count": 1,
+      "name": "caps_layout.c:print_boolean_set"
+    },
+    {
+      "count": 1,
+      "name": "caps_layout.c:print_video_caps"
+    },
+    {
+      "count": 14,
+      "name": "caps_layout.c:print_video_field"
+    }
+  ],
+  "layoutSha256": "ee3daa5d82dc8402aa3b1350be2d4b0e4c032cb0c9ca0341a2549f1535f1e76f",
+  "sourceSha256": "617c52c67866c71cb5c4857cd1bdb401598df80dca1b004e846e4c2a6270646a",
+  "totals": {
+    "branches": {
+      "count": 58,
+      "covered": 56,
+      "notcovered": 2,
+      "percent": 96.55172413793103
+    },
+    "functions": {
+      "count": 6,
+      "covered": 6,
+      "percent": 100
+    },
+    "instantiations": {
+      "count": 6,
+      "covered": 6,
+      "percent": 100
+    },
+    "lines": {
+      "count": 127,
+      "covered": 124,
+      "percent": 97.63779527559055
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 384,
+      "covered": 381,
+      "notcovered": 3,
+      "percent": 99.21875
+    }
+  }
+}
