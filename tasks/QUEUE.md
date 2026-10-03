@@ -485,7 +485,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02692` [E6-T12a](epic-6-transcendence/E6-T12a-virgl-command-decoder.md) — Decode captured VirGL packets with bounded portable byte parsing *(deps: E6-T10d)*
+- [?] `525.02692` [E6-T12a](epic-6-transcendence/E6-T12a-virgl-command-decoder.md) — Decode captured VirGL packets with bounded portable byte parsing *(deps: E6-T10d)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

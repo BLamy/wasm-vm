@@ -3,7 +3,7 @@ id: E6-T12a
 epic: 6
 title: Decode captured VirGL packets with bounded portable byte parsing
 priority: 525.02692
-status: in-progress
+status: implemented
 depends_on: [E6-T10d]
 estimate: S
 risk: high
@@ -108,3 +108,62 @@ Continues the explicitly requested graphics-offload lane after independently ver
 E6-T10d (`af6b5509`, PR #406). This S slice isolates hostile byte decoding before
 resource/state execution. Original L transport/renderer containers are being replaced
 with ordered S tasks; no other task is active.
+
+
+### 2026-10-03 — worker — implemented (UTC)
+
+Frozen runtime/harness head `b2636b5073b1e81f2172b6b0b268fea7ce381f0d`.
+`renderer/virgl-command/decoder.mjs` provides the documented synchronous,
+stateless `virgl-tiny-commands-v1` profile. It snapshots non-shared byte views,
+parses little endian fields, validates shapes/limits/profile features, and
+returns one deep-frozen complete result or a structured error. Resource identity,
+shader grammar, bindings and actual GPU execution remain later boundaries.
+Provenance labels are caller supplied; the independent acceptance loader
+computes and verifies their hashes. END_TRANSFERS padding and the upstream-unused
+transfer usage word are opaque. The contract's earlier empty-marker wording is
+corrected; historical evidence remains unchanged.
+
+Final command:
+`VIRGL_COMMAND_EVIDENCE_DIR=evidence/virgl-command/worker make verify-E6-T12a`.
+Receipt `evidence/virgl-command/worker/receipt.json` SHA256
+`d017e3cfd7176b4321dbed565c72859b8eb530c43733f0aeed429b61a9af1097`
+binds runtime, harness, protocol, raw input and report/screenshot hashes.
+The gate passed syntax checks, all21 existing capture tests, all4 full raw capture
+validations, and identical Node/headed-Chrome acceptance results: all8 original
+submissions /42380 bytes /210 packets /32 families /8 created object types;
+586628 assertions,283 named cases,42380 exhaustive byte prefixes,4096 mutations
+with seeds6a09e667/bb67ae85/3c6ef372/a54ff53a,1399 accepted/2697 rejected mutations,
+and779 recovery checks. Independent field oracles cover all command families and
+object types, exact shader text, transfer directions/offsets, geometry/state and
+three draw packets. No backing snapshots are consumed. Zero browser console,
+page or request errors. Shared memory input rejects in both environments.
+
+Node acceptance took774.4ms and headed Chrome154.0.8037.93 took580.4ms on this
+Apple Silicon host; these are parser-suite observations, not VM MIPS/FPS results.
+The hard budgets accept262144-byte opaque input and4096 commands, and reject the
+next excess. Their serialized results are355 and645970 bytes respectively;
+16384 text bytes and8192 declared tokens are exercised at the boundary. The whole
+Node proof process peaked at140048KiB RSS (including runtime/harness); this is
+not a per-decoder-allocation measurement. The runner bounds browser acceptance
+at120seconds and the clean-clone gate at240seconds. V8 counters for46 functions
+are retained in `worker/coverage.json`: only allowlist-unreachable object/command
+defaults and the deliberate unexpected-programmer-error rethrow are unhit.
+All other recorded branch ranges have positive counts.
+
+The trusted sabotage serves a decoder with only returned command.byteLength
+increased by4. Node's original module still passes; the browser oracle fails
+specifically at event161 command0: expected56, got60. Report and failure screenshot
+are under `worker/sabotage/`. The success screenshot was inspected and its SHA256
+is `24a974044765c347faee9cf2858b922fac4dfe361c015149476742eb2c0b17d9`.
+
+Final pristine clone command:
+`python3 tools/virgl-command/cold.py --output evidence/virgl-command/cold-clone`.
+It checks out the frozen exact head, removes compiler/Node/Python/Cargo injection
+variables and runs the same acceptance with fresh npm dependencies. Git status
+is empty before and after; report `cold-clone/report.json` records the retained
+scratch checkout. Its full acceptance receipt SHA256 is
+`1df3c66ee891cc57bab23df78ac70b9d9ddb7030e5f48505af691f9f064b6445`;
+log SHA256 `b6d8a5745b1f053e1080cf4f3c190eebe7379533d32f5253787c83b6d6d906a9`.
+No C/Rust/Wasm or production page/device behavior changes in this slice; their
+unchanged shader/execution proofs carry forward. No GPU rendering, guest Mesa
+activation or performance gain is claimed by command decoding.
