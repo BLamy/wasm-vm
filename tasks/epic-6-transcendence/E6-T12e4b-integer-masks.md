@@ -3,7 +3,7 @@ id: E6-T12e4b
 epic: 6
 title: Preserve wrapping integer arithmetic masks and selection
 priority: 525.02699042
-status: implemented
+status: verified
 depends_on: [E6-T12e4a]
 estimate: S
 risk: high
@@ -131,3 +131,61 @@ Retained clone:
 This is an isolated compiler proof; neither the default demo bundle nor guest
 capsets changed. It does not assert live Mesa or guest instruction throughput.
 Independent verifier evidence and status remain the critic's responsibility.
+
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+- P01–P20 **HELD**. The pre-evidence predictions were recorded before worker output
+  inspection in `evidence/virgl-integer-masks/verifier/predictions.md`, SHA256
+  `bff2edc72af60100ba0641e6a8752ad545b839cc325f14cbafeb5911b4d805c9`.
+  `verifier/VERIFICATION.md` gives each concrete recording point and disposition.
+  Frozen implementation `1e8f2586a125efd91460db3a7e11049855acb495` and worker
+  submission `8c2644f8` survived independent examination; no product changes were
+  made by the critic.
+- **Falsification:** separately compiled current/baseline sanitizer binaries
+  agreed on 298 full old results, including all 19 originals. Fresh source3,
+  initialization, masks, origins and malformed-input attacks produced 1,586
+  native/Wasm full-result matches, 4,758 native calls and 3,172 exact recoveries.
+  Five fresh abstract-state seeds and 32 concrete schedules over 51,200
+  instructions passed 3,500,032 known-bit checks, 112,288 origin assertions and
+  45,248 safe-output checks (`verifier/knowledge-report.json`).
+- **Actual GPU:** a separate composed five-op alias program passed 128 complete
+  words across 16 new vectors in both stages. Its source-bound UCMP arm swap
+  compiled and linked, then contradicted the independent TF oracle at
+  `verifier/sabotage/report.json#/acceptance/vertex/0/vectors/0/rawWords/4`:
+  expected `0x3f7f8000`, observed `0x3f000000`. Position and trailing guard words
+  remained intact. Worker TGSI was separately interpreted to recompute all 704
+  GPU words, 352 TF captures and 2,816 fragment bitplanes. All 17,856 non-diagonal
+  mixed-pair pixels and 16 direct finite UCMP selections were independently
+  recomputed; worker screenshot visually inspected.
+- **Sufficiency:** all 56 changed executable C lines have nonzero recorded LLVM
+  counts; all 22 added non-executable C/header lines are explicitly classified
+  in `verifier/worker-semantics.json`. Build/test/tooling/document hunks and narrow
+  proof-tool diagnostic waivers are listed in `verifier/VERIFICATION.md`. Prior
+  unchanged boundaries retain HELD authority; compact source storage, v2 profile
+  choice, known-bit/origin propagation and emitted operations were reattacked.
+- **Identity/portability:** `verifier/binding-audit.json` independently checks
+  37,282 value/shape/hash assertions and 9,439 repeated nested file bindings,
+  every frozen source, all native stream/log results and full browser parity.
+  All 127 copied cold artifacts match the retained clean clone; complete native
+  and GPU proof agrees with the worker and the Wasm hash is identical. A synthetic
+  poisoned-environment attack confirms the scrubbed environment reaches the
+  acceptance child. No worker receipt verification functions were imported.
+- **Scope/SUITE:** retain the fresh deterministic abstract-state attack, alias GPU
+  shaders, seeds, source3 corpus and full transcripts as repeatable verifier
+  regressions. The existing `make verify-E6-T12e4b` target is the recurring gate.
+  Production stays off; this verdict makes no live Mesa, guest graphics offload,
+  frame-rate or MIPS claim. No unrelated requirement was added.
+
+Verifier evidence manifest: `evidence/virgl-integer-masks/verifier/manifest.json`,
+SHA256 `4012f9aba301f1ce5d106901e61133ba8b4d83ced1f7ed15d2edeefe91dd3705`.
+Key report SHA256s: binding audit
+`c6f9bb8052d29f9b3f7c3e34fd4f01ecb8999b040eb82734488624dc6459320c`;
+independent native
+`1e1a3ebc6ae3d287715032240d12edd0e42d12d70a5c306b2efb74da1d21d94d`;
+independent hardware
+`c8f742f953160c6d45b8643b66a13255fd0f507c82a4f566720947a7e3ebd537`;
+independent sabotage
+`6cca0aa1e745444424380e108dba7f5e533ed8d953493d2329e2fbf79a8ee7ae`.
+Exact reproducible commands are in `verifier/VERIFICATION.md`; the sabotage
+command is required to fail at the cited actual GPU mismatch.

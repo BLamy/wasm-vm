@@ -1,0 +1,484 @@
+{
+  "schema": "independent-worker-integer-semantics-v1",
+  "status": "passed",
+  "head": "1e8f2586a125efd91460db3a7e11049855acb495",
+  "assertions": 8768,
+  "rawWords": 704,
+  "vertexCaptures": 352,
+  "fragmentBitplanes": 2816,
+  "executableChangedLines": 56,
+  "coverage": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 178,
+      "nativeLineCount": "921k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 179,
+      "nativeLineCount": "860k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 180,
+      "nativeLineCount": "860k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 181,
+      "nativeLineCount": "860k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 182,
+      "nativeLineCount": "860k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 291,
+      "nativeLineCount": "33.8k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 292,
+      "nativeLineCount": "18.3k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 293,
+      "nativeLineCount": "18.3k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 294,
+      "nativeLineCount": "18.2k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 295,
+      "nativeLineCount": "18.2k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 297,
+      "nativeLineCount": "368k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 377,
+      "nativeLineCount": "107k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 457,
+      "nativeLineCount": "794k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 458,
+      "nativeLineCount": "794k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 582,
+      "nativeLineCount": "107k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 583,
+      "nativeLineCount": "107k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 584,
+      "nativeLineCount": "107k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 41,
+      "nativeLineCount": "61.7k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 42,
+      "nativeLineCount": "61.7k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 43,
+      "nativeLineCount": "61.7k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 46,
+      "nativeLineCount": "62.1k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 47,
+      "nativeLineCount": "62.1k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 48,
+      "nativeLineCount": "62.1k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 51,
+      "nativeLineCount": "71.5k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 52,
+      "nativeLineCount": "71.5k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 53,
+      "nativeLineCount": "68.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 56,
+      "nativeLineCount": "68.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "nativeLineCount": "68.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 58,
+      "nativeLineCount": "68.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 75,
+      "nativeLineCount": "61.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 76,
+      "nativeLineCount": "61.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 77,
+      "nativeLineCount": "61.6k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 78,
+      "nativeLineCount": "156",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 79,
+      "nativeLineCount": "156",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 80,
+      "nativeLineCount": "88",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 81,
+      "nativeLineCount": "156",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 82,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 83,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 84,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 85,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 86,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 87,
+      "nativeLineCount": "146",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 88,
+      "nativeLineCount": "71.5k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 95,
+      "nativeLineCount": "475k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 171,
+      "nativeLineCount": "1.85M",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 178,
+      "nativeLineCount": "613k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 179,
+      "nativeLineCount": "61.5k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 180,
+      "nativeLineCount": "501k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 181,
+      "nativeLineCount": "132",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 182,
+      "nativeLineCount": "132",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 183,
+      "nativeLineCount": "501k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 184,
+      "nativeLineCount": "260",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 185,
+      "nativeLineCount": "260",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 186,
+      "nativeLineCount": "501k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 187,
+      "nativeLineCount": "66.8k",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 188,
+      "nativeLineCount": "66.8k",
+      "classification": "executed"
+    }
+  ],
+  "nonExecutableChangedLines": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 167,
+      "text": "static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 7,
+      "text": "static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_source *r, unsigned lane)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 40,
+      "text": "static struct raw_lane known_word(uint32_t word)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 44,
+      "text": "",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 45,
+      "text": "static bool known_operands(struct raw_lane a, struct raw_lane b)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 49,
+      "text": "",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 50,
+      "text": "static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 54,
+      "text": "   /* An unknown selector retains only facts true for BOTH payloads. Distinct",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 55,
+      "text": "    * float origins cannot become one input identity merely by being floats. */",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 59,
+      "text": "",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 132,
+      "text": "static void operand(struct writer *w, const struct profile *p, const struct raw_source *r, unsigned lane)",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 14,
+      "text": "enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 15,
+      "text": "                  RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP };",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 16,
+      "text": "#define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 17,
+      "text": "/* A checked source needs no declaration range, destination mask or parser flag.",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 18,
+      "text": " * Three 24-byte sources fit the former two 36-byte parser-register slots. */",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 19,
+      "text": "struct raw_source { enum file file; unsigned index, swizzle[4]; };",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 20,
+      "text": "struct raw_instruction { enum raw_opcode opcode; struct reg dst; struct raw_source src[3]; };",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 28,
+      "text": "   unsigned count, opcode_mask;",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 44,
+      "text": "_Static_assert(sizeof(struct raw_source) == 24, \"checked source layout\");",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 45,
+      "text": "_Static_assert(sizeof(struct raw_instruction) == 112, \"unchanged instruction layout\");",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 46,
+      "text": "_Static_assert(sizeof(struct raw_ir) == 26232, \"unchanged raw IR allocation\");",
+      "reason": "Declaration, layout/static assertion, comment, brace or preprocessor line; no independently executable statement. Header sizes also tested on native/Wasm."
+    }
+  ],
+  "workerHardwareSha256": "4dd3db917f3b9179aaca695f4427b60c4f39f9d475ff2828c728620f45cc37f4",
+  "coverageSha256": "027aee88a27251ab71d1254a70f827c3b51f855bdf5f81105ca5fa26b7eeb14a"
+}
