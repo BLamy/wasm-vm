@@ -517,7 +517,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02696` [E6-T11a](epic-6-transcendence/E6-T11a-virtio-3d-control-resources.md) — Connect validated virtio 3D context and resource control to the renderer *(deps: E6-T12d)*
+- [?] `525.02696` [E6-T11a](epic-6-transcendence/E6-T11a-virtio-3d-control-resources.md) — Connect validated virtio 3D context and resource control to the renderer *(deps: E6-T12d)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
