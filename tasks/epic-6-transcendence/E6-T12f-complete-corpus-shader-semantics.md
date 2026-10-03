@@ -1,10 +1,10 @@
 ---
 id: E6-T12f
 epic: 6
-title: Close faithful WebGL2 translation for every original captured shader
+title: Preserve PRECISE semantics and close all original captured shader bodies
 priority: 525.02700
 status: pending
-depends_on: [E6-T12e]
+depends_on: [E6-T12e9]
 estimate: S
 risk: high
 capstone: false
@@ -12,36 +12,39 @@ capstone: false
 
 ## Boundary
 
-Resolve the remaining captured shader precision boundary, including TGSI
-_PRECISE, with a defensible WebGL2/ESSL300 implementation and explicit semantic
-proof. ESSL300 does not accept the upstream precise qualifier on the measured
-backend. Dropping it, tolerating changed arithmetic, substituting a recaptured
-shader or restricting the test to already-supported hashes is not completion.
-Preserve instruction ordering/contraction and required float behavior with a
-validated lowering, or record the exact external/semantic blocker and keep the
-dependent milestone gated. A speculative feasibility argument cannot pass.
+With the separately verified declaration, lane, interface, integer, float,
+conditional and loop/address boundaries in place, resolve only the remaining
+PRECISE semantic boundary. The inventoried decorated operations are ADD_PRECISE,
+MUL_PRECISE, MAX_PRECISE, FSEQ_PRECISE, FSNE_PRECISE and MOV_PRECISE. Audit their
+pinned TGSI meaning and dependencies; do not assume that adding one qualifier
+preserves all upstream expression ordering or contraction behavior.
+
+Use a defensible ESSL300 implementation with actual semantic evidence, or mark
+this task blocked with the exact external/semantic dependency and reproducer.
+No speculative feasibility pass. Removing PRECISE, substituting a recaptured
+body, changing arithmetic, zero-initializing away unproven dataflow, or silently
+cutting off a loop is not completion. If implementation proves to require an
+additional independent feature family, split that family before activation.
 
 ## Deterministic acceptance
 
-`make verify-E6-T12f` requires every one of the original 19 E6-T10b TGSI hashes
-to translate unchanged into golden GLSL and compile/link in the measured WebGL2
-browser. This preserves the original full-corpus shader criterion, replacing
-obsolete WGSL/naga validation with actual ESSL300 execution validation. Exercise
-every newly supported operation/precision path with independent bit/ULP/pixel
-oracles appropriate to its specified semantics, including contraction-sensitive
-inputs. Run native sanitizer/Wasm/browser parity, existing regressions, bounded
-attacks and final pristine-clone proof. No production capability is inferred
-from compilation alone; unsupported resource/state behavior remains rejected.
+`make verify-E6-T12f` requires all original 19 TGSI SHA-256 bodies to translate
+unchanged, preserve checked metadata and compile/link in the actual WebGL2
+browser. Execute every newly supported PRECISE path with independent bit/ULP/
+pixel oracles appropriate to the audited guarantees, including cancellation and
+contraction-sensitive inputs. Exercise the original loop bodies only under their
+verified execution/address admission contract; report that contract explicitly.
+Require native sanitizer/Wasm parity, previous shader and scene regressions,
+exact source/toolchain/output identities and final pristine-clone evidence.
 
 ## Adversarial verification
 
-Audit pinned TGSI and language precision requirements before judging results.
-Attack cancellation, signed zero, subnormals, infinities/NaNs where admitted,
-rounding boundaries, modifiers and optimization/contraction. Verify the tests
-do not derive expected results from the lowering under test. Sabotage a rounding
-or contraction barrier and require failure. If additional independent feature
-families prove necessary, split and verify ordered S prerequisites before
-activation rather than expanding this task into an unbounded translator rewrite.
+Attack operation ordering, contraction, signed zero, rounding boundaries,
+subnormals/infinities/NaNs wherever the admitted contract includes them, modifier
+ordering and implementation optimization. Expected values must not be produced
+by the lowering under test. Sabotage the required precision mechanism and demand
+oracle failure. Compilation alone proves neither production compatibility nor
+complete compositor rendering; production negotiation remains separately gated.
 
 ## Verification log
 
