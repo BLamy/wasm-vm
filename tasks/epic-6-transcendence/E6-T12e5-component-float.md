@@ -4,7 +4,7 @@ epic: 6
 title: Preserve the remaining componentwise float operations and negation
 priority: 525.0269905
 status: pending
-depends_on: [E6-T12e4]
+depends_on: [E6-T12e4c]
 estimate: S
 risk: high
 capstone: false
