@@ -1640,27 +1640,27 @@
     }
   },
   {
-    "name": "still-unsupported-ADD-vertex",
+    "name": "still-unsupported-ADD-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nADD TEMP[117], CONST[0], CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nADD TEMP[117], |CONST[0]|, CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "still-unsupported-MUL-vertex",
+    "name": "still-unsupported-MUL-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMUL TEMP[117], CONST[0], CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMUL TEMP[117], |CONST[0]|, CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "still-unsupported-MAD-vertex",
+    "name": "still-unsupported-MAD-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMAD TEMP[117], CONST[0], CONST[45], CONST[0]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMAD TEMP[117], |CONST[0]|, CONST[45], CONST[0]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -3379,27 +3379,27 @@
     }
   },
   {
-    "name": "still-unsupported-ADD-fragment",
+    "name": "still-unsupported-ADD-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nADD TEMP[117], CONST[0], CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nADD TEMP[117], |CONST[0]|, CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "still-unsupported-MUL-fragment",
+    "name": "still-unsupported-MUL-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMUL TEMP[117], CONST[0], CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMUL TEMP[117], |CONST[0]|, CONST[45]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "still-unsupported-MAD-fragment",
+    "name": "still-unsupported-MAD-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMAD TEMP[117], CONST[0], CONST[45], CONST[0]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] UINT32 {0, 0, 4294967295, 0}\nIMM[1] UINT32 {1056964608, 8388607, 1065353216, 31}\nFSLT TEMP[117], CONST[0], CONST[45]\nMAD TEMP[117], |CONST[0]|, CONST[45], CONST[0]\nAND TEMP[117], TEMP[117], IMM[1].yyyy\nOR TEMP[117], TEMP[117], IMM[1].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"

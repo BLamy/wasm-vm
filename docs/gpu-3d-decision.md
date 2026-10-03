@@ -502,3 +502,45 @@ the contract. Removing both from a formerly unconditional result is outside
 this trusted-host contract; the renderer cannot authenticate arbitrary host
 metadata by inspecting generated GLSL. Actual compiler derivation follows in
 E6-T12e6b. Production guest graphics remains disabled.
+
+
+### Compiler-derived finite constant authority
+
+E6-T12e6b connects the owned shader compiler to the preceding draw-time
+consumer. Previously successful translations keep their complete GLSL and
+metadata. Only a typed missing-numeric-authority failure permits a second full
+validation from the original immutable TGSI text, and success requires actual
+numeric consumption dependent on the finite constant bank. The stage then
+emits raw-bits-v7 and its own matching slot-zero constant obligation. Caller
+options, source rewriting and host-injected metadata are not admission paths.
+
+The compact facts distinguish numeric access, ordinary output permission and
+finite-bank dependency. A copied conditional constant is numerically usable
+but is not a computed value or a proof that raw subnormal output is safe. An
+unknown UCMP preserves the selected raw bits and a synchronized numeric shadow;
+if either possible arm has only conditional numeric authority, MOV and further
+UCMP retain that limitation. An actual arithmetic operation grants the ordinary
+output authority of its computed result. Known selectors ignore the numeric
+authority of unselected initialized arms, while partial integer writes discard
+stale authority on the lanes they overwrite.
+
+The [GLSL ES3.00 contract](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf)
+§8.3 preserves finite binary32 bits under reinterpretation, including signed
+zero and subnormal inputs. Ordinary arithmetic remains subject to §4.5.1.
+For the subnormal hardware witness, multiplication by exactly 2^126 must yield
+the independently derived representable normal product, or zero when the input
+is flushed as permitted; a normal nonzero control must yield its product.
+Either sign of computed zero is allowed. Original raw constant words are
+exported in the same programs and must remain exact, independently of numeric
+latitude. Reciprocal and root witnesses retain the preceding rational bounds.
+
+An explicit migration inventory preserves 105 formerly rejected exact shader
+bodies as new positive inputs, with adjacent unsupported absolute-modifier
+replacements retaining the historical negative positions. Successor receipts
+account for these changes and reuse earlier GPU oracles without weakening
+historical source-bound receipts. The larger consumer matrix remains a named
+regression; new positive integration uses genuine compiler-produced contracts
+through decoded commands and the shared renderer. Source-bound compiler faults
+separately test missing metadata and an incorrect numeric constant index.
+TEX remains fragment-only, all seven PRECISE originals remain rejected, and
+production guest graphics stays disabled.

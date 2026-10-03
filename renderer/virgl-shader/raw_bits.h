@@ -25,8 +25,12 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES | RAW_V6_OPCODES)
 /* The remaining mask bit records a validated numeric modifier, not an opcode. */
 #define RAW_V5_NEGATION (1u << 21)
-enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_MIXED = 1,
-       RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14 };
+/* Separate from opcode bits: at least one checked numeric read used the bank. */
+#define RAW_FINITE_BANK_USED (1u << 25)
+enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
+       RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
+       RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
+       RAW_CONDITIONAL = 16 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -38,8 +42,9 @@ struct raw_instruction {
    uint32_t float_modes[3]; /* Four checked 8-bit lane modes per source. */
    unsigned float_mask, sampler, flags;
 };
-/* origin is zero for raw data, 1 + input register * 4 + input lane,
- * or RAW_FLOAT_SHADOW for an actual ordinary computed/copied float. */
+/* One checked byte separates numeric access, ordinary output permission and
+ * finite-bank dependence. Conditional access is never an IN shortcut or an
+ * ordinary output proof; a numeric-only selected shadow retains that limit. */
 struct raw_lane { uint32_t zero, one; unsigned origin; };
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
@@ -55,7 +60,8 @@ struct profile {
    unsigned semantic_index[2][8];
    bool flat[2][8];
    unsigned instructions, immediates, constant_extent;
-   bool ended, started, color0_property, mixed_candidate;
+   bool ended, started, color0_property;
+   unsigned char raw_flags;
    int stage;
    struct raw_ir *raw;
 };

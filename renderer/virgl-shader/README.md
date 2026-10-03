@@ -23,6 +23,7 @@ make verify-E6-T12e4a
 make verify-E6-T12e4b
 make verify-E6-T12e4c1
 make verify-E6-T12e4c2
+make verify-E6-T12e6b
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -651,3 +652,38 @@ upstream `virgl-version.h.meson` template. Remove `--check` only when deliberate
 regenerating, then review changes and update the recorded hashes. To verify
 upstream identity independently, obtain the pinned git revision and compare
 each `vendor/<path>` with `git show <revision>:<path>`.
+
+
+### Conditional finite constants in the owned compiler
+
+`virgl-webgl2-raw-bits-v7` permits numeric consumption of raw constant-derived
+finite values under one compiler-derived stage-local `constantDomains` record.
+The shared renderer must enforce that record against the complete current
+active uploaded prefix before drawing. It includes zeros and subnormal inputs;
+raw transport remains bit-exact, while ordinary arithmetic keeps its documented
+precision and subnormal-flush latitude. This is not a promise of exact computed
+zero signs, NaN payloads or PRECISE behavior.
+
+The compiler first tries the existing unconditional validator. Only its typed
+missing-numeric-authority failure permits a fresh full conditional attempt, and
+that attempt must actually consume CONST-dependent numeric data. Existing
+successful full results are unchanged. A conditional stage within a pair carries
+the same bank requirement as its standalone translation; an unconditional
+companion acquires no additional contract. Failed retries preserve the original
+public rejection and publish no partial response.
+
+Exact MOV/swizzles and supported UCMP provenance can carry numeric access
+without ordinary-output authority. Conditional-only arms remain unsuitable for
+raw float output until actual numeric arithmetic computes an ordinary value.
+Unknown raw data or integer writes cannot borrow a stale numeric shadow. The
+fact, instruction, IR and Wasm allocation bounds are unchanged. TEX remains
+fragment-only; PRECISE, indirect addressing and structured control flow remain
+outside this profile.
+
+`make verify-E6-T12e6b` records native sanitizer/recovery and full-result
+compatibility checks, real compiler-to-shared-renderer GPU draws, raw constant
+bitplanes, independent numeric bounds, targeted compiler faults and named
+predecessor regressions. Positive GPU tests inject neither GLSL nor metadata.
+The separate retained consumer regression is explicitly a trusted-host metadata
+harness and makes no additional compiler claim. Production guest negotiation
+remains disabled.

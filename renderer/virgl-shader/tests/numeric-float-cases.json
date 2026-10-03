@@ -9,9 +9,9 @@
     }
   },
   {
-    "name": "unknown-const-ADD-0-vertex",
+    "name": "unknown-const-ADD-0-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], CONST[45], IMM[0].wwww\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], |CONST[45]|, IMM[0].wwww\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -27,9 +27,9 @@
     }
   },
   {
-    "name": "unknown-const-ADD-1-vertex",
+    "name": "unknown-const-ADD-1-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], IN[1], CONST[45]\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], IN[1], |CONST[45]|\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -108,9 +108,9 @@
     }
   },
   {
-    "name": "unknown-const-MUL-0-vertex",
+    "name": "unknown-const-MUL-0-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], CONST[45], IMM[0].wwww\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], |CONST[45]|, IMM[0].wwww\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -126,9 +126,9 @@
     }
   },
   {
-    "name": "unknown-const-MUL-1-vertex",
+    "name": "unknown-const-MUL-1-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], IN[1], CONST[45]\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], IN[1], |CONST[45]|\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -207,9 +207,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-0-vertex",
+    "name": "unknown-const-MAD-0-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], CONST[45], IMM[0].wwww, IMM[0].zzzz\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], |CONST[45]|, IMM[0].wwww, IMM[0].zzzz\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -225,9 +225,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-1-vertex",
+    "name": "unknown-const-MAD-1-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], CONST[45], IMM[0].zzzz\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], |CONST[45]|, IMM[0].zzzz\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -243,9 +243,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-2-vertex",
+    "name": "unknown-const-MAD-2-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], IMM[0].wwww, CONST[45]\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], IMM[0].wwww, |CONST[45]|\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -450,18 +450,18 @@
     }
   },
   {
-    "name": "ucmp-unsafe-yes-vertex",
+    "name": "ucmp-unsafe-yes-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], CONST[45], IN[1]\nADD TEMP[117], TEMP[117], IMM[0].yyyy\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], CONST[45], IN[1]\nADD TEMP[117], |TEMP[117]|, IMM[0].yyyy\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "ucmp-unsafe-no-vertex",
+    "name": "ucmp-unsafe-no-absolute-vertex",
     "stage": "vertex",
-    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], IN[1], CONST[45]\nADD TEMP[117], TEMP[117], IMM[0].yyyy\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+    "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], IN[1], CONST[45]\nADD TEMP[117], |TEMP[117]|, IMM[0].yyyy\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1090,9 +1090,9 @@
     }
   },
   {
-    "name": "unknown-const-ADD-0-fragment",
+    "name": "unknown-const-ADD-0-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], CONST[45], IMM[0].wwww\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], |CONST[45]|, IMM[0].wwww\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1108,9 +1108,9 @@
     }
   },
   {
-    "name": "unknown-const-ADD-1-fragment",
+    "name": "unknown-const-ADD-1-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], IN[1], CONST[45]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nADD TEMP[117], IN[1], |CONST[45]|\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1189,9 +1189,9 @@
     }
   },
   {
-    "name": "unknown-const-MUL-0-fragment",
+    "name": "unknown-const-MUL-0-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], CONST[45], IMM[0].wwww\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], |CONST[45]|, IMM[0].wwww\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1207,9 +1207,9 @@
     }
   },
   {
-    "name": "unknown-const-MUL-1-fragment",
+    "name": "unknown-const-MUL-1-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], IN[1], CONST[45]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMUL TEMP[117], IN[1], |CONST[45]|\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1288,9 +1288,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-0-fragment",
+    "name": "unknown-const-MAD-0-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], CONST[45], IMM[0].wwww, IMM[0].zzzz\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], |CONST[45]|, IMM[0].wwww, IMM[0].zzzz\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1306,9 +1306,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-1-fragment",
+    "name": "unknown-const-MAD-1-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], CONST[45], IMM[0].zzzz\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], |CONST[45]|, IMM[0].zzzz\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1324,9 +1324,9 @@
     }
   },
   {
-    "name": "unknown-const-MAD-2-fragment",
+    "name": "unknown-const-MAD-2-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], IMM[0].wwww, CONST[45]\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nMAD TEMP[117], IN[1], IMM[0].wwww, |CONST[45]|\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -1531,18 +1531,18 @@
     }
   },
   {
-    "name": "ucmp-unsafe-yes-fragment",
+    "name": "ucmp-unsafe-yes-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], CONST[45], IN[1]\nADD TEMP[117], TEMP[117], IMM[0].yyyy\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], CONST[45], IN[1]\nADD TEMP[117], |TEMP[117]|, IMM[0].yyyy\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
     }
   },
   {
-    "name": "ucmp-unsafe-no-fragment",
+    "name": "ucmp-unsafe-no-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], IN[1], CONST[45]\nADD TEMP[117], TEMP[117], IMM[0].yyyy\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nUCMP TEMP[117], CONST[0], IN[1], CONST[45]\nADD TEMP[117], |TEMP[117]|, IMM[0].yyyy\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -2196,9 +2196,9 @@
     }
   },
   {
-    "name": "texture-unsafe-0-CONST[45]-fragment",
+    "name": "texture-unsafe-0-CONST[45]-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nTEX TEMP[117], CONST[45], SAMP[0], 2D\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nTEX TEMP[117], |CONST[45]|, SAMP[0], 2D\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"
@@ -2392,9 +2392,9 @@
     }
   },
   {
-    "name": "texture-unsafe-7-CONST[45]-fragment",
+    "name": "texture-unsafe-7-CONST[45]-absolute-fragment",
     "stage": "fragment",
-    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nTEX TEMP[117], CONST[45], SAMP[7], 2D\nMOV OUT[0], TEMP[117]\nEND\n",
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL IN[1], GENERIC[1], PERSPECTIVE\nDCL IN[2], GENERIC[2], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..45]\nDCL SAMP[7]\nDCL SVIEW[7], 2D, FLOAT\nIMM[0] FLT32 {0, 1, 0.5, 2}\nIMM[1] UINT32 {8388607, 1056964608, 4294967295, 1}\nAND TEMP[116], CONST[0], IMM[1].xxxx\nTEX TEMP[117], |CONST[45]|, SAMP[7], 2D\nMOV OUT[0], TEMP[117]\nEND\n",
     "ok": false,
     "expected": {
       "errorCode": "unsupported-feature"

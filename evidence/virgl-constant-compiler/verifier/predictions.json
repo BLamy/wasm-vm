@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "task": "E6-T12e6b",
+  "role": "fresh adversarial verifier",
+  "sourceHead": "f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2",
+  "parentHead": "9497f3da026092db1eb53e8d6187bceff214656a",
+  "writtenBeforeEvidenceInspection": true,
+  "predictions": [
+    {
+      "id": "P1",
+      "criterion": "Historical stability",
+      "prediction": "Every successful parent full result and each unaffected rejection remains byte-identical; exactly 105 formerly rejected literal bodies are promoted, paired with adjacent absolute-modifier negatives, and all 19 originals retain 12 accepted/7 rejected.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P2",
+      "criterion": "Authority separation",
+      "prediction": "IN authority cannot be manufactured from CONST or unknown TEMP; a finite conditional CONST may enter numeric use but raw conditional/subnormal output must reject. Dynamic UCMP with any conditional-only possible arm blocks output until arithmetic, while known selectors retain only selected facts.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P3",
+      "criterion": "Dataflow precision",
+      "prediction": "Pre-write alias/swizzle snapshots and partial writes preserve lane distinctions. Bitwise and integer writes remove stale numeric authority unless independent known-bit proof suffices. Every numeric source position and consumed scalar/DP3/TEX lane receives the correct authority.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P4",
+      "criterion": "Transactional retry",
+      "prediction": "Only the typed missing numeric authority failure permits a whole immutable shader retry; retry must consume a CONST dependency. Malformed/PRECISE suffixes, bad interfaces, allocation failures and subsequent recovery yield exact original public errors with no partial metadata/GLSL.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P5",
+      "criterion": "Contract identity",
+      "prediction": "Native and Wasm single/pair results agree exactly; every v7 stage has an exact bank obligation matching its actual uniform extent and correct stage/name/index. Old stages carry no added metadata or shadows.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P6",
+      "criterion": "Independent real GPU",
+      "prediction": "Compiler-produced shaders and obligations through decoded packets/shared sync/async renderer reconstruct independent normal words, reciprocal/root enclosure membership and explicitly derived subnormal preserved/flush alternatives, while raw constant byte planes match exactly.",
+      "status": "HELD",
+      "citation": "browser-audit.json (digest-bound worker hardware and isolated faults, all four modes); 8 verifier receipt-tamper rejections"
+    },
+    {
+      "id": "P7",
+      "criterion": "Current bank enforcement",
+      "prediction": "Missing/stripped contracts, wrong indices, non-finite/shortened/current banks and async yields cannot bypass validation; faulted compiler metadata/index must be detected by independent guard or pixel oracle.",
+      "status": "HELD",
+      "citation": "browser-audit.json (digest-bound worker hardware and isolated faults, all four modes); 8 verifier receipt-tamper rejections"
+    },
+    {
+      "id": "P8",
+      "criterion": "Coverage/bounds",
+      "prediction": "All changed runtime branches have recorded execution counters or a concrete justified waiver; instructions remain 112 bytes, facts 12 bytes, bounded IR/storage and fixed Wasm memory remain unchanged.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    },
+    {
+      "id": "P9",
+      "criterion": "Evidence provenance",
+      "prediction": "All evidence, source and fixture digests bind frozen f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2; one final scrubbed pristine-clone acceptance passes without undeclared workspace dependencies.",
+      "status": "HELD",
+      "citation": "final-cold-audit.json; final-cold-receipt-replay.log; cold-clone/report.json; cold-clone/acceptance/receipt.json"
+    },
+    {
+      "id": "P10",
+      "criterion": "Independent attack",
+      "prediction": "A verifier-authored matrix of conditional/IN/known/unknown raw arm joins, known selectors, aliases and partial overwrite lanes agrees with independently stated acceptance predictions; forbidden forged output and unsafe synthesized-bit cases reject. A targeted copy-only code fault causes the oracle to fail.",
+      "status": "HELD",
+      "citation": "native-wasm-audit.json; changed-line-coverage.json; independent-report.json; independent-calls.jsonl"
+    }
+  ],
+  "specificationAudit": {
+    "source": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+    "edition": "Language Version 3.00 Document Revision 6, 29 January 2016",
+    "references": [
+      {
+        "section": "4.5.1",
+        "pdfPage": 59,
+        "conclusion": "Numeric subnormal flushing and either computed-zero sign are allowed; highp addition/multiplication exact dyadic witnesses use correctly rounded operations; division/root bounds follow the documented operation bounds."
+      },
+      {
+        "section": "8.3",
+        "pdfPage": 98,
+        "conclusion": "Finite integer encodings retain representation through highp reinterpretation; Inf/NaN input has no such guarantee."
+      }
+    ]
+  },
+  "finalSourceHead": "d3565d11c2133aacbaa628ffa82342b5d308ab10",
+  "workerSubmission": "5dc8bbe01df31d7b0672d1ae55e6dd076da7fca2",
+  "verdict": "verified",
+  "evidenceOnlyRepairs": [
+    {
+      "path": "tools/virgl-constant-compiler/shader_compat.py",
+      "line": 236,
+      "observed": "Raw-bit predecessor has no operationDefinitions; warm combined receipt raised KeyError. Corrected schema explicitly requires field absence for raw only and retains exact values elsewhere.",
+      "resolution": "HELD: repaired assertions exercised in final exact-head cold acceptance and independently recomputed full receipt."
+    },
+    {
+      "path": "tools/virgl-constant-compiler/legacy_compat.py",
+      "line": 27,
+      "observed": "Compiler inventory needed current source head so the new native test is source-bound as current compiler rather than incorrectly demanded as a predecessor file. Unchanged renderer/oracle guards retained.",
+      "resolution": "HELD: repaired assertions exercised in final exact-head cold acceptance and independently recomputed full receipt."
+    }
+  ]
+}

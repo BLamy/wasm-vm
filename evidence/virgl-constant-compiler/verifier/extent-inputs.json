@@ -1,0 +1,50 @@
+[
+  {
+    "name": "only-zero-0",
+    "stage": 0,
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0]\nRCP OUT[0], CONST[0].zzzz\nMOV OUT[1], IN[0]\nEND\n",
+    "expectedCount": 1
+  },
+  {
+    "name": "only-high-0",
+    "stage": 0,
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nRCP OUT[0], CONST[45].zzzz\nMOV OUT[1], IN[0]\nEND\n",
+    "expectedCount": 46
+  },
+  {
+    "name": "low-high-0",
+    "stage": 0,
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0]\nDCL CONST[45]\nRCP OUT[0], CONST[45].zzzz\nMOV OUT[1], IN[0]\nEND\n",
+    "expectedCount": 46
+  },
+  {
+    "name": "high-low-0",
+    "stage": 0,
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nDCL CONST[0]\nRCP OUT[0], CONST[0].zzzz\nMOV OUT[1], IN[0]\nEND\n",
+    "expectedCount": 47
+  },
+  {
+    "name": "only-zero-1",
+    "stage": 1,
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0]\nRCP OUT[0], CONST[0].zzzz\nEND\n",
+    "expectedCount": 1
+  },
+  {
+    "name": "only-high-1",
+    "stage": 1,
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45]\nRCP OUT[0], CONST[45].zzzz\nEND\n",
+    "expectedCount": 46
+  },
+  {
+    "name": "low-high-1",
+    "stage": 1,
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0]\nDCL CONST[45]\nRCP OUT[0], CONST[45].zzzz\nEND\n",
+    "expectedCount": 46
+  },
+  {
+    "name": "high-low-1",
+    "stage": 1,
+    "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[0]\nRCP OUT[0], CONST[0].zzzz\nEND\n",
+    "expectedCount": 47
+  }
+]

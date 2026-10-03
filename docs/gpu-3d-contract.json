@@ -158,6 +158,21 @@
     "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
   },
   "componentShaderProfile": "virgl-webgl2-raw-bits-v5",
+  "conditionalConstantCompiler": {
+    "admission": "Run the unchanged unconditional validation first. Only a typed missing-numeric-authority failure permits one fresh full conditional validation from immutable input; a successful retry must prove actual numeric consumption dependent on finite CONST. No caller option, source rewrite or asserted domain selects this path.",
+    "bounds": "Lane facts remain 12 bytes, instructions 112 bytes, raw IR 26232 bytes, maximum 179 non-END instructions, fixed 16 MiB Wasm memory and 256 KiB stack. At most two sequential validation attempts.",
+    "compatibility": "Every previously successful full stage result remains exact. Intentional admission changes are tied to 105 exact promoted bodies and adjacent absolute-modifier negative replacements, including two rejection-pair references; remaining full results and all 19 captured originals remain fixed at 12 accepted and 7 rejected. Failed conditional transactions preserve the original public rejection without partial output.",
+    "consumer": "E6-T12e6a",
+    "contract": "A successful conditional stage derives exactly one constant-bank-finite-f32-v1 record, stage-local slot zero, matching vsconst0/fsconst0 and the validated declared extent. The same applicable stage obligation is emitted in standalone and pair results. The renderer enforces current active uploaded words before dispatch.",
+    "facts": "The existing 12-byte lane fact separates numeric access, ordinary-output authority and finite-bank dependency. Exact MOV/swizzles retain facts. Mixed UCMP keeps synchronized raw payload and numeric snapshot; any potentially selected conditional-only arm blocks ordinary output authority until actual numeric arithmetic computes a result. Known selectors retain only the selected fact. Integer/bitwise writes discard numeric provenance unless independent known-bit proof suffices.",
+    "numericDomain": "Finite includes positive/negative zero and subnormal binary32 encodings. Raw-u32 storage and selection preserve their bits. Ordinary arithmetic retains the GLSL ES3.00 latitude, including permitted subnormal flushing; there is no invented magnitude, nonzero-divisor or interpolation-weight admission restriction.",
+    "output": "Conditional numeric access alone never proves raw stage-output safety. Computed/sample values use actual float shadows; their raw bits are not re-decoded to recover ordinary NaN/Inf values. MOV and UCMP do not grant computed-output authority.",
+    "profile": "virgl-webgl2-raw-bits-v7",
+    "proof": "Native ASan/UBSan with full-result compatibility and retry/recovery checks; native/Wasm single/pair parity; actual compiler to decoded SET_CONSTANT_BUFFER to shared sync/async GPU draws; independent whole-frame bitplane and rational numeric oracles; emitted-contract and numeric-index source faults; retained shader/consumer regression oracles; exact-source final recording, pristine clone and fresh critic.",
+    "scope": "Conditional authored shader integration only. TEX remains fragment-only. PRECISE, indirect addressing, structured control flow, original rejected Mesa workloads and production guest graphics remain gated.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+    "task": "E6-T12e6b"
+  },
   "conditionalConstantConsumer": {
     "admission": "Trusted host compiler metadata only. Exactly one stage-local contract is required for v7; missing, duplicate, unknown or inconsistent constraints reject. Known unconditional profiles require the field to be absent. This consumer slice adds no compiler admission.",
     "draw": "Check completeness before finiteness and before index readback. Bind the selected context, subcontext, shader/program generations and bank identities to immutable upload snapshots. Revalidate identities after asynchronous yield, restore external bindings and upload those snapshots.",
