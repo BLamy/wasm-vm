@@ -478,7 +478,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [~] `525.02691` [E6-T10d](epic-6-transcendence/E6-T10d-captured-textured-shaders.md) — Execute the captured textured-scene shaders through the bounded browser bridge *(deps: E6-T10c)*
+- [?] `525.02691` [E6-T10d](epic-6-transcendence/E6-T10d-captured-textured-shaders.md) — Execute the captured textured-scene shaders through the bounded browser bridge *(deps: E6-T10c)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 
