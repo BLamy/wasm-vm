@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "task": "E6-T12f1",
+  "status": "failed",
+  "gitHead": "0e165928553aed9d261cff0d4ba27b513876569b",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-n5cdx5ib/wasm-vm",
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T12f1"
+  ],
+  "timeoutSeconds": 2400,
+  "startedAt": "2026-10-03T18:20:01.763559+00:00",
+  "harnessSha256": "daf051fa0cdc356ffc5936b9a3df5bbd8483416335a32f0670e63704f0875e6d",
+  "cloneHead": "0e165928553aed9d261cff0d4ba27b513876569b",
+  "statusBefore": "",
+  "exitCode": 2,
+  "cloneHeadAfter": "0e165928553aed9d261cff0d4ba27b513876569b",
+  "statusAfter": "",
+  "error": "cold raw equality compiler acceptance failed",
+  "logSha256": "ea137308e10f533213d30f4a79ef6dc039fb126e3ab1f0e99fe881b021638f69",
+  "finishedAt": "2026-10-03T18:23:27.398789+00:00"
+}

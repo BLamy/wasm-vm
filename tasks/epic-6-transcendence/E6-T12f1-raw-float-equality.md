@@ -3,7 +3,7 @@ id: E6-T12f1
 epic: 6
 title: Implement raw FSEQ and FSNE masks without changing precision semantics
 priority: 525.0269911
-status: in-progress
+status: implemented
 depends_on: [E6-T12e9]
 estimate: S
 risk: high
@@ -83,4 +83,80 @@ to continue the user’s explicit guest-GPU implementation request. The earlier
 E5.5-T03az verdict verified a negative trial, not desktop release admission.
 E9 is independently verified at `80813f4e45202cec3769d51b4f7d2b421034df01`;
 no other task occupies the active lane.
+
+### 2026-10-03 — worker — recorded submission
+
+Runtime implementation: `e535914881f6a6f1c623513f3531ad83ddcca34b`.
+Final source freeze: `a7be954c1f3bea9dd1e96522e890fa012197c6fe`.
+The intervening changes correct recording/audit plumbing only; compiler and
+consumer runtime bytes have not changed since the implementation commit.
+
+Commands:
+
+- `EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc VIRGL_RAW_EQUALITY_EVIDENCE_DIR=target/evidence/raw-equality-worker-final make verify-E6-T12f1`
+  passed at `0e165928553aed9d261cff0d4ba27b513876569b`; copied to
+  `evidence/virgl-raw-equality/worker/`.
+- `python3 tools/virgl-raw-equality/cold.py --output evidence/virgl-raw-equality/cold-clone`
+  passed at final source freeze `a7be954c1f3bea9dd1e96522e890fa012197c6fe`.
+  This final authoritative recording runs the complete acceptance from a
+  pristine detached clone with scrubbed Rust/Cargo/Node/Python/compiler/Git
+  overrides. The clone is retained at
+  `/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm`.
+  Its checkout is clean before and after the complete run.
+- `python3 tools/check_task_policy.py` and `git diff --check` passed.
+
+Final evidence digests (SHA-256):
+
+- `cold-clone/report.json`: `dc7de94e200cae79eacd702b34e8f3f393aa47015d7a33a16d25f05043a7fb1b`.
+- `cold-clone/acceptance/receipt.json`: `f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7`.
+- `cold-clone/acceptance/native/native-report.json`: `cb4d4367911bba46789f3d32ecc166e24bba412c8ad9e27db20e03e3a39f5751`.
+- `cold-clone/acceptance/gpu/report.json`: `216cd2aa04cd5a128fcffabb9b1e1221534fe3d5547bbe7031f8c067425e3b48`.
+- Earlier warm receipt: `506ac8a83c60415c3c9c752e0a2c037c21e719040a0c18b28560b2d6e3112a85`.
+
+The final recording demonstrates raw ordered FSEQ/unordered FSNE through
+independent encoding classification and real hardware output: 640 complete
+words across 32 vertex/fragment kernels, including unknown/self comparisons,
+signed zeros, signaling/quiet NaNs and payloads, subnormals, infinities,
+computed raw snapshots, partial consumed lanes, aliases, all mixed profile
+obligations and the certified counted loop. All eight unchanged historical
+negative bodies are independently rendered as new positives. The explicit
+migration manifest binds each old full result and body SHA; all other 4,004
+retained stages, all 264 retained pairs and all 19 original bodies/results remain
+exact at the E9 boundary (12 originals accepted). Historical integer/float
+whole gates are not claimed: successor leaves retain their independent hardware
+probe/oracle regions byte for byte and check 704/768 words and 17,856/37,696
+interpolation pixels with both framebuffer orientations.
+
+Native ASan/UBSan records 602,100 API calls: 4,152 stages, 298 pairs, 4,096
+mutations under four new seeds, 324 hostile inputs, 2,353 truncations and 16
+actual allocation failures, recovering through all 14 profiles. Typed LLVM
+counters include 124 executions of the new known-fact equality predicate.
+IR/profile/flow remain 26,352/7,616/52,644 bytes; instruction/source/lane sizes
+remain 112/24/12 bytes. Wasm records 14,241 calls, owned request/result copies,
+64 maximal-text/instruction stress calls and 33 real allocation-pressure calls,
+with the same 16MiB buffer throughout. Its 4KiB capacity observations show no
+lost requested chunks and full recovery; they do not claim a byte-granular leak
+proof. Consumer V8 records 2,535 checks including the exact new profile,
+forbidden domain/access/count shapes and genuine unknown-v14; getter invocation
+count is zero. All browser recordings have zero console/page/request errors.
+
+Five uniquely pinned actual compiler-source faults have complete native/Wasm
+parity recordings. NaN-guard removal, zero-sign mishandling, FSNE complement
+reversal and one-bit masks reach an independent physical GPU word failure;
+incorrect known-NaN folding rejects the four safe selection witnesses before
+unsafe GPU submission. Source inventories, serialized input/output streams,
+artifact digests, typed LLVM/V8 counters and sealed actual fault Wasm bytes are
+checked by the final receipt.
+
+The first cold attempt exposed macOS's `/var` versus `/private/var` aliases in
+the new fault recorder. Its exact failing command/head/log are preserved in
+`evidence/virgl-raw-equality/portability-repro/`. The final source canonicalizes
+both clone and fault artifact paths; the complete pristine acceptance then
+passed. This is the portability exception to the single-final-cold-run rule.
+
+Scope remains the isolated host shader compiler and metadata consumer. No demo
+import or guest capability negotiation changes; production virgl/capsets and
+Guest Renderer stay disabled. This proof does not close PRECISE/dataflow gaps,
+claim all 19 originals, establish guest desktop acceleration or demonstrate
+300 MIPS. Status is implemented pending a fresh adversarial verifier.
 

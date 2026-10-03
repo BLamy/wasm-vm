@@ -1,0 +1,3430 @@
+{
+  "schema": 1,
+  "task": "E6-T12f1",
+  "boundary": "Raw binary32 equality and inequality masks; isolated shader compiler only",
+  "guestExecution": false,
+  "currentGuest3dAdvertisement": false,
+  "predecessorFullGateClaimed": false,
+  "status": "failed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs",
+    "--output",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-nan-guard",
+    "--fault",
+    "nan-guard",
+    "--fault-artifacts",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts"
+  ],
+  "startedAt": "2026-10-03T18:19:29.556Z",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "release": "25.6.0",
+    "node": "v24.20.0"
+  },
+  "gitHead": "0e165928553aed9d261cff0d4ba27b513876569b",
+  "trackedChanges": [],
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "size": 57735,
+      "sha256": "4d99a3fa2f1fdde15448a935baf4276bf0196b6c4543e693500ebc48b55f2df5"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "size": 1061,
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 295161,
+      "sha256": "6dd6534168cb5562ca8e9ff4e3372a28a16cfbac6630a9f64b5be97663847084"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "size": 10212,
+      "sha256": "b50b0035080f526238c07164c509a092c7562c2e8640486abf1b33f95dc5c8b9"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "size": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "size": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "size": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "size": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "size": 9108,
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/bounded_loops.c",
+      "size": 16364,
+      "sha256": "9728ec295089efba300c4e8d51eafd1e3c21171b868126a0a0f804697bbb128b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "size": 10446,
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/component_floats.c",
+      "size": 12756,
+      "sha256": "f4448c512bebc7243cb346123df3335df0ec9f56f5b7458d9e5b023ade5bc7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "size": 6760,
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/constant_compiler.c",
+      "size": 15327,
+      "sha256": "e30e7ff420b27e58c0e3a5b22b02b758a2dc6c767d358d0c2ea1a4468465b952"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/dot_reciprocals.c",
+      "size": 12911,
+      "sha256": "9c701b78b0ac902ec1370b0b06200b58024fa2db9054eb7ca22226e6806fc3bf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/float_masks.c",
+      "size": 12298,
+      "sha256": "afc41f061f6d6427fe85ec35510512910e03bb893d35bb05ebe4d5ecbe5a2455"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "size": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/indirect_constants.c",
+      "size": 16400,
+      "sha256": "5d2ce3c7f57c7422a44186d653a1fae6f76bdd064b1859be35877abc5f191129"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/integer_masks.c",
+      "size": 12136,
+      "sha256": "ac712922b538298a97bd67af2a1eddb4dd8bd060ca3d6c2f5e8b31c153112fe4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/numeric_floats.c",
+      "size": 12549,
+      "sha256": "1c86ce4e37632eebf76e5c0d085bbf344845a4427e85c562ce9d758eb84504b8"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "size": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_bits.c",
+      "size": 11721,
+      "sha256": "8959695ea4436938389c64eb93e356fc83c1ad070941419d0184f57f25dd01bc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_equality.c",
+      "size": 16456,
+      "sha256": "355600c95b0ae2e1ddbb6f355d7119382553112676fb8079efc640677a7d0049"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/structured_conditionals.c",
+      "size": 15757,
+      "sha256": "aec64e43ca848ee704c1dd4931206a83bf7a07e60e3a2bc23fd93d9e7c4a32db"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "size": 26670,
+      "sha256": "9b36cfb3c5c5ae53fe14ffa7705870bd980b4b44e185140f7da7007a8f37ceaf"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "size": 6532,
+      "sha256": "20d99c205b2004141529a3502b51fd76d6d99149aee90cd2fb6e74ad1a2477dc"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "size": 54696,
+      "sha256": "901623cc29cc94b3535622a7f6e7f04342ada2b9ba7fa59e8362c184219d38be"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "size": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "size": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "size": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "size": 192995,
+      "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "size": 23946,
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bounded-loop-cases.json",
+      "size": 361412,
+      "sha256": "0eec49f7e11ff80fbcf84ef723df88126061c04ea17ddc70de26fc7529ba1653"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "size": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "size": 17303,
+      "sha256": "53f95875da947dd6644e993fcb7310601d12e6f1dd7c6ec7859d6b3d597434c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "size": 54311,
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-cases.json",
+      "size": 301735,
+      "sha256": "423f9cd45978fe43a4da5c8c8a59d6d53f76e2068868c30eb06d3f331d92e198"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-hardware.json",
+      "size": 112033,
+      "sha256": "ee9afd644f44542c7bfef49636be7d4f9db957413f454a300737c10f1e8784e3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-migrations.json",
+      "size": 3184,
+      "sha256": "f430bf73c2d29663d9ef406be7b55be2a6c590f2ad57e1584907a03974f88002"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-floats.mjs",
+      "size": 65278,
+      "sha256": "044a12cc3a0c166d3fe2c412b2d12f083b8a5d3edf3f91a983183e9f9a3fdc8e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "size": 20021,
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-cases.json",
+      "size": 398193,
+      "sha256": "53a0f1ef11e1b7049807df169d5b56acdaad4148aef4a8c4fd7b83154b1b9f7c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-migrations.json",
+      "size": 232244,
+      "sha256": "91e88ec0a3dc6e9d9efe9ff9c0261021b87b0914394fd5cf7c338874911d3bc7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-cases.json",
+      "size": 339348,
+      "sha256": "6640068f84c207cb221c8d753f5cd07afbed8fbc63b86f06664e245c9fb9ec3b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-hardware.json",
+      "size": 134169,
+      "sha256": "ca3dc4ec1cc4c60e382c1c23af645070b4aea303e9cea0c1cb8fd989666193a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-migrations.json",
+      "size": 1117,
+      "sha256": "e02edfeb1351ec7da0728a5d66673e12224b6d29e3b153e3a9c160f28325b28b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocals.mjs",
+      "size": 69323,
+      "sha256": "2b2f35dbd3a67c6fd11dada58746286837691599375a5d50c220fb31462f00b4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+      "size": 229886,
+      "sha256": "fc5044fbce3c4df167c3d757e79079dfd3d1d533b220aecc99cae31037442a63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "size": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks-equality-successor.mjs",
+      "size": 42035,
+      "sha256": "66a30a77518169a0a06432f3f576ea27bc7c961bb3c0d4312c26754e0b141ef1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks.mjs",
+      "size": 45102,
+      "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/indirect-constant-cases.json",
+      "size": 339595,
+      "sha256": "8155bcfee6bcf299dc26d8b2eb82b98bda270c8bfbb763a97c4f320895fce167"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+      "size": 313689,
+      "sha256": "bc3209f4e1d498d9c176d08ad56ba13ff633e9ad3e710a63eae77552400ad16c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+      "size": 57298,
+      "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks-equality-successor.mjs",
+      "size": 41546,
+      "sha256": "9c30e74b6c45bfce99f8a32854cdedd360ad92e05171f856310075de9e728d01"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+      "size": 44611,
+      "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "size": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "size": 211013,
+      "sha256": "f6a5ebb60bfac13649d67835d48b3a3bbc88e60e4c8b14d0240f2e5bc35e172b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-hardware.json",
+      "size": 92929,
+      "sha256": "635559a8b3d3d3c85399bd9a4fa0b20a970374293f00854d25569433251d0ba0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-floats.mjs",
+      "size": 47489,
+      "sha256": "06ce68ff9abdcdb7b33d71b75db37ee54f57ecae6e326b8a04ad90803bf44b76"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "size": 199393,
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "size": 15961,
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "size": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+      "size": 107467,
+      "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+      "size": 41731,
+      "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+      "size": 38247,
+      "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "size": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-migrations.json",
+      "size": 5170,
+      "sha256": "50c09a3cd522e340fd38279c50c49c0ac2b47f7eef0697b4be3d2380317c76f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-oracle.mjs",
+      "size": 5810,
+      "sha256": "7a1d358b664b6f74d1fd6294ca8639a1da5e5b68d0e97c3770dd41ede34ac1f4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality.mjs",
+      "size": 22854,
+      "sha256": "cd6cc39953dc0beabfb7a0f2f13f6f09fa74d4bdbcae89b8adbc572ab6d02392"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/structured-conditional-cases.json",
+      "size": 240027,
+      "sha256": "688d72e3ca6c210351242fba32d663cc356a6fc82e36809483dcd4a3900d2024"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "size": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "size": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "size": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "size": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "size": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "size": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "size": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "size": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "size": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "size": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "size": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "size": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "size": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "size": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "size": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "size": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "size": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "size": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "size": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "size": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "size": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "size": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "size": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "size": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "size": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "size": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "size": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "size": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "size": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "size": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "size": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "size": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "size": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "size": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "size": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "size": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "size": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "size": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "size": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "size": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "size": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "size": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "size": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "size": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "size": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "size": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "size": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "size": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "size": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "size": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "size": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "size": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "size": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "size": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "size": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "size": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "size": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "size": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "size": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "size": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "size": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "size": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "size": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "size": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "size": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "size": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "size": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "size": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tools/lib/virgl-browser-runner.mjs",
+      "size": 12831,
+      "sha256": "8ef93b0898858329aca938219b3532424aa4bb65945ddba3a59ae799af26f0e2"
+    },
+    {
+      "path": "tools/virgl-raw-equality/browser.mjs",
+      "size": 1814,
+      "sha256": "e58423cc42ba296d2efb4104b0572d16ddebf3e09f79dcbde4f849b88bbdf752"
+    }
+  ],
+  "servedFiles": [
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "size": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "size": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-oracle.mjs",
+      "size": 5810,
+      "sha256": "7a1d358b664b6f74d1fd6294ca8639a1da5e5b68d0e97c3770dd41ede34ac1f4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality.mjs",
+      "size": 22854,
+      "sha256": "cd6cc39953dc0beabfb7a0f2f13f6f09fa74d4bdbcae89b8adbc572ab6d02392"
+    },
+    {
+      "path": "target/evidence/raw-equality-worker-final/fault-artifacts/nan-guard/fault.wasm",
+      "size": 295145,
+      "sha256": "51bed30632af6018020181d632037c7107e0f455b087275d3f21456c1a697f55"
+    }
+  ],
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "executableSha256": "b4a14b08946ab78756169696fd272d6c3040a22df52da4f83f665225685f4c10",
+    "version": "154.0.8037.93",
+    "launch": {
+      "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "headless": false,
+      "args": [
+        "--enable-gpu"
+      ]
+    },
+    "actualCommandLine": [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "--disable-field-trial-config",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-back-forward-cache",
+      "--disable-breakpad",
+      "--disable-client-side-phishing-detection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-component-update",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+      "--allow-pre-commit-input",
+      "--disable-hang-monitor",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--disable-prompt-on-repost",
+      "--disable-renderer-backgrounding",
+      "--force-color-profile=srgb",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain",
+      "--no-service-autorun",
+      "--export-tagged-pdf",
+      "--disable-search-engine-choice-screen",
+      "--unsafely-disable-devtools-self-xss-warnings",
+      "--enable-use-zoom-for-dsf=false",
+      "--no-sandbox",
+      "--enable-gpu",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-10ZJX0",
+      "--remote-debugging-pipe",
+      "--no-startup-window",
+      "--flag-switches-begin",
+      "--flag-switches-end"
+    ],
+    "cdpVersion": {
+      "protocolVersion": "1.3",
+      "product": "Chrome/154.0.8037.93",
+      "revision": "@f89f3a4363808e117c592adedcf9947882ac3b79",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "jsVersion": "15.4.80.19"
+    },
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.029698,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "webglFeature": "webgl"
+  },
+  "failure": {
+    "message": "page.evaluate: Error: eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]\n    at require (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:5:43)\n    at equal (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:6:28)\n    at vertexProbe (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:91:9)\n    at async runAcceptance (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:160:30)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: Error: eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]\n    at require (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:5:43)\n    at equal (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:6:28)\n    at vertexProbe (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:91:9)\n    at async runAcceptance (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:160:30)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)\n    at async <anonymous>:260:30\n    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs:11:1"
+  },
+  "acceptance": {
+    "schema": "raw-equality-gpu-v1",
+    "status": "failed",
+    "guestExecution": false,
+    "predecessorFullGateClaimed": false,
+    "fault": "nan-guard",
+    "vertexProbes": [
+      {
+        "name": "eq",
+        "oracle": "eq-vertex",
+        "vertex": "eq-vertex",
+        "fragment": "legacy-fragment",
+        "varyings": [
+          "gl_Position",
+          "vso_g0"
+        ],
+        "vertexGlslSha256": "40758310d58aeabec5e26765a38ee8081ceb6c5f5603541bc19752f8c307e0a5",
+        "fragmentGlslSha256": "14fdeba71dba5d0f6a5fa9eefa78cffe3696a7cffe9198e3d4862af068569d92",
+        "vectors": [
+          {
+            "name": "raw-0",
+            "a": [
+              0,
+              2147483648,
+              1,
+              2147483649
+            ],
+            "b": [
+              2147483648,
+              0,
+              0,
+              2147483648
+            ],
+            "c": [
+              0,
+              1,
+              1056964608,
+              3212836864
+            ],
+            "expectedWords": [
+              4294967295,
+              4294967295,
+              0,
+              0
+            ],
+            "upload": {
+              "wordCount": 184,
+              "words": [
+                0,
+                2147483648,
+                1,
+                2147483649,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1056964608,
+                3212836864,
+                0,
+                0,
+                0,
+                0,
+                2147483648,
+                0,
+                0,
+                2147483648
+              ],
+              "observedA": [
+                0,
+                2147483648,
+                1,
+                2147483649
+              ],
+              "observedB": [
+                2147483648,
+                0,
+                0,
+                2147483648
+              ],
+              "observedC": [
+                0,
+                1,
+                1056964608,
+                3212836864
+              ]
+            },
+            "captures": [
+              {
+                "selector": 0,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "observed": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63
+                ],
+                "bytesSha256": "281f22860051c39a3cc313333056525503613015960eea2b44215e780e218229",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ]
+              },
+              {
+                "selector": 8,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ],
+                  "observed": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63
+                ],
+                "bytesSha256": "281f22860051c39a3cc313333056525503613015960eea2b44215e780e218229",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ]
+              },
+              {
+                "selector": 16,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ],
+                  "observed": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63
+                ],
+                "bytesSha256": "281f22860051c39a3cc313333056525503613015960eea2b44215e780e218229",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ]
+              },
+              {
+                "selector": 24,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ],
+                  "observed": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1065320448,
+                  1056964608,
+                  1056964608
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63
+                ],
+                "bytesSha256": "281f22860051c39a3cc313333056525503613015960eea2b44215e780e218229",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  255,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "observedWords": [
+              4294967295,
+              4294967295,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "raw-1",
+            "a": [
+              1,
+              8388607,
+              2155872255,
+              1065353216
+            ],
+            "b": [
+              1,
+              8388608,
+              2155872256,
+              1065353216
+            ],
+            "c": [
+              0,
+              1,
+              1056964608,
+              3212836864
+            ],
+            "expectedWords": [
+              4294967295,
+              0,
+              0,
+              4294967295
+            ],
+            "upload": {
+              "wordCount": 184,
+              "words": [
+                1,
+                8388607,
+                2155872255,
+                1065353216,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1056964608,
+                3212836864,
+                0,
+                0,
+                0,
+                0,
+                1,
+                8388608,
+                2155872256,
+                1065353216
+              ],
+              "observedA": [
+                1,
+                8388607,
+                2155872255,
+                1065353216
+              ],
+              "observedB": [
+                1,
+                8388608,
+                2155872256,
+                1065353216
+              ],
+              "observedC": [
+                0,
+                1,
+                1056964608,
+                3212836864
+              ]
+            },
+            "captures": [
+              {
+                "selector": 0,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "observed": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a555bf28d8e3929c6b2a79f5aa3f0c6011e0c3be94386689ae7f621cb37b0069",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 8,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ],
+                  "observed": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a555bf28d8e3929c6b2a79f5aa3f0c6011e0c3be94386689ae7f621cb37b0069",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 16,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ],
+                  "observed": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a555bf28d8e3929c6b2a79f5aa3f0c6011e0c3be94386689ae7f621cb37b0069",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 24,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ],
+                  "observed": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a555bf28d8e3929c6b2a79f5aa3f0c6011e0c3be94386689ae7f621cb37b0069",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  255,
+                  0,
+                  0,
+                  255
+                ]
+              }
+            ],
+            "observedWords": [
+              4294967295,
+              0,
+              0,
+              4294967295
+            ]
+          },
+          {
+            "name": "raw-2",
+            "a": [
+              1065353217,
+              3212836864,
+              3212836865,
+              2139095040
+            ],
+            "b": [
+              1065353216,
+              3212836864,
+              3212836864,
+              2139095040
+            ],
+            "c": [
+              0,
+              1,
+              1056964608,
+              3212836864
+            ],
+            "expectedWords": [
+              0,
+              4294967295,
+              0,
+              4294967295
+            ],
+            "upload": {
+              "wordCount": 184,
+              "words": [
+                1065353217,
+                3212836864,
+                3212836865,
+                2139095040,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1056964608,
+                3212836864,
+                0,
+                0,
+                0,
+                0,
+                1065353216,
+                3212836864,
+                3212836864,
+                2139095040
+              ],
+              "observedA": [
+                1065353217,
+                3212836864,
+                3212836865,
+                2139095040
+              ],
+              "observedB": [
+                1065353216,
+                3212836864,
+                3212836864,
+                2139095040
+              ],
+              "observedC": [
+                0,
+                1,
+                1056964608,
+                3212836864
+              ]
+            },
+            "captures": [
+              {
+                "selector": 0,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "observed": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "expectedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a4d5a86dbcfc27f2a39c57b373104ad9599da70fbb4e72ae6ffa52f4dd344008",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 8,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ],
+                  "observed": [
+                    8,
+                    8,
+                    8,
+                    8
+                  ]
+                },
+                "expectedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a4d5a86dbcfc27f2a39c57b373104ad9599da70fbb4e72ae6ffa52f4dd344008",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 16,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ],
+                  "observed": [
+                    16,
+                    16,
+                    16,
+                    16
+                  ]
+                },
+                "expectedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a4d5a86dbcfc27f2a39c57b373104ad9599da70fbb4e72ae6ffa52f4dd344008",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ]
+              },
+              {
+                "selector": 24,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ],
+                  "observed": [
+                    24,
+                    24,
+                    24,
+                    24
+                  ]
+                },
+                "expectedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1056964608,
+                  1065320448,
+                  1056964608,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "a4d5a86dbcfc27f2a39c57b373104ad9599da70fbb4e72ae6ffa52f4dd344008",
+                "paddingAfterDraw": null,
+                "decodedBytes": [
+                  0,
+                  255,
+                  0,
+                  255
+                ]
+              }
+            ],
+            "observedWords": [
+              0,
+              4294967295,
+              0,
+              4294967295
+            ]
+          },
+          {
+            "name": "raw-3",
+            "a": [
+              4286578688,
+              2139095040,
+              2143289345,
+              4290772993
+            ],
+            "b": [
+              4286578688,
+              4286578688,
+              2143289345,
+              4290772993
+            ],
+            "c": [
+              0,
+              1,
+              1056964608,
+              3212836864
+            ],
+            "expectedWords": [
+              4294967295,
+              0,
+              0,
+              0
+            ],
+            "upload": {
+              "wordCount": 184,
+              "words": [
+                4286578688,
+                2139095040,
+                2143289345,
+                4290772993,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1056964608,
+                3212836864,
+                0,
+                0,
+                0,
+                0,
+                4286578688,
+                4286578688,
+                2143289345,
+                4290772993
+              ],
+              "observedA": [
+                4286578688,
+                2139095040,
+                2143289345,
+                4290772993
+              ],
+              "observedB": [
+                4286578688,
+                4286578688,
+                2143289345,
+                4290772993
+              ],
+              "observedC": [
+                0,
+                1,
+                1056964608,
+                3212836864
+              ]
+            },
+            "captures": [
+              {
+                "selector": 0,
+                "selectorUpload": {
+                  "index": 44,
+                  "words": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "observed": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "expectedBytes": [
+                  255,
+                  0,
+                  0,
+                  0
+                ],
+                "expectedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1056964608,
+                  1056964608
+                ],
+                "observedBits": [
+                  0,
+                  0,
+                  0,
+                  1065353216,
+                  1065320448,
+                  1056964608,
+                  1065320448,
+                  1065320448
+                ],
+                "rawBytes": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  128,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  0,
+                  0,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63,
+                  0,
+                  128,
+                  127,
+                  63
+                ],
+                "bytesSha256": "e3fd3a3efa2b39634a61ecc08a8da1a1c471e0d2d3388268b193d0ba8f7be69f",
+                "paddingAfterDraw": null,
+                "failure": {
+                  "expectedBits": [
+                    0,
+                    0,
+                    0,
+                    1065353216,
+                    1065320448,
+                    1056964608,
+                    1056964608,
+                    1056964608
+                  ],
+                  "observedBits": [
+                    0,
+                    0,
+                    0,
+                    1065353216,
+                    1065320448,
+                    1056964608,
+                    1065320448,
+                    1065320448
+                  ]
+                }
+              }
+            ],
+            "observedWords": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "programLogs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "attribute": {
+          "name": "in_0",
+          "location": 0,
+          "values": [
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniformReflection": {
+          "name": "vsconst0[0]",
+          "index": 0,
+          "declaredCount": 46,
+          "activeCount": 46,
+          "type": 36296,
+          "uploadCount": 46,
+          "paddingPoison": null,
+          "hostUniformInjectionOnly": true
+        },
+        "feedbackReflection": [
+          {
+            "name": "gl_Position",
+            "size": 1,
+            "type": 35666
+          },
+          {
+            "name": "vso_g0",
+            "size": 1,
+            "type": 35666
+          }
+        ]
+      }
+    ],
+    "fragmentProbes": [],
+    "migratedProbes": [],
+    "translations": [
+      {
+        "name": "legacy-vertex",
+        "stage": "vertex",
+        "textSha256": "399ecf2f53d6b05029b6e3495dbeddc85eb26e670e09068f52a7121c73a598c4",
+        "result": {
+          "ok": true,
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-straight-line-v5",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "legacy-fragment",
+        "stage": "fragment",
+        "textSha256": "c188bed5747c3b0749fbb504708cadfe4168dc61a9d47eb6a18085432f3ebc10",
+        "result": {
+          "ok": true,
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vec4(1,0,0,1))));\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-straight-line-v5",
+            "stage": "fragment",
+            "inputs": [],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [],
+            "samplers": [],
+            "uniformBlocks": []
+          }
+        }
+      },
+      {
+        "name": "eq-vertex",
+        "stage": "vertex",
+        "textSha256": "5cd168b83e8d792f8ab2e64d83865b01129b8622090572ef3c3d53ecbe869294",
+        "result": {
+          "ok": true,
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nuint raw_float_equal_mask(uint a, uint b, bool not_equal) {\n uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\n bool equal = (a == b || (magnitude_a == 0u && magnitude_b == 0u));\n return (not_equal ? !equal : equal) ? 4294967295u : 0u;\n}\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n raw_rhs = uvec4((raw_float_equal_mask(vsconst0[0].x, vsconst0[45].x, false)), (raw_float_equal_mask(vsconst0[0].y, vsconst0[45].y, false)), (raw_float_equal_mask(vsconst0[0].z, vsconst0[45].z, false)), (raw_float_equal_mask(vsconst0[0].w, vsconst0[45].w, false)));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[117].x >> (vsconst0[44].x & 31u)), (raw_temp[117].y >> (vsconst0[44].y & 31u)), (raw_temp[117].z >> (vsconst0[44].z & 31u)), (raw_temp[117].w >> (vsconst0[44].w & 31u)));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x & 255u), (raw_temp[115].y & 255u), (raw_temp[115].z & 255u), (raw_temp[115].w & 255u));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x << (15u & 31u)), (raw_temp[115].y << (15u & 31u)), (raw_temp[115].z << (15u & 31u)), (raw_temp[115].w << (15u & 31u)));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x | 1056964608u), (raw_temp[115].y | 1056964608u), (raw_temp[115].z | 1056964608u), (raw_temp[115].w | 1056964608u));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x), (raw_temp[115].y), (raw_temp[115].z), (raw_temp[115].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = uintBitsToFloat(raw_out[1].x);\n vso_g0.y = uintBitsToFloat(raw_out[1].y);\n vso_g0.z = uintBitsToFloat(raw_out[1].z);\n vso_g0.w = uintBitsToFloat(raw_out[1].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v13",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "gpu-eq-vertex-pair",
+        "result": {
+          "ok": true,
+          "vertex": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nuint raw_float_equal_mask(uint a, uint b, bool not_equal) {\n uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\n bool equal = (a == b || (magnitude_a == 0u && magnitude_b == 0u));\n return (not_equal ? !equal : equal) ? 4294967295u : 0u;\n}\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n raw_rhs = uvec4((raw_float_equal_mask(vsconst0[0].x, vsconst0[45].x, false)), (raw_float_equal_mask(vsconst0[0].y, vsconst0[45].y, false)), (raw_float_equal_mask(vsconst0[0].z, vsconst0[45].z, false)), (raw_float_equal_mask(vsconst0[0].w, vsconst0[45].w, false)));\n raw_temp[117].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[117].x >> (vsconst0[44].x & 31u)), (raw_temp[117].y >> (vsconst0[44].y & 31u)), (raw_temp[117].z >> (vsconst0[44].z & 31u)), (raw_temp[117].w >> (vsconst0[44].w & 31u)));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x & 255u), (raw_temp[115].y & 255u), (raw_temp[115].z & 255u), (raw_temp[115].w & 255u));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x << (15u & 31u)), (raw_temp[115].y << (15u & 31u)), (raw_temp[115].z << (15u & 31u)), (raw_temp[115].w << (15u & 31u)));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x | 1056964608u), (raw_temp[115].y | 1056964608u), (raw_temp[115].z | 1056964608u), (raw_temp[115].w | 1056964608u));\n raw_temp[115].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[115].x), (raw_temp[115].y), (raw_temp[115].z), (raw_temp[115].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = uintBitsToFloat(raw_out[1].x);\n vso_g0.y = uintBitsToFloat(raw_out[1].y);\n vso_g0.z = uintBitsToFloat(raw_out[1].z);\n vso_g0.w = uintBitsToFloat(raw_out[1].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-raw-bits-v13",
+              "stage": "vertex",
+              "inputs": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "gl_Position",
+                  "type": "vec4",
+                  "semantic": "POSITION",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                },
+                {
+                  "index": 1,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15,
+                  "interpolation": "smooth"
+                }
+              ],
+              "attributes": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "uniforms": [
+                {
+                  "name": "vsconst0",
+                  "type": "uvec4[]",
+                  "count": 46,
+                  "encoding": "float32-bits"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [
+                {
+                  "name": "VirglBlock",
+                  "byteLength": 656,
+                  "members": [
+                    {
+                      "name": "winsys_adjust_y",
+                      "offset": 640,
+                      "type": "float",
+                      "default": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "fragment": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vec4(1,0,0,1))));\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-straight-line-v5",
+              "stage": "fragment",
+              "inputs": [],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "fsout_c0",
+                  "type": "vec4",
+                  "semantic": "COLOR",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                }
+              ],
+              "attributes": [],
+              "uniforms": [],
+              "samplers": [],
+              "uniformBlocks": []
+            }
+          },
+          "interfaceKey": "generic-interpolation-v1:"
+        }
+      }
+    ],
+    "objects": {
+      "created": {
+        "Program": 1,
+        "Shader": 2,
+        "VertexArray": 1,
+        "TransformFeedback": 1,
+        "Buffer": 3
+      },
+      "deleted": {
+        "Shader": 2,
+        "Buffer": 3,
+        "TransformFeedback": 1,
+        "VertexArray": 1,
+        "Program": 1
+      },
+      "live": 0
+    },
+    "faultWasmSha256": "51bed30632af6018020181d632037c7107e0f455b087275d3f21456c1a697f55",
+    "fixture": {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "bytes": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    "renderer": {
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "failure": {
+      "message": "eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]",
+      "stack": "Error: eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]\n    at require (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:5:43)\n    at equal (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:6:28)\n    at vertexProbe (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:91:9)\n    at async runAcceptance (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:160:30)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)\n    at async <anonymous>:260:30"
+    }
+  },
+  "failureScreenshot": {
+    "path": "failure.png",
+    "sha256": "258460c55e57cdf0408e6a8dffe58f9da592972e0dcca4a5325ee8ef9e6281af"
+  },
+  "browserCoverage": {
+    "path": "browser-coverage.json",
+    "sha256": "c2b052cbd3ec94726d8578041496884fc8821e0c4ceef667282fe770d442ece9"
+  },
+  "finishedAt": "2026-10-03T18:19:30.165Z"
+}
