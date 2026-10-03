@@ -40,7 +40,7 @@ _Static_assert(RAW_FSNE < 64, "opcode mask width");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
-       RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32 };
+       RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -65,6 +65,15 @@ struct loop_certificate {
    bool checked;
    unsigned char reserved[7];
 };
+/* A single selected-away interpolation. These are predecessor facts, never
+ * unconditional lane facts. The checked graph binds both permitted use sites. */
+struct demand_certificate {
+   uint16_t join, lrp, select, width;
+   struct raw_lane payload[4], result[4];
+   unsigned missing;
+   bool recognized, checked;
+   unsigned char reserved[2];
+};
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
    uint32_t immediates[FILE_REGISTERS][4];
@@ -73,6 +82,7 @@ struct raw_ir {
    struct raw_lane address;
    uint64_t opcode_mask, indirect_indices; /* Union of complete, checked use-site candidate sets. */
    struct loop_certificate loop;
+   struct demand_certificate demand;
 };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -93,8 +103,9 @@ _Static_assert(sizeof(struct raw_ir) <= 32768, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 26352, "bounded counted-loop IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 26464, "bounded interpolation IR allocation");
 _Static_assert(sizeof(struct loop_certificate) == 96, "compact loop certificate");
+_Static_assert(sizeof(struct demand_certificate) == 112, "compact demand certificate");
 _Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
 
 /* Shared post-swizzle lane selection for initialization and float authority. */

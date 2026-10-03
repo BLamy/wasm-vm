@@ -907,6 +907,24 @@
   "scalarShaderProfile": "virgl-webgl2-raw-bits-v6",
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
+  "selectedInterpolation": {
+    "bounds": {
+      "certificateBytes": 112,
+      "flowBytes": 52644,
+      "flowCap": 53248,
+      "profileBytes": 7616,
+      "profileCap": 8192,
+      "rawIrBytes": 26464,
+      "rawIrCap": 32768
+    },
+    "definedness": "Initialization masks remain intersected. True-predecessor facts live only in a compact separate certificate. Guarded LRP kills its old logical destination definition and guards all arithmetic and raw/float publication; only the exact final selected use may borrow the result fact. No zero fill or zero-times-undefined rule.",
+    "evidence": "make verify-E6-T12f2: full retained stage/pair outcomes, all masks/aliases/nested predecessors, literal definition-version/demand traces, shared renderer hardware words/pixels, actual guard/width compiler faults and final exact-head cold clone.",
+    "profiles": "Existing structured8 and finite-bank9; no metadata or guest capability change.",
+    "proof": "The missing-payload predecessor has known signed-zero width. Ordered positive finite bounds force literal zero weight there; unchanged FSNE and final UCMP discard the full LRP result. Predicate, payload, fallback and destination lane versions are checked.",
+    "reject": "Second graph, missing selected lane/predecessor, nonzero missing width, reversed/changed selector, weight/fallback clobber, overlapping fallback publication, unconditional later result read, unsupported syntax or PRECISE.",
+    "scope": "One alpha-renamable outer ELSE/weight/LRP/FSNE/final UCMP family; isolated compiler/shared renderer only. PRECISE, the radial TEMP2.x gap, guest graphics negotiation and desktop300MIPS remain gated.",
+    "task": "E6-T12f2"
+  },
   "shaderProfile": "virgl-webgl2-straight-line-v5",
   "shaderSyntax": {
     "FS_COLOR0_WRITES_ALL_CBUFS": {

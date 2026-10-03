@@ -683,5 +683,19 @@ available chunk count; every observed before/after count remains in evidence.
 
 The native input table grows to8192 only in the test driver; runtime storage and
 179-instruction/16KiB/64KiB output caps stay unchanged. Original captures remain
-12/19 while PRECISE and selected-lane definedness are implemented in later slices.
+12/19 while PRECISE and the separate radial definedness gap remain gated.
 This compiler proof does not enable guest GPU negotiation or establish300MIPS.
+
+
+E6-T12f2 adds one bounded selected-away interpolation graph to the isolated
+compiler. Its true-predecessor facts live in a separate 112-byte certificate,
+never in the initialization intersection. A zero-width false predecessor and
+unchanged weight/FSNE/final-UCMP lane versions justify sinking all LRP reads and
+writes behind a nonzero-magnitude guard. The conditional result's old definition
+is killed, and only the exact final selected arm can consume its certified fact.
+All destination masks and safe payload/result/selector aliases have deterministic
+word, predecessor and shared hardware proofs. Actual compiler faults require
+independent demand-counter and poison failures in both stages. Runtime caps and
+existing profile8/9 metadata remain unchanged; measured IR grows112 bytes to
+26464. PRECISE, the separate radial alternate-root gap, production guest graphics
+negotiation and desktop300MIPS remain gated.
