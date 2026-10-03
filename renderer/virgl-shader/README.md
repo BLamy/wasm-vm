@@ -962,7 +962,34 @@ The recording forces all five actual allocation sites in each of four ordinary
 and mixed witnesses, then recovers every profile. The identical fixed-heap Wasm
 schedule must fail cleanly and later return the complete healthy paired result.
 
-The original capture bodies and hashes remain unchanged; they still compile
-12/19. Remaining destination-mask, owned-bank raster authority and exact
-arithmetic work have separate tasks. This isolated boundary keeps production
+The original capture bodies and hashes remain unchanged; they compile
+14/19 after the ordered destination-mask extension below. Owned-bank raster
+authority and exact arithmetic work have separate tasks. This isolated boundary keeps production
 guest GPU negotiation disabled and makes no desktop300MIPS claim.
+
+
+Ordered destination subsets
+---------------------------
+
+Checked writes accept each nonempty, strictly ordered unique subset of `xyzw`,
+including `.yz` and explicit `.xyzw`. Source selectors retain their four-lane
+grammar. Declarations retain their existing prefix component masks. Writes must
+still stay inside the declared component authority, and explicit MAD/TEX masks
+remain gated. The existing complete right-hand-side snapshots preserve aliased
+sources and unselected raw and numeric lanes.
+
+`make verify-E6-T12f4a` binds the complete previous workload, explicitly records
+24 historical admissions and 30 errors that now reach the uninitialized-source
+check, and preserves every unrelated result. It exercises all15 masks with
+raw words, ordinary numeric shadows, aliases, swizzles and output neighbors in
+both stages. Independent literal TGSI predictions are compared with actual
+shared-renderer GPU pixels. Four separately compiled source faults widen yz,
+pack source lanes, overwrite neighbors or publish an aliased source early; each
+must fail the physical oracle.
+
+Untouched lighting captures `12f6d594` and `d4f702f7` now compile and link with
+their existing finite-bank contracts. The hardware witness uses a negative
+unit normal so their instruction-local MAX selects exact +0 while `.yz` copies
+distinct selector/texcoord words. This does not claim exact native RSQ/DP3
+intermediates, bank-derived raster alpha authority, guest GPU negotiation or
+300MIPS desktop throughput.

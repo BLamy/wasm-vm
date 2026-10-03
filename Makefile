@@ -1938,3 +1938,8 @@ verify-E6-T12f3:
 .PHONY: verify-E6-T12f4
 verify-E6-T12f4:
 	bash tools/verify-virgl-precise-word.sh
+
+# Ordered masked writes, unchanged lighting bodies and independent GPU observations.
+.PHONY: verify-E6-T12f4a
+verify-E6-T12f4a:
+	bash tools/verify-virgl-ordered-masks.sh

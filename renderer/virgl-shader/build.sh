@@ -16,7 +16,7 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
   native)
@@ -187,6 +187,18 @@ case "$mode" in
       build/precise-word-sanitize/bridge.o build/precise-word-sanitize/raw_bits.o \
       build/precise-word-sanitize/checked_upstream.o generated/u_format_table.c \
       "${sources[@]:4}" native_tests/precise_words.c -lm -o build/precise-word-sanitize/precise-word-test
+    ;;
+  ordered-mask-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -fstack-usage -c "$source.c" -o "build/ordered-mask-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -fstack-usage -c checked_upstream.c -o build/ordered-mask-sanitize/checked_upstream.o
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
+      build/ordered-mask-sanitize/bridge.o build/ordered-mask-sanitize/raw_bits.o \
+      build/ordered-mask-sanitize/checked_upstream.o generated/u_format_table.c \
+      "${sources[@]:4}" native_tests/ordered_masks.c -lm -o build/ordered-mask-sanitize/ordered-mask-test
     ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
