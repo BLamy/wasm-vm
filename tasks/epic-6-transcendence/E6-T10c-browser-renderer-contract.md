@@ -2,8 +2,8 @@
 id: E6-T10c
 epic: 6
 title: Freeze browser renderer capabilities against the captured guest corpus
-priority: 525.02703
-status: pending
+priority: 525.0269
+status: in-progress
 depends_on: [E6-T10b]
 estimate: S
 risk: medium
@@ -32,4 +32,15 @@ claims and browser limits, and reject any capability not implementable by the
 chosen API. No Mesa initialization or Hyprland compatibility claim until proven.
 
 ## Verification log
-(empty)
+
+### 2026-10-03 — worker — activated (UTC)
+
+Parent `0abd0745` independently verified E6-T10b; its complete reference corpus
+is published in PR #404. This task is prioritized ahead of the independent
+desktop-release lane to continue the user's explicit guest-graphics offload
+request. No other task remains active. The current corpus contains 33 command
+families and 19 distinct VERT/FRAG TGSI bodies; Xwayland contributes the most
+complex shader operations. The existing shader bridge remains a bounded
+prototype, not support for all recorded shaders or a guest renderer. This slice
+will freeze the backend/feature contract and prove representative browser
+mappings without advertising unimplemented guest capabilities.
