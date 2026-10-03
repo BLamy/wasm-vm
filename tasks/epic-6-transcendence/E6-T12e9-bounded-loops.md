@@ -3,7 +3,7 @@ id: E6-T12e9
 epic: 6
 title: Execute structured loops only with established execution and address bounds
 priority: 525.0269909
-status: in-progress
+status: implemented
 depends_on: [E6-T12e8]
 estimate: S
 risk: high
@@ -111,4 +111,65 @@ remain required before this task becomes verified.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — implemented
+
+Frozen source and harness: `bfcd3a4076a163648c67bf7674e94d616c42c1e1`, based on
+verified E8 `62e90790d5c6f0a5da5fa528c482679c16c74290`.
+
+Commands:
+
+```sh
+VIRGL_BOUNDED_LOOPS_EVIDENCE_DIR=evidence/virgl-bounded-loops/worker EMCC=/tmp/wasm-vm-emsdk/wasm-vm-emcc make verify-E6-T12e9
+python3 tools/virgl-bounded-loops/cold.py --output evidence/virgl-bounded-loops/cold-clone
+```
+
+Both complete gates passed. The local gate records guard checks, ASan/UBSan,
+LLVM execution/stack counters, actual native and fixed-memory Wasm ABI calls,
+consumer/metadata tests, decoded shared-renderer GPU paths, actual isolated
+compiler faults, and retained shader/renderer leaf oracles. The final cold gate
+ran once from the clean exact-source checkout `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm` with scrubbed
+build/runtime environment; checkout status was empty before and after. The
+178 copied acceptance files include the complete recording and its receipt.
+
+- Native: 743,022 calls; 4,012 stages and 264 pairs, including 198/12 new cases.
+  All 3,814/252 retained full results and all original 12/19 outcomes are exact.
+  6,115 truncations over six named bodies, 324 hostile envelopes, four independent
+  seeds × 1,024 mutations, and 16 actual allocation failures each recover through
+  the 26/24 single/pair anchor set. Recorded recoveries total 378,638/349,512.
+- Measured IR/profile/flow sizes: 26,352 / 7,616 / 52,644 bytes. Lane/source/
+  instruction sizes remain 12/24/112. IR grew 96 bytes and flow 32 bytes; existing
+  caps hold. Maximum recorded single/pair serialization is 63,369/109,235 bytes.
+- Wasm: 15,151 actual calls; complete native result equality, 5,590/5,160 recovery
+  calls, 64 maximum-text/179-instruction runs and 33 real allocation-pressure
+  attempts. The 16 MiB buffer identity stays fixed and all capacity is recovered.
+- Consumer: 234 closed metadata cases, 157 bank cases, three ownership cases,
+  and zero accessor calls. Existing profile fixtures retain their results;
+  exactly two old unknown-v12 diagnostics now name the required count contract.
+- GPU: 39 successful draws, 768 exact loop words and 159,744 checked pixels;
+  96 completion fences, 144 withheld polls and 26 rejected draws. Decoder bypass
+  adds 14 rejected draws followed by five successful recovery draws/20,480 pixels.
+  Healthy browser console, page and request error arrays are all empty.
+- Actual compiler faults: removing the recurrence check wrongly admits both
+  increment-two inputs in native/Wasm translation only. Flipping the certified
+  early comparison preserves the forced signed bound but produces 26 wrong
+  hardware words; the independent atlas oracle fails. All retained fault seams
+  and independent GPU leaf checks passed without claiming old complete gates.
+
+Evidence: `evidence/virgl-bounded-loops/worker/` and
+`evidence/virgl-bounded-loops/cold-clone/`. Warm receipt SHA-256
+`0cda5d537e15773794904bf7d53c30ff4da55c1c6846e846875fee5915a22715`;
+cold report `69a613e5cfa4d46b06f6a486ee60f757c9912068230abe5fd17fe003d34438a9`;
+cold receipt `03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7`.
+Warm native report `10cd0b59e6c2a8331cbb75dae216207be0a84fcccb49fe3f3cda1dfbb5099593`;
+Wasm report `a48deff3775974d93775a7c87fd09e807a08eb6595bf247b02ead48d65e2797b`;
+normal screenshot `6906d646fcbec6cae07d3493f652985cc948f3d69405a17e9af808bdf74d3639`.
+Coverage reports are retained verbatim, including LLVM's terminal blank line.
+
+The recording demonstrates the certified recurrence and complete access sets,
+with signed count <=18 checked against the exact owned finite bank generation
+used for upload. It covers zero/negative counts, first/interior/final exits,
+maximum tail addresses, rejected count19, replacement, async interference and
+cleanup. It establishes no PRECISE, radial-definedness, original19/19, live guest
+GPU or performance claim. The isolated compiler/renderer remains unreachable
+from the production demo, so no web/dist or deployment change is part of this
+boundary. Fresh verifier findings and the final verdict follow separately.
