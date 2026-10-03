@@ -1848,3 +1848,8 @@ verify-E6-T12d:
 .PHONY: verify-E6-T11a
 verify-E6-T11a:
 	bash tools/verify-virgl-control.sh
+
+# Owned renderer jobs with staged GPU readbacks; no guest DMA or 3D activation.
+.PHONY: verify-E6-T11b1
+verify-E6-T11b1:
+	bash tools/verify-virgl-async-jobs.sh
