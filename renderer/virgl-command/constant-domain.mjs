@@ -1,8 +1,11 @@
 /** Consumer contract only: no shader admission or guest transport is added here. */
 export const CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v7";
+export const STRUCTURED_PROFILE = "virgl-webgl2-raw-bits-v8";
+export const STRUCTURED_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v9";
 export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
+const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE]);
 const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
-  ...[1, 2, 3, 4, 5, 6].map((version) => `virgl-webgl2-raw-bits-v${version}`)]);
+  ...[1, 2, 3, 4, 5, 6].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
 const DOMAIN_KEYS = ["kind", "stage", "slot", "name", "count"];
 class DomainFault extends Error {}
@@ -45,8 +48,8 @@ export function parseConstantDomain(metadata, expectedStage) {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
     const value = record(metadata, [...METADATA_KEYS, "constantDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
-    require(value.profile === CONDITIONAL_PROFILE || UNCONDITIONAL_PROFILES.has(value.profile), "Unknown shader profile.");
-    if (value.profile !== CONDITIONAL_PROFILE) {
+    require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile), "Unknown shader profile.");
+    if (!CONDITIONAL_PROFILES.has(value.profile)) {
       require(!Object.hasOwn(value, "constantDomains"), "Unconditional shader profile carries a conditional contract.");
       return Object.freeze({ ok: true, domain: null });
     }

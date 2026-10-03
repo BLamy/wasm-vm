@@ -1909,3 +1909,7 @@ verify-E6-T12e6a:
 .PHONY: verify-E6-T12e6b
 verify-E6-T12e6b:
 	bash tools/verify-virgl-constant-compiler.sh
+
+.PHONY: verify-E6-T12e7
+verify-E6-T12e7:
+	bash tools/verify-virgl-structured-conditionals.sh
