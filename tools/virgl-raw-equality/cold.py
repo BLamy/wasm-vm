@@ -45,7 +45,7 @@ def main():
     for key in removed:
         del env[key]
     head = git('rev-parse', 'HEAD', env=env)
-    clone = Path(tempfile.mkdtemp(prefix='wasm-vm-raw-equality-cold-')) / 'wasm-vm'
+    clone = Path(tempfile.mkdtemp(prefix='wasm-vm-raw-equality-cold-')).resolve() / 'wasm-vm'
     report = {'schema': 1, 'task': 'E6-T12f1', 'status': 'running', 'gitHead': head,
               'clone': str(clone), 'removedEnvironmentNames': removed,
               'command': ['make', 'verify-E6-T12f1'], 'timeoutSeconds': TIMEOUT,
