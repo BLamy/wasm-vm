@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT
  * Bounded profile adapter around the unmodified upstream VirGL compiler.
  * The guard validates a deliberately small language before upstream's general
- * TGSI parser sees it. In particular no unbounded integer, range, property,
+ * TGSI parser sees it. No unbounded numeric/range value, unsupported property,
  * indirect address, unsupported stage, or control-flow token reaches upstream.
  */
 #include "bridge.h"
@@ -12,19 +12,22 @@
 #include <errno.h>
 #include <math.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT };
-struct reg { enum file file; unsigned index, mask; };
+enum operand_kind { DECLARATION, DESTINATION, SOURCE };
+struct reg { enum file file; unsigned index, last, mask; bool explicit_mask; };
 struct profile {
    bool declared[FILE_COUNT][8];
+   unsigned components[FILE_COUNT][8];
    unsigned written[FILE_COUNT][8];
    unsigned semantic[2][8]; /* 0 attribute, 1 POSITION, 2 GENERIC, 3 COLOR */
    unsigned semantic_index[2][8];
    unsigned instructions, immediates;
-   bool ended, started;
+   bool ended, started, color0_property;
    int stage;
 };
 
@@ -113,26 +116,53 @@ static bool index_number(const char **p, unsigned *result)
    if (isdigit((unsigned char)**p)) { failure_code = "unsupported-feature"; return false; }
    return true;
 }
-static bool register_name(const char **p, struct reg *r, bool destination)
+static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
 {
-   (void)destination;
    static const char *names[] = {"IN", "OUT", "TEMP", "CONST", "IMM", "SAMP", "SVIEW"};
    unsigned f;
    for (f = 0; f < FILE_COUNT; ++f) if (word(p, names[f])) break;
-   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index) || !punctuation(p, ']')) return false;
+   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index)) return false;
    r->file = (enum file)f;
+   r->last = r->index;
+   space(p);
+   if (!strncmp(*p, "..", 2)) {
+      if (kind != DECLARATION || f != TEMP) { failure_code = "unsupported-feature"; return false; }
+      *p += 2;
+      if (!index_number(p, &r->last) || r->last < r->index) return false;
+   }
+   if (!punctuation(p, ']')) return false;
    r->mask = 15;
-   if (punctuation(p, '.')) {
-      failure_code = "unsupported-feature";
-      return false;
+   r->explicit_mask = punctuation(p, '.');
+   if (r->explicit_mask) {
+      static const char components[] = "xyzw";
+      const char *begin = *p;
+      r->mask = 0;
+      unsigned count = 0, previous = 0;
+      while (**p && strchr(components, **p)) {
+         unsigned component = (unsigned)(strchr(components, **p) - components);
+         if (++count > 4 || (kind != SOURCE && count > 1 && component <= previous)) return false;
+         previous = component;
+         r->mask |= 1u << component;
+         ++*p;
+      }
+      if (kind == SOURCE) {
+         if (count != 4) return false;
+      } else if (!((count == 2 && !strncmp(begin, "xy", 2)) ||
+                   (kind == DESTINATION && count == 1 && (*begin == 'z' || *begin == 'w')))) {
+         failure_code = "unsupported-feature";
+         return false;
+      }
    }
    return true;
 }
 static bool source(const char **p, struct profile *s)
 {
    struct reg r;
-   if (!register_name(p, &r, false) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index]) return false;
-   return r.file != TEMP || (s->written[TEMP][r.index] & r.mask) == r.mask;
+   if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index] ||
+       (s->components[r.file][r.index] & r.mask) != r.mask) return false;
+   /* Deliberately conservative: all selected lanes must be declared, including
+    * lanes a masked destination may not consume. TEMP writes remain full. */
+   return r.file != TEMP || s->written[TEMP][r.index] == 15;
 }
 static bool literal_float(const char **p)
 {
@@ -148,10 +178,28 @@ static bool literal_float(const char **p)
    return !errno && *after == 0 && isfinite(value) && fabsf(value) <= 1000000.0f;
 }
 
+static bool literal_float_bits(const char **p)
+{
+   space(p);
+   uint32_t bits = 0;
+   unsigned digits = 0;
+   while (isdigit((unsigned char)**p)) {
+      unsigned digit = (unsigned)(**p - '0');
+      if (++digits > 10 || bits > (UINT32_MAX - digit) / 10) return false;
+      bits = bits * 10 + digit;
+      ++*p;
+   }
+   if (!digits || ((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0)) return false;
+   float value;
+   memcpy(&value, &bits, sizeof(value));
+   return isfinite(value) && fabsf(value) <= 1000000.0f;
+}
+
 static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
-   if (s->started || !register_name(p, &r, true) || r.mask != 15 || r.file == IMM || s->declared[r.file][r.index]) return false;
+   if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+   for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
    unsigned semantic = 0, sid = 0;
    if (r.file == OUT || (r.file == IN && s->stage == 1)) {
       if (!punctuation(p, ',')) return false;
@@ -172,8 +220,12 @@ static bool declaration(const char **p, struct profile *s)
    } else if (r.file == SVIEW) {
       if (s->stage != 1 || !punctuation(p, ',') || !word(p, "2D") || !punctuation(p, ',') || !word(p, "FLOAT")) return false;
    } else if (r.file == SAMP && s->stage != 1) return false;
+   if (r.mask != 15 && (semantic != 2 || r.mask != 3)) return false;
    if (!end(p)) return false;
-   s->declared[r.file][r.index] = true;
+   for (unsigned i = r.index; i <= r.last; ++i) {
+      s->declared[r.file][i] = true;
+      s->components[r.file][i] = r.mask;
+   }
    if (r.file <= OUT) {
       s->semantic[r.file][r.index] = semantic;
       s->semantic_index[r.file][r.index] = sid;
@@ -184,21 +236,23 @@ static bool declaration(const char **p, struct profile *s)
 static bool instruction(const char **p, struct profile *s)
 {
    unsigned arity;
-   bool tex = false;
+   bool tex = false, mov = false;
    if (word(p, "END")) { s->ended = true; return end(p); }
-   if (word(p, "MOV")) arity = 1;
+   if (word(p, "MOV")) { arity = 1; mov = true; }
    else if (word(p, "ADD") || word(p, "MUL")) arity = 2;
    else if (word(p, "MAD")) arity = 3;
    else if (word(p, "TEX")) { tex = true; arity = 1; }
    else { failure_code = "unsupported-feature"; return false; }
    if (++s->instructions > BRIDGE_MAX_INSTRUCTIONS) return false;
    struct reg dst;
-   if (!register_name(p, &dst, true) || (dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index]) return false;
+   if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||
+       !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
+   if (dst.explicit_mask && (!mov || dst.file != OUT)) { failure_code = "unsupported-feature"; return false; }
    for (unsigned i = 0; i < arity; ++i)
       if (!punctuation(p, ',') || !source(p, s)) return false;
    if (tex) {
       struct reg sampler;
-      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, false) || sampler.file != SAMP || sampler.mask != 15 ||
+      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
           !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
    }
    if (!end(p)) return false;
@@ -223,12 +277,25 @@ static bool validate(char *text, struct profile *s)
          if (!declaration(&p, s)) return false;
       } else if (word(&p, "IMM")) {
          unsigned i;
-         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i) || i != s->immediates || !punctuation(&p, ']') ||
-             !word(&p, "FLT32") || !punctuation(&p, '{')) return false;
+         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i) || i != s->immediates || !punctuation(&p, ']')) return false;
+         bool bits = false;
+         if (!word(&p, "FLT32")) {
+            if (!word(&p, "UINT32")) return false;
+            bits = true;
+         }
+         if (!punctuation(&p, '{')) return false;
          for (unsigned c = 0; c < 4; ++c)
-            if ((c && !punctuation(&p, ',')) || !literal_float(&p)) return false;
+            if ((c && !punctuation(&p, ',')) || !(bits ? literal_float_bits(&p) : literal_float(&p))) return false;
          if (!punctuation(&p, '}') || !end(&p)) return false;
-         s->declared[IMM][i] = true; ++s->immediates;
+         s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;
+      } else if (word(&p, "PROPERTY")) {
+         if (s->stage != 1 || s->started || s->color0_property ||
+             !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) {
+            failure_code = "unsupported-feature";
+            return false;
+         }
+         /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
+         s->color0_property = true;
       } else {
          s->started = true;
          /* Labels are optional, bounded, sequential, and never jump targets. */
@@ -245,7 +312,7 @@ static bool validate(char *text, struct profile *s)
    }
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
    for (unsigned i = 0; i < 8; ++i)
-      if (s->declared[OUT][i] && s->written[OUT][i] != 15) return false;
+      if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
    return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
 }
 
@@ -261,7 +328,9 @@ static void io_metadata(const struct profile *s, enum file f)
       else if (semantic == 1) snprintf(name, sizeof(name), "gl_Position");
       else if (semantic == 2) snprintf(name, sizeof(name), "vso_g%u", sid);
       else snprintf(name, sizeof(name), "fsout_c0");
-      append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u}", comma ? "," : "", i, name, names[semantic], sid);
+      append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u", comma ? "," : "", i, name, names[semantic], sid, s->components[f][i]);
+      if (f == OUT) append(",\"writtenMask\":%u", s->written[f][i]);
+      append("}");
       comma = true;
    }
    append("]");
@@ -312,7 +381,7 @@ const char *bridge_translate(int stage, const char *text, size_t length)
          else append("%c", c);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v1\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
+   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-straight-line-v2\",\"stage\":\"%s\",\"inputs\":", stage ? "fragment" : "vertex");
    io_metadata(&profile, IN); append(",\"outputs\":"); io_metadata(&profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(&profile, IN); else append("[]");

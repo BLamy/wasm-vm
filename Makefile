@@ -1819,3 +1819,7 @@ verify-E6-T10b:
 .PHONY: verify-E6-T10c
 verify-E6-T10c:
 	bash tools/verify-virgl-contract.sh
+
+.PHONY: verify-E6-T10d
+verify-E6-T10d:
+	bash tools/verify-virgl-captured-shaders.sh

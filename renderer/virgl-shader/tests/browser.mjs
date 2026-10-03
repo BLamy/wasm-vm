@@ -10,6 +10,9 @@ const digest = async (value) => [...new Uint8Array(await crypto.subtle.digest("S
   typeof value === "string" ? new TextEncoder().encode(value) : value))]
   .map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
+// Reuse binding/reflection mechanics while keeping literal/captured oracles separate.
+export { createProgram, texture2d, bindSystemBlocks, bindConstants, digest };
+
 function shader(gl, kind, source, label) {
   require(/^#version 300 es\b/m.test(source), `${label}: GLSL ES300 required`);
   const handle = gl.createShader(kind);

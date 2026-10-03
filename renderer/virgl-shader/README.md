@@ -14,6 +14,7 @@ bash renderer/virgl-shader/build.sh native
 bash renderer/virgl-shader/build.sh sanitize
 EMCC="$(bash tools/setup-virgl-emsdk.sh)" bash renderer/virgl-shader/build.sh wasm
 make verify-E6-T10a
+make verify-E6-T10d
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -31,6 +32,14 @@ Use the setup script's returned wrapper so the compiler uses its bundled Python
 rather than an incompatible system Python. The Wasm module has a fixed 16 MiB
 memory and 256 KiB stack, with no memory growth or filesystem. Generated build
 artifacts stay in ignored `build/`.
+
+`verify-E6-T10d` additionally compiles and executes the two unchanged TGSI bodies
+from the recorded guest textured scene. It checks three original indexed draws
+against 768 literal interior pixels, compares native and Wasm translations, runs
+the shared malformed-grammar cases under sanitizers and Wasm, and requires a
+texture sabotage to fail its pixel oracle. Five other corpus shaders now translate
+without an execution claim; twelve remain rejected. These are explicit workload
+bindings, not VirGL command-stream replay or a running emulator guest.
 
 ## JavaScript contract
 
@@ -65,27 +74,42 @@ interpolation patch state is inferred from guest data.
 
 ## Supported profile and bounds
 
-`virgl-webgl2-straight-line-v1` deliberately accepts a strict subset of TGSI text:
+`virgl-webgl2-straight-line-v2` deliberately accepts a strict subset of TGSI text:
 
-- `VERT` and `FRAG`; single, unique `DCL` registers with decimal indices 0–7.
-  Declarations and immediates precede instructions.
+- `VERT` and `FRAG`; unique `DCL` registers with decimal indices 0–7.
+  TEMP declarations may use non-overlapping inclusive ranges within 0–7. Ranges
+  for every other file are rejected. Declarations and immediates precede
+  instructions; declarations may follow immediates.
 - Vertex input attributes, mandatory vertex `OUT[0], POSITION`, and generic
   vertex outputs. Fragment inputs are `GENERIC[n], PERSPECTIVE`; fragment
   output is `OUT[0], COLOR`. Generic semantics within a stage are unique.
+  Generic vertex outputs and perspective fragment inputs may declare `.xy`;
+  all other declarations remain full-width.
 - Full `vec4` `MOV`, `ADD`, `MUL`, `MAD`; `TEMP`, `CONST`, and sequential
   `IMM[n] FLT32 {x, y, z, w}`. Temporary reads must follow a full write. Finite
   immediate floats must parse without range errors and have magnitude at most
-  1,000,000. Every declared output must be written before `END`.
+  1,000,000. `UINT32` immediates accept four checked decimal words interpreted as
+  float bits by upstream. Their float values must satisfy the same finite/range
+  bound, and nonzero subnormals are rejected. Integer instructions remain unsupported.
+- Only `MOV` to `OUT` may have destination masks `.xy`, `.z` or `.w`. POSITION
+  and COLOR must be fully written before `END`; generic outputs must have every
+  declared component written. TEMP writes remain full-width. Sources may use
+  exactly four `xyzw` selectors; every selected component must be declared, even
+  if the destination mask does not consume that lane. This is a deliberately
+  conservative profile, not a general TGSI dataflow validator.
 - Fragment `TEX dst, coordinates, SAMP[n], 2D`, with matching declared
   `SVIEW[n], 2D, FLOAT`. Sampling, wrapping, filtering and blending are caller
   GL state, separate from translation.
 - Optional bounded sequential instruction labels. ASCII spaces, tabs, CR and
   newline; no embedded NUL or other control/non-ASCII bytes.
+- Exactly one optional fragment `PROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1` before
+  instructions. The fixed one-target configuration makes this COLOR0 only.
 
-Unsupported TGSI includes register ranges, indirect addressing, swizzles and
-write masks, source modifiers, properties (including unknown properties upstream
-would otherwise ignore), control flow, other opcodes, integer/double operations,
-other texture types, extra shader stages, MRT, UBOs, SSBOs, images and atomics.
+Unsupported TGSI includes non-TEMP ranges, indirect addressing, other declaration
+or write masks, short/long swizzles, source modifiers, all other properties
+(including unknown properties upstream would otherwise ignore), PRECISE,
+control flow, other opcodes, integer/double operations, other texture types,
+extra shader stages, MRT, UBOs, SSBOs, images and atomics.
 This is not a general Mesa desktop-shader frontend. Widening this profile
 requires new safety checks and independent browser execution evidence.
 
@@ -104,7 +128,7 @@ arrays where applicable:
 
 | Field | Meaning |
 | --- | --- |
-| `inputs`, `outputs` | `{index,name,type,semantic,semanticIndex}`; type is `vec4`. VS attribute names are `in_n`, linked generic names are `vso_gn`, position is `gl_Position`, and fragment color is `fsout_c0`. |
+| `inputs`, `outputs` | `{index,name,type,semantic,semanticIndex,componentMask}`; outputs additionally include `writtenMask`. Masks are numeric bitsets (`xy=3`, `xyzw=15`). Type remains `vec4`, matching upstream declarations, even for partial generic components. A linker must check component coverage rather than infer it from type. VS attribute names are `in_n`, linked generic names are `vso_gn`, position is `gl_Position`, and fragment color is `fsout_c0`. |
 | `attributes` | Vertex input records; bind or reflect each attribute name. Fragment list is empty. |
 | `uniforms` | `{name,type:"uvec4[]",count,encoding:"float32-bits"}`. Base name is `vsconst0` or `fsconst0`; query `name + "[0]"`. Upload float bit patterns with `uniform4uiv`, not numeric integer conversion or `uniform4fv`. `count` includes any register gaps. |
 | `samplers` | `{index,name,type:"sampler2D"}`; name is `fssampn`. Caller binds each texture unit and sets the sampler uniform. |

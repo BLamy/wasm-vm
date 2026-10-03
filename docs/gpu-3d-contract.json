@@ -1,6 +1,6 @@
 {
   "activationBlockers": [
-    "Every captured shader is currently rejected.",
+    "Twelve captured shaders are still rejected; seven translate, and only the textured-scene pair has dedicated execution evidence.",
     "PRECISE semantics have no approved lowering.",
     "No production command renderer, transport or GPU scanout exists.",
     "Mesa has unconditional capabilities not suppressible by zero capset fields.",
@@ -37,78 +37,109 @@
   "capturedShaders": {
     "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
       "stage": "VERT"
     },
     "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "VERT"
     },
     "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
       "stage": "VERT"
     },
     "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "VERT"
     },
     "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "VERT"
     },
     "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "parse-error",
       "stage": "FRAG"
     },
     "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "textured-scene-three-phases",
       "stage": "FRAG"
     },
     "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
       "stage": "FRAG"
     },
     "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
       "stage": "FRAG"
     },
     "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "VERT"
     },
     "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "FRAG"
     },
     "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "textured-scene-three-phases",
       "stage": "VERT"
     },
     "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": {
       "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
       "stage": "VERT"
     },
     "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": {
-      "currentBridge": "rejected",
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
       "stage": "FRAG"
     }
   },
@@ -665,12 +696,12 @@
     "shaderStageCounts": {
       "FRAG": {
         "corpusOccurrences": 15,
-        "mapping": "Bounded literal FRAG stage implemented; current bridge rejects every unmodified captured shader.",
+        "mapping": "Bounded literal and captured textured-scene FRAG stage support; seven corpus bodies translate, twelve remain rejected. Only the captured scene pair has dedicated pixel proof.",
         "status": "supported"
       },
       "VERT": {
         "corpusOccurrences": 11,
-        "mapping": "Bounded literal VERT stage implemented; current bridge rejects every unmodified captured shader.",
+        "mapping": "Bounded literal and captured textured-scene VERT stage support; seven corpus bodies translate, twelve remain rejected. Only the captured scene pair has dedicated pixel proof.",
         "status": "supported"
       }
     }
@@ -702,10 +733,12 @@
   },
   "schema": "wasm-vm-virgl-browser-contract-v1",
   "scope": "Isolated prototype and planned renderer mappings; no guest renderer implementation or desktop acceleration claim.",
+  "shaderProfile": "virgl-webgl2-straight-line-v2",
   "shaderSyntax": {
     "FS_COLOR0_WRITES_ALL_CBUFS": {
-      "mapping": "Value1 requires actual enabled draw-buffer replication; one-target initial profile only, MRT semantics deferred.",
-      "status": "implementable"
+      "mapping": "Exactly one fragment property with value1 before instructions supported under fixed one-target configuration; no MRT support.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "PRECISE": {
       "mapping": "Strict precise semantics unsupported in accepted ESSL300 path; cannot discard qualifier.",
@@ -716,32 +749,37 @@
       "status": "implementable"
     },
     "UINT32-immediates": {
-      "mapping": "Preserve four 32-bit words and reinterpret for float use; indices0..4 observed; do not numerically convert to float.",
-      "status": "implementable"
+      "mapping": "Four checked decimal words are preserved as float bits; finite magnitude<=1e6 only, no nonzero subnormals. Integer operations remain rejected.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "declaration-masks": {
-      "mapping": "Validate xy/xyz/xyzw declaration masks and component initialization; never infer full writes from partial outputs.",
-      "status": "implementable"
+      "mapping": "Generic VS output and perspective FS input .xy supported; all other declarations stay full-width.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "declaration-ranges-and-order": {
-      "mapping": "Expand bounded declarations for IN/OUT/CONST/TEMP/ADDR/SAMP/SVIEW, disjoint ranges and declarations after IMM; max observed TEMP117 is not a general Mesa limit.",
-      "status": "implementable"
+      "mapping": "TEMP-only ranges within0..7, including declarations after immediates, are supported. Other file ranges, address registers and larger temporaries remain rejected.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "indirect-constant-index": {
       "mapping": "CONST[ADDR[0].x] uses bounded index and bit-correct UARL; reject out-of-range and unsupported indirect files.",
       "status": "implementable"
     },
     "partial-destination-writes": {
-      "mapping": "Merge masked destination writes with live untouched components and track initialization; ADDR/OUT/TEMP destinations.",
-      "status": "implementable"
+      "mapping": "Only MOV to OUT .xy/.z/.w supported; complete POSITION/COLOR and declared generic outputs required. TEMP writes remain full.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "semantics-and-interpolation": {
       "mapping": "POSITION/COLOR/GENERIC[0], PERSPECTIVE and CONSTANT; flat linkage requires matching VS/FS qualifiers.",
       "status": "implementable"
     },
     "source-swizzles-and-negation": {
-      "mapping": "Validate four-component selectors and unary minus for CONST/TEMP; apply modifiers in TGSI order.",
-      "status": "implementable"
+      "mapping": "Exactly four xyzw selectors supported; every selected component must be declared regardless of destination lanes. Negation/modifiers remain rejected.",
+      "scope": "bounded-v2-subset-only",
+      "status": "supported"
     },
     "structured-target-annotations": {
       "mapping": "Validate UIF/ELSE/BGNLOOP/ENDLOOP target labels and matching stack; observed IF nesting7 and loop nesting1; bound execution work.",
