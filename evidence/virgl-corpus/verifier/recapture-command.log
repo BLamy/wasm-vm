@@ -1,0 +1,1 @@
+{"output": "/capture/verifier-textured-scene", "result": {"qemuExitCode": 0, "guestExitCode": 0, "guestBegin": true, "guestEnd": true, "workloadPass": true, "complete": true, "error": null}}
