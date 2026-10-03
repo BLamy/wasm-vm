@@ -1713,6 +1713,58 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
+    #[cfg(feature = "virgl-control-proof")]
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu_submit3d_proof(
+        &mut self,
+        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+        submit_sink: alloc::boxed::Box<dyn dev::virtio::gpu::submit3d::Submit3dSink>,
+        mailbox: dev::virtio::gpu::submit3d::Submit3dMailbox,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_submit3d_proof_state(
+            frame_sink,
+            control_sink,
+            submit_sink,
+            mailbox,
+        );
+        self.install_virtio_gpu(device, state)
+    }
+
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn submit3d_gather(
+        &mut self,
+        exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
+    ) -> Result<alloc::vec::Vec<u8>, dev::virtio::gpu::control3d::Control3dError> {
+        let (state, _, _, index) = self
+            .gpu
+            .as_ref()
+            .ok_or(dev::virtio::gpu::control3d::Control3dError::InvalidParameter)?;
+        dev::virtio::gpu::submit3d_dma(&self.virtio[*index].0, state, &mut self.bus, exchange, None)
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn submit3d_scatter(
+        &mut self,
+        exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
+        bytes: &[u8],
+    ) -> Result<(), dev::virtio::gpu::control3d::Control3dError> {
+        let (state, _, _, index) = self
+            .gpu
+            .as_ref()
+            .ok_or(dev::virtio::gpu::control3d::Control3dError::InvalidParameter)?;
+        dev::virtio::gpu::submit3d_dma(
+            &self.virtio[*index].0,
+            state,
+            &mut self.bus,
+            exchange,
+            Some(bytes),
+        )
+        .map(|_| ())
+    }
+
     #[allow(clippy::type_complexity)]
     fn install_virtio_gpu(
         &mut self,

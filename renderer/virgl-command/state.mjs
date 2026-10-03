@@ -785,6 +785,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         return success({ profile, disposed, limits, ...(drawing ? { drawLimits } : {}),
           ...(asynchronous ? { jobLimits, jobs: { active: activeJob === null ? 0 : 1, status: activeJob?.phase ?? "idle",
             appliedCommands: activeJob?.index ?? 0, commandCount: activeJob?.commands.length ?? 0,
+            draws: activeJob?.submission.draws.length ?? 0,
             inputBytes: activeJob?.phase === "upload-ready" ? activeJob.pending.layout.tightBytes : 0,
             outputBytes: activeJob?.request?.bytes?.byteLength ?? 0,
             reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes } } : {}),

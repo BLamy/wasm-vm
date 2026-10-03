@@ -1,4 +1,4 @@
-//! Synchronous, proof-only virtio 3D control ownership. No submit, DMA or fences.
+//! Synchronous, proof-only virtio 3D control ownership. No renderer commands or asynchronous completion.
 //!
 //! Guest addresses remain transport metadata. Attach events copy initial bytes;
 //! these copies are not authoritative for future DMA. A sink's ordinary error
@@ -106,9 +106,11 @@ pub enum Control3dOperation {
     AttachBacking {
         resource: Control3dId,
         segments: Vec<BackingSegment>,
+        backing_generation: u64,
     },
     DetachBacking {
         resource: Control3dId,
+        backing_generation: u64,
     },
     UnrefResource {
         resource: Control3dId,
@@ -172,6 +174,7 @@ pub struct Resource3dSnapshot {
     pub identity: Control3dId,
     pub metadata: Resource3dMetadata,
     pub backing: Option<Vec<BackingEntry>>,
+    pub backing_generation: Option<u64>,
 }
 
 /// Transport diagnostics only. Retired renderer leases remain renderer-owned.
@@ -179,6 +182,7 @@ pub struct Resource3dSnapshot {
 pub struct Control3dSnapshot {
     pub epoch: u64,
     pub next_generation: u64,
+    pub next_backing_generation: u64,
     pub poisoned: bool,
     pub contexts: Vec<Context3dSnapshot>,
     pub resources: Vec<Resource3dSnapshot>,
@@ -195,10 +199,11 @@ impl Control3dSnapshot {
             out.extend_from_slice(&value.generation.to_le_bytes());
         }
         let mut out = Vec::new();
-        out.extend_from_slice(b"WV3DCTL1");
+        out.extend_from_slice(b"WV3DCTL2");
         for value in [
             self.epoch,
             self.next_generation,
+            self.next_backing_generation,
             self.logical_bytes,
             self.gpu_bytes,
             self.backing_bytes,
@@ -237,6 +242,12 @@ impl Control3dSnapshot {
             }
             out.push(u8::from(resource.backing.is_some()));
             if let Some(entries) = &resource.backing {
+                out.extend_from_slice(
+                    &resource
+                        .backing_generation
+                        .expect("attached backing generation")
+                        .to_le_bytes(),
+                );
                 out.extend_from_slice(&(entries.len() as u32).to_le_bytes());
                 for entry in entries {
                     out.extend_from_slice(&entry.addr.to_le_bytes());
@@ -260,6 +271,7 @@ pub(crate) struct Control3dState {
     sink: Box<dyn Control3dSink>,
     epoch: u64,
     next_generation: u64,
+    next_backing_generation: u64,
     poisoned: bool,
     contexts: Vec<Context3dSnapshot>,
     resources: Vec<Resource3dSnapshot>,
@@ -274,6 +286,7 @@ impl Control3dState {
             sink,
             epoch: 1,
             next_generation: 1,
+            next_backing_generation: 1,
             poisoned: false,
             contexts: Vec::new(),
             resources: Vec::new(),
@@ -296,6 +309,7 @@ impl Control3dState {
         Control3dSnapshot {
             epoch: self.epoch,
             next_generation: self.next_generation,
+            next_backing_generation: self.next_backing_generation,
             poisoned: self.poisoned,
             contexts,
             resources,
@@ -303,6 +317,9 @@ impl Control3dState {
             gpu_bytes: self.gpu_bytes,
             backing_bytes: self.backing_bytes,
         }
+    }
+    pub(crate) fn poison(&mut self) {
+        self.poisoned = true;
     }
     fn send(&mut self, operation: Control3dOperation) -> Result<(), Control3dError> {
         let result = self.sink.apply(&Control3dEvent {
@@ -372,7 +389,7 @@ impl Control3dState {
         if self.poisoned {
             return Err(Control3dError::BridgePoisoned);
         }
-        if header.flags != 0 || header.ring_idx != 0 || header.padding != [0; 3] {
+        if header.flags & !p::FLAG_FENCE != 0 || header.ring_idx != 0 || header.padding != [0; 3] {
             return Err(Control3dError::InvalidParameter);
         }
         let context_command = matches!(
@@ -501,6 +518,7 @@ impl Control3dState {
                     identity: resource,
                     metadata,
                     backing: None,
+                    backing_generation: None,
                 });
                 self.next_generation += 1;
                 self.logical_bytes += logical;
@@ -521,8 +539,14 @@ impl Control3dState {
                     if self.resources[index].backing.is_none() {
                         return Err(Control3dError::InvalidParameter);
                     }
-                    self.send(Control3dOperation::DetachBacking { resource })?;
+                    self.send(Control3dOperation::DetachBacking {
+                        resource,
+                        backing_generation: self.resources[index]
+                            .backing_generation
+                            .expect("attached generation"),
+                    })?;
                     self.resources[index].backing = None;
+                    self.resources[index].backing_generation = None;
                 } else {
                     let (logical, gpu) = self.resources[index].metadata.sizes()?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
@@ -550,6 +574,9 @@ impl Control3dState {
         if self.resources[index].backing.is_some() {
             return Err(Control3dError::InvalidParameter);
         }
+        self.next_backing_generation
+            .checked_add(1)
+            .ok_or(Control3dError::OutOfMemory)?;
         let count = word(&bytes, 28) as usize;
         if count == 0
             || count > MAX_BACKING_ENTRIES
@@ -603,8 +630,11 @@ impl Control3dState {
         self.send(Control3dOperation::AttachBacking {
             resource: self.resources[index].identity,
             segments,
+            backing_generation: self.next_backing_generation,
         })?;
         self.resources[index].backing = Some(entries);
+        self.resources[index].backing_generation = Some(self.next_backing_generation);
+        self.next_backing_generation += 1;
         self.backing_bytes += total;
         Ok(())
     }

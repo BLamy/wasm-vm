@@ -1853,3 +1853,7 @@ verify-E6-T11a:
 .PHONY: verify-E6-T11b1
 verify-E6-T11b1:
 	bash tools/verify-virgl-async-jobs.sh
+
+.PHONY: verify-E6-T11b2
+verify-E6-T11b2:
+	bash tools/verify-virgl-submit.sh

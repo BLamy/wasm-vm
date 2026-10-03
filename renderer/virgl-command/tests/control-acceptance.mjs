@@ -276,7 +276,8 @@ export async function runBrowserAcceptance({ WasmVirglControlProof, createVirglC
 
     // Structural guest attacks share the actual queue and recover with valid commands.
     for (const opcode of [0x205, 0x206, 0x207, 0x108, 0x109]) unchanged('later-command-disabled', header(opcode, 0, 32), UNSPEC);
-    for (const [offset, value] of [[24, 65], [28, 1], [4, 1], [20, 1], [21, 1]]) { const bytes = context(2); bytes[offset] = value; unchanged(`invalid-context-field-${offset}`, bytes, BAD_PARAMETER); }
+    // FENCE is supported by the ordered completion layer; INFO_RING_IDX remains unsupported.
+    for (const [offset, value] of [[24, 65], [28, 1], [4, 2], [20, 1], [21, 1]]) { const bytes = context(2); bytes[offset] = value; unchanged(`invalid-context-field-${offset}`, bytes, BAD_PARAMETER); }
     for (const length of [24, 25, 31, 32, 95]) unchanged(`short-context-${length}`, context(2).slice(0, length), BAD_PARAMETER);
     for (let capacity = 1; capacity < 24; capacity++) {
       const before = hex(q.vm.inspect().canonicalBytes), calls = events.length, result = q.submit(context(2), [96], [capacity]);

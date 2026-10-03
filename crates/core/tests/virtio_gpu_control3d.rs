@@ -479,7 +479,8 @@ fn control3d_packet_boundaries_metadata_and_error_recovery() {
         if offset == 24 {
             put32(&mut bytes, offset, 65);
         } else {
-            bytes[offset] = 1;
+            // FLAG_FENCE is supported by the ordered-completion slice; bit 1 is not.
+            bytes[offset] = if offset == 4 { 2 } else { 1 };
         }
         q.unchanged("invalid-context-fields", bytes, INVALID_PARAMETER);
     }
