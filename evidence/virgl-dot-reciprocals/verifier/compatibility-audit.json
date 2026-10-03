@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "source": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-dot-reciprocals/worker/component-regression",
+  "baselineSha256": "f7a06c2b645275543ee25324646bf79b48fb62a42f528ec396d728be6c891267",
+  "streamBytes": 1195201,
+  "streamSha256": "38b9454cd930b0a62c23f54f8c798e9ac2152bbe3ec430be40abb85d3bbddfbd",
+  "cases": 2083,
+  "pairs": 162,
+  "anchors": [
+    12,
+    10
+  ],
+  "exactStats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 2083,
+    "pairs": 162,
+    "calls": 316282,
+    "standaloneRecoveries": 164916,
+    "pairRecoveries": 137430,
+    "truncations": 7240,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "maxSingleResultBytes": 54603,
+    "maxPairResultBytes": 107416
+  },
+  "mutations": [
+    {
+      "attack": "rename-case",
+      "status": "rejected",
+      "reason": "exact input/outcome binding"
+    },
+    {
+      "attack": "change-migration-transform",
+      "status": "rejected",
+      "reason": "native migration claims independently reconstructed"
+    },
+    {
+      "attack": "change-input-and-rehash",
+      "status": "rejected",
+      "reason": "exact input/outcome binding"
+    },
+    {
+      "attack": "change-full-result",
+      "status": "rejected",
+      "reason": "every prior full result is byte-identical; only two input/name substitutions"
+    },
+    {
+      "attack": "change-anchor",
+      "status": "rejected",
+      "reason": "complete ordered recovery anchors independently reconstructed"
+    },
+    {
+      "attack": "change-seed",
+      "status": "rejected",
+      "reason": "actual unchanged sanitizer and varied mutation policy"
+    },
+    {
+      "attack": "change-log-digest",
+      "status": "rejected",
+      "reason": "actual complete sanitizer transcript digest"
+    },
+    {
+      "attack": "claim-historical-full-gate",
+      "status": "rejected",
+      "reason": "compatibility run is explicitly distinct from the unmodified E5 full gate"
+    },
+    {
+      "attack": "remove-case",
+      "status": "rejected",
+      "reason": "complete unique shared inputs"
+    },
+    {
+      "attack": "change-stream-and-rehash",
+      "status": "rejected",
+      "reason": "every native stream byte independently reconstructed"
+    },
+    {
+      "attack": "change-log-and-rehash",
+      "status": "rejected",
+      "reason": "all actual originals/cases/pairs and every seed recorded once in order"
+    }
+  ],
+  "reportSha256": "92ab6bbde8d57cb46469ed5586908d430063a303119bc38f1b385cd45239af4f",
+  "exactFrozenHeadValidation": "72a8695ba92d734a6bead0c42ead3089d8611806"
+}

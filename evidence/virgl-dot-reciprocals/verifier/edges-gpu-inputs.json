@@ -1,0 +1,2192 @@
+{
+  "runtimeSourceDigests": {
+    "renderer/virgl-shader/bridge.c": "7a2e7ab3256783532b05a4a5c53f7799ec691a77b01b777f501c5e1d127c9a9e",
+    "renderer/virgl-shader/raw_bits.c": "78582c4f13970bbefd7d3c38a8e3f1d71ab69421d72240dd09af8f6a9159d178",
+    "renderer/virgl-shader/raw_bits.h": "37e0f0f58ed0f651556f52c7a14faa93f8917bbdfc30cbccee10497c53bf0709",
+    "renderer/virgl-shader/bridge.h": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+  },
+  "librarySha256": "83b6e399aa53e4ed5896e1d16d1e65dd0d3cdbb7ccd35ddeb8dfe0681c2b9906",
+  "label": "edges",
+  "programs": [
+    {
+      "name": "RCP-edge-alias-w",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL TEMP[0..1]\nDCL CONST[0]\nIMM[0] UINT32 {255, 15, 1056964608, 1065353216}\nMOV TEMP[0], IN[1]\nRCP TEMP[0].w, TEMP[0].xyzw\nMOV OUT[1], TEMP[0]\nUSHR TEMP[1], TEMP[0], CONST[0].xxxx\nAND TEMP[1], TEMP[1], IMM[0].xxxx\nSHL TEMP[1], TEMP[1], IMM[0].yyyy\nOR TEMP[1], TEMP[1], IMM[0].zzzz\nMOV OUT[2], TEMP[1]\nMOV OUT[0], IN[0]\nEND\n",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((floatBitsToUint(in_1.x)), (floatBitsToUint(in_1.y)), (floatBitsToUint(in_1.z)), (floatBitsToUint(in_1.w)));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_rhs = vec4(1.0 / (in_1.x));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[0].w = raw_rhs.w;\n float_temp[0].w = float_rhs.w;\n float_rhs = vec4(0.0, 0.0, 0.0, (float_temp[0].w));\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), (raw_temp[0].z), (raw_temp[0].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].w = float_rhs.w;\n raw_rhs = uvec4((raw_temp[0].x >> (vsconst0[0].x & 31u)), (raw_temp[0].y >> (vsconst0[0].x & 31u)), (raw_temp[0].z >> (vsconst0[0].x & 31u)), (raw_temp[0].w >> (vsconst0[0].x & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x & 255u), (raw_temp[1].y & 255u), (raw_temp[1].z & 255u), (raw_temp[1].w & 255u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x << (15u & 31u)), (raw_temp[1].y << (15u & 31u)), (raw_temp[1].z << (15u & 31u)), (raw_temp[1].w << (15u & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x | 1056964608u), (raw_temp[1].y | 1056964608u), (raw_temp[1].z | 1056964608u), (raw_temp[1].w | 1056964608u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x), (raw_temp[1].y), (raw_temp[1].z), (raw_temp[1].w));\n raw_out[2].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = in_1.x;\n vso_g0.y = in_1.y;\n vso_g0.z = in_1.z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = uintBitsToFloat(raw_out[2].x);\n vso_g1.y = uintBitsToFloat(raw_out[2].y);\n vso_g1.z = uintBitsToFloat(raw_out[2].z);\n vso_g1.w = uintBitsToFloat(raw_out[2].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v6",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "vectors": [
+        {
+          "inputs": [
+            [
+              1.1754943508222875e-38,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              7.888609052210118e-31,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              5.960464477539063e-08,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.5,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0000001192092896,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              2.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "2",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.2676506002282294e+30,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              8.507059173023462e+37,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            }
+          ]
+        }
+      ],
+      "mask": "w"
+    },
+    {
+      "name": "RCP-edge-alias-xyzw",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL TEMP[0..1]\nDCL CONST[0]\nIMM[0] UINT32 {255, 15, 1056964608, 1065353216}\nMOV TEMP[0], IN[1]\nRCP TEMP[0], TEMP[0].xyzw\nMOV OUT[1], TEMP[0]\nUSHR TEMP[1], TEMP[0], CONST[0].xxxx\nAND TEMP[1], TEMP[1], IMM[0].xxxx\nSHL TEMP[1], TEMP[1], IMM[0].yyyy\nOR TEMP[1], TEMP[1], IMM[0].zzzz\nMOV OUT[2], TEMP[1]\nMOV OUT[0], IN[0]\nEND\n",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((floatBitsToUint(in_1.x)), (floatBitsToUint(in_1.y)), (floatBitsToUint(in_1.z)), (floatBitsToUint(in_1.w)));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_rhs = vec4(1.0 / (in_1.x));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[0].x), (float_temp[0].y), (float_temp[0].z), (float_temp[0].w));\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), (raw_temp[0].z), (raw_temp[0].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[0].x >> (vsconst0[0].x & 31u)), (raw_temp[0].y >> (vsconst0[0].x & 31u)), (raw_temp[0].z >> (vsconst0[0].x & 31u)), (raw_temp[0].w >> (vsconst0[0].x & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x & 255u), (raw_temp[1].y & 255u), (raw_temp[1].z & 255u), (raw_temp[1].w & 255u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x << (15u & 31u)), (raw_temp[1].y << (15u & 31u)), (raw_temp[1].z << (15u & 31u)), (raw_temp[1].w << (15u & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x | 1056964608u), (raw_temp[1].y | 1056964608u), (raw_temp[1].z | 1056964608u), (raw_temp[1].w | 1056964608u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x), (raw_temp[1].y), (raw_temp[1].z), (raw_temp[1].w));\n raw_out[2].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = uintBitsToFloat(raw_out[2].x);\n vso_g1.y = uintBitsToFloat(raw_out[2].y);\n vso_g1.z = uintBitsToFloat(raw_out[2].z);\n vso_g1.w = uintBitsToFloat(raw_out[2].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v6",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "vectors": [
+        {
+          "inputs": [
+            [
+              1.1754943508222875e-38,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              7.888609052210118e-31,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              5.960464477539063e-08,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.5,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0000001192092896,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              2.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "2",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.2676506002282294e+30,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              8.507059173023462e+37,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rcp",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rcp",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            }
+          ]
+        }
+      ],
+      "mask": "xyzw"
+    },
+    {
+      "name": "RSQ-edge-alias-w",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL TEMP[0..1]\nDCL CONST[0]\nIMM[0] UINT32 {255, 15, 1056964608, 1065353216}\nMOV TEMP[0], IN[1]\nRSQ TEMP[0].w, TEMP[0].xyzw\nMOV OUT[1], TEMP[0]\nUSHR TEMP[1], TEMP[0], CONST[0].xxxx\nAND TEMP[1], TEMP[1], IMM[0].xxxx\nSHL TEMP[1], TEMP[1], IMM[0].yyyy\nOR TEMP[1], TEMP[1], IMM[0].zzzz\nMOV OUT[2], TEMP[1]\nMOV OUT[0], IN[0]\nEND\n",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((floatBitsToUint(in_1.x)), (floatBitsToUint(in_1.y)), (floatBitsToUint(in_1.z)), (floatBitsToUint(in_1.w)));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_rhs = vec4(inversesqrt(in_1.x));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[0].w = raw_rhs.w;\n float_temp[0].w = float_rhs.w;\n float_rhs = vec4(0.0, 0.0, 0.0, (float_temp[0].w));\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), (raw_temp[0].z), (raw_temp[0].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].w = float_rhs.w;\n raw_rhs = uvec4((raw_temp[0].x >> (vsconst0[0].x & 31u)), (raw_temp[0].y >> (vsconst0[0].x & 31u)), (raw_temp[0].z >> (vsconst0[0].x & 31u)), (raw_temp[0].w >> (vsconst0[0].x & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x & 255u), (raw_temp[1].y & 255u), (raw_temp[1].z & 255u), (raw_temp[1].w & 255u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x << (15u & 31u)), (raw_temp[1].y << (15u & 31u)), (raw_temp[1].z << (15u & 31u)), (raw_temp[1].w << (15u & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x | 1056964608u), (raw_temp[1].y | 1056964608u), (raw_temp[1].z | 1056964608u), (raw_temp[1].w | 1056964608u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x), (raw_temp[1].y), (raw_temp[1].z), (raw_temp[1].w));\n raw_out[2].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = in_1.x;\n vso_g0.y = in_1.y;\n vso_g0.z = in_1.z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = uintBitsToFloat(raw_out[2].x);\n vso_g1.y = uintBitsToFloat(raw_out[2].y);\n vso_g1.z = uintBitsToFloat(raw_out[2].z);\n vso_g1.w = uintBitsToFloat(raw_out[2].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v6",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "vectors": [
+        {
+          "inputs": [
+            [
+              1.1754943508222875e-38,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              7.888609052210118e-31,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              5.960464477539063e-08,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.5,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0000001192092896,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              2.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "2",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.2676506002282294e+30,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              8.507059173023462e+37,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "exact",
+              "q": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "13",
+                "4"
+              ]
+            },
+            {
+              "kind": "exact",
+              "q": [
+                "17",
+                "4"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            }
+          ]
+        }
+      ],
+      "mask": "w"
+    },
+    {
+      "name": "RSQ-edge-alias-xyzw",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL TEMP[0..1]\nDCL CONST[0]\nIMM[0] UINT32 {255, 15, 1056964608, 1065353216}\nMOV TEMP[0], IN[1]\nRSQ TEMP[0], TEMP[0].xyzw\nMOV OUT[1], TEMP[0]\nUSHR TEMP[1], TEMP[0], CONST[0].xxxx\nAND TEMP[1], TEMP[1], IMM[0].xxxx\nSHL TEMP[1], TEMP[1], IMM[0].yyyy\nOR TEMP[1], TEMP[1], IMM[0].zzzz\nMOV OUT[2], TEMP[1]\nMOV OUT[0], IN[0]\nEND\n",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\nsmooth out vec4 vso_g0;\nsmooth out vec4 vso_g1;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n raw_rhs = uvec4((floatBitsToUint(in_1.x)), (floatBitsToUint(in_1.y)), (floatBitsToUint(in_1.z)), (floatBitsToUint(in_1.w)));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_rhs = vec4(inversesqrt(in_1.x));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[0].x), (float_temp[0].y), (float_temp[0].z), (float_temp[0].w));\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), (raw_temp[0].z), (raw_temp[0].w));\n raw_out[1].xyzw = raw_rhs.xyzw;\n float_out[1].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[0].x >> (vsconst0[0].x & 31u)), (raw_temp[0].y >> (vsconst0[0].x & 31u)), (raw_temp[0].z >> (vsconst0[0].x & 31u)), (raw_temp[0].w >> (vsconst0[0].x & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x & 255u), (raw_temp[1].y & 255u), (raw_temp[1].z & 255u), (raw_temp[1].w & 255u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x << (15u & 31u)), (raw_temp[1].y << (15u & 31u)), (raw_temp[1].z << (15u & 31u)), (raw_temp[1].w << (15u & 31u)));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x | 1056964608u), (raw_temp[1].y | 1056964608u), (raw_temp[1].z | 1056964608u), (raw_temp[1].w | 1056964608u));\n raw_temp[1].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((raw_temp[1].x), (raw_temp[1].y), (raw_temp[1].z), (raw_temp[1].w));\n raw_out[2].xyzw = raw_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = float_out[1].z;\n vso_g0.w = float_out[1].w;\n vso_g1.x = uintBitsToFloat(raw_out[2].x);\n vso_g1.y = uintBitsToFloat(raw_out[2].y);\n vso_g1.z = uintBitsToFloat(raw_out[2].z);\n vso_g1.w = uintBitsToFloat(raw_out[2].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v6",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            },
+            {
+              "index": 2,
+              "name": "vso_g1",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 1,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "vectors": [
+        {
+          "inputs": [
+            [
+              1.1754943508222875e-38,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "85070591730234615865843651857942052864"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              7.888609052210118e-31,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1267650600228229401496703205376"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              5.960464477539063e-08,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "16777216"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.5,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              0.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388607",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.0000001192092896,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "8388609",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              2.0,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "2",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "2",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.9999998807907104,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "16777215",
+                "8388608"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              1.2676506002282294e+30,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "1267650600228229401496703205376",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            [
+              8.507059173023462e+37,
+              3.25,
+              4.25,
+              4.75
+            ]
+          ],
+          "expectations": [
+            {
+              "kind": "rsq",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            },
+            {
+              "kind": "rsq",
+              "input": [
+                "85070591730234615865843651857942052864",
+                "1"
+              ]
+            }
+          ]
+        }
+      ],
+      "mask": "xyzw"
+    }
+  ]
+}

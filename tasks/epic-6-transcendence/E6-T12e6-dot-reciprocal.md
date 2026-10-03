@@ -3,7 +3,7 @@ id: E6-T12e6
 epic: 6
 title: Preserve captured dot-product and reciprocal float operations
 priority: 525.0269906
-status: implemented
+status: verified
 depends_on: [E6-T12e5]
 estimate: S
 risk: high
@@ -164,3 +164,94 @@ Wasm: `4287e738fe2653fe43f03aec2bade254855ea6e47f94451e5f3ad16f9adc01e7`.
 Raw compiler coverage output is retained byte-for-byte, including its trailing
 whitespace, rather than formatting recorded tool output.
 
+### 2026-10-03 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Reviewed worker claim `433e7f71dc8aee0dfd71bba15be14e9e25609387` against frozen
+source `cb6726dc68eebecdaf9b848ea846e525003e86c9` and verified E5 parent
+`3adaa72f95fd88b8fefd5caa32d6407df22af1dd`. Predictions were written before the
+corresponding output inspection in
+`evidence/virgl-dot-reciprocals/verifier/predictions.md`. The verifier did not
+implement the compiler or worker harness. This verifies isolated ordinary scalar
+compiler behavior; production negotiation, guest Mesa and MIPS remain outside
+the claim.
+
+- P1/P4/P9 consumed lanes and authority — HELD. Independently built native code
+  passed 4,032 attacks across seven destination masks, all 24 swizzle
+  permutations, three operations and independently missing initialization/raw
+  authority lanes. DP3 consumes post-swizzle xyz; RCP/RSQ consume x, including
+  partial aliased writes. Citation: `verifier/native-audit.json:10`, SHA-256
+  `6a194c2e92589f5391b68d2124a5915c8ee011b1d99b03f8383a518aef7d4cb6`.
+- P2/P3/P9 actual hardware — HELD. Independent Fraction/isqrt oracles checked
+  11,456 values from 2,864 draws, including aliases, negation, poison w,
+  preserved lanes, scalar replication and positive-normal domain edges. An
+  isolated xy-only DP3 mutation caused 1,644 failures; independently corrupted
+  reciprocals caused 3,292. Citation: `verifier/current-gpu-check.json:2`,
+  `edges-gpu-check.json:2`, `sabotage-dot-gpu-check.json:198` and
+  `sabotage-reciprocal-gpu-check.json:198`; each binds its complete raw capture.
+- P5/P6 compatibility and source semantics — HELD. Independent current/parent
+  APIs match all predecessor full results except the two declared DP3
+  admissions. All 162 pairs, four malformed historical RCP/RSQ errors and all
+  19 originals remain exact at 12 accepted / 7 PRECISE rejected. Mesa
+  documentation, interpreter, REPL metadata and source-use analysis support the
+  scalar rule; the older pinned RCP discrepancy is documented. Citation:
+  `verifier/native-audit.json:50750`, `:52696`, `:52700`, `:52797` and
+  `primary-source-notes.md` with primary-source digests.
+- P7 adapter — HELD. The independent 1,195,201-byte VGC5 reconstruction matches
+  2,083 cases, 162 pairs, all originals, 12/10 anchors and four seeds. Eleven
+  mutations of names, transforms, full results, rehashed stream/log bytes,
+  anchors, seeds or provenance were rejected. Citation:
+  `verifier/compatibility-audit.json:2`, `:27`, SHA-256
+  `9fbf75760bcd6830edf2f616b2b3774cf74305936b66d68522f22accdf88ffdd`.
+- P8 coverage/limits — HELD. Independently re-exported LLVM evidence proves all
+  46 added executable runtime lines and both outcomes of all 40 intersecting
+  branch records. Six nonexecutable lines are waived. Final cold counters equal
+  the HELD warm counters after checkout-path normalization. Instruction/IR sizes,
+  limits and fixed 16 MiB Wasm memory remain unchanged. Citation:
+  `verifier/native-recording-audit.json:38`, `:2876`, `cold-audit.json:58`.
+  `verifier/coverage-matrix.md` accounts for all 26 changed source files.
+- P11/P12/P13 oracle and receipt attacks — HELD. All 22 authored reciprocal and
+  texture enclosures pass independent rational/224-bit-isqrt reconstruction.
+  Eight detached evidence mutations are rejected, including coherent wrong
+  words and individually bounded but nonbroadcast lanes. No exact reciprocal
+  bits or unsupported exceptional guarantees are imposed. Final records prove
+  310 exact / 178 bounded words, 72 exceptional observations, 72 joint-consumer
+  draws, 6,144 sampled pixels, 33,728 interface pixels and no GL leaks. Citation:
+  `verifier/frozen-math-audit.json:5`, `worker-browser-audit.json:69` and
+  `cold-audit.json:60`.
+- Coverage finding — RESOLVED. The sole unused browser helper was deleted in
+  cb6726dc. Five affected browser recordings were renewed at that head; all 151
+  remaining functions entered. Earlier evidence remains honestly bound to
+  72a8695, with unchanged runtime findings carried forward. Exact residual
+  defensive/diagnostic/out-of-domain ranges are individually waived in
+  `verifier/harness-coverage-waivers.json`; `incremental-browser-audit.json`
+  checks the source delta and renewed records.
+- P10/P14 final isolation — HELD. The final pristine clone is clean before and
+  after acceptance and the read-only verifier audit. All 205 copied artifacts
+  match the retained clone; all 268 source blobs and 195 receipt records match.
+  Complete native results, stream and transcript equal the HELD run. Final
+  hardware plus four actual GPU faults and the complete E5/C2/predecessor
+  receipts were revalidated without rewriting acceptance. Citation:
+  `verifier/cold-audit.json:2`, `:10`, `:150`, SHA-256
+  `6316ad5105ffc1349328404dc5ec844262390ea1a47b9ae2551e22de5a7ace14`.
+  Final cold receipt SHA-256:
+  `42532735ad1bb140a4b0a5df551d4b9b6c0f4f0f67484d25446f7273c2d108f5`.
+  The final screenshot was visually inspected, SHA-256
+  `89a31f3f97bf316fbdf661cf0789b73c438c4f4dec78fb18d7fe7d23c5511161`.
+
+SUITE: retain the shared scalar native/Wasm fixtures, rational hardware workload,
+four source sabotage controls, explicit E5 adapter checks and
+`make verify-E6-T12e6`. Retain independent verifier attacks, raw GPU captures,
+receipt tamper scripts and digest manifest as audit evidence; no redundant
+runtime test added. Temporary native/sabotage binaries and source checkouts are
+excluded from the verifier commit. No unresolved finding remains.
+
+Verifier commands are preserved in the scripts under
+`evidence/virgl-dot-reciprocals/verifier/`: isolated build and native audit;
+independent GPU input generation, Playwright capture and Fraction/isqrt checks;
+compatibility/mathematical/native-recording/browser audits; final
+`python3 evidence/virgl-dot-reciprocals/verifier/audit-cold.py`.
+After this status change: `python3 tools/check_task_policy.py`, then
+`python3 tools/build_queue.py`. Full verdict and source coverage disposition:
+`verifier/final-review.md` and `verifier/coverage-matrix.md`.
