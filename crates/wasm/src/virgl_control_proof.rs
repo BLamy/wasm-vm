@@ -20,6 +20,8 @@ use wasm_vm_core::platform::{Platform, virt};
 
 const RAM_BYTES: usize = 4 * 1024 * 1024;
 
+mod scanout;
+
 #[wasm_bindgen(inline_js = r#"
 // Do not invoke result accessors or assimilate promises. The Rust sink is synchronous.
 export function invokeVirglControl(callback, event) {
@@ -787,7 +789,13 @@ impl WasmVirglSubmitProof {
             ] {
                 set(&value, key, hex(number)).map_err(js_error)?;
             }
-            set(&value, "context", id(p.context).map_err(js_error)?).map_err(js_error)?;
+            let context = p
+                .context
+                .map(id)
+                .transpose()
+                .map_err(js_error)?
+                .map_or(JsValue::NULL, JsValue::from);
+            set(&value, "context", context).map_err(js_error)?;
             for (key, number) in [
                 ("commandType", p.command_type),
                 ("flags", p.flags),

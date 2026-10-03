@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { loadDrawFixtures } from './virgl-command/draw-fixtures.mjs';
 import { repo, sha256 } from './virgl-command/fixtures.mjs';
 const args = process.argv.slice(2), options = {};
 for (let i = 0; i < args.length; i += 2) {
@@ -14,29 +15,11 @@ for (let i = 0; i < args.length; i += 2) {
   options[args[i].slice(2)] = args[i + 1];
 }
 assert.ok(options.output, '--output required');
-assert.ok(options.sabotage === undefined || options.sabotage === 'skip-context', 'Unknown sabotage');
+assert.ok(options.sabotage === undefined || ['orientation'].includes(options.sabotage), 'Unknown sabotage');
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
-const codePaths = [
-  'Cargo.lock', 'Cargo.toml', 'crates/core/Cargo.toml', 'crates/wasm/Cargo.toml',
-  'crates/core/src/lib.rs', 'crates/core/src/desktop_restore.rs',
-  'crates/core/src/dev/virtio/gpu/mod.rs', 'crates/core/src/dev/virtio/gpu/protocol.rs',
-  'crates/core/src/dev/virtio/gpu/snapshot.rs', 'crates/core/src/dev/virtio/gpu/control3d.rs',
-  'crates/core/tests/virtio_gpu_control3d.rs',
-  'crates/wasm/src/lib.rs', 'crates/wasm/src/virgl_control_proof.rs',
-  'renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/control-README.md',
-  'crates/core/src/dev/virtio/gpu/scanout3d.rs',
-  'crates/wasm/src/virgl_control_proof/scanout.rs',
-  'renderer/virgl-command/scanout.mjs',
-  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/decoder.mjs',
-  'renderer/virgl-command/tests/control-acceptance.mjs', 'renderer/virgl-shader/index.mjs',
-  'renderer/virgl-shader/build/wasm/virgl-shader.mjs', 'renderer/virgl-shader/build/wasm/virgl-shader.wasm',
-  'renderer/virgl-shader/bridge.c', 'renderer/virgl-shader/UPSTREAM.json',
-  'renderer/virgl-shader/build.sh', 'renderer/virgl-shader/verify_sources.py', 'tools/setup-virgl-emsdk.sh',
-  'tools/virgl-command/fixtures.mjs', 'tools/verify-virgl-control.mjs', 'tools/verify-virgl-control.sh',
-  'tools/verify-virgl-default-demo.mjs', 'web/dist/pkg/wasm_vm_wasm_bg.wasm', 'web/dist/sw.js',
-  'tools/virgl-command/control-receipt.py', 'tools/virgl-command/control-cold.py', 'Makefile',
-];
+const { fixtures, sources: inputs } = await loadDrawFixtures();
+const codePaths = JSON.parse(await fs.readFile(path.join(repo, 'tools/virgl-command/scanout-sources.json'), 'utf8'));
 async function collect(directory) {
   for (const entry of await fs.readdir(path.join(repo, directory), { withFileTypes: true })) {
     const filename = `${directory}/${entry.name}`;
@@ -44,18 +27,18 @@ async function collect(directory) {
     else if (/\.(js|wasm)$/.test(entry.name)) codePaths.push(filename);
   }
 }
-await collect('target/virgl-control/pkg');
+await collect('target/virgl-scanout/pkg');
 const html = `<!doctype html><meta charset="utf-8"><title>VirtIO 3D control proof</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1050px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
-<h1>VirtIO 3D context and resource control</h1><p>Real Wasm guest queues → synchronous host bridge → hardware WebGL2 storage</p>
-<p>Isolated proof fixture; production VIRGL and capsets remain disabled.</p><p id="status">Running packet, ownership and failure checks…</p><canvas id="gpu" width="64" height="64"></canvas><pre id="results"></pre>`;
-const report = { schema: 1, task: 'E6-T11a', status: 'running', liveGuest3d: false,
-  boundary: 'actual Wasm control queue and hardware resource lifecycle; no SUBMIT, scanout or production acceleration',
+<h1>VirtIO retained scanout and actual canvas presentation</h1><p>Real Wasm guest queues → asynchronous host bridge → hardware WebGL2 storage</p>
+<p>Isolated proof fixture; production VIRGL and capsets remain disabled.</p><p id="status">Running packet, ownership and failure checks…</p><canvas id="gpu" width="64" height="64"></canvas><div id="draws" style="display:flex;flex-wrap:wrap"></div><pre id="results"></pre>`;
+const report = { schema: 1, task: 'E6-T11c', status: 'running', liveGuest3d: false,
+  boundary: 'actual Wasm queues, retained PBO captures and built canvas presentation; production acceleration remains disabled',
   startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)],
   gitHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
   trackedChanges: execFileSync('git', ['status', '--porcelain', '--', ...codePaths], { cwd: repo, encoding: 'utf8' }).trim().split('\n').filter(Boolean),
   host: { platform: process.platform, architecture: process.arch, release: os.release(), node: process.version },
-  sources: [], servedFiles: [], browserErrors: { console: [], page: [], requests: [] } };
+  inputs, fixturesSha256: sha256(JSON.stringify(fixtures)), sources: [], servedFiles: [], browserErrors: { console: [], page: [], requests: [] } };
 const sources = new Map(), served = new Map();
 let browser, page, server;
 try {
@@ -65,14 +48,16 @@ try {
   }
   const servedSources = new Map(sources);
   if (options.sabotage) {
-    const filename = 'renderer/virgl-command/control-bridge.mjs';
-    const before = sources.get(filename).toString(), target = 'try { unwrap(renderer.createContext(context.id)); }';
-    assert.equal(before.split(target).length, 2, 'Unique context creation sabotage anchor');
-    const after = Buffer.from(before.replace(target, 'try { /* sabotage: skip renderer context */ }'));
+    const filename = 'renderer/virgl-command/scanout.mjs';
+    const before = sources.get(filename).toString();
+    const target = 'const sourceRow = height - 1 - row;';
+    assert.equal(before.split(target).length, 2, 'Unique source omission anchor');
+    const replacement = 'const sourceRow = row;';
+    const after = Buffer.from(before.replace(target, replacement));
     servedSources.set(filename, after);
     report.sabotage = { mode: options.sabotage, path: filename, originalSha256: sha256(sources.get(filename)), servedSha256: sha256(after) };
   }
-  const endpoints = new Map([['/', { bytes: Buffer.from(html), type: 'text/html' }],
+  const endpoints = new Map([['/', { bytes: Buffer.from(html), type: 'text/html' }], ['/fixtures.json', {bytes: Buffer.from(JSON.stringify(fixtures)),type:'application/json'}],
     ...codePaths.filter((file) => /\.(m?js|wasm)$/.test(file)).map((filename) => [`/${filename}`,
       { bytes: servedSources.get(filename), type: filename.endsWith('.wasm') ? 'application/wasm' : 'text/javascript' }])]);
   server = createServer((request, response) => {
@@ -109,11 +94,12 @@ try {
   try {
     report.browserResult = await Promise.race([page.evaluate(async () => {
       try {
-        const wasm = await import('/target/virgl-control/pkg/wasm_vm_wasm.js'); await wasm.default();
-        const { createVirglControlBridge } = await import('/renderer/virgl-command/control-bridge.mjs');
-        const { runBrowserAcceptance } = await import('/renderer/virgl-command/tests/control-acceptance.mjs');
-        const result = await runBrowserAcceptance({ WasmVirglControlProof: wasm.WasmVirglControlProof, createVirglControlBridge });
-        document.querySelector('#status').textContent = 'Passed: guest queue responses, actual GPU allocation, ownership and rollback';
+        const wasm = await import('/target/virgl-scanout/pkg/wasm_vm_wasm.js'); const exports = await wasm.default();
+        const { createVirglScanoutBridge } = await import('/renderer/virgl-command/control-bridge.mjs');
+        const { createVirglScanoutPresenter } = await import('/web/dist/src/sink/virgl-scanout-presenter.js');
+        const { runBrowserAcceptance } = await import('/renderer/virgl-command/tests/scanout-acceptance.mjs');
+        const result = await runBrowserAcceptance({ WasmVirglScanoutProof: wasm.WasmVirglScanoutProof, createVirglScanoutBridge, createVirglScanoutPresenter, fixtures: await fetch('/fixtures.json').then(r=>r.json()), wasmMemory: exports.memory });
+        document.querySelector('#status').textContent = 'Passed: retained GPU captures and separately acknowledged actual canvas drawing';
         document.querySelector('#results').textContent = JSON.stringify(result.summary ?? result, null, 2);
         return { status: 'passed', result };
       } catch (error) {
@@ -121,17 +107,17 @@ try {
         document.querySelector('#results').textContent = error.stack;
         return { status: 'failed', error: { message: error.message, stack: error.stack } };
       }
-    }), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('browser control proof exceeded 180 seconds')), 180000); })]);
+    }), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('browser submit proof exceeded 180 seconds')), 180000); })]);
   } finally { clearTimeout(timer); }
   report.browserMs = performance.now() - begin;
   const coverage = await coverageSession.send('Profiler.takePreciseCoverage');
-  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs'].map((filename) => {
+  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs','renderer/virgl-command/scanout.mjs','web/dist/src/sink/virgl-scanout-presenter.js'].map((filename) => {
     const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
     assert.equal(matches.length, 1, `coverage must name served runtime ${filename}`);
     return { source: filename, sha256: sha256(servedSources.get(filename)), coverage: matches[0] };
   });
   // Preserve callback marshaller coverage from wasm-bindgen inline-JS snippets as well.
-  for (const filename of codePaths.filter((file) => file.startsWith('target/virgl-control/pkg/snippets/') && file.endsWith('.js'))) {
+  for (const filename of codePaths.filter((file) => file.startsWith('target/virgl-scanout/pkg/snippets/') && file.endsWith('.js'))) {
     const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
     if (matches.length) scripts.push({ source: filename, sha256: sha256(servedSources.get(filename)), coverage: matches[0] });
   }
@@ -147,7 +133,7 @@ try {
   report.screenshot = { path: 'browser.png', sha256: sha256(await fs.readFile(path.join(output, 'browser.png'))) };
   for (const source of report.sources) assert.equal(sha256(await fs.readFile(path.join(repo, source.path))), source.sha256, `source changed during proof ${source.path}`);
   report.status = 'passed';
-  console.log(`Hardware Wasm control proof passed (${report.browserMs.toFixed(0)} ms)`);
+  console.log(`Hardware Wasm retained scanout proof passed (${report.browserMs.toFixed(0)} ms)`);
 } catch (error) {
   report.status = 'failed'; report.failure = { message: error.message, stack: error.stack }; process.exitCode = 1;
   console.error(error.stack);

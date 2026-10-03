@@ -22,7 +22,7 @@ and explicit failure behavior; production negotiation is still disabled.
 ## Presentation completion and bounded profile
 
 The initial compatible path uses scanout 0 and existing single-level RGBA8 2D
-renderer textures. SET_SCANOUT accepts a whole-resource rectangle; unsupported
+renderer textures. Renderer SET_SCANOUT accepts a whole-resource rectangle; unsupported
 formats, cropped bindings and invalid dimensions fail before changing the
 previous binding. Ordinary 2D scanout keeps its existing contract.
 
@@ -35,6 +35,9 @@ A successful enqueue alone is not evidence that pixels reached the canvas.
 
 The scanout binding retains the accepted resource generation independently of its
 public ID and context membership. Rendering membership checks stay unchanged.
+New renderer-backed FLUSH requests after public unref are rejected. Reusing the numeric ID
+requires a new successful SET_SCANOUT; it cannot redirect an accepted capture or
+frame to the replacement resource.
 The presenter keeps at most one pending frame, routes 2D and 3D through the same
 display owner, and rejects stale generations after rebinding or reset. Captures
 use bounded PBO/fence staging; already issued snapshots have explicit lifetime

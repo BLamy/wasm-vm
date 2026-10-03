@@ -177,9 +177,10 @@ export const ROADMAP = [
   {
     epic: "E6",
     title: "Transcendence",
-    status: "pending",
-    blurb: "Multi-hart SMP: HSM hart lifecycle, round-robin boot, RVWMO memory-model audit.",
+    status: "partial",
+    blurb: "Guest GPU offload in isolated fixtures; multi-hart SMP and live accelerated graphics remain in progress.",
     caps: [
+      { name: "Guest GPU offload", status: "partial", evidence: "Isolated command, DMA and retained scanout fixtures (E6-T11); production acceleration disabled" },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },
       { name: "SMP kernel boot (round-robin)", status: "pending" },
       { name: "RVWMO / wasm memory-model audit", status: "pending" },

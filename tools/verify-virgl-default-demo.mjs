@@ -10,7 +10,7 @@ import { repo, sha256 } from './virgl-command/fixtures.mjs';
 assert.equal(process.argv[2], '--output'); assert.ok(process.argv[3]);
 assert.ok(process.argv.length === 4 || (process.argv.length === 6 && process.argv[4] === '--task'));
 const task = process.argv[5] ?? 'E6-T11a';
-assert.ok(['E6-T11a', 'E6-T11b2'].includes(task));
+assert.ok(['E6-T11a', 'E6-T11b2', 'E6-T11c'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
 const report = { schema: 1, task, status: 'running',
@@ -45,7 +45,8 @@ try {
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
   report.proofExportAbsent = await page.evaluate(async () => {
     const module = await import('./pkg/wasm_vm_wasm.js');
-    return !Object.hasOwn(module, 'WasmVirglControlProof') && !Object.hasOwn(module, 'WasmVirglSubmitProof');
+    return !Object.hasOwn(module, 'WasmVirglControlProof') && !Object.hasOwn(module, 'WasmVirglSubmitProof')
+      && !Object.hasOwn(module, 'WasmVirglScanoutProof');
   });
   assert.equal(report.proofExportAbsent, true, 'ordinary build must omit proof surface');
   await page.locator('#suite-run').click();
@@ -57,6 +58,10 @@ try {
   const capability = page.locator('.cap', { hasText: 'Scalar memory across virtual-page boundaries' });
   report.roadmapPip = await capability.locator('.cap-pip').getAttribute('class');
   assert.match(report.roadmapPip, /\blive\b/);
+  const graphics = page.locator('.cap', { hasText: 'Guest GPU offload' });
+  report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
+  assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
+  assert.match(await graphics.textContent(), /production acceleration disabled/);
   assert.deepEqual(report.errors, []);
   report.servedWasmSha256 = served.get('/pkg/wasm_vm_wasm_bg.wasm')?.sha256;
   assert.equal(report.servedWasmSha256, sha256(await fs.readFile(path.join(root, 'pkg/wasm_vm_wasm_bg.wasm'))));

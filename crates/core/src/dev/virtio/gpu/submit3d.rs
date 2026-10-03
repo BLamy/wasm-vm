@@ -7,6 +7,7 @@ use sha2::{Digest, Sha256};
 use super::{
     control3d::{BackingEntry, Control3dError, Control3dId, Control3dSnapshot, Resource3dMetadata},
     protocol::CtrlHeader,
+    scanout3d::{Scanout3dEvent, Scanout3dRequest},
 };
 
 pub const MAX_SUBMISSION_BYTES: usize = 262_144;
@@ -95,6 +96,14 @@ pub struct Submit3dCompletion {
 pub trait Submit3dSink {
     fn begin_job(&mut self, request: &Submit3dRequest) -> Result<(), Control3dError>;
     fn cancel_job(&mut self, key: Submit3dKey) -> Result<(), Control3dError>;
+    /// Failure-atomic global display binding, enabled only by the scanout constructor.
+    fn bind_scanout(&mut self, _event: &Scanout3dEvent) -> Result<(), Control3dError> {
+        Err(Control3dError::Unspecified)
+    }
+    /// GPU capture plus bounded presenter acceptance, not physical presentation.
+    fn begin_scanout(&mut self, _request: &Scanout3dRequest) -> Result<(), Control3dError> {
+        Err(Control3dError::Unspecified)
+    }
 }
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Submit3dMailboxSnapshot {
@@ -107,6 +116,7 @@ struct MailboxState {
     active: Option<Submit3dKey>,
     last_exchange: u64,
     completion: Option<Submit3dCompletion>,
+    scanout: bool,
 }
 #[derive(Clone, Default)]
 pub struct Submit3dMailbox(Rc<RefCell<MailboxState>>);
@@ -132,7 +142,8 @@ impl Submit3dMailbox {
         if completion.outcome == Err(Control3dError::BridgePoisoned) && !completion.gpu_complete {
             completion.exchange_sequence = state.last_exchange;
         }
-        if completion.exchange_sequence != state.last_exchange
+        if (state.scanout && (completion.applied_commands != 0 || completion.draws != 0))
+            || completion.exchange_sequence != state.last_exchange
             || completion.applied_commands > 4096
             || completion.draws > 64
             || (!completion.gpu_complete
@@ -143,9 +154,10 @@ impl Submit3dMailbox {
         state.completion = Some(completion);
         Ok(())
     }
-    fn arm(&self, key: Submit3dKey) {
+    fn arm(&self, key: Submit3dKey, scanout: bool) {
         *self.0.borrow_mut() = MailboxState {
             active: Some(key),
+            scanout,
             ..MailboxState::default()
         };
     }
@@ -170,7 +182,7 @@ pub struct Submit3dCounters {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PendingSubmit3dSnapshot {
     pub key: Submit3dKey,
-    pub context: Control3dId,
+    pub context: Option<Control3dId>,
     pub command_type: u32,
     pub fence_id: u64,
     pub flags: u32,
@@ -188,7 +200,7 @@ pub struct Submit3dSnapshot {
 impl Submit3dSnapshot {
     pub fn canonical_bytes(&self) -> Vec<u8> {
         let mut out = Vec::new();
-        out.extend_from_slice(b"WV3DSUB1");
+        out.extend_from_slice(b"WV3DSUB2");
         let c = self.counters;
         for v in [
             self.next_sequence,
@@ -210,14 +222,20 @@ impl Submit3dSnapshot {
             for v in [
                 p.key.epoch,
                 p.key.sequence,
-                p.context.generation,
+                p.context.map_or(0, |c| c.generation),
                 p.fence_id,
                 p.byte_length,
                 p.last_exchange,
             ] {
                 out.extend_from_slice(&v.to_le_bytes());
             }
-            for v in [p.context.id, p.command_type, p.flags, p.backing_entries] {
+            out.push(u8::from(p.context.is_some()));
+            for v in [
+                p.context.map_or(0, |c| c.id),
+                p.command_type,
+                p.flags,
+                p.backing_entries,
+            ] {
                 out.extend_from_slice(&v.to_le_bytes());
             }
             out.push(u8::from(p.completion_ready));
@@ -234,8 +252,41 @@ impl Submit3dSnapshot {
     }
 }
 
+pub(crate) enum PendingRequest {
+    Render(Submit3dRequest),
+    Scanout(Scanout3dRequest),
+}
+impl PendingRequest {
+    pub fn key(&self) -> Submit3dKey {
+        match self {
+            Self::Render(r) => r.key,
+            Self::Scanout(r) => r.key,
+        }
+    }
+    pub fn header(&self) -> CtrlHeader {
+        match self {
+            Self::Render(r) => r.header,
+            Self::Scanout(r) => r.header,
+        }
+    }
+    fn context(&self) -> Option<Control3dId> {
+        match self {
+            Self::Render(r) => Some(r.context),
+            Self::Scanout(_) => None,
+        }
+    }
+    fn byte_length(&self) -> u64 {
+        match self {
+            Self::Render(r) => match &r.kind {
+                Submit3dKind::Commands(b) => b.len() as u64,
+                Submit3dKind::Transfer(_) => 72,
+            },
+            Self::Scanout(_) => 48,
+        }
+    }
+}
 pub(crate) struct PendingSubmit3d {
-    pub request: Submit3dRequest,
+    pub request: PendingRequest,
     pub chain: crate::dev::virtio::queue::DescriptorChain,
     pub queue_generation: u64,
     pub accepted: Control3dSnapshot,
@@ -266,15 +317,12 @@ impl Submit3dState {
             next_sequence: self.next_sequence,
             counters: self.counters,
             pending: self.pending.as_ref().map(|p| PendingSubmit3dSnapshot {
-                key: p.request.key,
-                context: p.request.context,
-                command_type: p.request.header.ty,
-                fence_id: p.request.header.fence_id,
-                flags: p.request.header.flags,
-                byte_length: match &p.request.kind {
-                    Submit3dKind::Commands(bytes) => bytes.len() as u64,
-                    Submit3dKind::Transfer(_) => 72,
-                },
+                key: p.request.key(),
+                context: p.request.context(),
+                command_type: p.request.header().ty,
+                fence_id: p.request.header().fence_id,
+                flags: p.request.header().flags,
+                byte_length: p.request.byte_length(),
                 backing_entries: p
                     .accepted
                     .resources
@@ -296,24 +344,30 @@ impl Submit3dState {
         })
     }
     pub fn begin(&mut self, pending: PendingSubmit3d) {
-        let key = pending.request.key;
+        let key = pending.request.key();
         self.counters.admitted = self.counters.admitted.saturating_add(1);
-        if pending.request.header.flags & super::protocol::FLAG_FENCE != 0 {
+        if pending.request.header().flags & super::protocol::FLAG_FENCE != 0 {
             self.counters.fenced = self.counters.fenced.saturating_add(1);
         }
-        if let Submit3dKind::Commands(bytes) = &pending.request.kind {
+        if let PendingRequest::Render(Submit3dRequest {
+            kind: Submit3dKind::Commands(bytes),
+            ..
+        }) = &pending.request
+        {
             self.counters.submission_bytes = self
                 .counters
                 .submission_bytes
                 .saturating_add(bytes.len() as u64);
         }
         self.next_sequence += 1;
-        self.mailbox.arm(key);
+        self.mailbox
+            .arm(key, matches!(pending.request, PendingRequest::Scanout(_)));
         self.pending = Some(pending);
-        if let Err(error) = self
-            .sink
-            .begin_job(&self.pending.as_ref().expect("installed pending").request)
-        {
+        let result = match &self.pending.as_ref().expect("installed pending").request {
+            PendingRequest::Render(r) => self.sink.begin_job(r),
+            PendingRequest::Scanout(r) => self.sink.begin_scanout(r),
+        };
+        if let Err(error) = result {
             // A contradictory post plus callback failure is uncertain host state.
             let already_posted = self.mailbox.inspect().ready;
             if already_posted {
@@ -334,11 +388,14 @@ impl Submit3dState {
             });
         }
     }
+    pub fn bind_scanout(&mut self, event: &Scanout3dEvent) -> Result<(), Control3dError> {
+        self.sink.bind_scanout(event)
+    }
     pub fn revoke(&mut self) {
         self.mailbox.revoke();
         if let Some(pending) = self.pending.take() {
             self.counters.cancelled = self.counters.cancelled.saturating_add(1);
-            let _ = self.sink.cancel_job(pending.request.key);
+            let _ = self.sink.cancel_job(pending.request.key());
         }
     }
     pub fn take_ready(&mut self) -> Option<(PendingSubmit3d, Submit3dCompletion)> {
@@ -377,11 +434,15 @@ impl Submit3dState {
             .pending
             .as_ref()
             .ok_or(Control3dError::InvalidParameter)?;
+        // Global scanout work never receives context or backing DMA authority.
+        let PendingRequest::Render(request) = &p.request else {
+            return Err(Control3dError::InvalidParameter);
+        };
         let m = self.mailbox.inspect();
         if current.poisoned {
             return Err(Control3dError::BridgePoisoned);
         }
-        if p.request.key != exchange.key
+        if request.key != exchange.key
             || m.active != Some(exchange.key)
             || m.ready
             || exchange.exchange_sequence != m.last_exchange + 1
@@ -391,7 +452,7 @@ impl Submit3dState {
         }
         if current.epoch != exchange.key.epoch
             || !current.contexts.iter().any(|c| {
-                c.identity == p.request.context && c.resources.contains(&exchange.backing.resource)
+                c.identity == request.context && c.resources.contains(&exchange.backing.resource)
             })
         {
             return Err(Control3dError::InvalidContextId);
@@ -595,13 +656,13 @@ pub(crate) fn admit(
         _ => return Err(Control3dError::Unspecified),
     };
     Ok(PendingSubmit3d {
-        request: Submit3dRequest {
+        request: PendingRequest::Render(Submit3dRequest {
             key: state.next_key(control.epoch)?,
             context: context.identity,
             header,
             resources,
             kind,
-        },
+        }),
         chain,
         queue_generation: queue_generation.ok_or(Control3dError::BridgePoisoned)?,
         accepted: control,
