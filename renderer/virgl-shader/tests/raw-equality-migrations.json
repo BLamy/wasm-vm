@@ -1,0 +1,144 @@
+{
+  "schema": "raw-equality-eight-migrations-v1",
+  "heldHead": "80813f4e45202cec3769d51b4f7d2b421034df01",
+  "baselinePath": "evidence/virgl-bounded-loops/cold-clone/acceptance/native/native-report.json",
+  "baselineSha256": "86702b34e542fa397cd255fd037db200a35d89cf21573fb57664b5c7ca678e57",
+  "entries": [
+    {
+      "group": "integerCases",
+      "name": "still-unsupported-FSEQ-vertex",
+      "stage": "vertex",
+      "inputSha256": "298bd485cd86416e1ab942186ecf9ca05e2564196a06b46b7d0dfc898cde6f81",
+      "bytes": 533,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "integerCases",
+      "name": "still-unsupported-FSNE-vertex",
+      "stage": "vertex",
+      "inputSha256": "077825a0dea5c6754da2e96e398b6cd52d288fb1880920394d8cdfacec03fd9f",
+      "bytes": 533,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "integerCases",
+      "name": "still-unsupported-FSEQ-fragment",
+      "stage": "fragment",
+      "inputSha256": "a66bb0d8d7fc9bd6be7019f69caac93f5e367565213641d074da8ae56038c0b9",
+      "bytes": 564,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "integerCases",
+      "name": "still-unsupported-FSNE-fragment",
+      "stage": "fragment",
+      "inputSha256": "436a6f1c882e81f63c2852c3f03c569fddcd08287cc0f609ad4814bcbc37692d",
+      "bytes": 564,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "floatCases",
+      "name": "still-unsupported-FSEQ-vertex",
+      "stage": "vertex",
+      "inputSha256": "614f908b65a1034643f398f3baf2b550d8ea443cf066ae15e476aae24322fcf2",
+      "bytes": 382,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "floatCases",
+      "name": "still-unsupported-FSNE-vertex",
+      "stage": "vertex",
+      "inputSha256": "1f9a7885a698f58b20bc0364427240364def07c2e7d7a8bcada2e1b1d95833c4",
+      "bytes": 382,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "floatCases",
+      "name": "still-unsupported-FSEQ-fragment",
+      "stage": "fragment",
+      "inputSha256": "334f10a239df26e7af12d408eaf9735fcdd6bd8cfc5e6328fbe0129f5a403230",
+      "bytes": 388,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    },
+    {
+      "group": "floatCases",
+      "name": "still-unsupported-FSNE-fragment",
+      "stage": "fragment",
+      "inputSha256": "556b6506e4080720992c4b23f833f179f7127f99f1ecf92a59fe2381e533ec64",
+      "bytes": 388,
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "oldResultBytes": 130,
+      "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+      "newProfile": "virgl-webgl2-raw-bits-v13"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ Add only undecorated FSEQ/FSNE. Compare raw binary32 encodings with ordered equa
 and unordered inequality: both zero signs are equal; any NaN makes FSEQ false and
 FSNE true. Results are exactly zero or all-ones. Preserve consumed-lane checks,
 RHS snapshots, unknown NaN self-comparisons and computed numeric raw snapshots.
-No lazy input, PRECISE, source-modifier or output-authority relaxation.
+No lazy input, PRECISE, source-modifier, destination-mask grammar or output-authority relaxation.
 
 Use explicit 64-bit opcode masks. Pure equality may use closed unconditional
 profile13 only after the existing loop, indirect, structured and finite-bank

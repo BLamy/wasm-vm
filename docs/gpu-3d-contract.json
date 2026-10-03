@@ -845,6 +845,14 @@
     "numCapsets": 0,
     "virglFeature": false
   },
+  "rawEquality": {
+    "compatibility": "All4004 other full E9 stage results and264 pairs remain exact. Exactly8 explicitly hashed undecorated negative fixtures become13 successes; historical fixtures and GPU oracles remain immutable. Originals stay12/19.",
+    "metadata": "Pure equality is unconditional13. Counted-loop12, indirect10/11, structured8/9 and actual finite-bank7 obligations take precedence. Every old domain/access/count record is forbidden on13; unknown14 remains rejected.",
+    "profile": "virgl-webgl2-raw-bits-v13",
+    "scope": "Isolated compiler/shared consumer only; PRECISE, modifiers, consumed-lane definedness, declaration/mask grammar and output authority are unchanged. Production guest graphics and performance claims remain gated.",
+    "semantics": "Undecorated FSEQ is ordered equality; FSNE is unordered inequality. Both zero signs compare equal; every NaN, including identical signaling payloads, compares unordered. Exact zero/all-ones raw masks use integer encodings without floating conversion.",
+    "task": "E6-T12f1"
+  },
   "rawShaderBoundary": {
     "acceptance": "make verify-E6-T12e4a, make verify-E6-T12e4b and make verify-E6-T12e4c1; authored both-stage raw32 reconstruction with actual WebGL2 transform feedback and32 fragment bitplanes, mixed v5/v1/v2/v3 interpolation, native/Wasm parity, exact unaffected prior results and unchanged12/19 original acceptance.",
     "constants": "Existing uvec4 declaration metadata, VirglBlock layout and finite float-bit guest command transport remain unchanged. Direct arbitrary host uniforms are hardware probes only.",

@@ -649,6 +649,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
       else if (word(p, "FSLT")) raw.opcode = RAW_FSLT;
       else if (word(p, "FSGE")) raw.opcode = RAW_FSGE;
+      else if (word(p, "FSEQ")) raw.opcode = RAW_FSEQ;
+      else if (word(p, "FSNE")) raw.opcode = RAW_FSNE;
       else if (word(p, "ADD")) raw.opcode = RAW_ADD;
       else if (word(p, "MUL")) raw.opcode = RAW_MUL;
       else if (word(p, "MAD")) raw.opcode = RAW_MAD;
@@ -876,7 +878,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
-          word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "UARL")) {
+          word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "FSEQ") || word(&p, "FSNE") || word(&p, "UARL")) {
          candidate = true;
       } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {
          numeric_candidate = true;
@@ -1077,6 +1079,7 @@ static void stage_result(const struct conversion *c)
       c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v9" : "virgl-webgl2-raw-bits-v8") :
       c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v7" :
+      c->profile.raw->opcode_mask & RAW_EQUALITY_OPCODES ? "virgl-webgl2-raw-bits-v13" :
       c->profile.raw->opcode_mask & RAW_V6_OPCODES ? "virgl-webgl2-raw-bits-v6" :
       c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :
       c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :

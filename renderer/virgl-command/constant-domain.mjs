@@ -11,7 +11,7 @@ export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
 const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
 const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
 const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
-  ...[1, 2, 3, 4, 5, 6].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
+  ...[1, 2, 3, 4, 5, 6, 13].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
 const DOMAIN_KEYS = ["kind", "stage", "slot", "name", "count"];
 class DomainFault extends Error {}

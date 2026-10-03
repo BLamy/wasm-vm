@@ -1921,3 +1921,7 @@ verify-E6-T12e8:
 .PHONY: verify-E6-T12e9
 verify-E6-T12e9:
 	bash tools/verify-virgl-bounded-loops.sh
+
+.PHONY: verify-E6-T12f1
+verify-E6-T12f1:
+	bash tools/verify-virgl-raw-equality.sh

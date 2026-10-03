@@ -60,6 +60,16 @@ static uint32_t ordered_float_mask(uint32_t a, uint32_t b, bool greater_equal)
    return selected ? UINT32_MAX : 0;
 }
 
+/* Equality consumes encodings, including exceptional words, without a float
+ * conversion. An identical NaN is unordered; the two zero signs are equal. */
+static uint32_t equal_float_mask(uint32_t a, uint32_t b, bool not_equal)
+{
+   uint32_t magnitude_a = a & UINT32_C(0x7fffffff), magnitude_b = b & UINT32_C(0x7fffffff);
+   bool unordered = magnitude_a > UINT32_C(0x7f800000) || magnitude_b > UINT32_C(0x7f800000);
+   bool equal = !unordered && (a == b || (magnitude_a == 0 && magnitude_b == 0));
+   return (not_equal ? !equal : equal) ? UINT32_MAX : 0;
+}
+
 static bool safe_raw_float(struct raw_lane value)
 {
    const uint32_t exponent = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);
@@ -189,6 +199,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_FSGE:
          if (known_operands(a, b)) result[lane] = known_word(ordered_float_mask(a.one, b.one, instruction->opcode == RAW_FSGE));
          break;
+      case RAW_FSEQ:
+      case RAW_FSNE:
+         if (known_operands(a, b)) result[lane] = known_word(equal_float_mask(a.one, b.one, instruction->opcode == RAW_FSNE));
+         break;
       case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane, conditional), mixed); break;
       case RAW_ADD:
       case RAW_MUL:
@@ -308,7 +322,7 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
       float_operand(w, p, instruction, 0, 1); emit(w, "));\n");
       return;
    }
-   if ((1u << op) & RAW_V6_OPCODES) {
+   if ((UINT64_C(1) << op) & RAW_V6_OPCODES) {
       /* Evaluate once, then broadcast before either view is published. In
        * particular RCP reads source x even when its destination is only w. */
       emit(w, " float_rhs = vec4(");
@@ -395,6 +409,12 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " uint key_b = (b & 2147483648u) != 0u ? ~b : b ^ 2147483648u;\n"
          " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
          " return selected ? 4294967295u : 0u;\n}\n");
+   if (p->raw->opcode_mask & RAW_EQUALITY_OPCODES)
+      emit(&w, "uint raw_float_equal_mask(uint a, uint b, bool not_equal) {\n"
+         " uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n"
+         " bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\n"
+         " bool equal = !unordered && (a == b || (magnitude_a == 0u && magnitude_b == 0u));\n"
+         " return (not_equal ? !equal : equal) ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
    if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
    if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES))
@@ -429,6 +449,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             if (op == RAW_NOT) emit(&w, "~");
             if (op == RAW_ISGE) emit(&w, "(");
             if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
+            if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, "raw_float_equal_mask(");
             operand(&w, p, &instruction->src[0], lane);
             if (op == RAW_AND || op == RAW_OR) {
                emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
@@ -446,6 +467,9 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             } else if (op == RAW_UCMP) {
                emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
                emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
+            } else if (op == RAW_FSEQ || op == RAW_FSNE) {
+               emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, op == RAW_FSNE ? ", true)" : ", false)");
             } else if (op == RAW_FSLT || op == RAW_FSGE) {
                emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
                emit(&w, op == RAW_FSGE ? ", true)" : ", false)");
