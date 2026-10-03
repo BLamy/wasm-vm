@@ -4,10 +4,12 @@ export const STRUCTURED_PROFILE = "virgl-webgl2-raw-bits-v8";
 export const STRUCTURED_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v9";
 export const INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v10";
 export const INDIRECT_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v11";
+export const LOOP_PROFILE = "virgl-webgl2-raw-bits-v12";
 export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
 export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
-const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE]);
-const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE]);
+export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
+const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
+const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE]);
 const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
   ...[1, 2, 3, 4, 5, 6].map((version) => `virgl-webgl2-raw-bits-v${version}`), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
@@ -50,9 +52,11 @@ function failure(code, message) { return Object.freeze({ ok: false, error: Objec
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
     require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), "Unknown shader profile.");
+    const loop = value.profile === LOOP_PROFILE;
+    require(loop || !Object.hasOwn(value, "constantConstraints"), "Shader profile forbids a constant count constraint.");
     const indirect = INDIRECT_PROFILES.has(value.profile);
     let access = null;
     if (indirect) {
@@ -90,7 +94,22 @@ export function parseConstantDomain(metadata, expectedStage) {
     require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47 &&
       uniform.name === name && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && uniform.count === domain.count,
     "Constant domain does not match the declared bank extent and encoding.");
-    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}) });
+    let constraint = null;
+    if (loop) {
+      require(Object.hasOwn(value, "constantConstraints"), "Loop shader profile requires a constant count constraint.");
+      const constraints = array(value.constantConstraints, 1);
+      require(constraints.length === 1, "Loop shader requires one constant count constraint.");
+      constraint = record(constraints[0], [...DOMAIN_KEYS, "register", "component", "maximum"]);
+      require(constraint.kind === CONSTANT_CONSTRAINT_KIND && constraint.stage === expectedStage && constraint.slot === 0 &&
+        constraint.name === name && constraint.register === 9 && constraint.component === 0 && constraint.maximum === 18,
+      "Unknown or inconsistent constant count constraint.");
+      require((constraint.count === 46 || constraint.count === 47) && constraint.count === domain.count && constraint.count === access.count,
+        "Constant count constraint does not match the complete declared bank extent.");
+      require(access.indices.filter((index) => index >= 10).length === 36,
+        "Loop constant access must cover every certified index from 10 through 45.");
+      constraint = Object.freeze(constraint);
+    }
+    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}), ...(loop ? { constraint } : {}) });
   } catch (error) {
     if (!(error instanceof DomainFault)) throw error;
     return failure("shader-domain-error", error.message);
@@ -137,4 +156,16 @@ export function checkIndirectBank(words, declaredCount, finite) {
     if (!(error instanceof DomainFault)) throw error;
     return failure(finite === true ? "constant-domain-error" : "constant-access-error", error.message);
   }
+}
+
+/** The finite prefix and raw signed count are approved on one owned snapshot. */
+export function checkLoopBank(words, declaredCount) {
+  if (declaredCount !== 46 && declaredCount !== 47)
+    return failure("constant-constraint-error", "Invalid counted-table bank extent.");
+  const checked = checkIndirectBank(words, declaredCount, true);
+  if (!checked.ok) return checked;
+  const word = checked.words[36];
+  if (!(word >= 0x80000000 || word <= 18))
+    return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+  return checked;
 }

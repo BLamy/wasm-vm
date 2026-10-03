@@ -20,18 +20,22 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit21 is the validated v5 negation feature, not an opcode. */
                   RAW_DP3 = 22, RAW_RCP, RAW_RSQ,
                   /* Bit25 is the finite-bank feature, not an opcode. */
-                  RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL };
-#define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
-#define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
-#define RAW_V4_OPCODES ((1u << RAW_ADD) | (1u << RAW_MUL) | (1u << RAW_MAD) | (1u << RAW_TEX))
-#define RAW_V5_OPCODES ((1u << RAW_DIV) | (1u << RAW_MAX) | (1u << RAW_FRC) | (1u << RAW_LRP))
-#define RAW_V6_OPCODES ((1u << RAW_DP3) | (1u << RAW_RCP) | (1u << RAW_RSQ))
+                  RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL,
+                  RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP };
+#define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP))
+#define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
+#define RAW_V4_OPCODES ((UINT64_C(1) << RAW_ADD) | (UINT64_C(1) << RAW_MUL) | (UINT64_C(1) << RAW_MAD) | (UINT64_C(1) << RAW_TEX))
+#define RAW_V5_OPCODES ((UINT64_C(1) << RAW_DIV) | (UINT64_C(1) << RAW_MAX) | (UINT64_C(1) << RAW_FRC) | (UINT64_C(1) << RAW_LRP))
+#define RAW_V6_OPCODES ((UINT64_C(1) << RAW_DP3) | (UINT64_C(1) << RAW_RCP) | (UINT64_C(1) << RAW_RSQ))
 #define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES | RAW_V6_OPCODES)
 /* The remaining mask bit records a validated numeric modifier, not an opcode. */
-#define RAW_V5_NEGATION (1u << 21)
+#define RAW_V5_NEGATION (UINT64_C(1) << 21)
 /* Separate from opcode bits: at least one checked numeric read used the bank. */
-#define RAW_FINITE_BANK_USED (1u << 25)
-#define RAW_STRUCTURED_OPCODES ((1u << RAW_UIF) | (1u << RAW_ELSE) | (1u << RAW_ENDIF))
+#define RAW_FINITE_BANK_USED (UINT64_C(1) << 25)
+#define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
+#define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
+#define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
+_Static_assert(RAW_ENDLOOP < 64, "opcode mask width");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
@@ -51,13 +55,23 @@ struct raw_instruction {
  * finite-bank dependence. Conditional access is never an IN shortcut or an
  * ordinary output proof; a numeric-only selected shadow retains that limit. */
 struct raw_lane { uint32_t zero, one; unsigned origin; };
+/* One checked counted-table certificate; lane IDs are TEMP index*4+component. */
+struct loop_certificate {
+   uint16_t begin, end, break_pc, tail_test, tail_if, tail_end;
+   uint16_t j, a, b, header, invariant;
+   uint8_t count_register, count_component;
+   struct { uint16_t uarl, read; uint32_t reserved; uint64_t candidates; } access[4];
+   bool checked;
+   unsigned char reserved[7];
+};
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
    uint32_t immediates[FILE_REGISTERS][4];
    struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
-   unsigned count, opcode_mask;
+   unsigned count;
    struct raw_lane address;
-   uint64_t indirect_indices; /* Union of complete, checked use-site candidate sets. */
+   uint64_t opcode_mask, indirect_indices; /* Union of complete, checked use-site candidate sets. */
+   struct loop_certificate loop;
 };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -66,8 +80,9 @@ struct profile {
    unsigned semantic[2][8]; /* 0 attribute, 1 POSITION, 2 GENERIC, 3 COLOR */
    unsigned semantic_index[2][8];
    bool flat[2][8];
-   unsigned instructions, immediates, constant_extent;
+   unsigned instructions, immediates, constant_extent, current_pc;
    bool ended, started, color0_property, address_declared, address_written;
+   bool syntax_only, live;
    unsigned char raw_flags;
    int stage;
    struct raw_ir *raw;
@@ -77,7 +92,8 @@ _Static_assert(sizeof(struct raw_ir) <= 32768, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 26256, "bounded scalar address IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 26352, "bounded counted-loop IR allocation");
+_Static_assert(sizeof(struct loop_certificate) == 96, "compact loop certificate");
 _Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
 
 /* Shared post-swizzle lane selection for initialization and float authority. */

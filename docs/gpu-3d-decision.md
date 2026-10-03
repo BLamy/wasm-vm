@@ -613,3 +613,46 @@ All 3,466 prior shader results and 236 pairs remain unchanged. Original captured
 admission stays 12/19 with every PRECISE shader rejected. This completes the
 bounded address slice; loops, PRECISE/corpus closure and live Mesa integration
 remain separate prerequisites. Production guest graphics stays disabled.
+
+### Certified counted-table loops
+
+E6-T12e9 supports one structural family matching the captured table search, with
+checked TEMP/IMM renaming and consumed lanes. The initial raw values are j=1,
+a=11 and b=16. Each header reads table[a] before testing an OR of a numeric
+comparison and signed j>=CONST9.x. The guarded BRK is the only exit. The checked
+recurrence preserves a=j+10 and b=16*j; a matching post-loop j!=n guard protects
+the three tail address chains. Other induction graphs and unproved forms reject.
+
+Under signed_i32(raw CONST9.x)<=18, a nonpositive count exits at the first header;
+a positive count exits by j=n. The true tail has j<=17. The complete header set
+is 11..28 and tail sets are 10..26, 29..45 and 28..44. Count 19 can exit early at j=18 and
+read CONST[46] in the tail. The compiler emits the checked original loop and BRK,
+with no artificial iteration cutoff. See the [Mesa TGSI control-flow specification](https://docs.mesa3d.org/gallium/tgsi.html#opcode-BGNLOOP).
+
+A shared syntax pass cannot authorize emission. A structural certificate and
+ordinary checked validation over universal header facts establish the proof;
+first-iteration facts cannot narrow the certified set. BRK terminates its path,
+joins include only live predecessors, and ENDLOOP restores the checked exit
+state. One snapshot per level preserves combined depth 8 without adding a second
+full state array. Explicit uint64 opcode shifts avoid an opcode 32 shift overflow.
+Actual layout and allocation sizes are recorded against the existing caps.
+
+The closed raw-bits-v12 profile requires the existing finite and indirect access
+contracts plus one constant-bank-counted-table-i32-v1 constraint identifying the
+same stage, slot zero, bank name and declared extent 46 or 47, register 9/component 0,
+and signed maximum 18. Its finite policy is explicit; raw FSLT does not itself
+imply numeric-bank consumption. The consumer reads raw word 36 from the same
+owned complete finite prefix it uploads, before preparing the draw. It preserves
+bank identity checks across replacement and async yields. A failed count cannot
+borrow a prior draw's approval or restoration zeros.
+
+`make verify-E6-T12e9` records the bound derivation, independently authored loops,
+exact first/interior/final words and pixels, maximum safe tail addresses, signed
+count boundary attacks, actual source faults, native/Wasm parity and recovery,
+and final pristine-clone evidence for a fresh reviewer. Invalid or potentially
+unbounded mutants are compiler-only; the GPU fault preserves the forced terminal
+break while changing the observable early-break choice.
+
+Original shader bodies remain untouched at 12/19 accepted. PRECISE and the second
+capture's separate conservative TEMP2.x initialization gap remain later work.
+Production guest GPU negotiation and performance claims remain gated.

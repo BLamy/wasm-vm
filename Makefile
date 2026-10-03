@@ -1917,3 +1917,7 @@ verify-E6-T12e7:
 .PHONY: verify-E6-T12e8
 verify-E6-T12e8:
 	bash tools/verify-virgl-indirect-constants.sh
+
+.PHONY: verify-E6-T12e9
+verify-E6-T12e9:
+	bash tools/verify-virgl-bounded-loops.sh

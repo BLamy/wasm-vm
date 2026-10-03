@@ -9,6 +9,30 @@
     "Owned mixed numeric shaders reject unknown raw numeric constants. Direct numeric CONST uses in all seven remaining originals need an explicit enforced runtime domain or separately proven full-domain lowering before Mesa activation."
   ],
   "backend": "WebGL2 / ESSL 3.00",
+  "boundedTableLoops": {
+    "bounds": "Combined structural depth8, one loop per stage, source16KiB,179 instructions, raw_lane12/source24/instruction112, IR<=32768/profile<=8192/flow<=53248 bytes, GLSL<=65536 bytes, fixed Wasm16MiB and256KiB stack. Native/Wasm evidence records actual layout/allocation growth; opcode masks use explicit uint64 shifts.",
+    "compatibility": "All3814 predecessor full stage results and252 pairs remain exact, including original captured12/19 outcomes. Unknown-v12 parser diagnostic changes are explicitly inventoried by successor adapters; no prior whole gate is relabeled.",
+    "consumer": "Validate signed raw word36 on the same owned complete finite prefix used for upload: word>=0x80000000 or word<=18 after exact-u32 checks. Zero/negative finite encodings can be safe; NaN/Inf words independently fail the finite domain. Reject before draw preparation, preserve immutable bank identity checks, and skip invalid non-draw restoration uploads.",
+    "contract": {
+      "component": 0,
+      "declaredCounts": [
+        46,
+        47
+      ],
+      "kind": "constant-bank-counted-table-i32-v1",
+      "maximum": 18,
+      "register": 9,
+      "slot": 0
+    },
+    "metadata": "One exact stage/name/extent constantConstraints record is mandatory alongside matching constantDomains and constantAccesses, which includes every certified index10..45. Old profiles forbid the new field. The finite domain is an explicit checked-loop policy; raw FSLT alone does not claim actual numeric-bank consumption.",
+    "profile": "virgl-webgl2-raw-bits-v12",
+    "proof": "For signed raw n=CONST9.x<=18: n<=0 forces exit at j1; n>=1 forces exit by j=n. Header a=j+10 and b=16*j are inductive. The exact j!=n true tail implies j<=17. Header indices11..28 and tail sets10..26/29..45/28..44 are complete; count19 can reach forbidden46. No runtime iteration cutoff is emitted.",
+    "scope": "One bounded counted-table family in the isolated compiler/shared renderer; no PRECISE or second-capture lane-definedness closure, production guest GPU or performance claim.",
+    "specification": "https://docs.mesa3d.org/gallium/tgsi.html#opcode-BGNLOOP",
+    "syntax": "One alpha-renamable captured counted-table graph per stage: exact j/a/b initializers1/11/16, paired BGNLOOP:0/ENDLOOP:0, sole OR/FSLT/ISGE-guarded BRK, certified recurrence and matching USNE true-tail address chains. No nested loops, CONT, arbitrary carried state, extra exits or unsupported labels.",
+    "task": "E6-T12e9",
+    "validation": "Shared bounded typed syntax builds unvalidated IR, then structural recognition and checked universal-header validation certify it before emission. BRK has no fallthrough; joins include live predecessors only. A syntax pass, a first-iteration value or one observed bank cannot establish authority."
+  },
   "browserMatrix": {
     "default": "reject",
     "qualificationScope": "prototype-only",
@@ -926,8 +950,9 @@
       "status": "supported"
     },
     "structured-target-annotations": {
-      "mapping": "Validate UIF/ELSE/BGNLOOP/ENDLOOP target labels and matching stack; observed IF nesting7 and loop nesting1; bound execution work.",
-      "status": "implementable"
+      "mapping": "UIF/ELSE/ENDIF retain checked matching targets. One certified counted-table BGNLOOP:0/ENDLOOP:0 pair with guarded BRK has signed-count and address contracts; combined depth8. Other loop forms remain rejected.",
+      "scope": "bounded-raw-v8-v9-v12-subsets-only",
+      "status": "supported"
     }
   },
   "statusMeaning": {

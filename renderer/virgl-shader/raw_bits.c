@@ -110,9 +110,9 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
 
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
-   if ((1u << input->opcode) & RAW_STRUCTURED_OPCODES) {
+   if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
       ir->instructions[ir->count++] = *input;
-      ir->opcode_mask |= 1u << input->opcode;
+      ir->opcode_mask |= UINT64_C(1) << input->opcode;
       return true;
    }
    if (input->opcode == RAW_UARL) {
@@ -121,7 +121,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       ir->address = source_lane(ir, &input->src[0], 0, false);
       ir->address.origin = 0;
       ir->instructions[ir->count++] = *input;
-      ir->opcode_mask |= 1u << RAW_UARL;
+      ir->opcode_mask |= UINT64_C(1) << RAW_UARL;
       return true;
    }
    struct raw_instruction checked = *input;
@@ -131,7 +131,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool mixed = (instruction->flags & RAW_MIXED) != 0;
    bool conditional = (instruction->flags & RAW_CONDITIONAL) != 0;
    bool structured = (instruction->flags & RAW_STRUCTURED) != 0;
-   bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+   bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
    unsigned dependency = 0;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ||
@@ -202,12 +202,15 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_RSQ:
       case RAW_TEX:
          result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
-         if (instruction->opcode == RAW_TEX || ((1u << instruction->opcode) & RAW_V6_OPCODES))
+         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & RAW_V6_OPCODES))
             result[lane].origin |= dependency;
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
          break;
       case RAW_UARL: break; /* Recorded above into the dedicated scalar state. */
+      case RAW_BGNLOOP:
+      case RAW_BRK:
+      case RAW_ENDLOOP:
       case RAW_UIF:
       case RAW_ELSE:
       case RAW_ENDIF: break; /* Recorded above without a destination. */
@@ -226,7 +229,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          if ((result[lane].origin & RAW_ACCESS_MASK) == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;
       }
    ir->instructions[ir->count++] = *instruction;
-   if (instruction->opcode != RAW_MOV) ir->opcode_mask |= 1u << instruction->opcode;
+   if (instruction->opcode != RAW_MOV) ir->opcode_mask |= UINT64_C(1) << instruction->opcode;
    if (instruction->flags & RAW_NEGATE_SOURCES) ir->opcode_mask |= RAW_V5_NEGATION;
    if (dependency) ir->opcode_mask |= RAW_FINITE_BANK_USED;
    return true;
@@ -398,6 +401,9 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
+      if (instruction->opcode == RAW_BGNLOOP) { emit(&w, " do {\n"); continue; }
+      if (instruction->opcode == RAW_BRK) { emit(&w, " break;\n"); continue; }
+      if (instruction->opcode == RAW_ENDLOOP) { emit(&w, " } while (true);\n"); continue; }
       if (instruction->opcode == RAW_UARL) {
          emit(&w, " raw_addr = "); operand(&w, p, &instruction->src[0], 0); emit(&w, ";\n");
          continue;
@@ -408,7 +414,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
       if (instruction->opcode == RAW_ELSE) { emit(&w, " } else {\n"); continue; }
       if (instruction->opcode == RAW_ENDIF) { emit(&w, " }\n"); continue; }
-      bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+      bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
       bool raw_shadow = (instruction->flags & RAW_STRUCTURED) && !numeric &&
          instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP;
       if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
