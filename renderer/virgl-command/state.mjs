@@ -1,7 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
-import { parseConstantDomain, checkFiniteBank } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -261,7 +261,9 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         if (type === 4) {
           const translated = unwrap(shaderBridge.translate({ stage: fields.stageName, text: fields.text }));
-          object.constantDomain = unwrap(parseConstantDomain(translated.metadata, fields.stageName)).domain;
+          const contract = unwrap(parseConstantDomain(translated.metadata, fields.stageName));
+          object.constantDomain = contract.domain;
+          object.constantAccess = contract.access ?? null;
           require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
@@ -357,6 +359,9 @@ function createRenderer(options, drawing, asynchronous = false) {
             // The upstream declaration can include an unaddressable 47th element.
             // Driver-retained suffixes are not permission to upload guest CONST46.
             const uploadCount = Math.min(activeCount, 46);
+            const access = (stage === 0 ? vertex : fragment).constantAccess;
+            require(!access || uploadCount > access.indices[access.indices.length - 1],
+              "shader-reflection-error", "Constant upload extent does not cover every proved indirect index.");
             if (uploadCount) program.uniforms.push({ stage, uploadCount, location,
               conditional: (stage === 0 ? vertex : fragment).constantDomain !== null });
             program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage, activeCount, uploadCount });
@@ -431,11 +436,16 @@ function createRenderer(options, drawing, asynchronous = false) {
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit));
     };
     // Restoration also follows SET, CLEAR, binding changes and restoreContext.
-    // A partial/invalid conditional bank remains CPU state but is never uploaded.
-    const constantUploads = (program, banks, strict) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
+    // A partial/invalid conditional or indirect bank remains CPU state but is never uploaded.
+    const constantUploads = (program, banks, strict, indirectBanks = null) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
       const bank = banks[uniform.stage], count = uniform.uploadCount * 4;
+      const shader = uniform.stage === 0 ? program.vertex : program.fragment;
       let words;
-      if (uniform.conditional) {
+      if (shader.constantAccess) {
+        const checked = indirectBanks?.[uniform.stage] ?? checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional);
+        if (!checked.ok && !strict) return [];
+        words = Object.freeze(unwrap(checked).words.slice(0, count));
+      } else if (uniform.conditional) {
         const checked = checkFiniteBank(bank, uniform.uploadCount);
         if (!checked.ok && !strict) return [];
         words = unwrap(checked).words;
@@ -546,9 +556,13 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
       require(sub.surfaces[0] && sub.viewport && sub.vertexElements && sub.indexBuffer,
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and index buffer.");
-      const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
-      const uploads = constantUploads(program, banks, true);
+      // Presence and numeric authority apply to the complete declared prefix,
+      // even if reflection prunes it. Reject before linking or any draw allocation.
+      const indirectBanks = Object.freeze(shaders.map((shader, stage) => shader.constantAccess ?
+        unwrap(checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
+      const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
+      const uploads = constantUploads(program, banks, true, indirectBanks);
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");

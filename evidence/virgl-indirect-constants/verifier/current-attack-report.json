@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "mode": "current",
+  "binding": {
+    "sources": [
+      {
+        "path": "evidence/virgl-indirect-constants/verifier/current-source/bridge.c",
+        "sha256": "3c71d3b8772ebdb916c4e4585be0a7fccdd89df3aff379c10c938a4e9dfd516b"
+      },
+      {
+        "path": "evidence/virgl-indirect-constants/verifier/current-source/raw_bits.c",
+        "sha256": "916491e77f8b2483d16cac9b53f96cbd19153d4410f36ee2dc2bde379d3c6902"
+      },
+      {
+        "path": "renderer/virgl-shader/generated/u_format_table.c",
+        "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+        "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+        "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+        "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+        "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+        "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+        "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+        "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+        "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+        "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+        "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+        "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+        "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+        "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+      },
+      {
+        "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+        "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+      }
+    ],
+    "binarySha256": "31f4e3e06c74e651a03dede9fdb25dfb8a26042bbcb1ce2c137b95f2dc2f18df",
+    "command": [
+      "clang",
+      "-std=gnu11",
+      "-D_GNU_SOURCE",
+      "-D_DARWIN_C_SOURCE",
+      "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+      "-DUTIL_ARCH_BIG_ENDIAN=0",
+      "-DHAVE___BUILTIN_CLZ=1",
+      "-DHAVE___BUILTIN_CLZLL=1",
+      "-DHAVE___BUILTIN_POPCOUNT=1",
+      "-g",
+      "-O0",
+      "-dynamiclib",
+      "-fprofile-instr-generate",
+      "-fcoverage-mapping",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/verifier/current-source",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/pipe",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/compat",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/include",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/util",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/verifier/current-source/bridge.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/verifier/current-source/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated/u_format_table.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "-lm",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/verifier/current.dylib"
+    ],
+    "changes": []
+  },
+  "cases": 9088,
+  "accepted": 3265,
+  "rejected": 5823,
+  "failures": []
+}

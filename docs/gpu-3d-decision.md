@@ -579,3 +579,37 @@ admitting them. This slice uses independently authored nested shaders, literal
 per-lane colors and raw-word atlases on actual hardware, plus separately compiled
 branch-polarity and initialization-union faults. Production guest negotiation
 remains disabled pending the remaining shader and live Mesa milestones.
+
+### Bounded indirect constant addressing
+
+E6-T12e8 adds scalar ADDR[0].x, raw integer UARL and
+CONST[ADDR[0].x]. The address copies the first post-swizzle unsigned word.
+At each indirect use, known-zero and known-one facts must establish a complete
+conservative set contained in 0..45. Every candidate index and consumed component
+must be declared. Address initialization and facts join both syntactic branch
+predecessors; a no-ELSE branch includes entry state. Unknown values, stale facts,
+other address forms and out-of-range candidates reject before translation.
+
+Profiles raw-bits-v10 and v11 require one compiler-derived
+constant-bank-static-indirect-v1 record identifying the stage, slot zero, bank,
+declared extent and sorted union of possible indices. v11 additionally requires
+the existing finite constant domain; v10 is raw transport. Older profiles reject
+the new record. Before draw allocation, linking or dispatch, the renderer owns
+the complete min(count,46) vec4 prefix and checks v11 finiteness over that same
+prefix, including unselected entries. Reflection must cover every possible index.
+The existing immutable bank identity check still binds draw validation to upload
+across updates and asynchronous yields. Short banks and restoration zeros cannot
+supply missing authority; non-draw restore skips incomplete new-profile uploads.
+
+The additional scalar state measures 26,256 bytes for raw IR, 7,616 for profile
+state and 52,612 for the flow arena, below their existing caps. The 179-instruction,
+16 MiB Wasm memory and 256 KiB stack bounds remain. The acceptance command is
+`make verify-E6-T12e8`: complete native/Wasm results and recovery, independent
+first/interior/last word and pixel oracles through decoded commands, immutable-bank
+attacks, and actual source-built bound-removal and low-bit-index faults. The latter
+stays in range on hardware; invalid-address fault witnesses are compiler-only.
+
+All 3,466 prior shader results and 236 pairs remain unchanged. Original captured
+admission stays 12/19 with every PRECISE shader rejected. This completes the
+bounded address slice; loops, PRECISE/corpus closure and live Mesa integration
+remain separate prerequisites. Production guest graphics stays disabled.

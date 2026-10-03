@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "head": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "coldReportSha256": "1d0cb600febe8f18aab8410ea2ceeb5e341b1ca0fb46dc33aae741ba9b8f19d3",
+  "coldReceiptSha256": "b8aba573e74f650d1737c4fabc15ffa10922615348bc451c95be71b2bfd96946",
+  "acceptanceFiles": 152,
+  "sources": 379,
+  "fullNativeCaseAndPairEntries": 4085,
+  "allNativeStatsAndOutcomesMatchWarm": true,
+  "allGpuPixelBytesMatchWarm": true,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm"
+}

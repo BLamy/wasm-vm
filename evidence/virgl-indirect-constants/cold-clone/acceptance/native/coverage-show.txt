@@ -1,0 +1,3659 @@
+/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/renderer/virgl-shader/bridge.c:
+    1|       |/* SPDX-License-Identifier: MIT
+    2|       | * Bounded profile adapter around the unmodified upstream VirGL compiler.
+    3|       | * The guard validates a deliberately small language before upstream's general
+    4|       | * TGSI parser sees it. No unbounded numeric/range value, unsupported property,
+    5|       | * indirect address, unsupported stage, or control-flow token reaches upstream.
+    6|       | * Checked indirect constants use the owned raw backend exclusively.
+    7|       | */
+    8|       |#include "bridge.h"
+    9|       |#include "raw_bits.h"
+   10|       |#include "vrend/vrend_shader.h"
+   11|       |#include "tgsi/tgsi_text.h"
+   12|       |#include "util/os_misc.h"
+   13|       |#include <ctype.h>
+   14|       |#include <errno.h>
+   15|       |#include <math.h>
+   16|       |#include <stdarg.h>
+   17|       |#include <stdint.h>
+   18|       |#include <stdio.h>
+   19|       |#include <stdlib.h>
+   20|       |#include <string.h>
+   21|       |
+   22|       |static char single_response[BRIDGE_MAX_RESULT];
+   23|       |static char pair_response[BRIDGE_MAX_PAIR_RESULT];
+   24|       |static char *response = single_response;
+   25|       |static size_t response_capacity = sizeof(single_response);
+   26|       |static size_t response_used;
+   27|       |static bool response_overflow;
+   28|       |static bool upstream_logged;
+   29|       |static const char *failure_code;
+   30|       |/* Public unsupported-feature also covers syntax. Only this typed failure may
+   31|       | * retry with compiler-derived finite-bank authority. */
+   32|       |static bool missing_numeric_authority;
+   33|       |
+   34|       |/* Logging is bounded and never allows guest text to become a format string.
+   35|       | * Any upstream diagnostic invalidates the conversion instead of silently
+   36|       | * accepting a warning about dropped semantics. */
+   37|       |void virgl_logv(enum virgl_log_level_flags level, const char *fmt, va_list args)
+   38|      0|{
+   39|      0|   (void)level; (void)fmt; (void)args;
+   40|      0|   upstream_logged = true;
+   41|      0|}
+   42|       |unsigned vrend_debug(const struct vrend_context *ctx, enum virgl_debug_flags flags)
+   43|   925k|{
+   44|   925k|   (void)ctx; (void)flags;
+   45|   925k|   return 0;
+   46|   925k|}
+   47|      0|void vrend_print_context_name(const struct vrend_context *ctx) { (void)ctx; }
+   48|       |/* Only these two OS services are referenced by the shader-only dependency
+   49|       | * closure. Native and Wasm use the same deterministic, environment-free hooks. */
+   50|      2|const char *os_get_option(const char *name) { (void)name; return NULL; }
+   51|      0|void os_log_message(const char *message) { (void)message; upstream_logged = true; }
+   52|       |
+   53|       |static void append(const char *fmt, ...)
+   54|  1.23G|{
+   55|  1.23G|   if (response_overflow) return;
+                                        ^0
+  ------------------
+  |  Branch (55:8): [True: 0, False: 1.23G]
+  ------------------
+   56|  1.23G|   va_list args;
+   57|  1.23G|   va_start(args, fmt);
+   58|  1.23G|   int n = vsnprintf(response + response_used, response_capacity - response_used, fmt, args);
+   59|  1.23G|   va_end(args);
+   60|  1.23G|   if (n < 0 || (size_t)n >= response_capacity - response_used) {
+  ------------------
+  |  Branch (60:8): [True: 0, False: 1.23G]
+  |  Branch (60:17): [True: 0, False: 1.23G]
+  ------------------
+   61|      0|      response_overflow = true;
+   62|      0|      return;
+   63|      0|   }
+   64|  1.23G|   response_used += (size_t)n;
+   65|  1.23G|}
+   66|       |
+   67|       |static void json_string(const char *s)
+   68|  21.7k|{
+   69|  21.7k|   append("\"");
+   70|   948k|   for (; *s; ++s) {
+                            ^926k
+  ------------------
+  |  Branch (70:11): [True: 926k, False: 21.7k]
+  ------------------
+   71|   926k|      unsigned char c = (unsigned char)*s;
+   72|   926k|      if (c == '"' || c == '\\') append("\\%c", c);
+                                               ^0
+  ------------------
+  |  Branch (72:11): [True: 0, False: 926k]
+  |  Branch (72:23): [True: 0, False: 926k]
+  ------------------
+   73|   926k|      else if (c < 32) append("\\u%04x", c);
+                                     ^0
+  ------------------
+  |  Branch (73:16): [True: 0, False: 926k]
+  ------------------
+   74|   926k|      else append("%c", c);
+   75|   926k|   }
+   76|  21.7k|   append("\"");
+   77|  21.7k|}
+   78|       |
+   79|       |static const char *error(const char *code, const char *message)
+   80|  10.8k|{
+   81|  10.8k|   response_used = 0;
+   82|  10.8k|   response_overflow = false;
+   83|  10.8k|   append("{\"ok\":false,\"error\":{\"code\":"); json_string(code);
+   84|  10.8k|   append(",\"message\":"); json_string(message); append("}}");
+   85|  10.8k|   return response;
+   86|  10.8k|}
+   87|       |
+   88|   612M|static void space(const char **p) { while (**p == ' ' || **p == '\t' || **p == '\r') ++*p; }
+                                                ^582M                  ^582M          ^582M        ^30.1M
+  ------------------
+  |  Branch (88:44): [True: 30.1M, False: 582M]
+  |  Branch (88:58): [True: 0, False: 582M]
+  |  Branch (88:73): [True: 2, False: 582M]
+  ------------------
+   89|       |static bool punctuation(const char **p, char c)
+   90|  79.8M|{
+   91|  79.8M|   space(p);
+   92|  79.8M|   if (**p != c) return false;
+                               ^16.6M ^16.6M
+  ------------------
+  |  Branch (92:8): [True: 16.6M, False: 63.2M]
+  ------------------
+   93|  63.2M|   ++*p;
+   94|  63.2M|   return true;
+   95|  79.8M|}
+   96|       |static bool word(const char **p, const char *s)
+   97|   410M|{
+   98|   410M|   space(p);
+   99|   410M|   size_t n = strlen(s);
+  100|   410M|   if (strncmp(*p, s, n) || isalnum((unsigned char)(*p)[n]) || (*p)[n] == '_') return false;
+                                          ^39.9M                             ^39.7M          ^370M  ^370M
+  ------------------
+  |  Branch (100:8): [True: 370M, False: 39.9M]
+  |  Branch (100:29): [True: 157k, False: 39.7M]
+  |  Branch (100:64): [True: 93, False: 39.7M]
+  ------------------
+  101|  39.7M|   *p += n;
+  102|  39.7M|   return true;
+  103|   410M|}
+  104|  28.2M|static bool end(const char **p) { space(p); return **p == '\0'; }
+  105|       |static bool index_number(const char **p, unsigned *result, unsigned limit)
+  106|  21.7M|{
+  107|  21.7M|   space(p);
+  108|  21.7M|   if (**p < '0' || **p > '9') { failure_code = "unsupported-feature"; return false; }
+                                  ^21.7M     ^305                                           ^305
+  ------------------
+  |  Branch (108:8): [True: 255, False: 21.7M]
+  |  Branch (108:21): [True: 50, False: 21.7M]
+  ------------------
+  109|  21.7M|   unsigned value = 0, digits = 0;
+  110|  21.7M|   bool zero = **p == '0';
+  111|  51.0M|   while (isdigit((unsigned char)**p)) {
+  ------------------
+  |  Branch (111:11): [True: 29.2M, False: 21.7M]
+  ------------------
+  112|  29.2M|      unsigned digit = (unsigned)(**p - '0');
+  113|  29.2M|      if (++digits > 3 || (zero && digits > 1) || value > (limit - 1) / 10 ||
+                                        ^29.2M^29.2M  ^8.06M         ^29.2M
+  ------------------
+  |  Branch (113:11): [True: 4, False: 29.2M]
+  |  Branch (113:28): [True: 8.06M, False: 21.2M]
+  |  Branch (113:36): [True: 7, False: 8.06M]
+  |  Branch (113:51): [True: 2, False: 29.2M]
+  ------------------
+  114|  29.2M|          (value == (limit - 1) / 10 && digit > (limit - 1) % 10)) {
+                        ^29.2M^29.2M                       ^17.1M
+  ------------------
+  |  Branch (114:12): [True: 17.1M, False: 12.1M]
+  |  Branch (114:41): [True: 29, False: 17.1M]
+  ------------------
+  115|     42|         failure_code = "unsupported-feature";
+  116|     42|         return false;
+  117|     42|      }
+  118|  29.2M|      value = value * 10 + digit;
+  119|  29.2M|      ++*p;
+  120|  29.2M|   }
+  121|  21.7M|   *result = value;
+  122|  21.7M|   return true;
+  123|  21.7M|}
+  124|       |static unsigned register_limit(unsigned file)
+  125|  17.7M|{
+  126|  17.7M|   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS : FILE_REGISTERS;
+                                       ^6.43M           ^11.3M          ^2.08M            ^9.25M
+  ------------------
+  |  Branch (126:11): [True: 6.43M, False: 11.3M]
+  |  Branch (126:43): [True: 2.08M, False: 9.25M]
+  ------------------
+  127|  17.7M|}
+  128|       |static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
+  129|  17.0M|{
+  130|  17.0M|   if (word(p, "ADDR")) {
+  ------------------
+  |  Branch (130:8): [True: 315k, False: 16.7M]
+  ------------------
+  131|   315k|      failure_code = "unsupported-feature";
+  132|   315k|      if (kind == SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) || !punctuation(p, ']')) return false;
+                                          ^315k                   ^315k                             ^315k                 ^64    ^64
+  ------------------
+  |  Branch (132:11): [True: 2, False: 315k]
+  |  Branch (132:29): [True: 20, False: 315k]
+  |  Branch (132:53): [True: 22, False: 315k]
+  |  Branch (132:87): [True: 20, False: 315k]
+  ------------------
+  133|   315k|      r->file = ADDR; r->last = 0; r->mask = 1;
+  134|  1.57M|      for (unsigned i = 0; i < 4; ++i) r->swizzle[i] = 0;
+                                                ^1.26M^1.26M
+  ------------------
+  |  Branch (134:28): [True: 1.26M, False: 315k]
+  ------------------
+  135|   315k|      r->explicit_mask = punctuation(p, '.');
+  136|   315k|      if (r->explicit_mask && !word(p, "x")) return false;
+                                            ^157k          ^20    ^20
+  ------------------
+  |  Branch (136:11): [True: 157k, False: 157k]
+  |  Branch (136:31): [True: 20, False: 157k]
+  ------------------
+  137|   315k|      return kind == DECLARATION || r->explicit_mask;
+                                                  ^157k
+  ------------------
+  |  Branch (137:14): [True: 157k, False: 157k]
+  |  Branch (137:37): [True: 157k, False: 14]
+  ------------------
+  138|   315k|   }
+  139|  16.7M|   static const char *names[] = {"IN", "OUT", "TEMP", "CONST", "IMM", "SAMP", "SVIEW"};
+  140|  16.7M|   unsigned f;
+  141|  44.2M|   for (f = 0; f < FILE_COUNT; ++f) if (word(p, names[f])) break;
+                                             ^27.4M^44.2M^44.2M             ^16.7M
+  ------------------
+  |  Branch (141:16): [True: 44.2M, False: 1.15k]
+  |  Branch (141:41): [True: 16.7M, False: 27.4M]
+  ------------------
+  142|  16.7M|   if (f == FILE_COUNT || !punctuation(p, '[')) return false;
+                                        ^16.7M                ^1.33k ^1.33k
+  ------------------
+  |  Branch (142:8): [True: 1.15k, False: 16.7M]
+  |  Branch (142:27): [True: 186, False: 16.7M]
+  ------------------
+  143|  16.7M|   bool indirect = f == CONST && word(p, "ADDR");
+                     ^16.7M      ^16.7M        ^1.66M
+  ------------------
+  |  Branch (143:20): [True: 1.66M, False: 15.1M]
+  |  Branch (143:34): [True: 155k, False: 1.50M]
+  ------------------
+  144|  16.7M|   if (indirect) {
+  ------------------
+  |  Branch (144:8): [True: 155k, False: 16.6M]
+  ------------------
+  145|   155k|      failure_code = "unsupported-feature";
+  146|   155k|      if (kind != SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) ||
+                                                                  ^155k
+  ------------------
+  |  Branch (146:11): [True: 0, False: 155k]
+  |  Branch (146:29): [True: 10, False: 155k]
+  |  Branch (146:53): [True: 10, False: 155k]
+  ------------------
+  147|   155k|          !punctuation(p, ']') || !punctuation(p, '.') || !word(p, "x")) return false;
+                        ^155k                   ^155k                   ^155k          ^50    ^50
+  ------------------
+  |  Branch (147:11): [True: 10, False: 155k]
+  |  Branch (147:35): [True: 10, False: 155k]
+  |  Branch (147:59): [True: 10, False: 155k]
+  ------------------
+  148|  16.6M|   } else if (!index_number(p, &r->index, register_limit(f))) return false;
+                                                                            ^268   ^268
+  ------------------
+  |  Branch (148:15): [True: 268, False: 16.6M]
+  ------------------
+  149|  16.7M|   r->file = indirect ? INDIRECT_CONST : (enum file)f;
+                                      ^155k            ^16.6M
+  ------------------
+  |  Branch (149:14): [True: 155k, False: 16.6M]
+  ------------------
+  150|  16.7M|   r->last = r->index;
+  151|  16.7M|   space(p);
+  152|  16.7M|   if (!strncmp(*p, "..", 2)) {
+  ------------------
+  |  Branch (152:8): [True: 1.14M, False: 15.6M]
+  ------------------
+  153|  1.14M|      if (kind != DECLARATION || (f != TEMP && f != CONST)) { failure_code = "unsupported-feature"; return false; }
+                                               ^1.14M^1.14M       ^573k        ^2                                             ^2
+  ------------------
+  |  Branch (153:11): [True: 2, False: 1.14M]
+  |  Branch (153:35): [True: 573k, False: 573k]
+  |  Branch (153:48): [True: 0, False: 573k]
+  ------------------
+  154|  1.14M|      *p += 2;
+  155|  1.14M|      if (!index_number(p, &r->last, register_limit(f)) || r->last < r->index) return false;
+                                                                         ^1.14M              ^18    ^18
+  ------------------
+  |  Branch (155:11): [True: 18, False: 1.14M]
+  |  Branch (155:60): [True: 0, False: 1.14M]
+  ------------------
+  156|  1.14M|   }
+  157|  16.7M|   if (!punctuation(p, ']')) return false;
+                                           ^269   ^269
+  ------------------
+  |  Branch (157:8): [True: 269, False: 16.7M]
+  ------------------
+  158|  16.7M|   r->mask = 15;
+  159|  83.8M|   for (unsigned i = 0; i < 4; ++i) r->swizzle[i] = i;
+                                             ^67.0M^67.0M
+  ------------------
+  |  Branch (159:25): [True: 67.0M, False: 16.7M]
+  ------------------
+  160|  16.7M|   r->explicit_mask = punctuation(p, '.');
+  161|  16.7M|   if (r->explicit_mask) {
+  ------------------
+  |  Branch (161:8): [True: 1.76M, False: 15.0M]
+  ------------------
+  162|  1.76M|      static const char components[] = "xyzw";
+  163|  1.76M|      const char *begin = *p;
+  164|  1.76M|      r->mask = 0;
+  165|  1.76M|      unsigned count = 0, previous = 0;
+  166|  8.78M|      while (**p && strchr(components, **p)) {
+                                  ^7.06M
+  ------------------
+  |  Branch (166:14): [True: 7.06M, False: 1.71M]
+  |  Branch (166:21): [True: 7.02M, False: 42.8k]
+  ------------------
+  167|  7.02M|         unsigned component = (unsigned)(strchr(components, **p) - components);
+  168|  7.02M|         if (++count > 4 || (kind != SOURCE && count > 1 && component <= previous)) return false;
+                                          ^7.02M^7.02M            ^7.17k       ^1.37k                  ^19    ^19
+  ------------------
+  |  Branch (168:14): [True: 7, False: 7.02M]
+  |  Branch (168:30): [True: 7.17k, False: 7.01M]
+  |  Branch (168:48): [True: 1.37k, False: 5.80k]
+  |  Branch (168:61): [True: 12, False: 1.35k]
+  ------------------
+  169|  7.02M|         previous = component;
+  170|  7.02M|         r->swizzle[count - 1] = component;
+  171|  7.02M|         r->mask |= 1u << component;
+  172|  7.02M|         ++*p;
+  173|  7.02M|      }
+  174|  1.76M|      if (kind == SOURCE) {
+  ------------------
+  |  Branch (174:11): [True: 1.75M, False: 5.79k]
+  ------------------
+  175|  1.75M|         if (count != 4) return false;
+                                       ^137   ^137
+  ------------------
+  |  Branch (175:14): [True: 137, False: 1.75M]
+  ------------------
+  176|  1.75M|      } else if (!((count == 2 && !strncmp(begin, "xy", 2)) ||
+                           ^5.79k^5.79k^5.79k^5.79k        ^537
+  ------------------
+  |  Branch (176:21): [True: 537, False: 5.25k]
+  |  Branch (176:35): [True: 507, False: 30]
+  ------------------
+  177|  5.79k|                   (count == 3 && !strncmp(begin, "xyz", 3)) ||
+                                 ^5.28k^5.28k        ^381
+  ------------------
+  |  Branch (177:21): [True: 381, False: 4.90k]
+  |  Branch (177:35): [True: 381, False: 0]
+  ------------------
+  178|  5.79k|                   (kind == DESTINATION && count == 1))) {
+                                 ^4.90k^4.90k                 ^4.90k
+  ------------------
+  |  Branch (178:21): [True: 4.90k, False: 0]
+  |  Branch (178:44): [True: 4.85k, False: 50]
+  ------------------
+  179|     50|         failure_code = "unsupported-feature";
+  180|     50|         return false;
+  181|     50|      }
+  182|  1.76M|   }
+  183|  16.7M|   return true;
+  184|  16.7M|}
+  185|       |static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand)
+  186|  7.14M|{
+  187|  7.14M|   struct reg r;
+  188|  7.14M|   if (!register_name(p, &r, SOURCE)) return false;
+                                                    ^1.12k ^1.12k
+  ------------------
+  |  Branch (188:8): [True: 1.12k, False: 7.14M]
+  ------------------
+  189|       |   /* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */
+  190|  7.14M|   if (r.file != INDIRECT_CONST &&
+  ------------------
+  |  Branch (190:8): [True: 6.99M, False: 155k]
+  ------------------
+  191|  7.14M|       (r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index])) return false;
+                     ^6.99M^6.99M           ^6.99M            ^6.99M                          ^46    ^46
+  ------------------
+  |  Branch (191:9): [True: 30, False: 6.99M]
+  |  Branch (191:26): [True: 16, False: 6.99M]
+  |  Branch (191:44): [True: 0, False: 6.99M]
+  ------------------
+  192|       |   /* Match tgsi_util_get_inst_usage_mask: choose opcode/destination lanes
+  193|       |    * first, then map each through its ordered source selector. */
+  194|  7.14M|   unsigned needed = 0;
+  195|  35.7M|   for (unsigned lane = 0; lane < 4; ++lane)
+                                                   ^28.5M
+  ------------------
+  |  Branch (195:28): [True: 28.5M, False: 7.14M]
+  ------------------
+  196|  28.5M|      if (consumed & (1u << lane)) needed |= 1u << r.swizzle[lane];
+                                                 ^27.5M
+  ------------------
+  |  Branch (196:11): [True: 27.5M, False: 1.09M]
+  ------------------
+  197|  7.14M|   if (r.file == INDIRECT_CONST) {
+  ------------------
+  |  Branch (197:8): [True: 155k, False: 6.99M]
+  ------------------
+  198|   155k|      failure_code = "unsupported-feature";
+  199|   155k|      if (!s->raw || !s->address_declared || !s->address_written) return false;
+                                                           ^155k                ^14    ^14
+  ------------------
+  |  Branch (199:11): [True: 0, False: 155k]
+  |  Branch (199:22): [True: 6, False: 155k]
+  |  Branch (199:46): [True: 8, False: 155k]
+  ------------------
+  200|   155k|      struct raw_lane address = s->raw->address;
+  201|       |      /* (~zero) is the unsigned maximum of ALL words represented by these
+  202|       |       * known bits. It proves the complete set, not one observed address. */
+  203|   155k|      if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;
+                                                                                                    ^39    ^39
+  ------------------
+  |  Branch (203:11): [True: 0, False: 155k]
+  |  Branch (203:43): [True: 39, False: 155k]
+  ------------------
+  204|   155k|      uint64_t candidates = 0;
+  205|  7.32M|      for (unsigned i = 0; i < CONST_REGISTERS; ++i) {
+                                                              ^7.16M
+  ------------------
+  |  Branch (205:28): [True: 7.16M, False: 155k]
+  ------------------
+  206|  7.16M|         if ((i & address.zero) || ((uint32_t)~i & address.one)) continue;
+                                                 ^1.71M                        ^7.00M
+  ------------------
+  |  Branch (206:14): [True: 5.45M, False: 1.71M]
+  |  Branch (206:36): [True: 1.55M, False: 158k]
+  ------------------
+  207|   158k|         if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;
+                                                     ^158k                                         ^4     ^4
+  ------------------
+  |  Branch (207:14): [True: 4, False: 158k]
+  |  Branch (207:40): [True: 0, False: 158k]
+  ------------------
+  208|   158k|         candidates |= UINT64_C(1) << i;
+  209|   158k|      }
+  210|   155k|      if (!candidates) return false;
+                                     ^0     ^0
+  ------------------
+  |  Branch (210:11): [True: 0, False: 155k]
+  ------------------
+  211|   155k|      s->raw->indirect_indices |= candidates;
+  212|  6.99M|   } else if ((s->components[r.file][r.index] & needed) != needed) return false;
+                                                                                 ^0     ^0
+  ------------------
+  |  Branch (212:15): [True: 0, False: 6.99M]
+  ------------------
+  213|  7.14M|   if (r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
+                                       ^2.68M                                          ^165   ^165
+  ------------------
+  |  Branch (213:8): [True: 2.68M, False: 4.46M]
+  |  Branch (213:26): [True: 165, False: 2.68M]
+  ------------------
+  214|  7.14M|   if (operand) {
+  ------------------
+  |  Branch (214:8): [True: 6.54M, False: 604k]
+  ------------------
+  215|  6.54M|      operand->file = r.file;
+  216|  6.54M|      operand->index = r.index;
+  217|  6.54M|      memcpy(operand->swizzle, r.swizzle, sizeof(operand->swizzle));
+  218|  6.54M|   }
+  219|  7.14M|   return true;
+  220|  7.14M|}
+  221|       |static bool literal_float(const char **p, uint32_t *bits)
+  222|  1.81M|{
+  223|  1.81M|   space(p);
+  224|  1.81M|   const char *begin = *p;
+  225|  5.73M|   while (**p && strchr("+-0123456789.eE", **p)) ++*p;
+                               ^5.73M                          ^3.91M
+  ------------------
+  |  Branch (225:11): [True: 5.73M, False: 12]
+  |  Branch (225:18): [True: 3.91M, False: 1.81M]
+  ------------------
+  226|  1.81M|   size_t n = (size_t)(*p - begin);
+  227|  1.81M|   if (!n || n > 32) return false;
+                           ^1.81M  ^7     ^7
+  ------------------
+  |  Branch (227:8): [True: 7, False: 1.81M]
+  |  Branch (227:14): [True: 0, False: 1.81M]
+  ------------------
+  228|  1.81M|   char number[33]; memcpy(number, begin, n); number[n] = 0;
+  229|  1.81M|   char *after;
+  230|  1.81M|   errno = 0;
+  231|  1.81M|   float value = strtof(number, &after);
+  232|  1.81M|   if (errno || *after || !isfinite(value) || fabsf(value) > 1000000.0f) return false;
+                                                                                       ^2     ^2
+  ------------------
+  |  Branch (232:8): [True: 0, False: 1.81M]
+  |  Branch (232:17): [True: 0, False: 1.81M]
+  |  Branch (232:27): [True: 0, False: 1.81M]
+  |  Branch (232:28): [Folded, False: 0]
+  |  Branch (232:28): [True: 1.81M, Folded]
+  |  Branch (232:47): [True: 2, False: 1.81M]
+  ------------------
+  233|  1.81M|   if (bits) memcpy(bits, &value, sizeof(value));
+                           ^1.76M
+  ------------------
+  |  Branch (233:8): [True: 1.76M, False: 51.8k]
+  ------------------
+  234|  1.81M|   return true;
+  235|  1.81M|}
+  236|       |
+  237|       |static bool literal_float_bits(const char **p, uint32_t *raw_bits)
+  238|  5.40M|{
+  239|  5.40M|   space(p);
+  240|  5.40M|   uint32_t bits = 0;
+  241|  5.40M|   unsigned digits = 0;
+  242|  24.3M|   while (isdigit((unsigned char)**p)) {
+  ------------------
+  |  Branch (242:11): [True: 18.9M, False: 5.40M]
+  ------------------
+  243|  18.9M|      unsigned digit = (unsigned)(**p - '0');
+  244|  18.9M|      if (++digits > 10 || bits > (UINT32_MAX - digit) / 10) return false;
+                                         ^18.9M  ^18.9M                    ^8     ^8
+  ------------------
+  |  Branch (244:11): [True: 2, False: 18.9M]
+  |  Branch (244:28): [True: 6, False: 18.9M]
+  ------------------
+  245|  18.9M|      bits = bits * 10 + digit;
+  246|  18.9M|      ++*p;
+  247|  18.9M|   }
+  248|  5.40M|   if (!digits) return false;
+                              ^16    ^16
+  ------------------
+  |  Branch (248:8): [True: 16, False: 5.40M]
+  ------------------
+  249|  5.40M|   const char *after = *p;
+  250|  5.40M|   space(&after);
+  251|  5.40M|   if (*after != ',' && *after != '}') return false;
+                                      ^1.35M         ^24    ^24
+  ------------------
+  |  Branch (251:8): [True: 1.35M, False: 4.05M]
+  |  Branch (251:25): [True: 24, False: 1.35M]
+  ------------------
+  252|  5.40M|   if (raw_bits) { *raw_bits = bits; return true; }
+                               ^5.40M                     ^5.40M
+  ------------------
+  |  Branch (252:8): [True: 5.40M, False: 90]
+  ------------------
+  253|     90|   float value;
+  254|     90|   memcpy(&value, &bits, sizeof(value));
+  255|     90|   if (((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0) ||
+                                                            ^77     ^77
+  ------------------
+  |  Branch (255:9): [True: 77, False: 13]
+  |  Branch (255:47): [True: 44, False: 33]
+  ------------------
+  256|     90|       !isfinite(value) || fabsf(value) > 1000000.0f) {
+                     ^46^46                ^42
+  ------------------
+  |  Branch (256:8): [True: 4, False: 42]
+  |  Branch (256:9): [Folded, False: 0]
+  |  Branch (256:9): [True: 46, Folded]
+  |  Branch (256:28): [True: 0, False: 42]
+  ------------------
+  257|     48|      failure_code = "unsupported-feature";
+  258|     48|      return false;
+  259|     48|   }
+  260|     42|   return true;
+  261|     90|}
+  262|       |
+  263|       |static bool declaration(const char **p, struct profile *s)
+  264|  5.59M|{
+  265|  5.59M|   struct reg r;
+  266|  5.59M|   if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+                                   ^5.59M                                ^5.59M         ^613   ^613
+  ------------------
+  |  Branch (266:8): [True: 2, False: 5.59M]
+  |  Branch (266:22): [True: 611, False: 5.59M]
+  |  Branch (266:60): [True: 0, False: 5.59M]
+  ------------------
+  267|  5.59M|   if (r.file == ADDR) {
+  ------------------
+  |  Branch (267:8): [True: 157k, False: 5.44M]
+  ------------------
+  268|   157k|      failure_code = "unsupported-feature";
+  269|   157k|      if (!s->raw || s->address_declared || !end(p)) return false;
+                                   ^156k                  ^156k    ^1.56k ^1.56k
+  ------------------
+  |  Branch (269:11): [True: 1.56k, False: 156k]
+  |  Branch (269:22): [True: 2, False: 156k]
+  |  Branch (269:45): [True: 0, False: 156k]
+  ------------------
+  270|   156k|      s->address_declared = true;
+  271|   156k|      failure_code = "parse-error";
+  272|   156k|      return true;
+  273|   157k|   }
+  274|  5.44M|   if (s->raw && !(s->raw_flags & RAW_MIXED) && (r.file == SAMP || r.file == SVIEW)) { failure_code = "unsupported-feature"; return false; }
+                               ^4.22M                         ^964k^964k             ^964k             ^4                                             ^4
+  ------------------
+  |  Branch (274:8): [True: 4.22M, False: 1.21M]
+  |  Branch (274:18): [True: 964k, False: 3.26M]
+  |  Branch (274:50): [True: 2, False: 964k]
+  |  Branch (274:68): [True: 2, False: 964k]
+  ------------------
+  275|   103M|   for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;
+                 ^5.44M                                  ^98.2M^98.2M^98.2M                  ^2     ^2
+  ------------------
+  |  Branch (275:31): [True: 98.2M, False: 5.44M]
+  |  Branch (275:53): [True: 2, False: 98.2M]
+  ------------------
+  276|  5.44M|   unsigned semantic = 0, sid = 0;
+  277|  5.44M|   bool flat = false;
+  278|  5.44M|   if (r.file == OUT || (r.file == IN && s->stage == 1)) {
+                                      ^3.56M^3.56M          ^2.26M
+  ------------------
+  |  Branch (278:8): [True: 1.87M, False: 3.56M]
+  |  Branch (278:26): [True: 2.26M, False: 1.30M]
+  |  Branch (278:42): [True: 861k, False: 1.40M]
+  ------------------
+  279|  2.73M|      if (!punctuation(p, ',')) return false;
+                                              ^36    ^36
+  ------------------
+  |  Branch (279:11): [True: 36, False: 2.73M]
+  ------------------
+  280|  2.73M|      if (word(p, "POSITION")) {
+  ------------------
+  |  Branch (280:11): [True: 518k, False: 2.21M]
+  ------------------
+  281|   518k|         if (s->stage != 0 || r.file != OUT || r.index != 0) return false;
+                                                                           ^0     ^0
+  ------------------
+  |  Branch (281:14): [True: 0, False: 518k]
+  |  Branch (281:31): [True: 0, False: 518k]
+  |  Branch (281:48): [True: 0, False: 518k]
+  ------------------
+  282|   518k|         semantic = 1;
+  283|  2.21M|      } else if (word(p, "GENERIC")) {
+  ------------------
+  |  Branch (283:18): [True: 1.70M, False: 518k]
+  ------------------
+  284|  1.70M|         if (!punctuation(p, '[') || !index_number(p, &sid, FILE_REGISTERS) || !punctuation(p, ']')) return false;
+                                                   ^1.70M                                    ^1.70M                ^57    ^57
+  ------------------
+  |  Branch (284:14): [True: 19, False: 1.70M]
+  |  Branch (284:38): [True: 19, False: 1.70M]
+  |  Branch (284:80): [True: 19, False: 1.70M]
+  ------------------
+  285|  1.70M|         if (s->stage == 1 && r.file == OUT) return false;
+                                            ^861k          ^0     ^0
+  ------------------
+  |  Branch (285:14): [True: 861k, False: 839k]
+  |  Branch (285:31): [True: 0, False: 861k]
+  ------------------
+  286|  1.70M|         semantic = 2;
+  287|  1.70M|      } else if (word(p, "COLOR")) {
+                           ^518k^518k
+  ------------------
+  |  Branch (287:18): [True: 518k, False: 255]
+  ------------------
+  288|   518k|         if (s->stage != 1 || r.file != OUT || r.index != 0) return false;
+                                                                           ^0     ^0
+  ------------------
+  |  Branch (288:14): [True: 0, False: 518k]
+  |  Branch (288:31): [True: 0, False: 518k]
+  |  Branch (288:48): [True: 0, False: 518k]
+  ------------------
+  289|   518k|         semantic = 3;
+  290|   518k|      } else { failure_code = "unsupported-feature"; return false; }
+                           ^255                                           ^255
+  291|  24.6M|      for (unsigned i = 0; i < 8; ++i)
+                    ^2.73M                      ^21.8M
+  ------------------
+  |  Branch (291:28): [True: 21.8M, False: 2.73M]
+  ------------------
+  292|  21.8M|         if (s->declared[r.file][i] && s->semantic[r.file][i] == semantic && s->semantic_index[r.file][i] == sid) return false;
+                                                     ^1.90M                                ^1.06M                               ^0     ^0
+  ------------------
+  |  Branch (292:14): [True: 1.90M, False: 19.9M]
+  |  Branch (292:40): [True: 1.06M, False: 839k]
+  |  Branch (292:78): [True: 0, False: 1.06M]
+  ------------------
+  293|  2.73M|      if (s->stage == 1 && r.file == IN) {
+                                         ^1.37M
+  ------------------
+  |  Branch (293:11): [True: 1.37M, False: 1.35M]
+  |  Branch (293:28): [True: 861k, False: 518k]
+  ------------------
+  294|   861k|         if (!punctuation(p, ',')) return false;
+                                                 ^12    ^12
+  ------------------
+  |  Branch (294:14): [True: 12, False: 861k]
+  ------------------
+  295|   861k|         if (word(p, "CONSTANT")) flat = true;
+                                                ^372k  ^372k
+  ------------------
+  |  Branch (295:14): [True: 372k, False: 488k]
+  ------------------
+  296|   488k|         else if (!word(p, "PERSPECTIVE")) return false;
+                                                         ^152   ^152
+  ------------------
+  |  Branch (296:19): [True: 152, False: 488k]
+  ------------------
+  297|   861k|      }
+  298|  2.73M|   } else if (r.file == SVIEW) {
+                        ^2.70M^2.70M
+  ------------------
+  |  Branch (298:15): [True: 131, False: 2.70M]
+  ------------------
+  299|    131|      if (s->stage != 1 || !punctuation(p, ',') || !word(p, "2D") || !punctuation(p, ',') || !word(p, "FLOAT")) return false;
+                                                                                                                              ^4     ^4
+  ------------------
+  |  Branch (299:11): [True: 0, False: 131]
+  |  Branch (299:28): [True: 0, False: 131]
+  |  Branch (299:52): [True: 0, False: 131]
+  |  Branch (299:70): [True: 0, False: 131]
+  |  Branch (299:94): [True: 4, False: 127]
+  ------------------
+  300|  2.70M|   } else if (r.file == SAMP && s->stage != 1) return false;
+                                              ^132           ^1     ^1
+  ------------------
+  |  Branch (300:15): [True: 132, False: 2.70M]
+  |  Branch (300:33): [True: 1, False: 131]
+  ------------------
+  301|  5.43M|   if (r.mask != 15 && (semantic != 2 || (r.mask != 3 && r.mask != 7))) return false;
+                                     ^233^233             ^233^233           ^112           ^0     ^0
+  ------------------
+  |  Branch (301:8): [True: 233, False: 5.43M]
+  |  Branch (301:25): [True: 0, False: 233]
+  |  Branch (301:43): [True: 112, False: 121]
+  |  Branch (301:58): [True: 0, False: 112]
+  ------------------
+  302|  5.43M|   if (!end(p)) return false;
+                              ^4     ^4
+  ------------------
+  |  Branch (302:8): [True: 4, False: 5.43M]
+  ------------------
+  303|  5.43M|   if (r.file == CONST) {
+  ------------------
+  |  Branch (303:8): [True: 573k, False: 4.86M]
+  ------------------
+  304|       |      /* Preserve vrend_shader.c:1961–1965, including a last CONST[0]
+  305|       |       * declaration's extra, guest-inaccessible array element. */
+  306|   573k|      if (!r.last) ++s->constant_extent;
+                                 ^23
+  ------------------
+  |  Branch (306:11): [True: 23, False: 573k]
+  ------------------
+  307|   573k|      else if (r.last + 1 > s->constant_extent) s->constant_extent = r.last + 1;
+                                                              ^572k
+  ------------------
+  |  Branch (307:16): [True: 572k, False: 6]
+  ------------------
+  308|   573k|   }
+  309|   103M|   for (unsigned i = r.index; i <= r.last; ++i) {
+                                                         ^98.2M
+  ------------------
+  |  Branch (309:31): [True: 98.2M, False: 5.43M]
+  ------------------
+  310|  98.2M|      s->declared[r.file][i] = true;
+  311|  98.2M|      s->components[r.file][i] = r.mask;
+  312|  98.2M|   }
+  313|  5.43M|   if (r.file <= OUT) {
+  ------------------
+  |  Branch (313:8): [True: 4.13M, False: 1.30M]
+  ------------------
+  314|  4.13M|      s->semantic[r.file][r.index] = semantic;
+  315|  4.13M|      s->semantic_index[r.file][r.index] = sid;
+  316|  4.13M|      s->flat[r.file][r.index] = flat;
+  317|  4.13M|   }
+  318|  5.43M|   return true;
+  319|  5.43M|}
+  320|       |
+  321|       |enum { FLOW_DEPTH = 8 };
+  322|       |struct flow_frame {
+  323|       |   struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
+  324|       |   unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];
+  325|       |   unsigned target, else_target;
+  326|       |   bool has_target, has_else, has_else_target, address_written;
+  327|       |   struct raw_lane address;
+  328|       |};
+  329|       |struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };
+  330|       |_Static_assert(sizeof(struct flow_context) <= 53248, "bounded conditional heap arena");
+  331|       |
+  332|       |/* A frame initially owns entry state. ELSE swaps it with the completed true
+  333|       | * predecessor, so only one snapshot per level is needed. Declarations and
+  334|       | * recorded instructions are global and never participate in this swap. */
+  335|       |static void flow_snapshot(struct profile *s, struct flow_frame *frame, bool swap)
+  336|   313k|{
+  337|   313k|   bool written = frame->address_written;
+  338|   313k|   struct raw_lane address = frame->address;
+  339|   313k|   frame->address_written = s->address_written;
+  340|   313k|   frame->address = s->raw->address;
+  341|   313k|   if (swap) { s->address_written = written; s->raw->address = address; }
+                           ^154k
+  ------------------
+  |  Branch (341:8): [True: 154k, False: 158k]
+  ------------------
+  342|   939k|   for (unsigned file = OUT; file <= TEMP; ++file) {
+                                                         ^626k
+  ------------------
+  |  Branch (342:30): [True: 626k, False: 313k]
+  ------------------
+  343|   626k|      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
+                                                    ^313k            ^313k
+  ------------------
+  |  Branch (343:24): [True: 313k, False: 313k]
+  ------------------
+  344|   626k|      unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
+                                                             ^313k                      ^313k
+  ------------------
+  |  Branch (344:33): [True: 313k, False: 313k]
+  ------------------
+  345|   626k|      struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;
+                                                                 ^313k              ^313k
+  ------------------
+  |  Branch (345:37): [True: 313k, False: 313k]
+  ------------------
+  346|   626k|      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;
+                                                                   ^313k               ^313k
+  ------------------
+  |  Branch (346:39): [True: 313k, False: 313k]
+  ------------------
+  347|  40.0M|      for (unsigned index = 0; index < count; ++index) {
+                                                            ^39.4M
+  ------------------
+  |  Branch (347:32): [True: 39.4M, False: 626k]
+  ------------------
+  348|  39.4M|         unsigned written = saved_written[index];
+  349|  39.4M|         saved_written[index] = s->written[file][index];
+  350|  39.4M|         if (swap) s->written[file][index] = written;
+                                 ^19.4M
+  ------------------
+  |  Branch (350:14): [True: 19.4M, False: 19.9M]
+  ------------------
+  351|   197M|         for (unsigned lane = 0; lane < 4; ++lane) {
+                                                         ^157M
+  ------------------
+  |  Branch (351:34): [True: 157M, False: 39.4M]
+  ------------------
+  352|   157M|            struct raw_lane value = saved[index][lane];
+  353|   157M|            saved[index][lane] = current[index][lane];
+  354|   157M|            if (swap) current[index][lane] = value;
+                                    ^77.8M
+  ------------------
+  |  Branch (354:17): [True: 77.8M, False: 79.9M]
+  ------------------
+  355|   157M|         }
+  356|  39.4M|      }
+  357|   626k|   }
+  358|   313k|}
+  359|       |
+  360|       |static void flow_join(struct profile *s, const struct flow_frame *frame)
+  361|   157k|{
+  362|   157k|   s->address_written &= frame->address_written;
+  363|   157k|   s->raw->address = s->address_written ?
+  ------------------
+  |  Branch (363:22): [True: 2.55k, False: 154k]
+  ------------------
+  364|   154k|      raw_join(s->raw->address, frame->address) : (struct raw_lane){0};
+                    ^2.55k
+  365|   471k|   for (unsigned file = OUT; file <= TEMP; ++file) {
+                                                         ^314k
+  ------------------
+  |  Branch (365:30): [True: 314k, False: 157k]
+  ------------------
+  366|   314k|      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;
+                                                    ^157k            ^157k
+  ------------------
+  |  Branch (366:24): [True: 157k, False: 157k]
+  ------------------
+  367|   314k|      const unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;
+                                                                   ^157k                      ^157k
+  ------------------
+  |  Branch (367:39): [True: 157k, False: 157k]
+  ------------------
+  368|   314k|      const struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;
+                                                                       ^157k              ^157k
+  ------------------
+  |  Branch (368:43): [True: 157k, False: 157k]
+  ------------------
+  369|   314k|      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;
+                                                                   ^157k               ^157k
+  ------------------
+  |  Branch (369:39): [True: 157k, False: 157k]
+  ------------------
+  370|  20.1M|      for (unsigned index = 0; index < count; ++index) {
+                                                            ^19.8M
+  ------------------
+  |  Branch (370:32): [True: 19.8M, False: 314k]
+  ------------------
+  371|  19.8M|         s->written[file][index] &= saved_written[index];
+  372|  99.0M|         for (unsigned lane = 0; lane < 4; ++lane)
+                                                         ^79.2M
+  ------------------
+  |  Branch (372:34): [True: 79.2M, False: 19.8M]
+  ------------------
+  373|  79.2M|            current[index][lane] = s->written[file][index] & (1u << lane) ?
+  ------------------
+  |  Branch (373:36): [True: 623k, False: 78.5M]
+  ------------------
+  374|  78.5M|               raw_join(current[index][lane], saved[index][lane]) : (struct raw_lane){0};
+                             ^623k
+  375|  19.8M|      }
+  376|   314k|   }
+  377|   157k|}
+  378|       |
+  379|       |static bool control(const char **p, struct profile *s, struct flow_context *flow, enum raw_opcode opcode)
+  380|   470k|{
+  381|   470k|   failure_code = "unsupported-feature";
+  382|   470k|   struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+  383|   470k|   if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0])) return false;
+                                          ^158k                           ^117   ^117
+  ------------------
+  |  Branch (383:8): [True: 158k, False: 311k]
+  |  Branch (383:29): [True: 117, False: 158k]
+  ------------------
+  384|   470k|   unsigned target = 0;
+  385|   470k|   bool has_target = opcode != RAW_ENDIF && punctuation(p, ':');
+                                                          ^313k
+  ------------------
+  |  Branch (385:22): [True: 313k, False: 157k]
+  |  Branch (385:45): [True: 59, False: 313k]
+  ------------------
+  386|   470k|   if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;
+                                   ^59^59                       ^59                         ^51                         ^10    ^10
+  ------------------
+  |  Branch (386:8): [True: 59, False: 470k]
+  |  Branch (386:23): [True: 8, False: 51]
+  |  Branch (386:77): [True: 2, False: 49]
+  ------------------
+  387|   470k|   if (!end(p) || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;
+                                ^470k              ^470k                    ^13    ^13
+  ------------------
+  |  Branch (387:8): [True: 11, False: 470k]
+  |  Branch (387:19): [True: 2, False: 470k]
+  ------------------
+  388|   470k|   if (opcode == RAW_UIF) {
+  ------------------
+  |  Branch (388:8): [True: 158k, False: 311k]
+  ------------------
+  389|   158k|      if (flow->depth == FLOW_DEPTH) return false;
+                                                   ^4     ^4
+  ------------------
+  |  Branch (389:11): [True: 4, False: 158k]
+  ------------------
+  390|   158k|      struct flow_frame *frame = &flow->frames[flow->depth++];
+  391|   158k|      frame->target = target; frame->has_target = has_target;
+  392|   158k|      frame->has_else = frame->has_else_target = false;
+  393|   158k|      flow_snapshot(s, frame, false);
+  394|   311k|   } else {
+  395|   311k|      if (!flow->depth) return false;
+                                      ^8     ^8
+  ------------------
+  |  Branch (395:11): [True: 8, False: 311k]
+  ------------------
+  396|   311k|      struct flow_frame *frame = &flow->frames[flow->depth - 1];
+  397|   311k|      if (opcode == RAW_ELSE) {
+  ------------------
+  |  Branch (397:11): [True: 154k, False: 157k]
+  ------------------
+  398|   154k|         if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;
+                                              ^154k^154k                ^20                                ^6     ^6
+  ------------------
+  |  Branch (398:14): [True: 2, False: 154k]
+  |  Branch (398:34): [True: 20, False: 154k]
+  |  Branch (398:55): [True: 4, False: 16]
+  ------------------
+  399|   154k|         frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;
+  400|   154k|         flow_snapshot(s, frame, true);
+  401|   157k|      } else {
+  402|   157k|         if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :
+                                              ^154k                     ^16
+  ------------------
+  |  Branch (402:14): [True: 4, False: 157k]
+  |  Branch (402:15): [True: 154k, False: 2.63k]
+  |  Branch (402:33): [True: 16, False: 154k]
+  |  Branch (402:59): [True: 2, False: 14]
+  ------------------
+  403|   157k|              frame->has_target && frame->target != s->instructions)) return false;
+                            ^2.63k               ^4                                 ^4     ^4
+  ------------------
+  |  Branch (403:15): [True: 4, False: 2.63k]
+  |  Branch (403:36): [True: 2, False: 2]
+  ------------------
+  404|   157k|         flow_join(s, frame);
+  405|   157k|         --flow->depth;
+  406|   157k|      }
+  407|   311k|   }
+  408|   470k|   ++s->instructions;
+  409|   470k|   raw_record(s->raw, &raw);
+  410|   470k|   failure_code = "parse-error";
+  411|   470k|   return true;
+  412|   470k|}
+  413|       |
+  414|       |static bool instruction(const char **p, struct profile *s, struct flow_context *flow)
+  415|  5.69M|{
+  416|  5.69M|   unsigned arity;
+  417|  5.69M|   bool tex = false, partial = false;
+  418|  5.69M|   struct raw_instruction raw = {0};
+  419|  5.69M|   if (word(p, "END")) {
+  ------------------
+  |  Branch (419:8): [True: 876k, False: 4.81M]
+  ------------------
+  420|   876k|      if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
+                                ^102k        ^20                                            ^20
+  ------------------
+  |  Branch (420:11): [True: 102k, False: 773k]
+  |  Branch (420:19): [True: 20, False: 102k]
+  ------------------
+  421|   876k|      s->ended = true; return end(p);
+  422|   876k|   }
+  423|  4.81M|   if (flow) {
+  ------------------
+  |  Branch (423:8): [True: 991k, False: 3.82M]
+  ------------------
+  424|   991k|      if (word(p, "UIF")) return control(p, s, flow, RAW_UIF);
+                                        ^158k
+  ------------------
+  |  Branch (424:11): [True: 158k, False: 833k]
+  ------------------
+  425|   833k|      if (word(p, "ELSE")) return control(p, s, flow, RAW_ELSE);
+                                         ^154k
+  ------------------
+  |  Branch (425:11): [True: 154k, False: 678k]
+  ------------------
+  426|   678k|      if (word(p, "ENDIF")) return control(p, s, flow, RAW_ENDIF);
+                                          ^157k
+  ------------------
+  |  Branch (426:11): [True: 157k, False: 521k]
+  ------------------
+  427|   678k|   }
+  428|  4.34M|   if (word(p, "MOV")) { arity = 1; partial = true; }
+                                     ^1.71M                 ^1.71M
+  ------------------
+  |  Branch (428:8): [True: 1.71M, False: 2.62M]
+  ------------------
+  429|  2.62M|   else if (s->raw) {
+  ------------------
+  |  Branch (429:13): [True: 2.62M, False: 186]
+  ------------------
+  430|  2.62M|      if (word(p, "UARL")) raw.opcode = RAW_UARL;
+                                         ^157k
+  ------------------
+  |  Branch (430:11): [True: 157k, False: 2.46M]
+  ------------------
+  431|  2.46M|      else if (word(p, "AND")) raw.opcode = RAW_AND;
+                                             ^208k
+  ------------------
+  |  Branch (431:16): [True: 208k, False: 2.25M]
+  ------------------
+  432|  2.25M|      else if (word(p, "OR")) raw.opcode = RAW_OR;
+                                            ^644k
+  ------------------
+  |  Branch (432:16): [True: 644k, False: 1.61M]
+  ------------------
+  433|  1.61M|      else if (word(p, "NOT")) raw.opcode = RAW_NOT;
+                                             ^809
+  ------------------
+  |  Branch (433:16): [True: 809, False: 1.61M]
+  ------------------
+  434|  1.61M|      else if (word(p, "SHL")) raw.opcode = RAW_SHL;
+                                             ^617k
+  ------------------
+  |  Branch (434:16): [True: 617k, False: 995k]
+  ------------------
+  435|   995k|      else if (word(p, "USHR")) raw.opcode = RAW_USHR;
+                                              ^154k
+  ------------------
+  |  Branch (435:16): [True: 154k, False: 841k]
+  ------------------
+  436|   841k|      else if (word(p, "UADD")) raw.opcode = RAW_UADD;
+                                              ^26.5k
+  ------------------
+  |  Branch (436:16): [True: 26.5k, False: 814k]
+  ------------------
+  437|   814k|      else if (word(p, "ISGE")) raw.opcode = RAW_ISGE;
+                                              ^78
+  ------------------
+  |  Branch (437:16): [True: 78, False: 814k]
+  ------------------
+  438|   814k|      else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
+                                              ^662
+  ------------------
+  |  Branch (438:16): [True: 662, False: 814k]
+  ------------------
+  439|   814k|      else if (word(p, "USNE")) raw.opcode = RAW_USNE;
+                                              ^72
+  ------------------
+  |  Branch (439:16): [True: 72, False: 814k]
+  ------------------
+  440|   814k|      else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
+                                              ^131k
+  ------------------
+  |  Branch (440:16): [True: 131k, False: 682k]
+  ------------------
+  441|   682k|      else if (word(p, "FSLT")) raw.opcode = RAW_FSLT;
+                                              ^103k
+  ------------------
+  |  Branch (441:16): [True: 103k, False: 578k]
+  ------------------
+  442|   578k|      else if (word(p, "FSGE")) raw.opcode = RAW_FSGE;
+                                              ^345
+  ------------------
+  |  Branch (442:16): [True: 345, False: 578k]
+  ------------------
+  443|   578k|      else if (word(p, "ADD")) raw.opcode = RAW_ADD;
+                                             ^286k
+  ------------------
+  |  Branch (443:16): [True: 286k, False: 291k]
+  ------------------
+  444|   291k|      else if (word(p, "MUL")) raw.opcode = RAW_MUL;
+                                             ^154k
+  ------------------
+  |  Branch (444:16): [True: 154k, False: 137k]
+  ------------------
+  445|   137k|      else if (word(p, "MAD")) raw.opcode = RAW_MAD;
+                                             ^26.9k
+  ------------------
+  |  Branch (445:16): [True: 26.9k, False: 110k]
+  ------------------
+  446|   110k|      else if (word(p, "TEX")) raw.opcode = RAW_TEX;
+                                             ^111
+  ------------------
+  |  Branch (446:16): [True: 111, False: 110k]
+  ------------------
+  447|   110k|      else if (word(p, "DIV")) raw.opcode = RAW_DIV;
+                                             ^230
+  ------------------
+  |  Branch (447:16): [True: 230, False: 109k]
+  ------------------
+  448|   109k|      else if (word(p, "MAX")) raw.opcode = RAW_MAX;
+                                             ^26.9k
+  ------------------
+  |  Branch (448:16): [True: 26.9k, False: 82.8k]
+  ------------------
+  449|  82.8k|      else if (word(p, "FRC")) raw.opcode = RAW_FRC;
+                                             ^166
+  ------------------
+  |  Branch (449:16): [True: 166, False: 82.6k]
+  ------------------
+  450|  82.6k|      else if (word(p, "LRP")) raw.opcode = RAW_LRP;
+                                             ^26.6k
+  ------------------
+  |  Branch (450:16): [True: 26.6k, False: 56.0k]
+  ------------------
+  451|  56.0k|      else if (word(p, "DP3")) raw.opcode = RAW_DP3;
+                                             ^53.8k
+  ------------------
+  |  Branch (451:16): [True: 53.8k, False: 2.16k]
+  ------------------
+  452|  2.16k|      else if (word(p, "RCP")) raw.opcode = RAW_RCP;
+                                             ^946
+  ------------------
+  |  Branch (452:16): [True: 946, False: 1.21k]
+  ------------------
+  453|  1.21k|      else if (word(p, "RSQ")) raw.opcode = RAW_RSQ;
+                                             ^948
+  ------------------
+  |  Branch (453:16): [True: 948, False: 268]
+  ------------------
+  454|    268|      else { failure_code = "unsupported-feature"; return false; }
+  455|  2.62M|      tex = raw.opcode == RAW_TEX;
+  456|  2.62M|      arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
+                                                      ^2.46M                   ^2.46M
+  ------------------
+  |  Branch (456:15): [True: 157k, False: 2.46M]
+  |  Branch (456:41): [True: 809, False: 2.46M]
+  |  Branch (456:66): [True: 166, False: 2.46M]
+  ------------------
+  457|  2.62M|         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || tex ? 1 :
+                       ^2.46M                   ^2.46M                   ^2.46M^160k
+  ------------------
+  |  Branch (457:10): [True: 946, False: 2.46M]
+  |  Branch (457:35): [True: 948, False: 2.46M]
+  |  Branch (457:60): [True: 111, False: 2.46M]
+  ------------------
+  458|  2.62M|         raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
+                       ^2.46M                    ^2.33M                   ^2.30M                  ^185k^2.27M
+  ------------------
+  |  Branch (458:10): [True: 131k, False: 2.33M]
+  |  Branch (458:36): [True: 26.9k, False: 2.30M]
+  |  Branch (458:61): [True: 26.6k, False: 2.27M]
+  ------------------
+  459|  2.62M|      partial = !tex && raw.opcode != RAW_MAD;
+                                      ^2.62M
+  ------------------
+  |  Branch (459:17): [True: 2.62M, False: 111]
+  |  Branch (459:25): [True: 2.59M, False: 26.9k]
+  ------------------
+  460|       |      /* These formerly unsupported numeric tokens retain that error category
+  461|       |       * for malformed syntax and unproven domains in an owned raw stage. */
+  462|  2.62M|      if (raw.opcode == RAW_UARL || ((1u << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = "unsupported-feature";
+                                                  ^2.46M                ^2.46M                ^735k
+  ------------------
+  |  Branch (462:11): [True: 157k, False: 2.46M]
+  |  Branch (462:37): [True: 578k, False: 1.88M]
+  ------------------
+  463|  2.62M|   }
+  464|    186|   else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
+                                            ^179            ^19                    ^19
+  ------------------
+  |  Branch (464:13): [True: 7, False: 179]
+  |  Branch (464:31): [True: 12, False: 167]
+  ------------------
+  465|    167|   else if (word(p, "MAD")) arity = 3;
+                                          ^0
+  ------------------
+  |  Branch (465:13): [True: 0, False: 167]
+  ------------------
+  466|    167|   else if (word(p, "TEX")) { tex = true; arity = 1; }
+                                          ^5      ^5
+  ------------------
+  |  Branch (466:13): [True: 5, False: 162]
+  ------------------
+  467|    162|   else { failure_code = "unsupported-feature"; return false; }
+  468|  4.34M|   if (++s->instructions > BRIDGE_MAX_INSTRUCTIONS) return false;
+                                                                  ^22    ^22
+  ------------------
+  |  Branch (468:8): [True: 22, False: 4.34M]
+  ------------------
+  469|  4.34M|   struct reg dst;
+  470|  4.34M|   if (!register_name(p, &dst, DESTINATION)) return false;
+                                                           ^512   ^512
+  ------------------
+  |  Branch (470:8): [True: 512, False: 4.34M]
+  ------------------
+  471|  4.34M|   if (raw.opcode == RAW_UARL) {
+  ------------------
+  |  Branch (471:8): [True: 157k, False: 4.18M]
+  ------------------
+  472|   157k|      if (dst.file != ADDR || !s->address_declared) return false;
+                                            ^157k                 ^10    ^10
+  ------------------
+  |  Branch (472:11): [True: 6, False: 157k]
+  |  Branch (472:31): [True: 4, False: 157k]
+  ------------------
+  473|  4.18M|   } else if ((dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index] ||
+                                                ^2.44M               ^4.18M
+  ------------------
+  |  Branch (473:16): [True: 2.44M, False: 1.73M]
+  |  Branch (473:35): [True: 4, False: 2.44M]
+  |  Branch (473:56): [True: 0, False: 4.18M]
+  ------------------
+  474|  4.18M|              (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;
+                            ^4.18M                                                       ^4     ^4
+  ------------------
+  |  Branch (474:15): [True: 0, False: 4.18M]
+  ------------------
+  475|  4.34M|   if (dst.explicit_mask && !partial) { failure_code = "unsupported-feature"; return false; }
+                                          ^163k     ^12                                            ^12
+  ------------------
+  |  Branch (475:8): [True: 163k, False: 4.17M]
+  |  Branch (475:29): [True: 12, False: 163k]
+  ------------------
+  476|  4.34M|   unsigned consumed = s->raw ? raw_consumed_mask(raw.opcode, dst.mask) : tex ? 3u : dst.mask;
+                                              ^3.73M                                    ^604k ^5   ^604k
+  ------------------
+  |  Branch (476:24): [True: 3.73M, False: 604k]
+  |  Branch (476:75): [True: 5, False: 604k]
+  ------------------
+  477|  11.3M|   for (unsigned i = 0; i < arity; ++i) {
+                                                 ^6.98M
+  ------------------
+  |  Branch (477:25): [True: 6.99M, False: 4.34M]
+  ------------------
+  478|  6.99M|      if (!punctuation(p, ',')) return false;
+                                              ^115   ^115
+  ------------------
+  |  Branch (478:11): [True: 115, False: 6.99M]
+  ------------------
+  479|       |      /* A modifier belongs only to a numeric operand; samplers, raw selectors
+  480|       |       * and bitwise payloads never pass through this typed minus parser. */
+  481|  6.99M|      if (s->raw && ((1u << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
+                                  ^6.38M                ^6.38M                  ^1.20M
+  ------------------
+  |  Branch (481:11): [True: 6.38M, False: 604k]
+  |  Branch (481:21): [True: 1.20M, False: 5.17M]
+  |  Branch (481:67): [True: 4.50k, False: 1.20M]
+  ------------------
+  482|  4.50k|         raw.flags |= RAW_NEGATE_SOURCE0 << i;
+  483|  6.99M|      if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL)) return false;
+                                                         ^6.38M               ^1.27k ^1.27k
+  ------------------
+  |  Branch (483:11): [True: 1.27k, False: 6.98M]
+  |  Branch (483:35): [True: 6.38M, False: 604k]
+  ------------------
+  484|  6.99M|   }
+  485|  4.34M|   if (tex) {
+  ------------------
+  |  Branch (485:8): [True: 102, False: 4.34M]
+  ------------------
+  486|    102|      struct reg sampler;
+  487|    102|      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
+                                         ^98                     ^98                                    ^94                     ^92
+  ------------------
+  |  Branch (487:11): [True: 4, False: 98]
+  |  Branch (487:28): [True: 0, False: 98]
+  |  Branch (487:52): [True: 4, False: 94]
+  |  Branch (487:91): [True: 2, False: 92]
+  |  Branch (487:115): [True: 2, False: 90]
+  ------------------
+  488|    102|          !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
+                        ^90                                  ^85                                   ^83                     ^81             ^29    ^29
+  ------------------
+  |  Branch (488:11): [True: 5, False: 85]
+  |  Branch (488:48): [True: 2, False: 83]
+  |  Branch (488:86): [True: 2, False: 81]
+  |  Branch (488:110): [True: 8, False: 73]
+  ------------------
+  489|     73|      raw.sampler = sampler.index;
+  490|     73|   }
+  491|  4.34M|   if (!end(p)) return false;
+                              ^62    ^62
+  ------------------
+  |  Branch (491:8): [True: 62, False: 4.34M]
+  ------------------
+  492|  4.34M|   if (s->raw) {
+  ------------------
+  |  Branch (492:8): [True: 3.73M, False: 603k]
+  ------------------
+  493|  3.73M|      raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
+  494|  3.73M|      raw.flags |= s->raw_flags;
+  495|  3.73M|      if (!raw_record(s->raw, &raw)) {
+  ------------------
+  |  Branch (495:11): [True: 155k, False: 3.58M]
+  ------------------
+  496|   155k|         missing_numeric_authority = true;
+  497|   155k|         failure_code = "unsupported-feature";
+  498|   155k|         return false;
+  499|   155k|      }
+  500|  3.73M|   }
+  501|  4.18M|   if (dst.file == ADDR) s->address_written = true;
+                                       ^157k                ^157k
+  ------------------
+  |  Branch (501:8): [True: 157k, False: 4.02M]
+  ------------------
+  502|  4.02M|   else s->written[dst.file][dst.index] |= dst.mask;
+  503|  4.18M|   failure_code = "parse-error";
+  504|  4.18M|   return true;
+  505|  4.34M|}
+  506|       |
+  507|       |static bool validate_body(char *text, struct profile *s, struct flow_context *flow)
+  508|  1.03M|{
+  509|  1.03M|   char *save = NULL;
+  510|  1.03M|   bool header = false;
+  511|  1.03M|   unsigned line_count = 0;
+  512|  15.0M|   for (char *line = strtok_r(text, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
+                                                                      ^13.9M          ^13.9M
+  ------------------
+  |  Branch (512:51): [True: 14.1M, False: 876k]
+  ------------------
+  513|  14.1M|      const char *p = line;
+  514|  14.1M|      if (end(&p)) continue;
+                                 ^0
+  ------------------
+  |  Branch (514:11): [True: 0, False: 14.1M]
+  ------------------
+  515|  14.1M|      if (++line_count > 256 || strlen(line) > 512 || s->ended) return false;
+                                                                              ^2     ^2
+  ------------------
+  |  Branch (515:11): [True: 0, False: 14.1M]
+  |  Branch (515:33): [True: 0, False: 14.1M]
+  |  Branch (515:55): [True: 2, False: 14.1M]
+  ------------------
+  516|  14.1M|      if (!header) {
+  ------------------
+  |  Branch (516:11): [True: 1.03M, False: 13.0M]
+  ------------------
+  517|  1.03M|         header = true;
+  518|  1.03M|         if (word(&p, s->stage == 0 ? "FRAG" : "VERT")) { failure_code = "unsupported-stage"; return false; }
+                                                    ^518k    ^518k    ^0                                           ^0
+  ------------------
+  |  Branch (518:14): [True: 0, False: 1.03M]
+  |  Branch (518:23): [True: 518k, False: 518k]
+  ------------------
+  519|  1.03M|         if (!word(&p, s->stage == 0 ? "VERT" : "FRAG") || !end(&p)) return false;
+                                                     ^518k    ^518k      ^1.03M    ^37    ^37
+  ------------------
+  |  Branch (519:14): [True: 37, False: 1.03M]
+  |  Branch (519:24): [True: 518k, False: 518k]
+  |  Branch (519:60): [True: 0, False: 1.03M]
+  ------------------
+  520|  13.0M|      } else if (word(&p, "DCL")) {
+  ------------------
+  |  Branch (520:18): [True: 5.59M, False: 7.49M]
+  ------------------
+  521|  5.59M|         if (!declaration(&p, s)) return false;
+                                                ^2.70k ^2.70k
+  ------------------
+  |  Branch (521:14): [True: 2.70k, False: 5.59M]
+  ------------------
+  522|  7.49M|      } else if (word(&p, "IMM")) {
+  ------------------
+  |  Branch (522:18): [True: 1.80M, False: 5.69M]
+  ------------------
+  523|  1.80M|         unsigned i;
+  524|  1.80M|         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i, FILE_REGISTERS) || i != s->immediates || !punctuation(&p, ']')) return false;
+                                                                  ^1.80M                                   ^1.80M                ^1.80M                 ^4     ^4
+  ------------------
+  |  Branch (524:14): [True: 0, False: 1.80M]
+  |  Branch (524:28): [True: 1, False: 1.80M]
+  |  Branch (524:53): [True: 2, False: 1.80M]
+  |  Branch (524:94): [True: 0, False: 1.80M]
+  |  Branch (524:116): [True: 1, False: 1.80M]
+  ------------------
+  525|  1.80M|         bool bits = false;
+                           ^1.80M
+  526|  1.80M|         if (!word(&p, "FLT32")) {
+  ------------------
+  |  Branch (526:14): [True: 1.35M, False: 454k]
+  ------------------
+  527|  1.35M|            if (!word(&p, "UINT32")) return false;
+                                                   ^27    ^27
+  ------------------
+  |  Branch (527:17): [True: 27, False: 1.35M]
+  ------------------
+  528|  1.35M|            bits = true;
+  529|  1.35M|         }
+  530|  1.80M|         if (!punctuation(&p, '{')) return false;
+                                                  ^8     ^8
+  ------------------
+  |  Branch (530:14): [True: 8, False: 1.80M]
+  ------------------
+  531|  9.03M|         for (unsigned c = 0; c < 4; ++c) {
+                       ^1.80M                      ^7.22M
+  ------------------
+  |  Branch (531:31): [True: 7.22M, False: 1.80M]
+  ------------------
+  532|  7.22M|            uint32_t *value = s->raw ? &s->raw->immediates[i][c] : NULL;
+                                                     ^7.17M
+  ------------------
+  |  Branch (532:31): [True: 7.17M, False: 51.9k]
+  ------------------
+  533|  7.22M|            if ((c && !punctuation(&p, ',')) || !(bits ? literal_float_bits(&p, value) : literal_float(&p, value))) return false;
+                                    ^5.41M                    ^7.22M^7.22M ^5.40M                          ^1.81M                     ^114   ^114
+  ------------------
+  |  Branch (533:18): [True: 5.41M, False: 1.80M]
+  |  Branch (533:23): [True: 9, False: 5.41M]
+  |  Branch (533:49): [True: 105, False: 7.22M]
+  |  Branch (533:51): [True: 5.40M, False: 1.81M]
+  ------------------
+  534|  7.22M|         }
+  535|  1.80M|         if (!punctuation(&p, '}') || !end(&p)) return false;
+                                                    ^1.80M    ^6     ^6
+  ------------------
+  |  Branch (535:14): [True: 4, False: 1.80M]
+  |  Branch (535:39): [True: 2, False: 1.80M]
+  ------------------
+  536|  1.80M|         s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;
+  537|  5.69M|      } else if (word(&p, "PROPERTY")) {
+  ------------------
+  |  Branch (537:18): [True: 22, False: 5.69M]
+  ------------------
+  538|     22|         if (s->stage != 1 || s->started || s->color0_property ||
+                                            ^17           ^16
+  ------------------
+  |  Branch (538:14): [True: 5, False: 17]
+  |  Branch (538:31): [True: 1, False: 16]
+  |  Branch (538:45): [True: 0, False: 16]
+  ------------------
+  539|     22|             !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) {
+                           ^16                                        ^12               ^12
+  ------------------
+  |  Branch (539:14): [True: 4, False: 12]
+  |  Branch (539:57): [True: 0, False: 12]
+  |  Branch (539:75): [True: 0, False: 12]
+  ------------------
+  540|     10|            failure_code = "unsupported-feature";
+  541|     10|            return false;
+  542|     10|         }
+  543|       |         /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
+  544|     12|         s->color0_property = true;
+  545|  5.69M|      } else {
+  546|  5.69M|         s->started = true;
+  547|       |         /* Labels are optional, bounded, sequential, and never jump targets. */
+  548|  5.69M|         if (isdigit((unsigned char)*p)) {
+  ------------------
+  |  Branch (548:14): [True: 361, False: 5.69M]
+  ------------------
+  549|    361|            unsigned label = 0, digits = 0;
+  550|    900|            while (isdigit((unsigned char)*p)) {
+  ------------------
+  |  Branch (550:20): [True: 539, False: 361]
+  ------------------
+  551|    539|               if (++digits > 3) return false;
+                                               ^0     ^0
+  ------------------
+  |  Branch (551:20): [True: 0, False: 539]
+  ------------------
+  552|    539|               label = label * 10 + (unsigned)(*p++ - '0');
+  553|    539|            }
+  554|    361|            if (label != s->instructions || !punctuation(&p, ':')) return false;
+                                                          ^349                   ^12    ^12
+  ------------------
+  |  Branch (554:17): [True: 12, False: 349]
+  |  Branch (554:45): [True: 0, False: 349]
+  ------------------
+  555|    361|         }
+  556|  5.69M|         if (!instruction(&p, s, flow)) return false;
+                                                      ^157k  ^157k
+  ------------------
+  |  Branch (556:14): [True: 157k, False: 5.53M]
+  ------------------
+  557|  5.69M|      }
+  558|  14.1M|   }
+  559|   876k|   if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
+                             ^103k        ^68                                            ^68
+  ------------------
+  |  Branch (559:8): [True: 103k, False: 773k]
+  |  Branch (559:16): [True: 68, False: 102k]
+  ------------------
+  560|   876k|   if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
+                                ^876k        ^876k               ^876k                 ^282   ^282
+  ------------------
+  |  Branch (560:8): [True: 10, False: 876k]
+  |  Branch (560:19): [True: 272, False: 876k]
+  |  Branch (560:32): [True: 0, False: 876k]
+  |  Branch (560:52): [True: 0, False: 876k]
+  ------------------
+  561|  7.88M|   for (unsigned i = 0; i < 8; ++i)
+                 ^876k                       ^7.00M
+  ------------------
+  |  Branch (561:25): [True: 7.00M, False: 876k]
+  ------------------
+  562|  7.00M|      if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
+                                               ^1.58M                                       ^0     ^0
+  ------------------
+  |  Branch (562:11): [True: 1.58M, False: 5.42M]
+  |  Branch (562:34): [True: 0, False: 1.58M]
+  ------------------
+  563|   876k|   if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s) ||
+                               ^567k^567k                   ^567k
+  ------------------
+  |  Branch (563:8): [True: 567k, False: 308k]
+  |  Branch (563:19): [True: 0, False: 567k]
+  |  Branch (563:43): [True: 225, False: 567k]
+  ------------------
+  564|   567k|       (s->address_declared && !s->raw->indirect_indices))) {
+                     ^567k^567k                  ^102k
+  ------------------
+  |  Branch (564:9): [True: 102k, False: 464k]
+  |  Branch (564:32): [True: 2, False: 102k]
+  ------------------
+  565|    227|      failure_code = "unsupported-feature";
+  566|    227|      return false;
+  567|    227|   }
+  568|   875k|   return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
+                                                                ^437k^438k
+  ------------------
+  |  Branch (568:35): [True: 437k, False: 438k]
+  ------------------
+  569|   876k|}
+  570|       |
+  571|       |static bool validate(char *text, struct profile *s)
+  572|  1.03M|{
+  573|  1.03M|   struct flow_context *flow = NULL;
+  574|  1.03M|   if (s->raw_flags & RAW_STRUCTURED) {
+  ------------------
+  |  Branch (574:8): [True: 155k, False: 882k]
+  ------------------
+  575|   155k|      flow = calloc(1, sizeof(*flow));
+  576|   155k|      if (!flow) { failure_code = "translation-error"; return false; }
+                               ^10                                          ^10
+  ------------------
+  |  Branch (576:11): [True: 10, False: 155k]
+  ------------------
+  577|   155k|   }
+  578|  1.03M|   bool valid = validate_body(text, s, flow);
+  579|  1.03M|   free(flow);
+  580|  1.03M|   return valid;
+  581|  1.03M|}
+  582|       |
+  583|       |static void io_metadata(const struct profile *s, enum file f)
+  584|  2.18M|{
+  585|  2.18M|   bool comma = false;
+  586|  2.18M|   append("[");
+  587|  19.7M|   for (unsigned i = 0; i < 8; ++i) if (s->declared[f][i]) {
+                                             ^17.5M^17.5M^17.5M
+  ------------------
+  |  Branch (587:25): [True: 17.5M, False: 2.18M]
+  |  Branch (587:41): [True: 4.62M, False: 12.8M]
+  ------------------
+  588|  4.62M|      unsigned semantic = s->semantic[f][i], sid = s->semantic_index[f][i];
+  589|  4.62M|      const char *names[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR"};
+  590|  4.62M|      char name[32];
+  591|  4.62M|      if (!semantic) snprintf(name, sizeof(name), "in_%u", i);
+                                   ^2.37M
+  ------------------
+  |  Branch (591:11): [True: 2.37M, False: 2.25M]
+  ------------------
+  592|  2.25M|      else if (semantic == 1) snprintf(name, sizeof(name), "gl_Position");
+                                            ^437k
+  ------------------
+  |  Branch (592:16): [True: 437k, False: 1.81M]
+  ------------------
+  593|  1.81M|      else if (semantic == 2) snprintf(name, sizeof(name), "vso_g%u", sid);
+                                            ^1.37M
+  ------------------
+  |  Branch (593:16): [True: 1.37M, False: 438k]
+  ------------------
+  594|   438k|      else snprintf(name, sizeof(name), "fsout_c0");
+  595|  4.62M|      append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u", comma ? "," : "", i, name, names[semantic], sid, s->components[f][i]);
+                                                                                                                                                      ^2.48M^2.13M
+  ------------------
+  |  Branch (595:129): [True: 2.48M, False: 2.13M]
+  ------------------
+  596|  4.62M|      if (f == OUT) append(",\"writtenMask\":%u", s->written[f][i]);
+                                  ^1.58M
+  ------------------
+  |  Branch (596:11): [True: 1.58M, False: 3.04M]
+  ------------------
+  597|  4.62M|      if (semantic == 2) append(",\"interpolation\":\"%s\"", s->flat[f][i] ? "flat" : "smooth");
+                                       ^1.37M                              ^1.37M          ^513k    ^865k
+  ------------------
+  |  Branch (597:11): [True: 1.37M, False: 3.24M]
+  |  Branch (597:62): [True: 513k, False: 865k]
+  ------------------
+  598|  4.62M|      append("}");
+  599|  4.62M|      comma = true;
+  600|  4.62M|   }
+  601|  2.18M|   append("]");
+  602|  2.18M|}
+  603|       |
+  604|       |/* Each conversion owns only upstream outputs. Text/token workspaces live in
+  605|       | * sequential helper calls, so a pair never doubles their Wasm stack footprint. */
+  606|       |struct conversion {
+  607|       |   struct profile profile;
+  608|       |   struct vrend_shader_info info;
+  609|       |   struct vrend_variable_shader_info variable;
+  610|       |   struct vrend_strarray shader;
+  611|       |   char *owned_shader;
+  612|       |};
+  613|       |_Static_assert(sizeof(struct conversion) * 2 <= 32768, "pair conversion stack bound");
+  614|       |
+  615|       |static void cleanup(struct conversion *c)
+  616|   886k|{
+  617|   886k|   strarray_free(&c->shader, true);
+  618|   886k|   free(c->info.sampler_arrays);
+  619|   886k|   free(c->info.image_arrays);
+  620|   886k|   free(c->profile.raw);
+  621|   886k|   free(c->owned_shader);
+  622|   886k|}
+  623|       |
+  624|       |static void begin_response(bool pair)
+  625|   603k|{
+  626|   603k|   response = pair ? pair_response : single_response;
+                                   ^282k           ^321k
+  ------------------
+  |  Branch (626:15): [True: 282k, False: 321k]
+  ------------------
+  627|   603k|   response_capacity = pair ? sizeof(pair_response) : sizeof(single_response);
+                                            ^282k                   ^321k
+  ------------------
+  |  Branch (627:24): [True: 282k, False: 321k]
+  ------------------
+  628|   603k|   response_used = 0;
+  629|   603k|   response_overflow = false;
+  630|   603k|}
+  631|       |
+  632|       |static const char *numeric_rejection(void)
+  633|    685|{
+  634|    685|   return error("unsupported-feature", "TGSI is malformed or outside the documented straight-line profile.");
+  635|    685|}
+  636|       |
+  637|       |static const char *check_input(struct profile *profile, const char *text, size_t length)
+  638|   886k|{
+  639|   886k|   if (!text) return error("invalid-input", "TGSI text is required.");
+                            ^3
+  ------------------
+  |  Branch (639:8): [True: 3, False: 886k]
+  ------------------
+  640|   886k|   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 16384 bytes.");
+                                               ^4
+  ------------------
+  |  Branch (640:8): [True: 4, False: 886k]
+  ------------------
+  641|   264M|   for (size_t i = 0; i < length; ++i) {
+                 ^886k                          ^263M
+  ------------------
+  |  Branch (641:23): [True: 263M, False: 882k]
+  ------------------
+  642|   263M|      unsigned char c = (unsigned char)text[i];
+  643|   263M|      if ((c < 32 && c != '\n' && c != '\t' && c != '\r') || c > 126)
+                                   ^12.1M       ^793         ^773          ^263M
+  ------------------
+  |  Branch (643:12): [True: 12.1M, False: 251M]
+  |  Branch (643:22): [True: 793, False: 12.1M]
+  |  Branch (643:35): [True: 773, False: 20]
+  |  Branch (643:48): [True: 753, False: 20]
+  |  Branch (643:62): [True: 3.35k, False: 263M]
+  ------------------
+  644|  4.10k|         return error("invalid-input", "TGSI must contain printable ASCII and ordinary whitespace, without NUL bytes.");
+  645|   263M|   }
+  646|   882k|   char checked[BRIDGE_MAX_TEXT + 1];
+  647|   882k|   memcpy(checked, text, length); checked[length] = 0;
+  648|       |   /* This bounded lexical probe chooses which validator to attempt; it never
+  649|       |    * admits a shader or selects emitted semantics. Only fully validated new
+  650|       |    * instructions plus a complete output proof authorize the owned backend.
+  651|       |    * Texts without such opcode tokens retain the exact legacy validator path. */
+  652|   882k|   bool candidate = false, numeric_candidate = false, structured_candidate = false;
+  653|   882k|   char *save = NULL;
+  654|  13.0M|   for (char *line = strtok_r(checked, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
+                                                                         ^12.1M          ^12.1M
+  ------------------
+  |  Branch (654:54): [True: 12.1M, False: 882k]
+  ------------------
+  655|  12.1M|      const char *p = line;
+  656|  12.1M|      space(&p);
+  657|  12.1M|      if (isdigit((unsigned char)*p)) {
+  ------------------
+  |  Branch (657:11): [True: 704, False: 12.1M]
+  ------------------
+  658|  2.04k|         while (isdigit((unsigned char)*p)) ++p;
+                                                          ^1.34k
+  ------------------
+  |  Branch (658:17): [True: 1.34k, False: 704]
+  ------------------
+  659|    704|         if (!punctuation(&p, ':')) continue;
+                                                  ^3
+  ------------------
+  |  Branch (659:14): [True: 3, False: 701]
+  ------------------
+  660|    704|      }
+  661|  12.1M|      if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
+                                           ^12.0M              ^11.9M
+  ------------------
+  |  Branch (661:11): [True: 107k, False: 12.0M]
+  |  Branch (661:30): [True: 103k, False: 11.9M]
+  |  Branch (661:50): [True: 105k, False: 11.8M]
+  ------------------
+  662|   316k|         candidate = structured_candidate = true;
+  663|  11.8M|      } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
+                                                  ^11.6M            ^10.9M             ^10.9M             ^10.3M
+  ------------------
+  |  Branch (663:18): [True: 208k, False: 11.6M]
+  |  Branch (663:37): [True: 645k, False: 10.9M]
+  |  Branch (663:55): [True: 806, False: 10.9M]
+  |  Branch (663:74): [True: 618k, False: 10.3M]
+  |  Branch (663:93): [True: 154k, False: 10.1M]
+  ------------------
+  664|  11.8M|          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
+                        ^10.1M              ^10.1M              ^10.1M              ^10.1M              ^10.1M
+  ------------------
+  |  Branch (664:11): [True: 26.5k, False: 10.1M]
+  |  Branch (664:31): [True: 78, False: 10.1M]
+  |  Branch (664:51): [True: 660, False: 10.1M]
+  |  Branch (664:71): [True: 72, False: 10.1M]
+  |  Branch (664:91): [True: 80.0k, False: 10.0M]
+  ------------------
+  665|  11.8M|          word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "UARL")) {
+                        ^10.0M              ^9.97M              ^9.97M
+  ------------------
+  |  Branch (665:11): [True: 103k, False: 9.97M]
+  |  Branch (665:31): [True: 350, False: 9.97M]
+  |  Branch (665:51): [True: 106k, False: 9.86M]
+  ------------------
+  666|  1.94M|         candidate = true;
+  667|  9.86M|      } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {
+                                                  ^9.68M             ^9.58M             ^9.55M
+  ------------------
+  |  Branch (667:18): [True: 183k, False: 9.68M]
+  |  Branch (667:37): [True: 103k, False: 9.58M]
+  |  Branch (667:56): [True: 26.8k, False: 9.55M]
+  |  Branch (667:75): [True: 110, False: 9.55M]
+  ------------------
+  668|   313k|         numeric_candidate = true;
+  669|       |         /* Probe source positions only. A '-' in a literal/declaration or
+  670|       |          * unrelated token cannot move an ordinary legacy program here. The
+  671|       |          * complete typed parser below remains the sole admission authority. */
+  672|   968k|         while ((p = strchr(p, ','))) {
+  ------------------
+  |  Branch (672:17): [True: 654k, False: 313k]
+  ------------------
+  673|   654k|            ++p; space(&p);
+  674|   654k|            if (*p == '-') candidate = true;
+                                         ^100        ^100
+  ------------------
+  |  Branch (674:17): [True: 100, False: 654k]
+  ------------------
+  675|   654k|         }
+  676|  9.55M|      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "FRC") || word(&p, "LRP") ||
+                                                  ^9.55M             ^9.52M             ^9.52M
+  ------------------
+  |  Branch (676:18): [True: 183, False: 9.55M]
+  |  Branch (676:37): [True: 26.9k, False: 9.52M]
+  |  Branch (676:56): [True: 132, False: 9.52M]
+  |  Branch (676:75): [True: 26.6k, False: 9.50M]
+  ------------------
+  677|  9.55M|                 word(&p, "DP3") || word(&p, "RCP") || word(&p, "RSQ")) {
+                               ^9.50M             ^9.44M             ^9.44M
+  ------------------
+  |  Branch (677:18): [True: 53.7k, False: 9.44M]
+  |  Branch (677:37): [True: 910, False: 9.44M]
+  |  Branch (677:56): [True: 912, False: 9.44M]
+  ------------------
+  678|   109k|         candidate = numeric_candidate = true;
+  679|   109k|      }
+  680|  12.1M|   }
+  681|   882k|   if (candidate) {
+  ------------------
+  |  Branch (681:8): [True: 570k, False: 311k]
+  ------------------
+  682|   570k|      profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
+                                                               ^260k                  ^362k       ^207k
+  ------------------
+  |  Branch (682:29): [True: 310k, False: 260k]
+  |  Branch (682:50): [True: 52.1k, False: 207k]
+  ------------------
+  683|   570k|         (structured_candidate ? RAW_STRUCTURED : 0);
+                                               ^103k            ^467k
+  ------------------
+  |  Branch (683:11): [True: 103k, False: 467k]
+  ------------------
+  684|   570k|      profile->raw = calloc(1, sizeof(*profile->raw));
+  685|   570k|      if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+                                       ^6
+  ------------------
+  |  Branch (685:11): [True: 6, False: 570k]
+  ------------------
+  686|   570k|   }
+  687|   882k|   memcpy(checked, text, length); checked[length] = 0;
+  688|   882k|   failure_code = "parse-error";
+  689|   882k|   missing_numeric_authority = false;
+  690|   882k|   if (validate(checked, profile)) return NULL;
+                                                 ^721k  ^721k
+  ------------------
+  |  Branch (690:8): [True: 721k, False: 161k]
+  ------------------
+  691|   161k|   if (!missing_numeric_authority)
+  ------------------
+  |  Branch (691:8): [True: 6.04k, False: 154k]
+  ------------------
+  692|  6.04k|      return error(failure_code, !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
+                                                                                            ^6
+  ------------------
+  |  Branch (692:34): [True: 6, False: 6.04k]
+  ------------------
+  693|  6.04k|         "TGSI is malformed or outside the documented straight-line profile.");
+                       ^6.04k
+  694|       |   /* The ordinary result wins whenever it succeeds. A failed domain use gets
+  695|       |    * one fresh whole-text attempt: no first-pass facts or borrowed response
+  696|       |    * pointer survive, and no concurrent second IR grows the storage budget. */
+  697|   154k|   int stage = profile->stage;
+  698|   154k|   free(profile->raw);
+  699|   154k|   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |
+  700|   154k|      (structured_candidate ? RAW_STRUCTURED : 0)};
+                                            ^51.5k           ^103k
+  ------------------
+  |  Branch (700:8): [True: 51.5k, False: 103k]
+  ------------------
+  701|   154k|   profile->raw = calloc(1, sizeof(*profile->raw));
+  702|   154k|   if (!profile->raw) return numeric_rejection();
+                                    ^4
+  ------------------
+  |  Branch (702:8): [True: 4, False: 154k]
+  ------------------
+  703|   154k|   memcpy(checked, text, length); checked[length] = 0;
+  704|   154k|   failure_code = "parse-error";
+  705|   154k|   missing_numeric_authority = false;
+  706|   154k|   if (!validate(checked, profile) || !(profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
+                                                    ^154k                         ^154k
+  ------------------
+  |  Branch (706:8): [True: 331, False: 154k]
+  |  Branch (706:39): [True: 0, False: 154k]
+  ------------------
+  707|    331|      return numeric_rejection();
+  708|   154k|   return NULL;
+  709|   154k|}
+  710|       |
+  711|       |static const char *convert(struct conversion *c, const char *text, size_t length,
+  712|       |                           const struct vrend_fs_shader_info *fragment_interface)
+  713|   875k|{
+  714|   875k|   if (c->profile.raw) {
+  ------------------
+  |  Branch (714:8): [True: 567k, False: 308k]
+  ------------------
+  715|       |      /* Raw stages never enter the float-backed upstream emitter. These are
+  716|       |       * value-only metadata from declarations already checked by our guard. */
+  717|   567k|      c->info.num_consts = (int)c->profile.constant_extent;
+  718|  4.24M|      for (unsigned i = 0; i < c->profile.raw->count; ++i)
+                                                                    ^3.67M
+  ------------------
+  |  Branch (718:28): [True: 3.67M, False: 567k]
+  ------------------
+  719|  3.67M|         if (c->profile.raw->instructions[i].opcode == RAW_TEX)
+  ------------------
+  |  Branch (719:14): [True: 57, False: 3.67M]
+  ------------------
+  720|     57|            c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;
+  721|   567k|      if (c->profile.stage) {
+  ------------------
+  |  Branch (721:11): [True: 283k, False: 283k]
+  ------------------
+  722|   283k|         struct vrend_fs_shader_info *fs = &c->variable.fs_info;
+  723|  2.55M|         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i]) {
+                                                                ^2.27M^2.27M^2.27M
+  ------------------
+  |  Branch (723:31): [True: 2.27M, False: 283k]
+  |  Branch (723:60): [True: 530k, False: 1.74M]
+  ------------------
+  724|   530k|            struct vrend_interp_info *entry = &fs->interpinfo[fs->num_interps++];
+  725|   530k|            entry->semantic_name = TGSI_SEMANTIC_GENERIC;
+  726|   530k|            entry->semantic_index = c->profile.semantic_index[IN][i];
+  727|   530k|            entry->interpolate = c->profile.flat[IN][i] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
+                                                                        ^154k                       ^375k
+  ------------------
+  |  Branch (727:34): [True: 154k, False: 375k]
+  ------------------
+  728|   530k|            entry->location = TGSI_INTERPOLATE_LOC_CENTER;
+  729|   530k|         }
+  730|   283k|      }
+  731|   567k|      c->owned_shader = raw_emit(&c->profile, c->profile.constant_extent);
+  732|   567k|      if (!c->owned_shader) return error("translation-error", "Raw GLSL allocation or output bound failed.");
+                                          ^16
+  ------------------
+  |  Branch (732:11): [True: 16, False: 567k]
+  ------------------
+  733|   567k|      return NULL;
+  734|   567k|   }
+  735|   308k|   char input[BRIDGE_MAX_TEXT + 1];
+  736|   308k|   memcpy(input, text, length); input[length] = 0;
+  737|   308k|   struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
+  738|   308k|   upstream_logged = false;
+  739|   308k|   if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return error("parse-error", "Upstream TGSI validation rejected the shader.");
+                                                                             ^0
+  ------------------
+  |  Branch (739:8): [True: 0, False: 308k]
+  ------------------
+  740|   308k|   struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 1, .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
+  741|   308k|   struct vrend_shader_key key = {0};
+  742|   308k|   if (c->profile.stage == 1) key.fs.lower_left_origin = 1;
+                                            ^154k
+  ------------------
+  |  Branch (742:8): [True: 154k, False: 154k]
+  ------------------
+  743|   308k|   if (fragment_interface) key.fs_info = *fragment_interface;
+                                         ^141k
+  ------------------
+  |  Branch (743:8): [True: 141k, False: 167k]
+  ------------------
+  744|   308k|   if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS)) return error("translation-error", "Shader output allocation failed.");
+                                                                      ^0
+  ------------------
+  |  Branch (744:8): [True: 0, False: 308k]
+  ------------------
+  745|   308k|   bool converted = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
+  746|   308k|   size_t total = 0;
+  747|  1.23M|   for (int i = 0; i < c->shader.num_strings; ++i) total += strlen(c->shader.strings[i].buf);
+                                                            ^925k^925k
+  ------------------
+  |  Branch (747:20): [True: 925k, False: 308k]
+  ------------------
+  748|   308k|   if (!converted || upstream_logged || total > BRIDGE_MAX_GLSL)
+  ------------------
+  |  Branch (748:8): [True: 0, False: 308k]
+  |  Branch (748:22): [True: 0, False: 308k]
+  |  Branch (748:41): [True: 0, False: 308k]
+  ------------------
+  749|      0|      return error("translation-error", "Upstream translation failed, logged a diagnostic, or exceeded the output bound.");
+  750|   308k|   return NULL;
+  751|   308k|}
+  752|       |
+  753|       |/* The profile permits only GENERIC fragment inputs, all centered and either
+  754|       | * PERSPECTIVE or CONSTANT. Cross-check upstream's value-only export before it
+  755|       | * becomes a vertex key; never accept caller keys or copy owned shader pointers. */
+  756|       |static bool checked_fragment_interface(const struct conversion *fragment)
+  757|   282k|{
+  758|   282k|   const struct profile *p = &fragment->profile;
+  759|   282k|   const struct vrend_fs_shader_info *info = &fragment->variable.fs_info;
+  760|   282k|   unsigned count = 0;
+  761|   282k|   bool seen[FILE_REGISTERS] = {0};
+  762|  2.54M|   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i];
+                                                          ^2.26M^2.26M
+  ------------------
+  |  Branch (762:25): [True: 2.26M, False: 282k]
+  ------------------
+  763|   282k|   if (info->num_interps != (int)count || info->has_sample_input || info->has_noperspective) return false;
+                                                                                                           ^0     ^0
+  ------------------
+  |  Branch (763:8): [True: 0, False: 282k]
+  |  Branch (763:43): [True: 0, False: 282k]
+  |  Branch (763:69): [True: 0, False: 282k]
+  ------------------
+  764|   668k|   for (unsigned i = 0; i < count; ++i) {
+                 ^282k                           ^385k
+  ------------------
+  |  Branch (764:25): [True: 385k, False: 282k]
+  ------------------
+  765|   385k|      const struct vrend_interp_info *entry = &info->interpinfo[i];
+  766|   385k|      if (entry->semantic_name != TGSI_SEMANTIC_GENERIC || entry->semantic_index >= FILE_REGISTERS ||
+  ------------------
+  |  Branch (766:11): [True: 0, False: 385k]
+  |  Branch (766:60): [True: 0, False: 385k]
+  ------------------
+  767|   385k|          entry->location != TGSI_INTERPOLATE_LOC_CENTER || seen[entry->semantic_index]) return false;
+                                                                                                       ^0     ^0
+  ------------------
+  |  Branch (767:11): [True: 0, False: 385k]
+  |  Branch (767:61): [True: 0, False: 385k]
+  ------------------
+  768|   385k|      seen[entry->semantic_index] = true;
+  769|   385k|      bool matched = false;
+  770|  3.46M|      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic_index[IN][j] == entry->semantic_index) {
+                                                             ^3.08M^3.08M^3.08M                ^693k
+  ------------------
+  |  Branch (770:28): [True: 3.08M, False: 385k]
+  |  Branch (770:57): [True: 693k, False: 2.38M]
+  |  Branch (770:79): [True: 385k, False: 308k]
+  ------------------
+  771|   385k|         unsigned expected = p->flat[IN][j] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
+                                                            ^218k                       ^167k
+  ------------------
+  |  Branch (771:30): [True: 218k, False: 167k]
+  ------------------
+  772|   385k|         if (entry->interpolate != expected) return false;
+                                                           ^0     ^0
+  ------------------
+  |  Branch (772:14): [True: 0, False: 385k]
+  ------------------
+  773|   385k|         matched = true;
+  774|   385k|      }
+  775|   385k|      if (!matched) return false;
+                                  ^0     ^0
+  ------------------
+  |  Branch (775:11): [True: 0, False: 385k]
+  ------------------
+  776|   385k|   }
+  777|   282k|   return true;
+  778|   282k|}
+  779|       |
+  780|       |static bool match_interface(struct profile *vertex, const struct profile *fragment)
+  781|   282k|{
+  782|  2.54M|   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i]) {
+                                                          ^2.26M^2.26M^2.26M
+  ------------------
+  |  Branch (782:25): [True: 2.26M, False: 282k]
+  |  Branch (782:54): [True: 385k, False: 1.87M]
+  ------------------
+  783|   385k|      bool matched = false;
+  784|  3.46M|      for (unsigned j = 0; j < FILE_REGISTERS; ++j) {
+                                                             ^3.08M
+  ------------------
+  |  Branch (784:28): [True: 3.08M, False: 385k]
+  ------------------
+  785|  3.08M|         if (!vertex->declared[OUT][j] || vertex->semantic[OUT][j] != 2 ||
+                                                        ^1.11M
+  ------------------
+  |  Branch (785:14): [True: 1.96M, False: 1.11M]
+  |  Branch (785:43): [True: 385k, False: 732k]
+  ------------------
+  786|  3.08M|             vertex->semantic_index[OUT][j] != fragment->semantic_index[IN][i]) continue;
+                           ^732k                                                              ^2.69M
+  ------------------
+  |  Branch (786:14): [True: 346k, False: 385k]
+  ------------------
+  787|   385k|         if ((fragment->components[IN][i] & vertex->written[OUT][j]) != fragment->components[IN][i]) return false;
+                                                                                                                   ^0     ^0
+  ------------------
+  |  Branch (787:14): [True: 0, False: 385k]
+  ------------------
+  788|   385k|         vertex->flat[OUT][j] = fragment->flat[IN][i];
+  789|   385k|         matched = true;
+  790|   385k|      }
+  791|   385k|      if (!matched) return false;
+                                  ^2     ^2
+  ------------------
+  |  Branch (791:11): [True: 2, False: 385k]
+  ------------------
+  792|   385k|   }
+  793|   282k|   return true;
+  794|   282k|}
+  795|       |
+  796|       |static void interface_key(const struct profile *fragment)
+  797|   282k|{
+  798|   282k|   append("\"generic-interpolation-v1:");
+  799|   282k|   bool comma = false;
+  800|  2.54M|   for (unsigned sid = 0; sid < FILE_REGISTERS; ++sid)
+                                                              ^2.26M
+  ------------------
+  |  Branch (800:27): [True: 2.26M, False: 282k]
+  ------------------
+  801|  20.3M|      for (unsigned i = 0; i < FILE_REGISTERS; ++i)
+                    ^2.26M                                   ^18.0M
+  ------------------
+  |  Branch (801:28): [True: 18.0M, False: 2.26M]
+  ------------------
+  802|  18.0M|         if (fragment->declared[IN][i] && fragment->semantic_index[IN][i] == sid) {
+                                                        ^3.08M
+  ------------------
+  |  Branch (802:14): [True: 3.08M, False: 15.0M]
+  |  Branch (802:43): [True: 385k, False: 2.69M]
+  ------------------
+  803|   385k|            append("%sg%u/%u/%s", comma ? ";" : "", sid, fragment->components[IN][i], fragment->flat[IN][i] ? "flat" : "smooth");
+                                                        ^102k ^282k                                                         ^218k    ^167k
+  ------------------
+  |  Branch (803:35): [True: 102k, False: 282k]
+  |  Branch (803:87): [True: 218k, False: 167k]
+  ------------------
+  804|   385k|            comma = true;
+  805|   385k|         }
+  806|   282k|   append("\"");
+  807|   282k|}
+  808|       |
+  809|       |static void stage_result(const struct conversion *c)
+  810|   875k|{
+  811|   875k|   const struct profile *profile = &c->profile;
+  812|   875k|   const struct vrend_shader_info *info = &c->info;
+  813|   875k|   int stage = profile->stage;
+  814|   875k|   append("\"glsl\":\"");
+  815|  2.36M|   for (int i = 0; i < (c->owned_shader ? 1 : c->shader.num_strings); ++i) {
+                                                        ^1.13M^1.23M                  ^1.49M
+  ------------------
+  |  Branch (815:20): [True: 1.49M, False: 875k]
+  |  Branch (815:25): [True: 1.13M, False: 1.23M]
+  ------------------
+  816|  1.21G|      for (const char *p = c->owned_shader ? c->owned_shader : c->shader.strings[i].buf; *p; ++p) {
+                                         ^1.49M            ^567k             ^925k                         ^1.20G
+  ------------------
+  |  Branch (816:28): [True: 567k, False: 925k]
+  |  Branch (816:90): [True: 1.20G, False: 1.49M]
+  ------------------
+  817|  1.20G|         unsigned char byte = (unsigned char)*p;
+  818|  1.20G|         if (byte == '"' || byte == '\\') append("\\%c", byte);
+                                                        ^0
+  ------------------
+  |  Branch (818:14): [True: 0, False: 1.20G]
+  |  Branch (818:29): [True: 0, False: 1.20G]
+  ------------------
+  819|  1.20G|         else if (byte < 32) append("\\u%04x", byte);
+                                           ^29.9M
+  ------------------
+  |  Branch (819:19): [True: 29.9M, False: 1.17G]
+  ------------------
+  820|  1.17G|         else append("%c", byte);
+  821|  1.20G|      }
+  822|  1.49M|   }
+  823|   875k|   const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+                                                       ^308k
+  ------------------
+  |  Branch (823:23): [True: 308k, False: 567k]
+  ------------------
+  824|   875k|      c->profile.raw->indirect_indices ?
+                    ^567k
+  ------------------
+  |  Branch (824:7): [True: 102k, False: 464k]
+  ------------------
+  825|   102k|         (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
+                                                                             ^51.4k                        ^51.5k
+  ------------------
+  |  Branch (825:11): [True: 51.4k, False: 51.5k]
+  ------------------
+  826|   567k|      c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
+                    ^464k                         ^464k
+  ------------------
+  |  Branch (826:7): [True: 102k, False: 361k]
+  ------------------
+  827|   102k|         (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v9" : "virgl-webgl2-raw-bits-v8") :
+                                                                             ^51.4k                       ^51.4k
+  ------------------
+  |  Branch (827:11): [True: 51.4k, False: 51.4k]
+  ------------------
+  828|   464k|      c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v7" :
+                    ^361k                         ^361k                  ^51.7k
+  ------------------
+  |  Branch (828:7): [True: 51.7k, False: 309k]
+  ------------------
+  829|   361k|      c->profile.raw->opcode_mask & RAW_V6_OPCODES ? "virgl-webgl2-raw-bits-v6" :
+                    ^309k                         ^309k            ^51.7k
+  ------------------
+  |  Branch (829:7): [True: 51.7k, False: 258k]
+  ------------------
+  830|   309k|      c->profile.raw->opcode_mask & (RAW_V5_OPCODES | RAW_V5_NEGATION) ? "virgl-webgl2-raw-bits-v5" :
+                    ^258k                          ^258k            ^258k              ^51.6k
+  ------------------
+  |  Branch (830:7): [True: 51.6k, False: 206k]
+  ------------------
+  831|   258k|      c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
+                    ^206k                         ^206k            ^51.5k
+  ------------------
+  |  Branch (831:7): [True: 51.5k, False: 154k]
+  ------------------
+  832|   206k|      c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
+                    ^154k                         ^154k            ^51.6k
+  ------------------
+  |  Branch (832:7): [True: 51.6k, False: 103k]
+  ------------------
+  833|   154k|      c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
+                    ^103k                         ^103k            ^51.6k                       ^51.5k
+  ------------------
+  |  Branch (833:7): [True: 51.6k, False: 51.5k]
+  ------------------
+  834|   875k|   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", name, stage ? "fragment" : "vertex");
+                                                                                                          ^438k        ^437k
+  ------------------
+  |  Branch (834:85): [True: 438k, False: 437k]
+  ------------------
+  835|   875k|   io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
+  836|   875k|   append(",\"attributes\":");
+  837|   875k|   if (!stage) io_metadata(profile, IN); else append("[]");
+                             ^437k                          ^438k
+  ------------------
+  |  Branch (837:8): [True: 437k, False: 438k]
+  ------------------
+  838|   875k|   append(",\"uniforms\":[");
+  839|   875k|   if (info->num_consts) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%d,\"encoding\":\"float32-bits\"}", stage ? "fs" : "vs", info->num_consts);
+                                       ^413k                                                                                             ^413k   ^206k  ^206k
+  ------------------
+  |  Branch (839:8): [True: 413k, False: 462k]
+  |  Branch (839:124): [True: 206k, False: 206k]
+  ------------------
+  840|   875k|   append("],\"samplers\":[");
+  841|   875k|   bool comma = false;
+  842|  7.88M|   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (info->samplers_used_mask & (1u << i)) {
+                                                          ^7.00M^7.00M^7.00M
+  ------------------
+  |  Branch (842:25): [True: 7.00M, False: 875k]
+  |  Branch (842:54): [True: 62, False: 7.00M]
+  ------------------
+  843|     62|      append("%s{\"index\":%u,\"name\":\"fssamp%u\",\"type\":\"sampler2D\"}", comma ? "," : "", i, i); comma = true;
+                                                                                                    ^6    ^56
+  ------------------
+  |  Branch (843:79): [True: 6, False: 56]
+  ------------------
+  844|     62|   }
+  845|   875k|   append("],\"uniformBlocks\":[");
+  846|   875k|   if (!stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}" );
+                             ^437k
+  ------------------
+  |  Branch (846:8): [True: 437k, False: 438k]
+  ------------------
+  847|   875k|   append("]");
+  848|   875k|   if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
+                                     ^567k                        ^567k
+  ------------------
+  |  Branch (848:8): [True: 567k, False: 308k]
+  |  Branch (848:24): [True: 154k, False: 412k]
+  ------------------
+  849|   154k|      append(",\"constantDomains\":[{\"kind\":\"constant-bank-finite-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d}]",
+  850|   154k|         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+                               ^77.3k       ^77.3k            ^77.3k ^77.3k
+  ------------------
+  |  Branch (850:10): [True: 77.3k, False: 77.3k]
+  |  Branch (850:41): [True: 77.3k, False: 77.3k]
+  ------------------
+  851|   875k|   if (profile->raw && profile->raw->indirect_indices) {
+                                     ^567k
+  ------------------
+  |  Branch (851:8): [True: 567k, False: 308k]
+  |  Branch (851:24): [True: 102k, False: 464k]
+  ------------------
+  852|   102k|      append(",\"constantAccesses\":[{\"kind\":\"constant-bank-static-indirect-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"indices\":[",
+  853|   102k|         stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+                               ^51.4k       ^51.4k            ^51.4k ^51.4k
+  ------------------
+  |  Branch (853:10): [True: 51.4k, False: 51.4k]
+  |  Branch (853:41): [True: 51.4k, False: 51.4k]
+  ------------------
+  854|   102k|      bool first = true;
+  855|  4.84M|      for (unsigned i = 0; i < CONST_REGISTERS; ++i) if (profile->raw->indirect_indices & (UINT64_C(1) << i)) {
+                                                              ^4.73M^4.73M^4.73M                            ^4.73M
+  ------------------
+  |  Branch (855:28): [True: 4.73M, False: 102k]
+  |  Branch (855:58): [True: 103k, False: 4.63M]
+  ------------------
+  856|   103k|         append("%s%u", first ? "" : ",", i); first = false;
+                                              ^102k^872
+  ------------------
+  |  Branch (856:25): [True: 102k, False: 872]
+  ------------------
+  857|   103k|      }
+  858|   102k|      append("]}]");
+  859|   102k|   }
+  860|   875k|   append("}");
+  861|   875k|}
+  862|       |
+  863|       |const char *bridge_translate(int stage, const char *text, size_t length)
+  864|   321k|{
+  865|   321k|   begin_response(false);
+  866|   321k|   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+                                   ^160k       ^1
+  ------------------
+  |  Branch (866:8): [True: 160k, False: 160k]
+  |  Branch (866:22): [True: 1, False: 160k]
+  ------------------
+  867|   321k|   struct conversion c = {.profile = {.stage = stage}};
+  868|   321k|   const char *failed = check_input(&c.profile, text, length);
+  869|   321k|   if (!failed) failed = convert(&c, text, length, NULL);
+                              ^310k                              ^310k
+  ------------------
+  |  Branch (869:8): [True: 310k, False: 10.4k]
+  ------------------
+  870|   321k|   if (!failed) { append("{\"ok\":true,"); stage_result(&c); append("}"); }
+                              ^310k
+  ------------------
+  |  Branch (870:8): [True: 310k, False: 10.4k]
+  ------------------
+  871|   321k|   bool retry_failed = (c.profile.raw_flags & RAW_CONDITIONAL) && (failed || response_overflow);
+                                                                                ^77.8k^77.8k    ^77.5k
+  ------------------
+  |  Branch (871:24): [True: 77.8k, False: 243k]
+  |  Branch (871:68): [True: 333, False: 77.5k]
+  |  Branch (871:78): [True: 0, False: 77.5k]
+  ------------------
+  872|   321k|   cleanup(&c);
+  873|   321k|   if (retry_failed) return numeric_rejection();
+                                   ^333
+  ------------------
+  |  Branch (873:8): [True: 333, False: 320k]
+  ------------------
+  874|   320k|   if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+                                        ^0
+  ------------------
+  |  Branch (874:8): [True: 0, False: 320k]
+  ------------------
+  875|   320k|   return response;
+  876|   320k|}
+  877|       |
+  878|       |const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
+  879|       |                                  const char *fragment_text, size_t fragment_length)
+  880|   282k|{
+  881|   282k|   begin_response(true);
+  882|   282k|   struct conversion vertex = {.profile = {.stage = 0}}, fragment = {.profile = {.stage = 1}};
+  883|   282k|   const char *failed = check_input(&vertex.profile, vertex_text, vertex_length);
+  884|   282k|   if (!failed) failed = check_input(&fragment.profile, fragment_text, fragment_length);
+                              ^282k
+  ------------------
+  |  Branch (884:8): [True: 282k, False: 24]
+  ------------------
+  885|   282k|   if (!failed && !match_interface(&vertex.profile, &fragment.profile))
+                                ^282k
+  ------------------
+  |  Branch (885:8): [True: 282k, False: 51]
+  |  Branch (885:19): [True: 2, False: 282k]
+  ------------------
+  886|      2|      failed = error("incompatible-interface", "Fragment GENERIC inputs require matching fully written vertex outputs.");
+  887|   282k|   if (!failed) failed = convert(&fragment, fragment_text, fragment_length, NULL);
+                              ^282k                                                       ^282k
+  ------------------
+  |  Branch (887:8): [True: 282k, False: 53]
+  ------------------
+  888|   282k|   if (!failed && !checked_fragment_interface(&fragment))
+                                ^282k
+  ------------------
+  |  Branch (888:8): [True: 282k, False: 54]
+  |  Branch (888:19): [True: 0, False: 282k]
+  ------------------
+  889|      0|      failed = error("translation-error", "Upstream fragment interpolation metadata differs from the checked interface.");
+  890|   282k|   if (!failed) failed = convert(&vertex, vertex_text, vertex_length, &fragment.variable.fs_info);
+                              ^282k
+  ------------------
+  |  Branch (890:8): [True: 282k, False: 54]
+  ------------------
+  891|   282k|   if (!failed) {
+  ------------------
+  |  Branch (891:8): [True: 282k, False: 55]
+  ------------------
+  892|   282k|      append("{\"ok\":true,\"vertex\":{"); stage_result(&vertex);
+  893|   282k|      append("},\"fragment\":{"); stage_result(&fragment);
+  894|   282k|      append("},\"interfaceKey\":"); interface_key(&fragment.profile); append("}");
+  895|   282k|   }
+  896|       |   /* A later stage/interface/emission failure must not replace the original
+  897|       |    * ordinary rejection that selected a conditional transaction. */
+  898|   282k|   bool retry_failed = ((vertex.profile.raw_flags | fragment.profile.raw_flags) & RAW_CONDITIONAL) &&
+  ------------------
+  |  Branch (898:24): [True: 77.0k, False: 205k]
+  ------------------
+  899|   282k|      (failed || response_overflow);
+                    ^77.0k^77.0k    ^77.0k
+  ------------------
+  |  Branch (899:8): [True: 17, False: 77.0k]
+  |  Branch (899:18): [True: 0, False: 77.0k]
+  ------------------
+  900|   282k|   cleanup(&vertex); cleanup(&fragment);
+  901|   282k|   if (retry_failed) return numeric_rejection();
+                                   ^17
+  ------------------
+  |  Branch (901:8): [True: 17, False: 282k]
+  ------------------
+  902|   282k|   if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+                                        ^0
+  ------------------
+  |  Branch (902:8): [True: 0, False: 282k]
+  ------------------
+  903|   282k|   return response;
+  904|   282k|}
+
+/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-bzr7uqca/wasm-vm/renderer/virgl-shader/raw_bits.c:
+    1|       |/* SPDX-License-Identifier: MIT */
+    2|       |#include "raw_bits.h"
+    3|       |#include <stdarg.h>
+    4|       |#include <stdio.h>
+    5|       |#include <stdlib.h>
+    6|       |
+    7|       |static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_source *r, unsigned lane, bool conditional)
+    8|  44.3M|{
+    9|  44.3M|   unsigned component = r->swizzle[lane];
+   10|  44.3M|   if (r->file == TEMP) return ir->temporary[r->index][component];
+                                      ^19.8M
+  ------------------
+  |  Branch (10:8): [True: 19.8M, False: 24.4M]
+  ------------------
+   11|  24.4M|   if (r->file == IMM) {
+  ------------------
+  |  Branch (11:8): [True: 11.2M, False: 13.2M]
+  ------------------
+   12|  11.2M|      uint32_t value = ir->immediates[r->index][component];
+   13|  11.2M|      return (struct raw_lane){.zero = ~value, .one = value};
+   14|  11.2M|   }
+   15|  13.2M|   if (r->file == IN) return (struct raw_lane){.origin = (1 + r->index * 4 + component) | RAW_OUTPUT};
+                                    ^6.15M
+  ------------------
+  |  Branch (15:8): [True: 6.15M, False: 7.10M]
+  ------------------
+   16|  7.10M|   if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)
+                                          ^679k
+  ------------------
+  |  Branch (16:9): [True: 6.42M, False: 679k]
+  |  Branch (16:29): [True: 679k, False: 0]
+  |  Branch (16:59): [True: 2.28M, False: 4.82M]
+  ------------------
+   17|  2.28M|      return (struct raw_lane){.origin = RAW_FLOAT_CONDITIONAL | RAW_BANK_DEPENDENCY};
+   18|  4.82M|   return (struct raw_lane){0};
+   19|  7.10M|}
+   20|       |
+   21|       |static struct raw_lane shifted(struct raw_lane a, struct raw_lane b, bool left)
+   22|  3.08M|{
+   23|  3.08M|   struct raw_lane result = {.zero = UINT32_MAX, .one = UINT32_MAX};
+   24|       |   /* Join every compatible low-five-bit count. This is a bounded 32-element
+   25|       |    * abstract evaluation, not a claim that dynamic counts are constant. */
+   26|   101M|   for (unsigned count = 0; count < 32; ++count) {
+                                                      ^98.7M
+  ------------------
+  |  Branch (26:29): [True: 98.7M, False: 3.08M]
+  ------------------
+   27|  98.7M|      if ((count & b.zero & 31u) || (~count & b.one & 31u)) continue;
+                                                  ^48.1M                  ^76.5M
+  ------------------
+  |  Branch (27:11): [True: 50.6M, False: 48.1M]
+  |  Branch (27:37): [True: 25.9M, False: 22.2M]
+  ------------------
+   28|  22.2M|      uint32_t zero, one;
+   29|  22.2M|      if (left) {
+  ------------------
+  |  Branch (29:11): [True: 2.47M, False: 19.7M]
+  ------------------
+   30|  2.47M|         zero = (a.zero << count) | (count ? UINT32_MAX >> (32 - count) : 0);
+                                                                     ^2.47M             ^88
+  ------------------
+  |  Branch (30:38): [True: 2.47M, False: 88]
+  ------------------
+   31|  2.47M|         one = a.one << count;
+   32|  19.7M|      } else {
+   33|  19.7M|         zero = (a.zero >> count) | (count ? UINT32_MAX << (32 - count) : 0);
+                                                                     ^19.1M             ^617k
+  ------------------
+  |  Branch (33:38): [True: 19.1M, False: 617k]
+  ------------------
+   34|  19.7M|         one = a.one >> count;
+   35|  19.7M|      }
+   36|  22.2M|      result.zero &= zero;
+   37|  22.2M|      result.one &= one;
+   38|  22.2M|   }
+   39|  3.08M|   return result;
+   40|  3.08M|}
+   41|       |
+   42|       |static struct raw_lane known_word(uint32_t word)
+   43|   415k|{
+   44|   415k|   return (struct raw_lane){.zero = ~word, .one = word};
+   45|   415k|}
+   46|       |
+   47|       |static bool known_operands(struct raw_lane a, struct raw_lane b)
+   48|   525k|{
+   49|   525k|   return (a.zero | a.one) == UINT32_MAX && (b.zero | b.one) == UINT32_MAX;
+                                                          ^415k               ^415k
+  ------------------
+  |  Branch (49:11): [True: 415k, False: 109k]
+  |  Branch (49:45): [True: 415k, False: 51]
+  ------------------
+   50|   525k|}
+   51|       |
+   52|       |static uint32_t ordered_float_mask(uint32_t a, uint32_t b, bool greater_equal)
+   53|   309k|{
+   54|   309k|   uint32_t magnitude_a = a & UINT32_C(0x7fffffff), magnitude_b = b & UINT32_C(0x7fffffff);
+   55|   309k|   if (magnitude_a > UINT32_C(0x7f800000) || magnitude_b > UINT32_C(0x7f800000)) return 0;
+                                                           ^309k         ^309k                 ^194
+  ------------------
+  |  Branch (55:8): [True: 130, False: 309k]
+  |  Branch (55:46): [True: 64, False: 309k]
+  ------------------
+   56|   309k|   bool both_zero = magnitude_a == 0 && magnitude_b == 0;
+                     ^309k        ^309k               ^308k
+  ------------------
+  |  Branch (56:21): [True: 308k, False: 484]
+  |  Branch (56:41): [True: 308k, False: 16]
+  ------------------
+   57|   309k|   uint32_t key_a = a & UINT32_C(0x80000000) ? ~a : a ^ UINT32_C(0x80000000);
+                                                             ^320 ^309k^309k
+  ------------------
+  |  Branch (57:21): [True: 320, False: 309k]
+  ------------------
+   58|   309k|   uint32_t key_b = b & UINT32_C(0x80000000) ? ~b : b ^ UINT32_C(0x80000000);
+                                                             ^264 ^309k^309k
+  ------------------
+  |  Branch (58:21): [True: 264, False: 309k]
+  ------------------
+   59|   309k|   bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;
+                                                 ^296         ^232             ^309k         ^268
+  ------------------
+  |  Branch (59:20): [True: 296, False: 309k]
+  |  Branch (59:36): [True: 64, False: 232]
+  |  Branch (59:49): [True: 112, False: 120]
+  |  Branch (59:66): [True: 268, False: 308k]
+  |  Branch (59:80): [True: 120, False: 148]
+  ------------------
+   60|   309k|   return selected ? UINT32_MAX : 0;
+                                                ^309k
+  ------------------
+  |  Branch (60:11): [True: 296, False: 309k]
+  ------------------
+   61|   309k|}
+   62|       |
+   63|       |static bool safe_raw_float(struct raw_lane value)
+   64|  19.6M|{
+   65|  19.6M|   const uint32_t exponent = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);
+   66|  19.6M|   return (value.zero & exponent) && ((value.one & exponent) || (value.zero & mantissa) == mantissa);
+                                                   ^14.4M^14.4M                    ^12.0M
+  ------------------
+  |  Branch (66:11): [True: 14.4M, False: 5.24M]
+  |  Branch (66:39): [True: 2.40M, False: 12.0M]
+  |  Branch (66:65): [True: 5.73M, False: 6.30M]
+  ------------------
+   67|  19.6M|}
+   68|       |
+   69|       |static unsigned float_mode(struct raw_lane value)
+   70|  27.5M|{
+   71|  27.5M|   return value.origin ? value.origin : safe_raw_float(value) ? RAW_FLOAT_DECODE | RAW_OUTPUT : 0;
+                                       ^9.39M         ^18.1M                  ^7.30M                          ^10.8M
+  ------------------
+  |  Branch (71:11): [True: 9.39M, False: 18.1M]
+  |  Branch (71:41): [True: 7.30M, False: 10.8M]
+  ------------------
+   72|  27.5M|}
+   73|       |
+   74|       |static bool output_legal(struct raw_lane value)
+   75|  6.41M|{
+   76|  6.41M|   return (value.origin & RAW_OUTPUT) || safe_raw_float(value);
+                                                       ^1.55M
+  ------------------
+  |  Branch (76:11): [True: 4.85M, False: 1.55M]
+  |  Branch (76:42): [True: 828k, False: 724k]
+  ------------------
+   77|  6.41M|}
+   78|       |
+   79|       |struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no)
+   80|   625k|{
+   81|   625k|   unsigned origin = 0;
+   82|   625k|   if (float_mode(yes) && float_mode(no))
+                                        ^518k
+  ------------------
+  |  Branch (82:8): [True: 518k, False: 107k]
+  |  Branch (82:27): [True: 415k, False: 103k]
+  ------------------
+   83|   415k|      origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |
+   84|   415k|         (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);
+                                             ^311k              ^208k        ^206k
+  ------------------
+  |  Branch (84:11): [True: 311k, False: 103k]
+  |  Branch (84:32): [True: 208k, False: 102k]
+  ------------------
+   85|   625k|   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
+   86|   625k|}
+   87|       |
+   88|       |static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no, bool mixed)
+   89|   525k|{
+   90|   525k|   if (condition.zero == UINT32_MAX) return no;
+                                                   ^3.26k
+  ------------------
+  |  Branch (90:8): [True: 3.26k, False: 522k]
+  ------------------
+   91|   522k|   if (condition.one) return yes;
+                                    ^144
+  ------------------
+  |  Branch (91:8): [True: 144, False: 521k]
+  ------------------
+   92|       |   /* An unknown selector retains only facts true for BOTH payloads. Distinct
+   93|       |    * float origins remain distinct in old profiles. A mixed stage instead
+   94|       |    * materializes the chosen authorized value in a new float shadow. */
+   95|   521k|   unsigned origin = yes.origin == no.origin ? yes.origin : 0;
+                                                             ^519k        ^2.72k
+  ------------------
+  |  Branch (95:22): [True: 519k, False: 2.72k]
+  ------------------
+   96|   521k|   if (mixed && float_mode(yes) && float_mode(no))
+                              ^414k              ^208k
+  ------------------
+  |  Branch (96:8): [True: 414k, False: 107k]
+  |  Branch (96:17): [True: 208k, False: 206k]
+  |  Branch (96:36): [True: 208k, False: 472]
+  ------------------
+   97|   208k|      origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |
+   98|   208k|         (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);
+                                             ^1.42k             ^549         ^207k
+  ------------------
+  |  Branch (98:11): [True: 1.42k, False: 206k]
+  |  Branch (98:32): [True: 549, False: 872]
+  ------------------
+   99|   521k|   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
+  100|   522k|}
+  101|       |
+  102|       |unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
+  103|  7.31M|{
+  104|       |   /* TGSI scalar operations consume post-swizzle x/xyz independently of the
+  105|       |    * written lanes. Use the same rule for initialization and float authority. */
+  106|  7.31M|   if (opcode == RAW_DP3) return 7u;
+                                        ^107k
+  ------------------
+  |  Branch (106:8): [True: 107k, False: 7.21M]
+  ------------------
+  107|  7.21M|   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL) return 1u;
+                                          ^7.20M               ^7.20M              ^161k
+  ------------------
+  |  Branch (107:8): [True: 1.85k, False: 7.20M]
+  |  Branch (107:29): [True: 1.85k, False: 7.20M]
+  |  Branch (107:50): [True: 157k, False: 7.04M]
+  ------------------
+  108|  7.04M|   return opcode == RAW_TEX ? 3u : destination_mask;
+                                            ^171 ^7.04M
+  ------------------
+  |  Branch (108:11): [True: 171, False: 7.04M]
+  ------------------
+  109|  7.21M|}
+  110|       |
+  111|       |bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
+  112|  4.20M|{
+  113|  4.20M|   if ((1u << input->opcode) & RAW_STRUCTURED_OPCODES) {
+  ------------------
+  |  Branch (113:8): [True: 470k, False: 3.73M]
+  ------------------
+  114|   470k|      ir->instructions[ir->count++] = *input;
+  115|   470k|      ir->opcode_mask |= 1u << input->opcode;
+  116|   470k|      return true;
+  117|   470k|   }
+  118|  3.73M|   if (input->opcode == RAW_UARL) {
+  ------------------
+  |  Branch (118:8): [True: 157k, False: 3.57M]
+  ------------------
+  119|       |      /* UARL copies the post-swizzle raw x word, never float conversion. Read
+  120|       |       * before publishing so UARL of an indirect source uses the old address. */
+  121|   157k|      ir->address = source_lane(ir, &input->src[0], 0, false);
+  122|   157k|      ir->address.origin = 0;
+  123|   157k|      ir->instructions[ir->count++] = *input;
+  124|   157k|      ir->opcode_mask |= 1u << RAW_UARL;
+  125|   157k|      return true;
+  126|   157k|   }
+  127|  3.57M|   struct raw_instruction checked = *input;
+  128|  3.57M|   checked.float_mask = 0;
+  129|  14.3M|   for (unsigned source = 0; source < 3; ++source) checked.float_modes[source] = 0;
+                                                       ^10.7M    ^10.7M
+  ------------------
+  |  Branch (129:30): [True: 10.7M, False: 3.57M]
+  ------------------
+  130|  3.57M|   const struct raw_instruction *instruction = &checked;
+  131|  3.57M|   bool mixed = (instruction->flags & RAW_MIXED) != 0;
+  132|  3.57M|   bool conditional = (instruction->flags & RAW_CONDITIONAL) != 0;
+  133|  3.57M|   bool structured = (instruction->flags & RAW_STRUCTURED) != 0;
+  134|  3.57M|   bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+  135|  3.57M|   unsigned dependency = 0;
+  136|  3.57M|   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
+                                                                      ^2.46M
+  ------------------
+  |  Branch (136:23): [True: 1.11M, False: 2.46M]
+  |  Branch (136:57): [True: 807, False: 2.46M]
+  ------------------
+  137|  3.57M|      instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ||
+                    ^2.46M                            ^2.46M
+  ------------------
+  |  Branch (137:7): [True: 134, False: 2.46M]
+  |  Branch (137:41): [True: 68, False: 2.46M]
+  ------------------
+  138|  3.57M|      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ? 1 :
+                    ^2.46M                            ^2.46M                           ^1.11M
+  ------------------
+  |  Branch (138:7): [True: 904, False: 2.46M]
+  |  Branch (138:41): [True: 906, False: 2.46M]
+  ------------------
+  139|  3.57M|      instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
+                    ^2.46M                             ^2.33M                            ^2.30M                           ^184k^2.27M
+  ------------------
+  |  Branch (139:7): [True: 131k, False: 2.33M]
+  |  Branch (139:42): [True: 26.8k, False: 2.30M]
+  |  Branch (139:76): [True: 26.6k, False: 2.27M]
+  ------------------
+  140|  3.57M|   unsigned consumed = raw_consumed_mask(instruction->opcode, instruction->dst.mask);
+  141|       |   /* Capture read authority at the use site, before any aliased destination
+  142|       |    * changes facts. Every numeric lane must have an enforceable domain. */
+  143|  9.54M|   for (unsigned source = 0; source < sources; ++source)
+                                                             ^5.96M
+  ------------------
+  |  Branch (143:30): [True: 6.12M, False: 3.42M]
+  ------------------
+  144|  29.9M|      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
+                    ^6.12M                            ^23.8M  ^24.0M^24.0M
+  ------------------
+  |  Branch (144:31): [True: 24.0M, False: 5.96M]
+  |  Branch (144:53): [True: 23.8M, False: 141k]
+  ------------------
+  145|  23.8M|         unsigned mode = float_mode(source_lane(ir, &instruction->src[source], lane, conditional));
+  146|  23.8M|         if (numeric && !mode) return false;
+                                      ^3.80M ^155k  ^155k
+  ------------------
+  |  Branch (146:14): [True: 3.80M, False: 20.0M]
+  |  Branch (146:25): [True: 155k, False: 3.65M]
+  ------------------
+  147|  23.7M|         if (numeric) dependency |= mode & RAW_BANK_DEPENDENCY;
+                                    ^3.65M
+  ------------------
+  |  Branch (147:14): [True: 3.65M, False: 20.0M]
+  ------------------
+  148|  23.7M|         if (mixed) checked.float_modes[source] |= (uint32_t)mode << (lane * 8);
+                                  ^14.1M
+  ------------------
+  |  Branch (148:14): [True: 14.1M, False: 9.62M]
+  ------------------
+  149|  23.7M|      }
+  150|       |   /* A known raw selector never demands numerical access to its unused arm.
+  151|       |    * Only the retry prunes these modes, preserving old emitted expressions. */
+  152|  3.42M|   if ((conditional || structured) && instruction->opcode == RAW_UCMP)
+                                     ^2.92M         ^729k
+  ------------------
+  |  Branch (152:9): [True: 495k, False: 2.92M]
+  |  Branch (152:24): [True: 233k, False: 2.69M]
+  |  Branch (152:39): [True: 52.2k, False: 677k]
+  ------------------
+  153|   261k|      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
+                    ^52.2k                            ^209k   ^209k^209k
+  ------------------
+  |  Branch (153:31): [True: 209k, False: 52.2k]
+  |  Branch (153:53): [True: 209k, False: 42]
+  ------------------
+  154|   209k|         struct raw_lane condition = source_lane(ir, &instruction->src[0], lane, conditional);
+  155|   209k|         if (condition.zero == UINT32_MAX || condition.one) {
+                                                           ^208k
+  ------------------
+  |  Branch (155:14): [True: 220, False: 208k]
+  |  Branch (155:46): [True: 64, False: 208k]
+  ------------------
+  156|    284|            unsigned unused = condition.zero == UINT32_MAX ? 1 : 2;
+                                                                           ^220^64
+  ------------------
+  |  Branch (156:31): [True: 220, False: 64]
+  ------------------
+  157|    284|            checked.float_modes[unused] &= ~(UINT32_C(255) << (lane * 8));
+  158|    284|         }
+  159|   209k|      }
+  160|  3.42M|   struct raw_lane result[4] = {{0}};
+  161|       |   /* Read all consumed lanes before publishing any destination lane. */
+  162|  17.1M|   for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) {
+                                                   ^13.6M  ^13.6M^13.6M
+  ------------------
+  |  Branch (162:28): [True: 13.6M, False: 3.42M]
+  |  Branch (162:50): [True: 13.6M, False: 14.9k]
+  ------------------
+  163|  13.6M|      struct raw_lane a = {0}, b = {0};
+  164|  13.6M|      if (!numeric) {
+  ------------------
+  |  Branch (164:11): [True: 12.0M, False: 1.67M]
+  ------------------
+  165|  12.0M|         a = source_lane(ir, &instruction->src[0], lane, conditional);
+  166|  12.0M|         if (sources > 1) b = source_lane(ir, &instruction->src[1], lane, conditional);
+                                        ^7.54M
+  ------------------
+  |  Branch (166:14): [True: 7.54M, False: 4.46M]
+  ------------------
+  167|  12.0M|      }
+  168|  13.6M|      switch (instruction->opcode) {
+  ------------------
+  |  Branch (168:15): [True: 13.6M, False: 0]
+  ------------------
+  169|  4.45M|      case RAW_MOV: result[lane] = a; break;
+  ------------------
+  |  Branch (169:7): [True: 4.45M, False: 9.22M]
+  ------------------
+  170|   831k|      case RAW_AND: result[lane] = (struct raw_lane){.zero = a.zero | b.zero, .one = a.one & b.one}; break;
+  ------------------
+  |  Branch (170:7): [True: 831k, False: 12.8M]
+  ------------------
+  171|  2.57M|      case RAW_OR: result[lane] = (struct raw_lane){.zero = a.zero & b.zero, .one = a.one | b.one}; break;
+  ------------------
+  |  Branch (171:7): [True: 2.57M, False: 11.1M]
+  ------------------
+  172|  3.16k|      case RAW_NOT: result[lane] = (struct raw_lane){.zero = a.one, .one = a.zero}; break;
+  ------------------
+  |  Branch (172:7): [True: 3.16k, False: 13.6M]
+  ------------------
+  173|  2.46M|      case RAW_SHL: result[lane] = shifted(a, b, true); break;
+  ------------------
+  |  Branch (173:7): [True: 2.46M, False: 11.2M]
+  ------------------
+  174|   617k|      case RAW_USHR: result[lane] = shifted(a, b, false); break;
+  ------------------
+  |  Branch (174:7): [True: 617k, False: 13.0M]
+  ------------------
+  175|   105k|      case RAW_UADD:
+  ------------------
+  |  Branch (175:7): [True: 105k, False: 13.5M]
+  ------------------
+  176|   105k|         if (known_operands(a, b)) result[lane] = known_word(a.one + b.one);
+                                                 ^105k
+  ------------------
+  |  Branch (176:14): [True: 105k, False: 476]
+  ------------------
+  177|   105k|         break;
+  178|    206|      case RAW_ISGE:
+  ------------------
+  |  Branch (178:7): [True: 206, False: 13.6M]
+  ------------------
+  179|    206|         if (known_operands(a, b)) result[lane] = known_word(
+  ------------------
+  |  Branch (179:14): [True: 88, False: 118]
+  ------------------
+  180|     88|            (a.one ^ UINT32_C(0x80000000)) >= (b.one ^ UINT32_C(0x80000000)) ? UINT32_MAX : 0);
+                                                                                                          ^32
+  ------------------
+  |  Branch (180:13): [True: 56, False: 32]
+  ------------------
+  181|    206|         break;
+  182|  2.53k|      case RAW_USEQ:
+  ------------------
+  |  Branch (182:7): [True: 2.53k, False: 13.6M]
+  ------------------
+  183|  2.53k|         if (known_operands(a, b)) result[lane] = known_word(a.one == b.one ? UINT32_MAX : 0);
+                                                 ^80                       ^80              ^80          ^56
+  ------------------
+  |  Branch (183:14): [True: 80, False: 2.45k]
+  |  Branch (183:62): [True: 24, False: 56]
+  ------------------
+  184|  2.53k|         break;
+  185|    188|      case RAW_USNE:
+  ------------------
+  |  Branch (185:7): [True: 188, False: 13.6M]
+  ------------------
+  186|    188|         if (known_operands(a, b)) result[lane] = known_word(a.one != b.one ? UINT32_MAX : 0);
+                                                 ^80                       ^80              ^80          ^24
+  ------------------
+  |  Branch (186:14): [True: 80, False: 108]
+  |  Branch (186:62): [True: 56, False: 24]
+  ------------------
+  187|    188|         break;
+  188|   415k|      case RAW_FSLT:
+  ------------------
+  |  Branch (188:7): [True: 415k, False: 13.2M]
+  ------------------
+  189|   416k|      case RAW_FSGE:
+  ------------------
+  |  Branch (189:7): [True: 1.13k, False: 13.6M]
+  ------------------
+  190|   416k|         if (known_operands(a, b)) result[lane] = known_word(ordered_float_mask(a.one, b.one, instruction->opcode == RAW_FSGE));
+                                                 ^309k
+  ------------------
+  |  Branch (190:14): [True: 309k, False: 106k]
+  ------------------
+  191|   416k|         break;
+  192|   525k|      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane, conditional), mixed); break;
+  ------------------
+  |  Branch (192:7): [True: 525k, False: 13.1M]
+  ------------------
+  193|   726k|      case RAW_ADD:
+  ------------------
+  |  Branch (193:7): [True: 726k, False: 12.9M]
+  ------------------
+  194|  1.13M|      case RAW_MUL:
+  ------------------
+  |  Branch (194:7): [True: 412k, False: 13.2M]
+  ------------------
+  195|  1.24M|      case RAW_MAD:
+  ------------------
+  |  Branch (195:7): [True: 107k, False: 13.5M]
+  ------------------
+  196|  1.24M|      case RAW_DIV:
+  ------------------
+  |  Branch (196:7): [True: 383, False: 13.6M]
+  ------------------
+  197|  1.35M|      case RAW_MAX:
+  ------------------
+  |  Branch (197:7): [True: 104k, False: 13.5M]
+  ------------------
+  198|  1.35M|      case RAW_FRC:
+  ------------------
+  |  Branch (198:7): [True: 262, False: 13.6M]
+  ------------------
+  199|  1.45M|      case RAW_LRP:
+  ------------------
+  |  Branch (199:7): [True: 105k, False: 13.5M]
+  ------------------
+  200|  1.67M|      case RAW_DP3:
+  ------------------
+  |  Branch (200:7): [True: 214k, False: 13.4M]
+  ------------------
+  201|  1.67M|      case RAW_RCP:
+  ------------------
+  |  Branch (201:7): [True: 3.24k, False: 13.6M]
+  ------------------
+  202|  1.67M|      case RAW_RSQ:
+  ------------------
+  |  Branch (202:7): [True: 3.25k, False: 13.6M]
+  ------------------
+  203|  1.67M|      case RAW_TEX:
+  ------------------
+  |  Branch (203:7): [True: 228, False: 13.6M]
+  ------------------
+  204|  1.67M|         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
+  205|  1.67M|         if (instruction->opcode == RAW_TEX || ((1u << instruction->opcode) & RAW_V6_OPCODES))
+                                                             ^1.67M                         ^1.67M
+  ------------------
+  |  Branch (205:14): [True: 228, False: 1.67M]
+  |  Branch (205:48): [True: 221k, False: 1.45M]
+  ------------------
+  206|   221k|            result[lane].origin |= dependency;
+  207|  4.58M|         else for (unsigned source = 0; source < sources; ++source)
+                            ^1.45M                                      ^3.12M
+  ------------------
+  |  Branch (207:41): [True: 3.12M, False: 1.45M]
+  ------------------
+  208|  3.12M|            result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
+  209|  1.67M|         break;
+  210|      0|      case RAW_UARL: break; /* Recorded above into the dedicated scalar state. */
+  ------------------
+  |  Branch (210:7): [True: 0, False: 13.6M]
+  ------------------
+  211|      0|      case RAW_UIF:
+  ------------------
+  |  Branch (211:7): [True: 0, False: 13.6M]
+  ------------------
+  212|      0|      case RAW_ELSE:
+  ------------------
+  |  Branch (212:7): [True: 0, False: 13.6M]
+  ------------------
+  213|      0|      case RAW_ENDIF: break; /* Recorded above without a destination. */
+  ------------------
+  |  Branch (213:7): [True: 0, False: 13.6M]
+  ------------------
+  214|  13.6M|      }
+  215|       |      /* Each structured predecessor owns a physical shadow for every value
+  216|       |       * with numerical authority. A join can therefore retain a value without
+  217|       |       * borrowing another arm's IN locator or decoding a computed raw value. */
+  218|  13.6M|      if (structured && float_mode(result[lane]))
+                                      ^1.87M
+  ------------------
+  |  Branch (218:11): [True: 1.87M, False: 11.8M]
+  |  Branch (218:25): [True: 1.55M, False: 315k]
+  ------------------
+  219|  1.55M|         result[lane].origin = RAW_FLOAT_SHADOW | (result[lane].origin & RAW_BANK_DEPENDENCY) |
+  220|  1.55M|            (output_legal(result[lane]) ? RAW_OUTPUT : 0);
+                                                        ^1.24M       ^310k
+  ------------------
+  |  Branch (220:14): [True: 1.24M, False: 310k]
+  ------------------
+  221|  13.6M|   }
+  222|  3.42M|   struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
+                                                                                ^2.39M                                  ^1.03M
+  ------------------
+  |  Branch (222:35): [True: 2.39M, False: 1.03M]
+  ------------------
+  223|  17.1M|   for (unsigned lane = 0; lane < 4; ++lane)
+                                                   ^13.6M
+  ------------------
+  |  Branch (223:28): [True: 13.6M, False: 3.42M]
+  ------------------
+  224|  13.6M|      if (instruction->dst.mask & (1u << lane)) {
+  ------------------
+  |  Branch (224:11): [True: 13.6M, False: 14.9k]
+  ------------------
+  225|  13.6M|         destination[lane] = result[lane];
+  226|  13.6M|         if ((result[lane].origin & RAW_ACCESS_MASK) == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;
+                                                                                        ^3.59M
+  ------------------
+  |  Branch (226:14): [True: 3.59M, False: 10.0M]
+  ------------------
+  227|  13.6M|      }
+  228|  3.42M|   ir->instructions[ir->count++] = *instruction;
+  229|  3.42M|   if (instruction->opcode != RAW_MOV) ir->opcode_mask |= 1u << instruction->opcode;
+                                                     ^2.30M
+  ------------------
+  |  Branch (229:8): [True: 2.30M, False: 1.11M]
+  ------------------
+  230|  3.42M|   if (instruction->flags & RAW_NEGATE_SOURCES) ir->opcode_mask |= RAW_V5_NEGATION;
+                                                              ^3.55k             ^3.55k
+  ------------------
+  |  Branch (230:8): [True: 3.55k, False: 3.42M]
+  ------------------
+  231|  3.42M|   if (dependency) ir->opcode_mask |= RAW_FINITE_BANK_USED;
+                                 ^182k              ^182k
+  ------------------
+  |  Branch (231:8): [True: 182k, False: 3.24M]
+  ------------------
+  232|  3.42M|   return true;
+  233|  3.42M|}
+  234|       |
+  235|       |bool raw_outputs_safe(const struct profile *p)
+  236|   567k|{
+  237|  5.10M|   for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
+                                                                  ^4.54M   ^4.54M^4.54M
+  ------------------
+  |  Branch (237:29): [True: 4.54M, False: 567k]
+  |  Branch (237:66): [True: 980k, False: 3.56M]
+  ------------------
+  238|  4.90M|      for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {
+                                                      ^3.92M  ^3.92M^3.92M
+  ------------------
+  |  Branch (238:31): [True: 3.92M, False: 980k]
+  |  Branch (238:53): [True: 3.92M, False: 84]
+  ------------------
+  239|  3.92M|         struct raw_lane value = p->raw->output[index][lane];
+  240|       |         /* Exclude Inf/NaN, then exclude possible subnormal values. Signed
+  241|       |          * zero is permitted; neither the sign nor normal mantissa is lost. */
+  242|  3.92M|         if (!output_legal(value)) return false;
+                                                 ^225   ^225
+  ------------------
+  |  Branch (242:14): [True: 225, False: 3.91M]
+  ------------------
+  243|  3.92M|      }
+  244|   980k|   }
+  245|   567k|   return true;
+  246|   567k|}
+  247|       |
+  248|       |struct writer { char *text; size_t used; bool overflow; };
+  249|       |static void emit(struct writer *w, const char *format, ...)
+  250|   163M|{
+  251|   163M|   if (w->overflow) return;
+                                  ^36.2k
+  ------------------
+  |  Branch (251:8): [True: 36.2k, False: 163M]
+  ------------------
+  252|   163M|   va_list args;
+  253|   163M|   va_start(args, format);
+  254|   163M|   int count = vsnprintf(w->text + w->used, BRIDGE_MAX_GLSL + 1 - w->used, format, args);
+  255|   163M|   va_end(args);
+  256|   163M|   if (count < 0 || (size_t)count > BRIDGE_MAX_GLSL - w->used) w->overflow = true;
+                                                                             ^10           ^10
+  ------------------
+  |  Branch (256:8): [True: 0, False: 163M]
+  |  Branch (256:21): [True: 10, False: 163M]
+  ------------------
+  257|   163M|   else w->used += (size_t)count;
+  258|   163M|}
+  259|       |
+  260|       |static void input_float(struct writer *w, const struct profile *p, unsigned index, unsigned component)
+  261|  5.72M|{
+  262|  5.72M|   if (p->stage) emit(w, "vso_g%u.%c", p->semantic_index[IN][index], "xyzw"[component]);
+                               ^1.62M
+  ------------------
+  |  Branch (262:8): [True: 1.62M, False: 4.10M]
+  ------------------
+  263|  4.10M|   else emit(w, "in_%u.%c", index, "xyzw"[component]);
+  264|  5.72M|}
+  265|       |
+  266|       |static void operand(struct writer *w, const struct profile *p, const struct raw_source *r, unsigned lane)
+  267|  21.4M|{
+  268|  21.4M|   unsigned component = r->swizzle[lane];
+  269|  21.4M|   switch (r->file) {
+  270|  2.22M|   case IN:
+  ------------------
+  |  Branch (270:4): [True: 2.22M, False: 19.2M]
+  ------------------
+  271|  2.22M|      emit(w, "floatBitsToUint("); input_float(w, p, r->index, component); emit(w, ")"); break;
+  272|  9.45M|   case TEMP: emit(w, "raw_temp[%u].%c", r->index, "xyzw"[component]); break;
+  ------------------
+  |  Branch (272:4): [True: 9.45M, False: 12.0M]
+  ------------------
+  273|  6.15M|   case IMM: emit(w, "%uu", p->raw->immediates[r->index][component]); break;
+  ------------------
+  |  Branch (273:4): [True: 6.15M, False: 15.3M]
+  ------------------
+  274|  3.21M|   case CONST: emit(w, "%sconst0[%u].%c", p->stage ? "fs" : "vs", r->index, "xyzw"[component]); break;
+                                                                   ^1.50M ^1.70M
+  ------------------
+  |  Branch (274:4): [True: 3.21M, False: 18.2M]
+  |  Branch (274:43): [True: 1.50M, False: 1.70M]
+  ------------------
+  275|   412k|   case INDIRECT_CONST: emit(w, "%sconst0[raw_addr].%c", p->stage ? "fs" : "vs", "xyzw"[component]); break;
+                                                                                  ^206k  ^206k
+  ------------------
+  |  Branch (275:4): [True: 412k, False: 21.0M]
+  |  Branch (275:58): [True: 206k, False: 206k]
+  ------------------
+  276|      0|   default: break; /* Guard excludes OUT/sampler operands before recording. */
+  ------------------
+  |  Branch (276:4): [True: 0, False: 21.4M]
+  ------------------
+  277|  21.4M|   }
+  278|  21.4M|}
+  279|       |
+  280|       |static unsigned lane_mode(const struct raw_instruction *instruction, unsigned source, unsigned lane)
+  281|  5.87M|{
+  282|  5.87M|   return (instruction->float_modes[source] >> (lane * 8)) & 255u;
+  283|  5.87M|}
+  284|       |
+  285|       |static void float_operand(struct writer *w, const struct profile *p, const struct raw_instruction *instruction, unsigned source, unsigned lane)
+  286|  5.45M|{
+  287|  5.45M|   unsigned mode = lane_mode(instruction, source, lane) & RAW_ACCESS_MASK;
+  288|  5.45M|   const struct raw_source *r = &instruction->src[source];
+  289|  5.45M|   bool negate = (instruction->flags & (RAW_NEGATE_SOURCE0 << source)) != 0;
+  290|  5.45M|   if (negate) emit(w, "-(");
+                             ^7.51k
+  ------------------
+  |  Branch (290:8): [True: 7.51k, False: 5.44M]
+  ------------------
+  291|  5.45M|   if (mode == RAW_FLOAT_SHADOW) emit(w, "float_temp[%u].%c", r->index, "xyzw"[r->swizzle[lane]]);
+                                               ^1.20M
+  ------------------
+  |  Branch (291:8): [True: 1.20M, False: 4.25M]
+  ------------------
+  292|  4.25M|   else if (mode == RAW_FLOAT_DECODE || mode == RAW_FLOAT_CONDITIONAL) {
+                                                      ^3.15M
+  ------------------
+  |  Branch (292:13): [True: 1.09M, False: 3.15M]
+  |  Branch (292:41): [True: 936k, False: 2.21M]
+  ------------------
+  293|  2.03M|      emit(w, "uintBitsToFloat("); operand(w, p, r, lane); emit(w, ")");
+  294|  2.21M|   } else input_float(w, p, (mode - 1) / 4, (mode - 1) % 4);
+  295|  5.45M|   if (negate) emit(w, ")");
+                             ^7.51k
+  ------------------
+  |  Branch (295:8): [True: 7.51k, False: 5.44M]
+  ------------------
+  296|  5.45M|}
+  297|       |
+  298|       |static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
+  299|   872k|{
+  300|   872k|   enum raw_opcode op = instruction->opcode;
+  301|   872k|   if (op == RAW_TEX) {
+  ------------------
+  |  Branch (301:8): [True: 57, False: 872k]
+  ------------------
+  302|       |      /* One vec4 sample is shared by all lanes and both representations. */
+  303|     57|      emit(w, " float_rhs = texture(fssamp%u, vec2(", instruction->sampler);
+  304|     57|      float_operand(w, p, instruction, 0, 0); emit(w, ", ");
+  305|     57|      float_operand(w, p, instruction, 0, 1); emit(w, "));\n");
+  306|     57|      return;
+  307|     57|   }
+  308|   872k|   if ((1u << op) & RAW_V6_OPCODES) {
+  ------------------
+  |  Branch (308:8): [True: 53.9k, False: 818k]
+  ------------------
+  309|       |      /* Evaluate once, then broadcast before either view is published. In
+  310|       |       * particular RCP reads source x even when its destination is only w. */
+  311|  53.9k|      emit(w, " float_rhs = vec4(");
+  312|  53.9k|      if (op == RAW_DP3) {
+  ------------------
+  |  Branch (312:11): [True: 52.9k, False: 982]
+  ------------------
+  313|  52.9k|         emit(w, "dot(");
+  314|   158k|         for (unsigned source = 0; source < 2; ++source) {
+                                                             ^105k
+  ------------------
+  |  Branch (314:36): [True: 105k, False: 52.9k]
+  ------------------
+  315|   105k|            if (source) emit(w, ", ");
+                                      ^52.9k
+  ------------------
+  |  Branch (315:17): [True: 52.9k, False: 52.9k]
+  ------------------
+  316|   105k|            emit(w, "vec3(");
+  317|   423k|            for (unsigned lane = 0; lane < 3; ++lane) {
+                                                            ^317k
+  ------------------
+  |  Branch (317:37): [True: 317k, False: 105k]
+  ------------------
+  318|   317k|               if (lane) emit(w, ", ");
+                                       ^211k
+  ------------------
+  |  Branch (318:20): [True: 211k, False: 105k]
+  ------------------
+  319|   317k|               float_operand(w, p, instruction, source, lane);
+  320|   317k|            }
+  321|   105k|            emit(w, ")");
+  322|   105k|         }
+  323|  52.9k|      } else {
+  324|    982|         emit(w, op == RAW_RCP ? "1.0 / (" : "inversesqrt(");
+                                               ^491        ^491
+  ------------------
+  |  Branch (324:18): [True: 491, False: 491]
+  ------------------
+  325|    982|         float_operand(w, p, instruction, 0, 0);
+  326|    982|      }
+  327|  53.9k|      emit(w, "));\n");
+  328|  53.9k|      return;
+  329|  53.9k|   }
+  330|   818k|   emit(w, " float_rhs = vec4(");
+  331|  4.09M|   for (unsigned lane = 0; lane < 4; ++lane) {
+                                                   ^3.27M
+  ------------------
+  |  Branch (331:28): [True: 3.27M, False: 818k]
+  ------------------
+  332|  3.27M|      if (lane) emit(w, ", ");
+                              ^2.45M
+  ------------------
+  |  Branch (332:11): [True: 2.45M, False: 818k]
+  ------------------
+  333|  3.27M|      if (!(instruction->float_mask & (1u << lane))) { emit(w, "0.0"); continue; }
+                                                                   ^11.0k
+  ------------------
+  |  Branch (333:11): [True: 11.0k, False: 3.26M]
+  ------------------
+  334|  3.26M|      emit(w, "(");
+  335|  3.26M|      if (op == RAW_UCMP) {
+  ------------------
+  |  Branch (335:11): [True: 208k, False: 3.05M]
+  ------------------
+  336|   208k|         unsigned yes = lane_mode(instruction, 1, lane), no = lane_mode(instruction, 2, lane);
+  337|       |         /* A known selector may choose an authorized shadow while the other
+  338|       |          * payload is arbitrary raw data. Never decode that unselected arm. */
+  339|   208k|         if (yes && no) {
+                                  ^207k
+  ------------------
+  |  Branch (339:14): [True: 207k, False: 40]
+  |  Branch (339:21): [True: 207k, False: 56]
+  ------------------
+  340|   207k|            operand(w, p, &instruction->src[0], lane); emit(w, " != 0u ? ");
+  341|   207k|            float_operand(w, p, instruction, 1, lane); emit(w, " : ");
+  342|   207k|            float_operand(w, p, instruction, 2, lane);
+  343|   207k|         } else float_operand(w, p, instruction, yes ? 1 : 2, lane);
+                              ^96                              ^96   ^56 ^40
+  ------------------
+  |  Branch (343:50): [True: 56, False: 40]
+  ------------------
+  344|  3.05M|      } else if (op == RAW_LRP) {
+  ------------------
+  |  Branch (344:18): [True: 105k, False: 2.95M]
+  ------------------
+  345|   105k|         emit(w, "mix(");
+  346|   105k|         float_operand(w, p, instruction, 2, lane); emit(w, ", ");
+  347|   105k|         float_operand(w, p, instruction, 1, lane); emit(w, ", ");
+  348|   105k|         float_operand(w, p, instruction, 0, lane); emit(w, ")");
+  349|  2.95M|      } else {
+  350|  2.95M|         if (op == RAW_MAX || op == RAW_FRC) emit(w, op == RAW_MAX ? "max(" : "fract(");
+                                            ^2.84M         ^104k   ^104k           ^104k    ^258
+  ------------------
+  |  Branch (350:14): [True: 104k, False: 2.84M]
+  |  Branch (350:31): [True: 258, False: 2.84M]
+  |  Branch (350:54): [True: 104k, False: 258]
+  ------------------
+  351|  2.95M|         float_operand(w, p, instruction, 0, lane);
+  352|  2.95M|         if (op == RAW_ADD || op == RAW_MUL || op == RAW_MAD || op == RAW_DIV || op == RAW_MAX) {
+                                            ^2.22M           ^1.81M           ^1.70M           ^1.70M
+  ------------------
+  |  Branch (352:14): [True: 724k, False: 2.22M]
+  |  Branch (352:31): [True: 411k, False: 1.81M]
+  |  Branch (352:48): [True: 107k, False: 1.70M]
+  |  Branch (352:65): [True: 371, False: 1.70M]
+  |  Branch (352:82): [True: 104k, False: 1.60M]
+  ------------------
+  353|  1.34M|            emit(w, op == RAW_ADD ? " + " : op == RAW_DIV ? " / " : op == RAW_MAX ? ", " : " * ");
+                                                  ^724k   ^623k           ^371    ^623k           ^104k  ^519k
+  ------------------
+  |  Branch (353:21): [True: 724k, False: 623k]
+  |  Branch (353:45): [True: 371, False: 623k]
+  |  Branch (353:69): [True: 104k, False: 519k]
+  ------------------
+  354|  1.34M|            float_operand(w, p, instruction, 1, lane);
+  355|  1.34M|            if (op == RAW_MAD) { emit(w, " + "); float_operand(w, p, instruction, 2, lane); }
+                                             ^107k
+  ------------------
+  |  Branch (355:17): [True: 107k, False: 1.24M]
+  ------------------
+  356|  1.34M|         }
+  357|  2.95M|         if (op == RAW_MAX || op == RAW_FRC) emit(w, ")");
+                                            ^2.84M         ^104k
+  ------------------
+  |  Branch (357:14): [True: 104k, False: 2.84M]
+  |  Branch (357:31): [True: 258, False: 2.84M]
+  ------------------
+  358|  2.95M|      }
+  359|  3.26M|      emit(w, ")");
+  360|  3.26M|   }
+  361|   818k|   emit(w, ");\n");
+  362|   818k|}
+  363|       |
+  364|       |char *raw_emit(const struct profile *p, unsigned const_count)
+  365|   567k|{
+  366|   567k|   struct writer w = {.text = calloc(BRIDGE_MAX_GLSL + 1, 1)};
+  367|   567k|   if (!w.text) return NULL;
+                              ^6     ^6
+  ------------------
+  |  Branch (367:8): [True: 6, False: 567k]
+  ------------------
+  368|   567k|   emit(&w, "#version 300 es\nprecision highp float;\nprecision highp int;\n");
+  369|  1.70M|   for (unsigned file = IN; file <= OUT; ++file)
+                                                       ^1.13M
+  ------------------
+  |  Branch (369:29): [True: 1.13M, False: 567k]
+  ------------------
+  370|  10.2M|      for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[file][index]) {
+                    ^1.13M                                           ^9.08M   ^9.08M^9.08M
+  ------------------
+  |  Branch (370:32): [True: 9.08M, False: 1.13M]
+  |  Branch (370:69): [True: 2.24M, False: 6.83M]
+  ------------------
+  371|  2.24M|         unsigned semantic = p->semantic[file][index];
+  372|  2.24M|         if (semantic == 0) emit(&w, "in vec4 in_%u;\n", index);
+                                          ^735k
+  ------------------
+  |  Branch (372:14): [True: 735k, False: 1.50M]
+  ------------------
+  373|       |         /* Component masks constrain accessed lanes, not the float link ABI:
+  374|       |          * the pinned legacy emitter declares vec4 even for xy/xyz GENERIC. */
+  375|  1.50M|         else if (semantic == 2) emit(&w, "%s %s vec4 vso_g%u;\n", p->flat[file][index] ? "flat" : "smooth", file == IN ? "in" : "out", p->semantic_index[file][index]);
+                                               ^942k                             ^942k                  ^295k    ^646k     ^942k        ^530k  ^412k
+  ------------------
+  |  Branch (375:19): [True: 942k, False: 567k]
+  |  Branch (375:68): [True: 295k, False: 646k]
+  |  Branch (375:110): [True: 530k, False: 412k]
+  ------------------
+  376|   567k|         else if (semantic == 3) emit(&w, "layout(location=0) out vec4 fsout_c0;\n");
+                                               ^283k
+  ------------------
+  |  Branch (376:19): [True: 283k, False: 283k]
+  ------------------
+  377|  2.24M|      }
+  378|   567k|   if (const_count) emit(&w, "uniform highp uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", const_count);
+                                  ^413k                                           ^413k      ^206k  ^206k
+  ------------------
+  |  Branch (378:8): [True: 413k, False: 154k]
+  |  Branch (378:69): [True: 206k, False: 206k]
+  ------------------
+  379|  5.10M|   for (unsigned index = 0; index < FILE_REGISTERS; ++index) {
+                                                                  ^4.54M
+  ------------------
+  |  Branch (379:29): [True: 4.54M, False: 567k]
+  ------------------
+  380|  4.54M|      bool used = false;
+  381|  33.9M|      for (unsigned i = 0; i < p->raw->count; ++i)
+                                                            ^29.3M
+  ------------------
+  |  Branch (381:28): [True: 29.3M, False: 4.54M]
+  ------------------
+  382|  29.3M|         used |= p->raw->instructions[i].opcode == RAW_TEX && p->raw->instructions[i].sampler == index;
+                                                                            ^456
+  ------------------
+  |  Branch (382:18): [True: 456, False: 29.3M]
+  |  Branch (382:63): [True: 57, False: 399]
+  ------------------
+  383|  4.54M|      if (used) emit(&w, "uniform highp sampler2D fssamp%u;\n", index);
+                              ^57
+  ------------------
+  |  Branch (383:11): [True: 57, False: 4.54M]
+  ------------------
+  384|  4.54M|   }
+  385|   567k|   if (!p->stage) emit(&w, "layout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\n");
+                                ^283k
+  ------------------
+  |  Branch (385:8): [True: 283k, False: 283k]
+  ------------------
+  386|   567k|   if (p->raw->opcode_mask & RAW_V3_OPCODES)
+  ------------------
+  |  Branch (386:8): [True: 103k, False: 464k]
+  ------------------
+  387|   103k|      emit(&w, "uint raw_float_mask(uint a, uint b, bool greater_equal) {\n"
+  388|   103k|         " uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n"
+  389|   103k|         " if (magnitude_a > 2139095040u || magnitude_b > 2139095040u) return 0u;\n"
+  390|   103k|         " bool both_zero = magnitude_a == 0u && magnitude_b == 0u;\n"
+  391|   103k|         " uint key_a = (a & 2147483648u) != 0u ? ~a : a ^ 2147483648u;\n"
+  392|   103k|         " uint key_b = (b & 2147483648u) != 0u ? ~b : b ^ 2147483648u;\n"
+  393|   103k|         " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
+  394|   103k|         " return selected ? 4294967295u : 0u;\n}\n");
+  395|   567k|   emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
+  396|   567k|   if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
+                                               ^102k
+  ------------------
+  |  Branch (396:8): [True: 102k, False: 464k]
+  ------------------
+  397|   567k|   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES))
+  ------------------
+  |  Branch (397:8): [True: 361k, False: 206k]
+  ------------------
+  398|   361k|      emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
+  399|  4.24M|   for (unsigned index = 0; index < p->raw->count; ++index) {
+                                                                 ^3.67M
+  ------------------
+  |  Branch (399:29): [True: 3.67M, False: 567k]
+  ------------------
+  400|  3.67M|      const struct raw_instruction *instruction = &p->raw->instructions[index];
+  401|  3.67M|      if (instruction->opcode == RAW_UARL) {
+  ------------------
+  |  Branch (401:11): [True: 103k, False: 3.57M]
+  ------------------
+  402|   103k|         emit(&w, " raw_addr = "); operand(&w, p, &instruction->src[0], 0); emit(&w, ";\n");
+  403|   103k|         continue;
+  404|   103k|      }
+  405|  3.57M|      if (instruction->opcode == RAW_UIF) {
+  ------------------
+  |  Branch (405:11): [True: 103k, False: 3.46M]
+  ------------------
+  406|   103k|         emit(&w, " if ("); operand(&w, p, &instruction->src[0], 0); emit(&w, " != 0u) {\n");
+  407|   103k|         continue;
+  408|   103k|      }
+  409|  3.46M|      if (instruction->opcode == RAW_ELSE) { emit(&w, " } else {\n"); continue; }
+                                                         ^103k
+  ------------------
+  |  Branch (409:11): [True: 103k, False: 3.36M]
+  ------------------
+  410|  3.36M|      if (instruction->opcode == RAW_ENDIF) { emit(&w, " }\n"); continue; }
+                                                          ^103k
+  ------------------
+  |  Branch (410:11): [True: 103k, False: 3.26M]
+  ------------------
+  411|  3.36M|      bool numeric = ((1u << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+                        ^3.26M                                    ^3.26M
+  412|  3.26M|      bool raw_shadow = (instruction->flags & RAW_STRUCTURED) && !numeric &&
+                                                                               ^363k
+  ------------------
+  |  Branch (412:25): [True: 363k, False: 2.89M]
+  |  Branch (412:66): [True: 311k, False: 51.9k]
+  ------------------
+  413|  3.26M|         instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP;
+                       ^311k                             ^1.23k
+  ------------------
+  |  Branch (413:10): [True: 1.23k, False: 309k]
+  |  Branch (413:44): [True: 830, False: 400]
+  ------------------
+  414|  3.26M|      if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
+                                                   ^872k        ^872k
+  ------------------
+  |  Branch (414:11): [True: 872k, False: 2.38M]
+  |  Branch (414:38): [True: 872k, False: 22]
+  ------------------
+  415|  3.26M|      if (numeric) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
+                                 ^419k
+  ------------------
+  |  Branch (415:11): [True: 419k, False: 2.84M]
+  ------------------
+  416|  2.84M|      else {
+  417|  2.84M|         emit(&w, " raw_rhs = uvec4(");
+  418|  14.2M|         for (unsigned lane = 0; lane < 4; ++lane) {
+                                                         ^11.3M
+  ------------------
+  |  Branch (418:34): [True: 11.3M, False: 2.84M]
+  ------------------
+  419|  11.3M|            if (lane) emit(&w, ", ");
+                                    ^8.52M
+  ------------------
+  |  Branch (419:17): [True: 8.52M, False: 2.84M]
+  ------------------
+  420|  11.3M|            if (!(instruction->dst.mask & (1u << lane))) { emit(&w, "0u"); continue; }
+                                                                       ^1.84k
+  ------------------
+  |  Branch (420:17): [True: 1.84k, False: 11.3M]
+  ------------------
+  421|  11.3M|            enum raw_opcode op = instruction->opcode;
+  422|  11.3M|            emit(&w, "(");
+  423|  11.3M|            if (op == RAW_NOT) emit(&w, "~");
+                                             ^2.85k
+  ------------------
+  |  Branch (423:17): [True: 2.85k, False: 11.3M]
+  ------------------
+  424|  11.3M|            if (op == RAW_ISGE) emit(&w, "(");
+                                              ^132
+  ------------------
+  |  Branch (424:17): [True: 132, False: 11.3M]
+  ------------------
+  425|  11.3M|            if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
+                                                ^10.9M          ^415k
+  ------------------
+  |  Branch (425:17): [True: 414k, False: 10.9M]
+  |  Branch (425:35): [True: 864, False: 10.9M]
+  ------------------
+  426|  11.3M|            operand(&w, p, &instruction->src[0], lane);
+  427|  11.3M|            if (op == RAW_AND || op == RAW_OR) {
+                                               ^10.5M
+  ------------------
+  |  Branch (427:17): [True: 827k, False: 10.5M]
+  |  Branch (427:34): [True: 2.57M, False: 7.96M]
+  ------------------
+  428|  3.40M|               emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
+                                                      ^827k   ^2.57M
+  ------------------
+  |  Branch (428:25): [True: 827k, False: 2.57M]
+  ------------------
+  429|  7.96M|            } else if (op == RAW_SHL || op == RAW_USHR) {
+                                                      ^5.49M
+  ------------------
+  |  Branch (429:24): [True: 2.46M, False: 5.49M]
+  |  Branch (429:41): [True: 617k, False: 4.87M]
+  ------------------
+  430|  3.08M|               emit(&w, op == RAW_SHL ? " << (" : " >> (");
+                                                      ^2.46M    ^617k
+  ------------------
+  |  Branch (430:25): [True: 2.46M, False: 617k]
+  ------------------
+  431|  3.08M|               operand(&w, p, &instruction->src[1], lane); emit(&w, " & 31u)");
+  432|  4.87M|            } else if (op == RAW_UADD) {
+  ------------------
+  |  Branch (432:24): [True: 105k, False: 4.77M]
+  ------------------
+  433|   105k|               emit(&w, " + "); operand(&w, p, &instruction->src[1], lane);
+  434|  4.77M|            } else if (op == RAW_ISGE) {
+  ------------------
+  |  Branch (434:24): [True: 132, False: 4.77M]
+  ------------------
+  435|    132|               emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
+  436|    132|               emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
+  437|  4.77M|            } else if (op == RAW_USEQ || op == RAW_USNE) {
+                                                       ^4.76M
+  ------------------
+  |  Branch (437:24): [True: 2.37k, False: 4.76M]
+  |  Branch (437:42): [True: 130, False: 4.76M]
+  ------------------
+  438|  2.50k|               emit(&w, op == RAW_USEQ ? " == " : " != "); operand(&w, p, &instruction->src[1], lane);
+                                                       ^2.37k   ^130
+  ------------------
+  |  Branch (438:25): [True: 2.37k, False: 130]
+  ------------------
+  439|  2.50k|               emit(&w, " ? 4294967295u : 0u");
+  440|  4.76M|            } else if (op == RAW_UCMP) {
+  ------------------
+  |  Branch (440:24): [True: 317k, False: 4.45M]
+  ------------------
+  441|   317k|               emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
+  442|   317k|               emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
+  443|  4.45M|            } else if (op == RAW_FSLT || op == RAW_FSGE) {
+                                                       ^4.03M
+  ------------------
+  |  Branch (443:24): [True: 414k, False: 4.03M]
+  |  Branch (443:42): [True: 864, False: 4.03M]
+  ------------------
+  444|   415k|               emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);
+  445|   415k|               emit(&w, op == RAW_FSGE ? ", true)" : ", false)");
+                                                       ^864        ^414k
+  ------------------
+  |  Branch (445:25): [True: 864, False: 414k]
+  ------------------
+  446|   415k|            }
+  447|  11.3M|            emit(&w, ")");
+  448|  11.3M|         }
+  449|  2.84M|      }
+  450|  3.26M|      emit(&w, ");\n");
+  451|  3.26M|      if (instruction->float_mask && raw_shadow) {
+                                                   ^872k
+  ------------------
+  |  Branch (451:11): [True: 872k, False: 2.38M]
+  |  Branch (451:38): [True: 22, False: 872k]
+  ------------------
+  452|     22|         emit(&w, " float_rhs = vec4(");
+  453|    110|         for (unsigned lane = 0; lane < 4; ++lane) {
+                                                         ^88
+  ------------------
+  |  Branch (453:34): [True: 88, False: 22]
+  ------------------
+  454|     88|            if (lane) emit(&w, ", ");
+                                    ^66
+  ------------------
+  |  Branch (454:17): [True: 66, False: 22]
+  ------------------
+  455|     88|            if (instruction->float_mask & (1u << lane)) emit(&w, "uintBitsToFloat(raw_rhs.%c)", "xyzw"[lane]);
+                                                                      ^76
+  ------------------
+  |  Branch (455:17): [True: 76, False: 12]
+  ------------------
+  456|     12|            else emit(&w, "0.0");
+  457|     88|         }
+  458|     22|         emit(&w, ");\n");
+  459|     22|      }
+  460|  3.26M|      emit(&w, " raw_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
+                                                                             ^2.22M   ^1.03M
+  ------------------
+  |  Branch (460:32): [True: 2.22M, False: 1.03M]
+  ------------------
+  461|  16.3M|      for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+                                                      ^13.0M  ^13.0M^13.0M                                ^13.0M
+  ------------------
+  |  Branch (461:31): [True: 13.0M, False: 3.26M]
+  |  Branch (461:53): [True: 13.0M, False: 11.8k]
+  ------------------
+  462|  3.26M|      emit(&w, " = raw_rhs.");
+  463|  16.3M|      for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+                                                      ^13.0M  ^13.0M^13.0M                                ^13.0M
+  ------------------
+  |  Branch (463:31): [True: 13.0M, False: 3.26M]
+  |  Branch (463:53): [True: 13.0M, False: 11.8k]
+  ------------------
+  464|  3.26M|      emit(&w, ";\n");
+  465|  3.26M|      if (instruction->float_mask) {
+  ------------------
+  |  Branch (465:11): [True: 872k, False: 2.38M]
+  ------------------
+  466|   872k|         emit(&w, " float_%s[%u].", instruction->dst.file == TEMP ? "temp" : "out", instruction->dst.index);
+                                                                                  ^370k    ^502k
+  ------------------
+  |  Branch (466:37): [True: 370k, False: 502k]
+  ------------------
+  467|  4.36M|         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+                                                         ^3.49M  ^3.49M^3.49M                                  ^3.47M
+  ------------------
+  |  Branch (467:34): [True: 3.49M, False: 872k]
+  |  Branch (467:56): [True: 3.47M, False: 11.5k]
+  ------------------
+  468|   872k|         emit(&w, " = float_rhs.");
+  469|  4.36M|         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
+                                                         ^3.49M  ^3.49M^3.49M                                  ^3.47M
+  ------------------
+  |  Branch (469:34): [True: 3.49M, False: 872k]
+  |  Branch (469:56): [True: 3.47M, False: 11.5k]
+  ------------------
+  470|   872k|         emit(&w, ";\n");
+  471|   872k|      }
+  472|  3.26M|   }
+  473|  5.10M|   for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
+                                                                  ^4.54M   ^4.54M^4.54M
+  ------------------
+  |  Branch (473:29): [True: 4.54M, False: 567k]
+  |  Branch (473:66): [True: 979k, False: 3.56M]
+  ------------------
+  474|  4.89M|      for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {
+                                                      ^3.91M  ^3.91M^3.91M
+  ------------------
+  |  Branch (474:31): [True: 3.91M, False: 979k]
+  |  Branch (474:53): [True: 3.91M, False: 84]
+  ------------------
+  475|  3.91M|         unsigned semantic = p->semantic[OUT][index];
+  476|  3.91M|         if (semantic == 1) emit(&w, " gl_Position");
+                                          ^1.13M
+  ------------------
+  |  Branch (476:14): [True: 1.13M, False: 2.78M]
+  ------------------
+  477|  2.78M|         else if (semantic == 2) emit(&w, " vso_g%u", p->semantic_index[OUT][index]);
+                                               ^1.64M
+  ------------------
+  |  Branch (477:19): [True: 1.64M, False: 1.13M]
+  ------------------
+  478|  1.13M|         else emit(&w, " fsout_c0");
+  479|  3.91M|         emit(&w, ".%c = ", "xyzw"[lane]);
+  480|  3.91M|         unsigned authority = p->raw->output[index][lane].origin;
+  481|  3.91M|         unsigned origin = authority & RAW_ACCESS_MASK;
+  482|  3.91M|         if ((authority & RAW_OUTPUT) && origin == RAW_FLOAT_SHADOW) emit(&w, "float_out[%u].%c", index, "xyzw"[lane]);
+                                                       ^3.09M                      ^1.80M
+  ------------------
+  |  Branch (482:14): [True: 3.09M, False: 825k]
+  |  Branch (482:42): [True: 1.80M, False: 1.29M]
+  ------------------
+  483|  2.11M|         else if (authority & RAW_OUTPUT) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);
+                                                        ^1.29M
+  ------------------
+  |  Branch (483:19): [True: 1.29M, False: 825k]
+  ------------------
+  484|   825k|         else emit(&w, "uintBitsToFloat(raw_out[%u].%c)", index, "xyzw"[lane]);
+  485|  3.91M|         emit(&w, ";\n");
+  486|  3.91M|      }
+  487|   979k|   }
+  488|   567k|   if (!p->stage) emit(&w, " gl_Position.y = gl_Position.y * winsys_adjust_y;\n");
+                                ^283k
+  ------------------
+  |  Branch (488:8): [True: 283k, False: 283k]
+  ------------------
+  489|   567k|   emit(&w, "}\n");
+  490|   567k|   if (w.overflow) { free(w.text); return NULL; }
+                                 ^10                    ^10
+  ------------------
+  |  Branch (490:8): [True: 10, False: 567k]
+  ------------------
+  491|   567k|   return w.text;
+  492|   567k|}
+

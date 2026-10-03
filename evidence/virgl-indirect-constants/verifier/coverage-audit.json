@@ -1,0 +1,1431 @@
+{
+  "schema": 1,
+  "head": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "evidence": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/worker",
+  "records": [
+    {
+      "path": "native/coverage-show.txt",
+      "sha256": "ff04d1903d91e2d18f0653cff4d75dea8111824e48df2ba35422e761658b87d4"
+    },
+    {
+      "path": "hardware/browser-coverage.json",
+      "sha256": "88efadcede91289207ecd066971caf3bbf143c5a4a7bc2329bee2731186febe4"
+    },
+    {
+      "path": "sabotage-decoder-bypass/browser-coverage.json",
+      "sha256": "d2cdc2d2ec993c9e64e067c40b4f097ec0cc6034f2914b4fc57b88924db68b7b"
+    },
+    {
+      "path": "consumer-unit/coverage.json",
+      "sha256": "22c168449402709151e6af0889499fb40fcd4079651d9aeea987ddf83ff07cf9"
+    }
+  ],
+  "lines": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 6,
+      "text": "* Checked indirect constants use the owned raw backend exclusively.",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 130,
+      "text": "if (word(p, \"ADDR\")) {",
+      "status": "EXECUTED",
+      "count": "17.0M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 131,
+      "text": "failure_code = \"unsupported-feature\";",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 132,
+      "text": "if (kind == SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) || !punctuation(p, ']')) return false;",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 133,
+      "text": "r->file = ADDR; r->last = 0; r->mask = 1;",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 134,
+      "text": "for (unsigned i = 0; i < 4; ++i) r->swizzle[i] = 0;",
+      "status": "EXECUTED",
+      "count": "1.57M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 135,
+      "text": "r->explicit_mask = punctuation(p, '.');",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 136,
+      "text": "if (r->explicit_mask && !word(p, \"x\")) return false;",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 137,
+      "text": "return kind == DECLARATION || r->explicit_mask;",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 138,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "315k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 142,
+      "text": "if (f == FILE_COUNT || !punctuation(p, '[')) return false;",
+      "status": "EXECUTED",
+      "count": "16.7M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 143,
+      "text": "bool indirect = f == CONST && word(p, \"ADDR\");",
+      "status": "EXECUTED",
+      "count": "16.7M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 144,
+      "text": "if (indirect) {",
+      "status": "EXECUTED",
+      "count": "16.7M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 145,
+      "text": "failure_code = \"unsupported-feature\";",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 146,
+      "text": "if (kind != SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) ||",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 147,
+      "text": "!punctuation(p, ']') || !punctuation(p, '.') || !word(p, \"x\")) return false;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 148,
+      "text": "} else if (!index_number(p, &r->index, register_limit(f))) return false;",
+      "status": "EXECUTED",
+      "count": "16.6M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 149,
+      "text": "r->file = indirect ? INDIRECT_CONST : (enum file)f;",
+      "status": "EXECUTED",
+      "count": "16.7M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 188,
+      "text": "if (!register_name(p, &r, SOURCE)) return false;",
+      "status": "EXECUTED",
+      "count": "7.14M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 189,
+      "text": "/* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 190,
+      "text": "if (r.file != INDIRECT_CONST &&",
+      "status": "EXECUTED",
+      "count": "7.14M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 191,
+      "text": "(r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index])) return false;",
+      "status": "EXECUTED",
+      "count": "7.14M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 197,
+      "text": "if (r.file == INDIRECT_CONST) {",
+      "status": "EXECUTED",
+      "count": "7.14M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 198,
+      "text": "failure_code = \"unsupported-feature\";",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 199,
+      "text": "if (!s->raw || !s->address_declared || !s->address_written) return false;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 200,
+      "text": "struct raw_lane address = s->raw->address;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 201,
+      "text": "/* (~zero) is the unsigned maximum of ALL words represented by these",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 202,
+      "text": "* known bits. It proves the complete set, not one observed address. */",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 203,
+      "text": "if ((address.zero & address.one) || (uint32_t)~address.zero >= CONST_REGISTERS) return false;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 204,
+      "text": "uint64_t candidates = 0;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 205,
+      "text": "for (unsigned i = 0; i < CONST_REGISTERS; ++i) {",
+      "status": "EXECUTED",
+      "count": "7.32M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 206,
+      "text": "if ((i & address.zero) || ((uint32_t)~i & address.one)) continue;",
+      "status": "EXECUTED",
+      "count": "7.16M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 207,
+      "text": "if (!s->declared[CONST][i] || (s->components[CONST][i] & needed) != needed) return false;",
+      "status": "EXECUTED",
+      "count": "158k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 208,
+      "text": "candidates |= UINT64_C(1) << i;",
+      "status": "EXECUTED",
+      "count": "158k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 209,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "158k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 210,
+      "text": "if (!candidates) return false;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 211,
+      "text": "s->raw->indirect_indices |= candidates;",
+      "status": "EXECUTED",
+      "count": "155k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 212,
+      "text": "} else if ((s->components[r.file][r.index] & needed) != needed) return false;",
+      "status": "EXECUTED",
+      "count": "6.99M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 267,
+      "text": "if (r.file == ADDR) {",
+      "status": "EXECUTED",
+      "count": "5.59M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 268,
+      "text": "failure_code = \"unsupported-feature\";",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 269,
+      "text": "if (!s->raw || s->address_declared || !end(p)) return false;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 270,
+      "text": "s->address_declared = true;",
+      "status": "EXECUTED",
+      "count": "156k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 271,
+      "text": "failure_code = \"parse-error\";",
+      "status": "EXECUTED",
+      "count": "156k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 272,
+      "text": "return true;",
+      "status": "EXECUTED",
+      "count": "156k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 273,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 326,
+      "text": "bool has_target, has_else, has_else_target, address_written;",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 327,
+      "text": "struct raw_lane address;",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 337,
+      "text": "bool written = frame->address_written;",
+      "status": "EXECUTED",
+      "count": "313k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 338,
+      "text": "struct raw_lane address = frame->address;",
+      "status": "EXECUTED",
+      "count": "313k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 339,
+      "text": "frame->address_written = s->address_written;",
+      "status": "EXECUTED",
+      "count": "313k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 340,
+      "text": "frame->address = s->raw->address;",
+      "status": "EXECUTED",
+      "count": "313k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 341,
+      "text": "if (swap) { s->address_written = written; s->raw->address = address; }",
+      "status": "EXECUTED",
+      "count": "313k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 362,
+      "text": "s->address_written &= frame->address_written;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 363,
+      "text": "s->raw->address = s->address_written ?",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 364,
+      "text": "raw_join(s->raw->address, frame->address) : (struct raw_lane){0};",
+      "status": "EXECUTED",
+      "count": "154k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 430,
+      "text": "if (word(p, \"UARL\")) raw.opcode = RAW_UARL;",
+      "status": "EXECUTED",
+      "count": "2.62M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 431,
+      "text": "else if (word(p, \"AND\")) raw.opcode = RAW_AND;",
+      "status": "EXECUTED",
+      "count": "2.46M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 456,
+      "text": "arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||",
+      "status": "EXECUTED",
+      "count": "2.62M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 462,
+      "text": "if (raw.opcode == RAW_UARL || ((1u << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = \"unsupported-feature\";",
+      "status": "EXECUTED",
+      "count": "2.62M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 470,
+      "text": "if (!register_name(p, &dst, DESTINATION)) return false;",
+      "status": "EXECUTED",
+      "count": "4.34M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 471,
+      "text": "if (raw.opcode == RAW_UARL) {",
+      "status": "EXECUTED",
+      "count": "4.34M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 472,
+      "text": "if (dst.file != ADDR || !s->address_declared) return false;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 473,
+      "text": "} else if ((dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index] ||",
+      "status": "EXECUTED",
+      "count": "4.18M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 474,
+      "text": "(s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;",
+      "status": "EXECUTED",
+      "count": "4.18M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 501,
+      "text": "if (dst.file == ADDR) s->address_written = true;",
+      "status": "EXECUTED",
+      "count": "4.18M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 502,
+      "text": "else s->written[dst.file][dst.index] |= dst.mask;",
+      "status": "EXECUTED",
+      "count": "4.02M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 563,
+      "text": "if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s) ||",
+      "status": "EXECUTED",
+      "count": "876k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 564,
+      "text": "(s->address_declared && !s->raw->indirect_indices))) {",
+      "status": "EXECUTED",
+      "count": "567k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 665,
+      "text": "word(&p, \"FSLT\") || word(&p, \"FSGE\") || word(&p, \"UARL\")) {",
+      "status": "EXECUTED",
+      "count": "11.8M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 824,
+      "text": "c->profile.raw->indirect_indices ?",
+      "status": "EXECUTED",
+      "count": "875k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 825,
+      "text": "(c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? \"virgl-webgl2-raw-bits-v11\" : \"virgl-webgl2-raw-bits-v10\") :",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 851,
+      "text": "if (profile->raw && profile->raw->indirect_indices) {",
+      "status": "EXECUTED",
+      "count": "875k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 852,
+      "text": "append(\",\\\"constantAccesses\\\":[{\\\"kind\\\":\\\"constant-bank-static-indirect-v1\\\",\\\"stage\\\":\\\"%s\\\",\\\"slot\\\":0,\\\"name\\\":\\\"%sconst0\\\",\\\"count\\\":%d,\\\"indices\\\":[\",",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 853,
+      "text": "stage ? \"fragment\" : \"vertex\", stage ? \"fs\" : \"vs\", info->num_consts);",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 854,
+      "text": "bool first = true;",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 855,
+      "text": "for (unsigned i = 0; i < CONST_REGISTERS; ++i) if (profile->raw->indirect_indices & (UINT64_C(1) << i)) {",
+      "status": "EXECUTED",
+      "count": "4.84M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 856,
+      "text": "append(\"%s%u\", first ? \"\" : \",\", i); first = false;",
+      "status": "EXECUTED",
+      "count": "103k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 857,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "103k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 858,
+      "text": "append(\"]}]\");",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 859,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "102k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 16,
+      "text": "if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)",
+      "status": "EXECUTED",
+      "count": "7.10M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 107,
+      "text": "if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL) return 1u;",
+      "status": "EXECUTED",
+      "count": "7.21M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 118,
+      "text": "if (input->opcode == RAW_UARL) {",
+      "status": "EXECUTED",
+      "count": "3.73M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 119,
+      "text": "/* UARL copies the post-swizzle raw x word, never float conversion. Read",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 120,
+      "text": "* before publishing so UARL of an indirect source uses the old address. */",
+      "status": "WAIVED",
+      "reason": "Non-executable declaration, type field, comment or structural line."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 121,
+      "text": "ir->address = source_lane(ir, &input->src[0], 0, false);",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 122,
+      "text": "ir->address.origin = 0;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 123,
+      "text": "ir->instructions[ir->count++] = *input;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 124,
+      "text": "ir->opcode_mask |= 1u << RAW_UARL;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 125,
+      "text": "return true;",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 126,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "157k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 210,
+      "text": "case RAW_UARL: break; /* Recorded above into the dedicated scalar state. */",
+      "status": "WAIVED",
+      "reason": "Exhaustive enum arm unreachable after dedicated UARL handler returns; no behavior is hidden."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 275,
+      "text": "case INDIRECT_CONST: emit(w, \"%sconst0[raw_addr].%c\", p->stage ? \"fs\" : \"vs\", \"xyzw\"[component]); break;",
+      "status": "EXECUTED",
+      "count": "412k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 396,
+      "text": "if (p->raw->indirect_indices) emit(&w, \" highp uint raw_addr;\\n\");",
+      "status": "EXECUTED",
+      "count": "567k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 401,
+      "text": "if (instruction->opcode == RAW_UARL) {",
+      "status": "EXECUTED",
+      "count": "3.67M",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 402,
+      "text": "emit(&w, \" raw_addr = \"); operand(&w, p, &instruction->src[0], 0); emit(&w, \";\\n\");",
+      "status": "EXECUTED",
+      "count": "103k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 403,
+      "text": "continue;",
+      "status": "EXECUTED",
+      "count": "103k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 404,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": "103k",
+      "record": "native/coverage-show.txt"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 10,
+      "text": "enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT,",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 11,
+      "text": "/* Checked scalar/address-source tags are NEVER declaration-array indices. */",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 12,
+      "text": "ADDR = FILE_COUNT, INDIRECT_CONST };",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 23,
+      "text": "RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL };",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 59,
+      "text": "struct raw_lane address;",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 60,
+      "text": "uint64_t indirect_indices; /* Union of complete, checked use-site candidate sets. */",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 70,
+      "text": "bool ended, started, color0_property, address_declared, address_written;",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "line": 80,
+      "text": "_Static_assert(sizeof(struct raw_ir) == 26256, \"bounded scalar address IR allocation\");",
+      "status": "WAIVED",
+      "reason": "Type layout, enum tag, or compile-time size assertion; compiled and actual layout separately recorded."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 5,
+      "text": "export const INDIRECT_PROFILE = \"virgl-webgl2-raw-bits-v10\";",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 6,
+      "text": "export const INDIRECT_CONDITIONAL_PROFILE = \"virgl-webgl2-raw-bits-v11\";",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 8,
+      "text": "export const CONSTANT_ACCESS_KIND = \"constant-bank-static-indirect-v1\";",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 9,
+      "text": "const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE]);",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 10,
+      "text": "const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE]);",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 53,
+      "text": "const value = record(metadata, [...METADATA_KEYS, \"constantDomains\", \"constantAccesses\"], METADATA_KEYS);",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 55,
+      "text": "require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), \"Unknown shader profile.\");",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 56,
+      "text": "const indirect = INDIRECT_PROFILES.has(value.profile);",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 57,
+      "text": "let access = null;",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 58,
+      "text": "if (indirect) {",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 59,
+      "text": "require(Object.hasOwn(value, \"constantAccesses\"), \"Indirect shader profile requires a constant access contract.\");",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 60,
+      "text": "const accesses = array(value.constantAccesses, 1), uniforms = array(value.uniforms, 1);",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 61,
+      "text": "require(accesses.length === 1 && uniforms.length === 1, \"Indirect shader requires one access contract and one constant bank.\");",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 62,
+      "text": "access = record(accesses[0], [...DOMAIN_KEYS, \"indices\"]);",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 63,
+      "text": "const uniform = record(uniforms[0], [\"name\", \"type\", \"count\", \"encoding\"]);",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 64,
+      "text": "const name = expectedStage === \"vertex\" ? \"vsconst0\" : \"fsconst0\";",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 65,
+      "text": "require(access.kind === CONSTANT_ACCESS_KIND && access.stage === expectedStage && access.slot === 0 && access.name === name,",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 66,
+      "text": "\"Unknown or inconsistent constant-bank access.\");",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 67,
+      "text": "require(Number.isInteger(access.count) && access.count >= 1 && access.count <= 47 &&",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 68,
+      "text": "uniform.name === name && uniform.type === \"uvec4[]\" && uniform.encoding === \"float32-bits\" && uniform.count === access.count,",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 69,
+      "text": "\"Constant access does not match the declared bank extent and encoding.\");",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 70,
+      "text": "const indices = array(access.indices, 46);",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 71,
+      "text": "require(indices.length > 0 && indices.every((index, position) => Number.isInteger(index) && index >= 0 &&",
+      "status": "EXECUTED",
+      "count": 784,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 72,
+      "text": "index <= 45 && index < access.count && (position === 0 || indices[position - 1] < index)),",
+      "status": "EXECUTED",
+      "count": 784,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 73,
+      "text": "\"Constant access indices must be nonempty, sorted, unique and guest-addressable.\");",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 74,
+      "text": "access = Object.freeze({ ...access, indices: Object.freeze(indices) });",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 75,
+      "text": "} else {",
+      "status": "EXECUTED",
+      "count": 161,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 76,
+      "text": "require(!Object.hasOwn(value, \"constantAccesses\"), \"Shader profile forbids a constant access contract.\");",
+      "status": "EXECUTED",
+      "count": 44,
+      "record": "profiles/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 77,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": 44,
+      "record": "profiles/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 80,
+      "text": "return Object.freeze({ ok: true, domain: null, ...(indirect ? { access } : {}) });",
+      "status": "EXECUTED",
+      "count": 32,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 93,
+      "text": "return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}) });",
+      "status": "EXECUTED",
+      "count": 207,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 121,
+      "text": "",
+      "status": "WAIVED",
+      "reason": "Module setup, comment, declaration or structural line; import and successful calls bind module bytes."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 122,
+      "text": "/** Own the entire declared guest-addressable bank, independent of reflection. */",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 123,
+      "text": "export function checkIndirectBank(words, declaredCount, finite) {",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 124,
+      "text": "try {",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 125,
+      "text": "require(Number.isInteger(declaredCount) && declaredCount >= 1 && declaredCount <= 47 && typeof finite === \"boolean\",",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 126,
+      "text": "\"Invalid indirect constant-bank contract.\");",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 127,
+      "text": "const bank = array(words, 184);",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 128,
+      "text": "require(bank.length % 4 === 0, \"Constant bank must contain complete vec4 registers.\");",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 129,
+      "text": "const count = Math.min(declaredCount, 46) * 4;",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 130,
+      "text": "if (bank.length < count) return failure(\"incomplete-draw\", \"Drawing requires every declared indirect constant word.\");",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 131,
+      "text": "const prefix = bank.slice(0, count);",
+      "status": "EXECUTED",
+      "count": 272,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 132,
+      "text": "require(prefix.every((word) => Number.isInteger(word) && word >= 0 && word <= 0xffffffff),",
+      "status": "EXECUTED",
+      "count": 50048,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 133,
+      "text": "\"Indirect constant word is not an exact u32.\");",
+      "status": "EXECUTED",
+      "count": 272,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 134,
+      "text": "require(!finite || prefix.every(finiteBinary32Word), \"Indirect constant word is outside the finite-binary32 domain.\");",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 135,
+      "text": "return Object.freeze({ ok: true, words: Object.freeze(prefix) });",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 136,
+      "text": "} catch (error) {",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 137,
+      "text": "if (!(error instanceof DomainFault)) throw error;",
+      "status": "EXECUTED",
+      "count": 258,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 138,
+      "text": "return failure(finite === true ? \"constant-domain-error\" : \"constant-access-error\", error.message);",
+      "status": "EXECUTED",
+      "count": 258,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 139,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": 258,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 140,
+      "text": "}",
+      "status": "EXECUTED",
+      "count": 296,
+      "record": "consumer-unit/coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 4,
+      "text": "import { parseConstantDomain, checkFiniteBank, checkIndirectBank } from \"./constant-domain.mjs\";",
+      "status": "EXECUTED",
+      "count": 1,
+      "record": "sabotage-index-offset/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 264,
+      "text": "const contract = unwrap(parseConstantDomain(translated.metadata, fields.stageName));",
+      "status": "EXECUTED",
+      "count": 38,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 265,
+      "text": "object.constantDomain = contract.domain;",
+      "status": "EXECUTED",
+      "count": 38,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 266,
+      "text": "object.constantAccess = contract.access ?? null;",
+      "status": "EXECUTED",
+      "count": 38,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 362,
+      "text": "const access = (stage === 0 ? vertex : fragment).constantAccess;",
+      "status": "EXECUTED",
+      "count": 10,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 363,
+      "text": "require(!access || uploadCount > access.indices[access.indices.length - 1],",
+      "status": "EXECUTED",
+      "count": 10,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 364,
+      "text": "\"shader-reflection-error\", \"Constant upload extent does not cover every proved indirect index.\");",
+      "status": "EXECUTED",
+      "count": 10,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 439,
+      "text": "// A partial/invalid conditional or indirect bank remains CPU state but is never uploaded.",
+      "status": "EXECUTED",
+      "count": 7,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 440,
+      "text": "const constantUploads = (program, banks, strict, indirectBanks = null) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {",
+      "status": "EXECUTED",
+      "count": 282,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 442,
+      "text": "const shader = uniform.stage === 0 ? program.vertex : program.fragment;",
+      "status": "EXECUTED",
+      "count": 282,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 444,
+      "text": "if (shader.constantAccess) {",
+      "status": "EXECUTED",
+      "count": 282,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 445,
+      "text": "const checked = indirectBanks?.[uniform.stage] ?? checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional);",
+      "status": "EXECUTED",
+      "count": 282,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 446,
+      "text": "if (!checked.ok && !strict) return [];",
+      "status": "EXECUTED",
+      "count": 282,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 447,
+      "text": "words = Object.freeze(unwrap(checked).words.slice(0, count));",
+      "status": "EXECUTED",
+      "count": 269,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 448,
+      "text": "} else if (uniform.conditional) {",
+      "status": "EXECUTED",
+      "count": 269,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 560,
+      "text": "// Presence and numeric authority apply to the complete declared prefix,",
+      "status": "EXECUTED",
+      "count": 41,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 561,
+      "text": "// even if reflection prunes it. Reject before linking or any draw allocation.",
+      "status": "EXECUTED",
+      "count": 41,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 562,
+      "text": "const indirectBanks = Object.freeze(shaders.map((shader, stage) => shader.constantAccess ?",
+      "status": "EXECUTED",
+      "count": 77,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 563,
+      "text": "unwrap(checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));",
+      "status": "EXECUTED",
+      "count": 77,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 564,
+      "text": "const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);",
+      "status": "EXECUTED",
+      "count": 41,
+      "record": "hardware/browser-coverage.json"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 565,
+      "text": "const uploads = constantUploads(program, banks, true, indirectBanks);",
+      "status": "EXECUTED",
+      "count": 41,
+      "record": "hardware/browser-coverage.json"
+    }
+  ]
+}

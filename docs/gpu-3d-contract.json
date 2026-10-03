@@ -207,6 +207,21 @@
     "MAX_VARYING_VECTORS": 16,
     "MAX_VERTEX_UNIFORM_BLOCKS": 13
   },
+  "indirectConstants": {
+    "bounds": "At each indirect use, known-zero/known-one facts must be nonconflicting and the complete conservative unsigned address set must lie in 0..45. Every candidate index and consumed component must be declared. Address state joins both structured predecessors, including the entry state for no-ELSE paths; stale or unknown facts cannot authorize a read.",
+    "compatibility": "All3466 preceding complete single results,236 pairs and19 original captured shader outcomes are retained; original admission stays12/19. Explicit successor adapters inventory unknown-v10 parser diagnostic changes without claiming a historical whole gate.",
+    "contracts": "Both new profiles require one exact stage-local slot-zero constant-bank-static-indirect-v1 record with declared count and sorted unique union of every possible consumed index. v11 additionally requires the matching finite-f32 domain record. v10 forbids that numeric record; every older profile forbids indirect access metadata.",
+    "draw": "Own all min(count,46) vec4 words from the current immutable bank before draw allocation/link/dispatch, including unused entries. v11 checks that entire same prefix is finite. Reflection must upload every proved index. The existing bank-array identity check binds the validated draw plan to its upload across updates and async yields; missing words or restoration zeros never confer authority.",
+    "memory": "Measured raw IR 26256 bytes, profile 7616 bytes, structured flow arena 52612 bytes; within 32768/8192/53248 caps. Maximum179 instructions, fixed16MiB Wasm memory and256KiB stack remain unchanged.",
+    "profiles": {
+      "conditional": "virgl-webgl2-raw-bits-v11",
+      "unconditional": "virgl-webgl2-raw-bits-v10"
+    },
+    "proof": "Sanitized native and actual Wasm full-result parity/recovery; independent word/pixel oracles through real decoded sync/async GPU commands; short/poisoned/replaced bank attacks; isolated compiled static-bound and in-bounds low-bit index faults; exact-source pristine clone and independent critic.",
+    "scope": "Bounded isolated compiler/shared-renderer support. No production guest GPU, Mesa corpus closure or MIPS/FPS acceleration claim.",
+    "syntax": "One declared scalar ADDR[0].x; UARL copies the unsigned post-swizzle x word. Exact CONST[ADDR[0].x] may select declared source components. Offsets, other address lanes/files, loops and PRECISE remain rejected.",
+    "task": "E6-T12e8"
+  },
   "integerShaderProfile": "virgl-webgl2-raw-bits-v2",
   "matrix": {
     "apiCalls": {
@@ -891,8 +906,9 @@
       "status": "supported"
     },
     "indirect-constant-index": {
-      "mapping": "CONST[ADDR[0].x] uses bounded index and bit-correct UARL; reject out-of-range and unsupported indirect files.",
-      "status": "implementable"
+      "mapping": "ADDR[0].x/UARL and CONST[ADDR[0].x] require the complete statically proved 0..45 address set and matching immutable full-prefix draw contract; no clamping or zero substitution.",
+      "scope": "bounded-raw-v10-v11-subset-only",
+      "status": "supported"
     },
     "partial-destination-writes": {
       "mapping": "MOV/ADD/MUL accept TEMP/OUT masks x/y/z/w/xy/xyz, tracking initialized lanes. Complete POSITION/COLOR and every declared generic output lane are required. MAD/TEX retain full-width destinations.",

@@ -13,7 +13,7 @@ static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_sou
       return (struct raw_lane){.zero = ~value, .one = value};
    }
    if (r->file == IN) return (struct raw_lane){.origin = (1 + r->index * 4 + component) | RAW_OUTPUT};
-   if (r->file == CONST && conditional)
+   if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)
       return (struct raw_lane){.origin = RAW_FLOAT_CONDITIONAL | RAW_BANK_DEPENDENCY};
    return (struct raw_lane){0};
 }
@@ -104,7 +104,7 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
    /* TGSI scalar operations consume post-swizzle x/xyz independently of the
     * written lanes. Use the same rule for initialization and float authority. */
    if (opcode == RAW_DP3) return 7u;
-   if (opcode == RAW_RCP || opcode == RAW_RSQ) return 1u;
+   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL) return 1u;
    return opcode == RAW_TEX ? 3u : destination_mask;
 }
 
@@ -113,6 +113,15 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    if ((1u << input->opcode) & RAW_STRUCTURED_OPCODES) {
       ir->instructions[ir->count++] = *input;
       ir->opcode_mask |= 1u << input->opcode;
+      return true;
+   }
+   if (input->opcode == RAW_UARL) {
+      /* UARL copies the post-swizzle raw x word, never float conversion. Read
+       * before publishing so UARL of an indirect source uses the old address. */
+      ir->address = source_lane(ir, &input->src[0], 0, false);
+      ir->address.origin = 0;
+      ir->instructions[ir->count++] = *input;
+      ir->opcode_mask |= 1u << RAW_UARL;
       return true;
    }
    struct raw_instruction checked = *input;
@@ -198,6 +207,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
          break;
+      case RAW_UARL: break; /* Recorded above into the dedicated scalar state. */
       case RAW_UIF:
       case RAW_ELSE:
       case RAW_ENDIF: break; /* Recorded above without a destination. */
@@ -262,6 +272,7 @@ static void operand(struct writer *w, const struct profile *p, const struct raw_
    case TEMP: emit(w, "raw_temp[%u].%c", r->index, "xyzw"[component]); break;
    case IMM: emit(w, "%uu", p->raw->immediates[r->index][component]); break;
    case CONST: emit(w, "%sconst0[%u].%c", p->stage ? "fs" : "vs", r->index, "xyzw"[component]); break;
+   case INDIRECT_CONST: emit(w, "%sconst0[raw_addr].%c", p->stage ? "fs" : "vs", "xyzw"[component]); break;
    default: break; /* Guard excludes OUT/sampler operands before recording. */
    }
 }
@@ -382,10 +393,15 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n"
          " return selected ? 4294967295u : 0u;\n}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
+   if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
    if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES))
       emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
+      if (instruction->opcode == RAW_UARL) {
+         emit(&w, " raw_addr = "); operand(&w, p, &instruction->src[0], 0); emit(&w, ";\n");
+         continue;
+      }
       if (instruction->opcode == RAW_UIF) {
          emit(&w, " if ("); operand(&w, p, &instruction->src[0], 0); emit(&w, " != 0u) {\n");
          continue;

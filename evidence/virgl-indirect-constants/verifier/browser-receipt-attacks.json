@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "head": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "control": "passed",
+  "results": [
+    {
+      "name": "draws-float",
+      "status": "HELD",
+      "rejection": "fractional observation outside authored viewport depth at ('drawCount',)"
+    },
+    {
+      "name": "source-access-slot-bool",
+      "status": "HELD",
+      "rejection": "unexpected boolean/non-JSON observation at ('shaderFixtures', 2, 'result', 'metadata', 'constantAccesses', 0, 'slot')"
+    },
+    {
+      "name": "word-bool",
+      "status": "HELD",
+      "rejection": "unexpected boolean/non-JSON observation at ('rigs', 0, 'atlases', 0, 'pages', 0, 'observedWords', 0)"
+    }
+  ]
+}
