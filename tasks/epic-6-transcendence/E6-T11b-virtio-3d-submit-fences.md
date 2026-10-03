@@ -3,12 +3,26 @@ id: E6-T11b
 epic: 6
 title: Complete VirGL submissions and transfers through asynchronous ordered fences
 priority: 525.02697
-status: pending
+status: cancelled
+decomposed_into: [E6-T11b1, E6-T11b2]
 depends_on: [E6-T11a]
 estimate: S
 risk: high
 capstone: false
 ---
+
+## Replacement slices
+
+Implementation inspection found two independent boundaries: the renderer's current
+index and texture readbacks are synchronous, and the device must separately own
+requests and guest DMA across yields. Continue the user's graphics-offload request
+through these ordered S tasks; neither claims production Mesa activation:
+
+1. [E6-T11b1 — asynchronous renderer jobs](E6-T11b1-async-renderer-jobs.md).
+2. [E6-T11b2 — virtqueue and DMA completion](E6-T11b2-virtio-3d-ordered-completion.md).
+
+The original acceptance requirements below are retained in those slices. E6-T11c
+now depends on E6-T11b2 rather than this cancelled planning container.
 
 ## Boundary
 
@@ -41,4 +55,9 @@ does not enable production 3D before the truthful capability milestone.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — planning decomposition
+
+Split before activation; no runtime work was submitted under this container.
+E6-T11a is independently verified at `26834baa` (PR #411). The next slice
+continues the explicitly requested guest graphics offload.
+
