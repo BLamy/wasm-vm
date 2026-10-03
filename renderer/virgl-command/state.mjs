@@ -139,8 +139,12 @@ function createRenderer(options, drawing, asynchronous = false) {
     const stageSlots = [Math.min(16, gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)), Math.min(16, gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS))];
     const maxViewport = [...gl.getParameter(gl.MAX_VIEWPORT_DIMS)];
     const uniformBindings = gl.getParameter(gl.MAX_UNIFORM_BUFFER_BINDINGS);
+    const hostUniformComponents = [gl.getParameter(gl.MAX_VERTEX_UNIFORM_COMPONENTS), gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS)];
     check();
     require(maxUnits >= 32 && maxAttributes >= 2 && uniformBindings >= 1, "unsupported-host", "WebGL limits do not support the state profile.");
+    require(hostUniformComponents.every((count) => Number.isSafeInteger(count) && count > 0),
+      "unsupported-host", "WebGL stage uniform component limits must be positive integers.");
+    Object.freeze(hostUniformComponents);
     const generation = () => { require(nextGeneration < Number.MAX_SAFE_INTEGER, "limit-exceeded", "Generation space exhausted."); return nextGeneration++; };
     const alive = () => require(!disposed, "disposed", "State renderer is disposed.");
     const resourceContext = (id) => {
@@ -335,15 +339,24 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         for (const [stage, metadata] of [[0, vs], [1, fs]]) {
           for (const uniform of metadata.uniforms) {
-            require(uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= 8,
+            require(uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= 47,
               "shader-reflection-error", "Unsupported uniform metadata.");
             const name = `${uniform.name}[0]`, location = gl.getUniformLocation(program.native, name);
             const index = gl.getUniformIndices(program.native, [name])?.[0];
-            require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
-              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.UNSIGNED_INT_VEC4 &&
-              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === uniform.count, "shader-reflection-error", "Constant reflection mismatch.");
-            program.uniforms.push({ stage, count: uniform.count, location });
-            program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage });
+            let activeCount = 0;
+            if (location !== null || index !== gl.INVALID_INDEX) {
+              require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.UNSIGNED_INT_VEC4,
+              "shader-reflection-error", "Constant reflection mismatch.");
+              activeCount = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0];
+              require(Number.isInteger(activeCount) && activeCount > 0 && activeCount <= uniform.count &&
+                activeCount * 4 <= hostUniformComponents[stage], "shader-reflection-error", "Constant extent exceeds its declaration or host stage limit.");
+            }
+            // The upstream declaration can include an unaddressable 47th element.
+            // Driver-retained suffixes are not permission to upload guest CONST46.
+            const uploadCount = Math.min(activeCount, 46);
+            if (uploadCount) program.uniforms.push({ stage, uploadCount, location });
+            program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage, activeCount, uploadCount });
           }
           for (const sampler of metadata.samplers) {
             require(sampler.type === "sampler2D" && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
@@ -454,7 +467,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           gl.uniformBlockBinding(program.native, block.index, 0); gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, block.buffer);
         }
         for (const uniform of program.uniforms) {
-          const words = new Uint32Array(uniform.count * 4);
+          const words = new Uint32Array(uniform.uploadCount * 4);
           words.set(sub.constants[uniform.stage].slice(0, words.length));
           gl.uniform4uiv(uniform.location, words);
         }
@@ -506,7 +519,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(sub.surfaces[0] && sub.viewport && sub.vertexElements && sub.indexBuffer,
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and index buffer.");
       const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
-      for (const uniform of program.uniforms) require(sub.constants[uniform.stage].length >= uniform.count * 4,
+      for (const uniform of program.uniforms) require(sub.constants[uniform.stage].length >= uniform.uploadCount * 4,
         "incomplete-draw", "Drawing requires every active constant word.");
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
@@ -845,7 +858,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       inspect(id) { return result(() => {
         if (id !== undefined) { uint(id, "contextId"); require(contexts.has(id), "missing-context", "State context does not exist."); }
         const selected = id === undefined ? [...contexts.values()] : [contexts.get(id)];
-        return success({ profile, disposed, limits, ...(drawing ? { drawLimits } : {}),
+        return success({ profile, disposed, limits, hostUniformComponents, ...(drawing ? { drawLimits } : {}),
           ...(asynchronous ? { jobLimits, jobs: { active: activeJob === null ? 0 : 1, status: activeJob?.phase ?? "idle",
             appliedCommands: activeJob?.index ?? 0, commandCount: activeJob?.commands.length ?? 0,
             draws: activeJob?.submission.draws.length ?? 0,

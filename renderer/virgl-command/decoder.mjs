@@ -9,7 +9,7 @@ export const LIMITS = Object.freeze({
   vertexBuffers: 16,
   samplerSlots: 32,
   constantSlots: 15,
-  constantWords: 32,
+  constantWords: 184,
   shaderBufferSlots: 16,
   imageSlots: 32,
   atomicBufferSlots: 16,

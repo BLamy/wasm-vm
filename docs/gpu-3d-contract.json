@@ -351,7 +351,7 @@
       },
       "SET_CONSTANT_BUFFER": {
         "corpusOccurrences": 4798,
-        "mapping": "Stage-specific ordinary constants via uniform4uiv float-bit encoding; bounds-check offset/length. Guest UBOs require separate support.",
+        "mapping": "Stage-specific slot0 finite float-bit constants, at most184 words (46 vec4s), via uniform4uiv. Reflection records declared, active and addressable upload extents separately; require the entire min(active extent,46) prefix before drawing and upload no host-only padding. Entirely inactive arrays require no guest words. Conservative driver-retained prefixes are not exact semantic liveness. Guest UBOs and integer constant semantics require separate support.",
         "status": "implementable"
       },
       "SET_FRAMEBUFFER_STATE": {
@@ -754,7 +754,7 @@
       "status": "supported"
     },
     "declaration-ranges-and-order": {
-      "mapping": "Canonical decimal TEMP0..117 and CONST0..45 indices/ranges are supported, including declarations after immediates. IN/OUT/IMM/SAMP/SVIEW/GENERIC remain0..7; 179 non-END instructions. Text/token/line/GLSL/response/fixed-Wasm bounds remain unchanged. This frontend boundary does not widen command constant uploads or renderer reflection; E6-T12e3b gates those. Other file ranges, address registers and larger banks remain rejected.",
+      "mapping": "Canonical decimal TEMP0..117 and CONST0..45 indices/ranges are supported, including declarations after immediates. IN/OUT/IMM/SAMP/SVIEW/GENERIC remain0..7; 179 non-END instructions. Text/token/line/GLSL/response/fixed-Wasm bounds remain unchanged. The separate E6-T12e3b command boundary carries up to46 vec4s and checks actual stage limits; retained declared/reflected47 has only46 addressable guest entries. Other file ranges, address registers and larger banks remain rejected.",
       "scope": "bounded-v5-subset-only",
       "status": "supported"
     },

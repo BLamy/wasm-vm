@@ -55,13 +55,18 @@ the original maximum is178 non-END, leaving one instruction of headroom. This
 is a static admission limit, not a future loop execution bound. All other text,
 token, line, GLSL, response and fixed-Wasm bounds remain unchanged.
 
-The larger banks are a frontend capability. Command constant uploads still
-allow only eight vec4s, and renderer reflection/restoration has not been widened.
-E6-T12e3b separately gates those paths. The pinned compiler can emit a declared
-uniform extent47 when CONST45 precedes a disjoint CONST0 declaration; the legal
-address range remains0..45. Metadata retains that declared extent, while direct
-hardware proofs use actual active uniform reflection. No input text is rewritten.
-See E6-T12e1/E6-T12e2/E6-T12e3 for bounded APIs and acceptance evidence.
+E6-T12e3b carries up to184 finite float-bit words (46 vec4s) per stage through
+slot0 command uploads. The pinned compiler can declare47 uniform entries when
+CONST45 precedes a disjoint CONST0 declaration; the legal address range stays
+0..45. Metadata preserves the declaration, and renderer reflection separately
+records the actual active extent and upload extent. Draws conservatively require
+the complete min(active extent,46) prefix. A wholly inactive array requires none;
+a driver retaining46 entries for a shader reading only CONST7 still requires46.
+This policy does not claim exact source liveness. Restoration initializes missing
+legal words to zero, but a short upload still fails draw completeness and cannot
+borrow the previous suffix. Host-only element46 is never uploaded or cleared.
+Actual per-stage component limits and successful linking govern host admission.
+See E6-T12e1/E6-T12e2/E6-T12e3/E6-T12e3b for bounded APIs and acceptance evidence.
 No general Mesa capset can honestly describe that frontend: pinned Mesa assumes
 256 temporaries, indirect temporary/constant access and control-flow depth 32
 regardless of many advertised bits.

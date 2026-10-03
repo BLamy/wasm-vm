@@ -99,11 +99,37 @@ the final binding is released. Smooth pairs keep their existing base shaders.
 `inspect()` exposes each program's `key`, `interfaceKey` and `variantBytes`.
 
 Reflection checks actual attribute type/size/location, uvec4
-constant-array type/count, sampler2D type/count, fragment output location zero,
+constant-array type/declared and active extents, sampler2D type/count, fragment output location zero,
 and every uniform block. `VirglBlock` must be 656 bytes with float
 `winsys_adjust_y` at offset640, initialized to 1. Its buffer is rebound and
 rewritten on restoration. Inline constant words are uploaded with
-`uniform4uiv`, preserving float bit patterns; unset words are zero. Fragment
+`uniform4uiv`, preserving float bit patterns. Slot-zero VS/FS packets contain at
+most 184 words (46 vec4s). Each packet replaces that stage's owned word array,
+including an empty reset; words from a previous packet never supply its suffix.
+
+Constant reflection keeps the compiler's `count` as the declared extent (up to 47)
+and records actual `activeCount` plus `uploadCount = min(activeCount,46)`.
+The real driver may retain an unread suffix: a shader reading only CONST7 but
+reflecting 46 entries conservatively requires 46 guest vec4s. This policy does not
+claim exact source liveness. A wholly inactive array records zero active/upload
+counts and requires no guest constants. Inconsistent location/index, wrong type,
+an active extent exceeding the declaration, or reflected component storage beyond
+the measured stage limit rejects the program with allocation cleanup. Actual
+successful linking remains the packing check. `inspect().hostUniformComponents`
+contains the measured vertex and fragment component limits; invalid reported
+limits reject renderer creation.
+
+CONST45 followed by CONST0 can produce a declared and reflected extent 47.
+Guest addresses still stop at 45. Restoration uploads only the legal reflected
+prefix and never writes or clears host-only element 46. Missing legal words are
+zeroed during safe restoration of incomplete state, but the stored guest array
+remains short: a draw rejects before index reading/staging unless every legal
+reflected word was supplied. This policy is shared by synchronous and asynchronous
+draw factories. The unrelated 64KiB system-UBO budget remains unchanged.
+
+The 184-word boundary is exercised with authored raw packets and actual hardware
+output. Original captured uploads reached at most 32 VS words and 4 FS words;
+no original high-constant execution is claimed. Fragment
 sampler slot N uses texture unit N; vertex slot N uses unit16+N. Active slots are
 bounded by the measured stage limits and a 16-slot stage maximum. All 32-slot
 inactive resets remain accepted.
