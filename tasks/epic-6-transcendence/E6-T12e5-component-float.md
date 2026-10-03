@@ -3,7 +3,7 @@ id: E6-T12e5
 epic: 6
 title: Preserve the remaining componentwise float operations and negation
 priority: 525.0269905
-status: implemented
+status: verified
 depends_on: [E6-T12e4c2]
 estimate: S
 risk: high
@@ -155,3 +155,82 @@ Production guest negotiation, guest constant transport and the demo remain
 unchanged; this claim does not include a Mesa boot, deployed desktop acceleration,
 FPS improvement, PRECISE, numeric unknown-CONST admission or a 300-MIPS result.
 No web/demo source changed, so no demo deployment is needed for this layer.
+
+
+### 2026-10-03 — fresh verifier
+
+VERDICT: verified
+
+Frozen diff reviewed against `67ca333c05fb70d719c49b3dc5cb8c1f8bb2f6de`:
+`6a8d3841e18379d665af4c7d8f9449322529636f`; final worker submission
+`1dacb4fc30dd4206e73800f184b15a607f459556` adds only evidence/lifecycle material.
+Predictions were written before evidence inspection in
+`evidence/virgl-component-floats/verifier/predictions.md`. Runtime was not edited.
+
+- P1/P2 checked lowering and numeric authority — HELD. The independent public-API
+  attacks admit plain new operations and numeric minus without an integer token,
+  reject unknown raw numeric sources, and retain original IN/computed/sample
+  authority without value-range admission guards. See verifier `audit-results.json`
+  (`attacks`) and `worker-review.json` (`counts`, complete source-contract checks).
+- P3/P8 snapshots, partial writes and novel attack — HELD. The fresh corpus alternates
+  float and raw writes, then negates/swizzles each consumed lane; only the overwritten
+  unauthorized lane rejects. All 113 independently authored parser/authority probes
+  pass. Seed `851ac309` supplies 360 separate hardware vectors across 15 programs:
+  1,440 draws and 5,760 independently Fraction-checked float/raw lane captures pass
+  in `gpu-results.json` and `gpu-rational-check.json`.
+- P4 restricted syntax/recovery — HELD. PRECISE, LEGACY_MATH_RULES, absolute,
+  saturation, repeated signs/unary plus and forbidden raw/integer/sampler modifier
+  positions reject. Full native/Wasm evidence and bounded recovery remain intact;
+  `worker/native/native.log` line 1 records layout and line 2270 records the final
+  316,282-call counters; `native-coverage-review.json` binds the sanitizer binary.
+- P5 preservation — HELD. `audit-results.json` (`legacyResultBindings`,
+  `legacyDifferences`) independently compares all 2,025 historical fixture bodies
+  against a separately built verified parent: only the six intended admissions
+  differ. `originals-audit.json` records all 19 complete responses unchanged
+  (12 accepted), including the 39-operation/six-negation inventory and both unknown
+  CONST negation sites. The complete earlier gate chain also passes fresh receipt
+  replay in `worker-review.json` and `cold-review.json`.
+- P6 numeric contract — HELD. Pinned TGSI/VirGL order and GLSL ES3.00 revision 6
+  sections 4.5.1/8.3 justify the rational oracles (`primary-source-notes.md`). DIV
+  uses outward 2.5-ULP enclosures for positive denominators in the specified range;
+  an exact quotient is not assumed to require exact output bits. Required
+  exceptional-value classes are checked without invented payload/zero/fmax
+  equivalence. Coherently changing an actual quotient, raw bytes, digest and decoded
+  observation still fails the independently reconstructed enclosure
+  (`worker-review.json: receiptTamper`, repeated for cold).
+- P7 coverage, sabotage and exact binding — HELD. `changed-coverage.json` and
+  `diff-coverage.md` account for every changed hunk; all 57 changed runtime branch
+  records have both directions hit. Definitions, comments and harness diagnostics
+  have explicit nonsemantic waivers. Both fresh receipt replays bind 251 sources
+  and 169 records to the frozen head. Four worker source-bound GPU sabotages fail;
+  the verifier's separately compiled removed-minus sabotage also fails at
+  `MAX-negative-source-0-alias-xyz` lane 0: expected `1059061760` (0.625), observed
+  `1072693248` (1.875), in `sabotage-results.json`.
+- P7 pristine clone — HELD. `cold-binding.json` independently verifies all 179
+  copied acceptance files against hashes and the surviving clone, whose head is
+  still frozen and whose checkout remains clean. The scrubbed complete acceptance
+  exited 0. Warm/cold Wasm bytes match; individually bound native binaries may
+  differ because their debug paths differ. Worker and cold browser proof have zero
+  console/page/request errors. The recorded hardware screenshot was inspected.
+- SUITE: retain `make verify-E6-T12e5`, shared fixtures, independent rational/byte/
+  orientation validators, source-bound sabotage and the complete prior gate chain.
+  Retain the verifier's bounded seed, public-API attacks and reproduction scripts
+  as independent permanent evidence; local dylibs/dSYM/generated sources are not
+  committed.
+
+Verifier evidence lives in `evidence/virgl-component-floats/verifier/`.
+`report.json` SHA256:
+`7bfc67b6c325bc945d179289b13c992bb9d11cf3e104b0ce7c182af6ab7ad1b9`.
+It binds all retained verifier records and the isolated compiler hashes.
+Worker receipt SHA256:
+`170666b1f0a6dd52b5dc53f4206162711e1c596001a891b0f974cf78c7f4a365`.
+Cold report SHA256:
+`7e36542bdb098a38c476ef444eaf2f7f73d295e775ee61a36aecf000471a5c4e`;
+cold receipt SHA256:
+`8846e747513422097b14b490383b68e5326f835c3e77e6d434425cd19f1f9286`.
+Exact commands and expected sabotage failure are in `reproduce.md`.
+
+The verified claim is the isolated checked compiler and its ordinary ESSL numeric
+contract. Production negotiation, constant transport, Mesa boot, demo deployment
+and MIPS/performance claims remain outside this boundary. rr is waived; all proof
+was local. No runtime/harness change was made during verification.
