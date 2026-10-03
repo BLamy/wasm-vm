@@ -1833,3 +1833,8 @@ verify-E6-T12a:
 .PHONY: verify-E6-T12b
 verify-E6-T12b:
 	bash tools/verify-virgl-resource-transfers.sh
+
+# Captured guest objects/render state and clear; DRAW_VBO remains gated.
+.PHONY: verify-E6-T12c
+verify-E6-T12c:
+	bash tools/verify-virgl-object-state.sh
