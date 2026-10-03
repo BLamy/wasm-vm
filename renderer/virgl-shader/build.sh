@@ -15,6 +15,9 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/mesa/compat -Ivendor/src/gallium/include
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
+  guard-check)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c native_tests/captured.c
+    ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
     ;;
@@ -22,6 +25,10 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/hostile.c -lm -o build/sanitize/hostile-test
     UBSAN_OPTIONS=halt_on_error=1 ASAN_OPTIONS=abort_on_error=1 build/sanitize/hostile-test
+    ;;
+  captured-sanitize)
+    "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
+      "${sources[@]}" native_tests/captured.c -lm -o build/captured-sanitize/captured-test
     ;;
   wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
@@ -34,5 +41,5 @@ case "$mode" in
       '-sEXPORTED_FUNCTIONS=["_bridge_translate","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
-  *) echo 'Usage: build.sh native|sanitize|wasm' >&2; exit 2 ;;
+  *) echo 'Usage: build.sh guard-check|native|sanitize|captured-sanitize|wasm' >&2; exit 2 ;;
 esac

@@ -20,6 +20,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CATEGORIES = ('opcodes', 'objects', 'shaderInstructions', 'apiCalls', 'shaderStageCounts', 'resourceFormats')
 WORKLOADS = ('textured-scene', 'kmscube', 'glmark2-es2', 'compositor')
 PRODUCTION = {'virglFeature': False, 'numCapsets': 0, 'capsets': [], 'guestRendererImplemented': False}
+PIXEL_PAIR = {'e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33',
+              '80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808'}
 
 
 def require(value, message):
@@ -61,9 +63,16 @@ def check_matrix(contract, totals, manifests, shaders, vertices):
                         f'{category}.{name}: unsupported current implementation claim')
             if name.endswith('_PRECISE') or (category == 'resourceFormats' and name == '17'):
                 require(row['status'] == 'rejected', f'{category}.{name}: must remain rejected')
-    expected_shaders = {digest: {'stage': info['stage'], 'currentBridge': 'rejected'}
-                        for digest, info in shaders.items()}
-    require(contract['capturedShaders'] == expected_shaders, 'captured shader identity/status differs')
+    require(set(contract['capturedShaders']) == set(shaders), 'captured shader identity differs')
+    for digest, info in shaders.items():
+        row = contract['capturedShaders'][digest]
+        require(row['stage'] == info['stage'] and row['currentBridge'] in ('translated', 'rejected'),
+                'captured shader stage/status differs')
+        require(row['executionEvidence'] == ('textured-scene-three-phases' if digest in PIXEL_PAIR else 'not-executed'),
+                'shader execution scope')
+        if row['currentBridge'] == 'rejected':
+            require(row['executionEvidence'] == 'not-executed' and
+                    row['rejectionCode'] in ('unsupported-feature', 'parse-error'), 'shader rejection classification')
     require(set(contract['vertexFormats']) == set(vertices), 'vertex format coverage differs')
     for key, count in vertices.items():
         row = contract['vertexFormats'][key]
@@ -162,15 +171,20 @@ def main():
                         vertices[str(words[offset + 5 + 4 * index])] += 1
                 offset += length + 1
     check_matrix(contract, totals, manifests, shaders, vertices)
-    rejection_results = {}
+    shader_results = {}
     executable = ROOT / 'renderer/virgl-shader/build/native/virgl-shader'
     for digest, info in sorted(shaders.items()):
         result = subprocess.run([str(executable), {'VERT': 'vertex', 'FRAG': 'fragment'}[info['stage']]],
                                 input=info['text'], capture_output=True, check=True, timeout=5)
         value = json.loads(result.stdout)
-        require(value.get('ok') is False and value['error']['code'] in ('unsupported-feature', 'parse-error'),
-                f'captured shader support changed: {digest}')
-        rejection_results[digest] = value
+        expected = contract['capturedShaders'][digest]
+        if expected['currentBridge'] == 'translated':
+            require(value.get('ok') is True and value['metadata']['profile'] == contract['shaderProfile'],
+                    f'captured shader translation changed: {digest}')
+        else:
+            require(value.get('ok') is False and value['error']['code'] == expected['rejectionCode'],
+                    f'captured shader rejection changed: {digest}')
+        shader_results[digest] = value
     with tempfile.TemporaryDirectory(prefix='virgl-capset-layout-') as temporary:
         binary = Path(temporary) / 'layout'
         command = [os.environ.get('CC', 'clang'), '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic',
@@ -199,12 +213,13 @@ def main():
                'sourceSha256': {name: sha((ROOT / name).read_bytes()) for name in source_names},
                'browserReportSha256': sha(args.browser_report.read_bytes()), 'qualifiedPrototype': qualified,
                'captureManifests': manifests, 'featureCounts': {key: len(value) for key, value in totals.items()},
-               'vertexFormats': dict(vertices), 'capturedShaderResults': rejection_results,
-               'rejectionsByCode': dict(Counter(value['error']['code'] for value in rejection_results.values())),
+               'vertexFormats': dict(vertices), 'capturedShaderResults': shader_results,
+               'shaderOutcomes': dict(Counter('translated' if value['ok'] else value['error']['code']
+                                             for value in shader_results.values())),
                'layoutSha256': sha(actual)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
-    print(json.dumps({key: receipt[key] for key in ('status', 'featureCounts', 'vertexFormats', 'rejectionsByCode')}, sort_keys=True))
+    print(json.dumps({key: receipt[key] for key in ('status', 'featureCounts', 'vertexFormats', 'shaderOutcomes')}, sort_keys=True))
 
 
 if __name__ == '__main__':

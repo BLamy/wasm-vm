@@ -1,0 +1,562 @@
+[
+  {
+    "name": "reversed-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[3..0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "oversized-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..8]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "negative-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[-1..3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "overflow-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..4294967296]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "long-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..0000000000000000000007]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-temp-range-end",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "bad-temp-range-separator",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0...3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "nested-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3..7]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "overlapping-temp-ranges",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nDCL TEMP[3..7]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "range-overlaps-prior-scalar",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[2]\nDCL TEMP[0..3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "scalar-overlaps-prior-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nDCL TEMP[2]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "duplicate-temp-range",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nDCL TEMP[0..3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "const-range-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0..3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "input-range-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[1..3]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "output-range-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1..3], GENERIC[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "address-register-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL ADDR[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "sampler-range-remains-rejected",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0..3]\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "view-range-remains-rejected",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[0..3], 2D, FLOAT\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].x, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].y, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].z, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].w, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyz, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-xyzw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyzw, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-yx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].yx, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "generic-declaration-mask-xyy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xyy, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n"
+  },
+  {
+    "name": "attribute-mask",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL IN[1].xy\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "position-mask",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0].xy, POSITION\nMOV OUT[0].xy, IN[0]\nEND\n"
+  },
+  {
+    "name": "temporary-mask",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0].xy\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "constant-mask",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0].xy\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "color-mask",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0].xy, COLOR\nMOV OUT[0].xy, IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "sampler-mask",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0].xy\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "view-mask",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SVIEW[0].xy, 2D, FLOAT\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "partial-temp-write-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].xy, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "partial-temp-write-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].z, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "partial-temp-write-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].w, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "partial-temp-write-xyzw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..3]\nMOV TEMP[0].xyzw, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].x, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-y",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].y, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-zw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].zw, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyz, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-xyzw",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xyzw, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-xx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xx, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "unsupported-output-mask-yx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].yx, IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "masked-add-output",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nADD OUT[0].xy, IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "masked-mul-output",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMUL OUT[0].xy, IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "masked-mad-output",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMAD OUT[0].xy, IN[0], IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "masked-tex-output",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nTEX OUT[0].xy, IN[0].xyyy, SAMP[0], 2D\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "read-unwritten-range-first",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..7]\nMOV OUT[0], TEMP[0]\nEND\n"
+  },
+  {
+    "name": "read-unwritten-range-last",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0..7]\nMOV TEMP[0], IN[0]\nMOV OUT[0], TEMP[7]\nEND\n"
+  },
+  {
+    "name": "write-undeclared-output-component",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xy, GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1].xy, IN[0]\nMOV OUT[1].z, IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-position-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xy, IN[0]\nMOV OUT[0].z, IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-position-z",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].xy, IN[0]\nMOV OUT[0].w, IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-position-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0].z, IN[0]\nMOV OUT[0].w, IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-generic-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1].xy, GENERIC[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-full-generic-w",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1].xy, IN[0]\nMOV OUT[1].z, IN[0]\nEND\n"
+  },
+  {
+    "name": "missing-color-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0].xy, IN[0].xyyy\nMOV OUT[0].z, IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "implicit-undeclared-generic-components",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "swizzled-undeclared-generic-z",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].zzzz\nEND\n"
+  },
+  {
+    "name": "swizzled-undeclared-generic-w",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyw\nEND\n"
+  },
+  {
+    "name": "unused-swizzle-lane-remains-bounded",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0].xy, IN[0].xyzz\nMOV OUT[0].z, IN[0].xxxx\nMOV OUT[0].w, IN[0].yyyy\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-x",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].x\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-xy",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].xy\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-xyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].xyz\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-xyzwx",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].xyzwx\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-qxyz",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].qxyz\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-rgba",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].rgba\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-XYZW",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].XYZW\nEND\n"
+  },
+  {
+    "name": "malformed-swizzle-empty",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0].\nEND\n"
+  },
+  {
+    "name": "swizzled-sampler",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nTEX OUT[0], IN[0].xyyy, SAMP[0].xyzw, 2D\nEND\n"
+  },
+  {
+    "name": "uint32-overflow",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {4294967296, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-long",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {999999999999999999999999999999999, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-long-leading-zeroes",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {00000000000, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-negative",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {-1, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-plus-sign",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {+1, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-hex",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {0x3f800000, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-exponent",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {1e2, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-decimal-point",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {1.0, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-text-nan",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {nan, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-qnan",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {2143289344, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-negative-qnan",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {4294967295, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-infinity",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {2139095040, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-negative-infinity",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {4286578688, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-subnormal-min",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {1, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-subnormal-max",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {8388607, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-negative-subnormal-min",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {2147483649, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-negative-subnormal-max",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {2155872255, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-above-float-limit",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {1232348161, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-below-negative-float-limit",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {3379831809, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-max-finite",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {2139095039, 0, 0, 0}\nMOV OUT[0], IMM[0]\nEND\n"
+  },
+  {
+    "name": "uint32-too-few-lanes",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {0, 1065353216, 0}\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "uint32-too-many-lanes",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] UINT32 {0, 1065353216, 0, 0, 0}\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "signed-integer-immediate",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nIMM[0] INT32 {0, 1, 0, 0}\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "property-zero",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 0\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-two",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 2\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-negative",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS -1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-overflow",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 4294967296\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-leading-zero",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 01\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-missing",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS \nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-trailing",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "property-equals",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS = 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "duplicate-fragment-property",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "vertex-fragment-property",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "property-after-instruction",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nEND\n"
+  },
+  {
+    "name": "unknown-property",
+    "stage": "fragment",
+    "text": "FRAG\nPROPERTY FS_COORD_ORIGIN LOWER_LEFT\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "interpolation-linear",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], LINEAR\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "interpolation-constant",
+    "stage": "fragment",
+    "text": "FRAG\nDCL IN[0].xy, GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0].xyyy\nEND\n"
+  },
+  {
+    "name": "precise-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV_PRECISE OUT[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "loop-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nBGNLOOP\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "integer-opcode-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nUADD OUT[0], IN[0], IN[0]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "indirect-source-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], CONST[ADDR[0].x]\nMOV OUT[0], IN[0]\nEND\n"
+  },
+  {
+    "name": "key-override-remains-rejected",
+    "stage": "vertex",
+    "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nPROPERTY VS_PROHIBIT_UCPS 1\nMOV OUT[0], IN[0]\nEND\n"
+  }
+]

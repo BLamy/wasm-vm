@@ -33,10 +33,13 @@ require another shader translation stage and additional GL coordinate, binding
 and rasterization conversions. It is not selected by this contract. WebGL2 still
 needs explicit lowering where its semantics differ from native GL.
 
-The current shader bridge rejects **all 19 captured shader bodies**: 15 as
-unsupported features and four as parse errors. Even the tiny textured scene uses
-ranges, masks/swizzles and UINT32 immediates outside its accepted profile. Its
-nine successful literal shader draws prove only the small frontend/API boundary.
+The v2 shader bridge translates **seven of 19 captured shader bodies** and rejects
+the remaining twelve (eleven unsupported-feature, one parse-error). The exact
+textured-scene pair has a dedicated three-phase pixel proof; the other five
+translated bodies have no execution claim. The nine literal shader regressions
+remain a separate frontend/API baseline. Limited TEMP ranges, generic `.xy`
+declarations, MOV output masks, four-lane source swizzles, finite UINT32 float bits
+and the one-target fragment property are now supported.
 No general Mesa capset can honestly describe that frontend: pinned Mesa assumes
 256 temporaries, indirect temporary/constant access and control-flow depth 32
 regardless of many advertised bits.
@@ -143,7 +146,8 @@ bit representations. The corpus uses declarations after immediates, register
 ranges, partial writes, source swizzles/negation, UINT32 immediates, CONSTANT or
 PERSPECTIVE inputs, indirect CONST[ADDR[0].x], branch target annotations and
 FS_COLOR0_WRITES_ALL_CBUFS=1. It reaches temporary 117 and seven nested conditionals.
-No widened grammar is implemented here. The four complex Xwayland fragment
+The bounded v2 subset is documented in the shader bridge README; larger ranges,
+negation, integer instructions, indirect addressing and control flow remain rejected. The four complex Xwayland fragment
 shaders are created and linked at glmark event 5462 but never subsequently bound;
 the capture does not establish that their loop/indirect paths executed.
 
@@ -200,12 +204,14 @@ pending fences can be serialized as borrowed pointers.
 Run `make verify-E6-T10c` with local Clang/Python/Node, the pinned Emscripten setup,
 and headed Chrome. `VIRGL_CONTRACT_EVIDENCE_DIR` selects the output directory.
 It builds the unchanged native/Wasm bridge, executes fresh browser acceptance,
-checks the matrix/ABI and records all 19 real shader rejections. No Rust or
+checks the matrix/ABI and records all 19 real shader translation/rejection results.
+`make verify-E6-T10d` additionally proves the exact textured-scene shader pair and
+its narrow grammar expansion; translation alone is not execution evidence. No Rust or
 production web runtime changes occur in this slice, so it does not deploy a new
 demo or claim a MIPS/FPS gain.
 
-Implementation must now be split into small boundaries: captured simple-shader
-support; bounded command decoding; virtual resources/state and replayed pixels;
+After the captured simple-shader slice, implementation continues in small
+boundaries: bounded command decoding; virtual resources/state and replayed pixels;
 async virtio transport; direct GPU scanout; then reduced-profile Mesa guest proof.
 PRECISE and the expanded GLES3 promises gate desktop activation. The old broad
 WebGPU tasks must be decomposed around this contract before entering the queue.
