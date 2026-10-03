@@ -4,7 +4,7 @@ epic: 6
 title: Real GL application milestone — glmark2-es2 plus one interactive app
 priority: 613
 status: pending
-depends_on: [E6-T12]
+depends_on: [E6-T12m]
 estimate: L
 capstone: false
 ---
@@ -30,7 +30,7 @@ Alpine riscv64 repos (community/testing) or build them in-guest (E6-T22's toolch
 not yet available; apk or prebuilt only).
 
 ## Deliverables
-- Gap-fix commits extending the E6-T12 renderer/translator (expected: stencil, FBO
+- Gap-fix commits extending the verified E6-T12a–m WebGL2 renderer/translator (expected: stencil, FBO
   surfaces beyond scanout, additional texture formats, mipmap generation via chained
   blit pipeline, element-index formats, larger UBO layouts).
 - Capset tuning so unsupported formats/features are honestly absent (Mesa must choose
@@ -47,11 +47,12 @@ not yet available; apk or prebuilt only).
 - [ ] The chosen interactive app reaches its main menu and in-game state, renders
       correctly (no inside-out geometry, no missing textures), and sustains ≥ 20 FPS
       at 800x600 with JIT + smp=2.
-- [ ] 20 minutes of continuous app runtime: zero ctrl-queue stalls, zero WebGPU
-      validation errors in the browser console, JS/GPU memory stable within 10%.
+- [ ] 20 minutes of continuous app runtime: zero ctrl-queue stalls, zero WebGL2
+      errors in the browser console, JS/GPU memory stable within 10%.
 - [ ] Input works in-app: rebindable keys and mouse look/aim function through the Epic 5
       virtio-input path with no stuck-key artifacts.
-- [ ] All E6-T12 milestones still pass (kmscube/es2gears regression gate).
+- [ ] All replacement E6-T11a–e/E6-T12a–m milestones still pass
+      (kmscube/es2gears/readback regression gates; unchanged evidence carries forward).
 
 ## Adversarial verification
 Play adversarially: alt-tab the guest app repeatedly, resize the desktop mid-game, and
@@ -64,7 +65,7 @@ back-to-back; score variance > 15% between run 1 and run 5 indicates a leak or c
 collapse and refutes the stability claim. Verify the FPS claims with the browser's own
 frame profiler, not the app's counter (a translator that drops frames silently can fake
 app-side FPS). Finally run the whole thing on a second GPU vendor (e.g. Apple vs NVIDIA
-adapter) — vendor-specific WGSL misbehavior that breaks rendering refutes portability.
+adapter) — vendor-specific ESSL300 or WebGL2 behavior that breaks rendering refutes portability.
 
 ## Verification log
 (empty)
