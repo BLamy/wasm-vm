@@ -1,7 +1,7 @@
 # E5.5-T03bg evidence guide
 
 **VERDICT: verified**, recorded by the independent critic in `a50516b6`.
-The runtime is published; verified demo metadata is being refreshed. Two final microbenchmark batches and the five-pair real-workload
+The runtime and verified demo metadata are published. Two final microbenchmark batches and the five-pair real-workload
 matrix are complete. Preliminary screens, submission gate failures and unrun
 targets are retained below. No claim of 300 MIPS on real workloads or improved
 desktop latency is made.
@@ -168,7 +168,7 @@ The frozen local [demo receipt](demo-frozen/demo-suite.json) records 127/127 ISA
 cases, the direct-memory roadmap capability live at 31/31, and zero unexpected
 errors. The raw console retains an explicitly identified `/favicon.ico` 404.
 [Screenshot](demo-frozen/demo-suite.png). Live publication and deployed artifact hashes are recorded below. The fresh
-verifier marked the task verified in `a50516b6`; final status metadata follows.
+verifier marked the task verified in `a50516b6`; final status metadata is recorded below.
 
 ## Reproduction
 
@@ -235,5 +235,22 @@ worker bytes to committed frozen artifacts. [Live browser proof](demo-live-worke
 records 127/127 ISA cases, 31/31 direct-memory capability and no unexpected
 errors; [screenshot](demo-live-worker/demo-suite.png). Task metadata still says
 in progress in this first runtime deployment; the final verified metadata is
-published after the separate critic verdict. Draft [PR #402](https://github.com/BLamy/wasm-vm/pull/402)
+subsequently published after the separate critic verdict (see below). Draft [PR #402](https://github.com/BLamy/wasm-vm/pull/402)
 remains open and unmerged.
+
+## Final verified publication
+
+Verified metadata commit `ee8e900a79a95cb5444375bc44b674ea034008c2` rebuilt and
+committed dist via the normal pre-commit hook; [build log](build-verified.log).
+The rebuilt wasm remains exactly `4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b`.
+[Final deployment](deploy-verified.log) succeeded at
+https://455ecaaf.wasm-vm.pages.dev and production https://wasm-vm.pages.dev.
+[Final live artifact receipt](live-verified-hashes.json) matches wasm, roadmap,
+tasks and service worker to that committed metadata head. Later evidence-only
+commits do not change those artifacts.
+
+[Final live browser capture](demo-live-verified/demo-suite.json) records 127/127
+ISA tests, 31/31 live direct-memory capability, the task's verified status and
+zero unexpected console/HTTP errors. Its [screenshot](demo-live-verified/demo-suite.png)
+was inspected. Runtime, independent verdict and publication are complete; the
+open draft PR remains unmerged. The broader baseline gate limitations above remain.
