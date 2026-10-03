@@ -21,6 +21,7 @@ make verify-E6-T12e2
 make verify-E6-T12e3
 make verify-E6-T12e4a
 make verify-E6-T12e4b
+make verify-E6-T12e4c1
 ```
 
 Native builds require Clang, a C11 standard library, and Python 3.9 or newer.
@@ -184,7 +185,7 @@ in `finally` and owns all returned JSON data.
 ### Private raw lanes
 
 `virgl-webgl2-raw-bits-v1` identifies fully validated programs containing AND,
-OR, NOT, SHL or USHR, without any v2 operation described below. A bounded lexical probe chooses which guard
+OR, NOT, SHL or USHR, without any v2 or v3 operation described below. A bounded lexical probe chooses which guard
 to attempt; it does not admit an instruction or select returned semantics.
 Programs without any admitted raw instruction tokens take the original v5 path, preserving
 its full GLSL, metadata and error results, including its finite UINT32-immediate
@@ -256,11 +257,12 @@ uniforms. It also records real fixed-memory allocation failure and recovery.
 ### Wrapping arithmetic, masks and raw selection
 
 `virgl-webgl2-raw-bits-v2` extends the owned profile with UADD, ISGE, USEQ, USNE
-and UCMP. A stage reports v2 only when a new instruction validates; old v1 and
+and UCMP. A stage reports v2 when one of these instructions validates and no v3
+instruction occurs; old v1 and
 legacy v5 programs retain their full GLSL/metadata/error results. A pair selects
 the profile independently for each stage, with the same derived interface key.
-Raw immediates alone still do not select an owned backend. FSLT/FSGE, mixed
-floating-point arithmetic, PRECISE, control flow and integer IO remain excluded.
+Raw immediates alone still do not select an owned backend. Mixed floating-point
+arithmetic, PRECISE, control flow and integer IO remain excluded.
 
 UADD computes the low32 bits using unsigned addition. ISGE orders two's-complement
 words by XORing each sign bit with `2147483648u` and comparing the unsigned results.
@@ -305,6 +307,47 @@ unsafe float outputs. Historical counts and all19 original body results remain
 unchanged. The hardware proof reconstructs every result bit using the v1 output
 encodings and independent integer oracles, including dynamic operands in both
 stages and mixed-profile pairs.
+
+### Ordered binary32 masks
+
+`virgl-webgl2-raw-bits-v3` adds FSLT and FSGE. Only a fully validated occurrence
+of one of these opcodes selects v3; unaffected v1, v2 and v5 full results stay
+unchanged. The comparison helper is emitted only in v3 stages. Both operands
+remain unsigned words: no float bitcast or floating-point comparison implements
+either instruction.
+
+Magnitude bits greater than `0x7f800000` identify a NaN, including every signed
+quiet or signalling payload; either NaN makes both predicates false. The two
+signed zeros compare equal. For other values, complementing a negative word or
+flipping a positive word's sign bit gives monotonically ordered unsigned keys.
+This preserves subnormal, normal and infinity ordering, including reversed
+negative magnitudes. FSLT tests less-than; FSGE tests greater-or-equal with its own
+ordered guard. Results are exactly `0xffffffff` or zero, including when carried
+through subsequent integer arithmetic or selection.
+
+The compile-time proof evaluates the predicate only when both words are fully
+known. Otherwise it retains unknown bits; neither case confers float-input
+origin. The existing output guard therefore rejects an unencoded dynamic mask
+or an all-ones result written directly to float output. A known false result can
+be output as zero. Source initialization and instruction-wide RHS snapshots
+remain unchanged for partial writes, swizzles and aliases. An IN source refers
+only to the float encoding delivered by the existing input ABI; it does not
+extend arbitrary raw NaN/subnormal payload transport across that ABI.
+
+These operations add no IR field, allocation or capacity. Instructions remain
+112 bytes and the IR remains26,232 bytes. Mixed ADD/MUL/MAD/TEX, PRECISE and
+control flow still reject; ordinary numeric mixing is a separate boundary.
+
+`tests/float-mask-cases.json` records constant-fold and dynamic cases, all ordered
+domains, partial initialization, aliases, unsafe outputs and unchanged bounds.
+Six newly supported historical FSLT/FSGE bodies are preserved exactly as positive
+cases. Their former negative slots in the raw-bit and integer-mask fixtures use
+adjacent unsupported FSEQ/FSNE names and opcodes; other fields and historical
+counts are unchanged. The successor gate binds those exact migrations while
+retaining all unaffected earlier full results and browser proofs. Native and
+Wasm results are compared in full, and hardware vertex/fragment probes reconstruct
+all32 result bits against an independent encoding-domain oracle. Production GPU
+negotiation and guest constant-command admission remain unchanged.
 
 ### Legacy finite-float profile
 

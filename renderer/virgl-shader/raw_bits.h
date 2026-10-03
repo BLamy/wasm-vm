@@ -12,8 +12,10 @@ enum operand_kind { DECLARATION, DESTINATION, SOURCE };
 enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
 struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
 enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
-                  RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP };
+                  RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP,
+                  RAW_FSLT, RAW_FSGE };
 #define RAW_V2_OPCODES ((1u << RAW_UADD) | (1u << RAW_ISGE) | (1u << RAW_USEQ) | (1u << RAW_USNE) | (1u << RAW_UCMP))
+#define RAW_V3_OPCODES ((1u << RAW_FSLT) | (1u << RAW_FSGE))
 /* A checked source needs no declaration range, destination mask or parser flag.
  * Three 24-byte sources fit the former two 36-byte parser-register slots. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };

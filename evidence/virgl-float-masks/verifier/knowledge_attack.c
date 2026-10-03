@@ -1,0 +1,135 @@
+#include "raw_bits.h"
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static uint32_t rng;
+static uint64_t assertions, instructions, safe_outputs;
+static uint64_t opcode_hits[RAW_FSGE+1], origin_hits, exact_hits, partial_hits, alias_hits;
+static uint32_t random32(void) { rng ^= rng << 13; rng ^= rng >> 17; rng ^= rng << 5; return rng; }
+static int64_t signed32(uint32_t x) { return x < UINT32_C(0x80000000) ? (int64_t)x : (int64_t)x - INT64_C(4294967296); }
+/* Independent sign/exponent/significand ordering. No key transform or float cast. */
+static uint32_t ordered(uint32_t a, uint32_t b, int ge) {
+   unsigned sa=a>>31,sb=b>>31,ea=(a>>23)&255,eb=(b>>23)&255;
+   unsigned fa=a&0x7fffff,fb=b&0x7fffff;
+   if ((ea==255 && fa) || (eb==255 && fb)) return 0;
+   int zero_a=ea==0 && fa==0,zero_b=eb==0 && fb==0,cmp;
+   if (zero_a && zero_b) cmp=0;
+   else if (sa!=sb) cmp=sa?-1:1;
+   else { cmp=ea<eb?-1:ea>eb?1:fa<fb?-1:fa>fb?1:0; if(sa)cmp=-cmp; }
+   return (ge ? cmp>=0 : cmp<0) ? UINT32_MAX : 0;
+}
+static uint32_t evaluate(enum raw_opcode op, uint32_t a, uint32_t b, uint32_t c) {
+   switch(op) {
+   case RAW_MOV: return a;
+   case RAW_AND: return a & b;
+   case RAW_OR: return a | b;
+   case RAW_NOT: return ~a;
+   case RAW_SHL: return a << (b % 32);
+   case RAW_USHR: return a >> (b % 32);
+   case RAW_UADD: return (uint32_t)((uint64_t)a + (uint64_t)b);
+   case RAW_ISGE: return signed32(a) >= signed32(b) ? UINT32_MAX : 0;
+   case RAW_USEQ: return a == b ? UINT32_MAX : 0;
+   case RAW_USNE: return a != b ? UINT32_MAX : 0;
+   case RAW_UCMP: return a ? b : c;
+   case RAW_FSLT: return ordered(a,b,0);
+   case RAW_FSGE: return ordered(a,b,1);
+   }
+   abort();
+}
+struct concrete { uint32_t temp[4][4], input[2][4], constant[2][4], out[4]; };
+static uint32_t get(const struct raw_ir *ir, const struct concrete *c, struct raw_source s, unsigned lane) {
+   unsigned component=s.swizzle[lane];
+   if(s.file==TEMP) return c->temp[s.index][component];
+   if(s.file==IN) return c->input[s.index][component];
+   if(s.file==CONST) return c->constant[s.index][component];
+   if(s.file==IMM) return ir->immediates[s.index][component];
+   abort();
+}
+static void check(struct raw_lane fact, uint32_t concrete, const struct concrete *c, unsigned seed, unsigned trial, unsigned instruction, unsigned lane) {
+   ++assertions;
+   if ((fact.zero & fact.one) || (concrete & fact.zero) || ((~concrete) & fact.one)) {
+      fprintf(stderr,"knowledge failed seed=%08x trial=%u instruction=%u lane=%u bits=%08x zero=%08x one=%08x\n",seed,trial,instruction,lane,concrete,fact.zero,fact.one); abort();
+   }
+   if(fact.origin) {
+      ++origin_hits; unsigned index=(fact.origin-1)/4, component=(fact.origin-1)%4;
+      if(concrete != c->input[index][component]) {fprintf(stderr,"origin failed seed=%08x trial=%u instruction=%u lane=%u\n",seed,trial,instruction,lane);abort();}
+   }
+   if((fact.zero|fact.one)==UINT32_MAX) ++exact_hits;
+}
+static uint64_t direct_pairs;
+static void compare_pair(uint32_t a,uint32_t b) {
+   struct raw_ir ir={0}; ir.immediates[0][0]=a; ir.immediates[1][0]=b;
+   struct raw_instruction ins={.dst={.file=TEMP,.index=0,.mask=1},.src={{.file=IMM,.index=0},{.file=IMM,.index=1}}};
+   for(unsigned op=RAW_FSLT;op<=RAW_FSGE;++op) {
+      ins.opcode=op;raw_record(&ir,&ins);struct raw_lane f=ir.temporary[0][0];uint32_t wanted=ordered(a,b,op==RAW_FSGE);
+      if(f.one!=wanted || f.zero!=~wanted || f.origin){fprintf(stderr,"exact ordered failed a=%08x b=%08x op=%u\n",a,b,op);abort();}
+      ++direct_pairs;
+   }
+}
+int main(void) {
+   const uint32_t boundary[]={0,1,2,0x007ffffe,0x007fffff,0x00800000,0x00800001,0x3effffff,0x3f000000,0x3f000001,0x3f7fffff,0x3f800000,0x3f800001,0x7f7ffffe,0x7f7fffff,0x7f800000,0x7f800001,0x7fbfffff,0x7fc00000,0x7fffffff};
+   for(unsigned a=0;a<40;++a)for(unsigned b=0;b<40;++b)compare_pair(boundary[a%20]|(a/20?0x80000000:0),boundary[b%20]|(b/20?0x80000000:0));
+   rng=0x4280b9d7;for(unsigned n=0;n<262144;++n){uint32_t a=random32(),b=random32();compare_pair(a,b);compare_pair(a,a);compare_pair(a,a^0x80000000);}
+   fprintf(stderr,"direct ordered comparisons: %"PRIu64"\n",direct_pairs);
+
+   const uint32_t seeds[]={UINT32_C(0xa937ec41),UINT32_C(0x526efb13),UINT32_C(0xdf071ca9),UINT32_C(0x369abf27),UINT32_C(0x80c531ed)};
+   const uint32_t edges[]={0,1,2,UINT32_C(0x7fffffff),UINT32_C(0x80000000),UINT32_MAX,UINT32_C(0x7f800000),UINT32_C(0xff800000),UINT32_C(0x7fc00001),UINT32_C(0x00800000),UINT32_C(0x00000001),UINT32_C(0x80000001),UINT32_C(0x3f800000)};
+   const uint32_t masks[]={0,UINT32_MAX,1,UINT32_C(0x80000000),UINT32_C(0x7f800000),UINT32_C(0x007fffff),UINT32_C(0x55555555),UINT32_C(0xaaaaaaaa)};
+   for(unsigned seed=0;seed<5;++seed) {rng=seeds[seed];
+      for(unsigned trial=0;trial<160;++trial) {
+         struct raw_ir *ir=calloc(1,sizeof(*ir)); struct concrete schedules[32]={0};
+         if(!ir) abort();
+         for(unsigned schedule=0;schedule<32;++schedule)
+            for(unsigned r=0;r<2;++r) for(unsigned lane=0;lane<4;++lane) {
+               schedules[schedule].input[r][lane]=random32();
+               schedules[schedule].constant[r][lane]=schedule<13?edges[(schedule+lane+r)%13]:random32();
+            }
+         for(unsigned r=0;r<4;++r) for(unsigned lane=0;lane<4;++lane) {
+            uint32_t word=random32(); if(trial%3==0) word=edges[(r+lane+trial)%13];
+            uint32_t mask=masks[random32()%8];
+            ir->temporary[r][lane]=(struct raw_lane){.zero=~word & mask,.one=word & mask};
+            if((random32()%5)==0) ir->temporary[r][lane]=(struct raw_lane){.origin=1+random32()%8};
+            for(unsigned s=0;s<32;++s) {struct raw_lane a=ir->temporary[r][lane];
+               schedules[s].temp[r][lane]=a.origin?schedules[s].input[(a.origin-1)/4][(a.origin-1)%4]:(random32() & ~(a.zero|a.one))|a.one;
+            }
+            ir->immediates[r][lane]=edges[(trial+r*4+lane)%13];
+         }
+         for(unsigned step=0;step<64;++step) {
+            struct raw_instruction ins={0};
+            ins.opcode=step<13?(enum raw_opcode)step:(enum raw_opcode)(random32()%13);
+            ins.dst.file=step%7==0?OUT:TEMP; ins.dst.index=ins.dst.file==OUT?0:random32()%4;
+            ins.dst.mask=1+random32()%15; if(ins.dst.mask!=15) ++partial_hits;
+            for(unsigned source=0;source<3;++source) {
+               enum file files[]={TEMP,IMM,IN,CONST}; ins.src[source].file=files[random32()%4];
+               ins.src[source].index=random32()%(ins.src[source].file==TEMP||ins.src[source].file==IMM?4:2);
+               for(unsigned lane=0;lane<4;++lane) ins.src[source].swizzle[lane]=random32()%4;
+               if(ins.src[source].file==ins.dst.file && ins.src[source].index==ins.dst.index) ++alias_hits;
+            }
+            raw_record(ir,&ins); ++instructions; ++opcode_hits[ins.opcode];
+            for(unsigned s=0;s<32;++s) {
+               uint32_t result[4]={0};
+               for(unsigned lane=0;lane<4;++lane) if(ins.dst.mask&(1u<<lane)) {
+                  uint32_t a=get(ir,&schedules[s],ins.src[0],lane),b=get(ir,&schedules[s],ins.src[1],lane),c=get(ir,&schedules[s],ins.src[2],lane);
+                  result[lane]=evaluate(ins.opcode,a,b,c);
+               }
+               for(unsigned lane=0;lane<4;++lane) if(ins.dst.mask&(1u<<lane)) {
+                  if(ins.dst.file==TEMP) schedules[s].temp[ins.dst.index][lane]=result[lane]; else schedules[s].out[lane]=result[lane];
+                  check(ins.dst.file==TEMP?ir->temporary[ins.dst.index][lane]:ir->output[0][lane],result[lane],&schedules[s],seeds[seed],trial,step,lane);
+               }
+            }
+            if(ins.dst.file==OUT) {
+               struct profile p={.raw=ir};p.declared[OUT][0]=true;p.components[OUT][0]=ins.dst.mask;
+               if(raw_outputs_safe(&p)) for(unsigned s=0;s<32;++s) for(unsigned lane=0;lane<4;++lane) if(ins.dst.mask&(1u<<lane)) {
+                  ++safe_outputs; uint32_t bits=schedules[s].out[lane],exponent=(bits>>23)&255u,mantissa=bits&UINT32_C(0x7fffff);
+                  if(!ir->output[0][lane].origin && (exponent==255u || (exponent==0u && mantissa))) abort();
+               }
+            }
+         }
+         free(ir);
+      }
+   }
+   printf("{\"directOrderedComparisons\":%"PRIu64",\"seeds\":[\"a937ec41\",\"526efb13\",\"df071ca9\",\"369abf27\",\"80c531ed\"],\"trials\":800,\"schedulesPerTrial\":32,\"instructions\":%"PRIu64",\"assertions\":%"PRIu64",\"originAssertions\":%"PRIu64",\"exactKnownAssertions\":%"PRIu64",\"safeOutputAssertions\":%"PRIu64",\"partialInstructions\":%"PRIu64",\"aliasSources\":%"PRIu64",\"opcodeHits\":[",direct_pairs,instructions,assertions,origin_hits,exact_hits,safe_outputs,partial_hits,alias_hits);
+   for(unsigned i=0;i<=RAW_FSGE;++i)printf("%s%"PRIu64,i?",":"",opcode_hits[i]);puts("],\"ok\":true}");
+}

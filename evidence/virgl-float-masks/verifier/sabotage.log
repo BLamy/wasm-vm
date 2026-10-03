@@ -1,0 +1,8 @@
+page.evaluate: Error: novel alias vertex alias-sign-boundary lane 0: expected [3204448256,3196059648,1048576000,1065353216,1065320448,1065320448,1065320448,1065320448,1061158912,1056964608,3196059648,1065353216,1065320448,1065320448,1065320448,1065320448,3187671040,1063256064,1056964608,1065353216,1065320448,1065320448,1065320448,1065320448,3735929054,3735929054,3735929054,3735929054], got [3204448256,3196059648,1048576000,1065353216,1056964608,1056964608,1056964608,1056964608,1061158912,1056964608,3196059648,1065353216,1056964608,1056964608,1056964608,1056964608,3187671040,1063256064,1056964608,1065353216,1056964608,1056964608,1056964608,1056964608,3735929054,3735929054,3735929054,3735929054]
+    at check (http://127.0.0.1:52794/evidence/virgl-float-masks/verifier/browser_audit.mjs:2:33)
+    at eq (http://127.0.0.1:52794/evidence/virgl-float-masks/verifier/browser_audit.mjs:3:19)
+    at runAcceptance (http://127.0.0.1:52794/evidence/virgl-float-masks/verifier/browser_audit.mjs:34:940)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-float-masks/verifier/run_browser.mjs:4:1

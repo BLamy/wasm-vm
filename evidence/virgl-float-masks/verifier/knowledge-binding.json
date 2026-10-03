@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "head": "d549500106399ada00fcd48f1439bd107377ebc5",
+  "commands": [
+    [
+      "clang",
+      "-std=gnu11",
+      "-g",
+      "-O1",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-I",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-float-masks/verifier/knowledge_attack.c",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-float-masks/verifier/knowledge-attack"
+    ],
+    [
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-float-masks/verifier/knowledge-attack"
+    ]
+  ],
+  "stats": {
+    "directOrderedComparisons": 1576064,
+    "seeds": [
+      "a937ec41",
+      "526efb13",
+      "df071ca9",
+      "369abf27",
+      "80c531ed"
+    ],
+    "trials": 800,
+    "schedulesPerTrial": 32,
+    "instructions": 51200,
+    "assertions": 3493824,
+    "originAssertions": 94240,
+    "exactKnownAssertions": 411936,
+    "safeOutputAssertions": 43968,
+    "partialInstructions": 47801,
+    "aliasSources": 7980,
+    "opcodeHits": [
+      3922,
+      4012,
+      3856,
+      4041,
+      3873,
+      3896,
+      3929,
+      3947,
+      3942,
+      3918,
+      4001,
+      3891,
+      3972
+    ],
+    "ok": true
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "sources": {
+    "renderer/virgl-shader/raw_bits.c": "1eb3c7a16bbba8346d78c47822a6d1cc380e350af5a2cb1a0c4eab468d490c39",
+    "renderer/virgl-shader/raw_bits.h": "e630fbd6def0cb1b4caadc2b2cd643ec7d22e37c1b62f64352327b1c5471af7b",
+    "renderer/virgl-shader/bridge.h": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105",
+    "evidence/virgl-float-masks/verifier/knowledge_attack.c": "20f24c3f227b45b7661408188b124473f9ab04f693230497f056f97191b00f5f",
+    "evidence/virgl-float-masks/verifier/run_knowledge.py": "bbef385a04b300e2c99202953b712bd5c3855995d18065ce62cda03dec30af2a"
+  },
+  "records": {
+    "knowledge-report.json": "bccaba8e570d2f9d3ca92c95036508d7860532a82ca511f4894c6fc11c2cfd7d",
+    "knowledge.stderr": "5190db9432837fc54e9551b966dfc80c8e21054834c345f4dbe7a684ba27d214"
+  },
+  "binarySha256": "49bc2eedbaaa0ab041a85b2ae7678b30bc402fe48feb9c2078554cf616cb2ed2"
+}

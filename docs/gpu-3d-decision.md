@@ -350,3 +350,30 @@ mixed stage interfaces, bounded failures/recovery and intentionally incorrect
 GPU lowerings. Direct arbitrary host uniforms remain compiler probes. The guest
 constant command policy, production negotiation and original19 shader bodies are
 unchanged. Float comparisons, mixed float arithmetic and PRECISE remain gated.
+
+
+## Ordered binary32 comparison masks
+
+E6-T12e4c1 adds `virgl-webgl2-raw-bits-v3` only to stages containing a validated
+FSLT or FSGE. Comparisons classify and order the raw unsigned encodings directly.
+Every signed quiet or signalling NaN is unordered, both signed zeros compare
+equal, negative magnitudes order in reverse, and infinity and subnormal values
+retain their binary32 order. Every result is an exact all-ones or zero word.
+FSGE includes its own ordered guard and cannot be the unconditional complement
+of FSLT. No raw input is converted to a GLSL float for these comparisons.
+
+The emitter adds bounded uint helpers only to new-profile stages. Existing v1,
+v2 and v5 outputs remain exact for inputs without a newly supported operation.
+The instruction and IR layouts, memory limits, consumed-lane checks and safe
+float-output policy remain unchanged. Full encoding guarantees apply to private
+words and raw constants; an ordinary float input means the encoding actually
+delivered by that float interface.
+
+`make verify-E6-T12e4c1` compares real VS/FS output against an independent integer
+binary32 oracle. Its vectors cover zeros, adjacent normal values, subnormal
+boundaries, infinities and varied NaN payloads. It contrasts integer equality
+with ordered comparisons and carries masks through arithmetic and selection.
+The successor receipt explicitly binds newly admitted historical inputs and
+their adjacent unsupported replacements while preserving all unaffected native
+results and earlier GPU checks. Numeric float shadows and actual mixed
+ADD/MUL/MAD/TEX chains remain E6-T12e4c2; production negotiation remains off.

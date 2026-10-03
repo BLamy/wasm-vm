@@ -1885,3 +1885,7 @@ verify-E6-T12e4a:
 .PHONY: verify-E6-T12e4b
 verify-E6-T12e4b:
 	bash tools/verify-virgl-integer-masks.sh
+
+.PHONY: verify-E6-T12e4c1
+verify-E6-T12e4c1:
+	bash tools/verify-virgl-float-masks.sh

@@ -12,7 +12,8 @@ capstone: false
 
 ## Execution slices
 
-Replaced by ordered S/high boundaries E6-T12e4a, E6-T12e4b and E6-T12e4c.
+Replaced by ordered S/high boundaries E6-T12e4a, E6-T12e4b, E6-T12e4c1 and
+E6-T12e4c2 (the E6-T12e4c planning container was split before activation).
 The pinned converter stores integer results in float TEMP registers, which cannot
 promise every raw32-bit value under ESSL300. An owned raw representation and
 explicit float-IO policy must be proven before arithmetic/masks and mixed use.
