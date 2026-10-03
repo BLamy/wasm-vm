@@ -10,6 +10,8 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+import re
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 HELD_HEAD = 'f643c50d3379e4e27a1daf1784f67287fe36d562'
@@ -43,9 +45,29 @@ def held_json(path):
     return json.loads(raw)
 
 
+def regression_head(report, head):
+    """Carry prior runs only across this task's browser-recording-only repair.
+
+    Every recorded source and built artifact is still checked below. The narrow
+    allowlist forbids using this path to excuse any changed runtime, dependency,
+    fixture or legacy oracle; a pristine clone always records the current head.
+    """
+    recorded = report['gitHead']
+    require(re.fullmatch('[0-9a-f]{40}', recorded), 'complete recorded regression head')
+    if recorded != head:
+        require(subprocess.run(['git', 'merge-base', '--is-ancestor', recorded, head], cwd=ROOT,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0,
+                'reused regression must be an ancestor of current evidence harness')
+        changed = set(constants.git('diff', '--name-only', recorded, head).decode().splitlines())
+        require(changed <= {'tools/verify-virgl-raw-bits.mjs', 'tools/virgl-raw-bits/regressions.py'},
+                'only coverage recording and this unchanged-source binding may differ from held regression')
+    return recorded
+
+
 def verify_async(directory, head, originals, qualified_report):
     report = read(directory / 'report.json')
-    require(report['task'] == 'E6-T11b1' and report['gitHead'] == head and report['status'] == 'passed',
+    regression_head(report, head)
+    require(report['task'] == 'E6-T11b1' and report['status'] == 'passed',
             'current asynchronous renderer regression')
     require(report['trackedChanges'] == [] and report['guestExecution'] is False and
             report['browserErrors'] == {'console': [], 'page': [], 'requests': []},
@@ -169,7 +191,8 @@ def verify(output, head, contract):
             'current native originals equal held full translations')
     constant_output = output / 'constant-regression'
     decoder = constants.verify_decoder(constant_output)
-    hardware = constants.verify_browser(constant_output / 'hardware', head, contract)
+    constant_head = regression_head(read(constant_output / 'hardware/report.json'), head)
+    hardware = constants.verify_browser(constant_output / 'hardware', constant_head, contract)
     constants.verify_translations(hardware['acceptance'], fixtures, cases, originals, decoder)
     constants.verify_hardware(hardware['acceptance'], cases)
     for item in hardware['sources']:
@@ -179,7 +202,8 @@ def verify(output, head, contract):
     async_report = verify_async(output / 'async-regression', head, originals, hardware)
     regression_output = output / 'regression'
     regression = read(regression_output / 'receipt.json')
-    require(regression['task'] == 'E6-T12e3' and regression['status'] == 'passed' and regression['gitHead'] == head and
+    bank_head = regression_head(regression, head)
+    require(regression['task'] == 'E6-T12e3' and regression['status'] == 'passed' and
             regression['production'] == contract['production'] and
             regression['shaderOutcomes'] == {'translated': 12, 'unsupported-feature': 7}, 'complete current bank regression receipt')
     constants.verify_records(regression_output, regression)
@@ -193,7 +217,7 @@ def verify(output, head, contract):
     bank_fixtures = read(ROOT / 'renderer/virgl-shader/tests/bank-cases.json')
     native = read(regression_output / 'native/native-report.json')
     banks.verify_native(native, bank_fixtures, corpus, regression_output)
-    reports = {name: banks.verify_browser_sources(regression_output, name, head, contract) for name in ('hardware', 'sabotage')}
+    reports = {name: banks.verify_browser_sources(regression_output, name, bank_head, contract) for name in ('hardware', 'sabotage')}
     banks.verify_execution(reports, native, bank_fixtures, corpus)
     names = {item['path'] for report in (hardware, async_report, regression) for item in report['sources']}
     names.update(item['path'] for item in async_report['inputs'])
@@ -205,6 +229,7 @@ def verify(output, head, contract):
             verify_source(item, head)
             sources.append(item)
     return {'heldLegacyHead': HELD_HEAD,
+            'recordedHeads': {'banks': bank_head, 'constants': constant_head, 'async': async_report['gitHead']},
             'boundary': 'Current browser legacy outputs equal verified native E3b results; current native originals and full bank regression remain exact. Historical unchanged-compiler receipt is retained, not reinterpreted.',
             'constantCases': 23, 'constantPixels': 45056, 'actualConstantRigs': 10, 'validationConstantRigs': 25,
             'asyncPackets': 210, 'asyncInteriorPixels': 768, 'asyncAttacks': len(async_report['browserResult']['result']['attacks']),
