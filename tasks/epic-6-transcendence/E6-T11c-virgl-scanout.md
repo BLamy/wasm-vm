@@ -3,7 +3,7 @@ id: E6-T11c
 epic: 6
 title: Present retained 3D resources through the existing virtio scanout path
 priority: 525.02698
-status: implemented
+status: verified
 depends_on: [E6-T11b2]
 estimate: S
 risk: high
@@ -171,3 +171,50 @@ configuration warning, visible in the terminal; no guest image edit was made.
 - `cold-clone-final/acceptance/hardware/report.json`: `a774880b7bf7908d89d14589da3ce9d599e2efb60995067f785984028fb2d04c`.
 - `cold-clone-final/acceptance/desktop/report.json`: `04c04d4ac2335cbac2592542e493ab6526ecdfccdf8cfa15966a12a769b2cada`.
 - `cold-clone-final/acceptance/desktop/desktop.png`: `ef137887dc641e5856f31b444f012601d125bdf6dc1ffe5489de50a6307bf7a7`.
+
+### 2026-10-03 — independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+- S01–S22 — HELD. The immutable predictions preceded implementation. Own actual
+  GPU/canvas attacks record 3,118 assertions, 303 records and 93 browser turns;
+  17 instrumented native tests pass. Captured A survives real GPU write B,
+  context deletion and public-ID reuse; only a new binding paints the replacement.
+  Stale callbacks cannot consume pending 2D frames. Strict queue/authority,
+  full-u64 fences, ownership across Wasm growth and failure/reset paths hold.
+- S22 sensitivity — HELD. Independent served-source omissions of Y conversion,
+  GPU signal readiness and scheduler-token validation each fail their intended
+  exact oracle. Actual live pixels were visually inspected before teardown.
+- COVERAGE — HELD with exact narrow private-invariant, host-diagnostic and type
+  waivers listed in `evidence/virgl-scanout/verifier/coverage-review.md`.
+  LLVM/V8 exports bind changed hunks to recordings; unchanged B2/dependency
+  findings carry forward by source hash and final same-source regression.
+- S20/S21 portability and ordinary desktop — HELD. Independent audit passes
+  3,524 binding/assertion checks. Final clone at `85962c49` passes the full gate,
+  clean before/after with unchanged explicit fixtures; its desktop has 28 drawn
+  frames and empty error arrays. Default local/live demo remains 127/127 with
+  exact default Wasm and all three proof exports absent. The first cold remains
+  failed; the independently audited bounded network diagnosis and harness-only
+  header/metadata correction justify the final fresh-clone repetition. No
+  failed-request filter was added. Both initial harness failures are preserved.
+- SUITE: retain own literal wire/GL/pixel oracles, replayable attacks, three
+  sabotage controls, two independent native cases, and binding/coverage audits.
+  No runtime file was changed by this verifier. Production 3D stays disabled;
+  live Mesa, FPS, compositor acceleration and zero-copy remain unclaimed.
+
+Detailed predictions, points, commands, calibration disclosures, provenance and
+verdict: `evidence/virgl-scanout/verifier/review.md` and `observations.md`.
+Commands: `node evidence/virgl-scanout/verifier/run-attacks.mjs` for `baseline`,
+`orientation`, `early-readback`, `stale-delivery`; instrumented
+`cargo test --locked --manifest-path evidence/virgl-scanout/verifier/native/Cargo.toml -- --nocapture`;
+`python3 evidence/virgl-scanout/verifier/coverage-audit.py`, `audit-network.py`,
+`audit-evidence.py`. Build objects/profiles are excluded under `target/`.
+The reviewed runtime is `f1aeb253`, receipt repair `fbceeb4d`, final harness
+`85962c49`, and formal worker submission `ad88508e`. SHA-256 anchors:
+
+- Predictions: `274196136e3bf17fa5c8a3f9e190dc29b99ede19d39c276fd4d2f2c6afd7d982`.
+- Verifier manifest: `7808e4a2b968017570ddb87c3814760cca22c652dc934e38a78ed738c6fabcf5`.
+- Verifier review: `8ce9853d0041dab19f7cf6a79e2bf43a2e902ef54fffb0adbb33cbccaa007126`.
+- Independent attacks: `e48f659aaa8b45ab5c50272caa11fb66153c4ffd3fbcf2783728dbebe5995284`.
+- Final audit: `9b2ede7897732dd12e3475fc00d216bc7aa80d63b593f956e872176b4a6deee9`.
+- Final cold receipt: `84c6d8af8e691fc82f0d0778ab6e9a3e73b98750ef74c1d004c8075747552352`.
