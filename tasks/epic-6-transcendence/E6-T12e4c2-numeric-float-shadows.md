@@ -3,7 +3,7 @@ id: E6-T12e4c2
 epic: 6
 title: Preserve ordinary numeric shader chains with bounded float shadows
 priority: 525.026990432
-status: pending
+status: in-progress
 depends_on: [E6-T12e4c1]
 estimate: S
 risk: high
@@ -58,6 +58,22 @@ sampler metadata. Corrupt shadow propagation or numeric interpretation and
 require a real independent hardware mismatch. Audit captured instruction-time
 facts rather than trusting final register state. Every changed executable path
 needs evidence; arbitrary raw constant admission and PRECISE are not inferred.
+
+## Preparation notes
+
+The seven remaining unsupported original bodies all use direct numeric CONST
+operands (8,3,12,7,15,11,10 uses in the current corpus inventory). This task keeps
+unknown raw numeric constants rejected. Before Mesa activation, a separate
+bounded boundary must either bind compiler-declared constant-domain requirements
+to synchronous/asynchronous draw-time validation or prove a sound full-domain
+numeric lowering. The current finite guest decoder does not confer standalone
+shader authority and admits subnormals. This task makes no compatibility claim
+for those remaining originals.
+
+Ordinary MAD tests must permit the GLSL ES3.00 range/precision rules, including
+higher internal precision. Use exact dyadic chains for the primary arithmetic
+proof. An isolated non-exact witness may use a derived rational error enclosure,
+not only the two results from fused/separate round-to-nearest binary32.
 
 ## Verification log
 
