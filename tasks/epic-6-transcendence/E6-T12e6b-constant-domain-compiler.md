@@ -3,7 +3,7 @@ id: E6-T12e6b
 epic: 6
 title: Derive conditional finite constant authority in the owned compiler
 priority: 525.02699062
-status: pending
+status: in-progress
 depends_on: [E6-T12e6a]
 estimate: S
 risk: high
@@ -73,6 +73,32 @@ full GLSL/metadata without added shadows or restrictions. Sabotage contract
 emission or a numeric constant index and require an independent guard or GPU
 oracle failure. A malformed/PRECISE suffix after a retry-triggering instruction
 must still fail and recover cleanly.
+
+## Execution notes
+
+The consumer dependency was independently verified at
+`9497f3da026092db1eb53e8d6187bceff214656a`. This slice changes only the owned
+compiler's conditional authority boundary; TEX remains fragment-only and the
+existing renderer/decoder contracts remain intact. Runtime authority fits the
+existing fact/instruction/IR layouts. An ordinary first attempt preserves every
+existing successful stage result; only an internally typed missing-numeric-
+authority failure permits one complete conditional retry.
+
+The exact historical migration inventory predicts 105 distinct formerly rejected
+bodies across five case files. Preserve those exact bodies as new positives and
+replace their historical negative positions with explicitly recorded adjacent
+absolute-modifier rejections; two generated numeric rejection-pair references
+follow those replacements. All other full results, recovery anchors and original
+captured bodies remain fixed. Successor compatibility receipts independently
+account for this boundary without changing old validators' historical claims.
+
+New positive hardware proof uses actual compiler-produced contracts through
+ordinary decoded packets and the shared sync/async renderer, with no injected
+metadata or GLSL. Compact indexed bitplane atlases reconstruct all numeric and
+raw constant words; independent per-pixel geometry/orientation checks bind the
+atlas itself. E6a's broader consumer workload runs once as an explicitly named
+regression. Fault runs are separate, narrowly scoped recordings. Production guest
+negotiation and original Mesa workload execution remain gated.
 
 ## Verification log
 
