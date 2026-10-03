@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12c** — Execute the captured eight-object VirGL state model
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -502,7 +501,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.02694` [E6-T12c](epic-6-transcendence/E6-T12c-virgl-object-state.md) — Execute the captured eight-object VirGL state model *(deps: E6-T12b)*
+- [~] `525.02694` [E6-T12c](epic-6-transcendence/E6-T12c-virgl-object-state.md) — Execute the captured eight-object VirGL state model *(deps: E6-T12b)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
 

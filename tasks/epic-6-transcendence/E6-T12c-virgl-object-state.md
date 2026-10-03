@@ -3,7 +3,7 @@ id: E6-T12c
 epic: 6
 title: Execute the captured eight-object VirGL state model
 priority: 525.02694
-status: pending
+status: in-progress
 depends_on: [E6-T12b]
 estimate: S
 risk: high
@@ -46,4 +46,16 @@ require restoration. Sabotage a bound color mask or constant and require failure
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activated
+
+Follows independently verified resource transfers (`442b87c0`, PR #408). This
+single state boundary integrates original decoded object/state commands with the
+verified TGSI bridge and resource leases. The recorded first submission may stop
+explicitly at its first unsupported DRAW_VBO; the successful prefix and subsequent
+state/teardown packets are proven separately. Whole-stream draw replay remains
+E6-T12d. Scoped submission gates are syntax/native resource+decoder regressions,
+real hardware WebGL2 state/link/reflection/clear/lifetime attacks, source-bound
+coverage and sabotage, plus one final scrubbed clean clone. The unchanged shader
+compiler is built for the actual linkage proof; its previously verified language
+semantics carry forward. No production device/capset or web demo activation.
+
