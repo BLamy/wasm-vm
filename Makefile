@@ -1925,3 +1925,7 @@ verify-E6-T12e9:
 .PHONY: verify-E6-T12f1
 verify-E6-T12f1:
 	bash tools/verify-virgl-raw-equality.sh
+
+.PHONY: verify-E6-T12f2
+verify-E6-T12f2:
+	bash tools/verify-virgl-selected-lanes.sh

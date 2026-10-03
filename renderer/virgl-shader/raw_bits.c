@@ -118,6 +118,20 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
    return opcode == RAW_TEX ? 3u : destination_mask;
 }
 
+static struct raw_lane checked_source(const struct raw_ir *ir, const struct raw_instruction *instruction,
+                                     unsigned source, unsigned lane, bool conditional)
+{
+   const struct demand_certificate *c = &ir->demand;
+   /* Only these two graph-bound reads are conditional. No ordinary TEMP read
+    * can inherit a missing predecessor's authority from this side table. */
+   if (c->checked && source == 1) {
+      if (ir->count == c->lrp && instruction->opcode == RAW_LRP) return c->payload[lane];
+      if (ir->count == c->select && instruction->opcode == RAW_UCMP)
+         return c->result[instruction->src[1].swizzle[lane]];
+   }
+   return source_lane(ir, &instruction->src[source], lane, conditional);
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -152,7 +166,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
     * changes facts. Every numeric lane must have an enforceable domain. */
    for (unsigned source = 0; source < sources; ++source)
       for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
-         unsigned mode = float_mode(source_lane(ir, &instruction->src[source], lane, conditional));
+         unsigned mode = float_mode(checked_source(ir, instruction, source, lane, conditional));
          if (numeric && !mode) return false;
          if (numeric) dependency |= mode & RAW_BANK_DEPENDENCY;
          if (mixed) checked.float_modes[source] |= (uint32_t)mode << (lane * 8);
@@ -161,7 +175,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
       for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {
-         struct raw_lane condition = source_lane(ir, &instruction->src[0], lane, conditional);
+         struct raw_lane condition = checked_source(ir, instruction, 0, lane, conditional);
          if (condition.zero == UINT32_MAX || condition.one) {
             unsigned unused = condition.zero == UINT32_MAX ? 1 : 2;
             checked.float_modes[unused] &= ~(UINT32_C(255) << (lane * 8));
@@ -172,8 +186,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    for (unsigned lane = 0; lane < 4; ++lane) if (instruction->dst.mask & (1u << lane)) {
       struct raw_lane a = {0}, b = {0};
       if (!numeric) {
-         a = source_lane(ir, &instruction->src[0], lane, conditional);
-         if (sources > 1) b = source_lane(ir, &instruction->src[1], lane, conditional);
+         a = checked_source(ir, instruction, 0, lane, conditional);
+         if (sources > 1) b = checked_source(ir, instruction, 1, lane, conditional);
       }
       switch (instruction->opcode) {
       case RAW_MOV: result[lane] = a; break;
@@ -203,7 +217,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_FSNE:
          if (known_operands(a, b)) result[lane] = known_word(equal_float_mask(a.one, b.one, instruction->opcode == RAW_FSNE));
          break;
-      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane, conditional), mixed); break;
+      case RAW_UCMP: result[lane] = selected(a, b, checked_source(ir, instruction, 2, lane, conditional), mixed); break;
       case RAW_ADD:
       case RAW_MUL:
       case RAW_MAD:
@@ -239,7 +253,13 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
    for (unsigned lane = 0; lane < 4; ++lane)
       if (instruction->dst.mask & (1u << lane)) {
-         destination[lane] = result[lane];
+         if (instruction->flags & RAW_GUARDED_LRP) {
+            ir->demand.result[lane] = result[lane];
+            /* LRP kills the old logical definition even if the physical write
+             * is skipped. Only the certificate's selected arm can read this
+             * conditional result; old initialization cannot authorize it. */
+            destination[lane] = (struct raw_lane){0};
+         } else destination[lane] = result[lane];
          if ((result[lane].origin & RAW_ACCESS_MASK) == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;
       }
    ir->instructions[ir->count++] = *instruction;
@@ -434,6 +454,14 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
       if (instruction->opcode == RAW_ELSE) { emit(&w, " } else {\n"); continue; }
       if (instruction->opcode == RAW_ENDIF) { emit(&w, " }\n"); continue; }
+      bool guarded = (instruction->flags & RAW_GUARDED_LRP) != 0;
+      if (guarded) {
+         unsigned lane = 0;
+         while (!(instruction->dst.mask & (1u << lane))) ++lane;
+         emit(&w, " /* guarded interpolation */\n if ((");
+         operand(&w, p, &instruction->src[0], lane);
+         emit(&w, " & 2147483647u) != 0u) {\n");
+      }
       bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
       bool raw_shadow = (instruction->flags & RAW_STRUCTURED) && !numeric &&
          instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP;
@@ -499,6 +527,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, "%c", "xyzw"[lane]);
          emit(&w, ";\n");
       }
+      if (guarded) emit(&w, " }\n");
    }
    for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
       for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {

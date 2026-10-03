@@ -832,5 +832,45 @@ available chunk count; every observed before/after count remains in evidence.
 
 The native input table grows to8192 only in the test driver; runtime storage and
 179-instruction/16KiB/64KiB output caps stay unchanged. Original captures remain
-12/19 while PRECISE and selected-lane definedness are implemented in later slices.
+12/19 while PRECISE and the separate radial definedness gap remain gated.
 This compiler proof does not enable guest GPU negotiation or establish300MIPS.
+
+
+### Selected-away interpolation (E6-T12f2)
+
+One bounded, alpha-renamable outer ELSE / weight / LRP / FSNE / final UCMP
+family may preserve a payload defined only on the true predecessor. The false
+predecessor must prove width is exactly either signed zero. Ordered positive
+finite bounds force the weight's true arm to literal zero there; FSNE and final
+UCMP must use the same unmodified weight and interpolation lane versions. A
+second candidate graph, changed selector, nonzero missing width, missing selected
+lane, fallback clobber or any later unconditional read of the conditional result
+still rejects. This is a graph proof, not a shader-body allowlist.
+
+Initialization masks remain intersected. A 112-byte demand certificate holds
+true-predecessor payload and result facts separately from unconditional lane
+facts. Only the two exact checked operand use sites may borrow those facts.
+Guarded LRP kills the old logical destination definition, including when it had
+a value before the branch. Emitted arithmetic and both raw/float publications
+execute only when the weight's magnitude is nonzero; final UCMP reads only its
+selected arm. No missing value is filled with zero, and zero multiplication of
+an undefined payload grants no authority. Partial writes retain untouched lanes;
+full RHS snapshots preserve permitted aliases. LRP may alias its payload, and
+final UCMP may alias its result or selector; overlapping fallback publication
+that would destroy the false arm rejects.
+
+Existing structured profiles8/9 and finite-bank obligations are unchanged. IR
+storage measures26464 bytes, profile7616 and flow52644, below existing caps32768,
+8192 and53248. The deterministic `make verify-E6-T12f2` records both captured
+forms, all output masks, aliases, nested predecessors and NaN intermediates,
+full retained native/Wasm outcomes, shared-renderer physical bit-plane words,
+independent definition-version traces and demand observers. Real isolated
+compiler faults remove the guard or width proof: the demand counter catches the
+former and two distinct diagnostic poisons change observable words for the
+latter. The poisons demonstrate invalid admission; they do not assign a guest
+meaning to an unwritten value. Exact-head cold evidence and a fresh critic are
+required before the task can become verified.
+
+Original captures stay12/19 because PRECISE is independently rejected. The
+second capture's radial TEMP2.x gap remains outside this family. Guest GPU
+negotiation and the desktop300MIPS target remain unproven.

@@ -30,6 +30,7 @@ static const char *failure_code;
 /* Public unsupported-feature also covers syntax. Only this typed failure may
  * retry with compiler-derived finite-bank authority. */
 static bool missing_numeric_authority;
+static bool missing_initialization;
 
 /* Logging is bounded and never allows guest text to become a format string.
  * Any upstream diagnostic invalidates the conversion instead of silently
@@ -182,7 +183,8 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
    }
    return true;
 }
-static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand)
+static bool source(const char **p, struct profile *s, unsigned consumed, struct raw_source *operand,
+                   enum raw_opcode opcode, unsigned role)
 {
    struct reg r;
    if (!register_name(p, &r, SOURCE)) return false;
@@ -216,7 +218,18 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
          s->raw->indirect_indices |= candidates;
       }
    } else if ((s->components[r.file][r.index] & needed) != needed) return false;
-   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) return false;
+   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) {
+      const struct demand_certificate *c = s->raw ? &s->raw->demand : NULL;
+      bool permitted = c && c->checked && role == 1 &&
+         ((s->current_pc == c->lrp && opcode == RAW_LRP) ||
+          (s->current_pc == c->select && opcode == RAW_UCMP));
+      if (permitted) {
+         const struct raw_source *bound = &s->raw->instructions[s->current_pc].src[1];
+         permitted = bound->file == r.file && bound->index == r.index &&
+            !memcmp(bound->swizzle, r.swizzle, sizeof(r.swizzle));
+      }
+      if (!permitted) { missing_initialization = true; return false; }
+   }
    if (operand) {
       operand->file = r.file;
       operand->index = r.index;
@@ -368,6 +381,83 @@ static bool loop_writes(const struct raw_instruction *i, unsigned lane)
 {
    return !((UINT64_C(1) << i->opcode) & RAW_CONTROL_OPCODES) && i->dst.file == TEMP &&
       i->dst.index == lane / 4 && (i->dst.mask & (1u << (lane % 4)));
+}
+
+static bool demand_zero(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source, unsigned lane)
+{
+   const struct raw_source *r = &i->src[source];
+   return r->file == IMM && !(ir->immediates[r->index][r->swizzle[lane]] & UINT32_C(0x7fffffff));
+}
+
+static uint32_t demand_positive(const struct raw_ir *ir, const struct raw_instruction *i, unsigned source)
+{
+   unsigned dst = loop_scalar(i);
+   const struct raw_source *r = &i->src[source];
+   if (dst == UINT16_MAX || r->file != IMM) return 0;
+   uint32_t word = ir->immediates[r->index][r->swizzle[dst % 4]];
+   return word && word < UINT32_C(0x7f800000) ? word : 0;
+}
+
+static bool demand_graph(const struct raw_ir *ir, unsigned join, struct demand_certificate *c)
+{
+   const struct raw_instruction *v = &ir->instructions[join];
+   const enum raw_opcode ops[] = {RAW_ENDIF, RAW_FSLT, RAW_FSLT, RAW_OR,
+      RAW_MUL, RAW_ADD, RAW_DIV, RAW_UCMP, RAW_LRP, RAW_FSNE, RAW_UCMP};
+   for (unsigned pc = 0; pc < 11; ++pc)
+      if (v[pc].opcode != ops[pc] || (v[pc].flags & RAW_NEGATE_SOURCES)) return false;
+   unsigned lt = loop_scalar(&v[1]), gt = loop_scalar(&v[2]), condition = loop_scalar(&v[3]);
+   unsigned product = loop_scalar(&v[4]), sum = loop_scalar(&v[5]), quotient = loop_scalar(&v[6]);
+   unsigned weight = loop_scalar(&v[7]), selector = loop_scalar(&v[9]);
+   if (lt == UINT16_MAX || gt == UINT16_MAX || condition == UINT16_MAX || product == UINT16_MAX ||
+       sum == UINT16_MAX || quotient == UINT16_MAX || weight == UINT16_MAX || selector == UINT16_MAX ||
+       v[1].src[0].file != TEMP || v[8].dst.file != TEMP || v[8].src[1].file != TEMP ||
+       v[10].dst.mask != v[8].dst.mask) return false;
+   unsigned width = v[1].src[0].index * 4 + v[1].src[0].swizzle[lt % 4];
+   uint32_t lower = demand_positive(ir, &v[1], 1), upper = demand_positive(ir, &v[2], 0);
+   if (!lower || lower >= upper || !loop_scalar_arg(&v[2], 1, width) ||
+       !loop_scalar_arg(&v[3], 0, lt) || !loop_scalar_arg(&v[3], 1, gt) ||
+       !loop_scalar_arg(&v[5], 1, product) || !loop_scalar_arg(&v[6], 0, sum) ||
+       !loop_scalar_arg(&v[6], 1, width) || !loop_scalar_arg(&v[7], 0, condition) ||
+       !demand_zero(ir, &v[7], 1, weight % 4) || !loop_scalar_arg(&v[7], 2, quotient) ||
+       !loop_scalar_arg(&v[9], 0, weight) || !demand_zero(ir, &v[9], 1, selector % 4)) return false;
+   /* Bind the producer versions, not just register names. In particular a
+    * predicate may not overwrite the width or the other live predicate. */
+   if (loop_writes(&v[2], lt)) return false;
+   for (unsigned pc = 1; pc <= 6; ++pc) if (loop_writes(&v[pc], width)) return false;
+   for (unsigned pc = 4; pc <= 6; ++pc) if (loop_writes(&v[pc], condition)) return false;
+   if (loop_writes(&v[8], weight)) return false;
+   for (unsigned lane = 0; lane < 4; ++lane) if (v[8].dst.mask & (1u << lane)) {
+      if (!loop_arg(&v[8], 0, lane, weight) || !loop_arg(&v[10], 0, lane, selector) ||
+          !loop_arg(&v[10], 1, lane, v[8].dst.index * 4 + lane) ||
+          v[10].src[2].file != v[8].src[2].file || v[10].src[2].index != v[8].src[2].index ||
+          v[10].src[2].swizzle[lane] != v[8].src[2].swizzle[lane] ||
+          loop_writes(&v[9], v[8].dst.index * 4 + lane)) return false;
+      unsigned payload = v[8].src[1].index * 4 + v[8].src[1].swizzle[lane];
+      for (unsigned pc = 1; pc <= 7; ++pc)
+         if (loop_writes(&v[pc], payload) || (v[8].src[2].file == TEMP &&
+             loop_writes(&v[pc], v[8].src[2].index * 4 + v[8].src[2].swizzle[lane]))) return false;
+      if (v[8].src[2].file == TEMP &&
+          (loop_writes(&v[8], v[8].src[2].index * 4 + v[8].src[2].swizzle[lane]) ||
+           loop_writes(&v[9], v[8].src[2].index * 4 + v[8].src[2].swizzle[lane]))) return false;
+   }
+   *c = (struct demand_certificate){.join = join, .lrp = join + 8, .select = join + 10,
+      .width = width, .recognized = true};
+   return true;
+}
+
+static bool demand_recognize(struct raw_ir *ir)
+{
+   struct demand_certificate found = {0};
+   for (unsigned pc = 0; pc + 10 < ir->count; ++pc) {
+      struct demand_certificate candidate;
+      if (ir->instructions[pc].opcode == RAW_ENDIF && demand_graph(ir, pc, &candidate)) {
+         if (found.recognized) return false;
+         found = candidate;
+      }
+   }
+   if (!found.recognized) return false;
+   ir->demand = found;
+   return true;
 }
 static uint64_t loop_indices(unsigned first, unsigned last)
 {
@@ -545,12 +635,39 @@ static void flow_join(struct profile *s, const struct flow_frame *frame)
    }
 }
 
+static bool demand_join(struct profile *s, const struct flow_frame *frame)
+{
+   struct demand_certificate *c = &s->raw->demand;
+   if (!c->recognized || s->current_pc != c->join) return true;
+   if (!frame->has_else || !s->live || !frame->saved_live) return false;
+   unsigned width = c->width;
+   struct raw_lane zero = s->raw->temporary[width / 4][width % 4];
+   if (!(s->written[TEMP][width / 4] & (1u << (width % 4))) ||
+       (zero.zero | zero.one) != UINT32_MAX || (zero.one & UINT32_C(0x7fffffff))) return false;
+   const struct raw_instruction *lrp = &s->raw->instructions[c->lrp];
+   const struct raw_source *payload = &lrp->src[1];
+   unsigned needed = 0;
+   for (unsigned lane = 0; lane < 4; ++lane) if (lrp->dst.mask & (1u << lane)) {
+      unsigned component = payload->swizzle[lane];
+      needed |= 1u << component;
+      if (!(frame->temporary_written[payload->index] & (1u << component))) return false;
+      c->payload[lane] = frame->temporary[payload->index][component];
+   }
+   c->missing = needed & ~s->written[TEMP][payload->index];
+   if (!c->missing) return false;
+   /* ELSE's saved snapshot is the initialized predecessor. The current
+    * zero-width predecessor is discarded by the bound integer selector.
+    * The normal join below still intersects every initialization mask. */
+   c->checked = true;
+   return true;
+}
+
 static bool control(const char **p, struct profile *s, struct flow_context *flow, enum raw_opcode opcode)
 {
    failure_code = "unsupported-feature";
    struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
    bool loop = opcode == RAW_BGNLOOP || opcode == RAW_ENDLOOP;
-   if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0])) return false;
+   if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0], opcode, 0)) return false;
    unsigned target = 0;
    bool has_target = opcode != RAW_ENDIF && opcode != RAW_BRK && punctuation(p, ':');
    if (loop) {
@@ -600,6 +717,7 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
             if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :
                  frame->has_target && frame->target != s->instructions)) return false;
             bool other_live = frame->has_else ? frame->saved_live : frame->entry_live;
+            if (!s->syntax_only && !demand_join(s, frame)) return false;
             if (!s->syntax_only && other_live) {
                if (s->live) flow_join(s, frame);
                else flow_snapshot(s, frame, true);
@@ -691,7 +809,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
        * and bitwise payloads never pass through this typed minus parser. */
       if (s->raw && ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
-      if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL)) return false;
+      if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL, raw.opcode, i)) return false;
    }
    if (tex) {
       struct reg sampler;
@@ -703,6 +821,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
       raw.flags |= s->raw_flags;
+      if (!s->syntax_only && s->raw->demand.checked && s->current_pc == s->raw->demand.lrp)
+         raw.flags |= RAW_GUARDED_LRP;
       if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
       else if (!raw_record(s->raw, &raw)) {
          missing_numeric_authority = true;
@@ -711,6 +831,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       }
    }
    if (dst.file == ADDR) s->address_written = true;
+   else if (raw.flags & RAW_GUARDED_LRP) s->written[dst.file][dst.index] &= ~dst.mask;
    else s->written[dst.file][dst.index] |= dst.mask;
    failure_code = "parse-error";
    return true;
@@ -848,6 +969,45 @@ static const char *numeric_rejection(void)
    return error("unsupported-feature", "TGSI is malformed or outside the documented straight-line profile.");
 }
 
+static void demand_reset(struct profile *profile, int stage, struct raw_ir *ir, unsigned flags)
+{
+   memset(ir->temporary, 0, sizeof(ir->temporary));
+   memset(ir->output, 0, sizeof(ir->output));
+   ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;
+   ir->address = (struct raw_lane){0};
+   memset(ir->demand.payload, 0, sizeof(ir->demand.payload));
+   memset(ir->demand.result, 0, sizeof(ir->demand.result));
+   ir->demand.missing = 0; ir->demand.checked = false;
+   *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags};
+}
+
+static bool demand_retry(struct profile *profile, const char *text, size_t length, char *checked)
+{
+   /* Reuse the one owned IR. The syntax pass cannot publish a shader, and a
+    * failed graph never grants access to a missing lane. Ordinary success has
+    * already won; loops keep their independent certificate and admission. */
+   if (!profile->raw || !(profile->raw_flags & RAW_STRUCTURED) || profile->raw->loop.checked) return false;
+   struct raw_ir *ir = profile->raw;
+   int stage = profile->stage;
+   unsigned flags = profile->raw_flags;
+   memset(ir, 0, sizeof(*ir));
+   *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
+   if (!validate(checked, profile) || !demand_recognize(ir)) return false;
+   demand_reset(profile, stage, ir, flags);
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
+   if (validate(checked, profile)) return !(flags & RAW_CONDITIONAL) || (ir->opcode_mask & RAW_FINITE_BANK_USED);
+   if (!missing_numeric_authority || (flags & RAW_CONDITIONAL)) return false;
+   /* A missing payload can precede the first finite-bank use. The complete
+    * checked retry retains only the graph, not predecessor facts or masks. */
+   demand_reset(profile, stage, ir, flags | RAW_CONDITIONAL);
+   memcpy(checked, text, length); checked[length] = 0;
+   failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
+   return validate(checked, profile) && (ir->opcode_mask & RAW_FINITE_BANK_USED);
+}
+
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
@@ -923,7 +1083,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       *profile = (struct profile){.stage = stage, .raw = ir,
          .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};
       memcpy(checked, text, length); checked[length] = 0;
-      failure_code = "parse-error"; missing_numeric_authority = false;
+      failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
       if (validate(checked, profile)) return NULL;
       profile->raw_flags &= ~RAW_CONDITIONAL;
       return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
@@ -932,11 +1092,16 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    }
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
-   missing_numeric_authority = false;
+   missing_numeric_authority = missing_initialization = false;
    if (validate(checked, profile)) return NULL;
-   if (!missing_numeric_authority)
+   if (!missing_numeric_authority) {
+      const char *original_code = failure_code;
+      if (missing_initialization && demand_retry(profile, text, length, checked)) return NULL;
+      profile->raw_flags &= ~RAW_CONDITIONAL;
+      if (strcmp(failure_code, "translation-error")) failure_code = original_code;
       return error(failure_code, !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
          "TGSI is malformed or outside the documented straight-line profile.");
+   }
    /* The ordinary result wins whenever it succeeds. A failed domain use gets
     * one fresh whole-text attempt: no first-pass facts or borrowed response
     * pointer survive, and no concurrent second IR grows the storage budget. */
@@ -948,10 +1113,10 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    if (!profile->raw) return numeric_rejection();
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
-   missing_numeric_authority = false;
-   if (!validate(checked, profile) || !(profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
-      return numeric_rejection();
-   return NULL;
+   missing_numeric_authority = missing_initialization = false;
+   if (validate(checked, profile) && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED)) return NULL;
+   if (missing_initialization && demand_retry(profile, text, length, checked)) return NULL;
+   return numeric_rejection();
 }
 
 static const char *convert(struct conversion *c, const char *text, size_t length,
