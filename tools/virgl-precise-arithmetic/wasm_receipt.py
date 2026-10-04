@@ -114,6 +114,7 @@ def _verify(directory,head,native):
                          {'ok':False,'error':{'code':'translation-error','message':'TGSI is malformed or outside the documented straight-line profile.'}},
                          {'ok':False,'error':{'code':'translation-error','message':'Structured flow allocation failed.'}},
                          {'ok':False,'error':{'code':'translation-error','message':'Raw GLSL allocation or output bound failed.'}},
+                         {'ok':False,'error':{'code':'translation-error','message':'Upstream translation failed, logged a diagnostic, or exceeded the output bound.'}},
                          {'ok':False,'error':{'code':'unsupported-feature','message':'TGSI is malformed or outside the documented straight-line profile.'}}]
                 require(any(same_json(result,value) for value in allowed),'only complete original/OOM failure before success');error_codes.add(result['error']['code'])
         require(('::' not in name or name.startswith('raster::')) or (attempts[-1]['releasedChunks']*4096>53248 and any(a['result'].get('error',{}).get('message')=='Structured flow allocation failed.' for a in attempts)),'real structured arena failure before full recovery beyond its 52KiB bound')
