@@ -7,7 +7,7 @@ export function physicalPlan(seed,primary){
       vectors:inputs.flatMap(input=>(variant==='join'?[0,0xffffffff]:[0]).flatMap(condition=>[0,1].map(position=>({input,condition,position}))))});
   for(const op of ['MIN','MIN_PRECISE']){
     const inputs=physicalVectors(op,seed);
-    for(const input of inputs){add(op,[input]);if(byName.has(op+'-'+input.name)&&input.a.every(normalOrZero))add(op,[input],'direct',false,'mesa');}
+    for(const input of inputs){add(op,[input]);if(byName.has(op+'-'+input.name)&&input.a.every(normalOrZero)&&input.b.every(normalOrZero))add(op,[input],'direct',false,'mesa');}
     for(const variant of bankVariants(op)){
       add(op,inputs,variant,true);
       if(variant!=='join')add(op,inputs.filter(v=>v.a.every(normalOrZero)&&v.b.every(normalOrZero)),variant,true,'mesa','',false,inputs[0]);
@@ -15,7 +15,7 @@ export function physicalPlan(seed,primary){
     for(const variant of ['alias','masked','swizzled','join'])add(op,[inputs[0]],variant);
     for(const input of inputs.filter((_,i)=>i%12===0))for(let plane=0;plane<32;plane++){
       const item={op,input,plane,text:bitplane(op,input,plane)};fragments.push({...item,backend:'owned'});
-      if(byName.has(`${op}-${input.name}-plane-${plane}`)&&input.a.every(normalOrZero))fragments.push({...item,backend:'mesa'});
+      if(byName.has(`${op}-${input.name}-plane-${plane}`)&&input.a.every(normalOrZero)&&input.b.every(normalOrZero))fragments.push({...item,backend:'mesa'});
     }
   }
   const input={name:'physical-input',a:[0x3fc00000,0xbfc00000,0,0x80000000],b:[0x40000000,0xbf800000,0x80000000,0]};

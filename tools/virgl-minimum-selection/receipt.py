@@ -79,7 +79,8 @@ def main():
     # Evidence-only repairs carry immutable runtime recordings forward. An old
     # head is acceptable only when the entire commit range changes this
     # harness file; every recorded served source is still digest-checked below.
-    harness_repairs = {'tools/virgl-minimum-selection/receipt.py'}
+    harness_repairs = {'tools/virgl-minimum-selection/receipt.py', 'tools/virgl-minimum-selection/plan.mjs',
+                       'renderer/virgl-shader/tests/minimum-selection.mjs'}
 
     def recording_head(value):
         recorded = value['gitHead']

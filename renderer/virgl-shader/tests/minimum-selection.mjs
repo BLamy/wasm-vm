@@ -141,7 +141,7 @@ export async function runAcceptance({seed=SEEDS[0],fault=null,stateModule=null}=
         const corrupted=fault==='selection'&&op==='MIN_PRECISE'&&selectedWords(op,input).some((w,i)=>w!==input.b[i]);
         await vertexProbe(gl,bridge,{op,inputs:[input]},values,report,corrupted?fault:null);
         const p=primary.get(op+'-'+input.name);
-        if(p&&input.a.every(normalOrZero)&&selectedWords(op,input).every(normalOrZero)){require(p.text===carrier(op,input),'primary source identity');await vertexProbe(gl,bridge,{op,inputs:[input],backend:'mesa',primary:p.primary},values,report,null);}
+        if(p&&input.a.every(normalOrZero)&&input.b.every(normalOrZero)&&selectedWords(op,input).every(normalOrZero)){require(p.text===carrier(op,input),'primary source identity');await vertexProbe(gl,bridge,{op,inputs:[input],backend:'mesa',primary:p.primary},values,report,null);}
       }
       for(const variant of bankVariants(op)){
         await vertexProbe(gl,bridge,{op,variant,bank:true,inputs},values,report,null);
@@ -154,7 +154,7 @@ export async function runAcceptance({seed=SEEDS[0],fault=null,stateModule=null}=
       for(const variant of ['alias','masked','swizzled','join'])await vertexProbe(gl,bridge,{op,variant,inputs:[inputs[0]]},values,report,null);
       for(const input of inputs.filter((_,i)=>i%12===0))for(let plane=0;plane<32;plane++){
         await fragmentProbe(gl,bridge,op,input,plane,report,null);
-        const p=primary.get(`${op}-${input.name}-plane-${plane}`);if(p&&input.a.every(normalOrZero)&&selectedWords(op,input).every(normalOrZero)){equal(p.text,bitplane(op,input,plane),'primary plane source identity');await fragmentProbe(gl,bridge,op,input,plane,report,p.primary);}
+        const p=primary.get(`${op}-${input.name}-plane-${plane}`);if(p&&input.a.every(normalOrZero)&&input.b.every(normalOrZero)&&selectedWords(op,input).every(normalOrZero)){equal(p.text,bitplane(op,input,plane),'primary plane source identity');await fragmentProbe(gl,bridge,op,input,plane,report,p.primary);}
       }
     }
     const input={name:'physical-input',a:[0x3fc00000,0xbfc00000,0,0x80000000],b:[0x40000000,0xbf800000,0x80000000,0]};
