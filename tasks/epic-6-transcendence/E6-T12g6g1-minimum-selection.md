@@ -3,7 +3,7 @@ id: E6-T12g6g1
 epic: 6
 title: Admit exact word-local minimum selection
 priority: 525.027010574
-status: pending
+status: in-progress
 depends_on: [E6-T12g6f]
 estimate: S
 risk: high
@@ -37,4 +37,19 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — activation
+
+Activated this S/high boundary above independently verified G6f `79cae493`.
+The pinned TGSI definition gives component-wise MIN; ordinary numeric emission
+uses unchanged GLSL `min` and retains existing finite numeric authority.
+Instruction-local MIN_PRECISE follows the existing private MAX selection model:
+choose the first original word only when it is ordered strictly smaller;
+equal values, both signed zeros and unordered comparisons choose the second
+original word. Negation applies before selection; private NaN payloads and
+subnormals remain words and gain no new numeric/output authority. Preserve
+whole previous precision, finite-bank, raster, arithmetic, conversion and
+scalar obligations with one bounded outer contract. Record native/Wasm and
+physical word/pixel proofs, masks/aliases/modifiers, adjacent precise/plain
+instructions, source-selection sensitivity, varied seeds and one final cold
+clone; submit to a fresh critic. Production negotiation and performance claims
+remain gated by dependent integration tasks.
