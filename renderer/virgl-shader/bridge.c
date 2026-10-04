@@ -846,6 +846,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "USHR")) raw.opcode = RAW_USHR;
       else if (word(p, "UADD")) raw.opcode = RAW_UADD;
       else if (word(p, "ISGE")) raw.opcode = RAW_ISGE;
+      else if (word(p, "ISLT")) raw.opcode = RAW_ISLT;
+      else if (word(p, "IMAX")) raw.opcode = RAW_IMAX;
       else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
       else if (word(p, "USNE")) raw.opcode = RAW_USNE;
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
@@ -1165,7 +1167,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE")) {
          candidate = numeric_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
-          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
+          word(&p, "UADD") || word(&p, "ISGE") || word(&p, "ISLT") || word(&p, "IMAX") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
           word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "FSEQ") || word(&p, "FSNE") || word(&p, "UARL")) {
          candidate = true;
       } else if (word(&p, "ADD") || word(&p, "MUL") || word(&p, "MAD") || word(&p, "TEX")) {

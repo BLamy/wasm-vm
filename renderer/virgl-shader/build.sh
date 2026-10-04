@@ -244,6 +244,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/hex_literals.c \
       -lm -o build/hex-literals-sanitize/hex-literals-test
     ;;
+  signed-integers-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/signed_integers.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/signed_integers.c \
+      -lm -o build/signed-integers-sanitize/signed-integers-test
+    ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit

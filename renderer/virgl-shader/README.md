@@ -6,6 +6,25 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Private signed comparison and maximum — E6-T12g6d
+
+The existing v2 integer profile now admits ISLT and IMAX as exact private
+two's-complement signed32 operations. Flipping bit31 provides signed ordering
+using only highp unsigned arithmetic. ISLT produces zero or `0xffffffff`;
+IMAX selects the original winning word. All source lanes are read before an
+aliased or masked destination publishes. Unknown IMAX facts intersect both
+sources' known bits and discard float locators/domain authority. Proven normal
+or signed-zero encodings retain the preexisting safe-use policy.
+
+`make verify-E6-T12g6d` checks endpoint/special words, all mask bits, swizzles,
+aliases, both branch predecessors and dynamic constant banks on physical GPU
+feedback/pixels. The pinned Mesa reference uses finite predicates for ISLT
+and normal/zero IMAX selections because float-backed temporaries canonicalize
+NaN words on this GPU. An independent BigInt oracle checks every original bit
+of the owned emitter. Real sync/async renderer submissions prove bank ownership
+and the unchanged nonfinite wire rejection. No production imports, caps or
+guest graphics negotiation follow from this compiler boundary.
+
 ## Hexadecimal FLT32 immediates — E6-T12g6c
 
 `FLT32` accepts the pinned TGSI binary32 spelling `0x` followed by exactly

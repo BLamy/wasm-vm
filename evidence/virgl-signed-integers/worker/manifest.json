@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-signed-integers-worker-seal-v1",
+  "task": "E6-T12g6d",
+  "sourceHead": "bc360945be9b9f20cc6cb2dc29475857b58f2382",
+  "base": "0488546825fa63ee5740844c045ae7be0d43eeb9",
+  "records": 65,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 8055540,
+    "sha256": "ebba6b455cd12786a95b4531d6936e72906b9d5716a0f8234e9e5cffea95fb88"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 11256,
+    "sha256": "bd2f737b4ae5b7ea03f87b4ce0c0c43c7e03cdf554beff461661142f81ab1741"
+  },
+  "hotReceiptSha256": "067a3bd147ae5b363edfad861ebe8d1545a247bf2d396d93c8e2e56ab98629dc",
+  "coldReportSha256": "f021e5f3c4eaec1c881612b1e315f7b6a223f3f93b53d0e1943560dc8f4446aa",
+  "coldReceiptSha256": "be44d0e519fdd2976ae62a3b06a26b4fe7922890d7373b49a44cbef7132f517b",
+  "checkedWords": 93384,
+  "checkedPixels": 29696,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

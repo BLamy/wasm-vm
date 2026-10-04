@@ -1,0 +1,31 @@
+{
+  "schema": "virgl-signed-integers-verifier-seal-v1",
+  "task": "E6-T12g6d",
+  "verdict": "verified",
+  "sourceHead": "bc360945be9b9f20cc6cb2dc29475857b58f2382",
+  "base": "0488546825fa63ee5740844c045ae7be0d43eeb9",
+  "workerArchiveSha256": "ebba6b455cd12786a95b4531d6936e72906b9d5716a0f8234e9e5cffea95fb88",
+  "records": 37,
+  "uncompressedMemberBytes": 57550427,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 1694583,
+    "sha256": "3fb492e9b9addbecedf462e27ac08ad9dcbe7e22d10aa6f92cac25952c17b777"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 5895,
+    "sha256": "2d18d13e974bd8a5c95154db3f85adf5c43726f7c7013538f8f0d2837346d4a4"
+  },
+  "guard": {
+    "path": "renderer/virgl-shader/tests/signed-integer-regressions.mjs",
+    "cases": 108,
+    "sha256": "3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3",
+    "reportSha256": "f6262d1474d6c8a3f0f03f960676849188ac485f53e20c3c616dd0d35da5a439"
+  },
+  "ownedPhysicalSeed": 967929221,
+  "ownedCheckedWords": 30912,
+  "ownedCheckedPixels": 9856,
+  "productionNegotiation": false,
+  "guestExecution": false
+}
