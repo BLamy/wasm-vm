@@ -6,6 +6,26 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Signed integer and binary32 conversions — E6-T12g6e
+
+Private I2F explicitly rounds signed32 words to binary32 nearest-even. F2I
+truncates toward zero only for finite values below positive2^31 or at most
+negative2^31. Unsigned word helpers avoid undefined GLSL casts. Static known
+bits prove computed/modifier sources; unknown direct constants require exact
+post-swizzle component range guards. Unproven computed/input/indirect and
+modified dynamic F2I sources reject. Explicit I2F gains normal/zero float
+authority; F2I integer results follow the existing private raw-word policy.
+
+The v29/v30 conversion wrappers retain their whole bounded base contract,
+including loop, radial, raster and precise-arithmetic obligations. The real
+state consumer checks complete owned prefixes before sync/async uploads,
+restoration, index access and draws. `make verify-E6-T12g6e` records exact
+native/Wasm results, pinned operand types and unchanged Mesa GLSL, physical
+words/bit planes, real indexed draws and deliberate rounding/truncation/range
+faults. [The recording protocol](../../tools/virgl-signed-conversions/README.md)
+defines the reference TEMP limitation and exact-head cold-clone proof.
+Production negotiation and the complete captured compositors remain gated.
+
 ## Private signed comparison and maximum — E6-T12g6d
 
 The existing v2 integer profile now admits ISLT and IMAX as exact private

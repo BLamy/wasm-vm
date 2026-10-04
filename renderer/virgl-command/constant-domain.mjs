@@ -17,8 +17,13 @@ export const RASTER_PROFILE = "virgl-webgl2-raw-bits-v27";
 export const RASTER_DOMAIN_KIND = "constant-bank-raster-copy-f32-v1";
 export const ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v28";
 export const ARITHMETIC_KIND = "tgsi-precise-binary32-rne-v1";
+export const CONVERSION_PROFILE = "virgl-webgl2-raw-bits-v29";
+export const CONVERSION_BANK_PROFILE = "virgl-webgl2-raw-bits-v30";
+export const CONVERSION_KIND = "tgsi-signed32-binary32-v1";
+export const CONVERSION_DOMAIN_KIND = "constant-bank-f2i-range-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
+const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -80,12 +85,59 @@ function rasterContract(value) {
   return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
 }
 
+function conversionBankContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === CONVERSION_DOMAIN_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent signed conversion bank.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47, "Conversion bank extent exceeds its bound.");
+  const components = array(domain.components, 46).map(value => record(value, ["register", "mask"]));
+  require(components.length > 0 && components.every((entry, position) => Number.isInteger(entry.register) &&
+    entry.register >= 0 && entry.register < Math.min(domain.count, 46) && Number.isInteger(entry.mask) &&
+    entry.mask >= 1 && entry.mask <= 15 && (position === 0 || components[position - 1].register < entry.register)),
+  "Conversion components must be nonempty, bounded, sorted and unique.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
 /** Recognize a trusted compiler result without changing any of its metadata. */
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const conversionBank = value.profile === CONVERSION_BANK_PROFILE;
+    const conversion = conversionBank || value.profile === CONVERSION_PROFILE;
+    require(conversion === Object.hasOwn(value, "conversionBaseProfile") &&
+      conversion === Object.hasOwn(value, "signedConversionContract") &&
+      conversionBank === Object.hasOwn(value, "constantConversionDomains"), "Signed conversion contract disagrees with its profile.");
+    if (conversion) {
+      require(CONVERSION_BASES.has(value.conversionBaseProfile), "Conversion requires an existing raw base profile.");
+      const policy = record(value.signedConversionContract, ["kind", "stage", "operations", "integerToFloat", "floatToInteger", "domain"]);
+      require(policy.kind === CONVERSION_KIND && policy.stage === expectedStage && policy.integerToFloat === "nearest-even" &&
+        policy.floatToInteger === "toward-zero" && policy.domain === "finite-negative-le-2^31-positive-lt-2^31",
+      "Unknown signed conversion policy.");
+      const operations = array(policy.operations, 2), names = ["I2F", "F2I"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))) &&
+        (!conversionBank || operations.includes("F2I")), "Conversion operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.conversionBaseProfile };
+      delete base.conversionBaseProfile; delete base.signedConversionContract; delete base.constantConversionDomains;
+      // Only v1..v28 bases are admitted: conversion cannot recursively wrap
+      // itself, and arithmetic/raster each retain their own bounded base check.
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      let conversionDomain = null;
+      if (conversionBank) {
+        const domains = array(value.constantConversionDomains, 1), uniforms = array(value.uniforms, 1);
+        require(domains.length === 1 && uniforms.length === 1, "Conversion requires one range domain and one bank.");
+        conversionDomain = conversionBankContract(domains[0]);
+        const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+        require(conversionDomain.stage === expectedStage && uniform.name === conversionDomain.name &&
+          uniform.count === conversionDomain.count && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits",
+        "Conversion range domain disagrees with the complete declared bank.");
+      }
+      return Object.freeze({ ...checked, conversion: Object.freeze({ ...policy, operations: Object.freeze(operations) }), conversionDomain });
+    }
     const arithmetic = value.profile === ARITHMETIC_PROFILE;
     require(arithmetic === Object.hasOwn(value, "arithmeticBaseProfile") &&
       arithmetic === Object.hasOwn(value, "preciseArithmeticContract"),
@@ -228,6 +280,43 @@ export function rasterBinary32Word(word) {
   if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
   const magnitude = word & 0x7fffffff, exponent = word & 0x7f800000;
   return magnitude === 0 || (exponent !== 0 && exponent !== 0x7f800000);
+}
+
+/** TGSI's defined F2I input range, including subnormals and both zero signs. */
+export function signedConversionBinary32Word(word) {
+  if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
+  const magnitude = word & 0x7fffffff;
+  return magnitude < 0x4f000000 || (word >= 0x80000000 && magnitude === 0x4f000000);
+}
+
+/** Every base approval and F2I component check uses one owned complete prefix. */
+export function checkConversionBank(words, domain, base) {
+  try {
+    const contract = conversionBankContract(domain);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain"], ["ok", "domain"]);
+    require(base.ok === true, "Conversion requires an approved base contract.");
+    for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
+      ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
+      ["radialDomain", RADIAL_DOMAIN_KIND, ["register", "component", "minimumMagnitude"]],
+      ["rasterDomain", RASTER_DOMAIN_KIND, ["components"]]]) if (base[key] != null) {
+      const obligation = record(base[key], [...DOMAIN_KEYS, ...extra]);
+      require(obligation.kind === kind && obligation.slot === 0 && obligation.count === contract.count &&
+        obligation.stage === contract.stage && obligation.name === contract.name,
+      "Conversion and base obligations disagree on their bank.");
+      base[key] = obligation;
+    }
+    const checked = base.rasterDomain ? checkRasterBank(words, base.rasterDomain, !!base.constraint, !!base.radialDomain) :
+      base.radialDomain ? checkRadialBank(words, contract.count, !!base.constraint) : base.constraint ?
+        checkLoopBank(words, contract.count) : checkIndirectBank(words, contract.count, base.domain !== null);
+    if (!checked.ok) return checked;
+    for (const entry of contract.components) for (let lane = 0; lane < 4; lane++)
+      if ((entry.mask & (1 << lane)) && !signedConversionBinary32Word(checked.words[entry.register * 4 + lane]))
+        return failure("constant-conversion-domain-error", "F2I bank word is outside the defined signed32 conversion range.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-conversion-domain-error", error.message);
+  }
 }
 
 /** Validate and own exactly the reflected prefix; no absent word is synthesized. */

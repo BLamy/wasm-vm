@@ -56,3 +56,20 @@ subnormals/zero signs, masked/swizzled aliases, source versions, joins, physical
 words/pixels, changing banks and deliberate rounding/range/source faults. The
 complete captured compositors remain gated until their own full-shape range
 proof and remaining opcodes. No production imports/caps or MIPS/FPS claim.
+
+### 2026-10-04 — worker — implementation freeze
+
+Added unsigned C/GLSL conversion helpers, static bit-range proofs and direct
+constant component obligations without enlarging the fixed IR. Conversion
+profiles v29/v30 preserve their entire v1..v28 base metadata. The state renderer
+uses one owned complete prefix for base and conversion checks before sync/async
+uploads, restoration, index access and draws. Synthetic private browser paths
+exercise source modifiers, input words, aliases, joins, masks, changing banks,
+actual indexed draws, reflection pruning, held async plans and zero budgets.
+The final recording target is `make verify-E6-T12g6e`; its source-only rational
+oracle and independent Python binary32 receipt never derive expected pixels
+from emitted GLSL. Deliberate rounding/truncation/helper and real range-guard
+faults are rejected by those oracles. Pinned Mesa word differentials exclude
+float-TEMP NaN/subnormal payload cases; owned evidence retains all defined
+words. No production/demo import changes, so the public demo gate is not yet
+applicable. Final exact-source evidence and independent verification follow.
