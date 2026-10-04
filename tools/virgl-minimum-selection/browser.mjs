@@ -9,7 +9,7 @@ assert.ok(Number.isInteger(seed)&&seed>=0&&seed<=0xffffffff);assert.ok([null,'se
 const files=['tools/virgl-minimum-selection/cases.mjs','tools/virgl-signed-conversions/cases.mjs','renderer/virgl-shader/build/minimum-selection-primary.json',
   'renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/constant-domain.mjs'];
 await runVirglBrowser({options,task:'E6-T12g6g1',boundary:'private finite MIN/MIN_PRECISE; isolated synthetic programs',reportFields:{productionNegotiation:false},
-  modulePath:'/renderer/virgl-shader/tests/minimum-selection.mjs',windowReportKey:'__virglScalarOperationsReport',browserArguments:{seed,fault},serializedAcceptance:true,servedFiles:files,
+  modulePath:'/renderer/virgl-shader/tests/minimum-selection.mjs',windowReportKey:'__virglMinimumSelectionReport',browserArguments:{seed,fault},serializedAcceptance:true,servedFiles:files,
   pinnedFiles:files.map(path=>({path,sha256:createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),coveragePaths:['renderer/virgl-shader/tests/minimum-selection.mjs','renderer/virgl-shader/tests/minimum-banks.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','tools/virgl-minimum-selection/cases.mjs'],
   html:browserDocument({title:'TGSI minimum selection',heading:'Exact operand selection on physical WebGL2',description:'Independent mathematical predictions, physical carrier words, all bit planes and pinned Mesa GLSL. Production negotiation remains disabled.'}),
   validate(a){assert.equal(a.seed,seed);assert.equal(a.fault,fault);assert.equal(a.objects.live,0);
