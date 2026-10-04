@@ -88,4 +88,7 @@ GitHub Actions or browser deployment.
 repeat build, capture, packing, inventory and first 39-case acceptance logs
 plus native recorder sources/events/binaries. Its manifest and records bind
 the archive. Later evidence supplements preserve that original recording;
-the final pristine-clone acceptance is recorded separately.
+the final pristine-clone acceptance is recorded separately under `worker/cold/`.
+It passed at `928f4fb6e3ae4c134aca8fdd79a759045fbc877d` with clean Git status
+before and after. `source-bindings.json` inside that archive binds the exact
+code; its logs and native recorder artifacts retain all acceptance results.
