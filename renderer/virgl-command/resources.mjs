@@ -85,6 +85,12 @@ function normalizeMetadata(value, limits) {
     kind = ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging" })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
+  } else if (meta.target === 2 && meta.format === 16) {
+    require(meta.bind === 1, "unsupported-resource", "Required Z16 storage admits only the measured depth-surface role.");
+    require(meta.width <= limits.textureSize && meta.height <= limits.textureSize, "limit-exceeded", "Depth dimensions exceed host/profile limits.");
+    kind = "depth-texture";
+    byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Depth allocation is too large."), 2,
+      limits.resourceBytes, "Depth allocation is too large.");
   } else {
     const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
     require(meta.target === 2 && [2, 67, 233].includes(meta.format) && roles !== 0 && (meta.bind & ~(10 | hints)) === 0,
@@ -126,11 +132,12 @@ function layoutFor(meta, fields, backingBytes, limits) {
   for (const [origin, extent, bound] of [[box.x, box.width, meta.width], [box.y, box.height, meta.height], [box.z, box.depth, meta.depth]]) {
     require(origin <= bound && extent <= bound - origin, "out-of-bounds", "Transfer box exceeds logical resource extent.");
   }
-  const texture = meta.kind === "texture";
+  const depth = meta.kind === "depth-texture", texture = meta.kind === "texture" || depth;
   require(texture || (box.y === 0 && box.z === 0 && box.height === 1 && box.depth === 1), "invalid-transfer", "Buffer coordinates are byte-addressed one-dimensional ranges.");
   require(box.z === 0 && box.depth === 1, "invalid-transfer", "Only one 2D layer is supported.");
-  const rowBytes = checkedProduct(box.width, texture ? 4 : 1, limits.transferBytes, "Transfer row exceeds byte limit.");
-  const defaultStride = checkedProduct(meta.width, texture ? 4 : 1, U32, "Default stride overflows u32.");
+  const pixelBytes = depth ? 2 : texture ? 4 : 1;
+  const rowBytes = checkedProduct(box.width, pixelBytes, limits.transferBytes, "Transfer row exceeds byte limit.");
+  const defaultStride = checkedProduct(meta.width, pixelBytes, U32, "Default stride overflows u32.");
   const rowStride = fields.stride || defaultStride;
   require(rowStride >= rowBytes, "out-of-bounds", "Row stride overlaps the transferred row.");
   const minimumLayer = checkedProduct(rowStride, box.height, U32, "Layer stride calculation overflows u32.");
@@ -143,10 +150,16 @@ function layoutFor(meta, fields, backingBytes, limits) {
   require(offset <= backingBytes && footprintBytes <= backingBytes - offset, "out-of-bounds", "Transfer exceeds backing bytes.");
   require(footprintBytes <= limits.transferBytes, "limit-exceeded", "Strided transfer footprint exceeds byte limit.");
   const tightBytes = checkedProduct(rowBytes, box.height, limits.transferBytes, "Tight transfer exceeds byte limit.");
+  const direction = (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload";
+  const packedBytes = depth && direction === "readback" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, "Depth conversion exceeds scratch byte limit.") : tightBytes;
   return freeze({ kind: texture ? "texture" : "buffer", box: { ...box }, offset, rowBytes, rowCount: box.height,
     rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,
-    direction: (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload" });
+    direction, ...(depth ? { scratchBytes: packedBytes, conversionBytes: direction === "readback" ? packedBytes : 0,
+      stagingBytes: direction === "readback" ? checkedProduct(packedBytes, 2, RESOURCE_LIMITS.gpuBytes, "Depth staging exceeds GPU byte limit.") : 0 } : {}) });
 }
+
+const scratchCharge = (layout) => layout.scratchBytes ?? layout.tightBytes;
+const stagingCharge = (layout) => layout.stagingBytes ?? layout.tightBytes;
 
 /** Pure checked wire-layout validation; no backing or GPU bytes are accessed. */
 export function computeTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
@@ -240,7 +253,7 @@ export function createResourceStore(options) {
       member.resource.memberships.delete(member);
     };
     const releaseTicket = (entry) => {
-      scratchBytes -= entry.layout.tightBytes;
+      scratchBytes -= scratchCharge(entry.layout);
       entry.upload = null;
       let firstError = null;
       try { freeNativeRead(entry); } catch (error) { firstError = error; }
@@ -266,9 +279,14 @@ export function createResourceStore(options) {
       "stale-ticket", "Prepared transfer identity or attachment is stale.");
     };
     const readGpu = (res, layout) => {
-      const bytes = byteView(host("readback", res.storage, res.meta, layout));
-      require(bytes.byteLength === layout.tightBytes, "backend-error", "Backend readback returned the wrong byte count.");
-      return bytes;
+      const conversion = layout.conversionBytes ?? 0;
+      require(conversion <= limits.gpuBytes - gpuBytes, "limit-exceeded", "GPU conversion byte budget exceeded.");
+      gpuBytes += conversion;
+      try {
+        const bytes = byteView(host("readback", res.storage, res.meta, layout));
+        require(bytes.byteLength === layout.tightBytes, "backend-error", "Backend readback returned the wrong byte count.");
+        return bytes;
+      } finally { gpuBytes -= conversion; }
     };
     const uploadGpu = (res, layout, bytes) => {
       require(res.contentRevision < Number.MAX_SAFE_INTEGER, "limit-exceeded", "Storage revision space exhausted.");
@@ -279,12 +297,12 @@ export function createResourceStore(options) {
     const freeNativeRead = (entry) => {
       if (!entry.native) return;
       const native = entry.native; entry.native = null;
-      stagingBytes -= entry.layout.tightBytes; gpuBytes -= entry.layout.tightBytes;
+      stagingBytes -= stagingCharge(entry.layout); gpuBytes -= stagingCharge(entry.layout);
       host("releaseReadback", native);
     };
     const freeStorageRead = (entry) => {
       try { freeNativeRead(entry); } finally {
-        scratchBytes -= entry.layout.tightBytes; entry.bytes = null;
+        scratchBytes -= scratchCharge(entry.layout); entry.bytes = null;
         entry.resource.references--; collect(entry.resource);
       }
     };
@@ -292,10 +310,15 @@ export function createResourceStore(options) {
       require(!entry.native, "invalid-ticket", "Readback already started.");
       require(["beginReadback", "pollReadback", "collectReadback", "releaseReadback"].every((name) => typeof backend[name] === "function"),
         "unsupported-backend", "Backend has no staged readback capability.");
-      require(entry.layout.tightBytes <= limits.gpuBytes - gpuBytes, "limit-exceeded", "GPU staging byte budget exceeded.");
-      const native = host("beginReadback", res.storage, res.meta, entry.layout);
-      require(native !== null && typeof native === "object", "backend-error", "Backend returned no staged readback.");
-      entry.native = native; stagingBytes += entry.layout.tightBytes; gpuBytes += entry.layout.tightBytes;
+      require(stagingCharge(entry.layout) <= limits.gpuBytes - gpuBytes, "limit-exceeded", "GPU staging byte budget exceeded.");
+      stagingBytes += stagingCharge(entry.layout); gpuBytes += stagingCharge(entry.layout);
+      try {
+        const native = host("beginReadback", res.storage, res.meta, entry.layout);
+        require(native !== null && typeof native === "object", "backend-error", "Backend returned no staged readback.");
+        entry.native = native;
+      } catch (error) {
+        stagingBytes -= stagingCharge(entry.layout); gpuBytes -= stagingCharge(entry.layout); throw error;
+      }
     };
     const operation = (fn) => (...args) => result(() => { alive(); return fn(...args); });
     const prepareTransfer = (contextId, decodedCommand, asynchronous = false) => {
@@ -321,10 +344,10 @@ export function createResourceStore(options) {
         } else { transferBacking = needBacking(primary); heldBackings.push(transferBacking); }
         const layout = layoutFor(primary.meta, fields, transferBacking.byteLength, limits);
         require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Prepared transfer ticket limit exceeded.");
-        reserveScratch(layout.tightBytes);
+        reserveScratch(scratchCharge(layout));
         let upload;
         try { upload = !asynchronous && layout.direction === "upload" ? gather(transferBacking, layout) : null; }
-        catch (error) { scratchBytes -= layout.tightBytes; throw error; }
+        catch (error) { scratchBytes -= scratchCharge(layout); throw error; }
         const ticket = Object.freeze({});
         for (const res of retained) res.references++;
         const backingLinks = retained.map((res) => ({ resource: res, backing: res.backing }));
@@ -417,9 +440,10 @@ export function createResourceStore(options) {
       retainStorage: operation((contextId, id, role = "view") => {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
-        require(typeof role === "string" && ["view", "surface", "vertex", "index", "readback"].includes(role), "invalid-input", "Unknown storage lease role.");
+        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback"].includes(role), "invalid-input", "Unknown storage lease role.");
         require(role === "readback" || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
           (role === "surface" && res.meta.kind === "texture" && (res.meta.bind & 2) !== 0) ||
+          (role === "depth-surface" && res.meta.kind === "depth-texture" && res.meta.bind === 1) ||
           (role === "vertex" && res.meta.kind === "vertex-buffer") || (role === "index" && res.meta.kind === "index-buffer"),
         "unsupported-resource", "Storage lease role contradicts the resource binding class.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
@@ -439,8 +463,8 @@ export function createResourceStore(options) {
           box: requestedBox ?? { x: 0, y: 0, z: 0, width: meta.width, height: meta.height, depth: 1 }, dataOffset: 0, direction: 2 });
         const layout = layoutFor(meta, fields, meta.byteLength, limits);
         require(leases.get(token) === entry, "invalid-lease", "Storage lease changed while inspecting the box.");
-        reserveScratch(layout.tightBytes);
-        try { return success({ bytes: readGpu(res, layout) }); } finally { scratchBytes -= layout.tightBytes; }
+        reserveScratch(scratchCharge(layout));
+        try { return success({ bytes: readGpu(res, layout) }); } finally { scratchBytes -= scratchCharge(layout); }
       }),
       prepareTransfer: operation((contextId, command) => prepareTransfer(contextId, command)),
       executeTransfer: operation((token) => {
@@ -575,7 +599,7 @@ export function createResourceStore(options) {
         const layout = layoutFor(meta, fields, meta.byteLength, limits);
         require(leases.get(lease) === leaseEntry, "invalid-lease", "Storage lease changed while inspecting the box.");
         require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
-        reserveScratch(layout.tightBytes);
+        reserveScratch(scratchCharge(layout));
         const entry = { resource: res, lease, leaseEntry, revision: res.contentRevision, layout, native: null, bytes: null };
         res.references++;
         try { startRead(entry, res); }
@@ -592,7 +616,7 @@ export function createResourceStore(options) {
           box: { x: 0, y: 0, z: 0, width: meta.width, height: meta.height, depth: 1 }, dataOffset: 0, direction: 2 });
         const layout = layoutFor(meta, fields, meta.byteLength, limits);
         require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
-        reserveScratch(layout.tightBytes);
+        reserveScratch(scratchCharge(layout));
         const entry = { resource: res, scanoutSnapshot: true, layout, native: null, bytes: null };
         res.references++;
         try { startRead(entry, res); }
@@ -638,21 +662,28 @@ export function createResourceStore(options) {
 export function createWebGL2TransferBackend(gl) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
-    let vao = null, framebuffer = null, disposed = false;
+    let vao = null, framebuffer = null, depthProgram = null, disposed = false;
     const allocations = new Set(), pendingReads = new Set();
     const colorFormats = {
+      16: { internal: gl.DEPTH_COMPONENT16, upload: gl.DEPTH_COMPONENT, type: gl.UNSIGNED_SHORT },
       2: { internal: gl.RGB8, upload: gl.RGB, type: gl.UNSIGNED_BYTE },
       67: { internal: gl.RGBA8, upload: gl.RGBA, type: gl.UNSIGNED_BYTE },
       233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
     };
     const colorFormat = (meta) => {
       const profile = colorFormats[meta.format];
-      require(profile, "unsupported-resource", "Unsupported native color storage format.");
+      require(profile, "unsupported-resource", "Unsupported native texture storage format.");
       return profile;
     };
     // Store uploads are private, dense scratch arrays. Convert in that same
     // reservation: no second CPU image or GPU shadow escapes the byte budgets.
     const nativeUpload = (format, bytes) => {
+      if (format === 16) {
+        const guest = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const native = new Uint16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 2);
+        for (let i = 0; i < native.length; i++) native[i] = guest.getUint16(i * 2, true);
+        return native;
+      }
       if (format === 2) {
         for (let source = 0, target = 0; source < bytes.length; source += 4, target += 3) {
           const b = bytes[source], g = bytes[source + 1], r = bytes[source + 2];
@@ -672,7 +703,14 @@ export function createWebGL2TransferBackend(gl) {
       return bytes;
     };
     const guestReadback = (format, bytes) => {
-      if (format === 2) {
+      if (format === 16) {
+        // GPU packing produced low/high UN16 bytes in RG; compact the same
+        // charged RGBA scratch. The returned view owns that underlying image.
+        for (let source = 0, target = 0; source < bytes.length; source += 4, target += 2) {
+          bytes[target] = bytes[source]; bytes[target + 1] = bytes[source + 1];
+        }
+        return bytes.subarray(0, bytes.length / 2);
+      } else if (format === 2) {
         for (let i = 0; i < bytes.length; i += 4) {
           const r = bytes[i]; bytes[i] = bytes[i + 2]; bytes[i + 2] = r; bytes[i + 3] = 255;
         }
@@ -715,6 +753,52 @@ export function createWebGL2TransferBackend(gl) {
         if (scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
       }
     };
+    const depthPacker = () => {
+      if (depthProgram) return depthProgram;
+      const shaders = [], program = gl.createProgram();
+      try {
+        require(program, "backend-error", "Depth packing program allocation failed.");
+        for (const [type, text] of [
+          [gl.VERTEX_SHADER, "#version 300 es\nvoid main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));gl_Position=vec4(p*2.0-1.0,0,1);}"],
+          [gl.FRAGMENT_SHADER, "#version 300 es\nprecision highp float;precision highp int;uniform highp sampler2D src;uniform ivec2 origin;out vec4 color;void main(){float z=texelFetch(src,origin+ivec2(gl_FragCoord.xy),0).r;uint d=uint(floor(clamp(z,0.0,1.0)*65535.0+0.5));color=vec4(float(d&255u),float(d>>8),0.0,255.0)/255.0;}"],
+        ]) {
+          const shader = gl.createShader(type); require(shader, "backend-error", "Depth packing shader allocation failed.");
+          shaders.push(shader); gl.shaderSource(shader, text); gl.compileShader(shader);
+          require(gl.getShaderParameter(shader, gl.COMPILE_STATUS), "backend-error", "Depth packing shader compilation failed.");
+          gl.attachShader(program, shader);
+        }
+        gl.linkProgram(program);
+        require(gl.getProgramParameter(program, gl.LINK_STATUS), "backend-error", "Depth packing program link failed.");
+        const src = gl.getUniformLocation(program, "src"), origin = gl.getUniformLocation(program, "origin");
+        require(src !== null && origin !== null, "backend-error", "Depth packing uniforms are unavailable.");
+        depthProgram = { program, src, origin }; return depthProgram;
+      } catch (error) { if (program) gl.deleteProgram(program); throw error; }
+      finally { for (const shader of shaders) gl.deleteShader(shader); }
+    };
+    const packDepth = (storage, box) => {
+      const texture = gl.createTexture();
+      let attached = false;
+      try {
+        require(texture, "backend-error", "Depth conversion texture allocation failed.");
+        const packer = depthPacker();
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, box.width, box.height);
+        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        attached = true;
+        gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+        require(gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Depth conversion framebuffer is incomplete.");
+        gl.bindVertexArray(vao); gl.useProgram(packer.program); gl.viewport(0, 0, box.width, box.height);
+        for (const capability of [gl.BLEND, gl.DEPTH_TEST, gl.STENCIL_TEST, gl.SCISSOR_TEST, gl.CULL_FACE, gl.DITHER,
+          gl.RASTERIZER_DISCARD, gl.SAMPLE_ALPHA_TO_COVERAGE, gl.SAMPLE_COVERAGE]) gl.disable(capability);
+        gl.colorMask(true, true, true, true); gl.bindTexture(gl.TEXTURE_2D, storage.texture); gl.bindSampler(0, null);
+        gl.uniform1i(packer.src, 0); gl.uniform2i(packer.origin, box.x, box.y); gl.drawArrays(gl.TRIANGLES, 0, 3);
+        check(); return texture;
+      } catch (error) {
+        if (attached) gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+        if (texture) gl.deleteTexture(texture); throw error;
+      }
+    };
     try {
       check();
       vao = gl.createVertexArray(); framebuffer = gl.createFramebuffer();
@@ -737,7 +821,9 @@ export function createWebGL2TransferBackend(gl) {
           check();
           let storage = null;
           try {
-            if (meta.kind === "texture") {
+            if (meta.kind === "texture" || meta.kind === "depth-texture") {
+              if (meta.format === 16) require(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)?.precision >= 23,
+                "unsupported-resource", "Faithful UN16 reconstruction requires highp binary32 shader precision.");
               const texture = gl.createTexture();
               require(texture !== null, "backend-error", "WebGL texture allocation failed.");
               storage = Object.freeze({ kind: "texture", texture });
@@ -783,10 +869,23 @@ export function createWebGL2TransferBackend(gl) {
         },
         readback(storage, meta, layout) {
           check(); pixelState();
-          const bytes = new Uint8Array(layout.tightBytes);
+          const bytes = new Uint8Array(scratchCharge(layout));
           if (storage.kind === "buffer") {
             gl.bindBuffer(gl.COPY_READ_BUFFER, storage.buffer);
             gl.getBufferSubData(gl.COPY_READ_BUFFER, layout.box.x, bytes);
+          } else if (meta.format === 16) {
+            let converted = null;
+            try {
+              converted = packDepth(storage, layout.box);
+              gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+              gl.readPixels(0, 0, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+            } finally {
+              if (converted) {
+                gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+                gl.deleteTexture(converted);
+              }
+            }
           } else {
             gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
             try {
@@ -804,24 +903,29 @@ export function createWebGL2TransferBackend(gl) {
         },
         beginReadback(storage, meta, layout) {
           check(); pixelState();
-          const entry = { buffer: null, sync: null, ready: false, bytes: layout.tightBytes, format: meta.format };
+          const entry = { buffer: null, sync: null, ready: false, bytes: scratchCharge(layout), format: meta.format };
           pendingReads.add(entry);
           try {
             entry.buffer = gl.createBuffer();
             require(entry.buffer, "backend-error", "Readback staging allocation failed.");
             if (storage.kind === "texture") {
               gl.bindBuffer(gl.PIXEL_PACK_BUFFER, entry.buffer);
-              gl.bufferData(gl.PIXEL_PACK_BUFFER, layout.tightBytes, gl.STREAM_READ);
+              gl.bufferData(gl.PIXEL_PACK_BUFFER, entry.bytes, gl.STREAM_READ);
+              let converted = null;
               gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
               try {
-                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, storage.texture, 0);
+                if (meta.format === 16) converted = packDepth(storage, layout.box);
+                gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, converted ?? storage.texture, 0);
                 gl.readBuffer(gl.COLOR_ATTACHMENT0);
                 require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Readback framebuffer is incomplete.");
                 // Numeric offset selects the PBO overload: no CPU destination here.
-                gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, colorFormat(meta).type, 0);
+                gl.readPixels(converted ? 0 : layout.box.x, converted ? 0 : layout.box.y, layout.box.width, layout.box.height,
+                  gl.RGBA, converted ? gl.UNSIGNED_BYTE : colorFormat(meta).type, 0);
               } finally {
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
                 gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+                if (converted) gl.deleteTexture(converted);
               }
             } else {
               // WebGL forbids copies across element-array/other-data classes.
@@ -861,6 +965,10 @@ export function createWebGL2TransferBackend(gl) {
           if (disposed) return;
           for (const entry of [...pendingReads]) releaseReadback(entry);
           for (const storage of [...allocations]) destroy(storage);
+          if (depthProgram) {
+            if (gl.getParameter(gl.CURRENT_PROGRAM) === depthProgram.program) gl.useProgram(null);
+            gl.deleteProgram(depthProgram.program);
+          }
           gl.deleteVertexArray(vao); gl.deleteFramebuffer(framebuffer); disposed = true;
         },
       };

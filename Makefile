@@ -1969,3 +1969,7 @@ verify-E6-T12g1-variants:
 .PHONY: verify-E6-T12g2
 verify-E6-T12g2:
 	bash tools/verify-virgl-color-formats.sh
+
+.PHONY: verify-E6-T12g3
+verify-E6-T12g3:
+	bash tools/verify-virgl-depth-formats.sh

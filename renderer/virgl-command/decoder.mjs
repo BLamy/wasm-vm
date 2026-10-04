@@ -257,7 +257,7 @@ function decodeObject(p, objectType) {
     case 8: {
       p.exact(5);
       const resourceHandle = p.handle(2), format = p.u(3), level = p.u(4), layers = p.u(5);
-      p.require([2, 67, 233].includes(format) && level === 0 && layers === 0, "unsupported-feature", "Only required level zero, layer zero normalized color surfaces are supported.");
+      p.require([2, 16, 67, 233].includes(format) && level === 0 && layers === 0, "unsupported-feature", "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer: 0, lastLayer: 0 };
     }
     default: p.fail("unsupported-object", "Unknown or unsupported object type.");
