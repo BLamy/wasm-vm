@@ -15,7 +15,10 @@ export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
 export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
 export const RASTER_PROFILE = "virgl-webgl2-raw-bits-v27";
 export const RASTER_DOMAIN_KIND = "constant-bank-raster-copy-f32-v1";
+export const ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v28";
+export const ARITHMETIC_KIND = "tgsi-precise-binary32-rne-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
+const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -81,8 +84,30 @@ function rasterContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const arithmetic = value.profile === ARITHMETIC_PROFILE;
+    require(arithmetic === Object.hasOwn(value, "arithmeticBaseProfile") &&
+      arithmetic === Object.hasOwn(value, "preciseArithmeticContract"),
+    "Binary32 arithmetic contract disagrees with its outer profile.");
+    if (arithmetic) {
+      require(ARITHMETIC_BASES.has(value.arithmeticBaseProfile), "Arithmetic requires an existing raw base profile.");
+      let precision = record(value.preciseArithmeticContract, ["kind", "stage", "operations", "rounding", "nan", "subnormals"]);
+      require(precision.kind === ARITHMETIC_KIND && precision.stage === expectedStage &&
+        precision.rounding === "nearest-even" && precision.nan === "canonical-quiet-0x7fc00000" &&
+        precision.subnormals === "gradual", "Unknown binary32 arithmetic policy.");
+      const operations = array(precision.operations, 2), names = ["ADD", "MUL"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Arithmetic operations must be nonempty, sorted and unique.");
+      precision = Object.freeze({ ...precision, operations: Object.freeze(operations) });
+      const base = { ...value, profile: value.arithmeticBaseProfile };
+      delete base.arithmeticBaseProfile; delete base.preciseArithmeticContract;
+      // v28 cannot be a base; v27 has only preexisting finite bases. Thus the
+      // complete combined contract is checked in at most two nested calls.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, arithmetic: precision }) : checked;
+    }
     const raster = value.profile === RASTER_PROFILE;
     require(raster === Object.hasOwn(value, "rasterBaseProfile") && raster === Object.hasOwn(value, "constantRasterDomains"),
       "Copied-bank raster contract disagrees with its outer profile.");

@@ -805,6 +805,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
       else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "ADD_PRECISE")) { raw.opcode = RAW_ADD_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "MUL_PRECISE")) { raw.opcode = RAW_MUL_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "UARL")) raw.opcode = RAW_UARL;
       else if (word(p, "AND")) raw.opcode = RAW_AND;
       else if (word(p, "OR")) raw.opcode = RAW_OR;
@@ -839,7 +841,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES)) failure_code = "unsupported-feature";
+      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES))) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -858,10 +860,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (!punctuation(p, ',')) return false;
       /* A modifier belongs only to a numeric operand; samplers, raw selectors
        * and bitwise payloads never pass through this typed minus parser. */
-      if (s->raw && (((UINT64_C(1) << raw.opcode) & RAW_NUMERIC_OPCODES) ||
+      bool arithmetic = s->raw && ((UINT64_C(1) << raw.opcode) & RAW_ARITHMETIC_OPCODES);
+      if (s->raw && (((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES)) ||
           raw.opcode == RAW_MAX_PRECISE) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
+      bool absolute = arithmetic && punctuation(p, '|');
+      if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0 << i;
       if (!source(p, s, consumed, s->raw ? &raw.src[i] : NULL, raw.opcode, i)) return false;
+      if (absolute && !punctuation(p, '|')) return false;
    }
    if (tex) {
       struct reg sampler;
@@ -954,6 +960,11 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    if (s->raw && !raw_outputs_safe(s)) {
       int raster = raw_certify_raster_outputs(s);
       if (raster != 1) {
+         /* An exact producer alone cannot borrow raw-bank output authority.
+          * One whole-text finite-bank retry can establish ordinary numerical
+          * access separately. Allocation failure is never retried as a domain. */
+         if (raster == 0 && (s->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED) &&
+             !(s->raw_flags & RAW_CONDITIONAL)) missing_numeric_authority = true;
          failure_code = raster < 0 ? "translation-error" : "unsupported-feature";
          return false;
       }
@@ -1120,6 +1131,8 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = true;
       } else if (word(&p, "MOV_PRECISE") || word(&p, "FSEQ_PRECISE") || word(&p, "FSNE_PRECISE")) {
          candidate = true;
+      } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE")) {
+         candidate = numeric_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
           word(&p, "FSLT") || word(&p, "FSGE") || word(&p, "FSEQ") || word(&p, "FSNE") || word(&p, "UARL")) {
@@ -1331,6 +1344,7 @@ static void precise_contract(const struct profile *profile)
    for (unsigned i = 0; i < profile->raw->count; ++i) {
       const struct raw_instruction *instruction = &profile->raw->instructions[i];
       if (!(instruction->flags & RAW_PRECISE)) continue;
+      if ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) continue;
       used[instruction->opcode == RAW_FSEQ ? 0 : instruction->opcode == RAW_FSNE ? 1 :
          instruction->opcode == RAW_MAX_PRECISE ? 2 : 3] = true;
    }
@@ -1342,6 +1356,15 @@ static void precise_contract(const struct profile *profile)
       append("%s\"%s\"", comma ? "," : "", names[i]); comma = true;
    }
    append("]}");
+}
+
+static void arithmetic_contract(const struct profile *profile, const char *base)
+{
+   bool add = (profile->raw->opcode_mask & (UINT64_C(1) << RAW_ADD_PRECISE)) != 0;
+   bool mul = (profile->raw->opcode_mask & (UINT64_C(1) << RAW_MUL_PRECISE)) != 0;
+   append(",\"arithmeticBaseProfile\":\"%s\",\"preciseArithmeticContract\":{\"kind\":\"tgsi-precise-binary32-rne-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"rounding\":\"nearest-even\",\"nan\":\"canonical-quiet-0x7fc00000\",\"subnormals\":\"gradual\"}",
+      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "",
+      add && mul ? "," : "", mul ? "\"MUL\"" : "");
 }
 
 static void raster_contract(const struct profile *profile, unsigned count, const char *base)
@@ -1391,8 +1414,10 @@ static void stage_result(const struct conversion *c)
       c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
       c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
    bool raster = profile->raw && (profile->raw->opcode_mask & RAW_RASTER_BANK_USED);
+   bool arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED);
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      raster ? "virgl-webgl2-raw-bits-v27" : name, stage ? "fragment" : "vertex");
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
+      stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(profile, IN); else append("[]");
@@ -1427,6 +1452,7 @@ static void stage_result(const struct conversion *c)
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    if (profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_WORD_USED)) precise_contract(profile);
    if (raster) raster_contract(profile, info->num_consts, name);
+   if (arithmetic) arithmetic_contract(profile, raster ? "virgl-webgl2-raw-bits-v27" : name);
    append("}");
 }
 

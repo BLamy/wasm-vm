@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: MIT */
 #include "raw_bits.h"
+#include "raw_binary32.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,6 +137,10 @@ static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_
                                       unsigned source, unsigned lane, bool conditional)
 {
    struct raw_lane value = checked_source(ir, instruction, source, lane, conditional);
+   if (instruction->flags & (RAW_ABSOLUTE_SOURCE0 << source)) {
+      value.zero |= UINT32_C(0x80000000);
+      value.one &= ~UINT32_C(0x80000000);
+   }
    if (instruction->flags & (RAW_NEGATE_SOURCE0 << source)) {
       const uint32_t sign = UINT32_C(0x80000000);
       uint32_t zero = value.zero;
@@ -239,6 +244,20 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          result[lane] = selected(condition, a, b, mixed);
          break;
       }
+      case RAW_ADD_PRECISE:
+      case RAW_MUL_PRECISE:
+         /* Exact private arithmetic accepts raw words, including specials.
+          * Numeric access/output is the separate existing arithmetic policy:
+          * both operands must already have checked numerical authority. No
+          * private integer manufacture acquires that authority here. */
+         a = precise_source(ir, instruction, 0, lane, conditional);
+         b = precise_source(ir, instruction, 1, lane, conditional);
+         if (float_mode(a) && float_mode(b)) {
+            result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT |
+               ((a.origin | b.origin) & RAW_BANK_DEPENDENCY);
+            dependency |= result[lane].origin & RAW_BANK_DEPENDENCY;
+         }
+         break;
       case RAW_UCMP: result[lane] = selected(a, b, checked_source(ir, instruction, 2, lane, conditional), mixed); break;
       case RAW_ADD:
       case RAW_MUL:
@@ -286,9 +305,11 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       }
    ir->instructions[ir->count++] = *instruction;
    if (instruction->opcode != RAW_MOV) ir->opcode_mask |= UINT64_C(1) << instruction->opcode;
-   if (instruction->flags & RAW_NEGATE_SOURCES) ir->opcode_mask |= RAW_V5_NEGATION;
+   bool arithmetic = ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) != 0;
+   if ((instruction->flags & RAW_NEGATE_SOURCES) && !arithmetic) ir->opcode_mask |= RAW_V5_NEGATION;
    if (dependency) ir->opcode_mask |= RAW_FINITE_BANK_USED;
-   if (instruction->flags & RAW_PRECISE) ir->opcode_mask |= RAW_PRECISE_WORD_USED;
+   if (arithmetic) ir->opcode_mask |= RAW_PRECISE_ARITHMETIC_USED;
+   else if (instruction->flags & RAW_PRECISE) ir->opcode_mask |= RAW_PRECISE_WORD_USED;
    return true;
 }
 
@@ -452,7 +473,9 @@ int raw_certify_raster_outputs(const struct profile *p)
          } else {
             /* Existing numeric results already own ordinary output authority.
              * No integer/bitwise transformation becomes a copied bank word. */
-            valid = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+            valid = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0 ||
+               (((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) &&
+                (instruction->float_mask & (1u << lane)));
          }
       }
       valid = valid && predecessor;
@@ -503,7 +526,11 @@ static void operand(struct writer *w, const struct profile *p, const struct raw_
 static void precise_operand(struct writer *w, const struct profile *p,
                             const struct raw_instruction *instruction, unsigned source, unsigned lane)
 {
-   emit(w, "("); operand(w, p, &instruction->src[source], lane);
+   emit(w, "(");
+   bool absolute = (instruction->flags & (RAW_ABSOLUTE_SOURCE0 << source)) != 0;
+   if (absolute) emit(w, "(");
+   operand(w, p, &instruction->src[source], lane);
+   if (absolute) emit(w, " & 2147483647u)");
    if (instruction->flags & (RAW_NEGATE_SOURCE0 << source)) emit(w, " ^ 2147483648u");
    emit(w, ")");
 }
@@ -632,9 +659,12 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          " bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\n"
          " bool equal = !unordered && (a == b || (magnitude_a == 0u && magnitude_b == 0u));\n"
          " return (not_equal ? !equal : equal) ? 4294967295u : 0u;\n}\n");
+   if (p->raw->opcode_mask & RAW_ARITHMETIC_OPCODES) emit(&w, "%s", raw_binary32_common);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_ADD_PRECISE)) emit(&w, "%s", raw_binary32_add);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_MUL_PRECISE)) emit(&w, "%s", raw_binary32_mul);
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
    if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
-   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE)))
+   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | RAW_ARITHMETIC_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE)))
       emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
@@ -661,7 +691,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          emit(&w, " & 2147483647u) != 0u) {\n");
       }
       bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
-      bool raw_shadow = instruction->opcode == RAW_MAX_PRECISE ||
+      bool arithmetic = ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) != 0;
+      bool raw_shadow = arithmetic || instruction->opcode == RAW_MAX_PRECISE ||
          ((instruction->flags & RAW_STRUCTURED) && !numeric &&
           instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP);
       if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
@@ -677,8 +708,10 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             if (op == RAW_ISGE) emit(&w, "(");
             if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
             if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, "raw_float_equal_mask(");
-            if (op == RAW_MAX_PRECISE) {
-               emit(&w, "raw_precise_max("); precise_operand(&w, p, instruction, 0, lane);
+            if (op == RAW_MAX_PRECISE || arithmetic) {
+               emit(&w, op == RAW_MAX_PRECISE ? "raw_precise_max(" :
+                    op == RAW_ADD_PRECISE ? "raw_precise_add(" : "raw_precise_mul(");
+               precise_operand(&w, p, instruction, 0, lane);
             } else operand(&w, p, &instruction->src[0], lane);
             if (op == RAW_AND || op == RAW_OR) {
                emit(&w, op == RAW_AND ? " & " : " | "); operand(&w, p, &instruction->src[1], lane);
@@ -696,7 +729,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             } else if (op == RAW_UCMP) {
                emit(&w, " != 0u ? "); operand(&w, p, &instruction->src[1], lane);
                emit(&w, " : "); operand(&w, p, &instruction->src[2], lane);
-            } else if (op == RAW_MAX_PRECISE) {
+            } else if (op == RAW_MAX_PRECISE || arithmetic) {
                emit(&w, ", "); precise_operand(&w, p, instruction, 1, lane); emit(&w, ")");
             } else if (op == RAW_FSEQ || op == RAW_FSNE) {
                emit(&w, ", "); operand(&w, p, &instruction->src[1], lane);

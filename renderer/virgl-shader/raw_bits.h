@@ -22,7 +22,9 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit25 is the finite-bank feature, not an opcode. */
                   RAW_UIF = 26, RAW_ELSE, RAW_ENDIF, RAW_UARL,
                   RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP, RAW_FSEQ, RAW_FSNE,
-                  RAW_MAX_PRECISE };
+                  RAW_MAX_PRECISE,
+                  /* Bits36/37 are precision/raster features, not opcodes. */
+                  RAW_ADD_PRECISE = 38, RAW_MUL_PRECISE };
 #define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP))
 #define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
 #define RAW_EQUALITY_OPCODES ((UINT64_C(1) << RAW_FSEQ) | (UINT64_C(1) << RAW_FSNE))
@@ -38,15 +40,18 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_PRECISE_WORD_USED (UINT64_C(1) << 36)
 /* A finalized copy certificate supplies only guarded ordinary raster access. */
 #define RAW_RASTER_BANK_USED (UINT64_C(1) << 37)
+#define RAW_ARITHMETIC_OPCODES ((UINT64_C(1) << RAW_ADD_PRECISE) | (UINT64_C(1) << RAW_MUL_PRECISE))
+#define RAW_PRECISE_ARITHMETIC_USED (UINT64_C(1) << 40)
 #define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
 #define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
 #define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
 _Static_assert(RAW_MAX_PRECISE < 36, "opcode/precision feature separation");
+_Static_assert(RAW_ADD_PRECISE == 38 && RAW_MUL_PRECISE == 39, "arithmetic/feature separation");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
        RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
-       RAW_PRECISE = 128 };
+       RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
