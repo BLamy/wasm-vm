@@ -26,7 +26,7 @@ It does not replay full client drawing state, enable negotiation or claim FPS.
 ## Deterministic acceptance
 
 `make verify-E6-T12g6a` authenticates literal G1 source/index/capture provenance,
-compiles the original pairs in hardware WebGL2, records actual reflection and
+compiles the admitted original programs in hardware WebGL2, records actual reflection and
 uniform snapshots, and uses independent hand-written equations for transform
 feedback words and raw GPU fragment pixels. Exercise all written vertex lanes,
 lighting clamp/ambient/material/alpha, separate rounded precise zero arithmetic,
@@ -55,3 +55,10 @@ not production compiler semantics, renderer negotiation, demo imports or caps.
 G6 remains gated on separately proving the two larger unsupported original bodies.
 The four already-admitted originals receive their own physical GPU proof here;
 F6's unchanged nineteen-body evidence is carried forward, never relabeled.
+
+Original draw binding inspection additionally identifies two supported programs:
+client `80a42bf3` / `86d0ee79` and supporting `403b0529` / `c2474531`.
+The latter reuses a byte-identical verified F6 vertex body. New vertex `7bf4d0d0`
+is originally paired with rejected `92cb866a`; measure every written output of
+that vertex in an explicitly labeled compatible isolation program. Keep its
+original complete program rejected, together with `403b0529` / `c5806d5f`.

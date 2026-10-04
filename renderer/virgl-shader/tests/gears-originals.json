@@ -1,0 +1,486 @@
+{
+  "schema": "gears-original-shader-boundary-v1",
+  "limits": {
+    "textBytes": 16384,
+    "tokens": 8192,
+    "glslBytes": 65536,
+    "instructions": 179,
+    "registerIndex": 7,
+    "temporaryRegisterIndex": 117,
+    "constantRegisterIndex": 45
+  },
+  "originals": [
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/80a42bf3c99720ded8979c28cf04fdf1e4080c5ff44f7c05f43d693b3e063e02.tgsi",
+      "sha256": "80a42bf3c99720ded8979c28cf04fdf1e4080c5ff44f7c05f43d693b3e063e02",
+      "bytes": 1187,
+      "stage": "vertex",
+      "role": "client",
+      "admitted": true,
+      "metadata": {
+        "profile": "virgl-webgl2-raw-bits-v27",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          },
+          {
+            "index": 1,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15,
+            "interpolation": "smooth"
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 10,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 10
+          }
+        ],
+        "preciseWordContract": {
+          "kind": "tgsi-precise-word-local-v1",
+          "stage": "vertex",
+          "operations": [
+            "MAX"
+          ]
+        },
+        "rasterBaseProfile": "virgl-webgl2-raw-bits-v18",
+        "constantRasterDomains": [
+          {
+            "kind": "constant-bank-raster-copy-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 10,
+            "components": [
+              {
+                "register": 9,
+                "mask": 8
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/86d0ee793508f4c6b9fad89c1ce75714fb38a8de8f8f1f3743c30ad71e680a71.tgsi",
+      "sha256": "86d0ee793508f4c6b9fad89c1ce75714fb38a8de8f8f1f3743c30ad71e680a71",
+      "bytes": 143,
+      "stage": "fragment",
+      "role": "client",
+      "admitted": true,
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "fragment",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "interpolation": "smooth"
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": []
+      }
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e.tgsi",
+      "sha256": "7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e",
+      "bytes": 588,
+      "stage": "vertex",
+      "role": "support",
+      "admitted": true,
+      "metadata": {
+        "profile": "virgl-webgl2-raw-bits-v28",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          },
+          {
+            "index": 1,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15,
+            "interpolation": "smooth"
+          },
+          {
+            "index": 2,
+            "name": "vso_g1",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 1,
+            "componentMask": 3,
+            "writtenMask": 3,
+            "interpolation": "smooth"
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 4,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ],
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 4
+          }
+        ],
+        "rasterBaseProfile": "virgl-webgl2-raw-bits-v7",
+        "constantRasterDomains": [
+          {
+            "kind": "constant-bank-raster-copy-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 4,
+            "components": [
+              {
+                "register": 3,
+                "mask": 3
+              }
+            ]
+          }
+        ],
+        "arithmeticBaseProfile": "virgl-webgl2-raw-bits-v27",
+        "preciseArithmeticContract": {
+          "kind": "tgsi-precise-binary32-rne-v1",
+          "stage": "vertex",
+          "operations": [
+            "ADD",
+            "MUL"
+          ],
+          "rounding": "nearest-even",
+          "nan": "canonical-quiet-0x7fc00000",
+          "subnormals": "gradual"
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba.tgsi",
+      "sha256": "92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba",
+      "bytes": 39261,
+      "stage": "fragment",
+      "role": "support",
+      "admitted": false,
+      "rejection": {
+        "code": "input-too-large",
+        "message": "TGSI text exceeds 16384 bytes."
+      }
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/c2474531b21b3debcbaefd49d53f945e7d883df71316a60135876097a019b1f1.tgsi",
+      "sha256": "c2474531b21b3debcbaefd49d53f945e7d883df71316a60135876097a019b1f1",
+      "bytes": 334,
+      "stage": "fragment",
+      "role": "support",
+      "admitted": true,
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "fragment",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 3,
+            "interpolation": "smooth"
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "fsout_c0",
+            "type": "vec4",
+            "semantic": "COLOR",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [],
+        "uniforms": [
+          {
+            "name": "fsconst0",
+            "type": "uvec4[]",
+            "count": 1,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [
+          {
+            "index": 0,
+            "name": "fssamp0",
+            "type": "sampler2D"
+          }
+        ],
+        "uniformBlocks": []
+      }
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f.tgsi",
+      "sha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f",
+      "bytes": 14786,
+      "stage": "fragment",
+      "role": "support",
+      "admitted": false,
+      "rejection": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    }
+  ],
+  "retainedPartners": [
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+      "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+      "stage": "vertex",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          },
+          {
+            "index": 1,
+            "name": "vso_g0",
+            "type": "vec4",
+            "semantic": "GENERIC",
+            "semanticIndex": 0,
+            "componentMask": 3,
+            "writtenMask": 3,
+            "interpolation": "smooth"
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "vsconst0",
+            "type": "uvec4[]",
+            "count": 3,
+            "encoding": "float32-bits"
+          }
+        ],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      "bytes": 419,
+      "probe": "ordinary",
+      "retainedPath": "evidence/virgl-corpus/captures/glmark2-es2/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+      "admitted": true,
+      "role": "retained-partner"
+    }
+  ]
+}
