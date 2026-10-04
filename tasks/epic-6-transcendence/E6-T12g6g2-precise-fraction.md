@@ -3,7 +3,7 @@ id: E6-T12g6g2
 epic: 6
 title: Admit exact instruction-local fractional-part arithmetic
 priority: 525.027010575
-status: implemented
+status: verified
 depends_on: [E6-T12g6g1]
 estimate: S
 risk: high
@@ -124,3 +124,61 @@ not demonstrate actual guest offload, complete compositor admission or a speed
 increase; the two full original shaders remain rejected and production/caps/live
 imports remain gated. Submitted to a fresh adversarial critic before a dependent
 may activate.
+
+### 2026-10-04 — fresh adversarial verifier — VERDICT: verified
+
+VERDICT: verified
+
+Inspected the complete task and predecessor/submission diff before evidence and
+committed predictions to the critic record before reading the observations. This
+session did not implement the task. Runtime remains frozen at
+`8a721921e16375ccc6ee30f46e772f245a4a17ac`; worker submission is
+`be4ff41ba8e99047796d9c41e13b34b0965c8e6c`, above verified predecessor
+`5ec49cbce92fc809498c601dc5e3a0e165e435ba`. rr/ssh-dev remain waived.
+
+- P1 — HELD. 95 unique regular members match the index, archive and cited digests; hot/cold 243/236 sources bind unchanged frozen runtime to submission. Original exact-head cold clone was pristine and scrubbed. Citation: `evidence/virgl-precise-fraction/verifier/authentication.json`, SHA-256 `fc3550e82d069d70eef65e60398be1af0e2bab149be405d3b867d7e8ca78fab6`.
+- P2 — HELD. Independent integer-scale rational equation confirms 15,936 helper predictions and literal predeclared anchors, including -minimum-subnormal => 0x3f800000 at hot/cold native/native.log:4 and -2^-25 => 0x3f800000 at line 10. Every complete archived native response matches Wasm. Citation: `evidence/virgl-precise-fraction/verifier/native-source-parity.json`, SHA-256 `2bd7c4db1d51f07ee8763616ebcadba1b00b97275fcdc8baa24d25bcaa22f133`.
+- P3 — HELD. 17 distinct authentic contracts survive; 1,118 independent hostile metadata mutations close without invoking an accessor. 13 banks preserve ownership, range and whole-prefix checks; private unknown/output/F2I predictions hold in the promoted 4,469-case guard. Citation: `evidence/virgl-precise-fraction/verifier/consumer-attacks.json`, SHA-256 `f56d9cdf0a9d65c239e0935bf479a39ec45df24c27eabbfaf668b971dc9e1ec5`.
+- P4 — HELD. All 4,469 native/Wasm word-bit, negation, mask/swizzle, alias, killed/saved version, conditional, malformed syntax and no-new-range predictions hold. Native token replay checks all 1,897 actual FLOAT/FLOAT unary FRC primary conversions and masks per recording. Citation: `evidence/virgl-precise-fraction/verifier/independent-regressions.json`, SHA-256 `fc23c3ab26457cc8e7d72a044a7faa6b793b545e5e35a4a1ba9a5d48ab352480`.
+- P5 — HELD. Six verified critic seals, 247 byte-identical dependencies and 16 unchanged helpers are carried forward. Independent native/legacy replay preserves 1,014 complete predecessor responses per recording except exactly the two digest-ledger migrations; current retained original/historical partitions remain 23/25 and 5/112. Seven production gate files remain byte-identical. Citation: `evidence/virgl-precise-fraction/verifier/carry-forward.json`, SHA-256 `9a665a774ed48f2705b72769511a4fffc0b2b202006e8a0c9a73394305ce2a47`.
+- P6 — HELD. Independent TGSI source interpretation confirms all six sealed recordings: 775,392 words and 67,456 pixels. Exact actual shaderSource sequences, GL compile/link status and reflection, attributes, banks, indexed geometry, source-dependent pixels, async waiting-index plans, closed hostile draws and zero GL/resource lifetimes bind the observations. Fourth physical seed separately confirms 128,832 words and 11,072 pixels. Citation: `evidence/virgl-precise-fraction/verifier/source-semantics.json`, SHA-256 `c3e26f55660a72add39c3f29759417808bff531be03f869204ad85f97429536f`.
+- P7 — HELD. Actual archived hot/cold ASan/UBSan binaries replay with byte-identical transcripts and no diagnostics. Re-exporting their original raw/merged profiles is exact. All 36 helper lines, 32 branches and 81 regions are covered; 28 runtime hunks/145 added lines have positive LLVM/V8 counts or explicit static/type/source-data justification, with zero proof gaps or dead hunks. Citation: `evidence/virgl-precise-fraction/verifier/coverage-audit.json`, SHA-256 `4e27278f554ae26999b05d910aee4e47008f3371f865950f4adcaf5765cb22c7`.
+- P8 — HELD. Independent seed 324,508,637 and physical seed 610,839,776 hold. The native promotion detects deleted negative complement at fraction-1-true-bit-0. The permanent capture promotion independently confirms 36,096 private words and refutes the real emitted negative-complement fault at record 175/vector 0, carrier lane 7, capture 9389931471ca43ba88af7b8bd37a8f8f4bb61a7107ca422d9aad1bd167d9079f. All six sealed physical faults contradict concrete words (lanes 7/5/6) and dispose objects. Citation: `evidence/virgl-precise-fraction/verifier/sensitivity.json`, SHA-256 `77c1e65023d49efbc130413dc25d2147f42d06be50710045a46368a999963a25`.
+
+SUITE: promoted `renderer/virgl-shader/tests/precise-fraction-regressions.mjs`
+contains 4,469 exact native/Wasm source-bit, version, mask and authority cases;
+`renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs` interprets
+TGSI against real feedback and verifies 36,096 private words in the fourth seed.
+The native and actual emitted-source sabotages both fail these promotions.
+Both source/report digests and exact commands are in the verifier manifest and
+`verdict.json`; the next saturation target will carry both guards forward.
+
+Commands: `python3 evidence/virgl-precise-fraction/verifier/{authenticate,replay,native_parity,source_semantics,coverage_audit,carry_forward,sensitivity,final_audits,write_verdict,seal}.py` (each separately);
+`node tools/virgl-precise-fraction/browser.mjs --output evidence/virgl-precise-fraction/verifier/gpu-610839776 --seed 610839776`;
+`python3 evidence/virgl-precise-fraction/verifier/source_semantics.py --fourth`;
+`NODE_V8_COVERAGE=evidence/virgl-precise-fraction/verifier/node-consumer-coverage node evidence/virgl-precise-fraction/verifier/consumer_attacks.mjs`;
+`node renderer/virgl-shader/tests/precise-fraction-regressions.mjs --native evidence/virgl-precise-fraction/verifier/unpacked/generated/native/virgl-shader --output evidence/virgl-precise-fraction/verifier/independent-regressions.json`;
+`node renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs --report evidence/virgl-precise-fraction/verifier/gpu-610839776/report.json --output evidence/virgl-precise-fraction/verifier/independent-capture-regressions.json`.
+Exact deliberate-failure commands, archive binary/profile identities and replay
+digests are also recorded in `verdict.json`, `native-replays.json` and `sensitivity.json`.
+
+Evidence of record: `evidence/virgl-precise-fraction/verifier/{manifest.json,records.json,recording.tar.gz}`.
+Critic archive: 71 members / 13,091,830 bytes, SHA-256
+`29fdaa5e6774bde13f708333b870bb2cda1060547f369086d0f11fd9a73c21e6`;
+index SHA-256 `16ac41cbdc3e4944cccb845670fa941b9fce9180589887a17717fd9d380b3a7a`;
+verdict SHA-256 `0b55fa9417706aeb14a88b2baa7f1689a8d1891bdd141845f0e3fb2c82578fd7`.
+Every sealed member was re-authenticated after sealing. Six predecessor critic
+seals, 247 unchanged dependencies and 16 unchanged helpers retain HELD results.
+The original pristine exact-head clone is authenticated and reused; no runtime
+change or portability finding called for repeating it.
+
+Coverage: all 28 changed runtime hunks / 145 added lines are executed or explicitly
+waived as static declarations/source data; zero needs-evidence/dead hunks. The
+actual archived helper profiles cover all 36 lines, 32 branches and 81 regions.
+Cleanup: all 13 successful/fault browser runs dispose their objects and all
+completed consumers have zero renderer/resource lifetime budgets.
+
+No guest offload, complete compositor admission, throughput/FPS/MIPS or production
+deployment claim follows. The two complete original shaders remain rejected;
+default caps/negotiation and live demo imports are byte-identical to the verified
+predecessor and stay disabled.
