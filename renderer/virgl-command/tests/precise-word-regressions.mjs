@@ -4,10 +4,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {createVirglShaderBridge} from '../../virgl-shader/index.mjs';
-import {parseConstantDomain} from '../constant-domain.mjs';
+import {parseConstantDomain, checkRasterBank} from '../constant-domain.mjs';
 
 export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
-  const observations = {admissions: [], contracts: [], ownership: [], getterCalls: 0};
+  const observations = {admissions: [], contracts: [], ownership: [], raster: [], getterCalls: 0};
   const program = (stage, body, bank = false) => [
     stage === 'vertex' ? 'VERT' : 'FRAG',
     stage === 'vertex' ? 'DCL IN[0]' : 'DCL IN[0], GENERIC[0], CONSTANT',
@@ -33,6 +33,7 @@ export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
       assert.ok(JSON.stringify(result).length < 512);
     }
     observations.admissions.push({stage, name, accepted});
+    return result;
   };
   for (const stage of ['vertex', 'fragment']) {
     requireResult(stage, 'retained-copy-flag', ['MOV_PRECISE OUT[0], IN[0]'], true);
@@ -49,10 +50,32 @@ export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
       `IMM[0] UINT32 {${a},${a},${a},${a}}`, `IMM[1] UINT32 {${b},${b},${b},${b}}`,
       'MAX_PRECISE TEMP[0], IMM[0], IMM[1]', 'MOV_PRECISE OUT[0], TEMP[0]',
     ], accepted);
-    requireResult(stage, 'bank-selection-does-not-grant-output', [
+    const raster = requireResult(stage, 'bank-selection-requires-output-certificate', [
       'MOV TEMP[0], CONST[0]', 'MAX_PRECISE TEMP[0], TEMP[0], IN[0]',
       'MOV_PRECISE OUT[0], TEMP[0]',
-    ], false, 17, true);
+    ], true, 27, true);
+    assert.equal(raster.metadata.rasterBaseProfile, 'virgl-webgl2-raw-bits-v18');
+    assert.deepEqual(raster.metadata.constantRasterDomains, [{
+      kind: 'constant-bank-raster-copy-f32-v1', stage, slot: 0,
+      name: (stage === 'vertex' ? 'vs' : 'fs') + 'const0', count: 2,
+      components: [{register: 0, mask: 15}],
+    }]);
+    const parsedRaster = parse(raster.metadata, stage);
+    assert.equal(parsedRaster.ok, true);
+    const bank = [0x3f800000, 0x80000000, 0, 0x00800000, 0, 0, 0, 0];
+    assert.equal(checkRasterBank(bank, parsedRaster.rasterDomain).ok, true);
+    for (const word of [1, 0x80000001, 0x7f800000, 0x7fc055aa]) {
+      const invalid = bank.slice(); invalid[0] = word;
+      const checked = checkRasterBank(invalid, parsedRaster.rasterDomain);
+      assert.equal(checked.ok, false);
+      assert.equal(checked.error.code, word === 1 || word === 0x80000001 ?
+        'constant-raster-domain-error' : 'constant-domain-error');
+      observations.raster.push({stage, word, error: checked.error.code});
+    }
+    for (const key of ['rasterBaseProfile', 'constantRasterDomains', 'constantDomains', 'preciseWordContract']) {
+      const erased = structuredClone(raster.metadata); delete erased[key];
+      assert.equal(parse(erased, stage).ok, false, 'required copied-bank obligation ' + key);
+    }
     for (const destination of ['TEMP[0]', 'TEMP[1]']) requireResult(stage, 'numeric-bank-negated-alias-' + destination, [
       'IMM[0] FLT32 {0,0,0,0}', 'ADD TEMP[0], CONST[0], IMM[0]', 'MOV TEMP[1], IN[0]',
       `MAX_PRECISE ${destination}, -TEMP[0].wzyx, TEMP[1].yxwz`,

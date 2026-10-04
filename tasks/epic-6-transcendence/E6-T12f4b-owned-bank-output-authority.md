@@ -71,3 +71,24 @@ the compiler, consumer and harness for one complete high-risk recording and
 one scrubbed pristine clone. A separate fresh verifier must judge the result.
 This boundary proves guarded admission; real radial workload banks and
 production guest graphics bring-up follow their dependent tasks.
+
+### 2026-10-03 — worker — recording harness repair
+
+The first recording at `3992d9466554f44b209938937c24551c6bb6bdee` completed
+1,501,326 native calls, native/Wasm parity, all three new hardware schedules,
+all three actual source faults and the retained hardware leaves. It stopped at
+the promoted PRECISE regression's historical bank-selection rejection, which
+this boundary intentionally replaces with guarded admission. Preserve the
+failed command log at
+`target/evidence/virgl-raster-bank-worker-3992d946/acceptance.log`.
+
+Update that exact regression to require v27, base v18, the complete copied
+component mask and all simultaneous obligations. It now rejects copied
+subnormal/nonfinite words and erased raster/finite/precision contracts. Add the
+promoted regression sources to the recording inventory. The browser receipt
+reader also requires identical duplicate pins to agree: pinned fixtures are
+already present in the compiler's complete source inventory, and conflicting
+entries still fail. Native/Wasm and physical schema prechecks passed; this
+repair changes tests and recording code only. Compiler and consumer runtime
+bytes remain unchanged. Freeze the repaired harness before the final recording
+and pristine-clone proof.

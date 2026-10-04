@@ -29,7 +29,8 @@ SOURCES = ['Makefile','renderer/virgl-shader/build.sh', 'renderer/virgl-shader/i
            'tools/virgl-raster-bank/generate_cases.py', 'tools/verify-virgl-raster-bank.sh',
            'tools/virgl-precise-word/generate_cases.py','tools/virgl-precise-word/oracle.mjs',
            'tools/virgl-raster-bank/shared.py','tools/virgl-raster-bank/receipt.py','tools/virgl-raster-bank/wasm.mjs','tools/virgl-raster-bank/wasm_receipt.py','tools/virgl-raster-bank/browser.mjs','tools/virgl-raster-bank/oracle.mjs','tools/virgl-raster-bank/reference.mjs','tools/virgl-raster-bank/consumer.mjs','tools/virgl-raster-bank/faults.py','tools/virgl-raster-bank/cold.py',
-           'renderer/virgl-command/tests/raster-bank.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','tools/lib/virgl-browser-runner.mjs','tools/virgl-radial-domain/oracle.mjs']
+           'renderer/virgl-command/tests/raster-bank.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','tools/lib/virgl-browser-runner.mjs','tools/virgl-radial-domain/oracle.mjs',
+           'renderer/virgl-command/tests/ordered-mask-regressions.mjs','renderer/virgl-command/tests/precise-word-regressions.mjs','renderer/virgl-command/tests/radial-domain-regressions.mjs','renderer/virgl-shader/native_tests/precise_upstream_allocations.sh']
 
 
 def require(value, message):

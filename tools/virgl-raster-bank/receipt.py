@@ -12,7 +12,10 @@ def envelope(directory,head,task='E6-T12f4b',fault=None,fault_root=None):
  require(r['guestExecution'] is False and r['currentGuest3dAdvertisement'] is False and r['trackedChanges']==[],'isolated frozen source')
  require(same(r['browserErrors'],{'console':[],'page':[],'requests':[]}),'zero browser errors')
  allowed={str((fault_root/e['path']).relative_to(ROOT)):e for e in fault['served']} if fault else {}
- inventory={e['path']:e for e in r['sources']};require(len(inventory)==len(r['sources']),'unique complete source inventory')
+ inventory={}
+ for e in r['sources']:
+  if e['path'] in inventory:require(same(e,inventory[e['path']]),'duplicate pin agrees with complete source inventory')
+  else:inventory[e['path']]=e
  for e in r['sources']:
   if e['path'] in allowed:require(e['size']==allowed[e['path']]['bytes'] and e['sha256']==allowed[e['path']]['sha256'],'actual source fault served')
   else:BASE.verify_source(e,head)
