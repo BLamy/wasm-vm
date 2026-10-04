@@ -1,0 +1,415 @@
+{
+  "schema": "wasm-vm-virgl-capture-v1",
+  "workload": "es2gears",
+  "versions": {
+    "host": {
+      "virglrenderer": "1.3.0",
+      "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+      "architecture": "aarch64",
+      "renderer": "llvmpipe"
+    },
+    "guest": {
+      "mesa": "1:26.2.2-1",
+      "hyprland": "0.56.2-3",
+      "architecture": "riscv64"
+    }
+  },
+  "events": {
+    "path": "events.jsonl",
+    "sha256": "6c20fda867fea51b85a13dd7d4a4025f56fbf92bccbbc6a11b16db101a2244ea",
+    "bytes": 12953873
+  },
+  "artifacts": [
+    {
+      "role": "command.json",
+      "path": "command.json",
+      "sha256": "63e4650ff1c8f8f337da1ada8d0f0e6c719a0cae221dd928f1432baffe4f41c8",
+      "bytes": 1839
+    },
+    {
+      "role": "gears-clients.json",
+      "path": "gears-clients.json",
+      "sha256": "a18d523e02172f8d9829b57eef65b79e79a26d13870cf18e255d14578133527c",
+      "bytes": 837
+    },
+    {
+      "role": "gears-close.log",
+      "path": "gears-close.log",
+      "sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+      "bytes": 3
+    },
+    {
+      "role": "gears-comm.txt",
+      "path": "gears-comm.txt",
+      "sha256": "25ee93b1849aa439de0ba3d5efe7e69445a9ba09d82b323a1fa71594972a69b0",
+      "bytes": 16
+    },
+    {
+      "role": "gears-control.log",
+      "path": "gears-control.log",
+      "sha256": "61bd3dc11628a2af3b09459adc5e1fa67c313d9c18da5a937f49a160cf05c767",
+      "bytes": 92
+    },
+    {
+      "role": "gears-drm-driver.txt",
+      "path": "gears-drm-driver.txt",
+      "sha256": "f0937613a40abf77be34a0a3639113b324d97ae55468db387a035e1ce6969fa9",
+      "bytes": 35
+    },
+    {
+      "role": "gears-environ.bin",
+      "path": "gears-environ.bin",
+      "sha256": "af5830aa8f29c21ffe041230eabb2820749aaa16634c96267158b06655f0fc18",
+      "bytes": 273
+    },
+    {
+      "role": "gears-executable.sha256",
+      "path": "gears-executable.sha256",
+      "sha256": "c0636635482fb9de3ee38d5008810333e01ca748964f9ac692e7832f6037d2da",
+      "bytes": 80
+    },
+    {
+      "role": "gears-executable.txt",
+      "path": "gears-executable.txt",
+      "sha256": "af3aa9ef529a1813122462de59a33e480c06eb26ce92d5ee5cf5ab9b1fa8d668",
+      "bytes": 58
+    },
+    {
+      "role": "gears-fds.txt",
+      "path": "gears-fds.txt",
+      "sha256": "588db5ec79bc214f8fbbdbf428d84020bb31fbc21ad4ff1683ab9cc605cd19ca",
+      "bytes": 1427
+    },
+    {
+      "role": "gears-library-hashes.txt",
+      "path": "gears-library-hashes.txt",
+      "sha256": "5354b4cfa674b8a75dc816ada94f7fdb784e6cb31aef307bf706cb649255cb44",
+      "bytes": 9437
+    },
+    {
+      "role": "gears-library-maps.txt",
+      "path": "gears-library-maps.txt",
+      "sha256": "058f3090cd5d0af6a555db871b05d3d14a2250bb86d14aeada15b37e0bfd1213",
+      "bytes": 34231
+    },
+    {
+      "role": "gears-process-read-errors.log",
+      "path": "gears-process-read-errors.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "role": "gears-window-setup.log",
+      "path": "gears-window-setup.log",
+      "sha256": "9256c4df6c9bdf77305f44a5d25caa4387eb979a8508d007a2353f4a8a7764df",
+      "bytes": 6
+    },
+    {
+      "role": "guest-cmdline.txt",
+      "path": "guest-cmdline.txt",
+      "sha256": "1963c8a52e188f77c032faa9f52795cf1c4c47691090c3aad32d3382f32660cb",
+      "bytes": 46
+    },
+    {
+      "role": "guest-dmesg.txt",
+      "path": "guest-dmesg.txt",
+      "sha256": "76157f9066e9643549f1b134df86a7bd8168d08c25dd1f13f208b0bc0c24e1c8",
+      "bytes": 12903
+    },
+    {
+      "role": "guest-exit-code.txt",
+      "path": "guest-exit-code.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "role": "guest-libraries.sha256",
+      "path": "guest-libraries.sha256",
+      "sha256": "ccb2b92739a330d4ae3937c7dc07c156a81005a997d355a21db6799bfe88a38a",
+      "bytes": 367
+    },
+    {
+      "role": "guest-packages.txt",
+      "path": "guest-packages.txt",
+      "sha256": "abab2879b2c03afa911d973c9217025817af7619d470b67abda0414bbd4ee49c",
+      "bytes": 7571
+    },
+    {
+      "role": "guest-serial.log",
+      "path": "guest-serial.log",
+      "sha256": "ab1ea39646e795db71ac516edcc66f174bc385c117478154775972757d838cde",
+      "bytes": 16318
+    },
+    {
+      "role": "guest.sh",
+      "path": "guest.sh",
+      "sha256": "3f04bafdf17ed30a44dd11d5791609a92f4fb1e9095884ce56d04f10f6b87007",
+      "bytes": 6995
+    },
+    {
+      "role": "host-library-maps.txt",
+      "path": "host-library-maps.txt",
+      "sha256": "e9ad4ffb51c77ba4840c63c4a7935110aa9630caac0690547f7f3f68f51a61e0",
+      "bytes": 1400
+    },
+    {
+      "role": "host-packages.txt",
+      "path": "host-packages.txt",
+      "sha256": "2da3d209f16542b80836d7652b5a2957038f752fe9f6a05503a3a1f2ec86d4cc",
+      "bytes": 181
+    },
+    {
+      "role": "host.log",
+      "path": "host.log",
+      "sha256": "6a2b9c38bbe41e7f20333f73fca995159de1791b209f6450b1e0049659aa2aa9",
+      "bytes": 207
+    },
+    {
+      "role": "hyprctl-exit.log",
+      "path": "hyprctl-exit.log",
+      "sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+      "bytes": 3
+    },
+    {
+      "role": "hyprland.log",
+      "path": "hyprland.log",
+      "sha256": "bf6c9463e695388ce061510d4827588230e753e093e328c44707226037523614",
+      "bytes": 101534
+    },
+    {
+      "role": "hyprland.stdout.log",
+      "path": "hyprland.stdout.log",
+      "sha256": "80ec6c07b804e90014a346dd4e25b40219a2d977c57ab521b21984308fc1c93a",
+      "bytes": 5132
+    },
+    {
+      "role": "input-setup.log",
+      "path": "input-setup.log",
+      "sha256": "8b171b82b246614c681de01855b9b3e50672fb803cf07570131dd031f7a059d0",
+      "bytes": 989
+    },
+    {
+      "role": "monitors.json",
+      "path": "monitors.json",
+      "sha256": "acd9e030271deada39a426ac9cfcc89c26443bd7deecca2894e42272838898c2",
+      "bytes": 1623
+    },
+    {
+      "role": "build_gears_in_container.py",
+      "path": "payload/build_gears_in_container.py",
+      "sha256": "d551a0994dec1891a35725e78b2c2d821f919ccbe0c69cb6b1a2736abbefb4dc",
+      "bytes": 8898
+    },
+    {
+      "role": "capture.py",
+      "path": "payload/capture.py",
+      "sha256": "89a7a3041f73840b1382a4ce36b61e9621744d8a401d79162187edf489f2ddab",
+      "bytes": 22873
+    },
+    {
+      "role": "es2gears_wayland",
+      "path": "payload/es2gears_wayland",
+      "sha256": "59f4029a08b809f8d191cd7b3d719e2c5b09f0aadb97833f088b41fa60a918af",
+      "bytes": 38376
+    },
+    {
+      "role": "gears-build-manifest.json",
+      "path": "payload/gears-build-manifest.json",
+      "sha256": "002aac0bdc689618c632982f216460d538d5e58d1756c7835d365bfe33b13ea1",
+      "bytes": 7681
+    },
+    {
+      "role": "gears-compile.log",
+      "path": "payload/gears-compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "role": "gears-elf-header.txt",
+      "path": "payload/gears-elf-header.txt",
+      "sha256": "d3da07aef414ee445a429957bc6765fcf66422778c9a685bfcfa59ddeb18f025",
+      "bytes": 979
+    },
+    {
+      "role": "gears-pins.json",
+      "path": "payload/gears-pins.json",
+      "sha256": "0e95c064c6468ba3b433692ea021795352a31f5f7c15209a2bbdec18658bc0ff",
+      "bytes": 1087
+    },
+    {
+      "role": "gears-sysroot-files.json",
+      "path": "payload/gears-sysroot-files.json",
+      "sha256": "529408e51ef65ea1ddade31379ccecbefdfc130c4ed1dd1362be289cf1f1639a",
+      "bytes": 2065449
+    },
+    {
+      "role": "mesa-demos-9.0.0.tar.xz",
+      "path": "payload/mesa-demos-9.0.0.tar.xz",
+      "sha256": "3046a3d26a7b051af7ebdd257a5f23bfeb160cad6ed952329cdff1e9f1ed496b",
+      "bytes": 14839368
+    },
+    {
+      "role": "recorder.build.sh",
+      "path": "payload/recorder.build.sh",
+      "sha256": "557d41a8552cb0e51bc38008bd8e71c46f1a6488d8e0f27fa046162634b09593",
+      "bytes": 442
+    },
+    {
+      "role": "recorder.c",
+      "path": "payload/recorder.c",
+      "sha256": "95faa3bd0bd8027949a0ec23eee1290c84b1f0c1d6d3c280c58469fd3c133f8f",
+      "bytes": 23137
+    },
+    {
+      "role": "recorder.so",
+      "path": "payload/recorder.so",
+      "sha256": "a0fc221b807e2ea11862b538f5562400d5af52e7d2bbda965e170510b26eb413",
+      "bytes": 124320
+    },
+    {
+      "role": "workloads-build-manifest.json",
+      "path": "payload/workloads-build-manifest.json",
+      "sha256": "b1769e9e00d8bad62e95988df2b9c5ece59d8ae6b062ba0facec7099b650cb77",
+      "bytes": 5015
+    },
+    {
+      "role": "seatd.log",
+      "path": "seatd.log",
+      "sha256": "c6e140998fcf53458ec6934bbe5578894032ee710cec8fcdc06d36fd87949e30",
+      "bytes": 526
+    },
+    {
+      "role": "udev.log",
+      "path": "udev.log",
+      "sha256": "83047752917d7392303be4a317a2a6f624aa0ce96f55108ed9a74f6556b2fa4a",
+      "bytes": 44
+    },
+    {
+      "role": "workload.log",
+      "path": "workload.log",
+      "sha256": "d7d5f9fbaf00aeadf1eb041fae9748057a18bd8194e9c84a3f7a3aebe70d51c4",
+      "bytes": 1099
+    }
+  ],
+  "inputs": [
+    {
+      "role": "rootfs",
+      "sourcePath": "/reference/omarchy.ext4",
+      "sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+      "bytes": 4294967296
+    },
+    {
+      "role": "kernel",
+      "sourcePath": "/kernel/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    {
+      "role": "hostRenderer",
+      "sourcePath": "/build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0",
+      "sha256": "2ba77dd6f0493c8caa4a9e92746bb94c4381d09f1244fd671e82b01c27c28a52",
+      "bytes": 2621216
+    },
+    {
+      "role": "recorder",
+      "sourcePath": "/capture/recorder.so",
+      "sha256": "a0fc221b807e2ea11862b538f5562400d5af52e7d2bbda965e170510b26eb413",
+      "bytes": 124320
+    },
+    {
+      "role": "qemu",
+      "sourcePath": "/usr/bin/qemu-system-riscv64",
+      "sha256": "0f2ad624f9028dfa27d12249b7e46e41fa8a9f5a2bfdc68588234a3d17ee33d4",
+      "bytes": 15482976
+    },
+    {
+      "role": "qemuGpuModule",
+      "sourcePath": "/usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so",
+      "sha256": "e30d71f6805a6123fb1eefd6803ba486560eb8a90990856ac822c6a4ca24385a",
+      "bytes": 67816
+    }
+  ],
+  "command": {
+    "argv": [
+      "qemu-system-riscv64",
+      "-machine",
+      "virt",
+      "-accel",
+      "tcg",
+      "-cpu",
+      "rv64",
+      "-smp",
+      "4",
+      "-m",
+      "2048",
+      "-global",
+      "virtio-mmio.force-legacy=false",
+      "-bios",
+      "default",
+      "-kernel",
+      "/kernel/Image",
+      "-append",
+      "root=/dev/vda rw console=ttyS0 init=/bin/bash",
+      "-drive",
+      "file=/capture/gears-capture-a669aad0/overlay.qcow2,format=qcow2,if=none,id=root",
+      "-device",
+      "virtio-blk-device,drive=root",
+      "-device",
+      "virtio-gpu-gl-device",
+      "-device",
+      "virtio-keyboard-device",
+      "-device",
+      "virtio-tablet-device",
+      "-fsdev",
+      "local,id=capture,path=/capture,security_model=none",
+      "-device",
+      "virtio-9p-device,fsdev=capture,mount_tag=capture",
+      "-display",
+      "gtk,gl=on,show-cursor=on",
+      "-serial",
+      "unix:/capture/gears-capture-a669aad0/serial.sock,server=on,wait=on",
+      "-monitor",
+      "none",
+      "-no-reboot"
+    ],
+    "env": {
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "HOME": "/root",
+      "LANG": "C.UTF-8",
+      "MESA_SHADER_CACHE_DISABLE": "true",
+      "DISPLAY": ":1",
+      "LIBGL_ALWAYS_SOFTWARE": "1",
+      "GALLIUM_DRIVER": "llvmpipe",
+      "LD_LIBRARY_PATH": "/build-virgl-1.3.0/src",
+      "LD_PRELOAD": "/capture/recorder.so",
+      "VIRGL_CAPTURE_REAL_LIBRARY": "/build-virgl-1.3.0/src/libvirglrenderer.so.1",
+      "VIRGL_CAPTURE_DIR": "/capture/gears-capture-a669aad0",
+      "VIRGL_CAPTURE_WORKLOAD": "es2gears",
+      "VIRGL_CAPTURE_MAX_EVENTS": "100000",
+      "VIRGL_CAPTURE_MAX_BLOB_BYTES": "1073741824",
+      "VIRGL_CAPTURE_MAX_EVENT_BYTES": "67108864"
+    },
+    "guestScript": "guest.sh",
+    "guestWorkload": {
+      "workload": "es2gears",
+      "outputDirectory": "/capture/gears-capture-a669aad0",
+      "gearsDirectory": "/capture/gears-workload-a669aad0"
+    }
+  },
+  "limits": {
+    "timeoutSeconds": 150,
+    "events": 100000,
+    "blobBytes": 1073741824,
+    "eventBytes": 67108864,
+    "logBytes": 8388608
+  },
+  "result": {
+    "qemuExitCode": 0,
+    "guestExitCode": 0,
+    "guestBegin": true,
+    "guestEnd": true,
+    "workloadPass": true,
+    "complete": true,
+    "error": null
+  }
+}

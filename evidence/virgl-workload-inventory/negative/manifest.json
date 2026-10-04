@@ -1,0 +1,24 @@
+{
+  "archive": {
+    "bytes": 15711855,
+    "path": "recording.tar.gz",
+    "sha256": "4d6d63999632fc23088343403aac4d54c3a0e7beb0dc4ab41a6af96ed595b257"
+  },
+  "boundary": "Deliberately substituted zero-exit RISC-V program; incomplete recording is a rejection proof, never an original gears workload.",
+  "frozenSourceHead": "a669aad01b93e03e3b528a931748d0800156e57c",
+  "records": {
+    "bytes": 38390,
+    "path": "records.json",
+    "sha256": "82cc148ef853c03ff586e91f1586591d684187b60399f52e9d4da4fac92f5ee5"
+  },
+  "result": {
+    "complete": false,
+    "error": null,
+    "guestBegin": true,
+    "guestEnd": false,
+    "guestExitCode": 1,
+    "qemuExitCode": 0,
+    "workloadPass": false
+  },
+  "schema": "virgl-early-zero-negative-v1"
+}

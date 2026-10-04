@@ -147,3 +147,49 @@ the normal artifacts.
 
 Building is not runtime evidence. The recorded four-workload corpus and its
 validator provide the task's authoritative guest-run evidence.
+
+## Unmodified es2gears
+
+`gears-pins.json` pins the complete official [Mesa demos9.0.0 archive](https://archive.mesa3d.org/demos/).
+`build_gears.py` cross-builds the original `es2gears.c`, EGLUT Wayland backend,
+and matrix helper against the same immutable guest image. No C source is
+patched. Linux `_GNU_SOURCE`, `HAVE_SINCOS` and `WL_EGL_PLATFORM` follow the
+original Meson configuration. The builder preserves the full source archive,
+all selected source/header/build hashes, compiler identity and argv, guest
+sysroot inventory, compile log, ELF header and executable digest.
+
+```sh
+python3 tools/virgl-capture/workloads/build_gears.py \
+  --container wasm-vm-virgl-reference-research \
+  --output /capture/gears-workload
+docker cp tools/virgl-capture/capture.py wasm-vm-virgl-reference-research:/capture/capture.py
+docker exec wasm-vm-virgl-reference-research python3 /capture/capture.py \
+  --workload es2gears --gears-directory /capture/gears-workload \
+  --output /capture/corpus/es2gears --timeout 150 \
+  --max-blob-bytes 1073741824
+```
+
+The bash-init reference boot coldplugs its real VirtIO keyboard/tablet before
+Hyprland. Without udev, the original Wayland client receives a seat without a
+keyboard and crashes. This setup affects only the fresh disposable overlay.
+The controller floats and resizes the actual PID's window to the upstream
+nominal300×300 size, waits for its positive first five-second idle-loop report,
+saves its executable/comm/maps/environment/open DRM descriptor/library hashes,
+and closes that same window through compositor IPC. It waits for the real
+zero exit, then exits the compositor and guest normally. No kill or timeout is
+accepted as completion. The animation needs an explicit1GiB unique-blob bound
+because every submission still includes every attached backing snapshot.
+
+`-info` prints EGL information; it does not print `GL_RENDERER`. Backend proof
+comes from the actual process's mapped guest Gallium/VirtIO render node and
+its named live context's original shader uploads and positive draw packets.
+The original report is a completion marker, not a benchmark or pixel oracle.
+`make verify-E6-T12g1` checks the committed recording and reconstructs the
+client-only format/view/transfer inventory. The nineteen original shader
+inputs remain a separate immutable claim. The new capture adds two client
+shaders and four supporting-compositor shaders outside that set. All six need
+their own admission/browser execution proof before their workload paths can
+activate. `evidence/virgl-workload-inventory/index.json` binds the two lists.
+The separate early-zero negative recording substitutes an explicitly fake
+RISC-V executable: its actual zero exit still fails the guest controller and
+capture acceptance, even while the compositor submits draws.
