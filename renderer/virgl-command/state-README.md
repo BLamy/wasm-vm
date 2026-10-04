@@ -149,6 +149,13 @@ backend initializes physical packed alpha; CLEAR and draw restoration mask
 alpha writes while preserving the guest RGB color mask and source fragment
 alpha. Thus SRC_ALPHA RGB blending still observes the shader's source alpha,
 and DST_ALPHA observes one. RGBA8 retains its ordinary stored alpha behavior.
+
+The original gears Z16_UNORM SURFACE can retain exact format16/bind1 native
+depth storage through a separate depth-surface lease. It cannot become a color
+attachment or an RGBA8 sampler view. Depth/stencil framebuffer selection,
+clear and DSA execution remain E6-T12h; this storage boundary does not enable
+them. `make verify-E6-T12g3` checks original surface lifetime, incompatible
+color attachment rejection and independent native depth observations.
 Sampler-view admission for new formats remains a separate boundary.
 
 Restoration binds the renderer's private VAO/FBO/program, every texture/sampler

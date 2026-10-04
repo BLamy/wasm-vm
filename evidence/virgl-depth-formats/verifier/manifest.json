@@ -1,0 +1,22 @@
+{
+  "archive": {
+    "bytes": 329397,
+    "path": "recording.tar.gz",
+    "sha256": "9a0c8f4730cdf92817d9a24e951623108ee2f58015b3e3f4e320070d3fb8fecb"
+  },
+  "boundary": "Nonduplicate fresh-verifier artifacts; extracted worker recordings remain bound by the worker seal and the complete verifier-records.json index.",
+  "coverageSha256": "e922defc00a3d0dbc64e85f4dde47c37c1740c3445931bc81cc1a0f931c6f3f5",
+  "predictionResultsSha256": "03123fdc96159e4457a930ef685c4b465205faa641ef6eaca4b9562226e724d5",
+  "recordIndex": {
+    "bytes": 4238,
+    "path": "records.json",
+    "sha256": "a2957fb308b95c71d7f874d72dde5a48ea47d953b0a2cba205e4ea904b772f60"
+  },
+  "records": 28,
+  "schema": "virgl-depth-verifier-seal-v1",
+  "sourceHead": "61db520384877672b63a23cd0539946c55297431",
+  "task": "E6-T12g3",
+  "verdict": "verified",
+  "verdictSha256": "f1ba110e205d9918f9199fab4d942cb2e5d839d9103e801b167020bc2c64cff7",
+  "workerArchiveSha256": "dbf7a0fbd12cc4e3711e4fc4745738d9cd3ac2ae4d9d60974f19077e148996eb"
+}

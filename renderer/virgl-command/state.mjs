@@ -256,7 +256,8 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         if (type === 6 || type === 8) {
           if (type === 6) require(fields.swizzle.every((component, index) => component === index), "unsupported-feature", "Only identity sampler swizzles are supported.");
-          Object.assign(object, retain(ctx, fields.resourceHandle, type === 6 ? "view" : "surface", "texture"));
+          const depth = type === 8 && fields.format === 16;
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", depth ? "depth-texture" : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
         }
         if (type === 4) {
@@ -662,7 +663,10 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         case 5: {
           const surfaces = fields.colorSurfaces.map((handle) => lookup(sub, handle, 8, true));
-          for (const surface of surfaces) if (surface) resolve(surface.lease);
+          for (const surface of surfaces) if (surface) {
+            require(surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
+            resolve(surface.lease);
+          }
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
           sub.surfaces = surfaces; break;
         }

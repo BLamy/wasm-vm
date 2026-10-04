@@ -233,7 +233,7 @@ explicitly rejected by this narrower profile.
   seamless-cube fields are preserved but inert with compare disabled and 2D
   views. Reserved packed bits are rejected.
 - **SURFACE:** `handle,resourceHandle,format,level,firstLayer,lastLayer`; required
-  normalized color formats 2 (BGRX8), 67 (RGBA8), 233 (B10G10R10X2),
+  normalized color formats 2 (BGRX8), 67 (RGBA8), 233 (B10G10R10X2), or16 (Z16_UNORM),
   level and layer zero, nonzero resource handle. Target compatibility is deferred.
 
 ### Opaque END_TRANSFERS framing

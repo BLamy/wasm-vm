@@ -3,8 +3,8 @@
 `resources.mjs` implements the bounded resource/backing/transfer boundary after
 `decoder.mjs`. It does not execute draw/state commands, advertise capsets, activate
 a guest renderer, handle fences, or provide asynchronous queue scheduling.
-`TRANSFER3D` and both `COPY_TRANSFER3D` directions operate on actual WebGL2 buffer
-or RGBA8 texture storage. CPU backing is separate from that storage; staging
+`TRANSFER3D` and both `COPY_TRANSFER3D` directions operate on actual WebGL2 buffer,
+normalized color or Z16 depth storage. CPU backing is separate from that storage; staging
 resources allocate no GPU object, and no CPU mirror supplies GPU readback.
 
 ## API
@@ -50,7 +50,7 @@ The store API is synchronous:
 | `detachBacking(id)` | Revokes that backing identity and frees its owned segments. |
 | `writeBacking(id,offset,bytes)` | `byteLength`; bounded scatter into owned backing; no input reference is retained. |
 | `readBacking(id,offset,length)` | `bytes`; bounded gather into a new Uint8Array. |
-| `retainStorage(contextId,id,role="view")` | `lease`; an opaque frozen identity token retaining GPU storage. View/surface require sampler/render texture binds; vertex/index require the matching buffer class. Readback accepts GPU storage; staging has none. |
+| `retainStorage(contextId,id,role="view")` | `lease`; an opaque frozen identity token retaining GPU storage. View/surface require sampler/render color binds; depth-surface requires Z16/bind1; vertex/index require the matching buffer class. Readback accepts GPU storage; staging has none. |
 | `readStorage(lease,box?)` | `bytes`; actual GPU readback, tightly packed, whole resource by default. Uses retained storage even after public unref. |
 | `releaseStorage(lease)` | Releases that lease once; unknown, released and foreign tokens fail. |
 | `prepareTransfer(contextId,decodedCommand)` | `ticket,layout`; validates the whole operation, retains exact identities, reserves scratch and snapshots upload bytes. |
@@ -85,13 +85,14 @@ are nonzero. Supported classes are:
 | `index-buffer` | target 0, format 64, bind 32, height 1 | width bytes on GPU |
 | `staging` | target 0, format 64, bind 524288, height 1 | no GPU allocation; attached backing only |
 | `texture` | target 2; format 2, 67 or 233; render bind 2 and/or sampler bind 8 | width × height × 4 conservative GPU bytes |
+| `depth-texture` | target 2, format16 Z16_UNORM, measured depth bind1 only | width × height × 2 GPU/guest bytes |
 
 Textures may also carry the measured SCANOUT (262144) and SHARED (1048576)
 metadata hints. Neither hint grants a view/render role or enables scanout of a
 new format. Global scanout remains format67 with a render bind and flags0.
 
 All classes require depth/arraySize 1 and lastLevel/nrSamples/flags 0. No format
-aliases, mixed buffer bindings, depth textures, mipmaps, MSAA, blobs or arrays are
+aliases, mixed buffer bindings, other depth/stencil formats, mipmaps, MSAA, blobs or arrays are
 accepted. An attached backing page may be larger or smaller than the resource's
 logical extent. Each operation must independently fit both the logical resource
 and the backing range it actually accesses.
@@ -244,6 +245,28 @@ format and storage generation, so reusing a public ID for another format cannot
 reinterpret an older pending read. No second CPU image or GPU shadow is added.
 No CPU shadow is used as a readback oracle.
 
+Required format16 uses immutable DEPTH_COMPONENT16, DEPTH_COMPONENT/
+UNSIGNED_SHORT upload and explicit little-endian guest16-bit words. Its only
+measured guest role is a depth surface; color attachment, guest sampler view
+and scanout roles reject. Format17 Z32_UNORM is rejected: DEPTH_COMPONENT32F
+would change normalized integer semantics. No stencil format is admitted.
+
+WebGL2 does not expose depth readPixels. A private fixed host shader samples
+the actual depth image with texelFetch, reconstructs UN16 with binary32 highp,
+and packs its low/high bytes into RG of a region-sized temporary RGBA8 image.
+The backend rejects fragment precision below23 bits. Readback compacts this
+owned RGBA scratch in place, preserving explicit little endian; it has no CPU
+depth mirror or persistent GPU shadow. The returned dense view retains its
+charged four-byte-per-pixel buffer. Upload scratch is two bytes per pixel;
+sync read reserves four CPU scratch plus four temporary GPU bytes per pixel.
+Async read reserves four CPU scratch plus eight GPU bytes per pixel for the
+conversion image and PBO, conservatively until release. These reservations
+precede native allocation, and failure/revocation/disposal releases them.
+The fixed packing program is lazy, bounded and deleted with the backend.
+
+The mapping follows the [GLES3 specification](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf),
+sections2.1.6,3.7/table3.2 and4.3.2, and [WebGL2](https://registry.khronos.org/webgl/specs/latest/2.0/).
+
 Every transfer establishes its required state: PACK/UNPACK PBO bindings null,
 alignments one, row lengths/image heights/skips zero, unpack flipY/premultiply false,
 colorspace conversion NONE, and its own copy/texture/read-FBO binding. Texture
@@ -288,3 +311,14 @@ the complete unchanged RGBA scene remains a regression. Deliberate channel and
 destination-alpha source faults must fail on independent physical pixels. This
 proves isolated color storage, not full gears replay, sampler-view specialization,
 guest execution, live capsets or a MIPS improvement.
+
+`make verify-E6-T12g3` proves the unchanged original es2gears Z16 create and
+SURFACE packet at4425/5115, with independently observed16-bit depth attachment.
+Synthetic uploads cover all65536 encodings through a separate RGBA32F sampling
+oracle, adjacent-depth LESS occlusion, inverse GPU bytes, odd split rows,
+partial regions, copy staging, PBO schedules, retained generations, revocation,
+exact quotas and host-allocation failures. A byte-order source fault must fail
+on normalized GPU samples. The affected decoder/resource/state/draw/async/color
+gates and final pristine clone are included. Original depth upload/draw is not
+claimed: the capture has no CPU depth upload, and guest depth framebuffer/DSA
+execution remains E6-T12h. Production offload negotiation stays disabled.
