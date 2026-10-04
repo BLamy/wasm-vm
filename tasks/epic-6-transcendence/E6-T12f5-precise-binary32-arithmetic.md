@@ -3,8 +3,8 @@ id: E6-T12f5
 epic: 6
 title: Execute PRECISE ADD and MUL with explicit binary32 rounding
 priority: 525.0269915
-status: pending
-depends_on: [E6-T12f4]
+status: in-progress
+depends_on: [E6-T12f4, E6-T12f4b]
 estimate: S
 risk: high
 capstone: false
@@ -44,4 +44,23 @@ arithmetic. Every changed helper branch needs execution or a bounded proof.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — activation
+
+The owned-bank raster boundary is independently verified at
+`b5cfbb33c290f352437b00a2112500d68ee8ae87`. Implement one bounded
+binary32 ADD/MUL backend in highp ESSL300 integer operations. Use explicit
+nearest-even rounding per instruction, gradual underflow, signed-zero rules and
+canonical quiet NaN for NaN inputs and invalid operations. Reject the unsupported
+LEGACY_MATH_RULES property. Keep exact internal words separate from existing
+numeric access and ordinary output authority; combined finite/indirect/count/
+radial/raster/word-PRECISE obligations remain mandatory.
+
+Record actual bits in both GPU stages against an independently rounded rational
+reference, including the untouched last original and contraction-sensitive
+chains. Test aliases, masks, absolute-then-negate modifiers, all shift classes,
+normalization/carry/sticky/rounding paths, output authority, full native/Wasm
+retention, bounds, source faults and a final pristine clone at the frozen head.
+Use the narrow compiler/reference/consumer/GPU checks while implementing, then
+one complete scoped high-risk acceptance recording and fresh independent
+verification. No production guest GPU advertisement or desktop MIPS claim is
+made by this isolated compiler boundary.
