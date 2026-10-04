@@ -3,7 +3,7 @@ id: E6-T12f6
 epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
 priority: 525.0269916
-status: implemented
+status: evidence-needed
 depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5]
 estimate: S
 risk: high
@@ -148,3 +148,80 @@ independent verifier must interrogate this submission before `verified`.
 Archive SHA-256: worker `1fc14df7ef7abf6c59d4bb41647636be90b2dcbb3d2f80d071e8b05b82f8482d`;
 cold `dff685c3c517135f43df8a2212d573e2c03e12330ebbaf69c01651aaff149028`.
 Final receipt SHA-256: `70991e5b2576d307aef795a0d2563611ec7a47051339cada7793c2d53029689f`.
+
+### 2026-10-04 — fresh verifier — VERDICT: needs-evidence
+
+- P1 identity/archive — HELD. Complete captured TGSI union equals all19 hashes;
+  originals and production compiler/renderer remain byte-identical to verified
+  parent a80ba9e9. Every worker/cold tar member matches length/SHA (227/229 files).
+  Strict receipt replay succeeds from frozen pristine clone b961c772. Citations:
+  verifier recording `integrity.json`, `literal-contracts.json`, `strict-replay.log`.
+- P2 contracts/API/linkage — HELD. Independent literal declarations, written masks,
+  uniform extents and all PRECISE modifiers agree. The57/31 pair partition and
+  complete contract/interpolation propagation hold. Exact ordered shaderSource
+  events match all80 actual programs,160 compilations and92 links/relinks;
+  a different valid source from the pool is detected. Citations:
+  `literal-contracts.json`, `literal-audit.jsonl`, `attacks.json`.
+- P3 execution/ownership — HELD. Sealed native stdout replays byte-identically for
+  2046 calls; LLVM counts show532 singles,1153 pairs and361 attacks. All2198 Wasm
+  calls replay byte-identically with fixed16MiB memory and76 owned outputs.
+  Citations: `original_corpus.coverage.txt:32`, `:38`, `:43`, `:68`, `:75`;
+  `replay-native.log`, `replay-wasm/calls.jsonl` and `report.json`.
+- P4 independent physical observations — HELD. A separate Python literal-TGSI
+  interpreter, using no compiler IR/GLSL/oracle.mjs for predictions, agrees with
+  6144 defined original vertex words and622592 pixels across three worker schedules
+  plus fresh hardware seed1581209817. All2048 historical migration words count
+  separately. Largest lighting distance2 ULP is inside the stated8-ULP sample
+  budget; positions/copies remain numerical ULP0. Original loops reach18 and
+  literal indirect reads remain bounded. Citations: `literal-audit.jsonl:1-4`,
+  `fresh-gpu/report.json`, promoted `tools/virgl-original-corpus/verifier.py`.
+- P5 original admission — HELD. Canonical19 contracts/67 forgeries/75 banks/19
+  owned snapshots survive. Fresh independent integer/exponent bank model matches
+  472 original/pair/supplemental cases and25 forgeries without getters, including
+  negative threshold neighbors and counter/copied-alpha authority overlap.
+  Citations: `admission.json` /banks, /forgeries, /getters; submitted consumer and
+  unchanged retained-raster evidence. Supplemental old-base metadata is separate
+  from the19 original-body claim.
+- P6 grammar/scene retention — HELD. The four authored admission migrations retain
+  exact names/hashes/full metadata and separately observed identity positions.
+  All112 scene fixtures remain,108 rejected/4 admitted, with972 rejection calls,
+  36 admissions,1792 mixed recoveries and768 scene pixels. Citations: submitted
+  `retained-scene/report.json` /acceptance/grammarAttacks and /acceptance/draws;
+  `literal-audit.jsonl`.
+- P7 fault/test sensitivity — HELD. Actual compiled inverted MAX selection produces
+  physical lighting lane4=0 instead of1059760811 (ULP1059760811, budget8), with
+  successful compilation/correct positions. Fresh checker rejects omitted
+  PRECISE, valid-pool source substitution and a corrupted physical word. Removing
+  the ordered-source check makes the substitution pass, failing its rejection
+  regression. Citations: submitted `fault/manifest.json` /point and
+  `fault/gpu/report.json` /acceptance/vertices/0/vectors/0; `attacks.json` and
+  `source-order-sabotage.py`.
+- P8 indirect helper fallback — NEEDS EVIDENCE. Predicted every new helper arm
+  executes correctly or is removed as dead. Observed new
+  `renderer/virgl-shader/tests/original-corpus.mjs:13` dereferences
+  `parsed.domain.count` for admitted access-only v10 metadata (domain=null,
+  access.count=46). Genuine preexisting literal-0-vertex fixture throws TypeError
+  before checkIndirectBank. This fallback was never exercised by the19 original
+  paths. Citation: `admission.json` /helperFault (actual Wasm metadata, full bank,
+  stack), /coverage (approve473 calls, access arm1 hit); promoted
+  `verifier-regressions.mjs:111`. Remove this unclaimed fallback or correct count
+  authority and record a narrow helper-only regression for genuine base profiles.
+
+The task's original output claim is not contradicted. All unchanged HELD results
+must carry forward; the sole outstanding point is the new helper fallback.
+Non-raster radial/loop helper paths ran in separate supplemental cases. Native
+and GPU/runtime harness happy paths have actual LLVM/V8 counters. Unexecuted
+failure-only assertion/diagnostic/exit branches and declarative types/metadata,
+logging/serialization/setup machinery receive infrastructure waivers with
+exercised positive/source-fault counterparts. No changed production semantics,
+guest/desktop/format/deployment or300MIPS claim is inferred. Full coverage
+classification and commands are in `evidence/virgl-original-corpus/verifier/verdict.md`.
+
+SUITE: promote the independent literal/output/ordered-source checker `verifier.py`
+and independent admission/base-profile regression `verifier-regressions.mjs`.
+The latter deliberately exits1 until the worker repairs/removes the unexecuted
+fallback; verifier edits no implementation. Lossless fresh-verifier recording:
+`evidence/virgl-original-corpus/verifier/recording.tar.gz`, SHA-256
+`78d141bca7fe28bf81b85d6a114bc26f1c918a97be1b922dd9bc315dc49124e8`; member inventories/digests are in `records.json` and `manifest.json`.
+The archive includes every fresh verifier output, excluding only the redundant
+extraction of the already-bound worker archive and Python bytecode.
