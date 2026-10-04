@@ -3,7 +3,7 @@ id: E6-T12g6e
 epic: 6
 title: Admit bounded signed integer and float conversions
 priority: 525.027010572
-status: pending
+status: in-progress
 depends_on: [E6-T12g6d]
 estimate: S
 risk: high
@@ -37,4 +37,22 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — activation
+
+Continued the user's guest graphics offload work above independently verified
+G6d `7f2cdec8`. Only this S/high conversion boundary occupies the active lane.
+Pinned TGSI I2F suggests nearest-even while leaving rounding unspecified; this
+profile chooses explicit binary32 nearest-even. F2I truncates toward zero only
+for finite encodings below positive2^31 or at most negative2^31. Use bounded
+unsigned word helpers and static known-bit range proofs; unknown direct,
+unmodified constant operands require exact component-bank range guards before
+all sync/async uploads, restorations and draws. Reject other unproven computed,
+input or indirect sources. Float source modifiers apply only to range-proven
+F2I encodings; integer I2F modifiers remain unsupported. Preserve the fixed IR
+layout and all preexisting profile obligations in bounded conversion wrappers.
+Integer outputs stay private; explicit I2F results receive normal/zero numeric
+and output authority. Record endpoints, rounding ties, fractional truncation,
+subnormals/zero signs, masked/swizzled aliases, source versions, joins, physical
+words/pixels, changing banks and deliberate rounding/range/source faults. The
+complete captured compositors remain gated until their own full-shape range
+proof and remaining opcodes. No production imports/caps or MIPS/FPS claim.
