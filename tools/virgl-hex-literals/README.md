@@ -15,7 +15,8 @@ emitted-source corruptions must contradict physical words/pixels, with all GL
 objects disposed on both success and failure.
 
 G6b's unchanged resource/arena/stack evidence stays HELD; the promoted 402-case
-join guard and 25 literal original bodies are replayed. Complete unsupported
+join guard, 49 critic-promoted hexadecimal grammar/domain/version guards and
+25 literal original bodies are replayed. Complete unsupported
 compositor programs still reject. There is no guest negotiation, production
 import, performance, portability or live desktop claim.
 

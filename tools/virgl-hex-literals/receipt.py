@@ -102,6 +102,17 @@ def main():
     require(joins['status'] == 'passed' and joins['cases'] == len(joins['native']) == len(joins['wasm']) == 402, 'promoted bounds guards')
     require(all(a['result'] == b['result'] for a, b in zip(joins['native'], joins['wasm'])), 'promoted guard parity')
     source('renderer/virgl-shader/build/native/virgl-shader', joins['nativeBinary']['sha256'])
+    guards = json.loads(artifact('independent-hex-guards.json'))
+    require(guards['schema'] == 'virgl-hex-literal-critic-guards-v1' and guards['status'] == 'passed'
+            and type(guards['cases']) is int and guards['cases'] == len(guards['native']) == len(guards['wasm']) == 49,
+            'promoted hexadecimal guards')
+    for native_guard, wasm_guard in zip(guards['native'], guards['wasm']):
+        require(native_guard['name'] == wasm_guard['name'] and native_guard['text'] == wasm_guard['text'], 'promoted guard input parity')
+        if native_guard['result'].get('error', {}).get('code') == 'invalid-input':
+            require(wasm_guard['result'].get('error', {}).get('code') == 'invalid-input', 'promoted input rejection parity')
+        else:
+            require(native_guard['result'] == wasm_guard['result'], 'promoted hexadecimal result parity')
+    source('renderer/virgl-shader/build/native/virgl-shader', guards['nativeBinary']['sha256'])
 
     words = pixels = 0
     for seed in SEEDS:
@@ -154,7 +165,7 @@ def main():
             artifact(str(file.relative_to(directory)))
     receipt = dict(schema='virgl-hex-literals-receipt-v1', task=TASK, status='passed', gitHead=head,
         guestExecution=False, productionNegotiation=False, nativeCases=676, primaryComparisons=512,
-        wasmCases=676, wasmPairs=676, retainedOriginals=25, retainedAdmissions=23, promotedBoundsCases=402,
+        wasmCases=676, wasmPairs=676, retainedOriginals=25, retainedAdmissions=23, promotedBoundsCases=402, promotedHexCases=49,
         checkedWords=words, checkedPixels=pixels, physicalOutputFaults=faults,
         sources=list(sources.values()), records=list(records.values()))
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')

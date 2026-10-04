@@ -12,7 +12,7 @@ export EMCC
 set -x
 git rev-parse HEAD
 git diff --check
-for file in renderer/virgl-shader/tests/hex-literals.mjs tools/virgl-hex-literals/*.mjs; do node --check "$file"; done
+for file in renderer/virgl-shader/tests/hex-literals.mjs renderer/virgl-shader/tests/hex-literal-regressions.mjs tools/virgl-hex-literals/*.mjs; do node --check "$file"; done
 python3 -m py_compile tools/virgl-hex-literals/*.py
 bash -n tools/verify-virgl-hex-literals.sh
 bash renderer/virgl-shader/build.sh guard-check
@@ -24,6 +24,7 @@ node tools/virgl-hex-literals/wasm.mjs "$evidence_dir/native/report.json" "$evid
 # Incremental replay of unchanged G6b guards and literal original outcomes.
 node tools/virgl-compiler-bounds/retained.mjs "$evidence_dir/retained"
 node renderer/virgl-shader/tests/compiler-bounds-joins.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-joins.json"
+node renderer/virgl-shader/tests/hex-literal-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-hex-guards.json"
 for seed in 883475089 2552332019 3860417495; do
   node tools/virgl-hex-literals/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
 done
