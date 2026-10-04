@@ -1,0 +1,13 @@
+{
+  "archive": {
+    "bytes": 158496,
+    "path": "recording.tar.gz",
+    "sha256": "73b3b022226652c7c276fff600c52b0c74dce2b7029cad7132865ee33cd82bba"
+  },
+  "excluded": "Consumed copies of already sealed input archives are bound externally and not duplicated.",
+  "records": 258,
+  "reportSha256": "dd8925908fa353434f9ed341363723dfa211823c0ae739839a2fd6bda2738961",
+  "schema": "virgl-inventory-variants-verifier-seal-v1",
+  "sourceHead": "7f74b5fa",
+  "verdict": "verified"
+}

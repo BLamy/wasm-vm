@@ -3,7 +3,7 @@ id: E6-T12g1
 epic: 6
 title: Capture unmodified guest es2gears and inventory required resource/view packets
 priority: 525.0270101
-status: implemented
+status: verified
 depends_on: [E6-T12f6]
 estimate: S
 risk: high
@@ -264,3 +264,110 @@ GPU execution, renderer admission or offload claim. The canonical G1 target now
 includes the narrow gate. As the critic prescribed, the unchanged actual guest
 and final pristine-clone proofs are carried forward rather than rerun. Fresh
 incremental verification of the missing sufficiency evidence is required.
+
+### 2026-10-04 — fresh verifier — incremental VERDICT: verified
+
+VERDICT: verified. The eight initial decoder sufficiency gaps are closed at
+review HEAD `7f74b5fa91cec8e44fb71b42808af95a135bc167`, with supplemental
+source frozen at `cfbe69fae8fc1b4befe85785d186a4449144f961`. This remains a
+real guest completion/provenance and literal inventory claim. Supplemental
+sessions prove synthetic decoder behavior only; six new shader bodies remain
+unproven for renderer admission or browser execution. No implementation was
+edited, and no new guest, rendering, pixel, offload or performance claim is made.
+
+- I1 authentication/carry-forward — HELD. Predicted all seals/sources and the
+  initial HELD boundaries would authenticate unchanged. All 225 supplemental
+  and 146 initial-verifier archive members authenticate, as do 15 supplemental
+  source bindings and every prior source/evidence boundary. Initial P1–P7 stay
+  HELD at their recorded digests. Supplement archive SHA-256 is
+  `4b30d21ff2e39ed54fedabe2e966140a84043676b8682ab9ada98e739c4a5c41`;
+  initial critic archive remains `0ce29d3b8e2f6911eeff48e6ecf3aa123b8b14981bea55473bb0b5282edd438a`.
+  Citations: `variants/authentication.json`, `variants/literal-audit.json`,
+  sealed `worker/variants/manifest.json` and `verifier/initial/manifest.json`.
+  Demand: preserve these boundaries; no repeat real guest/cold/full recorder
+  wall is required for this evidence/harness-only supplement.
+- I2 buffer/MSAA/shader — HELD. Predicted first/last elements 7/13, MSAA
+  sampleCount 4, and no premature shader object. Literal session
+  `objects-index-uniform/events.jsonl:48`, bytes 244 and 216, gives exactly
+  those view/surface fields and original resource lifetimes. Shader handle 11
+  is absent after event 38, then completes once at event 48/byte 0 with joined
+  VERT body `b637dca48152e1d4c6a2907363795843515fdbbeb3a310871b19232647e3c247`.
+  Observations and independently reassembled original fragments agree.
+  Demand: retain the literal assertions and continuation observation.
+- I3 index/uniform lifetimes and isolation — HELD. Predicted resource4@15,
+  indexBytes2/offset19, and uniform stage1/slot2 resource5@18 offset12/length20
+  plus stage0/slot5 resource8@27 offset28/length8. Event58 bytes0/16/40 and its
+  draw at byte64 agree. Later zero bindings retain only the other slot;
+  supporting context9's offset40 binding cannot change selected context4.
+  Draw roles are exactly index-buffer and uniform-buffer for those lifetimes.
+  Citations: `objects-index-uniform/inventory.json`, `observations.json`,
+  `assertions.json`, and independent `variants/literal-audit.json`.
+  Demand: retain stage/slot, zero-unbind and supporting-context assertions.
+- I4 client copy/inline bytes and backings — HELD. Predicted exact literal
+  copy fields, source offset19/flags3 and both latest backing citations.
+  `copy-inline/events.jsonl:58` byte0 agrees for destination1@6/source6@21;
+  creation and prior-submit bytes differ from the cited latest snapshots.
+  Byte60 inline payload is exactly 12 little-endian bytes
+  `010203045566778899000000`; independent hashing, level3/usage9/stride16/
+  layerStride48 and box/citation agree. Both transfers remain client scoped.
+  Demand: retain independent payload/field/backing checks.
+- I5 reset/cleanup/reused IDs — HELD. Predicted empty live tables at both
+  boundaries, new lifetimes and no inherited bindings/backings. Both
+  `reset-reuse/events.jsonl:60` and `cleanup-reuse/events.jsonl:60` empty live
+  contexts/resources/states. Recreated contexts4@62 and4@64 start from the
+  independent literal empty-state dictionary; new objects/draws use fresh
+  lifetimes while historical draw provenance remains unchanged. New copies
+  cite new snapshots at events116/118, byte156; RID6 recreated without IOV
+  yields sourceBackingAtSubmit null at events129/131, byte0.
+  Demand: retain both lifecycle sessions and the no-IOV reuse assertion.
+- I6 rejection, gate and line sufficiency — HELD. Predicted exact rejection
+  for missing index/uniform resource99 and an indexed draw after unbinding.
+  Three independent sessions reject their event58 packet as the expected
+  missing-resource or unbound-index error. All 21 demanded physical decoder
+  lines have authenticated hits with unchanged Inventory SHA-256
+  `0b81e69ebd6c5bf824db1bfb3a25755e0d8b59fb4c1dbd5167342aca78d16ada`.
+  The scrubbed narrow target passes seven sessions/66 assertions; index source
+  fault19→23 fails exactly the literal binding assertion. All 202 fresh normal
+  and fault artifacts reproduce the sealed outputs, except authenticated
+  sourceHead metadata. Citations: `variants/coverage-dispositions.json`,
+  `literal-audit.json`, `reproduction.json`, `acceptance/acceptance.log` and
+  `acceptance/index-offset-fault/objects-index-uniform/assertions.json`.
+  Demand: retain the new narrow target in the canonical gate.
+- I7 bounded novel attack — HELD. Predicted a balanced resource4 bind32→64
+  mutation would pass framing and reject its selected indexed draw. It does:
+  event15 changes only bind; event58/byte64 rejects as `actual client role
+  index-buffer contradicts resource 4@15 bind 64 at context 4@4`.
+  Mutated event digest is `63a0c9daccab2f4c59a13b61565ceec5daf3c3afeb9ae9a19d148ec1f66ec16d`;
+  citation: `variants/declared-index-role-fault/result.json`.
+  Demand: preserve the verifier attack evidence.
+- I8 independent new-check sensitivity — HELD. Predicted a scratch buffer
+  view source fault lastElement13→14 would fail its literal assertion.
+  It fails exactly `buffer-view literal fields`, expected13/observed14;
+  fault digest is `ff72379dd8b75743188ad967b191e1dd64c709cc805c9e4c8efc034f2b626fa6`.
+  Original tracked source remains unchanged. Citation:
+  `variants/buffer-element-source-fault/result.json` and its assertion rows.
+  Demand: preserve this sensitivity record; no production fault is retained.
+
+COVERAGE: Initial executable/waived hunk dispositions are carried forward;
+all eight previously unexecuted decoder behaviors now execute with independent
+literal state assertions. The new fixture builders, rejection checks, state
+recording and source-fault path execute. Make routing is exercised by the
+narrow gate; the main target's added line composes that same gate. Declarative
+imports/definitions/config/metadata and failure-only diagnostics are explicitly
+waived in `variants/coverage-dispositions.json`. No decoder runtime behavior is
+waived; no dead-code or further evidence demand remains.
+
+Commands: scrubbed-env
+`VIRGL_INVENTORY_VARIANTS_EVIDENCE_DIR=target/evidence/virgl-workload-inventory-verifier/variants/acceptance make verify-E6-T12g1-variants`;
+`python3 target/evidence/virgl-workload-inventory-verifier/variants/literal_variants_audit.py`;
+`python3 target/evidence/virgl-workload-inventory-verifier/variants/independent_attacks.py`;
+`bash -n tools/verify-virgl-inventory-variants.sh tools/verify-virgl-workload-inventory.sh`.
+All incremental scratch evidence is under
+`target/evidence/virgl-workload-inventory-verifier/variants/`;
+`report.json` SHA-256 `dd8925908fa353434f9ed341363723dfa211823c0ae739839a2fd6bda2738961` binds 257 verifier artifacts, source/evidence
+boundaries, predictions, coverage and attack results. SUITE: retain the seven
+synthetic sessions and narrow verify target alongside the canonical gate,
+immutable old corpus and sealed real/negative/cold/critic recordings. The
+ad-hoc independent audit and attacks remain verifier evidence; no duplicate
+tracked test is needed. The verifier sets status verified; the root worker
+owns queue regeneration, sealing and Git commits.
