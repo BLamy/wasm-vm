@@ -603,7 +603,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02701` [E6-T10a](epic-6-transcendence/E6-T10a-virgl-shader-bridge.md) — Reuse VirGL TGSI shader translation in a bounded browser module *(deps: E5-T06b, E5.5-T03bg)*
 - [-] `525.02701` [E6-T12g](epic-6-transcendence/E6-T12g-virgl-format-view-mapping.md) — Map required VirGL resource formats and texture views to WebGL2 *(deps: E6-T12f6)*
 - [x] `525.0270101` [E6-T12g1](epic-6-transcendence/E6-T12g1-guest-format-inventory.md) — Capture unmodified guest es2gears and inventory required resource/view packets *(deps: E6-T12f6)*
-- [~] `525.0270102` [E6-T12g2](epic-6-transcendence/E6-T12g2-color-format-storage.md) — Map required color formats and forced alpha with role-safe storage *(deps: E6-T12g1)*
+- [?] `525.0270102` [E6-T12g2](epic-6-transcendence/E6-T12g2-color-format-storage.md) — Map required color formats and forced alpha with role-safe storage *(deps: E6-T12g1)*
 - [ ] `525.0270103` [E6-T12g3](epic-6-transcendence/E6-T12g3-depth-format-storage.md) — Prove required packed depth formats and explicit unsupported depth rejection *(deps: E6-T12g2)*
 - [ ] `525.0270104` [E6-T12g4](epic-6-transcendence/E6-T12g4-texture-view-specialization.md) — Execute required sampler-view swizzles addressing and filtering *(deps: E6-T12g3)*
 - [ ] `525.0270105` [E6-T12g5](epic-6-transcendence/E6-T12g5-inline-texture-uploads.md) — Execute bounded RESOURCE_INLINE_WRITE and stride-repacked uploads *(deps: E6-T12g4)*
