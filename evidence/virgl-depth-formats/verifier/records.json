@@ -1,0 +1,142 @@
+[
+  {
+    "path": "attack.mjs",
+    "bytes": 17036,
+    "sha256": "d6ac834d97d17c3100212c7d405d5989ddd520a0b0d1abfc9a7839477a80b6e3"
+  },
+  {
+    "path": "authenticate.py",
+    "bytes": 6688,
+    "sha256": "9863df418cdd2cfe2d1b6be84882e9dc4e80048d05fbcd000aeb0d43527a3b00"
+  },
+  {
+    "path": "authentication.json",
+    "bytes": 289430,
+    "sha256": "ec87ad8d0cb54413deffe6151749be68122a4655eca9c3d89ac6dd88b5bdf3b0"
+  },
+  {
+    "path": "coverage.json",
+    "bytes": 261990,
+    "sha256": "e922defc00a3d0dbc64e85f4dde47c37c1740c3445931bc81cc1a0f931c6f3f5"
+  },
+  {
+    "path": "coverage.mjs",
+    "bytes": 4325,
+    "sha256": "150296ac4eac32edef1af2ee754b4b42866f624a09a9e249e3168781a0e4de51"
+  },
+  {
+    "path": "driver.mjs",
+    "bytes": 6585,
+    "sha256": "69e1998f79eb56d36faf58ce8fd61f7fb32a80f78a85615cc66dfb3755818321"
+  },
+  {
+    "path": "independent-byte-order/browser-coverage.json",
+    "bytes": 63315,
+    "sha256": "1feed5b3db13ed72cd37957a3d0d2c93bac3be21c3f56e1a3190b17dd8449d20"
+  },
+  {
+    "path": "independent-byte-order/browser.png",
+    "bytes": 80281,
+    "sha256": "1add85be29a454fcc14b143c9a95ceaf7e0df1a61637e23cd26746f0bb71551e"
+  },
+  {
+    "path": "independent-byte-order/mutant-resources.mjs",
+    "bytes": 61433,
+    "sha256": "12db5a1c3f3e21613113dee6376e65730d5f900644f826fb3ce4943f19d2ba91"
+  },
+  {
+    "path": "independent-byte-order/report.json",
+    "bytes": 18006,
+    "sha256": "d5380af786b1e6095339fafc85ebd15dc14e4c968fd7ececb921da9d4ff76825"
+  },
+  {
+    "path": "independent-clean/browser-coverage.json",
+    "bytes": 125241,
+    "sha256": "412484bae9bc428f0d9e9ef332ad4357c1bd32986f5b262d806f2ea7bf64af2b"
+  },
+  {
+    "path": "independent-clean/browser.png",
+    "bytes": 47137,
+    "sha256": "28434d02af47660017e59340fba4dcb40bf53b259838d703750bfb9bd22e1047"
+  },
+  {
+    "path": "independent-clean/report.json",
+    "bytes": 370919,
+    "sha256": "b98667d68bb21ab1c8ced51ac2948de9b904f02bd6b909cd1e390db6af6682ff"
+  },
+  {
+    "path": "independent-packing/browser-coverage.json",
+    "bytes": 65998,
+    "sha256": "1e0d9112c6f481bb54de489274e535a6153a33b9c168a18f5ce0c300f784cf10"
+  },
+  {
+    "path": "independent-packing/browser.png",
+    "bytes": 102597,
+    "sha256": "4425b91756f0535c142629ab78f69a74bddad740530d81ba4f1c077d9f1535a7"
+  },
+  {
+    "path": "independent-packing/mutant-resources.mjs",
+    "bytes": 61432,
+    "sha256": "1d3db224026295b0a3f214bd8433df50efdfff5ed9ad57ddf6e5e19b62ff360c"
+  },
+  {
+    "path": "independent-packing/report.json",
+    "bytes": 21204,
+    "sha256": "46022c8b4ca095b0b9e305530b422b4bdb31951c5832198198d131e3992d0297"
+  },
+  {
+    "path": "independent-summary.json",
+    "bytes": 2126,
+    "sha256": "cee3f8f7df739a2f840a3ef3764671def3972326bf8d6718c8e3434349baffb2"
+  },
+  {
+    "path": "observations-charge.json",
+    "bytes": 35241,
+    "sha256": "2d86e4ef219ba714e721b71d1f0af556775d399a3cf3ba647e4f26285081f6fa"
+  },
+  {
+    "path": "observations-fail-closed.json",
+    "bytes": 7528,
+    "sha256": "95c696ffecbb2727cb68b6a8f98e263c8e2fbab9fb889e9bab98bdef3426f45d"
+  },
+  {
+    "path": "observations-little-endian.json",
+    "bytes": 7618,
+    "sha256": "cc19a2ff4f98961d7f359b22c8f59d31680860e6217547e64181c3a168cffd97"
+  },
+  {
+    "path": "observations-sampling.json",
+    "bytes": 11526,
+    "sha256": "a067ba7032e57d93b6540567e4168ddbe62ef8a20587559cdeb657551ee1985a"
+  },
+  {
+    "path": "original-capture.json",
+    "bytes": 4516,
+    "sha256": "be5fc4a1a11a7b1baed48db443305ff57ee52bbe9d58e68f8e0feb9f0615300d"
+  },
+  {
+    "path": "prediction-results.json",
+    "bytes": 8575,
+    "sha256": "03123fdc96159e4457a930ef685c4b465205faa641ef6eaca4b9562226e724d5"
+  },
+  {
+    "path": "predictions.md",
+    "bytes": 4085,
+    "sha256": "6d52056ba99bfc05ee29c6bb54fce5bee1ac0ccdcc7d6a2d836f189c6714ac64"
+  },
+  {
+    "path": "verdict.md",
+    "bytes": 6315,
+    "sha256": "f1ba110e205d9918f9199fab4d942cb2e5d839d9103e801b167020bc2c64cff7"
+  },
+  {
+    "path": "verifier-records.json",
+    "bytes": 15734,
+    "sha256": "80f3d18e6c1d72edaad79eba44e8f478a00193309698cdcef6debc546a60142f"
+  },
+  {
+    "path": "write-verdict.py",
+    "bytes": 7392,
+    "sha256": "c0d808a35fb7665cc40f63fc9747339dfeaa3f2b9705802387d1dd9f4df2a08f"
+  }
+]
