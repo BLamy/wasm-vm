@@ -111,8 +111,8 @@ caller getters.
 
 Native records 1,589,060 calls over 5,101 singles, 1,116 pairs and all 19 original
 bodies: 800,358 single/774,540 pair recoveries, 3,128 truncations, 324 hostile inputs,
-4,096 seeded mutations and 260 real owned allocation failures, plus 20 upstream
-failures. All19 originals translate unchanged. Wasm records 74,716 calls, including
+4,096 seeded mutations and 260 total allocation failures, including 240 owned
+and 20 upstream failures. All 19 originals translate unchanged. Wasm records 74,716 calls, including
 full native single/pair/original equality, 64 maximal-input calls, 82 actual fixed-
 heap pressure calls and complete recovery with the same 16 MiB backing memory.
 IR 26,480/profile 7,616/flow 52,644 byte bounds are unchanged. The helper strings

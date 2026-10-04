@@ -30,8 +30,8 @@ The archives and member inventories can also be checked independently by digest.
 
 The acceptance records 1,589,060 native calls over 5,101 single cases, 1,116 pairs
 and all 19 unchanged original bodies. It includes 800,358 single and 774,540 pair
-recoveries, 3,128 truncations, 324 hostile inputs, 4,096 mutations, 260 owned
-allocation failures and 20 upstream failures. Wasm records 74,716 calls with full
+recoveries, 3,128 truncations, 324 hostile inputs, 4,096 mutations and 260 total
+allocation failures, including 240 owned and 20 upstream failures. Wasm records 74,716 calls with full
 native parity, 64 maximum-input calls and 82 real fixed-heap pressure calls.
 Its original 16 MiB backing buffer and allocation capacity recover after failure.
 
