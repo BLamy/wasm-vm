@@ -328,3 +328,12 @@ with RGBA/ZERO/ONE selectors. Views share the existing native storage and leases
 the renderer owns bounded fragment shader variants, with no extra view images
 or CPU shadows. Physical swizzle/filter/alpha oracles retain these color/depth
 transfer gates. Depth views and mip/layer/cube families remain unsupported.
+
+Inline uploads need context membership and GPU storage, without guest backing.
+Their dwords are owned data records; a dense scratch reservation is made before
+allocation or upload. The bounded payload contains exactly the strided footprint
+rounded up to a dword (up to three ignored terminal alignment bytes). Row stride0
+means the full resource width in guest bytes, including partial boxes; layer
+stride0 means the full resource height. Dense repacking skips guest row padding.
+Inline writes never modify guest backing and pending inline tickets bind resource
+and membership generations, independently of unrelated backing changes.

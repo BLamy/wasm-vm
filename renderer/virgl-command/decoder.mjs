@@ -18,7 +18,7 @@ export const LIMITS = Object.freeze({
 const COMMAND_NAMES = Object.freeze({
   1: "CREATE_OBJECT", 2: "BIND_OBJECT", 3: "DESTROY_OBJECT",
   4: "SET_VIEWPORT_STATE", 5: "SET_FRAMEBUFFER_STATE", 6: "SET_VERTEX_BUFFERS",
-  7: "CLEAR", 8: "DRAW_VBO", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
+  7: "CLEAR", 8: "DRAW_VBO", 9: "RESOURCE_INLINE_WRITE", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
   12: "SET_CONSTANT_BUFFER", 13: "SET_STENCIL_REF", 14: "SET_BLEND_COLOR",
   18: "BIND_SAMPLER_STATES", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
   25: "SET_STREAMOUT_TARGETS", 28: "SET_SUB_CTX", 29: "CREATE_SUB_CTX",
@@ -264,8 +264,8 @@ function decodeObject(p, objectType) {
   }
 }
 
-function decodeTransfer(p, copy) {
-  p.exact(copy ? 14 : 13);
+function decodeTransfer(p, copy, inline = false) {
+  if (inline) p.atLeast(12); else p.exact(copy ? 14 : 13);
   const resourceHandle = p.handle(1), level = p.u(2), usage = p.u(3), stride = p.u(4), layerStride = p.u(5);
   // Pinned vrend_decode_transfer_common ignores usage; preserve this opaque word.
   // In particular, do not interpret modern Mesa flags using the old renderer enum.
@@ -279,6 +279,7 @@ function decodeTransfer(p, copy) {
   const rowSpan = stride * (box.height - 1);
   p.require(rowSpan <= MAX_U32, "invalid-value", "Transfer row arithmetic overflows u32.");
   const common = { resourceHandle, level, usage, stride, layerStride, box };
+  if (inline) return { ...common, dataWords: p.words(12, p.length - 11) };
   if (copy) {
     const stagingResourceHandle = p.handle(12), stagingOffset = p.u(13), flags = p.u(14);
     p.mask(flags, 3);
@@ -355,6 +356,7 @@ function decodeFields(p, objectType) {
         "invalid-value", "Invalid draw count/index range.");
       return fields;
     }
+    case 9: return decodeTransfer(p, false, true);
     case 10: case 18: return decodeHandles(p);
     case 11: {
       p.require(p.length === 1 || p.length === 3, "payload-length", "Index buffer payload must have one or three words.");

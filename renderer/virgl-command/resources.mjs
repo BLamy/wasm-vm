@@ -103,14 +103,35 @@ function normalizeMetadata(value, limits) {
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
   return freeze({ ...meta, kind, byteLength });
 }
+function inlineWords(value) {
+  // The wire submission cap leaves at most 65524 words after its inline header.
+  // Read only own data descriptors: sparse/accessor arrays cannot invoke code.
+  let descriptors, length;
+  try {
+    require(Array.isArray(value), "invalid-input", "Inline data must be dwords.");
+    length = Object.getOwnPropertyDescriptor(value, "length")?.value;
+    require(Number.isInteger(length) && length >= 1 && length <= 65524, "limit-exceeded", "Inline data exceeds wire limits.");
+    descriptors = Object.getOwnPropertyDescriptors(value);
+  }
+  catch (error) { if (error instanceof ResourceFault) throw error; throw new ResourceFault("invalid-input", "Unusable inline dwords."); }
+  require(Reflect.ownKeys(descriptors).length === length + 1, "invalid-input", "Inline data must be a dense dword array.");
+  return Array.from({ length }, (_, i) => {
+    const descriptor = descriptors[i];
+    require(descriptor && Object.hasOwn(descriptor, "value"), "invalid-input", "Inline dwords cannot be sparse or accessors.");
+    return uint(descriptor.value, "inline dword");
+  });
+}
 function normalizedFields(value) {
-  const allowed = [...COMMON_KEYS, "dataOffset", "direction", "stagingResourceHandle", "stagingOffset", "flags", "synchronized", "readFromHost"];
+  const allowed = [...COMMON_KEYS, "dataWords", "dataOffset", "direction", "stagingResourceHandle", "stagingOffset", "flags", "synchronized", "readFromHost"];
   const fields = record(value, allowed, COMMON_KEYS);
   for (const key of COMMON_KEYS.filter((key) => key !== "box")) uint(fields[key], key, key === "resourceHandle");
   fields.box = record(fields.box, BOX_KEYS);
   for (const key of BOX_KEYS) uint(fields.box[key], key, ["width", "height", "depth"].includes(key));
   const copy = Object.hasOwn(fields, "flags");
-  if (copy) {
+  if (Object.hasOwn(fields, "dataWords")) {
+    for (const key of allowed.filter((key) => !COMMON_KEYS.includes(key) && key !== "dataWords")) require(!Object.hasOwn(fields, key), "invalid-transfer", "Mixed inline transfer encodings.");
+    fields.dataWords = inlineWords(fields.dataWords);
+  } else if (copy) {
     require(!Object.hasOwn(fields, "dataOffset") && !Object.hasOwn(fields, "direction"), "invalid-transfer", "Mixed transfer encodings.");
     uint(fields.stagingResourceHandle, "stagingResourceHandle", true);
     uint(fields.stagingOffset, "stagingOffset");
@@ -146,9 +167,12 @@ function layoutFor(meta, fields, backingBytes, limits) {
   const span = checkedProduct(box.height - 1, rowStride, U32, "Row footprint overflows u32.");
   require(rowBytes <= U32 - span, "out-of-bounds", "Transfer footprint overflows u32.");
   const footprintBytes = span + rowBytes;
-  const offset = Object.hasOwn(fields, "flags") ? fields.stagingOffset : fields.dataOffset;
+  const inline = Object.hasOwn(fields, "dataWords");
+  const offset = inline ? 0 : Object.hasOwn(fields, "flags") ? fields.stagingOffset : fields.dataOffset;
   require(offset <= backingBytes && footprintBytes <= backingBytes - offset, "out-of-bounds", "Transfer exceeds backing bytes.");
   require(footprintBytes <= limits.transferBytes, "limit-exceeded", "Strided transfer footprint exceeds byte limit.");
+  if (inline) require(fields.dataWords.length * 4 === Math.ceil(footprintBytes / 4) * 4,
+    "invalid-transfer", "Inline payload must contain exactly the aligned strided footprint.");
   const tightBytes = checkedProduct(rowBytes, box.height, limits.transferBytes, "Tight transfer exceeds byte limit.");
   const direction = (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload";
   const packedBytes = depth && direction === "readback" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, "Depth conversion exceeds scratch byte limit.") : tightBytes;
@@ -186,6 +210,14 @@ function gather(backing, layout) {
   const out = new Uint8Array(layout.tightBytes);
   for (let row = 0; row < layout.rowCount; row++) copySegments(backing.segments, layout.offset + row * layout.rowStride,
     out.subarray(row * layout.rowBytes, (row + 1) * layout.rowBytes), false);
+  return out;
+}
+function gatherInline(words, layout) {
+  const out = new Uint8Array(layout.tightBytes);
+  for (let row = 0; row < layout.rowCount; row++) for (let byte = 0; byte < layout.rowBytes; byte++) {
+    const offset = row * layout.rowStride + byte;
+    out[row * layout.rowBytes + byte] = (words[offset >>> 2] >>> ((offset & 3) * 8)) & 255;
+  }
   return out;
 }
 function scatter(backing, layout, bytes) {
@@ -324,34 +356,35 @@ export function createResourceStore(options) {
     const prepareTransfer = (contextId, decodedCommand, asynchronous = false) => {
         const ctx = context(contextId);
         const command = record(decodedCommand, ["opcode", "name", "objectType", "objectName", "byteOffset", "byteLength", "payloadDwords", "fields"], ["opcode", "fields"]);
-        require(command.opcode === 43 || command.opcode === 45, "unsupported-command", "Only TRANSFER3D and COPY_TRANSFER3D execute here.");
-        const copy = command.opcode === 45;
-        for (const [key, expected] of [["name", copy ? "COPY_TRANSFER3D" : "TRANSFER3D"], ["objectType", 0], ["objectName", "NULL"], ["byteLength", copy ? 60 : 56], ["payloadDwords", copy ? 14 : 13]]) {
+        require([9, 43, 45].includes(command.opcode), "unsupported-command", "Only inline and checked 3D transfers execute here.");
+        const copy = command.opcode === 45, inline = command.opcode === 9;
+        const fields = normalizedFields(command.fields);
+        require(Object.hasOwn(fields, "flags") === copy && Object.hasOwn(fields, "dataWords") === inline, "invalid-transfer", "Opcode and transfer payload disagree.");
+        const payloadDwords = inline ? 11 + fields.dataWords.length : copy ? 14 : 13;
+        for (const [key, expected] of [["name", inline ? "RESOURCE_INLINE_WRITE" : copy ? "COPY_TRANSFER3D" : "TRANSFER3D"], ["objectType", 0], ["objectName", "NULL"], ["byteLength", (payloadDwords + 1) * 4], ["payloadDwords", payloadDwords]]) {
           if (Object.hasOwn(command, key)) require(command[key] === expected, "invalid-transfer", "Inconsistent command metadata.");
         }
         if (Object.hasOwn(command, "byteOffset")) { uint(command.byteOffset, "byteOffset"); require(command.byteOffset % 4 === 0, "invalid-transfer", "Command byte offset is unaligned."); }
-        const fields = normalizedFields(command.fields);
-        require(Object.hasOwn(fields, "flags") === copy, "invalid-transfer", "Opcode and transfer payload disagree.");
         const primary = resource(fields.resourceHandle), primaryMember = membership(ctx, primary);
         const retained = [primary], members = [primaryMember], heldBackings = [];
-        let transferBacking;
+        let transferBacking = null;
         if (copy) {
           const staging = resource(fields.stagingResourceHandle), stagingMember = membership(ctx, staging);
           require(staging.meta.kind === "staging", "unsupported-resource", "Copy secondary resource must be staging backing.");
           transferBacking = needBacking(staging); heldBackings.push(transferBacking); retained.push(staging); members.push(stagingMember);
           // Pinned read-from-host copy also requires primary attached backing.
           if (fields.flags === 3) heldBackings.push(needBacking(primary));
-        } else { transferBacking = needBacking(primary); heldBackings.push(transferBacking); }
-        const layout = layoutFor(primary.meta, fields, transferBacking.byteLength, limits);
+        } else if (!inline) { transferBacking = needBacking(primary); heldBackings.push(transferBacking); }
+        const layout = layoutFor(primary.meta, fields, inline ? fields.dataWords.length * 4 : transferBacking.byteLength, limits);
         require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Prepared transfer ticket limit exceeded.");
         reserveScratch(scratchCharge(layout));
         let upload;
-        try { upload = !asynchronous && layout.direction === "upload" ? gather(transferBacking, layout) : null; }
+        try { upload = inline ? gatherInline(fields.dataWords, layout) : !asynchronous && layout.direction === "upload" ? gather(transferBacking, layout) : null; }
         catch (error) { scratchBytes -= scratchCharge(layout); throw error; }
         const ticket = Object.freeze({});
         for (const res of retained) res.references++;
-        const backingLinks = retained.map((res) => ({ resource: res, backing: res.backing }));
-        tickets.set(ticket, { context: ctx, primary, retained, memberships: members, backings: heldBackings, backingLinks, transferBacking, layout, upload, asynchronous, native: null, bytes: null });
+        const backingLinks = inline ? [] : retained.map((res) => ({ resource: res, backing: res.backing }));
+        tickets.set(ticket, { context: ctx, primary, retained, memberships: members, backings: heldBackings, backingLinks, transferBacking, layout, upload, inline, asynchronous, native: null, bytes: null });
         return success({ ticket, layout });
     };
     const store = {
@@ -555,6 +588,8 @@ export function createResourceStore(options) {
       } else if (!entry.resource) checkTicket(entry);
     };
     const describeTransfer = (entry) => {
+      if (entry.inline) return freeze({ resource: { id: entry.primary.meta.id, generation: entry.primary.generation },
+        backingGeneration: null, inline: true, layout: entry.layout });
       const destination = entry.retained.find((res) => res.backing === entry.transferBacking);
       return freeze({ resource: { id: destination.meta.id, generation: destination.generation },
         backingGeneration: entry.transferBacking.generation, layout: entry.layout });

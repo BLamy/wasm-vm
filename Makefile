@@ -1977,3 +1977,7 @@ verify-E6-T12g3:
 .PHONY: verify-E6-T12g4
 verify-E6-T12g4:
 	bash tools/verify-virgl-texture-views.sh
+
+.PHONY: verify-E6-T12g5
+verify-E6-T12g5:
+	bash tools/verify-virgl-inline-uploads.sh
