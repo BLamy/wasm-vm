@@ -90,13 +90,35 @@ matching vertex qualifiers; callers cannot supply compiler keys. The returned
 fragment must match its existing translation, and the vertex metadata must
 match the derived interface before any variant is compiled.
 
-Each flat program owns one additional vertex shader. Its generated GLSL length
+Each flat program owns one additional vertex shader. Each nonidentity color view
+adds a private fragment variant for the used sampler slots. Their generated GLSL lengths
 counts toward `shaderBytes`, including while it is being compiled. Allocation,
 compile, link and reflection failures release that charge and every temporary
 GL object. Program deletion, final selector release and context disposal release
 the variant; dropping a bound selector's public name preserves its variant until
 the final binding is released. Smooth pairs keep their existing base shaders.
-`inspect()` exposes each program's `key`, `interfaceKey` and `variantBytes`.
+`inspect()` exposes each program's `key`, `interfaceKey`, `samplingKey`,
+`samplingViews` and aggregate `variantBytes`.
+
+Fragment sampling keys canonically include used sampler slot/name, exact color
+format, target2, level/layer0, fixed lower-left origin and all four immutable
+RGBA/ZERO/ONE selectors. RGBA identity keeps its legacy executable key. The
+checked 2D TEX lookup is wrapped by a private GLSL helper before fragment main;
+helpers map the native normalized sample, including X-format alpha one. Shared
+texture contents and parameters remain unchanged. No per-view image or CPU
+shadow is created. Native sampler objects apply clamp-edge nearest/linear
+filtering and non-mip LOD state on every restoration. These native filter
+settings do not change the generated shader and therefore do not change its key.
+
+An all-constant view may optimize its native sampler uniform away. The logical
+sampler still requires a view/state lease and still rejects framebuffer feedback.
+Both vertex and fragment variants are charged before compilation, rolled back on
+failure and released with their program. A/B/A view selection reuses A's native
+program; replacing a public view handle cannot select an obsolete specialization.
+`make verify-E6-T12g4` proves actual pixels on all three color storage formats,
+each selector in each lane, constant lanes, slot7 combinations, filter/alias
+restoration, combined flat/view byte charges, delayed job draws, exact quotas,
+native allocation/compile/link/reflection failures and a physical swizzle fault.
 
 Reflection checks actual attribute type/size/location, uvec4
 constant-array type/declared and active extents, sampler2D type/count, fragment output location zero,
@@ -135,12 +157,12 @@ bounded by the measured stage limits and a 16-slot stage maximum. All 32-slot
 inactive resets remain accepted.
 
 The active profile is one required normalized level-zero color surface
-(BGRX8, RGBA8 or B10G10R10X2), identity RGBA8 sampler
-views, clamp-edge nearest/linear non-mip samplers, R32G32_FLOAT vertex elements,
+(BGRX8, RGBA8 or B10G10R10X2), exact-matching color sampler
+views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers, R32G32_FLOAT vertex elements,
 float-aligned vertex strides at most255 bytes, u16 indices, an integer positive
 viewport with normalized depth range, additive alpha blend modes supported by
 the decoder, optional dithering/back-face culling, and disabled depth/stencil.
-Scissor rasterization and nonidentity sampler swizzles fail explicitly. Buffer
+Scissor rasterization, depth views and mip/layer/cube sampling fail explicitly. Buffer
 and element ranges, resource classes, link inputs and quotas are validated before
 publication. Backend allocation/compile/link failures delete temporary objects.
 
@@ -156,7 +178,7 @@ attachment or an RGBA8 sampler view. Depth/stencil framebuffer selection,
 clear and DSA execution remain E6-T12h; this storage boundary does not enable
 them. `make verify-E6-T12g3` checks original surface lifetime, incompatible
 color attachment rejection and independent native depth observations.
-Sampler-view admission for new formats remains a separate boundary.
+Required matching color view admission is the E6-T12g4 boundary above.
 
 Restoration binds the renderer's private VAO/FBO/program, every texture/sampler
 unit, vertex/index buffers, system UBO and constants, color/blend/raster state,

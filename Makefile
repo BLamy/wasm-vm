@@ -1973,3 +1973,7 @@ verify-E6-T12g2:
 .PHONY: verify-E6-T12g3
 verify-E6-T12g3:
 	bash tools/verify-virgl-depth-formats.sh
+
+.PHONY: verify-E6-T12g4
+verify-E6-T12g4:
+	bash tools/verify-virgl-texture-views.sh
