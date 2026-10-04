@@ -92,12 +92,12 @@ async function draw(rig,kernel,vector,markers=null){
  const wanted=oracle.words;
  for(let y=0;y<2;y++)for(let x=0;x<64;x++){
   const pixel=[...bytes.slice((64*y+x)*4,(64*y+x+1)*4)];let expectedPixel;
-  expectedPixel=markers?[...bytes.slice(Math.floor(x/2)*8,Math.floor(x/2)*8+4)]:kernel.op==='ORIGINAL'?oracle.color:wanted.map(word=>((word>>>Math.floor(x/2))&1)*255);
+  expectedPixel=markers?[...bytes.slice(Math.floor(x/2)*8,Math.floor(x/2)*8+4)]:wanted===null?oracle.color:wanted.map(word=>((word>>>Math.floor(x/2))&1)*255);
   if(markers)require(pixel.every(value=>value===0||value===255),'physical branch flags are binary');
   if(JSON.stringify(pixel)!==JSON.stringify(expectedPixel)){record.failure??={x,y,expectedPixel,observedPixel:pixel};throw new Error(kernel.case+'/'+vector.name+' independent exact word pixel mismatch: '+JSON.stringify(record.failure));}
-  if(kernel.op!=='ORIGINAL'&&y===0&&x%2===0)for(let lane=0;lane<4;lane++)reconstructed[lane]|=BigInt(pixel[lane]/255)<<BigInt(x/2);
+  if(wanted!==null&&y===0&&x%2===0)for(let lane=0;lane<4;lane++)reconstructed[lane]|=BigInt(pixel[lane]/255)<<BigInt(x/2);
  }
- if(kernel.op!=='ORIGINAL'){
+ if(wanted!==null){
   const words=reconstructed.map(Number);
   if(markers){record.counterWords=words;record.helperBranches=markers.filter((_,i)=>((words[i<32?0:1]>>>(i%32))&1)!==0);equal(words.slice(2),[0,0],'unused counter lanes');}
   else{record.words=words;equal(record.words,wanted,'all physical reconstructed words');}

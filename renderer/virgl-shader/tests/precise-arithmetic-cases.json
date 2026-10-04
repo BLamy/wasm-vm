@@ -3364,6 +3364,53 @@
       }
     },
     {
+      "name": "numeric-raster-mixed-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nADD_PRECISE TEMP[0], IMM[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[1].xy, TEMP[0].xyxy\nMOV OUT[1].zw, CONST[0].zwzw\nMOV OUT[0], IN[0]\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v28",
+        "constantCount": 2,
+        "arithmeticBaseProfile": "virgl-webgl2-raw-bits-v27",
+        "preciseArithmeticContract": {
+          "kind": "tgsi-precise-binary32-rne-v1",
+          "stage": "vertex",
+          "operations": [
+            "ADD",
+            "MUL"
+          ],
+          "rounding": "nearest-even",
+          "nan": "canonical-quiet-0x7fc00000",
+          "subnormals": "gradual"
+        },
+        "rasterBaseProfile": "virgl-webgl2-raw-bits-v7",
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 2
+          }
+        ],
+        "constantRasterDomains": [
+          {
+            "kind": "constant-bank-raster-copy-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 2,
+            "components": [
+              {
+                "register": 0,
+                "mask": 12
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "reject-manufactured-output-vertex",
       "stage": "vertex",
       "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], TEMP[1]\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
@@ -6833,6 +6880,53 @@
       }
     },
     {
+      "name": "numeric-raster-mixed-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nADD_PRECISE TEMP[0], IMM[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[0].xy, TEMP[0].xyxy\nMOV OUT[0].zw, CONST[0].zwzw\nEND\n",
+      "ok": true,
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v28",
+        "constantCount": 2,
+        "arithmeticBaseProfile": "virgl-webgl2-raw-bits-v27",
+        "preciseArithmeticContract": {
+          "kind": "tgsi-precise-binary32-rne-v1",
+          "stage": "fragment",
+          "operations": [
+            "ADD",
+            "MUL"
+          ],
+          "rounding": "nearest-even",
+          "nan": "canonical-quiet-0x7fc00000",
+          "subnormals": "gradual"
+        },
+        "rasterBaseProfile": "virgl-webgl2-raw-bits-v7",
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 2
+          }
+        ],
+        "constantRasterDomains": [
+          {
+            "kind": "constant-bank-raster-copy-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 2,
+            "components": [
+              {
+                "register": 0,
+                "mask": 12
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "reject-manufactured-output-fragment",
       "stage": "fragment",
       "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], TEMP[1]\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
@@ -7779,6 +7873,12 @@
       "ok": true
     },
     {
+      "name": "numeric-raster-mixed-vertex-pair",
+      "vertex": "numeric-raster-mixed-vertex",
+      "fragment": "pass-fragment",
+      "ok": true
+    },
+    {
       "name": "arithmetic-limit-vertex-pair",
       "vertex": "arithmetic-limit-vertex",
       "fragment": "pass-fragment",
@@ -8565,6 +8665,12 @@
       "ok": true
     },
     {
+      "name": "numeric-raster-mixed-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "numeric-raster-mixed-fragment",
+      "ok": true
+    },
+    {
       "name": "arithmetic-limit-fragment-pair",
       "vertex": "pass-vertex",
       "fragment": "arithmetic-limit-fragment",
@@ -8678,6 +8784,15 @@
       "vectorSet": "targeted"
     },
     {
+      "case": "numeric-raster-mixed-vertex",
+      "stage": "vertex",
+      "op": "RASTER",
+      "mask": "xyzw",
+      "variant": "direct",
+      "count": 2,
+      "vectorSet": "original"
+    },
+    {
       "case": "arithmetic-add-xyzw-direct-fragment",
       "stage": "fragment",
       "op": "ADD",
@@ -8775,6 +8890,15 @@
       "variant": "absolute",
       "count": 6,
       "vectorSet": "targeted"
+    },
+    {
+      "case": "numeric-raster-mixed-fragment",
+      "stage": "fragment",
+      "op": "RASTER",
+      "mask": "xyzw",
+      "variant": "direct",
+      "count": 2,
+      "vectorSet": "original"
     },
     {
       "case": "unchanged-final-original",

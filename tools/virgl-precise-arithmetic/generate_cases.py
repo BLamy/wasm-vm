@@ -130,6 +130,27 @@ def main():
             source=min(sources,key=lambda e:len(e['text']));text=append_private(source['text']);md=source['result']['metadata']
             count=md['uniforms'][0]['count'] if md['uniforms'] else 0
             add(f'combined-{base}-{stage}',stage,text,expected(stage,text,base,count,md))
+        # The backward raster walk must stop at a numerically authorized exact
+        # producer while retaining copied-bank obligations for other lanes.
+        lines=['VERT' if stage=='vertex' else 'FRAG']
+        if stage=='vertex':lines+=['DCL IN[0]','DCL OUT[0], POSITION','DCL OUT[1], GENERIC[0]']
+        else:lines+=['DCL OUT[0], COLOR']
+        output='OUT[1]' if stage=='vertex' else 'OUT[0]'
+        lines+=['DCL TEMP[0]','DCL CONST[0..1]',
+          'IMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}',
+          'IMM[1] UINT32 {0,1065353216,0,0}',
+          'ADD_PRECISE TEMP[0], IMM[0], IMM[1].xxxx',
+          'MUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy',
+          f'MOV {output}.xy, TEMP[0].xyxy',f'MOV {output}.zw, CONST[0].zwzw']
+        if stage=='vertex':lines+=['MOV OUT[0], IN[0]']
+        text='\n'.join(lines+['END','']);e=expected(stage,text,27,2)
+        e['rasterBaseProfile']='virgl-webgl2-raw-bits-v7'
+        e['constantDomains']=[dict(kind='constant-bank-finite-f32-v1',stage=stage,slot=0,
+          name=('vs' if stage=='vertex' else 'fs')+'const0',count=2)]
+        e['constantRasterDomains']=[dict(kind='constant-bank-raster-copy-f32-v1',stage=stage,slot=0,
+          name=('vs' if stage=='vertex' else 'fs')+'const0',count=2,components=[dict(register=0,mask=12)])]
+        name='numeric-raster-mixed-'+stage;add(name,stage,text,e)
+        kernels.append(dict(case=name,stage=stage,op='RASTER',mask='xyzw',variant='direct',count=2,vectorSet='original'))
         # No private arithmetic result receives general output authority.
         text=kernel_text(stage,'ADD').replace('MOV '+('OUT[1]' if stage=='vertex' else 'OUT[0]')+', TEMP[115]',
           'MOV '+('OUT[1]' if stage=='vertex' else 'OUT[0]')+', TEMP[117]')

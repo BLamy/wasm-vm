@@ -114,9 +114,9 @@ def physical(directory,head,native,reference,fault=None,fault_root=None):
    for y in range(2):
     for x in range(64):
      observed=raw[(64*y+x)*4:(64*y+x+1)*4]
-     wanted_pixel=raw[(x//2)*8:(x//2)*8+4] if counted else wanted['oracle']['color'] if kernel['op']=='ORIGINAL' else [((word>>(x//2))&1)*255 for word in wanted['oracle']['words']]
+     wanted_pixel=raw[(x//2)*8:(x//2)*8+4] if counted else wanted['oracle']['color'] if wanted['oracle']['words'] is None else [((word>>(x//2))&1)*255 for word in wanted['oracle']['words']]
      if observed!=wanted_pixel and first is None:first=dict(x=x,y=y,expectedPixel=wanted_pixel,observedPixel=observed)
-     if kernel['op']!='ORIGINAL' and y==0 and x%2==0:
+     if wanted['oracle']['words'] is not None and y==0 and x%2==0:
       for lane,value in enumerate(observed):require(value in (0,255),'physical exact-word or branch bit');reconstructed[lane]|=(value//255)<<(x//2)
    if first:require(fault is not None and same(draw.get('failure'),first),'first independent physical source-fault contradiction');counts['physicalFailures']+=1;continue
    require(not fault,'source fault must produce an actual word mismatch')
@@ -126,7 +126,7 @@ def physical(directory,head,native,reference,fault=None,fault_root=None):
     require(same(draw['helperBranches'],observed),'actual bit flags map to source branch points');executed.update(observed)
     counts['counterDraws']+=1;counts['counterPixels']+=128
    else:
-    if kernel['op']!='ORIGINAL':require(same(reconstructed,wanted['oracle']['words']) and same(draw['words'],reconstructed),'all exact binary32 words');counts['words']+=4
+    if wanted['oracle']['words'] is not None:require(same(reconstructed,wanted['oracle']['words']) and same(draw['words'],reconstructed),'all exact binary32 words');counts['words']+=4
     else:require(draw['words'] is None,'ordinary RGBA8 output makes no raw-word preservation claim')
     counts['draws']+=1;counts['pixels']+=128
   if counted:
@@ -134,7 +134,7 @@ def physical(directory,head,native,reference,fault=None,fault_root=None):
   require(sum(e['call']=='drawElements' for e in rig['glEvents'])==len(rig['draws']),'every actual hardware draw is recorded')
  if fault:require(counts['physicalFailures']==1 and 'independent exact word pixel mismatch' in a['failure']['message'],'independent source-fault word refutation')
  else:
-  draws=sum(len(x['vectors']) for x in reference['kernels']);words=sum(4*len(x['vectors']) for x in reference['kernels'] if x['kernel']['op']!='ORIGINAL')
+  draws=sum(len(x['vectors']) for x in reference['kernels']);words=sum(4*len(x['vectors']) for x in reference['kernels'] if x['kernel']['op'] not in ('ORIGINAL','RASTER'))
   require((a['drawCount'],a['checkedWords'],a['checkedPixels'])==(draws,words,draws*128) and (counts['draws'],counts['words'],counts['pixels'])==(draws,words,draws*128),'complete independent hardware accounting')
   require(counts['counterDraws']==4*len(reference['proof']['cases']) and counts['counterPixels']==counts['counterDraws']*128,'every source-bound helper coverage draw')
   require(all(hits[stage]==set(markers) for stage in hits) and same(a['helperCoverageByStage'],{stage:markers for stage in hits}),'every helper marker executes in each actual GPU stage')

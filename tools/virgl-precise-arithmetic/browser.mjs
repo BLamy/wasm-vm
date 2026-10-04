@@ -7,7 +7,7 @@ import {kernelVectors} from './oracle.mjs';
 const options=browserOptions(['--seed','--fault-wasm','--fault-kernel','--fault-vector']);
 const fixture=JSON.parse(fs.readFileSync(new URL('../../renderer/virgl-shader/tests/precise-arithmetic-cases.json',import.meta.url)));
 const seed=Number(options.seed??0x5e74bf09)>>>0;
-const counts=fixture.kernels.reduce((a,k)=>{const n=kernelVectors(k,seed).length;a.draws+=n;a.words+=k.op==='ORIGINAL'?0:n*4;return a;},{draws:0,words:0});
+const counts=fixture.kernels.reduce((a,k)=>{const n=kernelVectors(k,seed).length;a.draws+=n;a.words+=['ORIGINAL','RASTER'].includes(k.op)?0:n*4;return a;},{draws:0,words:0});
 const runtime=fs.readdirSync(new URL('../../renderer/virgl-command/',import.meta.url)).filter(x=>x.endsWith('.mjs')).map(x=>'renderer/virgl-command/'+x);
 runtime.push('renderer/virgl-command/tests/precise-arithmetic.mjs','tools/virgl-precise-arithmetic/oracle.mjs','renderer/virgl-command/tests/bounded-loops-shaders.json','renderer/virgl-shader/tests/precise-arithmetic-cases.json',...fixture.kernels.filter(k=>k.originalPath).map(k=>k.originalPath));
 if(options['fault-wasm'])runtime.push(options['fault-wasm'].replace(/^\//,''));

@@ -1103,7 +1103,9 @@ classes, all23 subnormal leading-bit positions, modifiers, masks, aliases,
 conditional paths and contraction-sensitive chains. A separate recorded GPU
 counter run exercises all39 helper markers in both stages. It changes only
 explicit marker/observer instrumentation and never substitutes for the unchanged
-compiler-source word proof. Six isolated source faults remove sticky bits,
+compiler-source word proof. A mixed raster proof executes authorized arithmetic
+inxy while retaining guarded copied-bank obligations inzw. Six isolated source
+faults remove sticky bits,
 change halfway rounding, lose a limb carry, break normalization, lose a zero
 sign or truncate intermediate rounding; each must produce an independent
 physical word mismatch. Three input seeds, the retained hardware leaves, native

@@ -102,7 +102,7 @@ export function proof(seed = 0x5e74bf09) {
     cases: actual };
 }
 export function kernelVectors(kernel, seed = 0x5e74bf09) {
-  if (kernel.op === 'ORIGINAL') return [
+  if (kernel.op === 'ORIGINAL' || kernel.op === 'RASTER') return [
     [0x3e800000,0x3f000000,0x3f400000,0x3f800000],
     [0x80000000,0,0x80000000,0], [0x3f800000,0x3e800000,0x3f000000,0x3f000000],
     [0,0x3f800000,0,0x3f800000], [0x3f000000,0x3f000000,0x3f000000,0x3f800000]
@@ -112,12 +112,13 @@ export function kernelVectors(kernel, seed = 0x5e74bf09) {
 }
 export function bank(kernel, vector) {
   if (kernel.op === 'ORIGINAL') return [0x3f800000,0,0,0,0,0x3f800000,0,0,0,0,0,0,...vector.color];
+  if (kernel.op === 'RASTER') return [...vector.color,0,0,0,0];
   return [vector.a,vector.b,vector.c].flatMap(words => [
     ...words.map(w => (0x3f800000 | (w >>> 16)) >>> 0),
     ...words.map(w => (0x3f800000 | (w & 65535)) >>> 0)]);
 }
 export function expected(kernel, vector) {
-  if (kernel.op === 'ORIGINAL') return { words:null,color:vector.color.map(w => {
+  if (kernel.op === 'ORIGINAL' || kernel.op === 'RASTER') return { words:null,color:(kernel.op === 'RASTER'?[0x3e800000,0x3f000000,...vector.color.slice(2)]:vector.color).map(w => {
     const value=classify(w);if(value.kind!=='finite')throw new Error('finite original output');
     return Math.round(Math.max(0,Math.min(1,Number(value.n)/Number(value.d)))*255);
   }) };
