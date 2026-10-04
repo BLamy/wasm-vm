@@ -3,7 +3,7 @@ id: E6-T12g6h
 epic: 6
 title: Admit bounded MOV and DIV saturation modifiers
 priority: 525.027010576
-status: pending
+status: in-progress
 depends_on: [E6-T12g6g2]
 estimate: S
 risk: high
