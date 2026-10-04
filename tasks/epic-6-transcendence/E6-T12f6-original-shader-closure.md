@@ -3,7 +3,7 @@ id: E6-T12f6
 epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
 priority: 525.0269916
-status: implemented
+status: verified
 depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5]
 estimate: S
 risk: high
@@ -277,3 +277,68 @@ The original shader/pixel claims remain unchanged. This submission closes the
 helper proof gap only; it does not enable guest 3D or establish desktop speed.
 A fresh verifier must decide P8 and the promoted-gate integration before this
 slice can become verified.
+
+### 2026-10-04 — fresh verifier — VERDICT: verified
+
+- P1–P7 — HELD, carried forward. Production compiler/shared-renderer/consumer,
+  original body inventory, sealed artifacts and both original promoted verifier
+  programs are unchanged. The only helper semantic hunk is the access-only count
+  lookup; previously verified original/pair/GPU/scene/fault results keep their
+  source boundaries and evidence digests. Prior verifier archive SHA-256 remains
+  `78d141bca7fe28bf81b85d6a114bc26f1c918a97be1b922dd9bc315dc49124e8`.
+- P8 count authority — HELD. Predicted genuine access-only metadata owns the full
+  declared bank without a finite-domain record. Before repair, the unchanged
+  regression at15f8917e exits1 with TypeError; source hashes agree. After repair,
+  frozen8ace8d34 returns all184 owned words and the unchanged model passes473
+  banks,25 forgeries,19 originals,57 pairs,4 supplemental bases and0 getters.
+  Actual V8 approve total473 / access-return1 proves the repaired hunk executed.
+  Citations: helper-repair recording `before-record.json` /helperFault;
+  `admission.json` /banks (supplemental-existing-indirect), /coverage;
+  fresh `replay-admission.json`; original-corpus.mjs:13.
+- Exact-source/clean clone — HELD. All34 repair archive members match length/SHA;
+  frozen source, node executable, immutable generated module/Wasm replay seed and
+  three retained GPU inputs match their bindings. The detached clone is clean
+  before/after. The earlier missing-module attempt is diagnostic; final setup
+  seeds the hash-bound sealed compiler artifacts for the unchanged static import.
+  No compiler rebuild is needed for this JS harness-only repair. Citations:
+  helper-repair `manifest.json` and recorded `report.json` /sources,
+  /sealedReplaySetup,/node,/retainedInputs,/statusBefore,/statusAfter;
+  fresh `integrity.json`.
+- Bounded attack/sabotage — HELD. Fresh48 cases cover genuine preexisting vertex/
+  fragment v10/v11 fixtures. With activeCount0, the helper still requires all184
+  declared indirect words, rejects short/malformed banks and last-word getters,
+  permits exact-u32 infinity/NaN encodings only without a finite domain, retains
+  v11 finite-domain rejection and owns snapshots. No getters execute. Restoring
+  domain.count in an isolated helper copy reproduces TypeError on the first
+  complete v10 bank and makes the test fail. Citations: fresh `access-attack.json`
+  /cases,/getters; `sabotage.json`, `sabotage.log`; promoted `verifier-access.mjs`.
+  Supplemental base fixtures never increase the19 captured original count.
+- Promoted gate integration — HELD. Both new shell commands invoke unchanged
+  promoted programs and pass syntax/exact-source checks, the recorded clean clone
+  and fresh replay. The literal command reads three already-reviewed hash-bound
+  reports and agrees with4608 original words,466944 pixels and1536 separate
+  migration words, ordered actual sources and literal18-iteration loops.
+  Citations: helper-repair recorded `report.json` /commands;
+  fresh `replay-literal.jsonl:1-3`; tools/verify-virgl-original-corpus.sh:23,:30.
+
+COVERAGE: prior classifications/waivers remain. The sole missing helper arm now
+executes, with complete declared count authority and both stages/domain variants
+checked. Other helper arms execute in the473-case counters. Gate commands run
+as exact commands; README additions are explanatory metadata. No outstanding
+scoped code/evidence gap remains. Unchanged GPU/workspace gates are not repeated.
+
+SUITE: prior independent literal/ordered-source and bank regressions now run in
+the canonical target. Promote `tools/virgl-original-corpus/verifier-access.mjs`
+as a focused reflected-prefix/indirect-extent test; its command is
+`node tools/virgl-original-corpus/verifier-access.mjs`. It asserts independently
+expected shape/type/domain/ownership outcomes and detects the isolated count
+fault. Verifier edits no implementation. Fresh supplemental recording:
+`evidence/virgl-original-corpus/helper-verifier/recording.tar.gz`, SHA-256
+`702b41bae2127f1d88a8f6a4876ef8ad83dc3a531b1ca4aebb1749c2aa8af956`; all10 member lengths/digests are in records.json and manifest.json.
+The worker supplement stays bound at
+`aafcc6a2658b10490fc5de2fb61adc296eb084c59a9cec4de784116fc2f08983`.
+
+The verified claim remains19 unchanged original shaders with explicit domains,
+57 compatible pairs and bounded physical observations. It does not enable guest
+3D negotiation, certify arbitrary desktop constants/formats, measure compositor
+MIPS/FPS or deploy the site. Resource-format/view integration is now eligible.

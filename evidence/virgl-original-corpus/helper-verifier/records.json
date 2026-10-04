@@ -1,0 +1,52 @@
+[
+  {
+    "path": "access-attack.json",
+    "bytes": 29060,
+    "sha256": "72bd94a8750c76ef308b94f5d2e635cd57fc7d7854303e6d42e90bbce0e37da8"
+  },
+  {
+    "path": "integrity.json",
+    "bytes": 276,
+    "sha256": "c6182185651946d6c91aedb44b0dca03f49d5ede52e1948b4a723c4754729396"
+  },
+  {
+    "path": "predictions.md",
+    "bytes": 1603,
+    "sha256": "7164a00735668019d0d28adb0edee2531cea67bf7a75d898886de4ba458d9f98"
+  },
+  {
+    "path": "replay-admission.json",
+    "bytes": 1940875,
+    "sha256": "a85f7f0a6cae74e06a6d3c5b70385f20d8a20973266bb9077165a2f5334c9efd"
+  },
+  {
+    "path": "replay-literal.jsonl",
+    "bytes": 2381,
+    "sha256": "8990352733e3b5810807b9f19e3edb4d0c555f8670b53b2c2da5277dcd7c7ba0"
+  },
+  {
+    "path": "sabotage/renderer/virgl-shader/tests/original-corpus.mjs",
+    "bytes": 17645,
+    "sha256": "11f85e54061bd2df7db798367b952b273580ac438adfd2cb52a24038924817c0"
+  },
+  {
+    "path": "sabotage.json",
+    "bytes": 420,
+    "sha256": "833c704edacd91af2060af180cf5d67411a8b52a7cbe1e187e0412f916d653b5"
+  },
+  {
+    "path": "sabotage.log",
+    "bytes": 852,
+    "sha256": "bc19b74e0c0f50c984311ed8f2f9914d14ba119eb9c6cb96235ddd44eb2499a4"
+  },
+  {
+    "path": "sabotage.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verdict.md",
+    "bytes": 4554,
+    "sha256": "aeb3e47c1d3a8538540196d646f3cf0a6714d44e211778dd108ab4e056886be0"
+  }
+]
