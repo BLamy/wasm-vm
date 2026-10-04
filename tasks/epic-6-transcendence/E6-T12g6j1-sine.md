@@ -3,7 +3,7 @@ id: E6-T12g6j1
 epic: 6
 title: Admit bounded sine evaluation for captured compositor equations
 priority: 525.027010578
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6i]
 estimate: S
 risk: high
@@ -92,3 +92,62 @@ with independently source-derived conservative sine error about6.86e-8 on both
 backends (budget2^-20). These are ephemeral checks, not evidence of record.
 The next commands record the frozen final submission and single pristine clone;
 a fresh critic remains required before this task can become verified.
+
+
+### 2026-10-04 — worker — implemented / recorded submission
+
+Frozen runtime: `ad31839ebc55e5f853c9d9853a44c9922767e7da`; final evidence head:
+`d44d2683941ab4cb32df53d4dcb84f045046caf9`; verified base: `322bb56ee95ef9e2fb26b85179d61ae51efbbf5f`. Commands:
+`make verify-E6-T12g6j1`; `python3 tools/virgl-sine/cold.py --output
+ target/evidence/virgl-sine-cold-final`; `python3 tools/virgl-sine/receipt.py
+ target/evidence/virgl-sine`; `python3 tools/virgl-sine/seal.py --hot
+ target/evidence/virgl-sine --cold target/evidence/virgl-sine-cold-final --output
+ evidence/virgl-sine/worker`. The archive/index and all 135 actual members plus
+727 source bindings are authenticated. No implementer verdict is asserted.
+
+Both recorded checkouts pass 1,006 native/ASan/UBSan cases and Wasm singles/pairs,
+970 actual pinned FLOAT/REPL=2 witnesses, 14,736 inherited native/Wasm guards,
+5,861 whole predecessor responses, 974 contracts, 580 metadata attacks, 12 banks,
+four simultaneous whole-base obligations, and 67 exact rational predictions.
+Each checks 24,480 physical words and 61,056 pixels across seeds389793865,
+2135058973 and3399354483, including 12,240 actual primary words, 30,528 primary
+pixels and 4,896 canonical primary words. All three actual emitted-source faults
+contradict the independent physical oracle. Inherited SAT 39,576 words/26,624
+pixels and EX/LG 13,152 words/30,464 pixels still hold their promoted source
+oracles and sensitivity. All owned GPU objects, resource budgets and browser
+error arrays return to zero. Original complete larger bodies remain rejected;
+the two prior plain-SIN fixtures are an explicit new bounded admission extension.
+
+The maximum conservative observed sine error is
+6.859461500265203e-8 for each backend (budget2^-20), at vertex records180/181,
+condition0, lane0, input0x3fc00000, observed0x3f7f5bd6, seed389793865,
+raw capture SHA-256`22eca526aa1a37ea61812b94516f3baa1149a5ae632ddce2cb1409529a20f9b4`.
+The exact rational error and all vendor componentwise deviations are in the
+receipts. Expected values come from input words, independent TGSI execution and
+alternating-Taylor enclosures at220bits with nested280bit checks. Two original
+broadcast use sites agree under known isolated initializers, without any full-body
+or original computed-domain claim. The precision budget is measured on this
+physical host; ESSL supplies no sine precision guarantee.
+
+The initial pristine clone at ad31839e completed the full acceptance command
+(exit0, clean before/after) but its wrapper passed the old EX/LG output variable,
+then failed collecting a nonexistent receipt path. This is a recording-path
+failure, not a runtime refutation. Original failed report/log and completed
+acceptance receipt remain sealed in hot/cold-output-path-failure. The only repair
+at d44d2683 is cold.py plus receipt.py's explicit harness-repair set. The hot
+source/byte bindings were reauthenticated without repeating unchanged runtime
+checks; its first receipt remains sealed. The corrected wrapper passed one
+uninterrupted final pristine clone at d44d2683:
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-sine-cold-zlomsbxc/wasm-vm`.
+The final cold run and all original profiles/binaries are preserved separately.
+
+Evidence: `evidence/virgl-sine/worker/recording.tar.gz` (135 members,
+32171106 bytes), SHA-256`184d0cbf61b1fe7d3d0c01f1c20d786afceed06a1fa2600bbc4259e38011dc2c`;
+index`451cf3abf287a254f83773bd3ab1963de8aeb09db555ecf5d969d1269481e0b3`;
+manifest`901e0d3afe92649e133065e9d5cb2574cd968494f9e7e4a365ddae143d82ab2b`;
+hot receipt`543ca9744fffdf50d1d40a43bdd75648138ef4769b037dd980786700bc1ad9a0`;
+final cold report`d3de1df0400cbf06258a167c9c602735530fe36cd836d0888973b9c5e64d0a59`;
+final cold receipt`c687ef5cad483d70a79249f4aba3e87762cc75e1e2143bb25dc1b71675d8f8f2`.
+Production caps, negotiation, live imports, guest execution and measured FPS/MIPS
+remain gated. A fresh adversarial verifier must now interrogate this exact diff
+and archive before any dependent activates.
