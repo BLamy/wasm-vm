@@ -3,7 +3,7 @@ id: E6-T12g2
 epic: 6
 title: Map required color formats and forced alpha with role-safe storage
 priority: 525.0270102
-status: pending
+status: in-progress
 depends_on: [E6-T12g1]
 estimate: S
 risk: high
@@ -40,4 +40,23 @@ require independent physical pixels/readback to refute it.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — execution boundary
+
+Verified G1 parent is `0550aa94b59364380e543b0c6de41697c5f18fb8`. Its authenticated client
+inventory requires format2 B8G8R8X8_UNORM, format67 R8G8B8A8_UNORM and
+format233 B10G10R10X2_UNORM. This high-risk S slice changes the bounded
+resource/color-surface boundary only. Use native RGB8 for BGRX8 and native
+RGB10_A2 for packed10 storage, preserving lower-left flag0 orientation,
+four-byte guest strides and conservative storage/scratch/PBO charges. X alpha
+must be one when sampled and as a rendering destination; source fragment alpha
+still controls RGB blending. Packed transfer/readback must preserve all10 bits.
+
+Admit explicit render/sampler roles plus the measured SCANOUT/SHARED metadata
+hints, reject other roles/flags/aliases, and retain exact resource generations.
+Sampler-view specialization, depth, vec3/raster/draw closure, scanout conversion
+and live caps remain subsequent boundaries. The production demo does not import
+these isolated renderer modules; the authoritative browser proof is the local
+hardware-WebGL acceptance page, with original packet/backing citations. Record
+affected decoder/resource/tiny-scene regressions, new physical sampling/render/
+inverse-readback checks, source faults and final pristine-clone proof. A fresh
+independent critic must verify the frozen evidence before the next slice.
