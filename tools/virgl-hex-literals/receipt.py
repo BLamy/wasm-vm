@@ -99,7 +99,9 @@ def main():
     require(len(retained['originals']) == 25 and sum(c['native']['ok'] for c in retained['originals']) == 23, 'original partition unchanged')
     require(len(retained['historical']) == 112 and sum(c['native']['ok'] for c in retained['historical']) == 5, 'historical grammar unchanged')
     joins = json.loads(artifact('independent-joins.json'))
-    require(joins['status'] == 'passed' and joins['cases'] == joins['native'] == joins['wasm'] == 402, 'promoted bounds guards')
+    require(joins['status'] == 'passed' and joins['cases'] == len(joins['native']) == len(joins['wasm']) == 402, 'promoted bounds guards')
+    require(all(a['result'] == b['result'] for a, b in zip(joins['native'], joins['wasm'])), 'promoted guard parity')
+    source('renderer/virgl-shader/build/native/virgl-shader', joins['nativeBinary']['sha256'])
 
     words = pixels = 0
     for seed in SEEDS:
