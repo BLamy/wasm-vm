@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-scalar-operations-worker-seal-v1",
+  "task": "E6-T12g6f",
+  "sourceHead": "ad0bf0267ce7a53e2e5ab6a2f6a5b2ee0a2383f4",
+  "base": "58601f91",
+  "records": 81,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 13380867,
+    "sha256": "619627d6ed0a2f3f62d461e0f3699bc1da7c04cfa4a9f1f2d18dd0a2e1fdbb68"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 14089,
+    "sha256": "65f3c277eb411b162186fed14447a80a30b07c41d02daef5ae018312a9099959"
+  },
+  "hotReceiptSha256": "8bae5711c6563483291b810084b953f76f338f834cbfef7317c2ebf9ee79ea4b",
+  "coldReportSha256": "4d98b3fe309fbc2b96445389147cdf314419b9ee0fb158b3acbe7ec2424a103b",
+  "coldReceiptSha256": "ab14fda9273a9aebb4e56efd8442dce01fdc9fe6937081c180058eb0c9c58ba9",
+  "checkedWords": 88416,
+  "checkedPixels": 41920,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

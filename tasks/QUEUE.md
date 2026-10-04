@@ -612,7 +612,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02701057` [E6-T12g6c](epic-6-transcendence/E6-T12g6c-hexadecimal-immediates.md) — Decode captured hexadecimal FLT32 immediates without numeric reinterpretation *(deps: E6-T12g6b)*
 - [x] `525.027010571` [E6-T12g6d](epic-6-transcendence/E6-T12g6d-signed-selection.md) — Admit bounded signed integer comparison and maximum *(deps: E6-T12g6c)*
 - [x] `525.027010572` [E6-T12g6e](epic-6-transcendence/E6-T12g6e-signed-conversions.md) — Admit bounded signed integer and float conversions *(deps: E6-T12g6d)*
-- [~] `525.027010573` [E6-T12g6f](epic-6-transcendence/E6-T12g6f-scalar-truncation-sign.md) — Admit bounded scalar truncation and sign operations *(deps: E6-T12g6e)*
+- [?] `525.027010573` [E6-T12g6f](epic-6-transcendence/E6-T12g6f-scalar-truncation-sign.md) — Admit bounded scalar truncation and sign operations *(deps: E6-T12g6e)*
 - [ ] `525.027010574` [E6-T12g6g1](epic-6-transcendence/E6-T12g6g1-minimum-selection.md) — Admit exact word-local minimum selection *(deps: E6-T12g6f)*
 - [ ] `525.027010575` [E6-T12g6g2](epic-6-transcendence/E6-T12g6g2-precise-fraction.md) — Admit exact instruction-local fractional-part arithmetic *(deps: E6-T12g6g1)*
 - [ ] `525.027010576` [E6-T12g6h](epic-6-transcendence/E6-T12g6h-saturation.md) — Admit bounded MOV and DIV saturation modifiers *(deps: E6-T12g6g2)*
