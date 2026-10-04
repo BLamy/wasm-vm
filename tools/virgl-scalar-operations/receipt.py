@@ -152,10 +152,14 @@ def main():
     require(len(retained['originals']) == 25 and sum(c['native']['ok'] for c in retained['originals']) == 23, 'original partition unchanged')
     require(len(retained['historical']) == 112 and sum(c['native']['ok'] for c in retained['historical']) == 5, 'historical grammar unchanged')
     for filename, count in [('independent-joins.json', 402), ('independent-hex-guards.json', 49),
-                            ('independent-signed-guards.json', 108), ('independent-conversion-guards.json', 1575)]:
+                            ('independent-signed-guards.json', 108), ('independent-conversion-guards.json', 1575),
+                            ('independent-scalar-guards.json', 1427)]:
         guard = json.loads(artifact(filename))
         if filename == 'independent-conversion-guards.json':
             source('renderer/virgl-shader/tests/signed-conversion-regressions.mjs', guard['testSha256'])
+        if filename == 'independent-scalar-guards.json':
+            require(guard['schema'] == 'virgl-scalar-operation-critic-guards-v1', 'exact promoted scalar guard schema')
+            source('renderer/virgl-shader/tests/scalar-operation-regressions.mjs', guard['testSha256'])
         require(guard['status'] == 'passed' and type(guard['cases']) is int and guard['cases'] == len(guard['native']) == len(guard['wasm']) == count, 'promoted guard completeness')
         for a, b in zip(guard['native'], guard['wasm']):
             if a['result'].get('error', {}).get('code') == 'invalid-input':
@@ -314,7 +318,7 @@ def main():
     receipt = dict(schema='virgl-scalar-operations-receipt-v1', task=TASK, status='passed', gitHead=head,
         guestExecution=False, productionNegotiation=False, nativeCases=1598, primaryComparisons=1562,
         wasmCases=1598, wasmPairs=1598, retainedOriginals=25, retainedAdmissions=23,
-        promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108, promotedConversionCases=1575,
+        promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108, promotedConversionCases=1575, promotedScalarCases=1427,
         metadataAttacks=706, ownedRangeBanks=8, combinedBases=4,
         recordingHeads=sorted(recording_heads), incrementalHarnessRepairs=sorted(harness_repairs),
         checkedWords=words, checkedPixels=pixels, primaryWords=primary_words, primaryPixels=primary_pixels, physicalOutputFaults=faults,
