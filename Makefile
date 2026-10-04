@@ -1993,3 +1993,7 @@ verify-E6-T12g6b:
 .PHONY: verify-E6-T12g6c
 verify-E6-T12g6c:
 	bash tools/verify-virgl-hex-literals.sh
+
+.PHONY: verify-E6-T12g6d
+verify-E6-T12g6d:
+	bash tools/verify-virgl-signed-integers.sh

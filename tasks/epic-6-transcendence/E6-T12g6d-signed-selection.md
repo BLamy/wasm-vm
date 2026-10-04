@@ -49,3 +49,38 @@ bits 41/42 avoid feature bit40 and preserve the fixed IR layout. Scope proof to
 signed endpoints, masks/swizzles, aliased versions, joins, constant bank ownership,
 pinned Mesa semantics and actual physical feedback/pixels. Production imports,
 caps and negotiation stay disabled until their own integration acceptance.
+
+### 2026-10-04 — worker — implementation and proof scope
+
+Added the two bounded raw opcodes, portable unsigned sign-bit ordering, exact
+source selection and conservative unknown-bit intersections. IMAX drops IN
+float locators/domain origin; canonical zero/normal bit facts still supply the
+preexisting safe-use policy. No allocation, IR layout, capacity, fixed heap/
+stack, numerical contract or production consumer code changed.
+
+Self-validation passes 432 public sanitized native cases, 392 actual pinned
+TGSI signed-type/converter witnesses and 432 matching Wasm singles/pairs.
+The first physical run passes 31,128 exact carrier words and 9,984 pixels,
+including actual bank reflection, masks, aliases and both join predecessors.
+The real shared renderer passes both stages' A/B/A replacement/restoration,
+caller-byte mutation, sync/async submission ownership, unchanged nonfinite
+packet rejection and zero disposal budgets. Wrong-signedness and wrong-winner
+emitted-source faults both contradict actual feedback bytes.
+
+The pinned reference has an independently observed limitation: its all-ones
+ISLT mask passes through float TEMP and becomes canonical NaN `0x7fc00000`
+on this GPU. Original word carriers predicted lower mantissa carrier1065353215
+and observed1061158912 at vertex lane5 in the ephemeral Mesa comparison.
+The owned emitter preserved the full mask. This is outside the changed owned
+boundary: reference programs now explicitly use finite UCMP predicates for
+ISLT and normal/zero IMAX selections; alias/masked references also require
+normal/zero source words. No emitted reference source is rewritten. All owned
+raw results still face the independent full-word BigInt oracle, including
+NaN/subnormal encodings interpreted as signed integers. This limitation and
+the unchanged guest constant-packet restriction are explicit in the proof README.
+
+Final prescribed gates are the affected C syntax/guard checks, sanitized native
+and fixed-memory Wasm compiler paths, prior literal/original/join guards,
+three physical seeds and two actual source faults, authenticated receipt and
+one pristine scrubbed exact-source clone. Unchanged prior renderer/resource/
+capacity proofs remain HELD. No Rust or live web source/import changed.

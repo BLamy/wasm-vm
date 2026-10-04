@@ -222,6 +222,17 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          if (known_operands(a, b)) result[lane] = known_word(
             (a.one ^ UINT32_C(0x80000000)) >= (b.one ^ UINT32_C(0x80000000)) ? UINT32_MAX : 0);
          break;
+      case RAW_ISLT:
+         if (known_operands(a, b)) result[lane] = known_word(
+            (a.one ^ UINT32_C(0x80000000)) < (b.one ^ UINT32_C(0x80000000)) ? UINT32_MAX : 0);
+         break;
+      case RAW_IMAX:
+         /* Signed ordering chooses one exact source word. A private integer
+          * selection cannot inherit either source's float locator/authority. */
+         if (known_operands(a, b)) result[lane] = known_word(
+            (a.one ^ UINT32_C(0x80000000)) >= (b.one ^ UINT32_C(0x80000000)) ? a.one : b.one);
+         else result[lane] = (struct raw_lane){.zero = a.zero & b.zero, .one = a.one & b.one};
+         break;
       case RAW_USEQ:
          if (known_operands(a, b)) result[lane] = known_word(a.one == b.one ? UINT32_MAX : 0);
          break;
@@ -711,7 +722,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             enum raw_opcode op = instruction->opcode;
             emit(&w, "(");
             if (op == RAW_NOT) emit(&w, "~");
-            if (op == RAW_ISGE) emit(&w, "(");
+            if (op == RAW_ISGE || op == RAW_ISLT || op == RAW_IMAX) emit(&w, "(");
             if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
             if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, "raw_float_equal_mask(");
             if (op == RAW_MAX_PRECISE || arithmetic) {
@@ -729,6 +740,13 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             } else if (op == RAW_ISGE) {
                emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
                emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
+            } else if (op == RAW_ISLT) {
+               emit(&w, " ^ 2147483648u) < ("); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, " ^ 2147483648u) ? 4294967295u : 0u");
+            } else if (op == RAW_IMAX) {
+               emit(&w, " ^ 2147483648u) >= ("); operand(&w, p, &instruction->src[1], lane);
+               emit(&w, " ^ 2147483648u) ? "); operand(&w, p, &instruction->src[0], lane);
+               emit(&w, " : "); operand(&w, p, &instruction->src[1], lane);
             } else if (op == RAW_USEQ || op == RAW_USNE) {
                emit(&w, op == RAW_USEQ ? " == " : " != "); operand(&w, p, &instruction->src[1], lane);
                emit(&w, " ? 4294967295u : 0u");

@@ -27,8 +27,10 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_BGNLOOP, RAW_BRK, RAW_ENDLOOP, RAW_FSEQ, RAW_FSNE,
                   RAW_MAX_PRECISE,
                   /* Bits36/37 are precision/raster features, not opcodes. */
-                  RAW_ADD_PRECISE = 38, RAW_MUL_PRECISE };
-#define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP))
+                  RAW_ADD_PRECISE = 38, RAW_MUL_PRECISE,
+                  /* Bit40 is the precise arithmetic feature, not an opcode. */
+                  RAW_ISLT = 41, RAW_IMAX };
+#define RAW_V2_OPCODES ((UINT64_C(1) << RAW_UADD) | (UINT64_C(1) << RAW_ISGE) | (UINT64_C(1) << RAW_USEQ) | (UINT64_C(1) << RAW_USNE) | (UINT64_C(1) << RAW_UCMP) | (UINT64_C(1) << RAW_ISLT) | (UINT64_C(1) << RAW_IMAX))
 #define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
 #define RAW_EQUALITY_OPCODES ((UINT64_C(1) << RAW_FSEQ) | (UINT64_C(1) << RAW_FSNE))
 #define RAW_V4_OPCODES ((UINT64_C(1) << RAW_ADD) | (UINT64_C(1) << RAW_MUL) | (UINT64_C(1) << RAW_MAD) | (UINT64_C(1) << RAW_TEX))
@@ -50,6 +52,7 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
 _Static_assert(RAW_MAX_PRECISE < 36, "opcode/precision feature separation");
 _Static_assert(RAW_ADD_PRECISE == 38 && RAW_MUL_PRECISE == 39, "arithmetic/feature separation");
+_Static_assert(RAW_ISLT == 41 && RAW_IMAX == 42 && RAW_IMAX < 64, "signed opcode/feature separation");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
