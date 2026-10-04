@@ -1,0 +1,18 @@
+[
+  {
+    "name": "component-float-cases/precise-FRC-vertex",
+    "inputSha256": "b38b7f3a8249b0eb5abb1d777f0f952c642a46676ae5e446f4716f5bb65c479b",
+    "beforeOK": false,
+    "ok": true,
+    "profile": "virgl-webgl2-raw-bits-v33",
+    "base": "virgl-webgl2-raw-bits-v1"
+  },
+  {
+    "name": "component-float-cases/precise-FRC-fragment",
+    "inputSha256": "7c9393c86dc06c205e868fef171a357f9e50e0f4c29a4fcfba70d3edcee748e9",
+    "beforeOK": false,
+    "ok": true,
+    "profile": "virgl-webgl2-raw-bits-v33",
+    "base": "virgl-webgl2-raw-bits-v1"
+  }
+]
