@@ -3,7 +3,7 @@ id: E6-T12g6b
 epic: 6
 title: Bound compiler arenas for the larger captured compositor bodies
 priority: 525.02701056
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6a]
 estimate: S
 risk: high
@@ -81,3 +81,66 @@ maximum-length opcode combination fits the GLSL output ceiling. Oversize emitted
 source or JSON must reject without partial publication. Preserve byte-identical
 old emitted shader bodies when their existing register extent suffices, and
 retain literal historical fixture inputs when an old boundary moves.
+
+### 2026-10-04 — worker — bounded compiler envelope implemented
+
+Frozen runtime/harness source: `07f47569525dfa898dadd6f95dfa0a7a4a8718e4`;
+verified parent: `60aebb0e1a4639ff4d9468067879e9789e6a5a23`. Exact commands:
+
+```sh
+make verify-E6-T12g6b
+python3 tools/virgl-compiler-bounds/cold.py --output target/evidence/virgl-compiler-bounds-cold
+python3 tools/virgl-compiler-bounds/seal.py --hot target/evidence/virgl-compiler-bounds --cold target/evidence/virgl-compiler-bounds-cold --output evidence/virgl-compiler-bounds/worker
+```
+
+The scoped high-risk submission rebuilt owned strict-warning guard checks,
+ASan/UBSan/LLVM native coverage, the native converter, pinned Emscripten4.0.22
+Wasm and native/optimized-Wasm stack tables. Native and public Wasm agree on603
+literal cases and23 pairs;752 owned allocation failures reject and recover.
+Three schedules each exercise highest TEMP511/IMM31,768 non-END operations,
+depth16 in both validation and raster graphs, both branch predecessors and
+highest CONST45. Wire text/token and terminal-padding checks remain bounded.
+The delivered module remains16MiB with256KiB stack; actual exhaustion rejects
+and recovers. Native measured IR/flow/raster allocations are111744/433092/207884
+bytes; pair conversion records total67168 bytes. Worst six-byte escaped GLSL
+strings take1572866 bytes singly and3145732 bytes as a pair, inside1589248/3179520
+static JSON capacities. All owned optimized Wasm stack frames sum235392 bytes;
+this conservative nonrecursive-owned-code table excludes upstream/libc frames.
+The actual fixed-stack public Wasm pair, stress and recovery calls all passed.
+
+Physical headful Chrome used Apple M4 Max through ANGLE Metal, with10368 exact
+transform-feedback words and82944 independently predicted framebuffer pixels
+across three seeds. Actual object deletion and zero WebGL/console/page/request
+errors are recorded. Three emitted numerical faults failed at precise points:
+`fault-high-register/report.json`, high-vertex/bounded-1/lane4, expected1025507328,
+observed1032847360; `fault-branch-join/report.json`, deep-vertex/bounded-0/lane4,
+expected1062600704, observed1041235968; `fault-counter/report.json`,
+combined-vertex/bounded-0/lane4, the same expected/observed words. Their mutated
+source and physical bytes are captured. No simulated GPU is accepted.
+
+All25 complete literal original bodies retain23 admissions; their emitted GLSL
+and metadata are byte-identical to the authenticated prior compiler. The39261-byte
+92cb866a original now fits the input envelope and rejects unsupported grammar;
+c5806d5f also remains rejected. The literal historical TEMP0..118 declaration
+is the sole new admission among112 retained grammar fixtures, explicitly
+recorded without replacing its input. F6 native2046calls/public Wasm2198calls,
+88 original pair decisions and57 physical compatible programs passed; hardware
+checked1536 words/155648 pixels. G6a's four newly supported originals passed
+864 words/9216 pixels, including the fresh critic's exact-alpha guard. Existing
+consumer-domain and instruction-capacity regressions passed.
+
+The same acceptance passed once at the frozen source in a pristine clone with
+build-related environment scrubbed and an empty checkout status before/after.
+Both receipts bind1514 source/generated entries; LLVM/V8 coverage and physical
+screenshots are sealed. Historical leaf runtime, deployment, guest negotiation,
+live imports and capability claims remain outside this isolated change. No
+performance or original larger-compositor execution claim is made.
+
+Worker evidence: `evidence/virgl-compiler-bounds/worker/{manifest.json,records.json,recording.tar.gz}`
+contains104 members; archive SHA256`2e9a57b80f05914377f852f17c3aaf597112f269d2ea67244b1a510944601756`,
+index SHA256`77214cdb6c845547d9985015bee862323a06cc8f401380d64340b9c21c06fcf7`.
+Hot receipt`06095e23f4688683932916a4968717ce391175faa8d233628b19fc32067a5c9e`;
+cold report`ab084416411bab8c517943d55d52aa901333e59a2ad659ad581276cc16cdffb9`;
+cold receipt`9880378ec6192667f9377e43643bcf174b52a2fbe32fd41c00695e3e298b8a9a`.
+The worker submits the diff and recordings to a fresh critic; this is an
+implementation claim awaiting independent verification.
