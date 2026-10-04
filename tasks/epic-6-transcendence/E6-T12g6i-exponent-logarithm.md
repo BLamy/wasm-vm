@@ -3,7 +3,7 @@ id: E6-T12g6i
 epic: 6
 title: Admit bounded binary exponent and logarithm operations
 priority: 525.027010577
-status: pending
+status: in-progress
 depends_on: [E6-T12g6h]
 estimate: S
 risk: high
@@ -16,6 +16,13 @@ Add EX2/LG2 under explicit finite numerical domains and measured error budgets s
 
 Production GPU negotiation, live demo imports and caps remain disabled. No FPS
 or MIPS claim follows from this isolated compiler boundary.
+
+The first admitted domain is proved from conservative post-modifier source-word
+facts at every use: EX2 normal-or-zero inputs in [-125,126], LG2 positive normal
+inputs. Both consume post-swizzle x and replicate before masked publication.
+Opaque numerical shadows and unconstrained banks remain rejected. Partial word
+facts may prove a whole domain; no numerical authority, exact result bits or
+computed F2I permission are manufactured. Complete original bodies remain gated.
 
 ## Deterministic acceptance
 
