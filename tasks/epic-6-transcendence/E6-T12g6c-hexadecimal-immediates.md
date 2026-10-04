@@ -3,7 +3,7 @@ id: E6-T12g6c
 epic: 6
 title: Decode captured hexadecimal FLT32 immediates without numeric reinterpretation
 priority: 525.02701057
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6b]
 estimate: S
 risk: high
@@ -72,3 +72,63 @@ source. One frozen-head pristine clone follows. G6b's unchanged capacities,
 allocation/stack/fixed-memory proofs and other renderer boundaries stay HELD.
 This isolated compiler has no production import; the demo/deployment gate does
 not apply. No guest graphics or throughput result is claimed.
+
+### 2026-10-04 — worker — claim submitted for independent criticism
+
+Runtime and all acceptance sources were frozen at
+`5a039d16b2bfd756f6908a718ea063ad7c619905` (base verified G6b:
+`500ebfde1262e4615c9e15dbc96ecf1c407870f0`). The only later worker changes
+are this claim/status, regenerated queue and immutable recording artifacts.
+Commands:
+
+```sh
+make verify-E6-T12g6c
+python3 tools/virgl-hex-literals/cold.py --output target/evidence/virgl-hex-literals-cold
+python3 tools/virgl-hex-literals/seal.py --hot target/evidence/virgl-hex-literals --cold target/evidence/virgl-hex-literals-cold --output evidence/virgl-hex-literals/worker
+```
+
+The exact-source hot and pristine-clone submissions passed. Each records 676
+native ASan/UBSan cases, 512 canonical complete primary-parser word comparisons,
+676 matching public Wasm singles and 676 compatible/rejected pairs. Decimal and
+UINT32 controls preserve their existing admission/domain outcomes; the raw
+path's emitted GLSL and metadata match UINT32 exactly. Malformed/truncated,
+overlong, signed/prefixed/suffixed hex and immediate ordering violations reject
+without partial source. Exceptional bits survive only in permitted private
+operations; their copied/numerical uses retain the prior UINT32 restrictions.
+Native LLVM coverage executes all branches/statements in the new hexadecimal
+runtime hunk (`native/coverage.json`, bridge.c:246–275; comments waived).
+
+Physical headed Chrome/Apple WebGL2 seeds `883475089`, `2552332019` and
+`3860417495` each check 13,344 exact feedback words (including every exponent
+class and full reconstruction of literal bits) and 5,184 pixels from all 32
+bit planes and legacy controls. All GL objects are physically deleted; console,
+page, request and GL error checks are empty. Vertex source corruption changes
+expected word `1056964609` to observed `1056964610` at edge-0 vector0 lane6.
+Fragment source corruption changes expected RGBA `[0,0,255,255]` to observed
+`[0,0,0,255]` at edge-0-plane-0 pixel0. Both are caught by independent oracles.
+The promoted 402-case join/bank guard passes in native and Wasm; all 25 complete
+original bodies retain 23 admissions and unchanged GLSL/metadata. The two
+larger originals stay rejected. G6b resource/arena/stack claims and unchanged
+renderer leaves remain HELD; no new authority or production import is present.
+
+Evidence of record: `evidence/virgl-hex-literals/worker/{manifest.json,
+records.json,recording.tar.gz}`. The deterministic archive has 62 members,
+4,479,069 bytes and SHA-256
+`6aa1b74273563be5ae6aabaef307904b2362a1584edd344a7b27bc9281ac1ace`;
+the record index SHA-256 is
+`e83b840de0bac0804cf99e649549fb58f50b5b261f803418ffaeecbcaa708577`.
+Hot receipt SHA-256:
+`de1d05fd7fc216affbdb70addbef8ca9df10fd6bddecad1ac3b2795423117dba`;
+cold report:
+`e69c7e9ee574419d4f26778154468c20210214ddfbe370ff2cfbbca98decb40b`;
+cold receipt:
+`fa724009f00209e7fbd0217d118a172d77552edcd1a8bd55fbf10b3bd23f286d`.
+Both receipts bind 195 source/generated hashes and complete diagnostic/capture
+records. The cold clone has exact source HEAD and empty status before/after;
+its log digest is
+`51edce23aa2e8662d18caad9736f00b620063f0c0fcd080a73ab08c9434112bf`.
+Expanded diagnostics are in `target/evidence/virgl-hex-literals` and
+`target/evidence/virgl-hex-literals-cold`. Screenshots, actual framebuffer and
+feedback bytes, pinned-parser words, fixed input fixtures, sanitizer profiles
+and browser coverage are sealed for a fresh adversarial verifier. No throughput
+or accelerated desktop claim is made.
