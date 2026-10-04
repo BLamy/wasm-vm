@@ -2021,3 +2021,7 @@ verify-E6-T12g6h:
 .PHONY: verify-E6-T12g6i
 verify-E6-T12g6i:
 	bash tools/verify-virgl-exponent-logarithm.sh
+
+.PHONY: verify-E6-T12g6j1
+verify-E6-T12g6j1:
+	bash tools/verify-virgl-sine.sh

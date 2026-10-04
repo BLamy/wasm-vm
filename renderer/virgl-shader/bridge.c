@@ -837,6 +837,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "DIV_SAT")) raw.opcode = RAW_DIV_SAT;
       else if (word(p, "EX2")) raw.opcode = RAW_EX2;
       else if (word(p, "LG2")) raw.opcode = RAW_LG2;
+      else if (word(p, "SIN")) raw.opcode = RAW_SIN;
       else if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
       else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
@@ -880,7 +881,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
       arity = raw.opcode == RAW_MOV_SAT || raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC || raw.opcode == RAW_FRC_PRECISE ||
-         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_EX2 || raw.opcode == RAW_LG2 || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I ||
+         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_EX2 || raw.opcode == RAW_LG2 || raw.opcode == RAW_SIN || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I ||
          raw.opcode == RAW_TRUNC || raw.opcode == RAW_SSG || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
@@ -1178,7 +1179,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = true;
       } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE") || word(&p, "FRC_PRECISE")) {
          candidate = numeric_candidate = true;
-      } else if (word(&p, "I2F") || word(&p, "F2I") || word(&p, "TRUNC") || word(&p, "SSG") || word(&p, "MOV_SAT") || word(&p, "DIV_SAT") || word(&p, "EX2") || word(&p, "LG2")) {
+      } else if (word(&p, "I2F") || word(&p, "F2I") || word(&p, "TRUNC") || word(&p, "SSG") || word(&p, "MOV_SAT") || word(&p, "DIV_SAT") || word(&p, "EX2") || word(&p, "LG2") || word(&p, "SIN")) {
          candidate = numeric_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "ISLT") || word(&p, "IMAX") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
@@ -1492,6 +1493,12 @@ static void exponent_contract(const struct profile *profile, const char *base)
       base, profile->stage ? "fragment" : "vertex", exponential ? "\"EX2\"" : "", exponential && logarithm ? "," : "", logarithm ? "\"LG2\"" : "");
 }
 
+static void sine_contract(const struct profile *profile, const char *base)
+{
+   append(",\"sineBaseProfile\":\"%s\",\"sineContract\":{\"kind\":\"tgsi-bounded-sine-v1\",\"stage\":\"%s\",\"operations\":[\"SIN\"],\"source\":\"post-swizzle-x-replicated-before-mask\",\"proof\":\"static-post-modifier-word-facts\",\"domain\":\"normal-or-zero-minus8-to8\",\"error\":\"absolute-le-2^-20\",\"precision\":\"measured-physical-host-no-essl-guarantee\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-authority\",\"result\":\"ordinary-highp-no-static-range-facts\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1531,9 +1538,10 @@ static void stage_result(const struct conversion *c)
    bool fraction = profile->raw && (profile->raw->opcode_mask & RAW_FRACTION_OPCODES);
    bool saturation = profile->raw && (profile->raw->opcode_mask & RAW_SATURATION_OPCODES);
    bool exponent = profile->raw && (profile->raw->opcode_mask & RAW_EXPONENT_OPCODES);
+   bool sine = profile->raw && (profile->raw->opcode_mask & RAW_SINE_OPCODES);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
+      sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
@@ -1582,6 +1590,8 @@ static void stage_result(const struct conversion *c)
    if (saturation) saturation_contract(profile, fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (exponent) exponent_contract(profile, saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (sine) sine_contract(profile, exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    append("}");
 }

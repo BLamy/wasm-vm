@@ -77,7 +77,7 @@ export function getCases(){
   add(op+'-unused-special','fragment',program([imm(2,[bits(2),0x7fc00001,1,0xff800000]),`${op} OUT[0], IMM[2]`]),true,true);
   add(op+'-no-result-F2I-facts','fragment',program([`${op} TEMP[0], IMM[0]`,'F2I TEMP[1], TEMP[0]','I2F OUT[0], TEMP[1]']),false);
   add(op+'-no-result-domain-facts','fragment',program([`${op} TEMP[0], IMM[0]`,`${op} OUT[0], TEMP[0]`]),false);
-  for(const spelling of [op+'_SAT',op+'_PRECISE','SIN','POW'])add(op+'-unsupported-'+spelling,'fragment',program([`${spelling} TEMP[0], IMM[0]${spelling==='POW'?', IMM[1]':''}`,'MOV OUT[0], IMM[0]']),false);
+  for(const spelling of [op+'_SAT',op+'_PRECISE','SIN_PRECISE','POW'])add(op+'-unsupported-'+spelling,'fragment',program([`${spelling} TEMP[0], IMM[0]${spelling==='POW'?', IMM[1]':''}`,'MOV OUT[0], IMM[0]']),false);
   for(const bad of [`${op} TEMP[5], IMM[0]`,`${op} TEMP[0], CONST[46]`,`${op} TEMP[0], |IMM[0]|`,`${op} TEMP[0], IMM[0].xy`,`${op} CONST[0], IMM[0]`,`${op} TEMP[0], IMM[0], IMM[1]`])add('malformed-'+bad,'fragment',program([bad,'MOV OUT[0], IMM[0]']),false);
   const invalid=op==='EX2'?[bits(-125)+1,bits(126)+1,bits(-126),bits(127),bits(256)]:[0,bits(-0),bits(-1),bits(-.5),0x80800000];
   for(const w of [...invalid,1,0x80000001,0x007fffff,0x7f800000,0xff800000,0x7fc00001])add(op+'-out-of-domain-'+w,'fragment',program([imm(2,Array(4).fill(w)),`${op} TEMP[0], IMM[2]`,'MOV OUT[0], IMM[0]']),false);

@@ -279,6 +279,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/precise_fraction.c \
       -lm -o build/precise-fraction-sanitize/precise-fraction-test
     ;;
+  sine-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/sine.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/sine.c \
+      -lm -o build/sine-sanitize/sine-test
+    ;;
   exponent-logarithm-sanitize)
     instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
       -fprofile-instr-generate -fcoverage-mapping)

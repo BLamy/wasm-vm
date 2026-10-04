@@ -67,3 +67,28 @@ that requested scope. Use exact rational alternating-Taylor enclosures at
 220/280 bits, original source bindings, and one final pristine clone. The
 measured-platform budget and pinned converter discrepancy remain explicit.
 No runtime proof or implementation claim is made by this activation.
+
+
+### 2026-10-04 — worker — implementation / self-validation
+
+Implemented RAW_SIN (slot55) and the v36 wrapper above complete profiles1..35.
+Use-site facts must prove normal-or-zero magnitude<=8 after negation. The emitter
+snapshots post-swizzle x once before masked publication and inherits numerical
+bank dependence without creating output range or conversion facts.
+
+Ephemeral self-validation passed 1,006 native/ASan/UBSan cases and Wasm singles
+and pairs, 970 actual pinned FLOAT/REPL parser/converter witnesses, 974 contracts,
+580 metadata attacks, 12 owned banks, four simultaneous whole-base compositions,
+1,022 inherited EX2/LG2 guards, and 5,861 complete predecessor results. Two sealed
+old plain-SIN rejections are explicitly predicted as this new admission extension;
+only those unsupported-opcode negative declarations become SIN_PRECISE guards.
+Their original source and rejection records remain unchanged in the prior seal.
+
+An initial self-run exposed missing sine-only numeric routing; that runtime fix
+restarted the focused gates. A subsequent duplicate reserved temporary in a
+combined fixture was corrected to the unused slot505. Final self-native and
+Wasm checks pass. The first physical seed passed 8,160 words and 20,352 pixels,
+with independently source-derived conservative sine error about6.86e-8 on both
+backends (budget2^-20). These are ephemeral checks, not evidence of record.
+The next commands record the frozen final submission and single pristine clone;
+a fresh critic remains required before this task can become verified.
