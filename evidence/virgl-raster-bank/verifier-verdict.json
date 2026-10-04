@@ -1,0 +1,373 @@
+{
+  "schema": "raster-bank-verifier-verdict-v1",
+  "verdict": "needs-evidence",
+  "task": "E6-T12f4b",
+  "submissionHead": "2a413b9f84e2556cb1c32fcf1c8fbff3127dd5b3",
+  "frozenHead": "4999a81ad93496fc25e78cbb0aeb7adec66006e3",
+  "parentHead": "596f294fd4889665a793d678e5e4d72556388199",
+  "role": "fresh independent adversarial verifier",
+  "runtimeRefuted": false,
+  "scopeOverclaimRefuted": true,
+  "requiredCorrection": "Constrain approval before linking to draw-triggered linking, and approval before effects to effects consuming bank words. Explicit bank-independent linking/object creation may proceed; invalid banks are skipped by restoration, then draw preflight rejects. Append this worker claim correction without changing runtime/harness source. Reverify incrementally using existing HELD results and digests.",
+  "predictions": [
+    {
+      "id": "P1",
+      "outcome": "HELD",
+      "observation": "All400 worker and402 cold archive members losslessly match live files; native and Wasm artifacts/receipts bind frozen4999a81a; named cold clone still clean at that head.",
+      "record": "identity-audit.json",
+      "sha256": "fb8fc89c36578800d574679fb5d541c1eec3bfbb544b44c15ce2be1ce96c6057"
+    },
+    {
+      "id": "P2",
+      "outcome": "HELD",
+      "observation": "All150 generated literal mask/alias certificates independently derived; exact v27/base/finite/indirect/count/radial/PRECISE obligations survive. Novel nested masked copy demands C0:9,C1:11,C4:5 in both stages.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P3",
+      "outcome": "NEEDS EVIDENCE",
+      "observation": "Normal-or-signed-zero admission and before-upload/draw rejection HELD. The unqualified worker claim before program linking FAILED: explicit LINK succeeds with copied C0.w=1, creates Program22 and executes linkProgram at GL event212. Require the prepared scoped written claim correction; no runtime code is refuted.",
+      "record": "link-scope-audit.json",
+      "sha256": "69f710710ef45ecd2596505e727928f8a11ae15949b51539f174b282501fde71"
+    },
+    {
+      "id": "P4",
+      "outcome": "HELD",
+      "observation": "Independent lane/premultiplied-color equations matched1344 draws,2800 exact copied words and5505024 complete pixels across7 recordings; every uploaded bank prefix read back exactly. Wrong allowed-word decode fails physical pixels.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P5",
+      "outcome": "HELD",
+      "observation": "Invalid replacement remains exact CPU data, restoration skips upload, draw preserves complete state/framebuffer on rejection. Six async rigs per recording hold identical bank/shader generations;1932 real fences across7 recordings obey later-task polling and signaled deletion.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P6",
+      "outcome": "HELD",
+      "observation": "All19 bodies/hashes unchanged; only24 singles,3 pairs,4 originals migrate;18 originals admit. Entire unrelated baseline results agree; mandatory simultaneous contracts, count-as-output rejection and preserved retained leaves pass. Carry prior F4a/F3 HELD semantics at unchanged boundaries/digests.",
+      "record": "worker-replay.json",
+      "sha256": "6f2b3511865cec522cfea382c1e0473f29111ccdf04cc3309e08a0e102b138a5"
+    },
+    {
+      "id": "P7",
+      "outcome": "HELD",
+      "observation": "1501326 native calls,244 allocation failures including15 raster and20 upstream sites; actual16516-byte allocation fails transactionally.45696 Wasm calls,64 max-input stress and51 heap-pressure calls retain fixed16MiB buffer. IR26480/profile7616/flow52644, maximum GLSL58201 remain bounded; GPU/resource budgets zero.",
+      "record": "worker-replay.json",
+      "sha256": "6f2b3511865cec522cfea382c1e0473f29111ccdf04cc3309e08a0e102b138a5"
+    },
+    {
+      "id": "P8",
+      "outcome": "HELD",
+      "observation": "All three actual source faults independently rerun at seed4a57de19. Component omission and missing guard reach distinct domainOracleStop events with unsafeGpuCalled:false; wrong allowed decode produces pixel mismatch. Promoted guard-removal sensitivity fails at first unsafe lane with0 GPU calls.",
+      "record": "independent-physical-replay.json",
+      "sha256": "5ebe72e3d47b67a17c43503de2897293393df73f5afd4f997773556e6b60be11"
+    },
+    {
+      "id": "P9",
+      "outcome": "HELD",
+      "observation": "All54 changed hunks classified by actual execution/direct result or reasoned declaration/recorder/defense waiver. Sealed binaries/profiles reproduce complete LLVM exports. Independent V8 covers count/radial/descriptor helper failures omitted by browser schedules. No unproven product hunk remains for the guarded bank-consuming boundary.",
+      "record": "coverage-scope.json",
+      "sha256": "968a767317ddb0c31faeb600441f9ee4fb507b146a89c2179405ed855d871de7"
+    },
+    {
+      "id": "P10",
+      "outcome": "HELD",
+      "observation": "Novel predecessor/alias copy passes both stages,112 unsafe required-lane cases,2069 independent numeric-domain words and16 combined/hostile cases. Regression is actually guard-sabotage checked and syntax checked. Initial verifier descriptor-trap expectation was corrected to inherited DomainFault conversion; its failed diagnostic is preserved.",
+      "record": "independent-regressions.json",
+      "sha256": "d03ae5d0dd97426b54667eadc3e220c8437bfa9900b03e3d38bba92997defbf4"
+    }
+  ],
+  "finding": {
+    "claim": "worker activation: Guard one owned immutable bank generation before program linking, uploads and draw effects.",
+    "observed": {
+      "status": "observed",
+      "explicitLink": {
+        "ok": true,
+        "profile": "virgl-tiny-indexed-draw-v1",
+        "appliedCommands": 1,
+        "byteLength": 28,
+        "contextId": 1,
+        "subContextId": 0,
+        "draws": []
+      },
+      "effects": [
+        [
+          209,
+          "createProgram",
+          "Program:22",
+          null
+        ],
+        [
+          212,
+          "linkProgram",
+          "Program:22",
+          true
+        ]
+      ],
+      "restoration": {
+        "ok": true,
+        "contextId": 1,
+        "subContextId": 0
+      },
+      "restorationUploads": [],
+      "copiedCpuWordBefore": 1,
+      "copiedCpuWordAfter": 1,
+      "programsBefore": 1,
+      "programsAfter": 2,
+      "drawRejection": {
+        "ok": false,
+        "error": {
+          "code": "constant-raster-domain-error",
+          "message": "Copied bank word is outside the normal-or-signed-zero raster domain.",
+          "byteOffset": 0,
+          "opcode": 8
+        },
+        "appliedCommands": 0,
+        "draws": []
+      },
+      "unsafeGpuStops": [],
+      "unchangedPixels": true,
+      "reportSha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3"
+    },
+    "replicated": "link-scope-repeat-gpu/report.json",
+    "scope": "The stronger unqualified linking wording is contradicted; copied-bank domain/upload/draw safety is not contradicted.",
+    "demand": "Written scoped worker correction; no unrelated gates or new cold clone."
+  },
+  "exactPoints": [
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "line": 14747,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "needle": "\"sequence\": 212,",
+      "jsonPointer": "/acceptance/rigs/0/glEvents/212"
+    },
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "line": 184124,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "needle": "\"linkScope\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope"
+    },
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "line": 185745,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "needle": "\"explicit\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope/explicit"
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "line": 185955,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "needle": "\"restored\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope/restored"
+    },
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "line": 14747,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "needle": "\"sequence\": 212,",
+      "jsonPointer": "/acceptance/rigs/0/glEvents/212"
+    },
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "line": 184124,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "needle": "\"linkScope\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope"
+    },
+    {
+      "prediction": "P3 scope FAIL",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "line": 185745,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "needle": "\"explicit\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope/explicit"
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "line": 185955,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "needle": "\"restored\": {",
+      "jsonPointer": "/acceptance/rigs/0/linkScope/restored"
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu/report.json",
+      "line": 12461,
+      "sha256": "9e39063cf3809b838c66f8bd868efc28bb58aaa5afc742a5ae69a57ff2bf1f08",
+      "needle": "\"label\": \"positive-negative-zero\""
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu/report.json",
+      "line": 13279,
+      "sha256": "9e39063cf3809b838c66f8bd868efc28bb58aaa5afc742a5ae69a57ff2bf1f08",
+      "needle": "\"label\": \"normal-neighbors\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu/report.json",
+      "line": 1799060,
+      "sha256": "9e39063cf3809b838c66f8bd868efc28bb58aaa5afc742a5ae69a57ff2bf1f08",
+      "needle": "\"name\": \"disallowed replacement\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu/report.json",
+      "line": 120218,
+      "sha256": "9e39063cf3809b838c66f8bd868efc28bb58aaa5afc742a5ae69a57ff2bf1f08",
+      "needle": "\"yieldAttacks\": ["
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-2872938129/report.json",
+      "line": 12463,
+      "sha256": "b9c92a1bbeb42c5ca9f9d5f82b14414d6d5740dae6710412992dfc5fbcdf5661",
+      "needle": "\"label\": \"positive-negative-zero\""
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-2872938129/report.json",
+      "line": 13281,
+      "sha256": "b9c92a1bbeb42c5ca9f9d5f82b14414d6d5740dae6710412992dfc5fbcdf5661",
+      "needle": "\"label\": \"normal-neighbors\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-2872938129/report.json",
+      "line": 1799062,
+      "sha256": "b9c92a1bbeb42c5ca9f9d5f82b14414d6d5740dae6710412992dfc5fbcdf5661",
+      "needle": "\"name\": \"disallowed replacement\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-2872938129/report.json",
+      "line": 120220,
+      "sha256": "b9c92a1bbeb42c5ca9f9d5f82b14414d6d5740dae6710412992dfc5fbcdf5661",
+      "needle": "\"yieldAttacks\": ["
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-967105429/report.json",
+      "line": 12463,
+      "sha256": "26b64b5e778d83bb951e44ea5addde7a1cb35158c34f0b5a0c624e0de736533f",
+      "needle": "\"label\": \"positive-negative-zero\""
+    },
+    {
+      "prediction": "P4 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-967105429/report.json",
+      "line": 13281,
+      "sha256": "26b64b5e778d83bb951e44ea5addde7a1cb35158c34f0b5a0c624e0de736533f",
+      "needle": "\"label\": \"normal-neighbors\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-967105429/report.json",
+      "line": 1799062,
+      "sha256": "26b64b5e778d83bb951e44ea5addde7a1cb35158c34f0b5a0c624e0de736533f",
+      "needle": "\"name\": \"disallowed replacement\""
+    },
+    {
+      "prediction": "P5 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/gpu-967105429/report.json",
+      "line": 120220,
+      "sha256": "26b64b5e778d83bb951e44ea5addde7a1cb35158c34f0b5a0c624e0de736533f",
+      "needle": "\"yieldAttacks\": ["
+    },
+    {
+      "prediction": "P8 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/faults/drop-component/gpu/report.json",
+      "line": 14674,
+      "sha256": "ef385f36f54e6aba3fe97a046a4f26ed34f30c54045c24a39852748d5baef19c",
+      "needle": "\"call\": \"domainOracleStop\""
+    },
+    {
+      "prediction": "P8 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/faults/missing-guard/gpu/report.json",
+      "line": 14689,
+      "sha256": "a29279a86fac7c8af789037bd3fcc1b2d4bf99035225de1162b5ecc77279da54",
+      "needle": "\"call\": \"domainOracleStop\""
+    },
+    {
+      "prediction": "P8 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/faults/unapproved-decode/gpu/report.json",
+      "line": 67098,
+      "sha256": "663db06b9093c1fd556800e9fea60a117f7a81ed434c457f181dd7404f863d99",
+      "needle": "\"expectedPixel\": ["
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 1,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "LAYOUT {\"pointerBytes\":8,\"rawIrBytes\":26480,\"rawInstructionBytes\":112,\"rawDestinationBytes\":12,\"rawLaneBytes\":12,\"registerBytes\":36,\"rawSourceBytes\":24,\"profileBytes\":7616,\"rawIrBo"
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5898,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "FAULT 210 {\"kind\":\"raster-single\",\"case\":\"copy-xyzw-direct-vertex\",\"sites\":3,\"failAt\":2,\"attempts\":2,\"requestedBytes\":16516,\"result\":{\"ok\":false,\"error\":{\"code\":\"translation-error\""
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5901,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "FAULT 213 {\"kind\":\"raster-single\",\"case\":\"copy-xyzw-direct-fragment\",\"sites\":3,\"failAt\":2,\"attempts\":2,\"requestedBytes\":16516,\"result\":{\"ok\":false,\"error\":{\"code\":\"translation-erro"
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5904,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "FAULT 216 {\"kind\":\"raster-pair\",\"case\":\"gpu-copy-xyzw-direct-vertex-pair\",\"sites\":5,\"failAt\":2,\"attempts\":2,\"requestedBytes\":16516,\"result\":{\"ok\":false,\"error\":{\"code\":\"translation"
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5909,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "FAULT 221 {\"kind\":\"raster-pair\",\"case\":\"gpu-copy-xyzw-direct-fragment-pair\",\"sites\":4,\"failAt\":2,\"attempts\":2,\"requestedBytes\":16516,\"result\":{\"ok\":false,\"error\":{\"code\":\"translati"
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5940,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "FLOW {\"arenaBytes\":52644,\"arenaBoundBytes\":53248,\"depthLimit\":8}"
+    },
+    {
+      "prediction": "P7 HELD",
+      "file": "target/evidence/virgl-raster-bank-worker-4999a81a/native/native.log",
+      "line": 5941,
+      "sha256": "f246534d308bf9a9997a63c6fc2db94e0dd963d4f93b5be6cab5c95bb1f467ab",
+      "needle": "STATS {\"originals\":19,\"acceptedOriginals\":18,\"cases\":4816,\"pairs\":851,\"calls\":1501326,\"standaloneRecoveries\":756480,\"pairRecoveries\":731264,\"truncations\":3128,\"hostileCases\":324,\"m"
+    }
+  ],
+  "promotedTest": {
+    "path": "renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+    "sha256": "0b37d641763f196f24408ec638f3fc8ce0c1eb26b93f0f52e59bd34526f4c290",
+    "command": "node renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+    "healthy": "passed",
+    "actualGuardRemoval": "AssertionError at first unsafe required lane;0 GPU calls"
+  },
+  "claimLimits": [
+    "No arbitrary finite/subnormal/NaN raster transport",
+    "No real radial workload-bank claim",
+    "No production GPU negotiation/guest execution/full offload/desktop300MIPS",
+    "No bank-approval-before-explicit-link claim"
+  ]
+}

@@ -1943,3 +1943,7 @@ verify-E6-T12f4:
 .PHONY: verify-E6-T12f4a
 verify-E6-T12f4a:
 	bash tools/verify-virgl-ordered-masks.sh
+
+.PHONY: verify-E6-T12f4b
+verify-E6-T12f4b:
+	bash tools/verify-virgl-raster-bank.sh

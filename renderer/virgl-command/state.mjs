@@ -1,7 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
-import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -266,6 +266,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           object.constantAccess = contract.access ?? null;
           object.constantConstraint = contract.constraint ?? null;
           object.constantRadialDomain = contract.radialDomain ?? null;
+          object.constantRasterDomain = contract.rasterDomain ?? null;
           require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
@@ -439,12 +440,13 @@ function createRenderer(options, drawing, asynchronous = false) {
     };
     // Restoration also follows SET, CLEAR, binding changes and restoreContext.
     // A partial/invalid conditional or indirect bank remains CPU state but is never uploaded.
-    const constantUploads = (program, banks, strict, indirectBanks = null) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
+    const constantUploads = (program, banks, strict, approvedBanks = null) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
       const bank = banks[uniform.stage], count = uniform.uploadCount * 4;
       const shader = uniform.stage === 0 ? program.vertex : program.fragment;
       let words;
-      if (shader.constantRadialDomain || shader.constantAccess) {
-        const checked = indirectBanks?.[uniform.stage] ?? (shader.constantRadialDomain ?
+      if (shader.constantRasterDomain || shader.constantRadialDomain || shader.constantAccess) {
+        const checked = approvedBanks?.[uniform.stage] ?? (shader.constantRasterDomain ?
+          checkRasterBank(bank, shader.constantRasterDomain, shader.constantConstraint !== null, shader.constantRadialDomain !== null) : shader.constantRadialDomain ?
           checkRadialBank(bank, shader.constantRadialDomain.count, shader.constantConstraint !== null) : shader.constantConstraint ?
           checkLoopBank(bank, shader.constantConstraint.count) : checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional));
         if (!checked.ok && !strict) return [];
@@ -563,12 +565,13 @@ function createRenderer(options, drawing, asynchronous = false) {
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
-      const indirectBanks = Object.freeze(shaders.map((shader, stage) => shader.constantRadialDomain ?
+      const approvedBanks = Object.freeze(shaders.map((shader, stage) => shader.constantRasterDomain ?
+        unwrap(checkRasterBank(banks[stage], shader.constantRasterDomain, shader.constantConstraint !== null, shader.constantRadialDomain !== null)) : shader.constantRadialDomain ?
         unwrap(checkRadialBank(banks[stage], shader.constantRadialDomain.count, shader.constantConstraint !== null)) : shader.constantAccess ?
         unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :
           checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
       const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
-      const uploads = constantUploads(program, banks, true, indirectBanks);
+      const uploads = constantUploads(program, banks, true, approvedBanks);
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");

@@ -305,6 +305,169 @@ bool raw_outputs_safe(const struct profile *p)
    return true;
 }
 
+enum { RASTER_LANES = (TEMP_REGISTERS + FILE_REGISTERS) * 4,
+       RASTER_WORDS = (RASTER_LANES + 31) / 32, RASTER_QUEUE = 1024,
+       RASTER_NONE = UINT16_MAX };
+struct raster_analysis {
+   uint32_t visited[BRIDGE_MAX_INSTRUCTIONS + 1][RASTER_WORDS];
+   uint32_t queue[RASTER_QUEUE];
+   uint16_t next[BRIDGE_MAX_INSTRUCTIONS][2];
+   bool reachable[BRIDGE_MAX_INSTRUCTIONS + 1];
+   unsigned used;
+};
+_Static_assert(sizeof(struct raster_analysis) <= 32768, "bounded raster analysis arena");
+_Static_assert(sizeof(struct raster_certificate) <= sizeof(((struct raw_ir *)0)->temporary),
+   "finalized certificate reuses dead TEMP facts");
+
+static bool raster_graph(const struct raw_ir *ir, struct raster_analysis *a)
+{
+   struct { unsigned open, otherwise, breaking; bool loop; } frames[8];
+   unsigned depth = 0;
+   for (unsigned pc = 0; pc < ir->count; ++pc) {
+      enum raw_opcode op = ir->instructions[pc].opcode;
+      a->next[pc][0] = pc + 1; a->next[pc][1] = RASTER_NONE;
+      if (op == RAW_UIF || op == RAW_BGNLOOP) {
+         if (depth == 8) return false;
+         frames[depth].open = pc;
+         frames[depth].otherwise = frames[depth].breaking = RASTER_NONE;
+         frames[depth++].loop = op == RAW_BGNLOOP;
+      } else if (op == RAW_ELSE) {
+         if (!depth || frames[depth - 1].loop || frames[depth - 1].otherwise != RASTER_NONE) return false;
+         frames[depth - 1].otherwise = pc;
+      } else if (op == RAW_BRK) {
+         unsigned owner = depth;
+         while (owner && !frames[owner - 1].loop) --owner;
+         if (!owner || frames[owner - 1].breaking != RASTER_NONE) return false;
+         frames[owner - 1].breaking = pc;
+      } else if (op == RAW_ENDIF || op == RAW_ENDLOOP) {
+         if (!depth || frames[depth - 1].loop != (op == RAW_ENDLOOP)) return false;
+         --depth;
+         unsigned open = frames[depth].open, otherwise = frames[depth].otherwise;
+         if (op == RAW_ENDLOOP) {
+            unsigned breaking = frames[depth].breaking;
+            if (!ir->loop.checked || open != ir->loop.begin || pc != ir->loop.end ||
+                breaking != ir->loop.break_pc) return false;
+            a->next[pc][0] = open + 1;
+            a->next[breaking][0] = pc + 1;
+         } else {
+            a->next[open][1] = otherwise == RASTER_NONE ? pc + 1 : otherwise + 1;
+            if (otherwise != RASTER_NONE) a->next[otherwise][0] = pc + 1;
+            if (ir->radial.used && open == ir->radial.branch) {
+               /* Existing coefficient approval proves this exact edge false.
+                * The outer raster profile must retain that radial contract. */
+               a->next[open][0] = a->next[open][1];
+               a->next[open][1] = RASTER_NONE;
+            }
+         }
+      }
+   }
+   if (depth) return false;
+   a->reachable[0] = true; a->queue[a->used++] = 0;
+   while (a->used) {
+      unsigned pc = a->queue[--a->used];
+      if (pc == ir->count) continue;
+      for (unsigned edge = 0; edge < 2; ++edge) {
+         unsigned next = a->next[pc][edge];
+         if (next == RASTER_NONE) continue;
+         if (next > ir->count) return false;
+         if (!a->reachable[next]) {
+            a->reachable[next] = true;
+            a->queue[a->used++] = next; /* At most 180 distinct boundaries. */
+         }
+      }
+   }
+   return a->reachable[ir->count];
+}
+
+static bool raster_query(struct raster_analysis *a, unsigned pc, unsigned lane)
+{
+   uint32_t bit = UINT32_C(1) << (lane % 32);
+   if (a->visited[pc][lane / 32] & bit) return true;
+   if (a->used == RASTER_QUEUE) return false;
+   a->visited[pc][lane / 32] |= bit;
+   a->queue[a->used++] = pc * RASTER_LANES + lane;
+   return true;
+}
+
+static bool raster_source(const struct raw_ir *ir, struct raster_analysis *a,
+                          struct raster_certificate *c, unsigned pc,
+                          const struct raw_source *source, unsigned lane)
+{
+   unsigned component = source->swizzle[lane];
+   if (source->file == TEMP) return raster_query(a, pc, source->index * 4 + component);
+   if (source->file == IN) return true; /* Existing ordinary input authority. */
+   if (source->file == IMM) return safe_raw_float(known_word(ir->immediates[source->index][component]));
+   uint64_t indices = 0;
+   if (source->file == CONST) indices = UINT64_C(1) << source->index;
+   else if (source->file == INDIRECT_CONST) {
+      indices = ir->indirect_indices;
+      if (ir->loop.checked)
+         for (unsigned access = 0; access < 4; ++access)
+            if (ir->loop.access[access].read == pc) indices = ir->loop.access[access].candidates;
+   } else return false;
+   if (!indices || indices >> CONST_REGISTERS) return false;
+   for (unsigned index = 0; index < CONST_REGISTERS; ++index) if (indices & (UINT64_C(1) << index)) {
+      /* The loop count remains integer data even when its encoding happens to
+       * be a normal float. It cannot gain a raster interpretation here. */
+      if (ir->loop.checked && index == 9 && component == 0) return false;
+      c->components[index] |= 1u << component;
+   }
+   return true;
+}
+
+int raw_certify_raster_outputs(const struct profile *p)
+{
+   struct raw_ir *ir = p->raw;
+   if (!ir || !ir->count || ir->count > BRIDGE_MAX_INSTRUCTIONS ||
+       p->semantic[OUT][0] != (p->stage == 0 ? 1u : 3u)) return 0;
+   struct raster_analysis *a = calloc(1, sizeof(*a));
+   if (!a) return -1;
+   struct raster_certificate certificate = {0};
+   bool valid = raster_graph(ir, a);
+   for (unsigned index = 0; valid && index < FILE_REGISTERS; ++index) if (p->declared[OUT][index])
+      for (unsigned lane = 0; valid && lane < 4; ++lane)
+         if ((p->components[OUT][index] & (1u << lane)) && !output_legal(ir->output[index][lane])) {
+            certificate.outputs[index] |= 1u << lane;
+            valid = raster_query(a, ir->count, TEMP_REGISTERS * 4 + index * 4 + lane);
+         }
+   while (valid && a->used) {
+      unsigned query = a->queue[--a->used], pc = query / RASTER_LANES, id = query % RASTER_LANES;
+      enum file file = id < TEMP_REGISTERS * 4 ? TEMP : OUT;
+      unsigned index = file == TEMP ? id / 4 : id / 4 - TEMP_REGISTERS, lane = id % 4;
+      bool predecessor = false;
+      for (unsigned before = 0; valid && before < ir->count; ++before) {
+         if (!a->reachable[before] || (a->next[before][0] != pc && a->next[before][1] != pc)) continue;
+         predecessor = true;
+         const struct raw_instruction *instruction = &ir->instructions[before];
+         if (((UINT64_C(1) << instruction->opcode) & RAW_CONTROL_OPCODES) ||
+             instruction->dst.file != file || instruction->dst.index != index ||
+             !(instruction->dst.mask & (1u << lane))) {
+            valid = raster_query(a, before, id);
+         } else if (instruction->opcode == RAW_MOV) {
+            valid = raster_source(ir, a, &certificate, before, &instruction->src[0], lane);
+         } else if (instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAX_PRECISE) {
+            unsigned first = instruction->opcode == RAW_UCMP ? 1 : 0;
+            valid = raster_source(ir, a, &certificate, before, &instruction->src[first], lane) &&
+               raster_source(ir, a, &certificate, before, &instruction->src[first + 1], lane);
+         } else {
+            /* Existing numeric results already own ordinary output authority.
+             * No integer/bitwise transformation becomes a copied bank word. */
+            valid = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
+         }
+      }
+      valid = valid && predecessor;
+   }
+   bool bank = false;
+   for (unsigned index = 0; index < CONST_REGISTERS; ++index) bank |= certificate.components[index] != 0;
+   free(a);
+   if (!valid || !bank) return 0;
+   /* All semantic TEMP reads and flow joins are complete. Only now replace
+    * those dead facts and publish the mandatory finite+raster obligations. */
+   ir->raster = certificate;
+   ir->opcode_mask |= RAW_RASTER_BANK_USED | RAW_FINITE_BANK_USED;
+   return 1;
+}
+
 struct writer { char *text; size_t used; bool overflow; };
 static void emit(struct writer *w, const char *format, ...)
 {
@@ -578,7 +741,10 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          emit(&w, ".%c = ", "xyzw"[lane]);
          unsigned authority = p->raw->output[index][lane].origin;
          unsigned origin = authority & RAW_ACCESS_MASK;
-         if ((authority & RAW_OUTPUT) && origin == RAW_FLOAT_SHADOW) emit(&w, "float_out[%u].%c", index, "xyzw"[lane]);
+         bool raster = (p->raw->opcode_mask & RAW_RASTER_BANK_USED) &&
+            (p->raw->raster.outputs[index] & (1u << lane));
+         if (raster) emit(&w, "uintBitsToFloat(raw_out[%u].%c)", index, "xyzw"[lane]);
+         else if ((authority & RAW_OUTPUT) && origin == RAW_FLOAT_SHADOW) emit(&w, "float_out[%u].%c", index, "xyzw"[lane]);
          else if (authority & RAW_OUTPUT) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);
          else emit(&w, "uintBitsToFloat(raw_out[%u].%c)", index, "xyzw"[lane]);
          emit(&w, ";\n");
