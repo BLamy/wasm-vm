@@ -3,7 +3,7 @@ id: E6-T12f4a
 epic: 6
 title: Preserve ordered nonprefix destination masks in checked shader writes
 priority: 525.02699141
-status: implemented
+status: verified
 depends_on: [E6-T12f4]
 estimate: S
 risk: high
@@ -136,3 +136,115 @@ and their scoped native/Wasm/shared-renderer behavior. Owned-bank output and
 precise ADD/MUL remain separate boundaries. Production guest GPU negotiation,
 live deployment and desktop 300 MIPS are not claimed. A fresh verifier must
 judge this diff and evidence before setting verified.
+
+### 2026-10-03 — independent verifier
+
+VERDICT: verified
+
+Frozen implementation/harness: `2815f3d23806aa5b7aaa6a12cef03d5ce54ade90`;
+base `5f02a20e`; worker submission `9ca23afb715cbd9f81cc74d1b7372eba83c8b1c4`.
+Read AGENTS.md, the whole task, actual diff and handoff before evidence; recorded
+ten falsifiable predictions first. All ten are HELD. The
+[structured verdict](../../evidence/virgl-ordered-masks/verifier-verdict.json)
+binds the independent observations, hashes and raw citations. No runtime
+refutation or unexecuted product hunk remains.
+
+- ADMISSION / AUTHORITY — HELD. Predicted all 15 strictly increasing unique
+  subsets admit while duplicate/reversed/empty/overlong masks and undeclared
+  consumed components reject. Independent native and Wasm probes each pass
+  10,470 calls: 788 admissions/9,682 rejections, exhausting mask strings through
+  length 5, every four-lane source selector and xy/xyz GENERIC authority in both
+  stages. Full result objects agree; the Wasm backing buffer stays 16 MiB.
+  `verifier.tar.gz::current-probe.jsonl` and `wasm-parity.jsonl` preserve each
+  input/result digest. Declared TEMP partial masks and arbitrary raw raster
+  words were invalid initial verifier fixtures; their correct rejections and
+  corrected fixtures remain as diagnostic context. MAD/TEX boundaries and
+  unrelated ordinary output authority survive. No further evidence demanded.
+- WORDS / ALIASES / NEIGHBORS — HELD. Predicted absolute destination-lane
+  source selection and pre-write aliases. Separate direct equations, using no
+  worker interpreter/IR/GLSL/oracle, check every 542 worker hardware draw,
+  2,168 words and 2,220,032 pixels. At `worker.tar.gz::gpu/report.json`
+  line 3448256, yz direct source0-unordered yields
+  `[3f800000,ffc05678,7f801234,80000000]`; line 3546852 alias yields
+  `[7fc01234,ffc05678,7f801234,ff801111]`. Numeric-alias line 11097010 gives
+  `[3f000000,3f800000,3fc00000,3f800000]`; OUT-neighbor line 13612066 preserves
+  `[ff801111,ffffffff,7f801234,7fc01234]`.
+  GPU report SHA-256 `0440dec63cea6d7018bf7f5a489a375f112c3be0781f11c68cf2d57843b769a6`.
+  `exact-trace-points.jsonl` supplies exact raw word/pixel pointers and digests.
+  Independent seed 41d2c675 passes all 182 rigs/542 draws; novel seed 29bd6731
+  checks sequential yz/xz/yw aliases, ordinary writes, exact dyadic shadows and
+  repeated OUT writes in 74 draws/296 words/303,104 pixels. All source/artifact
+  bindings, actual compile/link/uploads/readbacks, hardware identity, zero
+  browser errors and zero final object budgets are independently rechecked.
+  No further evidence demanded.
+- LIGHTING / RETENTION — HELD. Predicted unchanged 12f6d594/d4f702f7 bodies
+  compile and pair-link under raw-v18 with eight-vector finite-bank and local
+  MAX contracts. Actual observer words are `[0,3ec00017,0,3ec00017]` at the same
+  GPU report lines 14672133/14719991. Every 19 capture body/hash remains unchanged;
+  14 accept. All 4,374 unaffected case records and 511 pair records equal F4
+  completely. The only migrations are 24 admissions, 30 later undefined-source
+  parse-errors and two lighting admissions. Relevant PRECISE/equality/selected/
+  radial hardware leaves and previously promoted regressions pass. Carry F4
+  HELD precision semantics, contracts, allocator and caps across their unchanged
+  code/dependency boundaries and baseline digest dc704cd8; mask-sensitive paths
+  are rechecked here. No exact backward RSQ/DP3 cone is inferred.
+- BOUNDS / COVERAGE — HELD. Predicted real positive counters at every changed
+  behavior and unchanged bounded storage. `worker.tar.gz::native/native.log`
+  lines 1/5594/5595 show IR 26,480 / instruction 112 / profile 7,616 / flow 52,644 within
+  53,248 and 1,429,106 sanitizer calls with 229 allocation failures, full recovery,
+  hostile/truncation/mutation schedules; SHA-256
+  `d5f4c303aedd29daaa7399fe3a29682ad2248084ab3fe3f4a7be547e46a103bf`.
+  The 51,287 Wasm calls retain the same 16 MiB buffer through 64 stress/31 pressure
+  calls. Instruction 179 passes/180 rejects; result and stage GLSL maxima remain
+  below existing limits. Mixed pressure rejects at `wasm/calls.jsonl` line 51165
+  and fully succeeds at 51172, digest
+  `24e7efe95217a12ffb927c083e3c72023db4205f0f80c2a50a7251cf71f1299e`.
+  The sole changed C expression at bridge.c:180 has 20,156,977 true/6 false
+  nonempty-count outcomes in source-bound LLVM coverage digest
+  `e7580d2461eb01e795492fa4d12f3697f143a9da5864bbf1edaf5fb19aac8aaf`.
+  V8 counters, submissions and physical state exercise every new GPU family.
+  `coverage-scope.md` classifies every remaining hunk: static data/configuration
+  or diagnostic/recorder infrastructure waivers. No product hunk is waived.
+- FAULTS / COLD — HELD. Predicted actual C compiler faults fail independent
+  physical words. Widen-yz, packed-source, neighbor-write and early-alias each
+  have a saved first pixel mismatch, exact isolated C mutation and compiled
+  Wasm digest; each reproduces with independent seed 41d2c675. Six bounded
+  physical/typed/coverage/migration corruption probes reject, including raw
+  pixels with recomputed digests. All 713 worker and 715 cold archive members,
+  binary artifacts and receipts are streamed losslessly. The final exact-head
+  named clone remains pristine before/after and on independent reinspection;
+  replay its source-bound reader in that clone. Entire native/Wasm transcripts
+  and complete GPU rigs equal worker. `cold-package-audit.json`,
+  `cold-reader-replay.json` and `receipt-attack-report.json` retain the proofs.
+  No second cold acceptance run is needed for this test/evidence-only promotion.
+- SUITE — promote
+  `renderer/virgl-command/tests/ordered-mask-regressions.mjs`: 10,470 literal
+  grammar/consumed-authority checks through the real Wasm API. Direct validation
+  passes 788 valid/9,682 invalid cases. A separately compiled real bridge with
+  the old count==1 rule fails the new assertion `mask vertex/xz` at test line 11;
+  isolated source/Wasm/build log and failure are retained. The existing
+  `make verify-E6-T12f4a` remains the recurring full acceptance target. No
+  implementation code or normal compiler artifact was changed by this verifier.
+
+The complete verifier scripts, predictions, raw native/Wasm probes, source
+faults, counters, independent hardware captures and corrected fixture diagnostics
+are losslessly committed in
+[verifier.tar.gz](../../evidence/virgl-ordered-masks/verifier.tar.gz), with every
+member bound by
+[verifier-manifest.json](../../evidence/virgl-ordered-masks/verifier-manifest.json).
+The archive SHA-256 is
+`9c1956ed71b7416efb448ff5e83af6d803dcecb36af798c52b04b5baddfcfa02`: 277
+files, 21,717,289 compressed bytes and 1,171,961,862 uncompressed bytes.
+
+Promotion commands:
+
+```sh
+node --check renderer/virgl-command/tests/ordered-mask-regressions.mjs
+node renderer/virgl-command/tests/ordered-mask-regressions.mjs
+```
+
+The verified scope is ordered checked destination writes and unchanged lighting
+compile/link under existing contracts. Owned-bank output authority, exact
+ADD/MUL arithmetic, guest negotiation/execution, deployment and desktop
+throughput remain separate tasks. Run task policy and regenerate the queue
+before committing this verdict.

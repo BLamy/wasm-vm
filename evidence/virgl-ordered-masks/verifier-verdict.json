@@ -1,0 +1,272 @@
+{
+  "schema": "ordered-mask-independent-verdict-v1",
+  "task": "E6-T12f4a",
+  "verdict": "verified",
+  "runtimeCommit": "2815f3d23806aa5b7aaa6a12cef03d5ce54ade90",
+  "workerSubmissionCommit": "9ca23afb715cbd9f81cc74d1b7372eba83c8b1c4",
+  "diffBase": "5f02a20e",
+  "freshVerifier": true,
+  "predictions": [
+    {
+      "id": 1,
+      "name": "PROVENANCE",
+      "status": "HELD",
+      "observation": "713 worker/715 cold files streamed losslessly; every packaged binary/source/receipt binding agrees. All19 originals retain SHA.",
+      "evidence": {
+        "path": "worker-audit.json",
+        "sha256": "af85a8649951353374dcc19fd413d2c800e44db28e07f24be95ac8c16d8b7b23"
+      }
+    },
+    {
+      "id": 2,
+      "name": "ADMISSION",
+      "status": "HELD",
+      "observation": "10,470 independent native/Wasm calls:788 admitted,9682 rejected; exhaustive length0..5 masks, all4-lane selectors, partial generic authority.",
+      "evidence": {
+        "path": "current-probe-summary.json",
+        "sha256": "5d9da3f545624788328025e3ae2f54250a0e16e7e41232fe84a247738bf01904"
+      }
+    },
+    {
+      "id": 3,
+      "name": "LANE IDENTITY",
+      "status": "HELD",
+      "observation": "Separate direct algebra checks every542 worker hardware draw/2168 words/2220032 pixels; all15 masks in6 families/both stages.",
+      "evidence": {
+        "path": "word-predictions.jsonl",
+        "sha256": "b0952f9f5aaa79a958525ff3d98e4e604d6b6371bf85c940c6ff53b6fd3db99f"
+      }
+    },
+    {
+      "id": 4,
+      "name": "ALIAS SNAPSHOT",
+      "status": "HELD",
+      "observation": "Sequential yz/xz/yw aliases, exact numeric shadows and repeated OUT writes pass74 novel shared-renderer draws/296 words/303104 pixels.",
+      "evidence": {
+        "path": "independent-novel-29bd6731/report.json",
+        "sha256": "5af40227ae17092f6e3ee74b622dfe6d7e4e2e6d5fa0ac23f6f0366e913c0655"
+      }
+    },
+    {
+      "id": 5,
+      "name": "LIGHTING",
+      "status": "HELD",
+      "observation": "Untouched12f6d594/d4f702f7 bind8-vector finite bank and local MAX contract; actual compile/link/render observer words[0,3ec00017,0,3ec00017].",
+      "evidence": {
+        "path": "exact-trace-points.jsonl",
+        "sha256": "fae409f9955537934de59525b0adb0752851b23689ee799f563153837ae1e503"
+      }
+    },
+    {
+      "id": 6,
+      "name": "RETENTION",
+      "status": "HELD",
+      "observation": "4374 unaffected case records and511 pair records equalF4 completely; exact24 admissions/30parse-errors/2 lighting migrations. Relevant rerun leaves/promoted prior checks pass.",
+      "evidence": {
+        "path": "migrations-audit.json",
+        "sha256": "726929ea0bfcab3a82c8274b7528a776d1a7f36b215d12428eb111240b672d8c"
+      }
+    },
+    {
+      "id": 7,
+      "name": "BOUNDS/RECOVERY",
+      "status": "HELD",
+      "observation": "Warm/cold native1,429,106 calls,229 allocation failures/full recovery; actual Wasm51287 calls/64stress/31pressure stable16MiB; all existing caps and179/180 boundary held.",
+      "evidence": {
+        "path": "worker-reader-replay.json",
+        "sha256": "497a57eda944ae6696a0153bc1ba6bd7c4337af939fede976d6b2cb011ef456a"
+      }
+    },
+    {
+      "id": 8,
+      "name": "FAULTS",
+      "status": "HELD",
+      "observation": "All4 real C-source fault artifacts match hashes and physical mismatches; independent seed41d2c675 reproduces each. Actual restored old-mask Wasm fails promoted test.",
+      "evidence": {
+        "path": "worker-audit.json",
+        "sha256": "af85a8649951353374dcc19fd413d2c800e44db28e07f24be95ac8c16d8b7b23"
+      }
+    },
+    {
+      "id": 9,
+      "name": "SUFFICIENCY",
+      "status": "HELD",
+      "observation": "Sole changed C expression has20,156,977 true/6 false nonempty outcomes; every behavioral hunk executes, remaining infrastructure/data hunks explicitly waived.",
+      "evidence": {
+        "path": "coverage-scope.md",
+        "sha256": "ec29c5f2ec7015a80d0d015dc74870109d68f24f4d90134c3f67cfb1a4612f66"
+      }
+    },
+    {
+      "id": 10,
+      "name": "COLD/PROOF ROBUSTNESS",
+      "status": "HELD",
+      "observation": "Final named pristine clone remains clean; raw native/Wasm transcripts and complete hardware rigs equalworker. Six bounded physical/typed/coverage/migration corruption probes reject.",
+      "evidence": {
+        "path": "cold-package-audit.json",
+        "sha256": "25a046283ecd3fc0c1091157669dd96fc64b0979ec51585c4333a34bb86034af"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "path": "predictions.md",
+      "sha256": "0fe8011fdf58b3381c34023cc73f040b3747fa9c14c198946cfc35752b11b4fb",
+      "bytes": 4635
+    },
+    {
+      "path": "worker-audit.json",
+      "sha256": "af85a8649951353374dcc19fd413d2c800e44db28e07f24be95ac8c16d8b7b23",
+      "bytes": 2188
+    },
+    {
+      "path": "cold-package-audit.json",
+      "sha256": "25a046283ecd3fc0c1091157669dd96fc64b0979ec51585c4333a34bb86034af",
+      "bytes": 2670
+    },
+    {
+      "path": "worker-reader-replay.json",
+      "sha256": "497a57eda944ae6696a0153bc1ba6bd7c4337af939fede976d6b2cb011ef456a",
+      "bytes": 8516
+    },
+    {
+      "path": "cold-reader-replay.json",
+      "sha256": "497a57eda944ae6696a0153bc1ba6bd7c4337af939fede976d6b2cb011ef456a",
+      "bytes": 8516
+    },
+    {
+      "path": "current-probe-summary.json",
+      "sha256": "5d9da3f545624788328025e3ae2f54250a0e16e7e41232fe84a247738bf01904",
+      "bytes": 383
+    },
+    {
+      "path": "wasm-probe-summary.json",
+      "sha256": "f693759c6a27c47eba9359e74b350b84cb2b7291fc2b13839f9865163bae87ce",
+      "bytes": 225
+    },
+    {
+      "path": "changed-c-coverage.json",
+      "sha256": "8718f2ae14d109e48caf9f1ef907d0bc323c25e9059d7a24ba06738897457847",
+      "bytes": 2968
+    },
+    {
+      "path": "coverage-scope.md",
+      "sha256": "ec29c5f2ec7015a80d0d015dc74870109d68f24f4d90134c3f67cfb1a4612f66",
+      "bytes": 4617
+    },
+    {
+      "path": "exact-trace-points.jsonl",
+      "sha256": "fae409f9955537934de59525b0adb0752851b23689ee799f563153837ae1e503",
+      "bytes": 7421
+    },
+    {
+      "path": "native-wasm-trace-points.jsonl",
+      "sha256": "3c7d78c2f2059af051c8bd8b3e043bf8e0bedadbee00c180a8ad662476cb8397",
+      "bytes": 4222
+    },
+    {
+      "path": "receipt-attack-report.json",
+      "sha256": "48573d06f141cbd5a3da1d5c0c6c820ba36e8b4bdccbb274c608b961606004e2",
+      "bytes": 959
+    },
+    {
+      "path": "promoted-test.log",
+      "sha256": "6ac77cef07b4dc3e386d93d647515eaf1a62740090fc8fbb89a433bfd5892c46",
+      "bytes": 78
+    },
+    {
+      "path": "promoted-test-sabotage.json",
+      "sha256": "a3e2197dbb8d7e753fb510029b7463d3ee79c0fb5f03425897d268635866cd06",
+      "bytes": 456
+    },
+    {
+      "path": "probe-fixture-correction.md",
+      "sha256": "b1d2e390d34f4987578c8cfcd783c48c4416602bcb9b0235e9fe44417538dcde",
+      "bytes": 1680
+    }
+  ],
+  "carryForward": "F4 instruction-local precision semantics, contracts/authority, checked upstream allocator, bounds and prior regressions retained only across unchanged code/dependency boundaries and exact baseline digestdc704cd8. Mask-sensitive admissions/footprints/emission paths rechecked.",
+  "suite": {
+    "promoted": "renderer/virgl-command/tests/ordered-mask-regressions.mjs",
+    "calls": 10470,
+    "accepted": 788,
+    "rejected": 9682,
+    "sabotage": "actual isolated Wasm restores count==1 and fails mask vertex/xz"
+  },
+  "findings": [],
+  "scope": "Only ordered destination writes and untouched lighting compile/link under existing contracts. No exact arithmetic cone, exceptional raster transport, bank-output authority, guest execution, production advertisement, deployment or throughput claim.",
+  "independentHardware": [
+    {
+      "path": "independent-normal-41d2c675/report.json",
+      "sha256": "836b98e271028b083ab79efe8c3c7641e833b80b8c2ca1b3b03326e8eabded78",
+      "status": "passed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 542,
+      "words": 2168,
+      "sources": 171
+    },
+    {
+      "path": "independent-novel-29bd6731/report.json",
+      "sha256": "5af40227ae17092f6e3ee74b622dfe6d7e4e2e6d5fa0ac23f6f0366e913c0655",
+      "status": "passed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 74,
+      "words": 296,
+      "sources": 173
+    },
+    {
+      "path": "independent-fault-widen-yz-41d2c675/report.json",
+      "sha256": "235dd87ba78ca2dfe767869e0a72c65817bcba9864610493f79d77f2606364ef",
+      "status": "failed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 127,
+      "words": 508,
+      "sources": 172
+    },
+    {
+      "path": "independent-fault-packed-source-41d2c675/report.json",
+      "sha256": "d8757a26f6f7a9ac5247aa689e5cb8482190623641055aa24e8453f664809cae",
+      "status": "failed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 18,
+      "words": 72,
+      "sources": 172
+    },
+    {
+      "path": "independent-fault-neighbor-write-41d2c675/report.json",
+      "sha256": "ddf1608e799e74d43d6aa3ddab722a9a855b1ca2c074e118fa0c4e5f2c0aed9b",
+      "status": "failed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 0,
+      "words": 0,
+      "sources": 172
+    },
+    {
+      "path": "independent-fault-early-alias-41d2c675/report.json",
+      "sha256": "692e94348d427131170b2ed8f698840ca417cda2b103a314cdffd3b01f2102ad",
+      "status": "failed",
+      "hardware": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      },
+      "draws": 130,
+      "words": 520,
+      "sources": 172
+    }
+  ]
+}
