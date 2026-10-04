@@ -3,7 +3,7 @@ id: E6-T12g4
 epic: 6
 title: Execute required sampler-view swizzles addressing and filtering
 priority: 525.0270104
-status: in-progress
+status: implemented
 depends_on: [E6-T12g3]
 estimate: S
 risk: high
@@ -89,4 +89,51 @@ retaining its physical smooth/flat/mixed, lifecycle,12 fault and two quota tests
 No admission expectations or implementation tests are weakened or rewritten.
 The final exact-source acceptance and pristine clone, followed by a fresh critic,
 are authoritative; these prechecks are only iteration.
+
+### 2026-10-04 — worker — implemented submission
+
+Frozen runtime/harness head: `7b4fbb11b3d386319b7050d7fc1e0442494d4f68`.
+Base: verified G3 `96d6b83fcde1765fc5e931a95808629f78d37b60`.
+Commands, both exit0:
+
+```
+VIRGL_VIEW_EVIDENCE_DIR=target/evidence/virgl-texture-views-worker-final make verify-E6-T12g4
+python3 tools/virgl-command/views-cold.py --output target/evidence/virgl-texture-views-worker-cold
+```
+
+Evidence of record: `evidence/virgl-texture-views/worker/manifest.json`,
+`records.json` and `recording.tar.gz` (63 members; archiveSHA256
+`de6d0334fed7059bb9af7dfaa5bd52ed2531089091ef1ce74e65970bb0789830`,
+indexSHA256 `5df25538360b1290ceec6cb23213b4c139635a8bdb0ca146317b9207ca0d58e0`).
+Hot receiptSHA256 `0e05457e623069ada8754571f567d1dc625189fa7440a2e1ee1dab7f76070849`;
+cold reportSHA256 `ed88346b27cf7b1f9312e8a5f675ff7a8d2322bf03b44f9d21fc596dd790de0a`;
+cold receiptSHA256 `33530f41598a57c020cefe28988fdac00af6104e07388bfec1a20bbb5ff570d6`.
+The hot/cold source and input tables are identical; the scrubbed exact-source
+clone is pristine before and after acceptance. Browser is Chrome154.0.8037.93,
+ANGLE Metal/Apple M4 Max, hardware enabled, with zero console/page/request errors.
+
+The recording demonstrates294 identical Node/browser guard assertions and4870
+hardware assertions, including the unchanged original kmscube VIEW/SAMPLER,
+26 independent physical patterns on each format2/67/233, native alpha, no extra
+view images (resident GPU4188 bytes in each tiny format rig), retained/reused
+aliases and exact A/B/A program reuse. Independent nearest center is
+[92,64,148,17], linear center[68,91,104,82], and combined flat/swizzled provoking
+pixels are[36,200,8,255]/[148,64,92,255], with both generated stages charged.
+Slot0/7 selection and delayed actual-fence jobs at0/1/3 produce correct pixels.
+Six incompatible role/storage attacks retain no charge; all-constant sampler
+elimination preserves logical view/state/feedback requirements. Exact shader
+quota succeeds and one byte short rejects before allocation. Twelve native
+allocation/compile/link/reflection/error failures roll back every new name and
+charge, including an already-created flat vertex variant when FS compilation
+fails. Six explicitly trusted-host output injections exercise lookup/main/
+length/sampler metadata guards. The unchanged retained flat renderer suite
+passes44 physical draws,12 failures and two quotas. A served lane-swap source
+fault fails at physicalRGBA67 pixel8,8: expected[172,84,40,12], actual[40,84,172,12].
+All affected old color/depth/state/draw/async/resource/decoder gates also pass.
+
+`hot/changed-line-coverage.json` records positive V8 counters for62 added runtime
+lines, bound to each clean recording/source digest. This worker map is a claim;
+the fresh critic must independently decide statement coverage and waivers.
+Original full-client draw closure remains G6; depth raster execution remains H.
+No live guest offload, capability negotiation or MIPS improvement is claimed.
 
