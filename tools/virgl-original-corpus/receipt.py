@@ -129,7 +129,7 @@ def physical(out,frozen,native,reference,fault=None):
  for v in a['vertices']:
   vectors=predicted[v['sha256']]['vectors'];require(len(v['vectors'])==(1 if fault else len(vectors)),'all original vertex equations')
   for x,p in zip(v['vectors'],vectors):
-   require(same(x['vector'],p['vector']) and same(x['expected'],p['expected']),'independent vertex prediction precedes GPU');expected=p['expected'];length=8 if expected['generic'] is not None else 4;ints(x['observed'],length);ints(x['bytes'],length*4,255)
+   require(same(x['vector'],p['vector']) and same(x['expected'],p['expected']),'independent vertex prediction precedes GPU');expected=p['expected'];length=8 if expected.get('generic') is not None else 4;ints(x['observed'],length);ints(x['bytes'],length*4,255)
    require(bytes(x['bytes'])==struct.pack('<'+'I'*length,*x['observed']) and sha(bytes(x['bytes']))==x['sha256'],'actual full vertex feedback bytes')
    checks=[]
    for lane,observed in enumerate(x['observed']):
