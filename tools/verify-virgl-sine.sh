@@ -35,9 +35,11 @@ node renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs --native ren
 python3 tools/virgl-sine/held-saturation.py "$evidence_dir/held-saturation"
 python3 tools/virgl-sine/held-exponent.py "$evidence_dir/held-exponent"
 node tools/virgl-sine/legacy.mjs "$evidence_dir/legacy.json"
+node renderer/virgl-shader/tests/sine-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-sine-guards.json"
 node tools/virgl-sine/consumer.mjs "$evidence_dir/native/report.json" "$evidence_dir/consumer.json"
 for seed in 389793865 2135058973 3399354483; do
   node tools/virgl-sine/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
+  python3 renderer/virgl-shader/tests/sine-capture-regressions.py --report "$evidence_dir/gpu-$seed/report.json" --output "$evidence_dir/independent-sine-capture-$seed.json"
 done
 for fault in function argument broadcast; do
   if node tools/virgl-sine/browser.mjs --output "$evidence_dir/fault-$fault" --fault "$fault"; then
