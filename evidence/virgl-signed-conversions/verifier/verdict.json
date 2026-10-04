@@ -1,0 +1,232 @@
+{
+  "schema": "critic-signed-conversion-verdict-v1",
+  "task": "E6-T12g6e",
+  "verdict": "verified",
+  "risk": "high",
+  "base": "7f2cdec89ca53b37bac120538bb168aaa153d62f",
+  "runtimeHead": "c4b811d7686e4fa59706324fcec6c3eecdc559d0",
+  "sourceHead": "2e67fac91552702add11c701f61d6c4c0af2260c",
+  "submissionHead": "4c001e35",
+  "predictions": [
+    {
+      "id": "P1",
+      "prediction": "Archive/index/member hashes and every receipt source match the named frozen commits; hot runtime is an ancestor with only the two harness repair paths changed and cold is exact2e67fac9, pristine and scrubbed.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "point": "members[0..80],sources.hot,sources.cold,incrementalDiff,coldReport",
+          "sha256": "ab172454d7925dcbcd936484755c34a1f5d34f7cf839021998d6ad9f45968f0c"
+        },
+        {
+          "path": "cold-binary-binding.json",
+          "point": "sha256",
+          "sha256": "f1bd656aaa315bdaae978637c35c3a7825eee2a4d3e7e03059e9990af58722ff"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "prediction": "For each authenticated GPU vertex source, independently interpreting signed32 I2F gives nearest-even including +/-2^31, +/-1 and tie parity; raw feedback equals source-derived position and two exact finite carriers of all32 result bits.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "source-semantics.json",
+          "point": "runs[0..5].vertices[].expectedWords/all32bits/resultSha256",
+          "sha256": "e08f8281050998da98e85c5c7ea0c2e8a410c206509239195c2a4d2faa9b99e2"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "prediction": "F2I truncates finite binary32 toward zero; +2^31, the next negative word below -2^31, NaNs and infinities are rejected before any emitted conversion or native effect; -2^31, both zeros and subnormals remain defined.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "independent-regressions.json",
+          "point": "native[672]:range-cube-1325400064-0-identity-x;native[].feasibleWords",
+          "sha256": "90e23221b81f0fe3a3f0e4126fae2e038f995b9d9c48e20b2abb130d90462096"
+        },
+        {
+          "path": "source-semantics.json",
+          "point": "runs[].vertices: F2I endpoint/zero/subnormal words",
+          "sha256": "e08f8281050998da98e85c5c7ea0c2e8a410c206509239195c2a4d2faa9b99e2"
+        },
+        {
+          "path": "consumer-attacks.json",
+          "point": "words[].predicted/observed",
+          "sha256": "bd54a19e724ca6c3c45d676388e522e6eb14bf154429ed0b4292ce8b006282b7"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "prediction": "Source modifiers, post-swizzle masks, in-place aliases, old/new versions and joins use pre-instruction words and preserve private integer provenance; unproven computed/input/indirect or modified dynamic F2I sources reject.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "independent-regressions.json",
+          "point": "native/wasm: all1,575 range-cube/modifier/mask/version/join cases",
+          "sha256": "90e23221b81f0fe3a3f0e4126fae2e038f995b9d9c48e20b2abb130d90462096"
+        },
+        {
+          "path": "boundary-attacks.json",
+          "point": "native/wasm:20 indirect/modifier/lexical/opcode cases",
+          "sha256": "14b9b6f724b208407937a90c6dcf82b746f06f5aeaa297068b83d0343470ad9c"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "prediction": "Every native/Wasm single and pair has exact parity; rejections publish no GLSL/metadata; pinned Mesa tokens have signed->float I2F and float->signed F2I and actual Mesa GPU output agrees inside its documented normal/zero TEMP scope.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "native-source-parity.json",
+          "point": "nativeCases[0..727],physicalUniqueSources=1136",
+          "sha256": "e23f0bd8b28e556b7d44df662ea47b5a89c4049fd7a5d3fe706900dd7adf0d07"
+        },
+        {
+          "path": "carry-forward.json",
+          "point": "retained,unchangedBoundaries",
+          "sha256": "bc84f0e7928c3b2c3d8ed14005bef2056e53c04996042f7fb77a5d29f4fabc9d"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "prediction": "Each fragment source produces independently derived all32 RGBA8 result bit planes, and each real indexed draw derives pixels from source words, with actual float/uvec4 reflection and full declared-prefix ownership.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "source-semantics.json",
+          "point": "runs[0..5].fragments[].expectedRGBA/resultSha256,draws[].expectedRGBA/resultSha256",
+          "sha256": "e08f8281050998da98e85c5c7ea0c2e8a410c206509239195c2a4d2faa9b99e2"
+        },
+        {
+          "path": "fourth-seed-semantics.json",
+          "point": "runs[0].vertices/fragments/draws",
+          "sha256": "22bd2461061fb3bb1fde73b5b9d438494cf4ff11f3b01704f005eb1c2a2b1ff8"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "prediction": "All conversion metadata forgeries reject without invoking getters, base policies remain byte-identical, and dynamic F2I domain components equal the union of consumed post-swizzle source lanes.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "consumer-attacks.json",
+          "point": "metadata[0..1790],banks[0..42],getterCalls=0",
+          "sha256": "bd54a19e724ca6c3c45d676388e522e6eb14bf154429ed0b4292ce8b006282b7"
+        },
+        {
+          "path": "authentication.json",
+          "point": "members:hot/consumer.json and cold/acceptance/consumer.json",
+          "sha256": "ab172454d7925dcbcd936484755c34a1f5d34f7cf839021998d6ad9f45968f0c"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "prediction": "Both stages and sync/async state consumers reject forbidden banks before upload, index access and draw; restored banks and owned async plans survive caller changes/actual index waits; budgets and physical objects return to zero.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "source-semantics.json",
+          "point": "runs[].guardedAttacks=20,asyncWaits=2",
+          "sha256": "e08f8281050998da98e85c5c7ea0c2e8a410c206509239195c2a4d2faa9b99e2"
+        },
+        {
+          "path": "fourth-seed-semantics.json",
+          "point": "runs[0].guardedAttacks/asyncWaits",
+          "sha256": "22bd2461061fb3bb1fde73b5b9d438494cf4ff11f3b01704f005eb1c2a2b1ff8"
+        },
+        {
+          "path": "cleanup.json",
+          "point": "matchingLiveProcesses=[],physicalLiveObjects=0",
+          "sha256": "92411a48809295ded48592132cf768b3982698e5f4100ff79fa2eb26c96147db"
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "prediction": "Authenticated LLVM and V8 count records execute each changed runtime hunk; unexecuted paths can only be waived as static structure/error fallback with independently bounded rejection proof.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "coverage-audit.json",
+          "point": "hunks[0..54],runtimeAddedLines[0..235],helperCoverage/helperFunctions;needsEvidence=[],dead=[]",
+          "sha256": "a2b43b572b2591bd1ef3110ff4919eff0f5f72a5eb8d861b28929dd8ef44f7bf"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "prediction": "Deliberate rounding, truncation and real component-guard source faults contradict independent source-derived words/range; the promoted regression fails when a real source range-proof mutation admits +2^31.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "sensitivity.json",
+          "point": "physicalFaults[0..5],sabotage.case:predictedfalse/actualtrue at positive2^31",
+          "sha256": "60aadd4b351149885b085718e7de471615b13212c37a827dcbc2129cba15cd52"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "prediction": "A bounded novel attack of signed range known-bit cubes, masks/modifiers/joins and output-version escapes matches independent range/provenance expectations on scratch native and Wasm binaries; a fourth physical seed also retains all exact words/pixels.",
+      "status": "HELD",
+      "citations": [
+        {
+          "path": "independent-regressions.json",
+          "point": "cases=1575,native/wasm complete",
+          "sha256": "90e23221b81f0fe3a3f0e4126fae2e038f995b9d9c48e20b2abb130d90462096"
+        },
+        {
+          "path": "boundary-attacks.json",
+          "point": "cases=20",
+          "sha256": "14b9b6f724b208407937a90c6dcf82b746f06f5aeaa297068b83d0343470ad9c"
+        },
+        {
+          "path": "fourth-seed-semantics.json",
+          "point": "runs[0]:37800 words/12480 pixels",
+          "sha256": "22bd2461061fb3bb1fde73b5b9d438494cf4ff11f3b01704f005eb1c2a2b1ff8"
+        }
+      ]
+    }
+  ],
+  "failed": [],
+  "needsEvidence": [],
+  "allSourceInterpretedWords": 228816,
+  "allSourceInterpretedPixels": 75136,
+  "newPhysicalSeed": 324508639,
+  "newPhysicalWords": 37800,
+  "newPhysicalPixels": 12480,
+  "promotedGuards": 1575,
+  "extraBoundaryGuards": 20,
+  "independentMetadataAttacks": 1791,
+  "independentOwnedBankAttacks": 43,
+  "promotedTest": {
+    "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+    "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a"
+  },
+  "digests": {
+    "authentication.json": "ab172454d7925dcbcd936484755c34a1f5d34f7cf839021998d6ad9f45968f0c",
+    "source-semantics.json": "e08f8281050998da98e85c5c7ea0c2e8a410c206509239195c2a4d2faa9b99e2",
+    "fourth-seed-semantics.json": "22bd2461061fb3bb1fde73b5b9d438494cf4ff11f3b01704f005eb1c2a2b1ff8",
+    "independent-regressions.json": "90e23221b81f0fe3a3f0e4126fae2e038f995b9d9c48e20b2abb130d90462096",
+    "consumer-attacks.json": "bd54a19e724ca6c3c45d676388e522e6eb14bf154429ed0b4292ce8b006282b7",
+    "boundary-attacks.json": "14b9b6f724b208407937a90c6dcf82b746f06f5aeaa297068b83d0343470ad9c",
+    "sensitivity.json": "60aadd4b351149885b085718e7de471615b13212c37a827dcbc2129cba15cd52",
+    "coverage-audit.json": "a2b43b572b2591bd1ef3110ff4919eff0f5f72a5eb8d861b28929dd8ef44f7bf",
+    "carry-forward.json": "bc84f0e7928c3b2c3d8ed14005bef2056e53c04996042f7fb77a5d29f4fabc9d",
+    "native-source-parity.json": "e23f0bd8b28e556b7d44df662ea47b5a89c4049fd7a5d3fe706900dd7adf0d07",
+    "gpu-324508639/report.json": "f1f1f5bd055a25682363ee7b2247dc40af8ce63333693b1679e971ee665c430b",
+    "cold-binary-binding.json": "f1bd656aaa315bdaae978637c35c3a7825eee2a4d3e7e03059e9990af58722ff",
+    "cleanup.json": "92411a48809295ded48592132cf768b3982698e5f4100ff79fa2eb26c96147db"
+  },
+  "scope": "private signed32 I2F/F2I only; full-word owned semantics, documented normal/zero Mesa TEMP comparisons; complete compositors and production imports/caps/guest boots/MIPS/FPS remain gated",
+  "implementationEdited": false,
+  "duplicateColdCloneRun": false
+}

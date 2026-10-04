@@ -26,6 +26,7 @@ node tools/virgl-compiler-bounds/retained.mjs "$evidence_dir/retained"
 node renderer/virgl-shader/tests/compiler-bounds-joins.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-joins.json"
 node renderer/virgl-shader/tests/hex-literal-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-hex-guards.json"
 node renderer/virgl-shader/tests/signed-integer-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-signed-guards.json"
+node renderer/virgl-shader/tests/signed-conversion-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-conversion-guards.json"
 node tools/virgl-signed-conversions/consumer.mjs "$evidence_dir/native/report.json" "$evidence_dir/consumer.json"
 node tools/virgl-signed-conversions/faults.mjs
 for seed in 1369979863 2804203833 3781791491; do
