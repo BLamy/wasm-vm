@@ -3,7 +3,7 @@ id: E6-T12f4b
 epic: 6
 title: Admit exact bank copies to ordinary outputs under a bounded raster domain
 priority: 525.02699142
-status: pending
+status: in-progress
 depends_on: [E6-T12f3, E6-T12f4a]
 estimate: S
 risk: high
@@ -49,3 +49,25 @@ and preserve unprojected negative ports. The F3 verification log and
 `evidence/virgl-radial-domain/verifier-verdict.json` bind this existing limit.
 This separate runtime boundary precedes integration-only F6 and makes no
 workload compatibility or guest execution claim.
+
+### 2026-10-03 — worker — activation
+
+The preceding ordered-mask task is independently verified at `596f294fd4889665a793d678e5e4d72556388199`.
+Implement the copied-bank raster boundary using the existing normal-or-signed-zero
+contract. Keep copied words exact internally and authorize only the bank
+components required by a checked bounded use-site certificate. Preserve the
+existing finite, indirect, count, radial and instruction-local precision
+obligations together.
+
+Guard one owned immutable bank generation before program linking, uploads and
+draw effects; preserve that approval across restoration and reject generation
+replacement during asynchronous draws. Record normal-domain neighbors, both
+zero signs, disallowed subnormal/nonfinite words, literal original gradients,
+native/Wasm complete results, independent hardware words/pixels and actual
+missing-guard/certificate fault witnesses before unsafe GPU execution.
+
+Use the narrow C/native/Wasm/consumer gates while implementing, then freeze
+the compiler, consumer and harness for one complete high-risk recording and
+one scrubbed pristine clone. A separate fresh verifier must judge the result.
+This boundary proves guarded admission; real radial workload banks and
+production guest graphics bring-up follow their dependent tasks.
