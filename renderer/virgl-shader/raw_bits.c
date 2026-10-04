@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 #include "raw_bits.h"
 #include "raw_binary32.h"
+#include "raw_conversions.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -176,9 +177,11 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool structured = (instruction->flags & RAW_STRUCTURED) != 0;
    bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
    unsigned dependency = 0;
+   bool conversion_bank = false;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ||
-      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ? 1 :
+      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ||
+      instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ? 1 :
       instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
    unsigned consumed = raw_consumed_mask(instruction->opcode, instruction->dst.mask);
    /* Capture read authority at the use site, before any aliased destination
@@ -232,6 +235,24 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          if (known_operands(a, b)) result[lane] = known_word(
             (a.one ^ UINT32_C(0x80000000)) >= (b.one ^ UINT32_C(0x80000000)) ? a.one : b.one);
          else result[lane] = (struct raw_lane){.zero = a.zero & b.zero, .one = a.one & b.one};
+         break;
+      case RAW_I2F:
+         if ((a.zero | a.one) == UINT32_MAX) result[lane] = known_word(raw_i2f_word(a.one));
+         /* This typed conversion is defined for every signed32 word and
+          * creates a finite normal-or-zero value, never an input locator. */
+         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
+         break;
+      case RAW_F2I:
+         a = precise_source(ir, instruction, 0, lane, conditional);
+         if (!raw_f2i_range_proved(a.zero, a.one)) {
+            /* No inferred float origin proves a range. Only a direct,
+             * unmodified bank word can be guarded at every runtime consumer. */
+            if (instruction->src[0].file != CONST ||
+                (instruction->flags & (RAW_NEGATE_SOURCES | RAW_ABSOLUTE_SOURCES))) return false;
+            conversion_bank = true;
+         }
+         if ((a.zero | a.one) == UINT32_MAX) result[lane] = known_word(raw_f2i_word(a.one));
+         else if ((~a.zero & UINT32_C(0x7fffffff)) < UINT32_C(0x3f800000)) result[lane] = known_word(0);
          break;
       case RAW_USEQ:
          if (known_operands(a, b)) result[lane] = known_word(a.one == b.one ? UINT32_MAX : 0);
@@ -319,6 +340,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool arithmetic = ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) != 0;
    if ((instruction->flags & RAW_NEGATE_SOURCES) && !arithmetic) ir->opcode_mask |= RAW_V5_NEGATION;
    if (dependency) ir->opcode_mask |= RAW_FINITE_BANK_USED;
+   if (conversion_bank) ir->opcode_mask |= RAW_CONVERSION_BANK_USED;
    if (arithmetic) ir->opcode_mask |= RAW_PRECISE_ARITHMETIC_USED;
    else if (instruction->flags & RAW_PRECISE) ir->opcode_mask |= RAW_PRECISE_WORD_USED;
    return true;
@@ -674,6 +696,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    if (p->raw->opcode_mask & RAW_ARITHMETIC_OPCODES) emit(&w, "%s", raw_binary32_common);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_ADD_PRECISE)) emit(&w, "%s", raw_binary32_add);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_MUL_PRECISE)) emit(&w, "%s", raw_binary32_mul);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_I2F)) emit(&w, "%s", raw_binary32_i2f);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_F2I)) emit(&w, "%s", raw_binary32_f2i);
    /* Keep all previously admitted source byte-identical. Higher declarations
     * extend the physical arrays only when this checked stage needs them. */
    unsigned temporaries = LEGACY_TEMP_REGISTERS;
@@ -681,7 +705,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       if (p->declared[TEMP][index]) temporaries = index + 1;
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[%u];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n", temporaries);
    if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
-   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | RAW_ARITHMETIC_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE)))
+   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE)))
       emit(&w, " highp vec4 float_temp[%u];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n", temporaries);
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
@@ -709,7 +733,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
       bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
       bool arithmetic = ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) != 0;
-      bool raw_shadow = arithmetic || instruction->opcode == RAW_MAX_PRECISE ||
+      bool raw_shadow = arithmetic || instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I || instruction->opcode == RAW_MAX_PRECISE ||
          ((instruction->flags & RAW_STRUCTURED) && !numeric &&
           instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP);
       if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
@@ -725,7 +749,10 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             if (op == RAW_ISGE || op == RAW_ISLT || op == RAW_IMAX) emit(&w, "(");
             if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
             if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, "raw_float_equal_mask(");
-            if (op == RAW_MAX_PRECISE || arithmetic) {
+            if (op == RAW_I2F || op == RAW_F2I) {
+               emit(&w, op == RAW_I2F ? "raw_signed_i2f(" : "raw_signed_f2i(");
+               precise_operand(&w, p, instruction, 0, lane); emit(&w, ")");
+            } else if (op == RAW_MAX_PRECISE || arithmetic) {
                emit(&w, op == RAW_MAX_PRECISE ? "raw_precise_max(" :
                     op == RAW_ADD_PRECISE ? "raw_precise_add(" : "raw_precise_mul(");
                precise_operand(&w, p, instruction, 0, lane);

@@ -1997,3 +1997,7 @@ verify-E6-T12g6c:
 .PHONY: verify-E6-T12g6d
 verify-E6-T12g6d:
 	bash tools/verify-virgl-signed-integers.sh
+
+.PHONY: verify-E6-T12g6e
+verify-E6-T12g6e:
+	bash tools/verify-virgl-signed-conversions.sh

@@ -1,7 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
-import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -268,6 +268,8 @@ function createRenderer(options, drawing, asynchronous = false) {
           object.constantConstraint = contract.constraint ?? null;
           object.constantRadialDomain = contract.radialDomain ?? null;
           object.constantRasterDomain = contract.rasterDomain ?? null;
+          object.constantConversionDomain = contract.conversionDomain ?? null;
+          object.constantConversionBase = contract;
           require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
@@ -496,8 +498,9 @@ function createRenderer(options, drawing, asynchronous = false) {
       const bank = banks[uniform.stage], count = uniform.uploadCount * 4;
       const shader = uniform.stage === 0 ? program.vertex : program.fragment;
       let words;
-      if (shader.constantRasterDomain || shader.constantRadialDomain || shader.constantAccess) {
-        const checked = approvedBanks?.[uniform.stage] ?? (shader.constantRasterDomain ?
+      if (shader.constantConversionDomain || shader.constantRasterDomain || shader.constantRadialDomain || shader.constantAccess) {
+        const checked = approvedBanks?.[uniform.stage] ?? (shader.constantConversionDomain ?
+          checkConversionBank(bank, shader.constantConversionDomain, shader.constantConversionBase) : shader.constantRasterDomain ?
           checkRasterBank(bank, shader.constantRasterDomain, shader.constantConstraint !== null, shader.constantRadialDomain !== null) : shader.constantRadialDomain ?
           checkRadialBank(bank, shader.constantRadialDomain.count, shader.constantConstraint !== null) : shader.constantConstraint ?
           checkLoopBank(bank, shader.constantConstraint.count) : checkIndirectBank(bank, shader.constantAccess.count, uniform.conditional));
@@ -618,7 +621,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
-      const approvedBanks = Object.freeze(shaders.map((shader, stage) => shader.constantRasterDomain ?
+      const approvedBanks = Object.freeze(shaders.map((shader, stage) => shader.constantConversionDomain ?
+        unwrap(checkConversionBank(banks[stage], shader.constantConversionDomain, shader.constantConversionBase)) : shader.constantRasterDomain ?
         unwrap(checkRasterBank(banks[stage], shader.constantRasterDomain, shader.constantConstraint !== null, shader.constantRadialDomain !== null)) : shader.constantRadialDomain ?
         unwrap(checkRadialBank(banks[stage], shader.constantRadialDomain.count, shader.constantConstraint !== null)) : shader.constantAccess ?
         unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :
