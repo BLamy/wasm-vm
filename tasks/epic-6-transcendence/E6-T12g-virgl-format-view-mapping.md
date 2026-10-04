@@ -3,9 +3,9 @@ id: E6-T12g
 epic: 6
 title: Map required VirGL resource formats and texture views to WebGL2
 priority: 525.02701
-status: pending
+status: cancelled
 depends_on: [E6-T12f6]
-estimate: S
+estimate: M
 risk: high
 capstone: false
 ---
@@ -41,4 +41,14 @@ does not grant every format found in the wider desktop corpus support.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — decomposition before execution
+
+Inspection identified separate capture/provenance, color storage, packed depth,
+view specialization/addressing and inline-write boundaries. This was an M-sized
+planning container despite its old S label. Replace it with ordered S slices
+E6-T12g1 through E6-T12g6; no acceptance requirement is removed. The original
+combined acceptance remains `make verify-E6-T12g`, owned by E6-T12g6. Raster/depth
+state task E6-T12h depends on that verified closure, not this cancelled parent.
+Each slice retains unsupported requests explicitly; resource allocation alone
+never grants sampling, attachment, readback or guest caps. Pinned workload
+requirements come from the actual old kmscube and new es2gears captures.

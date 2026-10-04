@@ -4,7 +4,7 @@ epic: 6
 title: Execute required VirGL raster depth and vertex state without coordinate drift
 priority: 525.02702
 status: pending
-depends_on: [E6-T12g]
+depends_on: [E6-T12g6]
 estimate: S
 risk: high
 capstone: false
