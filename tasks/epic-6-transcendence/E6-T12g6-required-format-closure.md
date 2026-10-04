@@ -4,7 +4,7 @@ epic: 6
 title: Close original kmscube and es2gears format/view requirements
 priority: 525.0270106
 status: pending
-depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5]
+depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a]
 estimate: S
 risk: high
 capstone: false
@@ -24,7 +24,10 @@ G1 preserves two new gears client shaders and four new supporting-compositor
 shaders outside F6's unchanged nineteen-body corpus. Bind those original bytes
 from `evidence/virgl-workload-inventory/index.json` and prove admission plus
 actual browser execution for the required paths. F6's result cannot establish
-support for these six additional bodies.
+support for these six additional bodies. G6a separately proves the four already
+admitted bodies. The larger `92cb866a` and `c5806d5f` require ordered compiler
+capacity/grammar tasks and original execution evidence before G6 may activate;
+add their verified dependency boundaries when that decomposition is defined.
 
 ## Deterministic acceptance
 
