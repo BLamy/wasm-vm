@@ -3,7 +3,7 @@ id: E6-T12g1
 epic: 6
 title: Capture unmodified guest es2gears and inventory required resource/view packets
 priority: 525.0270101
-status: implemented
+status: evidence-needed
 depends_on: [E6-T12f6]
 estimate: S
 risk: high
@@ -121,3 +121,104 @@ and reproducible requirements. No renderer, emulator, wasm or demo code changes;
 broad Rust/wasm/browser gates do not exercise this tooling boundary. No rendered
 pixels, new shader admission, format support, live offload or MIPS claim is made.
 Fresh adversarial verification is still required.
+
+### 2026-10-04 — fresh verifier — VERDICT: needs-evidence
+
+VERDICT: needs-evidence. The unmodified guest completion and literal client
+inventory claims were not contradicted. New executable inventory branches
+remain unexercised; they require the bounded decoder proof below before this
+task reaches verified. No implementation code was edited by this verifier.
+
+- P1 authentication — HELD. Predicted every seal/member/source binding would
+  authenticate. All 143 original-worker, 148 cold-worker and 198 negative
+  archive members do, as do the positive capture/artifact/blob digests and
+  all frozen/cold Git source tables. Capture digest remains
+  `202500d87a7e31a5c04f192852bb9a23dedce8681fb3ee4850e0738aee30e8a8`.
+  Citations: `target/evidence/virgl-workload-inventory-verifier/authentication.json`,
+  `worker/manifest.json`, `worker/cold/manifest.json`, `negative/manifest.json`
+  under this evidence directory. Preserve these exact boundaries.
+- P2 immutable inputs and new shader separation — HELD. All four old captures,
+  recorder source/build and nineteen old bodies remain byte-identical to the
+  verified parent. Two new client and four new supporting bodies remain separate
+  and unproven for admission/rendering (`index.json` and the canonical gate).
+  Current generated scripts for all four old workloads are byte-identical to
+  their retained guest scripts (`legacy-driver-compatibility.json`).
+- P3 source/build/live identity — HELD. An independent fresh read from the
+  official archive URL matched 14,839,368 bytes and `3046a3d2…496b`. A fresh
+  container compile, after independently checking all 12 source files,
+  12,153 sysroot bindings, compiler digest and package versions, reproduced
+  `59f4029a…18af`. The live executable, PID176, comm, mapped library hashes,
+  VirtIO render descriptor and actual 300×300 window agree. Citations:
+  `official-source.json`, `build-replay.log`, captured `gears-executable.sha256`,
+  `gears-library-hashes.txt`, `gears-fds.txt`, and `gears-clients.json`.
+- P4 normal completion — HELD. Predicted positive original reports followed
+  by successful actual window closure and zero client/guest/QEMU exits.
+  Captured `workload.log:8-9` reports 158 and 196 frames over 5.0 seconds;
+  `gears-control.log:3-7` records rendered/resized/identity 1 and close/client 0;
+  `guest-serial.log:238,251` bounds the successful guest run. The independent
+  sealed early-zero run still rejects despite client 0 and 2,277 supporting
+  draws. The unchanged upstream Wayland close handler sets `window.open=false`
+  after native teardown; no synthesized renderer/exit/FPS output was added.
+- P5 literal joins and supporting separation — HELD. Independent replay
+  authenticated all 8,533 gears client packets, 532 client objects, and 1,566
+  draw bindings, plus all 147 kmscube packets/16 objects/48 draws. Earlier
+  `6@192` Hyprland contributes no client state; only `6@4410` is selected.
+  Real gears creates at `events.jsonl:4414,4425,5010` bind formats 233 color,
+  16 depth and 64 vertex bytes; the first draw at event 5115/byte 6484 binds
+  their original objects and vec3 input. Its packet digest is
+  `f290d0bda70b54295557d81d930705905da73f8ffda8c50f9f6bca22a8190a1f`.
+  Kmscube event 176/bytes 4400,4444 proves its format 67 view and sampler words.
+  `literal-audit.json` records every checked lifetime/citation. The two inventory
+  digests remain `fb91301b…9a3c` and `8a1fb71f…7b8c`.
+- P6 backing/framing and scoped gate — HELD. The canonical gate passed at
+  `1b2cbf44`: 21 framing tests, all five complete captures, both identical
+  inventories, 42 rejected mutations, 27 recorder cases and recorder sabotage.
+  Positive `events.jsonl:52809` has openCalls 0, droppedRecords 0 and
+  632,291,908 unique blob bytes. Every required submit backing is present.
+  The cold archive authenticates source 928f4fb6 and clean Git before/after;
+  its checking source is byte-identical to current. Keep this proof; no
+  unrelated Rust/wasm/browser/deployment suite is demanded.
+- P7 independent attacks and new assertion sensitivity — HELD. A well-framed
+  kmscube view mutation changed only the G swizzle to ONE(5); literal decoded
+  lanes became [0,5,2,3] and original inventory equality rejected it while 48
+  draws remained. Aliasing the new named client to still-live compositor
+  context 5 rejected at event 4410 as `overlapping context inventory lifetime`.
+  Disabling the new comm assertion in a scratch source copy made the new
+  acceptance harness fail exactly at `wrong-client-comm`. Citations:
+  `independent-attacks.json`, `attacks-coverage.log`; original source digest
+  `df323c77…eb4d`, fault digest `81cbdd4d…ca18`.
+- P8 executable branch sufficiency — NEEDS EVIDENCE. Predicted every changed
+  decoder behavior would execute or be non-runtime metadata. Line hits plus
+  an independent opcode/object/draw recheck show the following are absent
+  from both actual clients. Record a synthetic literal-packet decoder suite
+  with independent field/role/digest assertions, explicitly separate from
+  real guest use and rendering:
+  - `inventory.py:139`: buffer-target SAMPLER_VIEW first/last elements.
+  - `inventory.py:147`: MSAA_SURFACE word 6 sample count and surface lifetime.
+  - `inventory.py:166`: incomplete shader packet creates no completed object;
+    the final continuation installs the exact joined body/stage/handle.
+  - `inventory.py:221-223,291-292`: index bytes/offset/resource, indexed draw
+    role, zero unbinding and missing-resource rejection.
+  - `inventory.py:231-233,301-302`: uniform stage/slot/offset/length/resource,
+    draw role and zero unbinding without borrowing another slot/context.
+  - `inventory.py:255-258`: selected-client COPY_TRANSFER3D source/destination
+    lifetimes, source offset/flags and both latest backing citations.
+  - `inventory.py:260-261`: RESOURCE_INLINE_WRITE exact payload byte count/hash
+    and literal level/box/stride citation.
+  - `inventory.py:370-371`: reset and cleanup clear live tables; reused numeric
+    IDs acquire fresh lifetimes and cannot inherit old state.
+  Citations: `coverage.json`, `coverage-recheck.json` and original event footer
+  line 52809 (`cleanupSeen=false`). These are executable behavior, not waived
+  merely because the recorded clients do not need them. Declarative tables,
+  imports/definitions, task planning metadata and logging are explicitly waived.
+
+Commands: scrubbed-env `VIRGL_WORKLOAD_INVENTORY_EVIDENCE_DIR=target/evidence/virgl-workload-inventory-verifier/acceptance make verify-E6-T12g1`;
+`python3 target/evidence/virgl-workload-inventory-verifier/literal_audit.py`;
+`python3 target/evidence/virgl-workload-inventory-verifier/attacks_and_coverage.py`;
+independent official fetch and scrubbed-environment compile recorded in
+`official-source.json` and `build-replay.log`. All verifier scratch artifacts
+are under `target/evidence/virgl-workload-inventory-verifier/`; `report.json`
+binds their digests and lists the exact source/evidence boundaries to carry
+forward. SUITE: preserve the canonical target and add the missing scoped
+decoder proof; no fresh guest boot or repeat cold clone is needed if only
+tests/fixtures/recording evidence change and these HELD boundaries stay intact.

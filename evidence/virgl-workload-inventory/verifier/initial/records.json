@@ -1,0 +1,732 @@
+[
+  {
+    "bytes": 6683,
+    "path": "acceptance/acceptance.log",
+    "sha256": "e2ba6228d0b25160bd0b2e6de974655561905a227a819f4851fcc0ca51ed0165"
+  },
+  {
+    "bytes": 7595,
+    "path": "acceptance/attacks.json",
+    "sha256": "7658e07f8654554b93129066993fef670b62008c4cd1774eff03d9041847a169"
+  },
+  {
+    "bytes": 2149,
+    "path": "acceptance/recorder/inputs/abi/virgl-version.h",
+    "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+  },
+  {
+    "bytes": 36318,
+    "path": "acceptance/recorder/inputs/abi/virgl_hw.h",
+    "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+  },
+  {
+    "bytes": 19876,
+    "path": "acceptance/recorder/inputs/abi/virglrenderer.h",
+    "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+  },
+  {
+    "bytes": 406,
+    "path": "acceptance/recorder/inputs/provenance.json",
+    "sha256": "18d9240e11fc38472c49bfbf8d8253c2a2d4457937a57d21ebb2539bf31ed995"
+  },
+  {
+    "bytes": 442,
+    "path": "acceptance/recorder/inputs/recorder.build.sh",
+    "sha256": "557d41a8552cb0e51bc38008bd8e71c46f1a6488d8e0f27fa046162634b09593"
+  },
+  {
+    "bytes": 23137,
+    "path": "acceptance/recorder/inputs/recorder.c",
+    "sha256": "95faa3bd0bd8027949a0ec23eee1290c84b1f0c1d6d3c280c58469fd3c133f8f"
+  },
+  {
+    "bytes": 16177,
+    "path": "acceptance/recorder/inputs/recorder_contract.c",
+    "sha256": "bf5741d38cc20b04ae16e2252546f778fce9dc5f95f9de005358c22bb109202e"
+  },
+  {
+    "bytes": 14660,
+    "path": "acceptance/recorder/inputs/recorder_harness.py",
+    "sha256": "0a94d36d5542a6c0f004fedbf5f028efec82bdcdd639a8204346898ce2d0e55c"
+  },
+  {
+    "bytes": 458,
+    "path": "acceptance/recorder/invocation.json",
+    "sha256": "c86ed54a5165cd3f620dc8b57aac0a4e23acbc539788753c14cf2d750b60c58c"
+  },
+  {
+    "bytes": 33,
+    "path": "acceptance/recorder/run/active-exit/FAILED",
+    "sha256": "c15f810381f6083710ddc1c2f16b3c922c5394e2d58d6995cf9b944f4c9ca68e"
+  },
+  {
+    "bytes": 592,
+    "path": "acceptance/recorder/run/active-exit/events.jsonl",
+    "sha256": "88c7446b7e8acf9740496dfc1fd58742eddb31894d5150d032e3e62a874b9262"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/active-exit/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 25,
+    "path": "acceptance/recorder/run/active-exit/stdout.log",
+    "sha256": "395992da1d6d3898d0cd1859daeb9bc6a81b85b69681b4c10f35de722a6a8036"
+  },
+  {
+    "bytes": 28,
+    "path": "acceptance/recorder/run/blob-limit/FAILED",
+    "sha256": "9e674eba15f95d6d814c805f3ab8c18bb18b127e5e3cca0743d60d33f0eae666"
+  },
+  {
+    "bytes": 599,
+    "path": "acceptance/recorder/run/blob-limit/events.jsonl",
+    "sha256": "d9e1da75bb12d0c380f4d0d67c3138ee7a1c2c67dcd3d7061ee265fe70049917"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/blob-limit/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 73,
+    "path": "acceptance/recorder/run/blob-limit/stdout.log",
+    "sha256": "446a8292907689cc4d372a7df4854ed1eaaa64de5fc5db3e18afe05100c00afa"
+  },
+  {
+    "bytes": 29,
+    "path": "acceptance/recorder/run/callback-invalid/FAILED",
+    "sha256": "3a6a16a5c5b95eeba0838f2f50bceea76da925311906944d934ca753d2662357"
+  },
+  {
+    "bytes": 604,
+    "path": "acceptance/recorder/run/callback-invalid/events.jsonl",
+    "sha256": "2235f45b28e50e025a14453704fa64c807333275015d4bb43345a29bb574ce1a"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callback-invalid/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 76,
+    "path": "acceptance/recorder/run/callback-invalid/stdout.log",
+    "sha256": "b4abef3425f9d7e3b6661d6d38c285a3717aa3fa15afb32eaf14b096f0268207"
+  },
+  {
+    "bytes": 29,
+    "path": "acceptance/recorder/run/callback-null/FAILED",
+    "sha256": "3a6a16a5c5b95eeba0838f2f50bceea76da925311906944d934ca753d2662357"
+  },
+  {
+    "bytes": 605,
+    "path": "acceptance/recorder/run/callback-null/events.jsonl",
+    "sha256": "15c9a33af3f2285517d7edd26c1350e5c787a407c332b159b242be670752accc"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callback-null/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 73,
+    "path": "acceptance/recorder/run/callback-null/stdout.log",
+    "sha256": "96cf802db016229b21d925f58326abbf43680316df2d8d49ccd65fda3279ec56"
+  },
+  {
+    "bytes": 1285,
+    "path": "acceptance/recorder/run/callbacks-1/events.jsonl",
+    "sha256": "a85485f0b53fa62173a6d419d96fe7fb9f9fb1869a888b1b2a76ec239da64476"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callbacks-1/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 111,
+    "path": "acceptance/recorder/run/callbacks-1/stdout.log",
+    "sha256": "967466f8f368a6d5203531ba538d8c98401bd98ff189b5a7a99c59c481c8c327"
+  },
+  {
+    "bytes": 1285,
+    "path": "acceptance/recorder/run/callbacks-2/events.jsonl",
+    "sha256": "857607a4649ba163ada873fd87b193d9edb43cea15be7ca4a0e549260d892e13"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callbacks-2/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 111,
+    "path": "acceptance/recorder/run/callbacks-2/stdout.log",
+    "sha256": "0b3f2c5b14fee44a47ace44f55052b7484412f150423f8698833a45a581fb32c"
+  },
+  {
+    "bytes": 1845,
+    "path": "acceptance/recorder/run/callbacks-3/events.jsonl",
+    "sha256": "f2d9116a4848f514ea262e2d399dbc57e4abf5b27045f594bfe176d4bc275df9"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callbacks-3/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 138,
+    "path": "acceptance/recorder/run/callbacks-3/stdout.log",
+    "sha256": "9b0b32d10ee709bd87351f03e4a0ee92148c10ee21e9a3df111702a48e888d91"
+  },
+  {
+    "bytes": 1845,
+    "path": "acceptance/recorder/run/callbacks-4/events.jsonl",
+    "sha256": "6feddab172d7ac2d0469c9fcb5dc17a5869af56b61c82ca68bdfac0d31a5924a"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/callbacks-4/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 138,
+    "path": "acceptance/recorder/run/callbacks-4/stdout.log",
+    "sha256": "c72736dda585ee1d34d73c7af0035d02bd0cc0f67a202c65e1bc0944ed75a8c2"
+  },
+  {
+    "bytes": 17508,
+    "path": "acceptance/recorder/run/commands.json",
+    "sha256": "00d7c4b8295a4a4863391d90784c23596b15f3dfb3c2eff0b02a34acc3af015d"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/compile-0.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/compile-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/compile-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 26,
+    "path": "acceptance/recorder/run/event-byte-limit/FAILED",
+    "sha256": "f8788aaf25295c4446db8404fadf4521bc0d7f13785cde86f4d8215ffdca5c1f"
+  },
+  {
+    "bytes": 578,
+    "path": "acceptance/recorder/run/event-byte-limit/events.jsonl",
+    "sha256": "11550b9fc50b2e6c247bad1bcaf359c939f65c4dd362e35f726803995b646409"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/event-byte-limit/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/event-byte-limit/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 25,
+    "path": "acceptance/recorder/run/event-count-limit/FAILED",
+    "sha256": "3a09741cff193c3414c88f37ec6205d7bf189d138fb2254a9326148a0ab83301"
+  },
+  {
+    "bytes": 579,
+    "path": "acceptance/recorder/run/event-count-limit/events.jsonl",
+    "sha256": "9c0d6228495c9fbc6544b459be68010da515d3b34bfe83fc138e3160977db2e4"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/event-count-limit/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/event-count-limit/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 641,
+    "path": "acceptance/recorder/run/footer-baseline/events.jsonl",
+    "sha256": "523a4f6454344043a25219a3ed1b59d5543b3758a861627e6e92d79f0e11e417"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/footer-baseline/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/footer-baseline/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 640,
+    "path": "acceptance/recorder/run/footer-exact/events.jsonl",
+    "sha256": "affcb4c7a2c7e30060afbcce2960f313127a2490cf68cd9b2ae1cde83c1b3541"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/footer-exact/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/footer-exact/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 37,
+    "path": "acceptance/recorder/run/footer-insufficient/FAILED",
+    "sha256": "7fbdf4808d538a2d7d9f1aa5eb173821eba203ff5ec0f2c5d87dccdd1ec7fe81"
+  },
+  {
+    "bytes": 727,
+    "path": "acceptance/recorder/run/footer-insufficient/events.jsonl",
+    "sha256": "e57af2ffcab32bb985bfd1e7dcdd7ea3f2062cad4c30f7a485a85539097d7f8e"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/footer-insufficient/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/footer-insufficient/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/027ab46b0c61be2b4ba3447b14ecc35da4fc8aac051de872eb13043e37bd1016.bin",
+    "sha256": "027ab46b0c61be2b4ba3447b14ecc35da4fc8aac051de872eb13043e37bd1016"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/2180fb88fdb3ef2c2690e9f0704e8309e0d894160d4188e0e291a6dcdbdf93a2.bin",
+    "sha256": "2180fb88fdb3ef2c2690e9f0704e8309e0d894160d4188e0e291a6dcdbdf93a2"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/2b2ccf8c0bbbbee3bdcdb27b50c053db2f61911178180b635f7993afba2020a9.bin",
+    "sha256": "2b2ccf8c0bbbbee3bdcdb27b50c053db2f61911178180b635f7993afba2020a9"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/2bb4bea89bf8d5d3a53f3aa652aa3d337812c63065f5412512c125cc7d2b8edd.bin",
+    "sha256": "2bb4bea89bf8d5d3a53f3aa652aa3d337812c63065f5412512c125cc7d2b8edd"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/3584fab2b6e0a212b06a15428b6bad9d1ecd1f4757396338e995ade9c48c4ac2.bin",
+    "sha256": "3584fab2b6e0a212b06a15428b6bad9d1ecd1f4757396338e995ade9c48c4ac2"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/4e6989573df0f49ee52a63b5202cac9f0b760cbb223368e3cdd7b5633b4670d7.bin",
+    "sha256": "4e6989573df0f49ee52a63b5202cac9f0b760cbb223368e3cdd7b5633b4670d7"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/8ad60e6d90c1de6ab0418ad1993614d8154bafbb20d0cecceebd4f208b31adb8.bin",
+    "sha256": "8ad60e6d90c1de6ab0418ad1993614d8154bafbb20d0cecceebd4f208b31adb8"
+  },
+  {
+    "bytes": 5,
+    "path": "acceptance/recorder/run/happy/blobs/ad89c6bf7e18ecaf1eddb5914458a1aefe67ca8a748936fcfee4cacbca4c37d3.bin",
+    "sha256": "ad89c6bf7e18ecaf1eddb5914458a1aefe67ca8a748936fcfee4cacbca4c37d3"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/b6ac30908fd3e0b4a05906531c3f2d417ac9951216cc2ccc61bc9be2672bd397.bin",
+    "sha256": "b6ac30908fd3e0b4a05906531c3f2d417ac9951216cc2ccc61bc9be2672bd397"
+  },
+  {
+    "bytes": 8,
+    "path": "acceptance/recorder/run/happy/blobs/dd2d6c011831f149d5b9f1a7aad0da2b3d845dca69582bcbb20556997712c9ff.bin",
+    "sha256": "dd2d6c011831f149d5b9f1a7aad0da2b3d845dca69582bcbb20556997712c9ff"
+  },
+  {
+    "bytes": 12495,
+    "path": "acceptance/recorder/run/happy/events.jsonl",
+    "sha256": "242444ee8beb61cabece9761d33c5964bbddb38ad68b9011d31c5f09e5cbeda9"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/happy/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 668,
+    "path": "acceptance/recorder/run/happy/stdout.log",
+    "sha256": "8ff02946be006b8b43d4b99d599178fa55fc8d5dd116840d7593e7a0a8217624"
+  },
+  {
+    "bytes": 23,
+    "path": "acceptance/recorder/run/invalid-limit--1/FAILED",
+    "sha256": "e6d14bf4067b993ba656a90fe8118b12b98d7b158f5dc15623777309a8d48002"
+  },
+  {
+    "bytes": 485,
+    "path": "acceptance/recorder/run/invalid-limit--1/events.jsonl",
+    "sha256": "5d9a9caac26358bb2da85e9e2e110dfcb2c5ded7285b18d317d9ceffd0058a31"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/invalid-limit--1/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/invalid-limit--1/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 23,
+    "path": "acceptance/recorder/run/invalid-limit-0/FAILED",
+    "sha256": "e6d14bf4067b993ba656a90fe8118b12b98d7b158f5dc15623777309a8d48002"
+  },
+  {
+    "bytes": 485,
+    "path": "acceptance/recorder/run/invalid-limit-0/events.jsonl",
+    "sha256": "5d9a9caac26358bb2da85e9e2e110dfcb2c5ded7285b18d317d9ceffd0058a31"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/invalid-limit-0/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/invalid-limit-0/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 23,
+    "path": "acceptance/recorder/run/invalid-limit-12x/FAILED",
+    "sha256": "e6d14bf4067b993ba656a90fe8118b12b98d7b158f5dc15623777309a8d48002"
+  },
+  {
+    "bytes": 485,
+    "path": "acceptance/recorder/run/invalid-limit-12x/events.jsonl",
+    "sha256": "5d9a9caac26358bb2da85e9e2e110dfcb2c5ded7285b18d317d9ceffd0058a31"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/invalid-limit-12x/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/invalid-limit-12x/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 23,
+    "path": "acceptance/recorder/run/invalid-limit-4294967296/FAILED",
+    "sha256": "e6d14bf4067b993ba656a90fe8118b12b98d7b158f5dc15623777309a8d48002"
+  },
+  {
+    "bytes": 485,
+    "path": "acceptance/recorder/run/invalid-limit-4294967296/events.jsonl",
+    "sha256": "5d9a9caac26358bb2da85e9e2e110dfcb2c5ded7285b18d317d9ceffd0058a31"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/invalid-limit-4294967296/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/invalid-limit-4294967296/stdout.log",
+    "sha256": "9575457b7ed542b87eaadae57b21a9d31dc2cae7ace0dc723e14561e09b7de8e"
+  },
+  {
+    "bytes": 42,
+    "path": "acceptance/recorder/run/iov-array-null/FAILED",
+    "sha256": "d3d18a72b62dd85afc3f6b158b2f1aec7aae49260f3706c259740a24516a4176"
+  },
+  {
+    "bytes": 838,
+    "path": "acceptance/recorder/run/iov-array-null/events.jsonl",
+    "sha256": "38e78251a14852822e73638bf7c9a603d090e4f8bf97e6ee0dfc6b59f5995bd8"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/iov-array-null/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 76,
+    "path": "acceptance/recorder/run/iov-array-null/stdout.log",
+    "sha256": "64ebcf44ff1b10ade4c2a7a3197eb4ebb064a7d3a5e6d8a3411845cfb077483d"
+  },
+  {
+    "bytes": 42,
+    "path": "acceptance/recorder/run/iov-count/FAILED",
+    "sha256": "d3d18a72b62dd85afc3f6b158b2f1aec7aae49260f3706c259740a24516a4176"
+  },
+  {
+    "bytes": 842,
+    "path": "acceptance/recorder/run/iov-count/events.jsonl",
+    "sha256": "27a35c0385f1332eb0684575c4dd35b299f704b6c65de5cb23b0c0b4803fb548"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/iov-count/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 71,
+    "path": "acceptance/recorder/run/iov-count/stdout.log",
+    "sha256": "b69dddae9ebe80e45367c7c147cb9d55f2e5633b3ece6cea1afe3fdcf1af069b"
+  },
+  {
+    "bytes": 42,
+    "path": "acceptance/recorder/run/iov-null/FAILED",
+    "sha256": "d3d18a72b62dd85afc3f6b158b2f1aec7aae49260f3706c259740a24516a4176"
+  },
+  {
+    "bytes": 838,
+    "path": "acceptance/recorder/run/iov-null/events.jsonl",
+    "sha256": "38e78251a14852822e73638bf7c9a603d090e4f8bf97e6ee0dfc6b59f5995bd8"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/iov-null/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 70,
+    "path": "acceptance/recorder/run/iov-null/stdout.log",
+    "sha256": "7b20e94e97b03f80eb83cdfbc122e6bc4489946e9badc5c67e07fe2b708e7941"
+  },
+  {
+    "bytes": 42,
+    "path": "acceptance/recorder/run/iov-size/FAILED",
+    "sha256": "d3d18a72b62dd85afc3f6b158b2f1aec7aae49260f3706c259740a24516a4176"
+  },
+  {
+    "bytes": 838,
+    "path": "acceptance/recorder/run/iov-size/events.jsonl",
+    "sha256": "38e78251a14852822e73638bf7c9a603d090e4f8bf97e6ee0dfc6b59f5995bd8"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/iov-size/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 70,
+    "path": "acceptance/recorder/run/iov-size/stdout.log",
+    "sha256": "54870ce001ecc7e1a734907e6a896ed8ff50e5a7777bc56839dfea038295deaf"
+  },
+  {
+    "bytes": 91968,
+    "path": "acceptance/recorder/run/librecorder_fake.so",
+    "sha256": "a6eefc6affe03076d45d7e56ce2c6489f9a9bf792a304969528daf634b4eb24a"
+  },
+  {
+    "bytes": 124512,
+    "path": "acceptance/recorder/run/recorder.so",
+    "sha256": "e0430a4c673c4fc8bcb8716fbb25809259a34eaf61f53c97d5be98f99ea0bbf3"
+  },
+  {
+    "bytes": 91856,
+    "path": "acceptance/recorder/run/recorder_driver",
+    "sha256": "422bd83b6b69a9f1ec167a71ef3b416c602aaa6d2d6b162b3a3a9d0478fc2aa8"
+  },
+  {
+    "bytes": 21809,
+    "path": "acceptance/recorder/run/report.json",
+    "sha256": "fb0ca9fc8dce21a2945c00d17aa380bad627c0da1d170d7e9a8421418aebdc83"
+  },
+  {
+    "bytes": 20,
+    "path": "acceptance/recorder/run/resource-limit/FAILED",
+    "sha256": "abb0d1f652158e3f7ffa2ffce6c85b1c46f42c10268654a4a172d9247f948e6c"
+  },
+  {
+    "bytes": 1501201,
+    "path": "acceptance/recorder/run/resource-limit/events.jsonl",
+    "sha256": "6760970a9ce6953d1c1451e67a1e73ee674778fab1e908cd2788f1935983c263"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/resource-limit/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 81999,
+    "path": "acceptance/recorder/run/resource-limit/stdout.log",
+    "sha256": "46c4be3cbc2d15a3ca6ba0494506849fa68ef627b6b62f8423a5e9b0b27885aa"
+  },
+  {
+    "bytes": 22,
+    "path": "acceptance/recorder/run/submit-large/FAILED",
+    "sha256": "40303fa35846446c878423a034d0f751810877f9ad9a0ad83869348849fa074b"
+  },
+  {
+    "bytes": 598,
+    "path": "acceptance/recorder/run/submit-large/events.jsonl",
+    "sha256": "8447d296daa2f7bcd30e515579f14bb5e3673bc71646ab1a3f7c9cd7da804f85"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/submit-large/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 74,
+    "path": "acceptance/recorder/run/submit-large/stdout.log",
+    "sha256": "a3ff9b6e787d9396c0a92f89900ca94d928dff7074ded59e64bd7d1b0fedc49b"
+  },
+  {
+    "bytes": 22,
+    "path": "acceptance/recorder/run/submit-negative/FAILED",
+    "sha256": "40303fa35846446c878423a034d0f751810877f9ad9a0ad83869348849fa074b"
+  },
+  {
+    "bytes": 592,
+    "path": "acceptance/recorder/run/submit-negative/events.jsonl",
+    "sha256": "e1cf2d8c9e444af6cdc9b1c5c1da68ee32ca6e5b3bd04ea236f1e3c2da9eeed8"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/submit-negative/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 77,
+    "path": "acceptance/recorder/run/submit-negative/stdout.log",
+    "sha256": "ee70f27cd19e9245709329ff7d986ac3c80c084a60b624379375ae735276ee52"
+  },
+  {
+    "bytes": 22,
+    "path": "acceptance/recorder/run/submit-null/FAILED",
+    "sha256": "40303fa35846446c878423a034d0f751810877f9ad9a0ad83869348849fa074b"
+  },
+  {
+    "bytes": 591,
+    "path": "acceptance/recorder/run/submit-null/events.jsonl",
+    "sha256": "10aceb71affede44c1ac0f360291d62d6e0313cc12f656a5147c0155fd30130f"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/submit-null/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 73,
+    "path": "acceptance/recorder/run/submit-null/stdout.log",
+    "sha256": "056f9e7649c0cd55f2b08b71cfa7140825452fe429bee704852307ada79cb32f"
+  },
+  {
+    "bytes": 43,
+    "path": "acceptance/recorder/run/unsupported-blob/FAILED",
+    "sha256": "01eea09c088c243ef689d3460636820e90335747424b46910efc30854c6deae6"
+  },
+  {
+    "bytes": 505,
+    "path": "acceptance/recorder/run/unsupported-blob/events.jsonl",
+    "sha256": "32c6170b6f1384bc18bff784a991894d6b2598ceef23986a36a7dd7cb2286687"
+  },
+  {
+    "bytes": 0,
+    "path": "acceptance/recorder/run/unsupported-blob/stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 64,
+    "path": "acceptance/recorder/run/unsupported-blob/stdout.log",
+    "sha256": "2dc28d9b1a19bffb9ca404985e94e2c2485cd53dcad920f47b0c09bedcb301fe"
+  },
+  {
+    "bytes": 140,
+    "path": "acceptance/recorder/run.log",
+    "sha256": "fef3ac52000cb1bffc723305f8b642c8aa0fdcec7d4ecbb710296ccbdb0d9e41"
+  },
+  {
+    "bytes": 1287,
+    "path": "attacks-coverage.log",
+    "sha256": "74708af0583a86dde8d45478c371f2c58edd2301fedf98ea5eb9f66dbab895c5"
+  },
+  {
+    "bytes": 6394,
+    "path": "attacks_and_coverage.py",
+    "sha256": "a41928b9e29fe00c0e83ffb5eb78638a8352852f5095d189514baef1000164ed"
+  },
+  {
+    "bytes": 2747,
+    "path": "authentication.json",
+    "sha256": "d38f9fde702a7fbc710552fa5c3688182956a0e5bd816522b62f989b44fcb7ee"
+  },
+  {
+    "bytes": 1862,
+    "path": "build-replay.log",
+    "sha256": "e652d2fba8c5cedab68aeaf95fae95f0d3ff7fe3e888bfc28cbbb945ba7e7611"
+  },
+  {
+    "bytes": 1285,
+    "path": "coverage-recheck.json",
+    "sha256": "f5c99ea65c8e2edc2b111c4db8cc69069f9c1f78660177c0feecd4378da8cbf0"
+  },
+  {
+    "bytes": 26440,
+    "path": "coverage.json",
+    "sha256": "2635bd012d555ea006ee4cd53010346297df251a5c72ccaded6ee4abb7e4b676"
+  },
+  {
+    "bytes": 6729,
+    "path": "driver.log",
+    "sha256": "926353c68bbfbb0a203fffe7b61da527db82a72a86739f497075020176da7ba6"
+  },
+  {
+    "bytes": 14500,
+    "path": "gears_check_comm_fault.py",
+    "sha256": "81cbdd4d1f890bf159e81a01e33cdc176ad4c3fe625639cb3ec306c2f05bca18"
+  },
+  {
+    "bytes": 1287,
+    "path": "independent-attacks.json",
+    "sha256": "74708af0583a86dde8d45478c371f2c58edd2301fedf98ea5eb9f66dbab895c5"
+  },
+  {
+    "bytes": 753,
+    "path": "legacy-driver-compatibility.json",
+    "sha256": "c4c95b51fe883f279edc71e7fc411f506e7289f8e3360947e1c32a4bc5c486ff"
+  },
+  {
+    "bytes": 7354,
+    "path": "literal-audit.json",
+    "sha256": "589c05a178706e1b16f988d2eb2e7ef9413bbdb16fba84da9865e5f26043a8ff"
+  },
+  {
+    "bytes": 13796,
+    "path": "literal_audit.py",
+    "sha256": "036fc8d7cf1117e28f55f2fad807a3a34174a1458c3940e5c4c90b3662c669d1"
+  },
+  {
+    "bytes": 188,
+    "path": "official-source.json",
+    "sha256": "469045c9f4ebd21023537447e8ed8e1e9636a1cc64a583b9648255f48ec470c2"
+  },
+  {
+    "bytes": 3198,
+    "path": "predictions.json",
+    "sha256": "c895143686a779d34c1494de8bc69fa5274250faa03c70df6848822f33b6d2e3"
+  },
+  {
+    "bytes": 8325,
+    "path": "report.json",
+    "sha256": "3f1dc1b67f3cf371a239325a74ea8e37c249520dbe26aa885afa6c5699b9c8bb"
+  }
+]
