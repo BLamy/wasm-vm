@@ -113,7 +113,7 @@ def physical(out,frozen,native,reference,fault=None):
  sources=[stage['glsl'] for e in a['pairs'] if e['ok'] for stage in (e['result']['vertex'],e['result']['fragment'])]
  migrations=read(ROOT/'renderer/virgl-shader/tests/captured-grammar-migrations.json')['migrations']
  if not fault:
-  require(len(a['migrations'])==4,'all explicit historical admissions physically executed')
+  require(len(a['migrations'])==len(migrations)==5,'all four historical and one compiler-capacity admissions physically executed')
   for m,expected in zip(a['migrations'],migrations):
    require(same(m['entry'],expected) and sha(m['text'].encode())==expected['inputSha256'],'exact migration bytes and contract');sources += [m['result'][key]['glsl'] for key in ('vertex','fragment')]
    prediction=next(e for e in reference['migrations'] if e['inputSha256']==expected['inputSha256']);require(len(m['probe']['vectors'])==32,'all historical identity probes')
@@ -161,7 +161,7 @@ def main():
   r=envelope(out/('retained-'+name),frozen,task);a=r['acceptance'];retained[name]=dict(status=r['status'],pixels=a.get('checkedPixels'),words=a.get('checkedWords'))
   if name=='literal':require(a['checkedPixels']==4336 and len(a['draws'])==9,'retained literal leaf')
   if name=='scene':
-   require(a['checkedPixels']==768 and len(a['draws'])==3 and a['grammarAttacks']['rejections']==972 and a['grammarAttacks']['admissions']==36 and a['grammarAttacks']['recoveries']==1792,'original scene and explicit grammar migration accounting')
+   require(a['checkedPixels']==768 and len(a['draws'])==3 and a['grammarAttacks']['rejections']==963 and a['grammarAttacks']['admissions']==45 and a['grammarAttacks']['recoveries']==1792,'original scene and explicit grammar/capacity migration accounting')
    migration=ROOT/'renderer/virgl-shader/tests/captured-grammar-migrations.json';require(a['grammarAttacks']['migrationSha256']==sha(migration.read_bytes()),'scene migration ledger')
  records=[binding(p,out) for p in sorted(out.rglob('*')) if p.is_file() and p.name not in ('receipt.json','acceptance.log') and '__pycache__' not in p.parts]
  receipt=dict(schema='original-corpus-receipt-v1',task='E6-T12f6',status='passed',gitHead=frozen,guestExecution=False,currentGuest3dAdvertisement=False,originals=19,compatiblePairs=57,incompatiblePairs=31,nativeStats=n['stats'],wasmCalls=w['calls'],gpu=gpu,chaos=chaos,sabotage=sabotage,consumer={k:len(consumer[k]) for k in ('contracts','forgeries','banks','ownership')},retained=retained,records=records)

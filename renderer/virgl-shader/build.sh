@@ -229,9 +229,27 @@ case "$mode" in
       -fprofile-instr-generate -fcoverage-mapping "${sources[@]}" native_tests/original_corpus.c \
       -lm -o build/original-corpus-sanitize/original-corpus-test
     ;;
+  compiler-bounds-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Wall -Wextra -Werror -fstack-usage \
+      -c native_tests/compiler_bounds.c -o build/compiler-bounds-sanitize/compiler_bounds.o
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
+      "${sources[@]:2}" build/compiler-bounds-sanitize/compiler_bounds.o -lm -o build/compiler-bounds-sanitize/compiler-bounds-test
+    ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit
+    ;;
+  compiler-bounds-wasm-stack)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    # Same owned source and optimization as the delivered module. These objects
+    # only measure compiler stack frames; the public acceptance uses build/wasm.
+    for source in bridge raw_bits; do
+      "$emcc" "${common[@]}" -O2 -fstack-usage -c "$source.c" -o "build/$mode/$source.o"
+    done
     ;;
   wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}

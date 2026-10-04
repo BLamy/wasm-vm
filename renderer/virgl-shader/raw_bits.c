@@ -336,19 +336,20 @@ struct raster_analysis {
    bool reachable[BRIDGE_MAX_INSTRUCTIONS + 1];
    unsigned used;
 };
-_Static_assert(sizeof(struct raster_analysis) <= 32768, "bounded raster analysis arena");
+_Static_assert(sizeof(struct raster_analysis) == 207884, "bounded raster analysis arena");
+_Static_assert(RASTER_LANES < UINT16_MAX, "raster queue lane IDs fit uint16_t");
 _Static_assert(sizeof(struct raster_certificate) <= sizeof(((struct raw_ir *)0)->temporary),
    "finalized certificate reuses dead TEMP facts");
 
 static bool raster_graph(const struct raw_ir *ir, struct raster_analysis *a)
 {
-   struct { unsigned open, otherwise, breaking; bool loop; } frames[8];
+   struct { unsigned open, otherwise, breaking; bool loop; } frames[BRIDGE_MAX_FLOW_DEPTH];
    unsigned depth = 0;
    for (unsigned pc = 0; pc < ir->count; ++pc) {
       enum raw_opcode op = ir->instructions[pc].opcode;
       a->next[pc][0] = pc + 1; a->next[pc][1] = RASTER_NONE;
       if (op == RAW_UIF || op == RAW_BGNLOOP) {
-         if (depth == 8) return false;
+         if (depth == BRIDGE_MAX_FLOW_DEPTH) return false;
          frames[depth].open = pc;
          frames[depth].otherwise = frames[depth].breaking = RASTER_NONE;
          frames[depth++].loop = op == RAW_BGNLOOP;
@@ -662,10 +663,15 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    if (p->raw->opcode_mask & RAW_ARITHMETIC_OPCODES) emit(&w, "%s", raw_binary32_common);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_ADD_PRECISE)) emit(&w, "%s", raw_binary32_add);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_MUL_PRECISE)) emit(&w, "%s", raw_binary32_mul);
-   emit(&w, "void main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n");
+   /* Keep all previously admitted source byte-identical. Higher declarations
+    * extend the physical arrays only when this checked stage needs them. */
+   unsigned temporaries = LEGACY_TEMP_REGISTERS;
+   for (unsigned index = LEGACY_TEMP_REGISTERS; index < TEMP_REGISTERS; ++index)
+      if (p->declared[TEMP][index]) temporaries = index + 1;
+   emit(&w, "void main(void) {\n highp uvec4 raw_temp[%u];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n", temporaries);
    if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
    if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | RAW_ARITHMETIC_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE)))
-      emit(&w, " highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n");
+      emit(&w, " highp vec4 float_temp[%u];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n", temporaries);
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
       if (instruction->flags & RAW_PRECISE) emit(&w, " /* TGSI PRECISE word-local */\n");

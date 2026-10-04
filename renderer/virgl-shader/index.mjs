@@ -1,11 +1,15 @@
 export const LIMITS = Object.freeze({
-  textBytes: 16384,
+  textBytes: 49152,
   tokens: 8192,
-  glslBytes: 65536,
-  instructions: 179,
+  glslBytes: 262144,
+  instructions: 768,
   registerIndex: 7,
-  temporaryRegisterIndex: 117,
+  temporaryRegisterIndex: 511,
   constantRegisterIndex: 45,
+  immediateRegisterIndex: 31,
+  conditionalDepth: 16,
+  lines: 1536,
+  lineBytes: 512,
 });
 
 const failure = (code, message) => ({ ok: false, error: { code, message } });
@@ -38,7 +42,7 @@ export async function createVirglShaderBridge(options = {}) {
         return failure("invalid-input", "Pair request reflection failed.");
       }
       for (const text of [vertexText, fragmentText]) {
-        if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 16384 bytes.");
+        if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 49152 bytes.");
         if (/[^\x09\x0a\x0d\x20-\x7e]/.test(text)) {
           return failure("invalid-input", "TGSI must be printable ASCII without NUL bytes.");
         }
@@ -71,7 +75,7 @@ export async function createVirglShaderBridge(options = {}) {
       if (Object.keys(request).some((key) => key !== "stage" && key !== "text")) {
         return failure("unsupported-feature", "This profile does not accept shader-key overrides.");
       }
-      if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 16384 bytes.");
+      if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 49152 bytes.");
       if (/[^\x09\x0a\x0d\x20-\x7e]/.test(text)) {
         return failure("invalid-input", "TGSI must be printable ASCII without NUL bytes.");
       }

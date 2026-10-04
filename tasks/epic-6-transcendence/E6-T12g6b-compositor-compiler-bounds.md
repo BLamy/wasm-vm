@@ -18,8 +18,9 @@ source bytes, 716/295 instruction lines, TEMP indices438/218, IMM index28,
 and nested conditional depths14/3. Existing defaults (16KiB,179 instructions,
 TEMP117,IMM7,depth8) cannot represent those original bodies.
 
-Bound source text at49,152 bytes, 768 numbered instructions including END, TEMP0..511, IMM0..31 and
+Bound source text at49,152 bytes, 768 non-END instructions, TEMP0..511, IMM0..31 and
 16 conditional levels. Keep IN/OUT/SAMP/SVIEW0..7 and CONST0..45 unchanged;
+Bound nonblank lines at1,536 and keep the512-byte individual-line ceiling.
 do not conflate the immediate bank with interface register capacity. Keep the existing8,192-token ceiling (both literal bodies need at most2,663
 encoded tokens). Expose the separate immediate and conditional-depth limits.
 Set a measured bounded GLSL/JSON output envelope adequate for the worst emitted
@@ -80,4 +81,3 @@ maximum-length opcode combination fits the GLSL output ceiling. Oversize emitted
 source or JSON must reject without partial publication. Preserve byte-identical
 old emitted shader bodies when their existing register extent suffices, and
 retain literal historical fixture inputs when an old boundary moves.
-

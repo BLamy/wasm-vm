@@ -11,7 +11,10 @@ enum file { IN, OUT, TEMP, CONST, IMM, SAMP, SVIEW, FILE_COUNT,
    /* Checked scalar/address-source tags are NEVER declaration-array indices. */
    ADDR = FILE_COUNT, INDIRECT_CONST };
 enum operand_kind { DECLARATION, DESTINATION, SOURCE };
-enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46, TEMP_REGISTERS = 118 };
+enum { FILE_REGISTERS = 8, CONST_REGISTERS = 46,
+       TEMP_REGISTERS = BRIDGE_MAX_TEMPORARIES,
+       IMM_REGISTERS = BRIDGE_MAX_IMMEDIATES,
+       LEGACY_TEMP_REGISTERS = 118 };
 struct reg { enum file file; unsigned index, last, mask, swizzle[4]; bool explicit_mask; };
 enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   RAW_UADD, RAW_ISGE, RAW_USEQ, RAW_USNE, RAW_UCMP,
@@ -97,7 +100,7 @@ struct raster_certificate {
 };
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
-   uint32_t immediates[FILE_REGISTERS][4];
+   uint32_t immediates[IMM_REGISTERS][4];
    /* TEMP facts die when semantic validation finishes. The emitter reads only
     * recorded instructions and final OUT facts. Publish this small certificate
     * in their arena only at that lifetime boundary, guarded by its feature bit. */
@@ -128,15 +131,17 @@ struct profile {
    struct raw_ir *raw;
 };
 
-_Static_assert(sizeof(struct raw_ir) <= 32768, "raw IR allocation bound");
+_Static_assert(sizeof(struct raw_ir) <= 114688, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 26480, "bounded radial IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 111744, "bounded compositor IR allocation");
 _Static_assert(sizeof(struct loop_certificate) == 96, "compact loop certificate");
 _Static_assert(sizeof(struct demand_certificate) == 112, "compact demand certificate");
 _Static_assert(sizeof(struct radial_certificate) == 16, "compact radial certificate");
-_Static_assert(sizeof(struct profile) <= 8192, "profile stack bound");
+_Static_assert(sizeof(struct profile) <= 32768, "profile stack bound");
+_Static_assert(TEMP_REGISTERS * 4 < UINT16_MAX && BRIDGE_MAX_INSTRUCTIONS < UINT16_MAX,
+               "certificate lane and program counters fit uint16_t");
 
 /* Shared post-swizzle lane selection for initialization and float authority. */
 unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask);
@@ -150,7 +155,7 @@ int raw_certify_raster_outputs(const struct profile *profile);
 /* Only initialized predecessors are joined; structured writes have already
  * materialized each authorized value in its destination's physical shadow. */
 struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no);
-/* Returns one owned <=64KiB NUL-terminated shader, or NULL on allocation/bound
+/* Returns one owned <=256KiB NUL-terminated shader, or NULL on allocation/bound
  * failure. const_count preserves the pinned declaration extent (0..47). */
 char *raw_emit(const struct profile *profile, unsigned const_count);
 #endif

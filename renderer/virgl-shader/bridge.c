@@ -125,7 +125,8 @@ static bool index_number(const char **p, unsigned *result, unsigned limit)
 }
 static unsigned register_limit(unsigned file)
 {
-   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS : FILE_REGISTERS;
+   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS :
+      file == IMM ? IMM_REGISTERS : FILE_REGISTERS;
 }
 static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
 {
@@ -614,7 +615,7 @@ static void loop_header(struct profile *s)
    s->address_written = false; s->raw->address = (struct raw_lane){0};
 }
 
-enum { FLOW_DEPTH = 8 };
+enum { FLOW_DEPTH = BRIDGE_MAX_FLOW_DEPTH };
 struct flow_frame {
    struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
    unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];
@@ -624,7 +625,7 @@ struct flow_frame {
    struct raw_lane address;
 };
 struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };
-_Static_assert(sizeof(struct flow_context) <= 53248, "bounded conditional heap arena");
+_Static_assert(sizeof(struct flow_context) == 433092, "bounded conditional heap arena");
 
 /* A frame initially owns entry state. ELSE swaps it with the completed true
  * predecessor, so only one snapshot per level is needed. Declarations and
@@ -903,7 +904,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    for (char *line = strtok_r(text, "\n", &save); line; line = strtok_r(NULL, "\n", &save)) {
       const char *p = line;
       if (end(&p)) continue;
-      if (++line_count > 256 || strlen(line) > 512 || s->ended) return false;
+      if (++line_count > BRIDGE_MAX_LINES || strlen(line) > BRIDGE_MAX_LINE_BYTES || s->ended) return false;
       if (!header) {
          header = true;
          if (word(&p, s->stage == 0 ? "FRAG" : "VERT")) { failure_code = "unsupported-stage"; return false; }
@@ -912,7 +913,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
          if (!declaration(&p, s)) return false;
       } else if (word(&p, "IMM")) {
          unsigned i;
-         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i, FILE_REGISTERS) || i != s->immediates || !punctuation(&p, ']')) return false;
+         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i, IMM_REGISTERS) || i != s->immediates || !punctuation(&p, ']')) return false;
          bool bits = false;
          if (!word(&p, "FLT32")) {
             if (!word(&p, "UINT32")) return false;
@@ -1015,7 +1016,7 @@ struct conversion {
    struct vrend_strarray shader;
    char *owned_shader;
 };
-_Static_assert(sizeof(struct conversion) * 2 <= 32768, "pair conversion stack bound");
+_Static_assert(sizeof(struct conversion) * 2 <= 73728, "pair conversion stack bound");
 
 static void cleanup(struct conversion *c)
 {
@@ -1104,7 +1105,7 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
-   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 16384 bytes.");
+   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
    for (size_t i = 0; i < length; ++i) {
       unsigned char c = (unsigned char)text[i];
       if ((c < 32 && c != '\n' && c != '\t' && c != '\r') || c > 126)

@@ -6,6 +6,44 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Compiler resource envelope — E6-T12g6b
+
+`make verify-E6-T12g6b` records checked text/instruction/register/depth limits,
+ASan/UBSan allocation faults and recovery, public Wasm/wire equivalence and
+physical WebGL2 word/pixel comparisons. Synthetic 768-instruction and depth-16
+programs address TEMP511, IMM31 and CONST45. The unchanged original bodies and
+metadata are compared with the authenticated G6a compiler. One literal historical
+TEMP0..118 declaration now fits; its migration is explicit. The two complete
+larger compositor fragments still reject for unsupported operations.
+
+| Resource | Current ceiling or measured size |
+|---|---:|
+| Source / nonblank lines / bytes per line | 49,152 / 1,536 / 512 |
+| Non-END instructions / tokens | 768 / 8,192 |
+| TEMP / IMM / IN, OUT, SAMP, SVIEW / CONST | 512 / 32 / 8 each / 46 |
+| Flow / raster-graph nesting | 16 |
+| Owned GLSL allocation, including NUL | 262,145 bytes per stage |
+| Checked IR / flow arena / raster analysis | 111,744 / 433,092 / 207,884 bytes |
+| Native profile / conversion / pair conversion | 32,440 / 33,584 / 67,168 bytes |
+| Static single / pair JSON response | 1,589,248 / 3,179,520 bytes |
+| Wasm memory / stack | 16 MiB / 256 KiB, fixed |
+
+IR and flow/raster arenas live on the heap and release on every outcome. The
+16 flow snapshots each occupy 27,068 bytes. A pair can retain two IRs and two
+maximum emitted buffers (747,778 bytes total); validation flow and raster
+analysis allocations occur separately. Lane IDs and program counters remain
+uint16 values; compile-time assertions cover the enlarged ranges. The raster
+work queue remains independently bounded at 1,024 entries and rejects overflow.
+Old programs retain their 118-row emitted arrays; checked higher declarations
+extend the emitted physical array to the highest declared row plus one.
+
+The recording includes compiler stack-usage tables for both native sanitizer
+and optimized Wasm objects. These measure owned code; upstream/libc stack frames
+are excluded from that table. Public exact-limit pair calls, stress schedules,
+and memory-exhaustion/recovery run against the delivered fixed-memory module.
+The compiler capacity change does not advertise guest graphics negotiation or
+change the isolated module's production import boundary.
+
 ## Build and reproduce
 
 From the repository root:
@@ -130,7 +168,7 @@ trusted application configuration. Translation requests accept exactly `stage`
 and `text`; unknown enumerable string request keys are rejected, including
 shader-key overrides. The pair request described below rejects every unknown own
 key, including symbols and non-enumerable keys.
-`LIMITS.registerIndex` remains 7; `LIMITS.temporaryRegisterIndex` is 117 and
+`LIMITS.registerIndex` remains 7; `LIMITS.temporaryRegisterIndex` is 511 and
 `LIMITS.constantRegisterIndex` is 45. These are shader frontend limits. The
 command decoder and state renderer retain their separately gated constant limits.
 Each factory call creates separate Wasm memory. Calls are synchronous and
@@ -540,7 +578,7 @@ original closure or actual Mesa acceleration. Production stays disabled.
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
 
 - `VERT` and `FRAG`; unique `DCL` registers with canonical decimal indices
-  of at most three digits. TEMP indices are 0–117 and CONST indices are 0–45;
+  of at most three digits. TEMP indices are 0–511 and CONST indices are 0–45;
   IN, OUT, IMM, SAMP, SVIEW and GENERIC semantic indices remain independently
   bounded at 0–7. TEMP and CONST declarations may use non-overlapping inclusive
   ranges within their respective banks. Other ranges, signs, nondecimal
@@ -587,19 +625,20 @@ extra shader stages, MRT, UBOs, SSBOs, images and atomics.
 This is not a general Mesa desktop-shader frontend. Widening this profile
 requires new safety checks and independent browser execution evidence.
 
-Input is capped at 16,384 bytes, 256 nonempty lines, 512 bytes per nonempty line,
-179 non-END instructions, 118 TEMP registers, 46 CONST registers and eight
-registers in each other file. The original corpus maximum is 178 non-END
-instructions (179 including END); the admission limit is static, not a future
-loop execution bound. Tokens have a fixed 8,192
-word allocation, GLSL is capped at 65,536 bytes, and JSON storage is fixed at
-147,456 bytes per standalone result and 295,936 bytes per pair result. Pair
-conversion reuses the text/token stack workspaces sequentially. The fixed
-16 MiB Wasm memory and 256 KiB stack are unchanged. Output bounds are checked
-before returning success. The small
-guard checks syntax, numeric bounds and dataflow before upstream sees input;
-upstream still performs the actual TGSI parsing and GLSL generation. No upstream
-assertion is disabled. Upstream diagnostics cause translation failure.
+Input is capped at 49,152 bytes, 1,536 nonempty lines, 512 bytes per nonempty
+line, 768 non-END instructions, 512 TEMP registers, 32 immediate vectors, 46
+CONST registers and eight IN/OUT/SAMP/SVIEW registers. Tokens retain their fixed
+8,192-word allocation. GLSL is capped at 262,144 bytes per stage. These ceilings
+are independent: a valid 768-instruction MAD program can exceed the GLSL ceiling
+and must reject. JSON storage reserves the worst six-byte escape for every GLSL
+byte: 1,589,248 bytes per standalone result and 3,179,520 bytes per pair. Output
+bounds are checked before returning success, including all metadata; failures
+publish no partial stage. Pair conversion reuses text/token stack workspaces
+sequentially. Wasm memory remains 16 MiB and its stack remains 256 KiB.
+
+The numerical and certificate profiles below describe their original verified
+boundaries. Historical measurements in those sections retain their original
+values; the current resource envelope and recording are documented above.
 
 ## Binding metadata
 
@@ -694,7 +733,7 @@ E6-T12e7 adds the bounded UIF/ELSE/ENDIF family to the owned backend. UIF tests
 only the unsigned post-swizzle x word against zero; it does not use floating-point
 truthiness or require a canonical all-ones boolean. Optional target labels must
 identify the actual matching ELSE/ENDIF, every delimiter must balance before END,
-and nesting is limited to eight. IF, arbitrary jumps, loops and indirect operands
+and nesting is limited to sixteen. IF, arbitrary jumps, loops and indirect operands
 remain unsupported.
 
 Validation saves entry state per nesting level, swaps it with the completed true

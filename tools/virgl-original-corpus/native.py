@@ -7,7 +7,7 @@ SOURCES=['renderer/virgl-shader/bridge.c','renderer/virgl-shader/bridge.h','rend
 def attacks(originals):
     cases=json.loads((ROOT/'renderer/virgl-shader/tests/captured-invalid.json').read_bytes())
     migrations=json.loads((ROOT/'renderer/virgl-shader/tests/captured-grammar-migrations.json').read_bytes())['migrations']
-    admitted={e['name']:e for e in migrations};require(len(admitted)==4,'exact four historical grammar migrations')
+    admitted={e['name']:e for e in migrations};require(len(admitted)==5,'four historical grammar migrations plus explicit compiler-capacity migration')
     result=[]
     for e in cases:
         migration=admitted.get(e['name'])

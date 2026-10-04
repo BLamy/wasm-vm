@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {createVirglShaderBridge} from '../../virgl-shader/index.mjs';
+import {createVirglShaderBridge,LIMITS} from '../../virgl-shader/index.mjs';
 import {parseConstantDomain, checkRasterBank} from '../constant-domain.mjs';
 
 export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
@@ -89,7 +89,7 @@ export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
       'IMM[0] FLT32 {0,0,0,0}', 'MOV TEMP[0].xy, IN[0].xyxy',
       'MAX_PRECISE TEMP[0].xy, -TEMP[0].zwxy, IMM[0]', 'MOV_PRECISE OUT[0], IN[0]',
     ], false);
-    for (const [count, accepted] of [[178, true], [179, false]]) requireResult(stage, 'instruction-count-' + (count + 1), [
+    for (const [count, accepted] of [[LIMITS.instructions - 1, true], [LIMITS.instructions, false]]) requireResult(stage, 'instruction-count-' + (count + 1), [
       ...Array(count).fill('MOV_PRECISE TEMP[0], IN[0]'), 'MOV_PRECISE OUT[0], TEMP[0]',
     ], accepted);
     for (const operation of ['ADD', 'MUL']) {
