@@ -24,8 +24,9 @@ division. The independent BigInt and Python Fraction oracles use the 2.5-ULP
 highp division bound in the [ESSL 3.00 specification](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf),
 section 4.5.1, printed page 52. `precision-source.json` pins its document digest
 and domain. Exact copies and saturated plateaus are separate from quotient
-budgets. Private MOV_SAT preserves the source zero sign; ordinary DIV and the
-pinned converter retain their scoped numerical zero policies. No new exact
+budgets. Saturation and ordinary DIV retain the permitted interchange of numerical
+signed zeros in the same section; raw MOV and untouched copy lanes preserve
+exact words. The pinned converter follows its existing numerical zero policy. No new exact
 promise or authority is created for special/subnormal numerical sources.
 
 The declared physical schedule covers both private and pinned Mesa shaders,

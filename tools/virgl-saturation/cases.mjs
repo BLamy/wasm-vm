@@ -17,7 +17,7 @@ export function laneOracle(op,source,divisor){
  const saturation=op.endsWith('_SAT');
  let center=roundRational(n,d);if(n===0n)center=((source^(op.startsWith('DIV')?divisor:0))&0x80000000)>>>0;
  if(saturation&&n<0n)center=0;else if(saturation&&n>d)center=0x3f800000;
- if(!op.startsWith('DIV'))return{center,allowed:[center],kind:'exact-move',n:n.toString(),d:d.toString()};
+ if(!op.startsWith('DIV'))return{center,allowed:saturation&&(center&0x7fffffff)===0?[0,0x80000000]:[center],kind:'exact-move',n:n.toString(),d:d.toString()};
  if(n===0n)return{center,allowed:[0,0x80000000],kind:'zero-division',n:'0',d:d.toString()};
  const magnitude=n<0n?-n:n;let e=bitLength(magnitude)-bitLength(d);
  if(e>=0?magnitude<(d<<BigInt(e)):(magnitude<<BigInt(-e))<d)e--;
@@ -31,6 +31,7 @@ export function laneOracle(op,source,divisor){
   if(v.n*endpointD<lowN*v.d||v.n*endpointD>highN*v.d)continue;
   const final=saturation&&v.n<0n?0:saturation&&v.n>v.d?0x3f800000:w;allowed.add(final);
  }
+ if(saturation&&(allowed.has(0)||allowed.has(0x80000000))){allowed.add(0);allowed.add(0x80000000);}
  if(!allowed.size)throw Error('empty independent division enclosure');
  return{center,allowed:[...allowed].sort((a,b)=>a-b),kind:'highp-division-2.5-ulp',n:n.toString(),d:d.toString(),
   lower:{n:lowN.toString(),d:endpointD.toString()},upper:{n:highN.toString(),d:endpointD.toString()},exponent:e};

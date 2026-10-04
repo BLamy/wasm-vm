@@ -28,7 +28,7 @@ def equation(op,v,variant='direct',condition=0,modifier=''):
   if op.startswith('DIV'):q/=number(v['d'][i])
   if not op.startswith('DIV'):
    expected=0 if op.endswith('_SAT') and q<0 else 0x3f800000 if op.endswith('_SAT') and q>1 else w
-   rows.append(dict(kind='move',word=expected));continue
+   rows.append(dict(kind='move',word=expected,zeroInterchange=op.endswith('_SAT')));continue
   if q==0:rows.append(dict(kind='zero',words=[0,0x80000000]));continue
   magnitude=abs(q);e=magnitude.numerator.bit_length()-magnitude.denominator.bit_length()
   if magnitude<Fraction(2)**e:e-=1
@@ -39,7 +39,7 @@ def equation(op,v,variant='direct',condition=0,modifier=''):
  return rows
 def allowed(row,w,backend):
  if row['kind'] in ['copy','move']:
-  return w==row['word'] or backend=='mesa' and (row['word']&0x7fffffff)==0 and (w&0x7fffffff)==0
+  return w==row['word'] or (backend=='mesa' or row.get('zeroInterchange',False)) and (row['word']&0x7fffffff)==0 and (w&0x7fffffff)==0
  if row['kind']=='zero':return w in row['words']
  return (w&0x7f800000)!=0x7f800000 and row['lo']<=number(w)<=row['hi']
 def main():
@@ -50,7 +50,7 @@ def main():
     # Evidence-only repairs carry immutable runtime recordings forward. An old
     # head is acceptable only when the entire commit range changes this
     # harness file; every recorded served source is still digest-checked below.
-    harness_repairs = {'tools/virgl-saturation/receipt.py'}
+    harness_repairs = {'tools/virgl-saturation/receipt.py','tools/virgl-saturation/cases.mjs','tools/virgl-saturation/README.md','tools/virgl-saturation/precision-source.json'}
 
     def recording_head(value):
         recorded = value['gitHead']

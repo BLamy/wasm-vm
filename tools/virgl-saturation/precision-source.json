@@ -9,5 +9,6 @@
   "positiveDenominatorMaximumPowerOfTwo": 126,
   "signedDenominators": "exact sign canonicalization before numerical division",
   "nonunitQuotients": "known normal-or-zero numerator with conservative exponent difference -124 through 125",
-  "specialAndSubnormalNumericSources": "no new authority or exact numerical promise; existing bank and source policies are retained"
+  "specialAndSubnormalNumericSources": "no new authority or exact numerical promise; existing bank and source policies are retained",
+  "numericalZero": "signed-zeros-interchangeable-ESSL-3.00-section4.5.1"
 }
