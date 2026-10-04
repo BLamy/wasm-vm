@@ -177,13 +177,16 @@ def main():
     require(len(retained['historical']) == 112 and sum(c['native']['ok'] for c in retained['historical']) == 5, 'historical grammar unchanged')
     for filename, count in [('independent-joins.json', 402), ('independent-hex-guards.json', 49),
                             ('independent-signed-guards.json', 108), ('independent-conversion-guards.json', 1575),
-                            ('independent-scalar-guards.json', 1427)]:
+                            ('independent-scalar-guards.json', 1427), ('independent-minimum-guards.json', 4524)]:
         guard = json.loads(artifact(filename))
         if filename == 'independent-conversion-guards.json':
             source('renderer/virgl-shader/tests/signed-conversion-regressions.mjs', guard['testSha256'])
         if filename == 'independent-scalar-guards.json':
             require(guard['schema'] == 'virgl-scalar-operation-critic-guards-v1', 'exact promoted scalar guard schema')
             source('renderer/virgl-shader/tests/scalar-operation-regressions.mjs', guard['testSha256'])
+        if filename == 'independent-minimum-guards.json':
+            require(guard['schema'] == 'virgl-minimum-selection-critic-guards-v1', 'exact promoted minimum guard schema')
+            source('renderer/virgl-shader/tests/minimum-selection-regressions.mjs', guard['testSha256'])
         require(guard['status'] == 'passed' and type(guard['cases']) is int and guard['cases'] == len(guard['native']) == len(guard['wasm']) == count, 'promoted guard completeness')
         for a, b in zip(guard['native'], guard['wasm']):
             if a['result'].get('error', {}).get('code') == 'invalid-input':
@@ -358,7 +361,7 @@ def main():
     receipt = dict(schema='virgl-minimum-selection-receipt-v1', task=TASK, status='passed', gitHead=head,
         guestExecution=False, productionNegotiation=False, nativeCases=961, primaryComparisons=913,
         wasmCases=961, wasmPairs=961, retainedOriginals=25, retainedAdmissions=23,
-        promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108, promotedConversionCases=1575, promotedScalarCases=1427,
+        promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108, promotedConversionCases=1575, promotedScalarCases=1427, promotedMinimumCases=4524,
         metadataAttacks=661, ownedRangeBanks=16, combinedBases=4, legacyPrecisionCases=84,
         recordingHeads=sorted(recording_heads), incrementalHarnessRepairs=sorted(harness_repairs),
         checkedWords=words, checkedPixels=pixels, primaryWords=primary_words, primaryPixels=primary_pixels, physicalOutputFaults=faults,
