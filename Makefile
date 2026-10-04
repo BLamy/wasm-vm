@@ -2017,3 +2017,7 @@ verify-E6-T12g6g2:
 .PHONY: verify-E6-T12g6h
 verify-E6-T12g6h:
 	bash tools/verify-virgl-saturation.sh
+
+.PHONY: verify-E6-T12g6i
+verify-E6-T12g6i:
+	bash tools/verify-virgl-exponent-logarithm.sh

@@ -1,0 +1,17 @@
+{
+  "source": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+  "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f",
+  "section": "4.5.1",
+  "printedPage": 52,
+  "exponentErrorULP": "3+2*abs(x)",
+  "logarithmErrorOutsideHalfToTwoULP": "3",
+  "logarithmErrorInsideHalfToTwoAbsoluteStrict": "2^-21",
+  "exponentInput": "normal-or-zero [-125,126]",
+  "logarithmInput": "positive-normal",
+  "reference": "https://docs.python.org/3/library/decimal.html",
+  "referenceMethod": "correctly-rounded ln/exp expanded one Decimal ULP, outward arithmetic at 160 digits, independently nested 220-digit enclosure",
+  "acceptance": "within stated budget for every real value in the primary enclosure",
+  "replication": "renderer/virgl-shader/tests/mesa-24.2.8-tgsi.rst lines 348-365 and pinned tgsi_info.c REPL",
+  "pinnedConverterDiscrepancy": "virglrenderer 1.3.0 vrend_shader.c:5639-5643 emits componentwise exp2/log2. Canonical broadcast sources agree; unswizzled sources retain independently predicted vendor results and recorded deviations from TGSI scalar replication.",
+  "byteCarrier": "byte I2F is exact; DIV by 255 error <=2.5 ULP, times 255 <0.00008 << RGBA8 half-step. One physical pixel exposes one whole evaluated word."
+}

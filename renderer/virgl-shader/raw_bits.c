@@ -118,7 +118,7 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
    /* TGSI scalar operations consume post-swizzle x/xyz independently of the
     * written lanes. Use the same rule for initialization and float authority. */
    if (opcode == RAW_DP3) return 7u;
-   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL) return 1u;
+   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL || opcode == RAW_EX2 || opcode == RAW_LG2) return 1u;
    return opcode == RAW_TEX ? 3u : destination_mask;
 }
 
@@ -171,6 +171,22 @@ static bool saturation_division_proved(struct raw_lane a, struct raw_lane b)
    return difference >= -124 && difference <= 125;
 }
 
+/* Prove the complete post-modifier domain from conservative encoding facts.
+ * A numerical origin alone is not a bound. Every possible EX2 argument must
+ * remain in [-125,126], keeping its highp result away from overflow/flush edges.
+ * LG2 requires a known clear sign and nonzero exponent in a safe normal word.
+ * Partial facts are sufficient only when they constrain every possible word. */
+static bool exponent_domain_proved(enum raw_opcode op, struct raw_lane value)
+{
+   if (!safe_raw_float(value)) return false;
+   const uint32_t sign = UINT32_C(0x80000000);
+   if (op == RAW_LG2) return (value.zero & sign) && (value.one & UINT32_C(0x7f800000));
+   uint32_t maximum = ~value.zero & UINT32_C(0x7fffffff);
+   if (!(value.one & sign) && maximum > UINT32_C(0x42fc0000)) return false;
+   if (!(value.zero & sign) && maximum > UINT32_C(0x42fa0000)) return false;
+   return true;
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -199,7 +215,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool conversion_bank = false;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_MOV_SAT || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_FRC_PRECISE || instruction->opcode == RAW_TEX ||
-      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ||
+      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ || instruction->opcode == RAW_EX2 || instruction->opcode == RAW_LG2 ||
       instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ||
       instruction->opcode == RAW_TRUNC || instruction->opcode == RAW_SSG ? 1 :
       instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
@@ -217,6 +233,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane))
          if (!saturation_division_proved(precise_source(ir, instruction, 0, lane, conditional),
                                         precise_source(ir, instruction, 1, lane, conditional))) return false;
+   if (((UINT64_C(1) << instruction->opcode) & RAW_EXPONENT_OPCODES) &&
+       !exponent_domain_proved(instruction->opcode, precise_source(ir, instruction, 0, 0, conditional))) return false;
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
@@ -353,9 +371,11 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_DP3:
       case RAW_RCP:
       case RAW_RSQ:
+      case RAW_EX2:
+      case RAW_LG2:
       case RAW_TEX:
          result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
-         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & RAW_V6_OPCODES))
+         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES)))
             result[lane].origin |= dependency;
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
@@ -643,6 +663,14 @@ static void float_operand(struct writer *w, const struct profile *p, const struc
 static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
 {
    enum raw_opcode op = instruction->opcode;
+   if ((UINT64_C(1) << op) & RAW_EXPONENT_OPCODES) {
+      /* TGSI consumes post-swizzle x once and broadcasts before publication,
+       * even for a y/w-only destination or an aliased source register. */
+      emit(w, op == RAW_EX2 ? " float_rhs = vec4(/* exponent:EX2 */ exp2(" : " float_rhs = vec4(/* exponent:LG2 */ log2(");
+      float_operand(w, p, instruction, 0, 0);
+      emit(w, "));\n");
+      return;
+   }
    if (op == RAW_TEX) {
       /* One vec4 sample is shared by all lanes and both representations. */
       emit(w, " float_rhs = texture(fssamp%u, vec2(", instruction->sampler);

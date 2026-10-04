@@ -24,6 +24,14 @@ Opaque numerical shadows and unconstrained banks remain rejected. Partial word
 facts may prove a whole domain; no numerical authority, exact result bits or
 computed F2I permission are manufactured. Complete original bodies remain gated.
 
+The pinned TGSI documentation and token output mode require scalar replication.
+The pinned virglrenderer 1.3.0 converter instead lowers EX2/LG2 componentwise.
+The differential records this discrepancy against independent equations without
+editing its GLSL. Canonical broadcast inputs prove agreement across the complete
+boundary/random input set; other inputs retain concrete vendor deviations. All
+18 captured broadcast statements are isolated with declared static inputs and
+proven on both backends, without claiming either whole body is admitted.
+
 ## Deterministic acceptance
 
 `make verify-E6-T12g6i`: Independent high precision primary-reference predictions at power-of-two and adjacent inputs, log positive-domain boundaries, upper/lower exponents, lane/modifier/conditional states and permitted error budgets. Pinned Mesa differential plus native/wasm and actual physical pixels/words. Reject domain drift and source-equation faults; cache/uniform consumers bind any new contract.
