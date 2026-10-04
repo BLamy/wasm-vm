@@ -1,0 +1,154 @@
+{
+  "schema": "virgl-saturation-critic-seal-v1",
+  "task": "E6-T12g6h",
+  "verdict": "verified",
+  "sourceHead": "81dfb7c010eb117d93335bc3a7c91878546449f8",
+  "runtimeHead": "31641b3fb5fa4e09256531df67dfaaadf651b0ea",
+  "workerSubmission": "8bb489e04170afd3a9158afeb4a9808386db5997",
+  "base": "bad92bfdaba16295b064a78c0767652da09be158",
+  "records": 100,
+  "allMembersAuthenticated": true,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 3680786,
+    "sha256": "cd1a07fa45456a46060dabe52d8a91c6521fd46d11bdac3ff5f7a3480654cead"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 16237,
+    "sha256": "690b88eeb9125b4afccba8e7ff06dbc376f5183e04a60e70ed0d7fb8be730df5"
+  },
+  "verdictRecord": {
+    "path": "verdict.json",
+    "bytes": 49640,
+    "sha256": "4f16b8765090e6e70698f5544535bb2ebd3ba3eef49a7c9b191db5f0332c2863"
+  },
+  "predictions": {
+    "held": 14,
+    "failed": 0,
+    "needsEvidence": 0
+  },
+  "workerDependencies": {
+    "manifestSha256": "a28ffabfd280ef45b3262168b492358adc77a39b59920efcffd69af222ca5bb8",
+    "archiveSha256": "0f23bfac558168d1207a3841028243ba5d0d1c4cb9f34faac2d2ebf8fa220b53",
+    "indexSha256": "3652615c51b879418d967067e6394b978f30fa118085b0b04a3d4c6ef18b185b",
+    "authenticatedMembers": 123,
+    "trackedSourceBindings": 610
+  },
+  "priorHeldSeals": [
+    {
+      "boundary": "virgl-precise-fraction",
+      "manifestSha256": "27c7fa297d0f9c4f3f9ed65f71bd1c53fd47cddbce4959be167004965a6530c0",
+      "archiveSha256": "29fdaa5e6774bde13f708333b870bb2cda1060547f369086d0f11fd9a73c21e6",
+      "indexSha256": "16ac41cbdc3e4944cccb845670fa941b9fce9180589887a17717fd9d380b3a7a",
+      "members": 71,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-minimum-selection",
+      "manifestSha256": "592ea6d92b6a6b68bb36eaef91403964c0517fab63007a0916591562ffbb98e0",
+      "archiveSha256": "aedf4c1401b7e985b399350ab9648d6ec981d591692ce3dbce1e95fabc8bd4ff",
+      "indexSha256": "7a9bca57207672121cea1f0d17c76b788cb7813b1fd8d736e68ca13321020b98",
+      "members": 63,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-scalar-operations",
+      "manifestSha256": "df1c4906705f6a2e4f9fe6a548f523b4d35ca273c3e45f3cfeea5ea9607da927",
+      "archiveSha256": "c5fd50cd563707c31c5c6ac52e360e0a711cdb16c088a2fff64a8461381c06e4",
+      "indexSha256": "7ac5c0e5a368a575d0dbb1ac9607a357830a30d5198aaa0cce37e54c71f41b9a",
+      "members": 51,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-signed-conversions",
+      "manifestSha256": "bf3ae212d2ef31ce1a084a162f38e692713f36bcc69f9f200977751e42545cd7",
+      "archiveSha256": "ccec7ef4231c2aaac9ed93167ab7e025283a14a9efe28a3be5c91f6a43e41cca",
+      "indexSha256": "fc9b55d8d34a2dc287d2193dafcefec1291e8098fee9aa7386205535e7b0ffc9",
+      "members": 47,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-signed-integers",
+      "manifestSha256": "50796c1e44d5cff1cadc56dfbc5908b3298b0cb601c38d14e11c8465efbb0543",
+      "archiveSha256": "3fb492e9b9addbecedf462e27ac08ad9dcbe7e22d10aa6f92cac25952c17b777",
+      "indexSha256": "2d18d13e974bd8a5c95154db3f85adf5c43726f7c7013538f8f0d2837346d4a4",
+      "members": 37,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-hex-literals",
+      "manifestSha256": "de87e77241b5f78f78b30364e728d4b0465d37114e8fc46a65913ca87df3b2a2",
+      "archiveSha256": "bb25e10d6b31a6efe547c8468a6b4d0f560b40c60650e85c6133bcbe33aa184d",
+      "indexSha256": "e684ae0b0a697a59a89c57f01c15c8347fa2d2853d7233b269ee6a8ce0618977",
+      "members": 30,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-compiler-bounds",
+      "manifestSha256": "1081296a0236616037539d953cacba78aed05d517dc6eee6c048e1d96ba6e643",
+      "archiveSha256": "1c6e0d69048ccdcb9762acde6e9198b3d5e380e6fb6308aa1a5e9355fa01037d",
+      "indexSha256": "fb78c6bc0fde0df3b9269787ced68d40d200de233bd45147321a1eea3636f821",
+      "members": 28,
+      "verdict": "verified"
+    }
+  ],
+  "promoted": [
+    {
+      "path": "renderer/virgl-shader/tests/saturation-regressions.mjs",
+      "testSha256": "724fe09a689e41494e0cfbb7698d68b5b73390b1b6c1ee0b8c8204328a7c1536",
+      "archiveMember": "promoted/saturation-regressions.mjs",
+      "report": "independent-regressions.json",
+      "reportSha256": "cc47765bbad6f807baaca911f23a37700d163c7da062c664731edc0c9fa64692",
+      "schema": "virgl-saturation-critic-guards-v1",
+      "cases": 1160
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-capture-regressions.py",
+      "testSha256": "9483831c97a60e40ea1fb51c33580ec1665e0bcdaa2a93a01b43e841de7a3745",
+      "archiveMember": "promoted/saturation-capture-regressions.py",
+      "report": "independent-capture-regressions.json",
+      "reportSha256": "a0a8aef8727564a643c15cd03740095dd8645d306189a729bf79abe9f478b859",
+      "schema": "virgl-saturation-critic-capture-guards-v1",
+      "physicalWords": 39576,
+      "physicalPixels": 26624
+    }
+  ],
+  "targetWiring": {
+    "path": "tools/verify-virgl-saturation.sh",
+    "sha256": "9a35c82c20796477cd2add611772aac54206c4b99fc10d941a2d8affd2814dd4",
+    "archiveMember": "promoted/verify-virgl-saturation.sh"
+  },
+  "coverage": {
+    "runtimeHunks": 22,
+    "addedRuntimeLines": 85,
+    "needsEvidence": 0,
+    "dead": 0,
+    "defensiveZeroHitEdge": "waived as unreachable under independently attacked prior numeric-authority invariant"
+  },
+  "physical": {
+    "sealedWords": 242064,
+    "sealedPixels": 159744,
+    "fourthWords": 39576,
+    "fourthPixels": 26624,
+    "localityWords": 72,
+    "bothBackends": true
+  },
+  "carried": {
+    "unchangedDependencies": 247,
+    "unchangedHelpers": 6,
+    "unchangedProductionGates": 7,
+    "wholePredecessorResponsesPerSet": 2933,
+    "heldFractionPhysicalWords": 36096,
+    "boundary": "Carry only authenticated unchanged source, dependencies, complete prior metadata and evidence digests. Changed compiler and consumer hunks receive current proof."
+  },
+  "scope": {
+    "runtimeEdited": false,
+    "productionAdmission": false,
+    "guestOffload": false,
+    "fullOriginalAdmission": false,
+    "fpsMipsOrDeploymentClaim": false,
+    "rrHostLayer": "waived by current AGENTS.md",
+    "retainedOriginals": "23/25 and 5/112 remain unchanged; both complete compositor originals stay rejected"
+  }
+}

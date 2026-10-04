@@ -29,11 +29,13 @@ node renderer/virgl-shader/tests/signed-conversion-regressions.mjs --native rend
 node renderer/virgl-shader/tests/scalar-operation-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-scalar-guards.json"
 node renderer/virgl-shader/tests/minimum-selection-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-minimum-guards.json"
 node renderer/virgl-shader/tests/precise-fraction-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-fraction-guards.json"
+node renderer/virgl-shader/tests/saturation-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-saturation-guards.json"
 python3 tools/virgl-saturation/held-fraction.py "$evidence_dir/held-fraction"
 node tools/virgl-saturation/legacy.mjs "$evidence_dir/legacy.json"
 node tools/virgl-saturation/consumer.mjs "$evidence_dir/native/report.json" "$evidence_dir/consumer.json"
 for seed in 1640573655 3073696041 3798507267; do
   node tools/virgl-saturation/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
+  python3 renderer/virgl-shader/tests/saturation-capture-regressions.py --report "$evidence_dir/gpu-$seed/report.json" --output "$evidence_dir/gpu-$seed/critic-capture-guards.json"
 done
 for fault in lower upper order; do
   if node tools/virgl-saturation/browser.mjs --output "$evidence_dir/fault-$fault" --fault "$fault"; then
