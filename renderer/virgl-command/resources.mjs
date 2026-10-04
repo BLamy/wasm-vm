@@ -86,8 +86,9 @@ function normalizeMetadata(value, limits) {
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
   } else {
-    require(meta.target === 2 && meta.format === 67 && meta.bind === 10,
-      "unsupported-resource", "Only RGBA8 2D renderable sampler textures are supported.");
+    const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
+    require(meta.target === 2 && [2, 67, 233].includes(meta.format) && roles !== 0 && (meta.bind & ~(10 | hints)) === 0,
+      "unsupported-resource", "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported.");
     require(meta.width <= limits.textureSize && meta.height <= limits.textureSize, "limit-exceeded", "Texture dimensions exceed host/profile limits.");
     kind = "texture";
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Texture allocation is too large."), 4,
@@ -417,6 +418,10 @@ export function createResourceStore(options) {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
         require(typeof role === "string" && ["view", "surface", "vertex", "index", "readback"].includes(role), "invalid-input", "Unknown storage lease role.");
+        require(role === "readback" || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
+          (role === "surface" && res.meta.kind === "texture" && (res.meta.bind & 2) !== 0) ||
+          (role === "vertex" && res.meta.kind === "vertex-buffer") || (role === "index" && res.meta.kind === "index-buffer"),
+        "unsupported-resource", "Storage lease role contradicts the resource binding class.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
         const token = Object.freeze({}); leases.set(token, { resource: res, role }); res.references++;
         return success({ lease: token });
@@ -501,8 +506,8 @@ export function createResourceStore(options) {
         const res = resource(id);
         require(Number.isSafeInteger(expectedGeneration) && expectedGeneration > 0 && res.generation === expectedGeneration,
           "stale-resource", "Scanout resource generation changed.");
-        require(res.meta.kind === "texture" && res.meta.format === 67 && res.meta.flags === 0,
-          "unsupported-resource", "Scanout requires a supported RGBA8 texture.");
+        require(res.meta.kind === "texture" && res.meta.format === 67 && res.meta.flags === 0 && (res.meta.bind & 2) !== 0,
+          "unsupported-resource", "Scanout requires a supported renderable RGBA8 texture.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
         const lease = Object.freeze({}); leases.set(lease, { resource: res, role: "scanout" }); res.references++;
         return success({ lease, metadata: res.meta, generation: res.generation });
@@ -635,6 +640,52 @@ export function createWebGL2TransferBackend(gl) {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     let vao = null, framebuffer = null, disposed = false;
     const allocations = new Set(), pendingReads = new Set();
+    const colorFormats = {
+      2: { internal: gl.RGB8, upload: gl.RGB, type: gl.UNSIGNED_BYTE },
+      67: { internal: gl.RGBA8, upload: gl.RGBA, type: gl.UNSIGNED_BYTE },
+      233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
+    };
+    const colorFormat = (meta) => {
+      const profile = colorFormats[meta.format];
+      require(profile, "unsupported-resource", "Unsupported native color storage format.");
+      return profile;
+    };
+    // Store uploads are private, dense scratch arrays. Convert in that same
+    // reservation: no second CPU image or GPU shadow escapes the byte budgets.
+    const nativeUpload = (format, bytes) => {
+      if (format === 2) {
+        for (let source = 0, target = 0; source < bytes.length; source += 4, target += 3) {
+          const b = bytes[source], g = bytes[source + 1], r = bytes[source + 2];
+          bytes[target] = r; bytes[target + 1] = g; bytes[target + 2] = b;
+        }
+        return bytes.subarray(0, bytes.length / 4 * 3);
+      }
+      if (format === 233) {
+        const guest = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const native = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
+        for (let i = 0; i < native.length; i++) {
+          const word = guest.getUint32(i * 4, true);
+          native[i] = ((word >>> 20) & 1023) | (word & 0x000ffc00) | ((word & 1023) << 20) | 0xc0000000;
+        }
+        return native;
+      }
+      return bytes;
+    };
+    const guestReadback = (format, bytes) => {
+      if (format === 2) {
+        for (let i = 0; i < bytes.length; i += 4) {
+          const r = bytes[i]; bytes[i] = bytes[i + 2]; bytes[i + 2] = r; bytes[i + 3] = 255;
+        }
+      } else if (format === 233) {
+        const native = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
+        const guest = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        for (let i = 0; i < native.length; i++) {
+          const word = native[i];
+          guest.setUint32(i * 4, ((word >>> 20) & 1023) | (word & 0x000ffc00) | ((word & 1023) << 20) | 0xc0000000, true);
+        }
+      }
+      return bytes;
+    };
     const check = () => {
       require(!disposed && !gl.isContextLost(), "backend-error", "WebGL context is disposed or lost.");
       const error = gl.getError();
@@ -647,6 +698,22 @@ export function createWebGL2TransferBackend(gl) {
         gl.UNPACK_ROW_LENGTH, gl.UNPACK_IMAGE_HEIGHT, gl.UNPACK_SKIP_PIXELS, gl.UNPACK_SKIP_ROWS, gl.UNPACK_SKIP_IMAGES]) gl.pixelStorei(parameter, 0);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+    };
+    const initializeXAlpha = (texture) => {
+      const previous = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING), mask = gl.getParameter(gl.COLOR_WRITEMASK);
+      const scissor = gl.isEnabled(gl.SCISSOR_TEST);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
+      try {
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+        require(gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Packed color initialization framebuffer is incomplete.");
+        gl.disable(gl.SCISSOR_TEST); gl.colorMask(true, true, true, true);
+        gl.clearBufferfv(gl.COLOR, 0, [0, 0, 0, 1]);
+      } finally {
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+        gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, previous); gl.colorMask(...mask);
+        if (scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
+      }
     };
     try {
       check();
@@ -675,11 +742,14 @@ export function createWebGL2TransferBackend(gl) {
               require(texture !== null, "backend-error", "WebGL texture allocation failed.");
               storage = Object.freeze({ kind: "texture", texture });
               gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
-              gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, meta.width, meta.height);
+              gl.texStorage2D(gl.TEXTURE_2D, 1, colorFormat(meta).internal, meta.width, meta.height);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+              // RGB8 has implicit alpha one. RGB10_A2 needs actual stored A=3,
+              // then the state executor masks destination alpha writes.
+              if (meta.format === 233) initializeXAlpha(texture);
             } else {
               const buffer = gl.createBuffer();
               require(buffer !== null, "backend-error", "WebGL buffer allocation failed.");
@@ -705,7 +775,9 @@ export function createWebGL2TransferBackend(gl) {
             gl.bufferSubData(gl.COPY_WRITE_BUFFER, layout.box.x, bytes);
           } else {
             gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, storage.texture);
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+            const profile = colorFormat(meta);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, layout.box.x, layout.box.y, layout.box.width, layout.box.height,
+              profile.upload, profile.type, nativeUpload(meta.format, bytes));
           }
           check();
         },
@@ -721,16 +793,18 @@ export function createWebGL2TransferBackend(gl) {
               gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, storage.texture, 0);
               gl.readBuffer(gl.COLOR_ATTACHMENT0);
               require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Transfer framebuffer is incomplete.");
-              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+              const profile = colorFormat(meta);
+              const destination = meta.format === 233 ? new Uint32Array(bytes.buffer) : bytes;
+              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, profile.type, destination);
             } finally {
               gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
             }
           }
-          check(); return bytes;
+          check(); return guestReadback(meta.format, bytes);
         },
         beginReadback(storage, meta, layout) {
           check(); pixelState();
-          const entry = { buffer: null, sync: null, ready: false, bytes: layout.tightBytes };
+          const entry = { buffer: null, sync: null, ready: false, bytes: layout.tightBytes, format: meta.format };
           pendingReads.add(entry);
           try {
             entry.buffer = gl.createBuffer();
@@ -744,7 +818,7 @@ export function createWebGL2TransferBackend(gl) {
                 gl.readBuffer(gl.COLOR_ATTACHMENT0);
                 require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Readback framebuffer is incomplete.");
                 // Numeric offset selects the PBO overload: no CPU destination here.
-                gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE, 0);
+                gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, colorFormat(meta).type, 0);
               } finally {
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
                 gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
@@ -780,7 +854,7 @@ export function createWebGL2TransferBackend(gl) {
           check(); require(pendingReads.has(entry) && entry.ready, "backend-error", "Readback fence has not signaled.");
           const bytes = new Uint8Array(entry.bytes);
           gl.bindBuffer(gl.COPY_READ_BUFFER, entry.buffer);
-          gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, bytes); check(); return bytes;
+          gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, bytes); check(); return guestReadback(entry.format, bytes);
         },
         releaseReadback,
         dispose() {

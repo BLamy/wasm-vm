@@ -232,7 +232,8 @@ explicitly rejected by this narrower profile.
   and nonnegative finite max LOD; zero inactive border. Compare-function and
   seamless-cube fields are preserved but inert with compare disabled and 2D
   views. Reserved packed bits are rejected.
-- **SURFACE:** `handle,resourceHandle,format,level,firstLayer,lastLayer`; RGBA8,
+- **SURFACE:** `handle,resourceHandle,format,level,firstLayer,lastLayer`; required
+  normalized color formats 2 (BGRX8), 67 (RGBA8), 233 (B10G10R10X2),
   level and layer zero, nonzero resource handle. Target compatibility is deferred.
 
 ### Opaque END_TRANSFERS framing

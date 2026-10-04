@@ -50,7 +50,7 @@ The store API is synchronous:
 | `detachBacking(id)` | Revokes that backing identity and frees its owned segments. |
 | `writeBacking(id,offset,bytes)` | `byteLength`; bounded scatter into owned backing; no input reference is retained. |
 | `readBacking(id,offset,length)` | `bytes`; bounded gather into a new Uint8Array. |
-| `retainStorage(contextId,id,role="view")` | `lease`; an opaque frozen identity token retaining GPU storage. Roles are `view,surface,vertex,index,readback`; staging has no GPU storage. |
+| `retainStorage(contextId,id,role="view")` | `lease`; an opaque frozen identity token retaining GPU storage. View/surface require sampler/render texture binds; vertex/index require the matching buffer class. Readback accepts GPU storage; staging has none. |
 | `readStorage(lease,box?)` | `bytes`; actual GPU readback, tightly packed, whole resource by default. Uses retained storage even after public unref. |
 | `releaseStorage(lease)` | Releases that lease once; unknown, released and foreign tokens fail. |
 | `prepareTransfer(contextId,decodedCommand)` | `ticket,layout`; validates the whole operation, retains exact identities, reserves scratch and snapshots upload bytes. |
@@ -84,7 +84,11 @@ are nonzero. Supported classes are:
 | `vertex-buffer` | target 0, format 64, bind 16, height 1 | width bytes on GPU |
 | `index-buffer` | target 0, format 64, bind 32, height 1 | width bytes on GPU |
 | `staging` | target 0, format 64, bind 524288, height 1 | no GPU allocation; attached backing only |
-| `texture` | target 2, format 67, bind 10 | width × height × 4 GPU bytes |
+| `texture` | target 2; format 2, 67 or 233; render bind 2 and/or sampler bind 8 | width × height × 4 conservative GPU bytes |
+
+Textures may also carry the measured SCANOUT (262144) and SHARED (1048576)
+metadata hints. Neither hint grants a view/render role or enables scanout of a
+new format. Global scanout remains format67 with a render bind and flags0.
 
 All classes require depth/arraySize 1 and lastLevel/nrSamples/flags 0. No format
 aliases, mixed buffer bindings, depth textures, mipmaps, MSAA, blobs or arrays are
@@ -222,8 +226,22 @@ handles through GL; the resource store never returns them through its public API
 Index buffers first bind to ELEMENT_ARRAY_BUFFER on a private VAO. Vertex buffers
 first bind to ARRAY_BUFFER. Later upload/readback uses COPY_WRITE_BUFFER and
 COPY_READ_BUFFER, preserving WebGL2's permanent element-versus-other-data buffer
-classification. Textures use immutable single-level RGBA8 texStorage2D, tightly
-packed texSubImage2D uploads, and readPixels from a private read framebuffer.
+classification. Textures use immutable single-level RGB8, RGBA8 or RGB10_A2
+texStorage2D, tightly packed texSubImage2D uploads, and readPixels from a private
+read framebuffer. Guest format2 B8G8R8X8 becomes RGB8 with implicit sampled and
+destination alpha one. Format233 B10G10R10X2 becomes RGB10_A2 with all10 color
+bits preserved and actual stored alpha3; initialization clears alpha to one,
+and the state executor masks subsequent alpha writes. Guest X bits are ignored
+on upload and canonicalized to all ones on readback. RGBA8 alpha is unchanged.
+Guest rows and GPU/PBO/scratch budgets remain four bytes per pixel for every
+format, even when RGB8's native upload has three components.
+
+Channel conversion uses the store's private dense scratch in place. Packed
+guest words are explicitly little endian; GL uses native Uint32Array packed
+RGBA/UNSIGNED_INT_2_10_10_10_REV, including PBO collection. Readback performs the
+inverse conversion before returning guest bytes. A staged read retains its own
+format and storage generation, so reusing a public ID for another format cannot
+reinterpret an older pending read. No second CPU image or GPU shadow is added.
 No CPU shadow is used as a readback oracle.
 
 Every transfer establishes its required state: PACK/UNPACK PBO bindings null,
@@ -259,3 +277,14 @@ have 4,188 logical GPU bytes and 1,064,960 attached backing bytes. Transfer proo
 covers the 64-byte vertex buffer, 12-byte u16 index buffer and 16-byte texture via
 actual GL readback, independent layout/SG/lifetime/poison cases, and a final clean
 clone. It does not claim replaying the scene's draws or speeding up guest graphics.
+
+`make verify-E6-T12g2` additionally executes G1's unchanged selected kmscube and
+original es2gears color creates/surfaces and kmscube's CPU RGBA upload. Independent
+hardware sampling, physical attachment pixels and inverse sync/async guest bytes
+cover all three formats with literal non-symmetric inputs, varying X bits,
+odd split rows, copy staging, generation reuse and byte-budget pressure. A
+synthetic tiny-scene variant checks destination-alpha and source-alpha blending;
+the complete unchanged RGBA scene remains a regression. Deliberate channel and
+destination-alpha source faults must fail on independent physical pixels. This
+proves isolated color storage, not full gears replay, sampler-view specialization,
+guest execution, live capsets or a MIPS improvement.
