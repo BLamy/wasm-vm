@@ -1,0 +1,76 @@
+{
+  "schema": "ordered-mask-lossless-evidence-v1",
+  "task": "E6-T12f4a",
+  "gitHead": "2815f3d23806aa5b7aaa6a12cef03d5ce54ade90",
+  "runtimeCommit": "2815f3d23806aa5b7aaa6a12cef03d5ce54ade90",
+  "archives": [
+    {
+      "path": "worker.tar.gz",
+      "bytes": 23807478,
+      "sha256": "bdf9499f20d74e44a1c3f57ff207f2f7e0e5e568e0e81172130809dd7961edad"
+    },
+    {
+      "path": "cold.tar.gz",
+      "bytes": 23854441,
+      "sha256": "04f6aa5b8fbfa77f4a112f0ebb795abaae9e60ccfe8929e4b7fcadd6b9d33677"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "worker-receipt.json",
+      "bytes": 53091,
+      "sha256": "5a3cefc2f55f703eab313fc3508b2f6b21e2645d9a95553d9e4a9f2618cc94ce"
+    },
+    {
+      "path": "cold-receipt.json",
+      "bytes": 53091,
+      "sha256": "cae07cf58c61518cb62a4c86682cf51cb059a4bfa19d8bbc446c18c0cf0a109e"
+    },
+    {
+      "path": "cold-report.json",
+      "bytes": 144965,
+      "sha256": "1740e1fb815546a63b22132a178b490d7411cbebde16fd49bb48c87bc627233d"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "worker-native",
+      "bytes": 3356128,
+      "sha256": "58f99356a9e747e97ad237606e45eb01fee481abcc931a1b6b9faa449987ce69"
+    },
+    {
+      "path": "artifacts/worker/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/worker/virgl-shader.wasm",
+      "bytes": 304558,
+      "sha256": "d85d76ec924ea737f3ea94085e6912a094a88b0352ad6f553cf0a50f702247e2"
+    },
+    {
+      "path": "cold-native",
+      "bytes": 3357152,
+      "sha256": "5065fd1a7488c10b61347d9bf14194318262050f7cd2bcc38988f4f32376a401"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.wasm",
+      "bytes": 304558,
+      "sha256": "d85d76ec924ea737f3ea94085e6912a094a88b0352ad6f553cf0a50f702247e2"
+    }
+  ],
+  "workerRecordedFiles": 713,
+  "screenshot": {
+    "path": "browser.png",
+    "bytes": 33250,
+    "sha256": "96c8fe687580a77847675752d89f70c5bd8c0449e2c8eccd2aabbc205c648251"
+  },
+  "coldRecordedFiles": 715,
+  "coldAcceptanceFiles": 713,
+  "boundary": "Every complete recording file is included. Each archive member was streamed and checked against its original size and SHA-256, then originals were rechecked. Native/Wasm artifacts match their recorded digests. One final pristine exact-source clone was clean before and after direct canonical acceptance. No guest execution or production advertisement claim."
+}

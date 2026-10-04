@@ -177,7 +177,7 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
          if (count != 4) return false;
       } else if (!((count == 2 && !strncmp(begin, "xy", 2)) ||
                    (count == 3 && !strncmp(begin, "xyz", 3)) ||
-                   (kind == DESTINATION && count == 1))) {
+                   (kind == DESTINATION && count != 0))) {
          failure_code = "unsupported-feature";
          return false;
       }
