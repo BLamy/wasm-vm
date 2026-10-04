@@ -2,15 +2,97 @@
 """Attack real workload provenance and the reproducible client-only inventory."""
 import argparse
 import copy
+import io
 import json
 from pathlib import Path
 import shutil
 import struct
+import tarfile
 import tempfile
+from types import SimpleNamespace
 
 import inventory as model
+from capture import guest_script_text
 from gears_check import check_gears
-from validate import CaptureError, checked_file, load_json, require, sha256, validate_capture
+from validate import CaptureError, checked_file, load_json, require, sha256, validate_capture, validate_events
+
+
+def check_new_shaders(index, summary, expected, original):
+    client = set(expected['clientShaderSha256'])
+    require(index.get('additionalClientShaders') == sorted(client-original),
+            'new original client shader gap list differs')
+    require(index.get('additionalSupportingShaders') == sorted(set(summary['shaders'])-original-client),
+            'new original supporting shader gap list differs')
+
+
+def check_negative(corpus, index):
+    """Authenticate the actual zero-exit substitution run, which must fail."""
+    require(index['negativeZeroExit']['path']=='negative/manifest.json','negative evidence path differs')
+    seal = load_json(checked_file(corpus,index['negativeZeroExit']))
+    require(seal.get('schema')=='virgl-early-zero-negative-v1'
+            and seal.get('frozenSourceHead')==index['frozenSourceHead'],'negative source boundary differs')
+    directory = corpus/'negative'
+    require(seal['archive']['path']=='recording.tar.gz' and seal['records']['path']=='records.json',
+            'negative archive path differs')
+    archive_bytes = checked_file(directory,seal['archive'])
+    records = load_json(checked_file(directory,seal['records']))
+    require(0<len(records)<=2048 and sum(r['bytes'] for r in records)<=128*1024*1024,
+            'negative recording exceeds bound')
+    with tempfile.TemporaryDirectory(prefix='virgl-early-zero-proof-') as temporary:
+        scratch = Path(temporary)
+        with tarfile.open(fileobj=io.BytesIO(archive_bytes),mode='r:gz') as archive:
+            members = archive.getmembers()
+            require([m.name for m in members]==[r['path'] for r in records],
+                    'negative archive inventory differs')
+            require(len({m.name for m in members})==len(members),'duplicate negative archive path')
+            for member,record in zip(members,records):
+                path = Path(member.name)
+                require(member.isfile() and not path.is_absolute() and '..' not in path.parts
+                        and member.size==record['bytes'],'unsafe negative archive member')
+                raw = archive.extractfile(member).read(member.size+1)
+                require(len(raw)==record['bytes'] and sha256(raw)==record['sha256'],
+                        'negative recording member digest differs')
+                output = scratch/path
+                output.parent.mkdir(parents=True,exist_ok=True)
+                output.write_bytes(raw)
+        capture = scratch/'capture'
+        manifest = load_json((capture/'manifest.json').read_bytes())
+        require(manifest['result']==seal['result']=={
+            'qemuExitCode':0,'guestExitCode':1,'guestBegin':True,'guestEnd':False,
+            'workloadPass':False,'complete':False,'error':None},'early zero exit counted as success')
+        artifacts = {r['role']:checked_file(capture,r) for r in manifest['artifacts']}
+        require(artifacts['capture.py']==(model.ROOT/'tools/virgl-capture/capture.py').read_bytes(),
+                'negative run used a different controller')
+        parameters = manifest['command']['guestWorkload']
+        args = SimpleNamespace(workload='es2gears',gears_directory=parameters['gearsDirectory'])
+        guest_output = '/hostcapture/'+str(Path(parameters['outputDirectory']).relative_to('/capture'))
+        require(artifacts['guest.sh']==guest_script_text(args,guest_output).encode(),
+                'negative run used a different guest driver')
+        require((scratch/'inputs/quick-zero.c').read_bytes()==b'int main(void) { return 0; }\n',
+                'negative source is not the declared zero-exit program')
+        fake = (scratch/'inputs/es2gears_wayland').read_bytes()
+        require(fake==artifacts['es2gears_wayland'] and fake[:6]==b'\x7fELF\x02\x01'
+                and struct.unpack_from('<H',fake,18)[0]==243,'negative executable is not the recorded RISC-V program')
+        build = load_json(artifacts['gears-build-manifest.json'])
+        require(sha256(fake)!=build['binary']['sha256'],'negative program silently counted as original')
+        control = artifacts['gears-control.log'].decode().splitlines()
+        require(all(value in control for value in ['client-exit=0','rendered=0','resized=0',
+                                                  'window-close=1','identity=0']),
+                'negative run does not demonstrate early zero-exit rejection')
+        require(artifacts['guest-exit-code.txt'].strip()==b'1','negative actual guest exit differs')
+        events = [load_json(line) for line in checked_file(capture,manifest['events']).splitlines()]
+        summary,_,_ = validate_events(events,lambda digest:(capture/'blobs'/(digest+'.bin')).read_bytes())
+        require(summary['opcodes'].get('DRAW_VBO',0)>0,'negative run lacks supporting compositor draws')
+        try:
+            validate_capture(capture)
+        except CaptureError as error:
+            require(str(error)=='reference workload did not complete successfully',
+                    'negative run failed for an unrelated reason')
+        else:
+            raise CaptureError('accepted actual early zero-exit substitution')
+        return {'guestExit':1,'clientExit':0,'recordedEvents':len(events),
+                'supportingDraws':summary['opcodes']['DRAW_VBO'],'accepted':False,
+                'archiveSha256':seal['archive']['sha256']}
 
 
 def main():
@@ -39,12 +121,13 @@ def main():
     require((args.corpus/'es2gears-inventory.json').read_bytes()==model.encoded(expected),'saved gears inventory differs')
     checked_file(args.corpus,index['gearsInventory'])
     checked_file(args.corpus,index['kmscubeInventory'])
-    require(index.get('additionalClientShaders')==sorted(set(expected['clientShaderSha256'])-
-            {item['sha256'] for item in original_inputs}),'new original shader gap list differs')
 
     manifest = load_json((capture/'manifest.json').read_bytes())
     artifacts = {r['role']:checked_file(capture,r) for r in manifest['artifacts']}
     summary,_ = validate_capture(capture)
+    original = {item['sha256'] for item in original_inputs}
+    check_new_shaders(index,summary,expected,original)
+    negative = check_negative(args.corpus,index)
     events = [load_json(raw) for raw in checked_file(capture,manifest['events']).splitlines()]
     bare = model.Inventory(capture,summary).run(events)
     original_bytes = model.encoded(bare)
@@ -62,6 +145,13 @@ def main():
         changed = dict(artifacts)
         changed[role] = transform(changed[role])
         rejected(name,lambda:check_gears(copy.deepcopy(manifest),changed))
+
+    for role in ['additionalClientShaders','additionalSupportingShaders']:
+        changed = copy.deepcopy(index);changed[role].pop()
+        rejected('omitted-'+role,lambda changed=changed:check_new_shaders(changed,summary,expected,original))
+    changed = copy.deepcopy(index)
+    changed['additionalSupportingShaders'].append(changed['additionalClientShaders'][0])
+    rejected('client-shader-mislabeled-supporting',lambda:check_new_shaders(changed,summary,expected,original))
 
     for key,bad in (('rendered','0'),('resized','0'),('window-close','124'),
                     ('client-exit','124'),('client-exit','137'),('client-exit','143'),('identity','0')):
@@ -179,19 +269,19 @@ def main():
                 if event.get(key,0)>snap:
                     event[key] -= 1
         sizes = {ref['sha256']:ref['bytes'] for event in events for ref in event['blobs']}
-        from validate import validate_events
         rejected('missing-required-backing-snapshot',lambda:validate_events(missing,lambda digest:
                  original_blob(capture,{'sha256':digest,'bytes':sizes[digest]})))
         require('submit omitted attached resource backing' in results[-1]['reason'],
                 'missing snapshot mutation failed for an unrelated reason')
 
-    require(len(results)>=38 and all(r['result']=='rejected' for r in results),'missing workload attacks')
+    require(len(results)>=42 and all(r['result']=='rejected' for r in results),'missing workload attacks')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     report = {'schema':'virgl-required-workload-acceptance-v1','passed':True,
               'captureManifestSha256':expected['captureManifestSha256'],
               'inventorySha256':sha256(model.encoded(expected)),
               'clientDraws':len(expected['clientDraws']),'supportingDraws':expected['supportingDraws'],
               'unchangedOriginalShaders':19,'additionalClientShaders':index['additionalClientShaders'],
+              'additionalSupportingShaders':index['additionalSupportingShaders'],'earlyZeroExitRun':negative,
               'cases':results,'boundary':'Provenance/framing/client inventory only; no rendered-pixel or performance proof.'}
     args.output.write_bytes(model.encoded(report))
     print(json.dumps({'passed':True,'cases':len(results),'clientDraws':len(expected['clientDraws']),

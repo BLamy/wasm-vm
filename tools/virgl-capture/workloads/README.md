@@ -186,5 +186,10 @@ its named live context's original shader uploads and positive draw packets.
 The original report is a completion marker, not a benchmark or pixel oracle.
 `make verify-E6-T12g1` checks the committed recording and reconstructs the
 client-only format/view/transfer inventory. The nineteen original shader
-inputs remain a separate immutable claim; any additional gears shaders need
-their own browser execution proof before workload activation.
+inputs remain a separate immutable claim. The new capture adds two client
+shaders and four supporting-compositor shaders outside that set. All six need
+their own admission/browser execution proof before their workload paths can
+activate. `evidence/virgl-workload-inventory/index.json` binds the two lists.
+The separate early-zero negative recording substitutes an explicitly fake
+RISC-V executable: its actual zero exit still fails the guest controller and
+capture acceptance, even while the compositor submits draws.

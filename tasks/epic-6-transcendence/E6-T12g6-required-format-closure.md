@@ -20,6 +20,12 @@ Keep resource/surface/sampling/vertex roles distinct and unsupported formats
 absent from caps. A required unsupported format gates later workloads explicitly,
 not through incorrect substitution. Production negotiation remains disabled.
 
+G1 preserves two new gears client shaders and four new supporting-compositor
+shaders outside F6's unchanged nineteen-body corpus. Bind those original bytes
+from `evidence/virgl-workload-inventory/index.json` and prove admission plus
+actual browser execution for the required paths. F6's result cannot establish
+support for these six additional bodies.
+
 ## Deterministic acceptance
 
 `make verify-E6-T12g` executes original required upload/view packets and

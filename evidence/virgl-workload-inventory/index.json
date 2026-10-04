@@ -3,6 +3,12 @@
     "80a42bf3c99720ded8979c28cf04fdf1e4080c5ff44f7c05f43d693b3e063e02",
     "86d0ee793508f4c6b9fad89c1ce75714fb38a8de8f8f1f3743c30ad71e680a71"
   ],
+  "additionalSupportingShaders": [
+    "7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e",
+    "92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba",
+    "c2474531b21b3debcbaefd49d53f945e7d883df71316a60135876097a019b1f1",
+    "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+  ],
   "archiveName": "mesa-demos-9.0.0.tar.xz",
   "capture": {
     "bytes": 12613,
@@ -20,6 +26,11 @@
     "bytes": 433396,
     "path": "kmscube-inventory.json",
     "sha256": "8a1fb71fdd3f4d4c3696104690e11af480e5f1b95634bd077a1fcef1636b7b8c"
+  },
+  "negativeZeroExit": {
+    "bytes": 744,
+    "path": "negative/manifest.json",
+    "sha256": "2aaffe2c3bbf692bc7c9efc147f271b3b0f67f9f3da6f2fc12cec69030dc78e9"
   },
   "originalManifests": {
     "compositor": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
