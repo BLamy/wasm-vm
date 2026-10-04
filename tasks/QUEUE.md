@@ -574,7 +574,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0269913` [E6-T12f3](epic-6-transcendence/E6-T12f3-radial-definedness-domain.md) — Establish an explicit admission contract for radial shader definedness *(deps: E6-T12f2)*
 - [x] `525.0269914` [E6-T12f4](epic-6-transcendence/E6-T12f4-precise-word-operations.md) — Preserve PRECISE comparison selection and copy semantics on the GPU *(deps: E6-T12f1)*
 - [x] `525.02699141` [E6-T12f4a](epic-6-transcendence/E6-T12f4a-ordered-destination-masks.md) — Preserve ordered nonprefix destination masks in checked shader writes *(deps: E6-T12f4)*
-- [~] `525.02699142` [E6-T12f4b](epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md) — Admit exact bank copies to ordinary outputs under a bounded raster domain *(deps: E6-T12f3, E6-T12f4a)*
+- [?] `525.02699142` [E6-T12f4b](epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md) — Admit exact bank copies to ordinary outputs under a bounded raster domain *(deps: E6-T12f3, E6-T12f4a)*
 - [ ] `525.0269915` [E6-T12f5](epic-6-transcendence/E6-T12f5-precise-binary32-arithmetic.md) — Execute PRECISE ADD and MUL with explicit binary32 rounding *(deps: E6-T12f4)*
 - [ ] `525.0269916` [E6-T12f6](epic-6-transcendence/E6-T12f6-original-shader-closure.md) — Close the unchanged 19-body shader corpus with explicit contracts *(deps: E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5)*
 
