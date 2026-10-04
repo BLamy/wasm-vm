@@ -616,7 +616,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010574` [E6-T12g6g1](epic-6-transcendence/E6-T12g6g1-minimum-selection.md) — Admit exact word-local minimum selection *(deps: E6-T12g6f)*
 - [x] `525.027010575` [E6-T12g6g2](epic-6-transcendence/E6-T12g6g2-precise-fraction.md) — Admit exact instruction-local fractional-part arithmetic *(deps: E6-T12g6g1)*
 - [x] `525.027010576` [E6-T12g6h](epic-6-transcendence/E6-T12g6h-saturation.md) — Admit bounded MOV and DIV saturation modifiers *(deps: E6-T12g6g2)*
-- [~] `525.027010577` [E6-T12g6i](epic-6-transcendence/E6-T12g6i-exponent-logarithm.md) — Admit bounded binary exponent and logarithm operations *(deps: E6-T12g6h)*
+- [?] `525.027010577` [E6-T12g6i](epic-6-transcendence/E6-T12g6i-exponent-logarithm.md) — Admit bounded binary exponent and logarithm operations *(deps: E6-T12g6h)*
 - [ ] `525.027010578` [E6-T12g6j1](epic-6-transcendence/E6-T12g6j1-sine.md) — Admit bounded sine evaluation for captured compositor equations *(deps: E6-T12g6i)*
 - [ ] `525.027010579` [E6-T12g6j2](epic-6-transcendence/E6-T12g6j2-power.md) — Admit bounded power evaluation for captured compositor equations *(deps: E6-T12g6j1)*
 - [ ] `525.02701058` [E6-T12g6k](epic-6-transcendence/E6-T12g6k-fragment-coordinates.md) — Lower captured fragment position and coordinate properties *(deps: E6-T12g6j2)*
