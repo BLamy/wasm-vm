@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-minimum-selection-worker-seal-v1",
+  "task": "E6-T12g6g1",
+  "sourceHead": "2be8709b05a9f6bcaf9f2a543a62d9eda37656ed",
+  "base": "79cae493",
+  "records": 82,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 17813706,
+    "sha256": "4cde54d259703ba0c62f7f70f88820fdb53faa06621f5b7b0d5f372066ebc394"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 14234,
+    "sha256": "97bb60698f66009bfa1bf0fe498797b9c2601967693c61f7f9017bf18e6456a7"
+  },
+  "hotReceiptSha256": "1626d7928fba3db259e729293ba56fa1a0231b39be79cf4cebe04cbd86926895",
+  "coldReportSha256": "e4d9bc3560a0a1f919008ef0ddb8775196f2c9ca2ef3796a50291a886c7f4e82",
+  "coldReceiptSha256": "f15cf1cdaccf85b79393ecbb462cf93f8e58704ee93bbabd410ad03e7c2c37f1",
+  "checkedWords": 166752,
+  "checkedPixels": 17344,
+  "productionNegotiation": false,
+  "guestExecution": false
+}
