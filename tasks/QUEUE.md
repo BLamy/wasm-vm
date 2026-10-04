@@ -614,7 +614,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010572` [E6-T12g6e](epic-6-transcendence/E6-T12g6e-signed-conversions.md) — Admit bounded signed integer and float conversions *(deps: E6-T12g6d)*
 - [x] `525.027010573` [E6-T12g6f](epic-6-transcendence/E6-T12g6f-scalar-truncation-sign.md) — Admit bounded scalar truncation and sign operations *(deps: E6-T12g6e)*
 - [x] `525.027010574` [E6-T12g6g1](epic-6-transcendence/E6-T12g6g1-minimum-selection.md) — Admit exact word-local minimum selection *(deps: E6-T12g6f)*
-- [~] `525.027010575` [E6-T12g6g2](epic-6-transcendence/E6-T12g6g2-precise-fraction.md) — Admit exact instruction-local fractional-part arithmetic *(deps: E6-T12g6g1)*
+- [?] `525.027010575` [E6-T12g6g2](epic-6-transcendence/E6-T12g6g2-precise-fraction.md) — Admit exact instruction-local fractional-part arithmetic *(deps: E6-T12g6g1)*
 - [ ] `525.027010576` [E6-T12g6h](epic-6-transcendence/E6-T12g6h-saturation.md) — Admit bounded MOV and DIV saturation modifiers *(deps: E6-T12g6g2)*
 - [ ] `525.027010577` [E6-T12g6i](epic-6-transcendence/E6-T12g6i-exponent-logarithm.md) — Admit bounded binary exponent and logarithm operations *(deps: E6-T12g6h)*
 - [ ] `525.027010578` [E6-T12g6j1](epic-6-transcendence/E6-T12g6j1-sine.md) — Admit bounded sine evaluation for captured compositor equations *(deps: E6-T12g6i)*
