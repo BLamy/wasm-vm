@@ -3,7 +3,7 @@ id: E6-T12g1
 epic: 6
 title: Capture unmodified guest es2gears and inventory required resource/view packets
 priority: 525.0270101
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12f6]
 estimate: S
 risk: high
@@ -227,3 +227,40 @@ binds their digests and lists the exact source/evidence boundaries to carry
 forward. SUITE: preserve the canonical target and add the missing scoped
 decoder proof; no fresh guest boot or repeat cold clone is needed if only
 tests/fixtures/recording evidence change and these HELD boundaries stay intact.
+
+### 2026-10-04 — worker — incremental decoder evidence
+
+Supplement source is frozen at `cfbe69fae8fc1b4befe85785d186a4449144f961`.
+Only fixtures, recording/acceptance scripts, Makefile routing and documentation
+changed. The inventory, framing validator, real guest controller/builder and
+source pins remain byte-identical to the critic's HELD boundary. All eight
+retained evidence digests are recorded unchanged in `worker/variants/manifest.json`.
+The initial critic archive is sealed separately under `verifier/initial/` with
+SHA-256 `0ce29d3b8e2f6911eeff48e6ecf3aa123b8b14981bea55473bb0b5282edd438a`.
+
+With inherited Rust/Cargo/Python overrides scrubbed, recorded commands were:
+
+```sh
+python3 -m py_compile tools/virgl-capture/tests/inventory_variants.py
+bash -n tools/verify-virgl-inventory-variants.sh tools/verify-virgl-workload-inventory.sh
+python3 -m unittest discover -s tools/virgl-capture/tests -v
+VIRGL_INVENTORY_VARIANTS_EVIDENCE_DIR=target/evidence/virgl-inventory-variants-worker/acceptance make verify-E6-T12g1-variants
+```
+
+All passed, with clean tracked Git state. The supplement archive is
+`worker/variants/recording.tar.gz`, SHA-256
+`4b30d21ff2e39ed54fedabe2e966140a84043676b8682ab9ada98e739c4a5c41`;
+its 225 members preserve seven complete balanced synthetic API sessions,
+literal packet/backing bytes, independent field/lifetime assertions, shader
+assembler outputs, inventory results, state observations and per-case line
+hits. The 66 assertions cover all eight requested decoder boundaries; the
+index/uniform rejection cases also require exact errors. Reused resource ID 6
+without an IOV cannot inherit its prior lifetime's backing. A scratch source
+fault changes index offset 19 to 23 and fails precisely the independent literal
+binding assertion. The 21 existing framing tests still pass.
+
+These are synthetic decoder checks only. They add no real-client requirement,
+GPU execution, renderer admission or offload claim. The canonical G1 target now
+includes the narrow gate. As the critic prescribed, the unchanged actual guest
+and final pristine-clone proofs are carried forward rather than rerun. Fresh
+incremental verification of the missing sufficiency evidence is required.
