@@ -322,3 +322,9 @@ on normalized GPU samples. The affected decoder/resource/state/draw/async/color
 gates and final pristine clone are included. Original depth upload/draw is not
 claimed: the capture has no CPU depth upload, and guest depth framebuffer/DSA
 execution remains E6-T12h. Production offload negotiation stays disabled.
+
+`make verify-E6-T12g4` admits immutable exact-matching color sampler views2/67/233
+with RGBA/ZERO/ONE selectors. Views share the existing native storage and leases;
+the renderer owns bounded fragment shader variants, with no extra view images
+or CPU shadows. Physical swizzle/filter/alpha oracles retain these color/depth
+transfer gates. Depth views and mip/layer/cube families remain unsupported.

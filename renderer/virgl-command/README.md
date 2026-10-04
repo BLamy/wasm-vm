@@ -223,8 +223,13 @@ explicitly rejected by this narrower profile.
   vertexBufferIndex,sourceFormat}]`; per-vertex R32G32_FLOAT (29), divisor zero,
   buffer index below 16, sourceOffset+8 fits u32.
 - **SAMPLER_VIEW:** `handle,resourceHandle,format,target,firstLayer,lastLayer,
-  firstLevel,lastLevel,swizzle[4]`; RGBA8 (67), 2D (2), level/layer zero; swizzle
+  firstLevel,lastLevel,swizzle[4]`; normalized color formats2/67/233, 2D (2), level/layer zero; swizzle
   components 0–5 (RGBA/ZERO/ONE). Resource type compatibility is deferred.
+  State execution requires the exact storage format and sampler bind. Immutable
+  per-view selectors specialize checked fragment TEX output and its program key;
+  aliases never mutate or duplicate the shared GPU image. Mip/layer/cube and
+  depth views remain rejected. `make verify-E6-T12g4` records physical swizzles,
+  alpha/filtering, alias/cache restoration, bounded native variants and source faults.
 - **SAMPLER_STATE:** `handle,wrapS,wrapT,wrapR,minImageFilter,minMipFilter,
   magImageFilter,compareMode,compareFunction,seamlessCubeMap,maxAnisotropy,
   lodBias,minLod,maxLod,borderColor[4]`. Clamp-edge S/T; repeat or clamp-edge R;

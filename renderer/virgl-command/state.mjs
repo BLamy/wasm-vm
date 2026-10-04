@@ -201,6 +201,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       if (gl.getParameter(gl.CURRENT_PROGRAM) === program.native) gl.useProgram(null);
       gl.deleteProgram(program.native);
       if (program.variantShader) gl.deleteShader(program.variantShader);
+      if (program.fragmentVariantShader) gl.deleteShader(program.fragmentVariantShader);
       shaderBytes -= program.variantBytes;
       for (const block of program.blocks) { gl.deleteBuffer(block.buffer); uniformBytes -= block.byteLength; }
     };
@@ -255,7 +256,6 @@ function createRenderer(options, drawing, asynchronous = false) {
           for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
         }
         if (type === 6 || type === 8) {
-          if (type === 6) require(fields.swizzle.every((component, index) => component === index), "unsupported-feature", "Only identity sampler swizzles are supported.");
           const depth = type === 8 && fields.format === 16;
           Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", depth ? "depth-texture" : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
@@ -299,20 +299,55 @@ function createRenderer(options, drawing, asynchronous = false) {
       }
     };
     const unitFor = (stage, index) => stage === 1 ? index : 16 + index;
+    const samplingFor = (sub, fragment) => {
+      const views = fragment.translation.metadata.samplers.map((sampler) => {
+        require(sampler.type === "sampler2D" && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < 8 &&
+          sampler.name === `fssamp${sampler.index}`, "shader-link-error", "View specialization requires the checked fragment 2D TEX family.");
+        const view = sub.views[1][sampler.index], fields = view?.fields;
+        // Linking may precede view binding. The fixed legacy RGBA identity
+        // specialization is safe then; draw validation still requires a view.
+        return { index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
+          firstLevel: 0, lastLevel: 0, firstLayer: 0, lastLayer: 0, origin: "lower-left",
+          swizzle: fields?.swizzle ?? [0, 1, 2, 3] };
+      });
+      const key = views.length ? `sampler-view-v1:${JSON.stringify(views)}` : "";
+      const standard = views.every((view) => view.format === 67 && view.swizzle.every((value, lane) => value === lane));
+      return freeze({ key, suffix: standard ? "" : `|${key}`, views });
+    };
+    const specializeFragment = (text, sampling) => {
+      const specialized = sampling.views.filter((view) => view.swizzle.some((value, lane) => value !== lane));
+      if (!specialized.length) return null;
+      let helpers = "";
+      for (const view of specialized) {
+        const name = `wv_view_${view.index}`, pattern = new RegExp(`\\btexture\\s*\\(\\s*${view.name}\\s*,`, "g");
+        let hits = 0;
+        text = text.replace(pattern, () => { hits++; return `${name}(`; });
+        require(hits > 0, "shader-link-error", "Checked TEX sampler has no emitted lookup to specialize.");
+        const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];
+        helpers += `vec4 ${name}(vec2 coord){vec4 v=texture(${view.name},coord);return vec4(${view.swizzle.map((value) => lanes[value]).join(",")});}\n`;
+      }
+      const main = text.indexOf("\nvoid main(");
+      require(main >= 0, "shader-link-error", "Checked fragment has no main insertion point.");
+      const variant = text.slice(0, main + 1) + helpers + text.slice(main + 1);
+      require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "View-specialized GLSL exceeds the compiler output bound.");
+      return variant;
+    };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
+      const sampling = samplingFor(sub, fragment);
       // A successfully checked selector is immutable. Repeated restoration can
       // reuse its canonical key without rebuilding the varying maps each time.
       if (fragment.interfaceKey !== undefined) {
-        const cached = sub.programs.get(`${vertex.generation}:${fragment.generation}:${fragment.interfaceKey}`);
+        const cached = sub.programs.get(`${vertex.generation}:${fragment.generation}:${fragment.interfaceKey}${sampling.suffix}`);
         if (cached) return cached;
       }
       let vs = vertex.translation.metadata;
       const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs);
-      const key = `${vertex.generation}:${fragment.generation}:${interfaceInfo.key}`;
+      const key = `${vertex.generation}:${fragment.generation}:${interfaceInfo.key}${sampling.suffix}`;
       require(programs.size < limits.programs, "limit-exceeded", "Linked program limit exceeded.");
       const program = { key, vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
-        interfaceKey: interfaceInfo.key, variantShader: null, variantBytes: 0,
+        interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
+        variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
       try {
         if (interfaceInfo.flat) {
@@ -334,8 +369,18 @@ function createRenderer(options, drawing, asynchronous = false) {
             `WebGL vertex variant compilation failed: ${gl.getShaderInfoLog(program.variantShader)}`);
           vs = pair.vertex.metadata;
         }
+        const fragmentText = specializeFragment(fragment.translation.glsl, sampling);
+        if (fragmentText !== null) {
+          require(fragmentText.length <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Fragment view variant storage budget exceeded.");
+          program.variantBytes += fragmentText.length; shaderBytes += fragmentText.length;
+          program.fragmentVariantShader = gl.createShader(gl.FRAGMENT_SHADER);
+          require(program.fragmentVariantShader, "backend-error", "Fragment view variant allocation failed.");
+          gl.shaderSource(program.fragmentVariantShader, fragmentText); gl.compileShader(program.fragmentVariantShader);
+          require(gl.getShaderParameter(program.fragmentVariantShader, gl.COMPILE_STATUS), "shader-error",
+            `WebGL fragment view variant compilation failed: ${gl.getShaderInfoLog(program.fragmentVariantShader)}`);
+        }
         program.native = gl.createProgram(); require(program.native, "backend-error", "Program allocation failed.");
-        gl.attachShader(program.native, program.variantShader ?? vertex.shader); gl.attachShader(program.native, fragment.shader);
+        gl.attachShader(program.native, program.variantShader ?? vertex.shader); gl.attachShader(program.native, program.fragmentVariantShader ?? fragment.shader);
         gl.linkProgram(program.native);
         require(gl.getProgramParameter(program.native, gl.LINK_STATUS), "shader-link-error", `WebGL program link failed: ${gl.getProgramInfoLog(program.native)}`);
         for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_ATTRIBUTES); index++) {
@@ -373,9 +418,13 @@ function createRenderer(options, drawing, asynchronous = false) {
           for (const sampler of metadata.samplers) {
             require(sampler.type === "sampler2D" && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
             const location = gl.getUniformLocation(program.native, sampler.name), index = gl.getUniformIndices(program.native, [sampler.name])?.[0];
-            require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
-              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.SAMPLER_2D &&
-              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1, "shader-reflection-error", "Sampler reflection mismatch.");
+            const view = stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index) : null;
+            const constant = view?.swizzle.every((value) => value >= 4) ?? false;
+            if (location === null && index === gl.INVALID_INDEX) require(constant,
+              "shader-reflection-error", "Only a proved all-constant view may eliminate a used sampler.");
+            else require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.SAMPLER_2D &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1, "shader-reflection-error", "Sampler reflection mismatch.");
             const unit = unitFor(stage, sampler.index);
             program.samplers.push({ location, unit, stage, index: sampler.index }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
           }
@@ -419,6 +468,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       } catch (error) {
         if (program.native) gl.deleteProgram(program.native);
         if (program.variantShader) gl.deleteShader(program.variantShader);
+        if (program.fragmentVariantShader) gl.deleteShader(program.fragmentVariantShader);
         shaderBytes -= program.variantBytes;
         for (const block of program.blocks) { gl.deleteBuffer(block.buffer); uniformBytes -= block.byteLength; }
         throw error;
@@ -469,6 +519,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         "stale-context", "Draw context or subcontext identity changed.");
       require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
         sub.programs.get(program.key) === program && programs.has(program) &&
+        samplingFor(sub, shaders[1]).key === program.samplingKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
     };
@@ -758,7 +809,8 @@ function createRenderer(options, drawing, asynchronous = false) {
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
         vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation,
-        key: program.key, interfaceKey: program.interfaceKey, variantBytes: program.variantBytes,
+        key: program.key, interfaceKey: program.interfaceKey, samplingKey: program.samplingKey,
+        samplingViews: program.samplingViews, variantBytes: program.variantBytes,
         reflection: program.reflection })), resets: { ...sub.resets } });
     const releaseJobAccess = (job) => {
       if (job.pending) {

@@ -66,3 +66,27 @@ color/depth/state/draw/async/tiny checks, then freeze the exact source, record
 final hardware/pristine-clone proof and submit to a fresh critic. This remains
 an isolated renderer boundary; production negotiation stays disabled.
 
+### 2026-10-04 — worker — frozen proof plan
+
+The isolated runtime adds no production import or guest capability negotiation.
+The submission target rebuilds the unchanged pinned Wasm compiler and records
+all affected decoder/resource/state/draw/async/color/depth gates. New hardware
+proof exercises26 view patterns per color format, all selectors in each lane,
+native nearest/linear/clamp-edge pixels, exact role guards, retained/reused
+aliases, slot0/7 keys, combined flat+view variants,12 native failure boundaries,
+exact/one-byte-short shader quotas, six trusted-host compiler-output guards and
+delayed asynchronous A/B/A draws at schedules0/1/3. A served GLSL swizzle source
+fault must fail a physical GPU pixel, before inverse guest-byte conversion.
+
+The historical `tools/verify-virgl-pairs.mjs` wrapper stopped at its old compiler
+corpus premise: it still predicts12/19 standalone admissions although subsequent
+verified compiler work expanded that family (precheck report at
+`target/evidence/virgl-view-precheck/pairs/report.json`, unchanged shader
+`12f6d594…`, expected false/observed true). This is outside G4's JS runtime
+boundary. The new hardware suite invokes the unchanged exported
+`runRendererPairs` directly with its authenticated original/fixture inputs,
+retaining its physical smooth/flat/mixed, lifecycle,12 fault and two quota tests.
+No admission expectations or implementation tests are weakened or rewritten.
+The final exact-source acceptance and pristine clone, followed by a fresh critic,
+are authoritative; these prechecks are only iteration.
+

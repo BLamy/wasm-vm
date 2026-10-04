@@ -245,7 +245,7 @@ function decodeObject(p, objectType) {
     case 6: {
       p.exact(6);
       const resourceHandle = p.handle(2), packedFormat = p.u(3), format = packedFormat & 0xffffff, target = packedFormat >>> 24;
-      p.require(format === 67 && target === 2, "unsupported-feature", "Only RGBA8 2D sampler views are supported.");
+      p.require([2, 67, 233].includes(format) && target === 2, "unsupported-feature", "Only required normalized color 2D sampler views are supported.");
       p.zero(4, 2, "Only level zero, layer zero sampler views are supported.");
       const packedSwizzle = p.u(6);
       p.mask(packedSwizzle, 0xfff);
