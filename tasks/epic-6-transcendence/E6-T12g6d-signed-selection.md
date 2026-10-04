@@ -3,7 +3,7 @@ id: E6-T12g6d
 epic: 6
 title: Admit bounded signed integer comparison and maximum
 priority: 525.027010571
-status: pending
+status: in-progress
 depends_on: [E6-T12g6c]
 estimate: S
 risk: high
@@ -37,4 +37,15 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — activation
+
+Continued the user's guest graphics offload request above independently verified
+G6c `04885468`, rather than unrelated E5.5 publication work. Only this S/high
+compiler boundary occupies the active lane. The captured compositor uses ISLT
+and IMAX on count words in its existing raw constant banks. Add these private
+integer operations to the existing v2 integer profile, preserving metadata for
+all prior programs and adding no numeric/raster domain grant. Explicit opcode
+bits 41/42 avoid feature bit40 and preserve the fixed IR layout. Scope proof to
+signed endpoints, masks/swizzles, aliased versions, joins, constant bank ownership,
+pinned Mesa semantics and actual physical feedback/pixels. Production imports,
+caps and negotiation stay disabled until their own integration acceptance.

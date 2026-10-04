@@ -9,7 +9,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Next up (deps satisfied, in priority order)
 
 1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
-1. **E6-T12g6d** — Admit bounded signed integer comparison and maximum
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -611,7 +610,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02701055` [E6-T12g6a](epic-6-transcendence/E6-T12g6a-original-shader-execution.md) — Prove four newly captured gears and compositor shader bodies on hardware *(deps: E6-T12g5)*
 - [x] `525.02701056` [E6-T12g6b](epic-6-transcendence/E6-T12g6b-compositor-compiler-bounds.md) — Bound compiler arenas for the larger captured compositor bodies *(deps: E6-T12g6a)*
 - [x] `525.02701057` [E6-T12g6c](epic-6-transcendence/E6-T12g6c-hexadecimal-immediates.md) — Decode captured hexadecimal FLT32 immediates without numeric reinterpretation *(deps: E6-T12g6b)*
-- [ ] `525.027010571` [E6-T12g6d](epic-6-transcendence/E6-T12g6d-signed-selection.md) — Admit bounded signed integer comparison and maximum *(deps: E6-T12g6c)*
+- [~] `525.027010571` [E6-T12g6d](epic-6-transcendence/E6-T12g6d-signed-selection.md) — Admit bounded signed integer comparison and maximum *(deps: E6-T12g6c)*
 - [ ] `525.027010572` [E6-T12g6e](epic-6-transcendence/E6-T12g6e-signed-conversions.md) — Admit bounded signed integer and float conversions *(deps: E6-T12g6d)*
 - [ ] `525.027010573` [E6-T12g6f](epic-6-transcendence/E6-T12g6f-scalar-truncation-sign.md) — Admit bounded scalar truncation and sign operations *(deps: E6-T12g6e)*
 - [ ] `525.027010574` [E6-T12g6g1](epic-6-transcendence/E6-T12g6g1-minimum-selection.md) — Admit exact word-local minimum selection *(deps: E6-T12g6f)*
