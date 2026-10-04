@@ -3,7 +3,7 @@ id: E6-T12f6
 epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
 priority: 525.0269916
-status: pending
+status: in-progress
 depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5]
 estimate: S
 risk: high
@@ -42,4 +42,18 @@ support for formats/state outside the separately verified boundary.
 
 ## Verification log
 
-(empty)
+### 2026-10-03 — worker — execution boundary
+
+All dependencies are independently verified; arithmetic predecessor is
+`a80ba9e929698c6d582589856822c18aad8c513c`. This integration slice adds an acceptance
+harness, an explicit original-body/metadata/contract inventory, independent
+vertex/pixel observations and a retained-leaf recording. It changes no runtime
+feature family. The 8-by-11 original pair matrix must admit exactly the 57
+declaration-compatible pairs and reject the other 31, preserving all contracts.
+Eight unchanged vertex bodies get physical transform-feedback observations of
+their written lanes; all eleven unchanged fragment bodies get pixel observations.
+Original loop/radial execution stays inside the separately verified domains.
+An actual exercised compiler-source fault must fail independent observations.
+The final frozen-source acceptance runs from a scrubbed pristine clone and is
+submitted to a fresh adversarial verifier. Guest negotiation, complete desktop
+offload, deployment and 300 MIPS remain gated beyond this slice.
