@@ -4,7 +4,7 @@ epic: 6
 title: Close original kmscube and es2gears format/view requirements
 priority: 525.0270106
 status: pending
-depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a]
+depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m]
 estimate: S
 risk: high
 capstone: false
@@ -27,7 +27,9 @@ actual browser execution for the required paths. F6's result cannot establish
 support for these six additional bodies. G6a separately proves the four already
 admitted bodies. The larger `92cb866a` and `c5806d5f` require ordered compiler
 capacity/grammar tasks and original execution evidence before G6 may activate;
-add their verified dependency boundaries when that decomposition is defined.
+E6-T12g6b through E6-T12g6l separately prove the capacity and grammar
+boundaries; E6-T12g6m must prove both complete original programs before G6.
+The ordered tasks preserve each one-boundary acceptance and fresh critic gate.
 
 ## Deterministic acceptance
 
