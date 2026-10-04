@@ -3,11 +3,18 @@
 
 #include <stddef.h>
 
-#define BRIDGE_MAX_TEXT 16384u
+#define BRIDGE_MAX_TEXT 49152u
 #define BRIDGE_MAX_TOKENS 8192u
-#define BRIDGE_MAX_GLSL 65536u
-#define BRIDGE_MAX_INSTRUCTIONS 179u
-#define BRIDGE_MAX_RESULT (BRIDGE_MAX_GLSL * 2u + 16384u)
+#define BRIDGE_MAX_GLSL 262144u
+#define BRIDGE_MAX_INSTRUCTIONS 768u
+#define BRIDGE_MAX_TEMPORARIES 512u
+#define BRIDGE_MAX_IMMEDIATES 32u
+#define BRIDGE_MAX_FLOW_DEPTH 16u
+#define BRIDGE_MAX_LINES 1536u
+#define BRIDGE_MAX_LINE_BYTES 512u
+/* json_string encodes every control byte as six ASCII bytes. Reserve its
+ * worst case, independent of today's particular GLSL newline density. */
+#define BRIDGE_MAX_RESULT (BRIDGE_MAX_GLSL * 6u + 16384u)
 #define BRIDGE_MAX_PAIR_RESULT (BRIDGE_MAX_RESULT * 2u + 1024u)
 
 /* stage: 0 = vertex, 1 = fragment. The returned JSON is borrowed until the

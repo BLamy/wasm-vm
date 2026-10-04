@@ -1,0 +1,44 @@
+{
+  "schema": "virgl-compiler-bounds-critic-seal-v1",
+  "task": "E6-T12g6b",
+  "verdict": "verified",
+  "sourceHead": "07f47569525dfa898dadd6f95dfa0a7a4a8718e4",
+  "submissionHead": "9921c1c0df69a0e4572bf4154cbd9fb2deeff264",
+  "base": "60aebb0e1a4639ff4d9468067879e9789e6a5a23",
+  "records": 28,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 1066484,
+    "sha256": "1c6e0d69048ccdcb9762acde6e9198b3d5e380e6fb6308aa1a5e9355fa01037d"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 4591,
+    "sha256": "fb78c6bc0fde0df3b9269787ced68d40d200de233bd45147321a1eea3636f821"
+  },
+  "auditSha256": "b04b2a432e0e714124d9c38e0cb3bfc290e8248c5b2cf2004fc97a7619c5b411",
+  "predictionsSha256": "28f7978d228acc10927341dc6d66eb5a46809aad3330f1a1f70de9f6688e9087",
+  "sourceBindingsSha256": "86d13a8665733082bd5dad82f1d9fb7bd4d99c9ffb16a066970b75a4be592243",
+  "workerDependency": {
+    "path": "evidence/virgl-compiler-bounds/worker/recording.tar.gz",
+    "sha256": "2e9a57b80f05914377f852f17c3aaf597112f269d2ea67244b1a510944601756",
+    "recordIndexSha256": "77214cdb6c845547d9985015bee862323a06cc8f401380d64340b9c21c06fcf7",
+    "uniqueMembers": 104
+  },
+  "promotedGuard": {
+    "path": "renderer/virgl-shader/tests/compiler-bounds-joins.mjs",
+    "sha256": "26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62",
+    "cases": 402,
+    "resultSha256": "f368d7d69dbea6494d367961378bfa15011f4e1a2a74676f9e80933d7dc90f57",
+    "command": "node renderer/virgl-shader/tests/compiler-bounds-joins.mjs --native renderer/virgl-shader/build/native/virgl-shader"
+  },
+  "independentJoinCases": 402,
+  "happyHardwareSchedules": 7,
+  "independentlyCheckedWords": 24192,
+  "independentlyCheckedPixels": 193536,
+  "freshSeed": 1875794577,
+  "allResourcesClosed": true,
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "performanceClaim": false
+}

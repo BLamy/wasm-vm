@@ -1985,3 +1985,7 @@ verify-E6-T12g5:
 .PHONY: verify-E6-T12g6a
 verify-E6-T12g6a:
 	bash tools/verify-virgl-gears-shaders.sh
+
+.PHONY: verify-E6-T12g6b
+verify-E6-T12g6b:
+	bash tools/verify-virgl-compiler-bounds.sh

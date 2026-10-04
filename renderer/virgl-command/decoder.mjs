@@ -3,7 +3,7 @@ export const PROFILE = "virgl-tiny-commands-v1";
 export const LIMITS = Object.freeze({
   submissionBytes: 262144,
   commands: 4096,
-  shaderTextBytes: 16384,
+  shaderTextBytes: 49152,
   shaderTokens: 8192,
   vertexElements: 16,
   vertexBuffers: 16,

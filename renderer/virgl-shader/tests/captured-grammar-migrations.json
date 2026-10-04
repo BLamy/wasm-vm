@@ -235,6 +235,63 @@
         }
       },
       "reason": "The final full MOV OUT[0], IN[0] defines every visible position lane; the preceding bounded mask or PRECISE MOV is now supported by verified compiler boundaries."
+    },
+    {
+      "name": "oversized-temp-range",
+      "stage": "vertex",
+      "inputSha256": "dbec40d29925299865788879acb672c1f5f0dfd42bf00c3d0978c53c2f206e1e",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      "reason": "E6-T12g6b raises the checked TEMP envelope to index511. The literal historical TEMP[0..118] declaration now fits; its only visible operation remains the original full identity MOV."
     }
   ]
 }

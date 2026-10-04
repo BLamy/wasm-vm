@@ -1,13 +1,17 @@
 {
   "schema": "gears-original-shader-boundary-v1",
   "limits": {
-    "textBytes": 16384,
+    "textBytes": 49152,
     "tokens": 8192,
-    "glslBytes": 65536,
-    "instructions": 179,
+    "glslBytes": 262144,
+    "instructions": 768,
     "registerIndex": 7,
-    "temporaryRegisterIndex": 117,
-    "constantRegisterIndex": 45
+    "temporaryRegisterIndex": 511,
+    "constantRegisterIndex": 45,
+    "immediateRegisterIndex": 31,
+    "conditionalDepth": 16,
+    "lines": 1536,
+    "lineBytes": 512
   },
   "originals": [
     {
@@ -319,8 +323,13 @@
       "role": "support",
       "admitted": false,
       "rejection": {
-        "code": "input-too-large",
-        "message": "TGSI text exceeds 16384 bytes."
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      },
+      "rejectionMigration": {
+        "task": "E6-T12g6b",
+        "previousCode": "input-too-large",
+        "reason": "The complete39261-byte original fits the larger bounded source envelope; unproved shader operations still reject."
       }
     },
     {
