@@ -92,7 +92,20 @@ export function runPreciseWordRegressions(bridge, parse = parseConstantDomain) {
     for (const [count, accepted] of [[178, true], [179, false]]) requireResult(stage, 'instruction-count-' + (count + 1), [
       ...Array(count).fill('MOV_PRECISE TEMP[0], IN[0]'), 'MOV_PRECISE OUT[0], TEMP[0]',
     ], accepted);
-    for (const opcode of ['ADD_PRECISE', 'MUL_PRECISE', 'MAX_SAT_PRECISE', 'MOV_PRECISE_PRECISE'])
+    for (const operation of ['ADD', 'MUL']) {
+      const text = program(stage, [operation + '_PRECISE TEMP[0], IN[0], IN[0]', 'MOV OUT[0], IN[0]']);
+      const result = bridge.translate({stage, text});
+      assert.equal(result.ok, true, 'explicit binary32 migration/' + stage + '/' + operation);
+      assert.equal(result.metadata.profile, 'virgl-webgl2-raw-bits-v28');
+      assert.equal(result.metadata.arithmeticBaseProfile, 'virgl-webgl2-raw-bits-v1');
+      assert.equal(Object.hasOwn(result.metadata, 'preciseWordContract'), false);
+      assert.deepEqual(result.metadata.preciseArithmeticContract, {
+        kind: 'tgsi-precise-binary32-rne-v1', stage, operations: [operation],
+        rounding: 'nearest-even', nan: 'canonical-quiet-0x7fc00000', subnormals: 'gradual',
+      });
+      observations.admissions.push({stage, name: 'binary32-' + operation, accepted: true});
+    }
+    for (const opcode of ['MAX_SAT_PRECISE', 'MOV_PRECISE_PRECISE'])
       requireResult(stage, 'gated-' + opcode, [opcode + ' TEMP[0], IN[0], IN[0]', 'MOV OUT[0], IN[0]'], false);
   }
   const fixture = JSON.parse(fs.readFileSync(new URL('../../virgl-shader/tests/precise-word-cases.json', import.meta.url)));

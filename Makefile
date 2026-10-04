@@ -1947,3 +1947,7 @@ verify-E6-T12f4a:
 .PHONY: verify-E6-T12f4b
 verify-E6-T12f4b:
 	bash tools/verify-virgl-raster-bank.sh
+
+.PHONY: verify-E6-T12f5
+verify-E6-T12f5:
+	bash tools/verify-virgl-precise-arithmetic.sh

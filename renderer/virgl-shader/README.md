@@ -1035,3 +1035,80 @@ paths are stopped before invoking the native GPU method.
 The original bodies now compile18/19. ADD_PRECISE and MUL_PRECISE remain gated.
 This is guarded admission, without claiming real captured radial banks,
 production guest GPU negotiation or300MIPS desktop throughput.
+
+Explicit integer binary32 PRECISE arithmetic — E6-T12f5
+-----------------------------------------------------
+
+`ADD_PRECISE` and `MUL_PRECISE` execute on the GPU through bounded ESSL300
+highp integer helpers. Each instruction returns one raw binary32 word, rounded
+once to nearest with ties to even. Gradual underflow preserves subnormals;
+ADD cancellation returns positive zero, ADD of two negative zeros returns
+negative zero, and MUL uses the XOR of operand signs. NaN inputs and invalid
+operations (opposite infinities in ADD, zero times infinity in MUL) return the
+canonical quiet NaN `0x7fc00000`. Source absolute value clears the sign bit
+before source negation toggles it. `LEGACY_MATH_RULES` remains unsupported.
+
+The [TGSI specification](https://docs.mesa3d.org/gallium/tgsi.html) prohibits
+result-changing transformations of PRECISE instructions, including contraction.
+It does not select a rounding mode. This bridge explicitly chooses nearest-even,
+also the default reference mode documented by
+[SoftFloat](https://www.jhauser.us/arithmetic/SoftFloat-3/doc/SoftFloat.html).
+Two separately rounded instructions are therefore observably distinct from a
+fused multiply-add. For `0x3f800001 * 0x3f7ffffe + 0xbf800000`, this policy returns
+zero; rounding the exact combined rational once returns `0xa8800000`.
+There is no native floating multiply/add inside these helpers and no reliance
+on bitcasts, helper calls or driver options as contraction barriers.
+
+[ESSL300](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf)
+specifies 32-bit highp integers. ADD aligns significands with guard/round/sticky
+bits, then performs at most26 normalization steps. MUL normalizes each nonzero
+subnormal in at most23 steps and forms a48-bit product from16-bit limbs in two
+32-bit words. The lower limb product fits in32 bits; the middle accumulation
+is at most33488384 and the upper word at most65535. Product reduction shifts
+by20 or21, retaining three rounding bits and the discarded-bit sticky flag.
+Exponent underflow can request a shift up to172, but the jam helper handles
+zero,1–31 and32-or-more as separate guarded paths. Every executed shift count
+is less than32; no64-bit GLSL type, extension, CPU shader evaluator or unbounded
+normalization loop is used. The three helper strings together remain below8KiB
+and the existing64KiB output,179-instruction,118-temporary,46-constant and fixed
+16MiB Wasm/256KiB stack limits are unchanged.
+
+Outer profile `virgl-webgl2-raw-bits-v28` adds a closed
+`preciseArithmeticContract` with the operation set and fixed rounding/NaN/
+underflow policy. `arithmeticBaseProfile` retains one existing raw profile
+v1–v27; v28 cannot recursively wrap itself. A v27 base still retains its own
+raster base. The renderer validates every simultaneous finite-bank, indirect,
+count, radial, raster and word-PRECISE obligation before using its bank.
+Contracts are copied into frozen owned records without invoking caller getters.
+
+Exact private arithmetic accepts all binary32 input words and keeps results
+raw through masks, aliases, swizzles, selects and exact comparisons. Existing
+ordinary numerical access and floating output authority remain separate: both
+arithmetic operands must already possess numerical authority before their
+result receives it. Integer manufacture alone cannot obtain ordinary raster
+output authority. Arithmetic outputs may still undergo ordinary interpolation,
+RGBA8 conversion or host GPU treatment of subnormals; the exact-word promise
+applies to internal integer consumers. The bit-plane GPU proof observes internal
+words using known zero/one floating carriers, in both stages.
+
+`make verify-E6-T12f5` records the complete source-bound predecessor corpus and
+an explicit admission ledger for10 singles,4 pairs and the last unchanged
+original. All19 originals translate; this isolated slice executes original
+`3f78a90d` with its original multiply-by-zero and ADD instructions intact.
+The full19-body hardware integration remains E6-T12f6. A rational oracle uses
+BigInt values and binary search between adjacent representable numbers; it does
+not copy the GPU alignment/product algorithm or consult emitted GLSL. The
+hardware proof checks386 four-lane vectors per full kernel, all exponent-gap
+classes, all23 subnormal leading-bit positions, modifiers, masks, aliases,
+conditional paths and contraction-sensitive chains. A separate recorded GPU
+counter run exercises all39 helper markers in both stages. It changes only
+explicit marker/observer instrumentation and never substitutes for the unchanged
+compiler-source word proof. A mixed raster proof executes authorized arithmetic
+inxy while retaining guarded copied-bank obligations inzw. Six isolated source
+faults remove sticky bits,
+change halfway rounding, lose a limb carry, break normalization, lose a zero
+sign or truncate intermediate rounding; each must produce an independent
+physical word mismatch. Three input seeds, the retained hardware leaves, native
+ASan/UBSan/counters, actual fixed-heap Wasm pressure, and a final scrubbed clone
+complete the scoped evidence. Guest3D negotiation remains disabled and no desktop
+MIPS or compositor responsiveness result is claimed here.

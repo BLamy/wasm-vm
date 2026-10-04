@@ -1,0 +1,1048 @@
+{
+  "status": "passed",
+  "head": "7e444f2e3523b5b46b4aedbff3ace0c409ff6a83",
+  "binarySha256": "a78914ff0f54583e74df35f33c8998230118126554084e9b3df709b42b734c70",
+  "sanitizers": {
+    "ASAN_OPTIONS": "abort_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  },
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "b543317f717986e769a48ffc23fc72f30db3a6efb9b38263a46a43c55a9cb9d2",
+      "bytes": 77333
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "93e4f8bca31662b464cada43bb17f9e1955d9589572431f52728ecec4203315e",
+      "bytes": 40572
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4",
+      "bytes": 554830
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.c",
+      "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b",
+      "bytes": 3266
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3",
+      "bytes": 35054
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc",
+      "bytes": 23084
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833",
+      "bytes": 22172
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879",
+      "bytes": 2910
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd",
+      "bytes": 9241
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51",
+      "bytes": 15277
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975",
+      "bytes": 24473
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f",
+      "bytes": 5859
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c",
+      "bytes": 49657
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce",
+      "bytes": 11690
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514",
+      "bytes": 11319
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c",
+      "bytes": 8950
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d",
+      "bytes": 10824
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3",
+      "bytes": 454
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.h",
+      "sha256": "bdd21214e97b6e9a63516e2b96e4753f8aaaa9f69ad48dee1d133129872f8aac",
+      "bytes": 304
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105",
+      "bytes": 1061
+    },
+    {
+      "path": "renderer/virgl-shader/raw_binary32.h",
+      "sha256": "90d8e3227f44c19e21443d5ec85f6e926eece345b95cb6cd3b06f01259a7c490",
+      "bytes": 5216
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "39353b91c14bc29e7f2564c117d629e2d2c211cc94fee33bd5de631efc7c4015",
+      "bytes": 8895
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71",
+      "bytes": 8594
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287",
+      "bytes": 951
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "sha256": "876d4ba830ed7f9a7886fae3b81c0df36d5ac9b3d3268913ac826b0617d0c7b0",
+      "bytes": 15719
+    },
+    {
+      "path": "target/evidence/virgl-precise-arithmetic-verifier/authority.mjs",
+      "sha256": "e9c9b023717360709c91096b6bb13aa58c8ca740230c7827f42689697fad94e3",
+      "bytes": 4033
+    },
+    {
+      "path": "target/evidence/virgl-precise-arithmetic-verifier/audit-native.py",
+      "sha256": "2a74c5a14fc32aab73338b73c0a238aadd19eadd1aeafa11cf1b4105da9a6f9b",
+      "bytes": 3896
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 313935,
+      "sha256": "1f26f78f5ba3516e98ea701f3e85e46364b3334cc855e86f08772dd949de299a"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "bytes": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "target/evidence/virgl-precise-arithmetic-verifier/authority.json",
+      "bytes": 38935,
+      "sha256": "e3c578ba0f4320580ffe46d085f4af864802cdedda8a294e99f55aa97faac3f1"
+    }
+  ],
+  "calls": [
+    {
+      "index": 0,
+      "name": "private output",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], TEMP[1]\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "0904ba4fdf7a979f1c9eb992d9fa0449f878bf544dd5adea7b534142cb5f574a",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "0.profraw"
+    },
+    {
+      "index": 1,
+      "name": "multiply zero shortcut",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nMUL_PRECISE TEMP[117].xyzw, TEMP[0], IMM[0].xxxx\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "4b18fee82bfeb04a00e1268d0483591f65b1107c1c03a752c687f2ff771e5822",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "1.profraw"
+    },
+    {
+      "index": 2,
+      "name": "add zero shortcut",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], IMM[0].xxxx\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "419f9a2f7ce97666a87593ccad0aadbe96525edfc68c3e128cc27929c9fba889",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "2.profraw"
+    },
+    {
+      "index": 3,
+      "name": "safe left private right",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, IMM[0].xxxx, TEMP[0]\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "e58b6cb08823b1390581b688257ff24aaec877dde688d4da61c6003affaf017b",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "3.profraw"
+    },
+    {
+      "index": 4,
+      "name": "safe zero left private right",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nMUL_PRECISE TEMP[117].xyzw, IMM[0].xxxx, TEMP[0]\nUSHR TEMP[100].x, IN[1].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[1], TEMP[117]\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "801b18f240d8602f1f3ed0bc5a74aa39bac884e20a0d51b203863446359edbc5",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "4.profraw"
+    },
+    {
+      "index": 5,
+      "name": "private-bank mixed raster",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nIMM[2] UINT32 {65535,65535,65535,65535}\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nAND TEMP[0], CONST[1], IMM[2]\nADD_PRECISE TEMP[0], TEMP[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[1].xy, TEMP[0].xyxy\nMOV OUT[1].zw, CONST[0].zwzw\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "6bbfae2041314d91514821b99cc1e5c0ec54908c2aef63cfa16c5ba8c3cfcbfb",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "parse-error",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "0f9d190dbf5eeab88b4cf1a4d4b1bad65a4fb42133a3535eefecd7b72f534b0d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "5.profraw"
+    },
+    {
+      "index": 6,
+      "name": "authorized mixed raster",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nADD_PRECISE TEMP[0], IMM[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[1].xy, TEMP[0].xyxy\nMOV OUT[1].zw, CONST[0].zwzw\nMOV OUT[0], IN[0]\nEND\n",
+      "inputSha256": "af225aed6b01d2b90a1b75a0393d41ccb2976e27294d55a82433f1a22092bc42",
+      "exitCode": 0,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[2];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nuint raw_exact_jam(uint value, uint distance) {\n if (distance == 0u) { /* exact:jam-zero */ return value; }\n if (distance < 32u) { /* exact:jam-short */ return (value >> distance) | uint((value << (32u - distance)) != 0u); }\n /* exact:jam-wide */ return uint(value != 0u);\n}\nuint raw_exact_pack(uint sign, int exponent, uint significand) {\n if (exponent <= 0) { /* exact:underflow */ significand = raw_exact_jam(significand, uint(1 - exponent)); exponent = 1; }\n uint rounded = significand >> 3u, tail = significand & 7u;\n if (tail > 4u || (tail == 4u && (rounded & 1u) != 0u)) { /* exact:round-up */ rounded += 1u; }\n else { /* exact:round-down */ }\n if (rounded >= 16777216u) { /* exact:round-carry */ rounded >>= 1u; exponent += 1; }\n if (exponent >= 255) { /* exact:overflow */ return sign | 2139095040u; }\n if (rounded == 0u) { /* exact:rounded-zero */ return sign; }\n if (exponent == 1 && rounded < 8388608u) { /* exact:subnormal */ exponent = 0; }\n /* exact:packed */ return sign | (uint(exponent) << 23u) | (rounded & 8388607u);\n}\nuint raw_precise_add(uint a, uint b) {\n uint ma = a & 2147483647u, mb = b & 2147483647u;\n if (ma > 2139095040u || mb > 2139095040u) { /* exact:add-nan */ return 2143289344u; }\n if (ma == 2139095040u || mb == 2139095040u) {\n  if (ma == mb && ((a ^ b) & 2147483648u) != 0u) { /* exact:add-invalid */ return 2143289344u; }\n  /* exact:add-infinity */ return ma == 2139095040u ? a : b;\n }\n if (ma == 0u && mb == 0u) { /* exact:add-zeros */ return (a & b) & 2147483648u; }\n if (ma == 0u) { /* exact:add-zero-a */ return b; }\n if (mb == 0u) { /* exact:add-zero-b */ return a; }\n if (ma < mb) { /* exact:add-swap */ uint swap = a; a = b; b = swap; }\n int ea = int((a >> 23u) & 255u), eb = int((b >> 23u) & 255u);\n uint sa = a & 8388607u, sb = b & 8388607u, sign = a & 2147483648u;\n if (ea == 0) { /* exact:add-a-subnormal */ ea = 1; } else { /* exact:add-a-normal */ sa |= 8388608u; }\n if (eb == 0) { /* exact:add-b-subnormal */ eb = 1; } else { /* exact:add-b-normal */ sb |= 8388608u; }\n sa <<= 3u; sb = raw_exact_jam(sb << 3u, uint(ea - eb));\n uint result;\n if (((a ^ b) & 2147483648u) == 0u) {\n  /* exact:add-same-sign */ result = sa + sb;\n  if (result >= 134217728u) { /* exact:add-carry */ result = raw_exact_jam(result, 1u); ea += 1; }\n } else {\n  /* exact:add-subtract */ result = sa - sb;\n  if (result == 0u) { /* exact:add-cancel */ return 0u; }\n  for (int step = 0; step < 26 && ea > 1 && result < 67108864u; ++step) { /* exact:add-normalize */ result <<= 1u; ea -= 1; }\n }\n return raw_exact_pack(sign, ea, result);\n}\nuint raw_precise_mul(uint a, uint b) {\n uint ma = a & 2147483647u, mb = b & 2147483647u, sign = (a ^ b) & 2147483648u;\n if (ma > 2139095040u || mb > 2139095040u) { /* exact:mul-nan */ return 2143289344u; }\n if (ma == 2139095040u || mb == 2139095040u) {\n  if (ma == 0u || mb == 0u) { /* exact:mul-invalid */ return 2143289344u; }\n  /* exact:mul-infinity */ return sign | 2139095040u;\n }\n if (ma == 0u || mb == 0u) { /* exact:mul-zero */ return sign; }\n int ea = int((a >> 23u) & 255u), eb = int((b >> 23u) & 255u);\n uint sa = a & 8388607u, sb = b & 8388607u;\n if (ea == 0) { /* exact:mul-a-subnormal */ ea = 1; } else { /* exact:mul-a-normal */ sa |= 8388608u; }\n if (eb == 0) { /* exact:mul-b-subnormal */ eb = 1; } else { /* exact:mul-b-normal */ sb |= 8388608u; }\n for (int step = 0; step < 23 && sa < 8388608u; ++step) { /* exact:mul-normalize-a */ sa <<= 1u; ea -= 1; }\n for (int step = 0; step < 23 && sb < 8388608u; ++step) { /* exact:mul-normalize-b */ sb <<= 1u; eb -= 1; }\n uint a0 = sa & 65535u, a1 = sa >> 16u, b0 = sb & 65535u, b1 = sb >> 16u;\n uint bottom = a0 * b0;\n uint middle = a0 * b1 + a1 * b0 + (bottom >> 16u);\n uint high = a1 * b1 + (middle >> 16u), low = (middle << 16u) | (bottom & 65535u);\n int exponent = ea + eb - 127; uint distance = 20u;\n if ((high & 32768u) != 0u) { /* exact:mul-high */ distance = 21u; exponent += 1; }\n else { /* exact:mul-low */ }\n uint significand = (high << (32u - distance)) | (low >> distance) | uint((low << (32u - distance)) != 0u);\n return raw_exact_pack(sign, exponent, significand);\n}\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_add((1048576000u), (0u))), (raw_precise_add((1056964608u), (0u))), (raw_precise_add((1061158912u), (0u))), (raw_precise_add((1065353216u), (0u))));\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), uintBitsToFloat(raw_rhs.z), uintBitsToFloat(raw_rhs.w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_mul((raw_temp[0].x), (1065353216u))), (raw_precise_mul((raw_temp[0].y), (1065353216u))), (raw_precise_mul((raw_temp[0].z), (1065353216u))), (raw_precise_mul((raw_temp[0].w), (1065353216u))));\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), uintBitsToFloat(raw_rhs.z), uintBitsToFloat(raw_rhs.w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[0].x), (float_temp[0].y), 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), 0u, 0u);\n raw_out[1].xy = raw_rhs.xy;\n float_out[1].xy = float_rhs.xy;\n raw_rhs = uvec4(0u, 0u, (vsconst0[0].z), (vsconst0[0].w));\n raw_out[1].zw = raw_rhs.zw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[0].xyzw = raw_rhs.xyzw;\n gl_Position.x = in_0.x;\n gl_Position.y = in_0.y;\n gl_Position.z = in_0.z;\n gl_Position.w = in_0.w;\n vso_g0.x = float_out[1].x;\n vso_g0.y = float_out[1].y;\n vso_g0.z = uintBitsToFloat(raw_out[1].z);\n vso_g0.w = uintBitsToFloat(raw_out[1].w);\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v28",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 2,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 2
+            }
+          ],
+          "rasterBaseProfile": "virgl-webgl2-raw-bits-v7",
+          "constantRasterDomains": [
+            {
+              "kind": "constant-bank-raster-copy-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 2,
+              "components": [
+                {
+                  "register": 0,
+                  "mask": 12
+                }
+              ]
+            }
+          ],
+          "arithmeticBaseProfile": "virgl-webgl2-raw-bits-v27",
+          "preciseArithmeticContract": {
+            "kind": "tgsi-precise-binary32-rne-v1",
+            "stage": "vertex",
+            "operations": [
+              "ADD",
+              "MUL"
+            ],
+            "rounding": "nearest-even",
+            "nan": "canonical-quiet-0x7fc00000",
+            "subnormals": "gradual"
+          }
+        }
+      },
+      "stdoutSha256": "be4c3776d3f2c301bc9ec6e266fa048c727cab2d4b9942de937c5beac3ed86d5",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "6.profraw"
+    },
+    {
+      "index": 7,
+      "name": "private output",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], TEMP[1]\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+      "inputSha256": "aeb892970fe9507b18dcb216c764fa84fe4229d32c15aedabe0ee837e0742de1",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "7.profraw"
+    },
+    {
+      "index": 8,
+      "name": "multiply zero shortcut",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nMUL_PRECISE TEMP[117].xyzw, TEMP[0], IMM[0].xxxx\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+      "inputSha256": "3411c6491244ccf72b00f5a8b405b0dfa32845717efcbb347a139588f1d6b113",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "8.profraw"
+    },
+    {
+      "index": 9,
+      "name": "add zero shortcut",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, TEMP[0], IMM[0].xxxx\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+      "inputSha256": "32e2247c03328383f1c7c8730d10bc46a1e2b798e0e6e6f0eddbf0697e676911",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "9.profraw"
+    },
+    {
+      "index": 10,
+      "name": "safe left private right",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nADD_PRECISE TEMP[117].xyzw, IMM[0].xxxx, TEMP[0]\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+      "inputSha256": "ee0422886f62b17e80c7d57eea7272b6225dd3869b671a79121e4d8a4f6a9f90",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "10.profraw"
+    },
+    {
+      "index": 11,
+      "name": "safe zero left private right",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL IN[1], GENERIC[1], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0..117]\nDCL CONST[0..5]\nIMM[0] UINT32 {0,1065353216,2147483648,0}\nIMM[1] UINT32 {23,127,4294967200,1}\nIMM[2] UINT32 {65535,16,0,0}\nIMM[3] UINT32 {1065353217,1065353214,3212836864,1}\nAND TEMP[0], CONST[0], IMM[2].xxxx\nSHL TEMP[0], TEMP[0], IMM[2].yyyy\nAND TEMP[3], CONST[1], IMM[2].xxxx\nOR TEMP[0], TEMP[0], TEMP[3]\nAND TEMP[1], CONST[2], IMM[2].xxxx\nSHL TEMP[1], TEMP[1], IMM[2].yyyy\nAND TEMP[4], CONST[3], IMM[2].xxxx\nOR TEMP[1], TEMP[1], TEMP[4]\nAND TEMP[2], CONST[4], IMM[2].xxxx\nSHL TEMP[2], TEMP[2], IMM[2].yyyy\nAND TEMP[5], CONST[5], IMM[2].xxxx\nOR TEMP[2], TEMP[2], TEMP[5]\nMOV TEMP[117], IMM[0].xxxx\nMUL_PRECISE TEMP[117].xyzw, IMM[0].xxxx, TEMP[0]\nUSHR TEMP[100].x, IN[0].xxxx, IMM[1].xxxx\nAND TEMP[100].x, TEMP[100].xxxx, IMM[1].yyyy\nUADD TEMP[100].x, TEMP[100].xxxx, IMM[1].zzzz\nUSHR TEMP[115], TEMP[117], TEMP[100].xxxx\nAND TEMP[115], TEMP[115], IMM[1].wwww\nUCMP TEMP[115], TEMP[115], IMM[0].yyyy, IMM[0].xxxx\nMOV OUT[0], TEMP[117]\nEND\n",
+      "inputSha256": "3622ce79f8a2e2cec7a04f5d9574ad408853c1056a1526652ecb45069133b1e2",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "11.profraw"
+    },
+    {
+      "index": 12,
+      "name": "private-bank mixed raster",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[2] UINT32 {65535,65535,65535,65535}\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nAND TEMP[0], CONST[1], IMM[2]\nADD_PRECISE TEMP[0], TEMP[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[0].xy, TEMP[0].xyxy\nMOV OUT[0].zw, CONST[0].zwzw\nEND\n",
+      "inputSha256": "c0b230f5f55aad071feec0ff9eb46018cbbf66b2ae52a3e1d9312b6817b4801d",
+      "exitCode": 0,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "parse-error",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "stdoutSha256": "0f9d190dbf5eeab88b4cf1a4d4b1bad65a4fb42133a3535eefecd7b72f534b0d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "12.profraw"
+    },
+    {
+      "index": 13,
+      "name": "authorized mixed raster",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL CONST[0..1]\nIMM[0] UINT32 {1048576000,1056964608,1061158912,1065353216}\nIMM[1] UINT32 {0,1065353216,0,0}\nADD_PRECISE TEMP[0], IMM[0], IMM[1].xxxx\nMUL_PRECISE TEMP[0], TEMP[0], IMM[1].yyyy\nMOV OUT[0].xy, TEMP[0].xyxy\nMOV OUT[0].zw, CONST[0].zwzw\nEND\n",
+      "inputSha256": "c87d7e963329e20af95372efb8f82f5876bb8eec1ceaf59bb87983f567953b00",
+      "exitCode": 0,
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[2];\nuint raw_exact_jam(uint value, uint distance) {\n if (distance == 0u) { /* exact:jam-zero */ return value; }\n if (distance < 32u) { /* exact:jam-short */ return (value >> distance) | uint((value << (32u - distance)) != 0u); }\n /* exact:jam-wide */ return uint(value != 0u);\n}\nuint raw_exact_pack(uint sign, int exponent, uint significand) {\n if (exponent <= 0) { /* exact:underflow */ significand = raw_exact_jam(significand, uint(1 - exponent)); exponent = 1; }\n uint rounded = significand >> 3u, tail = significand & 7u;\n if (tail > 4u || (tail == 4u && (rounded & 1u) != 0u)) { /* exact:round-up */ rounded += 1u; }\n else { /* exact:round-down */ }\n if (rounded >= 16777216u) { /* exact:round-carry */ rounded >>= 1u; exponent += 1; }\n if (exponent >= 255) { /* exact:overflow */ return sign | 2139095040u; }\n if (rounded == 0u) { /* exact:rounded-zero */ return sign; }\n if (exponent == 1 && rounded < 8388608u) { /* exact:subnormal */ exponent = 0; }\n /* exact:packed */ return sign | (uint(exponent) << 23u) | (rounded & 8388607u);\n}\nuint raw_precise_add(uint a, uint b) {\n uint ma = a & 2147483647u, mb = b & 2147483647u;\n if (ma > 2139095040u || mb > 2139095040u) { /* exact:add-nan */ return 2143289344u; }\n if (ma == 2139095040u || mb == 2139095040u) {\n  if (ma == mb && ((a ^ b) & 2147483648u) != 0u) { /* exact:add-invalid */ return 2143289344u; }\n  /* exact:add-infinity */ return ma == 2139095040u ? a : b;\n }\n if (ma == 0u && mb == 0u) { /* exact:add-zeros */ return (a & b) & 2147483648u; }\n if (ma == 0u) { /* exact:add-zero-a */ return b; }\n if (mb == 0u) { /* exact:add-zero-b */ return a; }\n if (ma < mb) { /* exact:add-swap */ uint swap = a; a = b; b = swap; }\n int ea = int((a >> 23u) & 255u), eb = int((b >> 23u) & 255u);\n uint sa = a & 8388607u, sb = b & 8388607u, sign = a & 2147483648u;\n if (ea == 0) { /* exact:add-a-subnormal */ ea = 1; } else { /* exact:add-a-normal */ sa |= 8388608u; }\n if (eb == 0) { /* exact:add-b-subnormal */ eb = 1; } else { /* exact:add-b-normal */ sb |= 8388608u; }\n sa <<= 3u; sb = raw_exact_jam(sb << 3u, uint(ea - eb));\n uint result;\n if (((a ^ b) & 2147483648u) == 0u) {\n  /* exact:add-same-sign */ result = sa + sb;\n  if (result >= 134217728u) { /* exact:add-carry */ result = raw_exact_jam(result, 1u); ea += 1; }\n } else {\n  /* exact:add-subtract */ result = sa - sb;\n  if (result == 0u) { /* exact:add-cancel */ return 0u; }\n  for (int step = 0; step < 26 && ea > 1 && result < 67108864u; ++step) { /* exact:add-normalize */ result <<= 1u; ea -= 1; }\n }\n return raw_exact_pack(sign, ea, result);\n}\nuint raw_precise_mul(uint a, uint b) {\n uint ma = a & 2147483647u, mb = b & 2147483647u, sign = (a ^ b) & 2147483648u;\n if (ma > 2139095040u || mb > 2139095040u) { /* exact:mul-nan */ return 2143289344u; }\n if (ma == 2139095040u || mb == 2139095040u) {\n  if (ma == 0u || mb == 0u) { /* exact:mul-invalid */ return 2143289344u; }\n  /* exact:mul-infinity */ return sign | 2139095040u;\n }\n if (ma == 0u || mb == 0u) { /* exact:mul-zero */ return sign; }\n int ea = int((a >> 23u) & 255u), eb = int((b >> 23u) & 255u);\n uint sa = a & 8388607u, sb = b & 8388607u;\n if (ea == 0) { /* exact:mul-a-subnormal */ ea = 1; } else { /* exact:mul-a-normal */ sa |= 8388608u; }\n if (eb == 0) { /* exact:mul-b-subnormal */ eb = 1; } else { /* exact:mul-b-normal */ sb |= 8388608u; }\n for (int step = 0; step < 23 && sa < 8388608u; ++step) { /* exact:mul-normalize-a */ sa <<= 1u; ea -= 1; }\n for (int step = 0; step < 23 && sb < 8388608u; ++step) { /* exact:mul-normalize-b */ sb <<= 1u; eb -= 1; }\n uint a0 = sa & 65535u, a1 = sa >> 16u, b0 = sb & 65535u, b1 = sb >> 16u;\n uint bottom = a0 * b0;\n uint middle = a0 * b1 + a1 * b0 + (bottom >> 16u);\n uint high = a1 * b1 + (middle >> 16u), low = (middle << 16u) | (bottom & 65535u);\n int exponent = ea + eb - 127; uint distance = 20u;\n if ((high & 32768u) != 0u) { /* exact:mul-high */ distance = 21u; exponent += 1; }\n else { /* exact:mul-low */ }\n uint significand = (high << (32u - distance)) | (low >> distance) | uint((low << (32u - distance)) != 0u);\n return raw_exact_pack(sign, exponent, significand);\n}\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_add((1048576000u), (0u))), (raw_precise_add((1056964608u), (0u))), (raw_precise_add((1061158912u), (0u))), (raw_precise_add((1065353216u), (0u))));\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), uintBitsToFloat(raw_rhs.z), uintBitsToFloat(raw_rhs.w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_mul((raw_temp[0].x), (1065353216u))), (raw_precise_mul((raw_temp[0].y), (1065353216u))), (raw_precise_mul((raw_temp[0].z), (1065353216u))), (raw_precise_mul((raw_temp[0].w), (1065353216u))));\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), uintBitsToFloat(raw_rhs.z), uintBitsToFloat(raw_rhs.w));\n raw_temp[0].xyzw = raw_rhs.xyzw;\n float_temp[0].xyzw = float_rhs.xyzw;\n float_rhs = vec4((float_temp[0].x), (float_temp[0].y), 0.0, 0.0);\n raw_rhs = uvec4((raw_temp[0].x), (raw_temp[0].y), 0u, 0u);\n raw_out[0].xy = raw_rhs.xy;\n float_out[0].xy = float_rhs.xy;\n raw_rhs = uvec4(0u, 0u, (fsconst0[0].z), (fsconst0[0].w));\n raw_out[0].zw = raw_rhs.zw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = uintBitsToFloat(raw_out[0].z);\n fsout_c0.w = uintBitsToFloat(raw_out[0].w);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v28",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 2,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 2
+            }
+          ],
+          "rasterBaseProfile": "virgl-webgl2-raw-bits-v7",
+          "constantRasterDomains": [
+            {
+              "kind": "constant-bank-raster-copy-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 2,
+              "components": [
+                {
+                  "register": 0,
+                  "mask": 12
+                }
+              ]
+            }
+          ],
+          "arithmeticBaseProfile": "virgl-webgl2-raw-bits-v27",
+          "preciseArithmeticContract": {
+            "kind": "tgsi-precise-binary32-rne-v1",
+            "stage": "fragment",
+            "operations": [
+              "ADD",
+              "MUL"
+            ],
+            "rounding": "nearest-even",
+            "nan": "canonical-quiet-0x7fc00000",
+            "subnormals": "gradual"
+          }
+        }
+      },
+      "stdoutSha256": "7ab8a6806aa58d3c2c6308a5a202719c845cd0c0afe8a263b3055b6b69d9b304",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "profile": "13.profraw"
+    }
+  ],
+  "branchPoint": {
+    "path": "renderer/virgl-shader/raw_bits.c",
+    "line": 255,
+    "branches": [
+      [
+        255,
+        14,
+        255,
+        27,
+        48,
+        48,
+        0,
+        0,
+        4
+      ],
+      [
+        255,
+        31,
+        255,
+        44,
+        16,
+        32,
+        0,
+        0,
+        4
+      ]
+    ]
+  },
+  "coverageCommands": [
+    [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata",
+      "merge",
+      "-sparse",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/0.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/1.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/2.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/3.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/4.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/5.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/6.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/7.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/8.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/9.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/10.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/11.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/12.profraw",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/13.profraw",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/merged.profdata"
+    ],
+    [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+      "export",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/cli",
+      "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/merged.profdata",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c"
+    ],
+    [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+      "show",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/cli",
+      "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/merged.profdata",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+      "-show-line-counts-or-regions",
+      "-show-branches=count"
+    ]
+  ],
+  "tools": [
+    {
+      "path": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata",
+      "sha256": "7de82232c57a96269446a091afe378c154a5665b500034ea91d6b13a404c2060",
+      "version": "Apple LLVM version 21.0.0\n  Optimized build."
+    },
+    {
+      "path": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+      "sha256": "85b099b47bf16f4108c5d6c604f5b89fe1af67535dc687c7d2904aa8ad819e99",
+      "version": "Apple LLVM version 21.0.0\n  Optimized build."
+    }
+  ],
+  "records": [
+    {
+      "path": "0.profraw",
+      "bytes": 97080,
+      "sha256": "738ee6d8887e56399cf15245557a24b6465f34ddf4264520c7a0649a6a666387"
+    },
+    {
+      "path": "0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "0.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "0.tgsi",
+      "bytes": 1040,
+      "sha256": "0904ba4fdf7a979f1c9eb992d9fa0449f878bf544dd5adea7b534142cb5f574a"
+    },
+    {
+      "path": "1.profraw",
+      "bytes": 97080,
+      "sha256": "f90128e16644845912346094ca01aeb49fdb9f1c95bcedb0eb362bc996055dbb"
+    },
+    {
+      "path": "1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "1.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "1.tgsi",
+      "bytes": 1044,
+      "sha256": "4b18fee82bfeb04a00e1268d0483591f65b1107c1c03a752c687f2ff771e5822"
+    },
+    {
+      "path": "10.profraw",
+      "bytes": 97080,
+      "sha256": "86f5d07ec58c50294cdf41e212a22f55e5c04a8ad4394bcd3740becc6f0393c1"
+    },
+    {
+      "path": "10.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "10.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "10.tgsi",
+      "bytes": 1044,
+      "sha256": "ee0422886f62b17e80c7d57eea7272b6225dd3869b671a79121e4d8a4f6a9f90"
+    },
+    {
+      "path": "11.profraw",
+      "bytes": 97080,
+      "sha256": "d2a7a9d505bcdef439681ae72c6d5c544122147354c0035971e651dbea5f0612"
+    },
+    {
+      "path": "11.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "11.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "11.tgsi",
+      "bytes": 1044,
+      "sha256": "3622ce79f8a2e2cec7a04f5d9574ad408853c1056a1526652ecb45069133b1e2"
+    },
+    {
+      "path": "12.profraw",
+      "bytes": 97080,
+      "sha256": "4ff0a8794165c29a79e78a2c68b09cf076cbfdd14e274f74c23977a27dada2d2"
+    },
+    {
+      "path": "12.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "12.stdout",
+      "bytes": 123,
+      "sha256": "0f9d190dbf5eeab88b4cf1a4d4b1bad65a4fb42133a3535eefecd7b72f534b0d"
+    },
+    {
+      "path": "12.tgsi",
+      "bytes": 359,
+      "sha256": "c0b230f5f55aad071feec0ff9eb46018cbbf66b2ae52a3e1d9312b6817b4801d"
+    },
+    {
+      "path": "13.profraw",
+      "bytes": 97080,
+      "sha256": "cb6184b7bc59afc300957c06b71ede5d21f5733a16223c9ebf07639aae05acfc"
+    },
+    {
+      "path": "13.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "13.stdout",
+      "bytes": 7150,
+      "sha256": "7ab8a6806aa58d3c2c6308a5a202719c845cd0c0afe8a263b3055b6b69d9b304"
+    },
+    {
+      "path": "13.tgsi",
+      "bytes": 288,
+      "sha256": "c87d7e963329e20af95372efb8f82f5876bb8eec1ceaf59bb87983f567953b00"
+    },
+    {
+      "path": "2.profraw",
+      "bytes": 97080,
+      "sha256": "1c08f50ba4ca50a717b2495c29818a45a5c213c106588e50cdc631a1e8552b5b"
+    },
+    {
+      "path": "2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "2.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "2.tgsi",
+      "bytes": 1044,
+      "sha256": "419f9a2f7ce97666a87593ccad0aadbe96525edfc68c3e128cc27929c9fba889"
+    },
+    {
+      "path": "3.profraw",
+      "bytes": 97080,
+      "sha256": "b4f47871ac4fec0929617e15dfd51ee48b5ab7f32677dbf1948da9741a287654"
+    },
+    {
+      "path": "3.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "3.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "3.tgsi",
+      "bytes": 1044,
+      "sha256": "e58b6cb08823b1390581b688257ff24aaec877dde688d4da61c6003affaf017b"
+    },
+    {
+      "path": "4.profraw",
+      "bytes": 97080,
+      "sha256": "d3ad04faf741b1b527efa000f003e5cf1f7ce47bb48b606dcb9552c1a74f920f"
+    },
+    {
+      "path": "4.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "4.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "4.tgsi",
+      "bytes": 1044,
+      "sha256": "801b18f240d8602f1f3ed0bc5a74aa39bac884e20a0d51b203863446359edbc5"
+    },
+    {
+      "path": "5.profraw",
+      "bytes": 97080,
+      "sha256": "d6408b7435e01ccf54ebb943d400dc55515fe74459044c9cb079a2dfb497cbff"
+    },
+    {
+      "path": "5.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "5.stdout",
+      "bytes": 123,
+      "sha256": "0f9d190dbf5eeab88b4cf1a4d4b1bad65a4fb42133a3535eefecd7b72f534b0d"
+    },
+    {
+      "path": "5.tgsi",
+      "bytes": 413,
+      "sha256": "6bbfae2041314d91514821b99cc1e5c0ec54908c2aef63cfa16c5ba8c3cfcbfb"
+    },
+    {
+      "path": "6.profraw",
+      "bytes": 97080,
+      "sha256": "45f3fa985e2106bb1c537bedfe028073a89178f2af49445d2c98805fcc4728fa"
+    },
+    {
+      "path": "6.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "6.stdout",
+      "bytes": 8158,
+      "sha256": "be4c3776d3f2c301bc9ec6e266fa048c727cab2d4b9942de937c5beac3ed86d5"
+    },
+    {
+      "path": "6.tgsi",
+      "bytes": 342,
+      "sha256": "af225aed6b01d2b90a1b75a0393d41ccb2976e27294d55a82433f1a22092bc42"
+    },
+    {
+      "path": "7.profraw",
+      "bytes": 97080,
+      "sha256": "559cba6a11ec85e267f44a8aed1b73432e69d8c520a204553b4f5417fa064c87"
+    },
+    {
+      "path": "7.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "7.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "7.tgsi",
+      "bytes": 1040,
+      "sha256": "aeb892970fe9507b18dcb216c764fa84fe4229d32c15aedabe0ee837e0742de1"
+    },
+    {
+      "path": "8.profraw",
+      "bytes": 97080,
+      "sha256": "db1c05f2127730477d0c831797612b9161189067ef7d1fd4ca54b499443968db"
+    },
+    {
+      "path": "8.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "8.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "8.tgsi",
+      "bytes": 1044,
+      "sha256": "3411c6491244ccf72b00f5a8b405b0dfa32845717efcbb347a139588f1d6b113"
+    },
+    {
+      "path": "9.profraw",
+      "bytes": 97080,
+      "sha256": "d75dea363f49ad2d41b6cef4f754cc8940f2a54dc333b71fa9fcc7bd1e38eb13"
+    },
+    {
+      "path": "9.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "9.stdout",
+      "bytes": 131,
+      "sha256": "17338c15e528012094f44a350fdf74dfa56f39fc21f639de5b82110f2eeecb13"
+    },
+    {
+      "path": "9.tgsi",
+      "bytes": 1044,
+      "sha256": "32e2247c03328383f1c7c8730d10bc46a1e2b798e0e6e6f0eddbf0697e676911"
+    },
+    {
+      "path": "build.log",
+      "bytes": 3935,
+      "sha256": "62e99d21bb66fe1ef74e06b8da8ffc74b5df6b8d14af308835aba12423782708"
+    },
+    {
+      "path": "cli",
+      "bytes": 3313424,
+      "sha256": "a78914ff0f54583e74df35f33c8998230118126554084e9b3df709b42b734c70"
+    },
+    {
+      "path": "command.json",
+      "bytes": 3558,
+      "sha256": "c4b7c0a0a0a27390b530b3e59f8d48e4d61c1fd52d9c2475a7657eb75116ff3f"
+    },
+    {
+      "path": "coverage-show.txt",
+      "bytes": 268473,
+      "sha256": "d2196991531ec168faf0203efce35211e522cd75b19e087f5e8046a6b84cff59"
+    },
+    {
+      "path": "coverage-show.txt.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "coverage.json",
+      "bytes": 1903011,
+      "sha256": "664424b5ef8c97b5ffa5ae5d70eda102f7ea2e18ebe810fa2677943d9789689b"
+    },
+    {
+      "path": "coverage.json.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "merge.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "merge.log.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "merged.profdata",
+      "bytes": 15848,
+      "sha256": "72c4a643104245e47277593e29ec03baaeb85c4a70c6f43d41b112312226ae81"
+    }
+  ],
+  "compiler": {
+    "path": "/usr/bin/clang",
+    "sha256": "b8763cf250e607a778bb4603cecb5b90338814d0a3dfcba0d57b1de242f610e9",
+    "version": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+    "command": [
+      "clang",
+      "-std=gnu11",
+      "-D_GNU_SOURCE",
+      "-D_DARWIN_C_SOURCE",
+      "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+      "-DUTIL_ARCH_BIG_ENDIAN=0",
+      "-DHAVE___BUILTIN_CLZ=1",
+      "-DHAVE___BUILTIN_CLZLL=1",
+      "-DHAVE___BUILTIN_POPCOUNT=1",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/pipe",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/compat",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/include",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary",
+      "-I/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/util",
+      "-g",
+      "-O1",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fprofile-instr-generate",
+      "-fcoverage-mapping",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/generated/u_format_table.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/checked_upstream.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/cli.c",
+      "-lm",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/native-authority/cli"
+    ]
+  }
+}
