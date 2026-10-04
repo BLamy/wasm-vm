@@ -3,7 +3,7 @@ id: E6-T12f4b
 epic: 6
 title: Admit exact bank copies to ordinary outputs under a bounded raster domain
 priority: 525.02699142
-status: implemented
+status: evidence-needed
 depends_on: [E6-T12f3, E6-T12f4a]
 estimate: S
 risk: high
@@ -169,3 +169,98 @@ pristine-clone evidence demonstrate guarded copied-bank admission; they do not
 establish real radial workload-bank compatibility, production GPU negotiation,
 guest graphics offload or desktop 300 MIPS. Fresh adversarial verification remains
 required before this task can become verified.
+
+### 2026-10-03 — fresh independent verifier
+
+VERDICT: needs-evidence
+
+Reviewed AGENTS.md, the entire task and all 54 changed hunks before inspecting
+evidence; recorded ten falsifiable predictions first. Frozen source is
+`4999a81ad93496fc25e78cbb0aeb7adec66006e3`, submission
+`2a413b9f84e2556cb1c32fcf1c8fbff3127dd5b3`, independently verified parent
+`596f294fd4889665a793d678e5e4d72556388199`.
+
+- **P3 scope — FAILED / written correction needed.** The activation claim
+  "before program linking" is too broad. Predicted no native link would occur
+  with copied C0.w = `0x00000001`; observed explicit LINK_SHADER succeed with
+  one applied command, create `Program:22` at GL event 209 and link it
+  successfully at event 212, increasing programs from one to two. The actual
+  hardware probe is preserved in `verifier.tar.gz::link-scope-gpu/report.json`
+  line 14747 (event 212), line 185745 (successful explicit result), SHA-256
+  `b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3`.
+  A second hardware recording reproduces it. Restoration succeeds with no
+  copied-bank upload, pixels stay unchanged, and the subsequent draw rejects
+  `constant-raster-domain-error` with zero applied commands. This refutes the
+  unqualified linking wording; it does not refute copied-bank runtime safety.
+  **Demand:** append the worker correction limiting pre-link approval to
+  draw-triggered linking and the bank boundary to effects consuming bank words.
+  Bank-independent explicit linking/object creation remain legal; restoration
+  skips invalid banks, then draw preflight rejects. No runtime/harness change,
+  unrelated gauntlet or second cold clone is demanded for that correction.
+- **P1 identity/cold — HELD.** Streamed every 400 worker and 402 cold archive
+  members against size/SHA-256 and checked artifacts/receipts. Both complete
+  source-bound readers pass at their original LLVM/source-fault roots. Named
+  cold clone remains clean at the frozen head. Complete native input/log, Wasm
+  calls, consumer observations and three independent references are identical
+  between worker and cold. `identity-audit.json`, `worker-lossless-members.json`,
+  `cold-lossless-members.json`, both replays and `cold-reinspection.json` bind it.
+- **P2/P6 certificates, originals and retention — HELD.** Independently derived
+  all 150 generated mask/alias component certificates. v27 preserves the exact
+  base and simultaneous finite/indirect/count/radial/PRECISE obligations. All 19
+  original bodies/hashes remain unchanged; exactly 24 singles, three pairs and
+  four originals migrate, giving 18/19 admission. Unrelated complete baseline
+  results agree. Count data cannot become copied raster data. Carry prior F4a/F3
+  HELD semantics across unchanged source/dependency boundaries and baseline
+  digests; affected paths and retained hardware leaves are checked here.
+- **P3 bounded domain, P4 pixels and P5 ownership — HELD.** Separate lane and
+  premultiplied-color equations, using neither worker interpreter nor emitted
+  GLSL, matched 1,344 draws, 2,800 copied words and all 5,505,024 pixels across
+  seven worker/cold/fresh-seed recordings. All uniform readbacks match exact
+  banks. Both zero signs and normal neighbors execute. Invalid copies reject
+  before consuming bank words; invalid replacements remain exact CPU data and
+  are skipped on restoration. Checked 1,932 real fences, later-task polling,
+  signaled deletion, shader/program identities and six async rigs per recording.
+  Replacement/restoration/destruction during waiting-index remain busy without
+  changing the owned state. `direct-audit.json` retains every generation/pixel
+  point; `exact-evidence-points.json` binds raw file lines/digests.
+- **P7 caps/allocations — HELD.** Both complete recordings have 1,501,326 native
+  calls, 244 real allocation failures including all 15 raster and 20 upstream
+  sites, and full recovery. The actual 16,516-byte analysis allocation fails
+  transactionally. All 45,696 Wasm calls, 64 maximum-input stress and 51 real
+  heap-pressure calls retain the same 16 MiB buffer. IR 26,480/profile 7,616/
+  flow 52,644 and GLSL maximum 58,201 stay within bounds. Resource/native-object
+  budgets return to zero. Sealed binary/profile pairs independently reproduce
+  both entire LLVM exports; `counter-replay.json` records exact commands.
+- **P8 source attacks, P9 sufficiency, P10 novel attack — HELD.** Fresh seed
+  `0x4a57de19` reruns all hardware schedules and the three actual source faults.
+  Component omission and actual guard removal reach separate `domainOracleStop`
+  events with `interceptedCall: uniform4uiv`, word 1 and `unsafeGpuCalled: false`;
+  wrong allowed-word decoding fails actual pixels. Independent nested branches,
+  masked pre-write aliases and UCMP demand exactly C0:9/C1:11/C4:5 in both
+  stages. Its 112 unsafe-lane cases, 2,069 independent numeric-domain words and
+  16 combined/hostile checks pass. Actual guard-removal sabotage makes this
+  regression fail at the first unsafe required lane with zero GPU calls. The
+  initial verifier descriptor-trap fixture expected propagation; the inherited
+  helper correctly converts it to DomainFault. Its diagnostic is preserved,
+  and the corrected test changes no implementation.
+
+**Coverage:** `coverage-scope.json` classifies every changed hunk. Runtime hunks
+have positive LLVM/V8 counters; independent Node V8 recordings cover count,
+radial and malformed-contract failure returns absent from browser schedules.
+Typed fields/feature bits/layout assertions, comments/docs/queue metadata and
+fixture authoring are declarative waivers with direct outputs bound. Invalid
+internal graph arms are excluded by preceding public syntax/semantic validation;
+queue overflow and unexpected host-error propagation are bounded fail-closed
+defenses, not successful-domain claims. Optional smoke diagnostics are not a
+submission claim. No product hunk is unproven for the bank-consuming boundary.
+
+**SUITE:** preserve the verified guarded-copy regression at
+`renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs`, source digest
+`0b37d641763f196f24408ec638f3fc8ce0c1eb26b93f0f52e59bd34526f4c290`.
+Its direct actual-Wasm run and syntax check pass; sensitivity is source-sabotage
+checked. No acceptance harness or runtime source is edited. The structured
+`evidence/virgl-raster-bank/verifier-verdict.json` retains every prediction,
+finding, raw citation and precise correction demand. Complete independent
+records are losslessly archived in `verifier.tar.gz`; `verifier-manifest.json`
+binds every member and its archive digest. Preserve all HELD outcomes for the
+written correction's incremental re-verification.
