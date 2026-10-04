@@ -3,7 +3,7 @@ id: E6-T12g3
 epic: 6
 title: Prove required packed depth formats and explicit unsupported depth rejection
 priority: 525.0270103
-status: pending
+status: in-progress
 depends_on: [E6-T12g2]
 estimate: S
 risk: high
@@ -38,4 +38,25 @@ and require the independent GPU oracle to fail.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — execution boundary
+
+The user's graphics-offload continuation selects this next eligible graphics
+dependency after verified G2 head `9d93635d7aee08adb3cb1b17516cb4e5da87c9b0`.
+G1 requires only format16 Z16_UNORM, bind1, target2/flags0 for depth:
+original es2gears resource35@4425, surface handle4 at event5115/byte5568.
+Kmscube has no client depth format. Admit this measured depth-surface/storage
+role only; guest depth sampler views and raster/depth draw-state execution
+remain separate boundaries. Format17 Z32_UNORM and unrequired stencil/float
+depth formats remain explicit failures.
+
+Use native DEPTH_COMPONENT16 and owned explicit little-endian16-bit upload.
+WebGL2/GLES3 readPixels does not expose depth components, so inverse readback
+needs an actual GPU sampling/packing pass into a temporary normalized color
+image. Charge region-sized conversion texture, readback/PBO bytes and CPU
+scratch before GL allocation; preserve all old color/buffer accounting and
+global limits. Never use a CPU depth mirror or a persistent full-resource
+shadow. Prove all65536 uploaded encodings and independent sampling/attachment/
+occlusion, odd rows, roles, retained generations, sync/async release/quota paths
+and byte-order fault sensitivity before the final pristine clone and fresh critic.
+Production negotiation remains disabled; the isolated local hardware proof
+is the browser boundary, with no new production demo import or MIPS claim.
