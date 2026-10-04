@@ -237,6 +237,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" \
       "${sources[@]:2}" build/compiler-bounds-sanitize/compiler_bounds.o -lm -o build/compiler-bounds-sanitize/compiler-bounds-test
     ;;
+  hex-literals-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/hex_literals.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/hex_literals.c \
+      -lm -o build/hex-literals-sanitize/hex-literals-test
+    ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit

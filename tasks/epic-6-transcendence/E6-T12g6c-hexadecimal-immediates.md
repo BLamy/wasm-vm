@@ -52,3 +52,23 @@ existing numerical and raster-output authority checks still decide their uses.
 The complete c5806d5f/92cb866a programs remain rejected for later capabilities.
 Production negotiation, imports, caps and deployment remain gated.
 
+### 2026-10-04 — worker — freeze scoped literal implementation
+
+The only runtime hunk is `bridge.c:literal_float`: eight checked ASCII digits
+produce the binary32 word before the pinned parser runs. Raw consumers keep
+the existing word/domain analysis; legacy conversion applies the existing
+UINT32 normal-or-zero/finite/magnitude gate. Canonical letter case is accepted;
+uppercase prefix, signs, short/long forms, C hex floats, suffixes and malformed
+terminators reject. Existing decimal/UINT32 parsing and immediate order remain
+unchanged. The pinned parser is queried only with complete canonical witnesses.
+
+The affected high-risk submission is `make verify-E6-T12g6c`: strict owned C,
+native ASan/UBSan/coverage, 676 singles with 512 primary-token comparisons,
+Wasm singles and pairs, 25 unchanged original bodies, the promoted 402-case
+G6b guard, three hardware seeds, exact carrier words and bit-plane pixels,
+and two emitted-source fault captures. Legacy GLSL differs by immediate type,
+so its metadata and physical pixels are compared instead of assuming identical
+source. One frozen-head pristine clone follows. G6b's unchanged capacities,
+allocation/stack/fixed-memory proofs and other renderer boundaries stay HELD.
+This isolated compiler has no production import; the demo/deployment gate does
+not apply. No guest graphics or throughput result is claimed.

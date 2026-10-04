@@ -243,6 +243,36 @@ static bool literal_float(const char **p, uint32_t *bits)
 {
    space(p);
    const char *begin = *p;
+   if (begin[0] == '0' && begin[1] == 'x') {
+      /* Pinned TGSI text: 0x plus eight hexadecimal digits is a binary32
+       * encoding, not an integer-to-float conversion. Validate before upstream. */
+      const char *cur = begin + 2;
+      uint32_t value = 0;
+      for (unsigned i = 0; i < 8; ++i) {
+         unsigned char c = (unsigned char)*cur++;
+         unsigned digit;
+         if (c >= '0' && c <= '9') digit = c - '0';
+         else if (c >= 'a' && c <= 'f') digit = c - 'a' + 10;
+         else if (c >= 'A' && c <= 'F') digit = c - 'A' + 10;
+         else return false;
+         value = (value << 4) | digit;
+      }
+      const char *after = cur;
+      space(&after);
+      if (*after != ',' && *after != '}') return false;
+      if (bits) *bits = value;
+      else {
+         float decoded;
+         memcpy(&decoded, &value, sizeof(decoded));
+         if (((value & UINT32_C(0x7f800000)) == 0 && (value & UINT32_C(0x007fffff)) != 0) ||
+             !isfinite(decoded) || fabsf(decoded) > 1000000.0f) {
+            failure_code = "unsupported-feature";
+            return false;
+         }
+      }
+      *p = cur;
+      return true;
+   }
    while (**p && strchr("+-0123456789.eE", **p)) ++*p;
    size_t n = (size_t)(*p - begin);
    if (!n || n > 32) return false;
