@@ -62,26 +62,42 @@ async function rejectionRecovery(bridge, valid, report) {
   require(response.ok, "cannot fetch bounded new-grammar attack corpus");
   const bytes = new Uint8Array(await response.arrayBuffer());
   const cases = JSON.parse(new TextDecoder().decode(bytes));
+  const migrationsResponse = await fetch(new URL("captured-grammar-migrations.json", import.meta.url));
+  require(migrationsResponse.ok, "explicit historical grammar migration ledger");
+  const migrationBytes = new Uint8Array(await migrationsResponse.arrayBuffer());
+  const migrations = JSON.parse(new TextDecoder().decode(migrationBytes)).migrations;
+  equal(migrations.length, 4, "exact historical admission migrations");
+  const admitted = new Map(migrations.map(entry => [entry.name, entry]));
   require(Array.isArray(cases) && cases.length >= 20 && cases.length <= 256, "bounded nonempty new-grammar attack corpus");
-  report.grammarAttacks = { sourceSha256: await digest(bytes), cases: [], recoveryRounds: 8 };
+  report.grammarAttacks = { sourceSha256: await digest(bytes), migrationSha256: await digest(migrationBytes), cases: [], recoveryRounds: 8 };
   for (const test of cases) {
     require(["vertex", "fragment"].includes(test.stage) && typeof test.text === "string", "invalid grammar-attack fixture schema");
     const output = bridge.translate({ stage: test.stage, text: test.text });
-    require(output.ok === false && ["parse-error", "unsupported-feature"].includes(output.error?.code), `${test.name}: new-grammar attack accepted or misclassified: ${JSON.stringify(output)}`);
-    require(!Object.hasOwn(output, "glsl") && output.error.message.length > 0 && output.error.message.length <= 512, `${test.name}: bounded rejection without fallback GLSL`);
-    report.grammarAttacks.cases.push({ name: test.name, stage: test.stage, inputSha256: await digest(test.text), inputBytes: test.text.length, error: output.error });
+    const migration = admitted.get(test.name);
+    if (migration) {
+      equal([test.stage, await digest(test.text)], [migration.stage, migration.inputSha256], "exact migrated input");
+      require(output.ok === true, "verified grammar migration admitted");
+      equal(output.metadata, migration.metadata, "complete explicit migrated metadata");
+    } else {
+      require(output.ok === false && ["parse-error", "unsupported-feature"].includes(output.error?.code), `${test.name}: new-grammar attack accepted or misclassified: ${JSON.stringify(output)}`);
+      require(!Object.hasOwn(output, "glsl") && output.error.message.length > 0 && output.error.message.length <= 512, `${test.name}: bounded rejection without fallback GLSL`);
+    }
+    report.grammarAttacks.cases.push({ name: test.name, stage: test.stage, inputSha256: await digest(test.text), inputBytes: test.text.length, ...(migration ? { migration, result: output } : { error: output.error }) });
   }
   for (let round = 0; round < report.grammarAttacks.recoveryRounds; round++) {
     for (const [index, test] of cases.entries()) {
       const failed = bridge.translate({ stage: test.stage, text: test.text });
-      equal(failed.error?.code, report.grammarAttacks.cases[index].error.code, `recovery ${round}/${test.name} rejection code`);
+      const expected = report.grammarAttacks.cases[index];
+      if (expected.migration) equal(failed, expected.result, `recovery ${round}/${test.name} admitted migration`);
+      else equal(failed.error?.code, expected.error.code, `recovery ${round}/${test.name} rejection code`);
       for (const stage of ["vertex", "fragment"]) {
         const { text, ...expected } = valid[stage];
         equal(bridge.translate({ stage, text }), expected, `recovery ${round}/${test.name}/${stage} unchanged output and metadata`);
       }
     }
   }
-  report.grammarAttacks.rejections = cases.length * (report.grammarAttacks.recoveryRounds + 1);
+  report.grammarAttacks.rejections = (cases.length - migrations.length) * (report.grammarAttacks.recoveryRounds + 1);
+  report.grammarAttacks.admissions = migrations.length * (report.grammarAttacks.recoveryRounds + 1);
   report.grammarAttacks.recoveries = cases.length * report.grammarAttacks.recoveryRounds * 2;
 }
 

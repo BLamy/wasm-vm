@@ -1,0 +1,240 @@
+{
+  "schema": "captured-grammar-admission-migrations-v1",
+  "migrations": [
+    {
+      "name": "partial-temp-write-xyzw",
+      "stage": "vertex",
+      "inputSha256": "78a65c66fc7b7e519e52d630343596c54092ca7302f6aa248a8a4ef38f5f2390",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      "reason": "The final full MOV OUT[0], IN[0] defines every visible position lane; the preceding bounded mask or PRECISE MOV is now supported by verified compiler boundaries."
+    },
+    {
+      "name": "unsupported-output-mask-zw",
+      "stage": "vertex",
+      "inputSha256": "62cc0a59c8f680882b0c492eecfbc37c5dca142012b4d249ff8c3fde4d73f68b",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      "reason": "The final full MOV OUT[0], IN[0] defines every visible position lane; the preceding bounded mask or PRECISE MOV is now supported by verified compiler boundaries."
+    },
+    {
+      "name": "unsupported-output-mask-xyzw",
+      "stage": "vertex",
+      "inputSha256": "19f4ca3d24ca5a0e1afb91ec8bd4f9d77faf68e3bf14343e56ba55bceb8a0126",
+      "metadata": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ]
+      },
+      "reason": "The final full MOV OUT[0], IN[0] defines every visible position lane; the preceding bounded mask or PRECISE MOV is now supported by verified compiler boundaries."
+    },
+    {
+      "name": "precise-remains-rejected",
+      "stage": "vertex",
+      "inputSha256": "674c816dac1878c8a9a43f3d7b43f2d31e8324090071a760b49d11e53875821c",
+      "metadata": {
+        "profile": "virgl-webgl2-raw-bits-v17",
+        "stage": "vertex",
+        "inputs": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "outputs": [
+          {
+            "index": 0,
+            "name": "gl_Position",
+            "type": "vec4",
+            "semantic": "POSITION",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "writtenMask": 15
+          }
+        ],
+        "attributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": "vec4",
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "offset": 640,
+                "type": "float",
+                "default": 1
+              }
+            ]
+          }
+        ],
+        "preciseWordContract": {
+          "kind": "tgsi-precise-word-local-v1",
+          "stage": "vertex",
+          "operations": [
+            "MOV"
+          ]
+        }
+      },
+      "reason": "The final full MOV OUT[0], IN[0] defines every visible position lane; the preceding bounded mask or PRECISE MOV is now supported by verified compiler boundaries."
+    }
+  ]
+}
