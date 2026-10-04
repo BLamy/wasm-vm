@@ -786,7 +786,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           sub.shaders[fields.stage] = objectRef(sub, sub.shaders[fields.stage], shader); break;
         }
         case 38: sub.defaults = fields; break;
-        case 43: case 45: {
+        case 9: case 43: case 45: {
           const prepared = unwrap(resources.prepareTransfer(ctx.id, command)); unwrap(resources.executeTransfer(prepared.ticket)); break;
         }
         case 44: return;
@@ -919,10 +919,11 @@ function createRenderer(options, drawing, asynchronous = false) {
             job.pending = { ...read, sub, plan, readStarted: true, fenceSerial: job.serial };
             job.hadFence = true; job.phase = "waiting-index"; return jobStatus(job, "waiting-gpu");
           }
-          if (job.command.opcode === 43 || job.command.opcode === 45) {
+          if ([9, 43, 45].includes(job.command.opcode)) {
             const prepared = unwrap(asyncAccess.prepareTransfer(job.ctx.id, job.command));
             job.pending = { ...prepared, sub, readStarted: false };
             require(prepared.layout.tightBytes <= jobLimits.transferBytes, "limit-exceeded", "Transfer exceeds job byte limit.");
+            if (prepared.inline) { job.phase = "upload-ready"; return jobStatus(job, job.phase); }
             if (prepared.layout.direction === "upload") {
               job.request = transferRequest(job, prepared); job.phase = "needs-input"; return jobStatus(job, job.phase);
             }

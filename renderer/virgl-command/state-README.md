@@ -207,3 +207,10 @@ shaderBytes and uniformBytes. Limits may only tighten defaults: 8 contexts,
 16 total subcontexts, 256 live objects, 64 linked programs, 1MiB shader text/GLSL,
 and 64KiB system UBO storage. Resource storage/leases remain additionally bounded
 by the resource store's independent limits.
+
+Inline-write submissions use the same immutable decoded command snapshot. Async
+inline jobs own their dense reserved upload at preparation and yield in
+`upload-ready` before any GPU write; they request no guest DMA input. The next
+step checks resource/context/membership identity, issues the upload and retires
+through a nonblocking GPU completion fence. Cancellation, stale identity and
+backend failures release the reservation without publishing an unowned payload.

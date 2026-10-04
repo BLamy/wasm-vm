@@ -268,3 +268,11 @@ and browser parity, independent typed-field/framing expectations, invalid tails,
 truncations, hostile mutations, input ownership, boundary budgets, sabotage and
 the final pristine-clone proof. This parser-only task does not change or deploy
 production `web/` or claim GPU execution, Mesa compatibility or FPS gains.
+
+The isolated E6-T12g5 profile admits bounded RESOURCE_INLINE_WRITE (opcode9):
+the pinned eleven common words and owned payload from word12. One-level buffers
+and matching native2D color/Z16 storage reuse the checked transfer boundary.
+`make verify-E6-T12g5` binds five original normal CPU uploads separately from
+synthetic inline writes, raw GPU pixels/bytes, odd rows, deferred ownership and
+physical source faults. END_TRANSFERS padding stays opaque; production negotiation
+remains disabled.
