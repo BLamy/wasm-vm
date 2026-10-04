@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "task": "E6-T12f6",
+  "status": "failed",
+  "gitHead": "f19544c691c7ada4182a81517210188488d5c151",
+  "clone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-original-corpuss-cold-lomtq_rl/wasm-vm",
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T12f6"
+  ],
+  "timeoutSeconds": 2400,
+  "startedAt": "2026-10-04T03:40:55.859986+00:00",
+  "harnessSha256": "e382e2a588afaeac025832e0e22627dfd424b5318ca3e59c8a41718f8fe9a256",
+  "cloneHead": "f19544c691c7ada4182a81517210188488d5c151",
+  "statusBefore": "",
+  "exitCode": 2,
+  "cloneHeadAfter": "f19544c691c7ada4182a81517210188488d5c151",
+  "statusAfter": "",
+  "error": "cold original-corpus compiler acceptance failed",
+  "logSha256": "4b57ed255a52587fd118ac59a2f1d915e60a29b0eb6937edeb3d14b2a17a2802",
+  "finishedAt": "2026-10-04T03:43:41.793303+00:00"
+}

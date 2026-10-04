@@ -1951,3 +1951,7 @@ verify-E6-T12f4b:
 .PHONY: verify-E6-T12f5
 verify-E6-T12f5:
 	bash tools/verify-virgl-precise-arithmetic.sh
+
+.PHONY: verify-E6-T12f6
+verify-E6-T12f6:
+	bash tools/verify-virgl-original-corpus.sh
