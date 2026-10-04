@@ -1,0 +1,23 @@
+{
+  "archive": {
+    "bytes": 2190282,
+    "path": "recording.tar.gz",
+    "sha256": "ef5cd601c77585b597b85fda5f77e227694d6ddb1a3041dd50ae398b6920b273"
+  },
+  "base": "0550aa94b59364380e543b0c6de41697c5f18fb8",
+  "boundary": "Isolated color storage, selected original packets and independent synthetic GPU cases; no full gears, live negotiation or performance claim.",
+  "coldReceiptSha256": "132eb8d364e8f247aac88c7bf93aa7e897f90919df7c9c56efde3170f58b2213",
+  "coldReportSha256": "d92a75f797ad0c570d5c24d36c51722d658976c0bc75372f710862d759d6e2d7",
+  "hardwareAssertions": 941,
+  "nativeAssertions": 822,
+  "receiptSha256": "185ce3ecdf8b61727ca42aa2ebdb244906c67c936e62649f118f3eeb5d60074d",
+  "recordIndex": {
+    "bytes": 10172,
+    "path": "records.json",
+    "sha256": "9db281a7569b78ac25a8d30157d83d275ec53dd339a9cddb6618ace9ad295d56"
+  },
+  "records": 60,
+  "schema": "virgl-color-worker-seal-v1",
+  "sourceHead": "f0770a386271513fac56df8da26057e256a6ae8b",
+  "task": "E6-T12g2"
+}

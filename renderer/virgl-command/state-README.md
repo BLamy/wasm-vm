@@ -134,7 +134,8 @@ sampler slot N uses texture unit N; vertex slot N uses unit16+N. Active slots ar
 bounded by the measured stage limits and a 16-slot stage maximum. All 32-slot
 inactive resets remain accepted.
 
-The active profile is one RGBA8 level-zero color surface, identity RGBA8 sampler
+The active profile is one required normalized level-zero color surface
+(BGRX8, RGBA8 or B10G10R10X2), identity RGBA8 sampler
 views, clamp-edge nearest/linear non-mip samplers, R32G32_FLOAT vertex elements,
 float-aligned vertex strides at most255 bytes, u16 indices, an integer positive
 viewport with normalized depth range, additive alpha blend modes supported by
@@ -142,6 +143,13 @@ the decoder, optional dithering/back-face culling, and disabled depth/stencil.
 Scissor rasterization and nonidentity sampler swizzles fail explicitly. Buffer
 and element ranges, resource classes, link inputs and quotas are validated before
 publication. Backend allocation/compile/link failures delete temporary objects.
+
+X-format color surfaces force sampled and destination alpha one. The resource
+backend initializes physical packed alpha; CLEAR and draw restoration mask
+alpha writes while preserving the guest RGB color mask and source fragment
+alpha. Thus SRC_ALPHA RGB blending still observes the shader's source alpha,
+and DST_ALPHA observes one. RGBA8 retains its ordinary stored alpha behavior.
+Sampler-view admission for new formats remains a separate boundary.
 
 Restoration binds the renderer's private VAO/FBO/program, every texture/sampler
 unit, vertex/index buffers, system UBO and constants, color/blend/raster state,

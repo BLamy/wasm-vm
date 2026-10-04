@@ -1,0 +1,77 @@
+[
+  {
+    "bytes": 5514,
+    "path": "attack-browser.mjs",
+    "sha256": "be38e3eb2e75a186fa712352775efdc0d70d6b7b48ab0b3404c93520fcf9e1a8"
+  },
+  {
+    "bytes": 19006,
+    "path": "attack-cases.mjs",
+    "sha256": "ebb39213ec243d852a3b02d9700f5b2e3c98fe63f2f7ec35875ed9019946e9ca"
+  },
+  {
+    "bytes": 6202,
+    "path": "authenticate.py",
+    "sha256": "13357742a869fd62f5f33ca475b6565fcf5f30f2442b03804616048cf4f131bd"
+  },
+  {
+    "bytes": 5079,
+    "path": "authentication.json",
+    "sha256": "7ff98cfad00cf8e081f9dfb7cafea883a4855a802020f0a637f895cea11d30c0"
+  },
+  {
+    "bytes": 126932,
+    "path": "coverage.json",
+    "sha256": "98cf2284c98d77996667fcb7bde34600b4665078aa0a1931ecaaeaead56beecd"
+  },
+  {
+    "bytes": 4092,
+    "path": "coverage.py",
+    "sha256": "883986b312158a0ddd11cf3c9ce0006cac553950d13a94c8e7bfd5dd00a56d68"
+  },
+  {
+    "bytes": 188395,
+    "path": "independent-attacks/browser.png",
+    "sha256": "60189c85897ba9f08dd2db0f9bae2e67bafaead836f3b9c8e3ad50cf9a9cc0a9"
+  },
+  {
+    "bytes": 148335,
+    "path": "independent-attacks/coverage.json",
+    "sha256": "55b510f6a0efc57ac5b669924e5d5da3caba23cc23b35c6de5c1c4c6ed843899"
+  },
+  {
+    "bytes": 627666,
+    "path": "independent-attacks/report.json",
+    "sha256": "dcd06dc5a5a047207b2d8e037d9d3abbe6325ee8cedb2035ab80c639906c1515"
+  },
+  {
+    "bytes": 4001,
+    "path": "predictions.md",
+    "sha256": "2bedfa39202cf143507f615d0bfa42ad819544ad914c0d67c2d12babea8d28d0"
+  },
+  {
+    "bytes": 96763,
+    "path": "sabotage-packed-order/browser.png",
+    "sha256": "6bb8009d3258a19943b574547e4f687e1bb562dcb7233a8eda032c8811b13a2d"
+  },
+  {
+    "bytes": 111483,
+    "path": "sabotage-packed-order/coverage.json",
+    "sha256": "08933fd3da68cb45041a82648803f6fb281389117c300f6d75e27b4361f58d23"
+  },
+  {
+    "bytes": 53777,
+    "path": "sabotage-packed-order/fault-source.mjs",
+    "sha256": "6d625aae8eeb8df1a8da2f5197fe6e4515aa7ee1f102ce8ee9618de72db1945e"
+  },
+  {
+    "bytes": 8835,
+    "path": "sabotage-packed-order/report.json",
+    "sha256": "8f8690b2654ecd103d0cd264260b68e9684af781530bbd295a0d920aa9e75b99"
+  },
+  {
+    "bytes": 10623,
+    "path": "verdict.md",
+    "sha256": "27814a6f3086b6792f2fbeac3a0a81517238a485254931f08fc14b55749603d1"
+  }
+]

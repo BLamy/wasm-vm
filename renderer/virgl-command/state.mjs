@@ -434,9 +434,10 @@ function createRenderer(options, drawing, asynchronous = false) {
           8 <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
+    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format);
     const colorMask = (sub) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
-      return [1, 2, 4, 8].map((bit) => Boolean(bits & bit));
+      return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));
     };
     // Restoration also follows SET, CLEAR, binding changes and restoreContext.
     // A partial/invalid conditional or indirect bank remains CPU state but is never uploaded.
@@ -681,7 +682,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         case 7:
           require(sub.surfaces[0], "incomplete-framebuffer", "CLEAR needs a color surface.");
           restore(sub);
-          gl.colorMask(true, true, true, true); gl.clearColor(...fields.color); gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.colorMask(true, true, true, !xAlpha(sub)); gl.clearColor(...fields.color); gl.clear(gl.COLOR_BUFFER_BIT);
           gl.colorMask(...colorMask(sub)); check(); return;
         case 8:
           if (!drawing) throw new StateFault("unsupported-draw", "DRAW_VBO execution belongs to the next renderer boundary.");
