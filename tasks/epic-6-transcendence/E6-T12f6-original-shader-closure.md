@@ -3,7 +3,7 @@ id: E6-T12f6
 epic: 6
 title: Close the unchanged 19-body shader corpus with explicit contracts
 priority: 525.0269916
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12f2, E6-T12f3, E6-T12f4, E6-T12f4a, E6-T12f4b, E6-T12f5]
 estimate: S
 risk: high
@@ -225,3 +225,55 @@ fallback; verifier edits no implementation. Lossless fresh-verifier recording:
 `78d141bca7fe28bf81b85d6a114bc26f1c918a97be1b922dd9bc315dc49124e8`; member inventories/digests are in `records.json` and `manifest.json`.
 The archive includes every fresh verifier output, excluding only the redundant
 extraction of the already-bound worker archive and Python bytecode.
+
+### 2026-10-04 — worker — narrow helper repair and recorded resubmission
+
+Frozen repair source `8ace8d34e1e5791564411b41de85b4d311a66980` changes only
+`approve()`'s access-only count lookup from the absent finite-domain record to
+`parsed.access.count`. Production compiler/consumer sources and sealed native/
+Wasm artifacts are unchanged. The two promoted verifier checks now run in
+`make verify-E6-T12f6`; their independent models/interpreters are unchanged.
+P1–P7 HELD evidence, source boundaries and digests carry forward under the
+incremental re-verification policy. P8 alone needs fresh review.
+
+The repair recording is `evidence/virgl-original-corpus/helper-repair/recording.tar.gz`;
+SHA-256 `aafcc6a2658b10490fc5de2fb61adc296eb084c59a9cec4de784116fc2f08983`
+(217,456 bytes). `manifest.json` binds the exact frozen source, preceding verdict,
+retained cold archive/input digests and complete supplement inventory in
+`records.json`. Every archive member was streamed back and compared with the
+original size/SHA; the original inventory was rechecked.
+
+The recorded command was `python3 /tmp/record-original-corpus-helper-repair.py`.
+Its full source is retained as `recording-script.py` inside the archive. It creates
+a scrubbed, detached pristine clone at the frozen repair head, hashes the sealed
+worker bridge/Wasm and seeds their identical bytes into the ignored build path.
+No compiler rebuild is needed for this harness-only change. The final clone is
+`/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-original-helper-cold-9uu4wax1/wasm-vm`;
+Git was clean before/after, and all changed/helper/fixture/tool sources were
+compared with the frozen Git objects before execution and rehashed afterwards.
+`report.json` retains exact commands, exit codes, stdout/stderr and tool/source
+identities for diff/shell/Node/Python syntax checks and these two new gate commands:
+
+```
+node tools/virgl-original-corpus/verifier-regressions.mjs
+python3 tools/virgl-original-corpus/verifier.py <retained three GPU report paths>
+```
+
+The unchanged verifier regression now passes 473 independent bank cases,
+25 forgeries, 57 compatible pairs, 19 originals and four supplemental base
+contracts, with zero getters and owned results. The genuine existing
+literal-0-vertex access-only fixture admits its complete 184-word bank without
+a finite-domain record; actual V8 counters record the repaired helper arm.
+The independent literal/source checker reruns successfully over the three
+already-reviewed GPU reports extracted from the sealed cold archive, each
+checked against its recorded byte length/SHA. This checks the newly added gate
+command without rerunning unchanged GPU or workspace gates. The initial
+before-repair execution reproduced the verifier's TypeError and is retained.
+An initial narrow clone lacked the statically imported generated bridge module;
+no admission cases ran there. Its diagnostic is retained, and the final run
+uses the bound sealed module setup described above.
+
+The original shader/pixel claims remain unchanged. This submission closes the
+helper proof gap only; it does not enable guest 3D or establish desktop speed.
+A fresh verifier must decide P8 and the promoted-gate integration before this
+slice can become verified.

@@ -77,3 +77,10 @@ ephemeral in-memory reader checks are not submitted as exact-source acceptance.
 The full admission and output limits are in `tools/virgl-original-corpus/README.md`.
 This integration does not enable production guest GPU negotiation, establish
 complete compositor suitability, measure desktop MIPS/FPS or deploy the demo.
+
+The `helper-repair/` lossless supplement records the access-only helper repair at
+8ace8d34, including the before-fix TypeError, final clean-clone admission model,
+V8 coverage, syntax checks and both newly promoted canonical gate commands.
+Prior P1–P7 evidence carries forward unchanged. Its manifest binds all sources,
+sealed replay setup, retained input archive members, outputs and the supplement
+inventory; production compiler and renderer semantics are unchanged.
