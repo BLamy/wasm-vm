@@ -3,7 +3,7 @@ id: E6-T12g6c
 epic: 6
 title: Decode captured hexadecimal FLT32 immediates without numeric reinterpretation
 priority: 525.02701057
-status: pending
+status: in-progress
 depends_on: [E6-T12g6b]
 estimate: S
 risk: high
@@ -37,4 +37,18 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — activate hexadecimal FLT32 grammar
+
+The human graphics continuation authorizes this ordered compiler boundary after
+E6-T12g6b was independently verified at `500ebfde1262e4615c9e15dbc96ecf1c407870f0`. Its frozen capacity proof,
+402-case promoted guard and unchanged original-program results remain HELD.
+This high-risk S task adds only the pinned `0x` plus eight hexadecimal digits
+spelling for FLT32 immediates. The primary source is the pinned
+`vendor/src/gallium/auxiliary/tgsi/tgsi_text.c:252-267`: hexadecimal words are
+reinterpreted as binary32 bits, not numerically converted from an integer.
+Canonical syntax, immediate ordering and prior decimal/UINT32 grammar stay
+bounded. Raw private operations may consume exact exceptional encodings;
+existing numerical and raster-output authority checks still decide their uses.
+The complete c5806d5f/92cb866a programs remain rejected for later capabilities.
+Production negotiation, imports, caps and deployment remain gated.
+
