@@ -17,6 +17,8 @@ upload/readback conversion and explicit resource/surface/sampling roles. Core
 WebGL2 DEPTH_COMPONENT32F is not Z32_UNORM; format17 remains rejected until an
 independently faithful mapping exists. Use real GPU observations rather than
 CPU mirrors. Additional draw-state execution belongs to E6-T12h.
+The real unmodified gears candidate selects format16 Z16_UNORM; include its
+exact16-bit normalized depth behavior. The verified G1 inventory is authoritative.
 
 ## Deterministic acceptance
 

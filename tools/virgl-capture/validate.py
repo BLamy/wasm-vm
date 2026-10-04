@@ -202,6 +202,10 @@ API_TYPES = frozenset({
 })
 SCHEMA = "wasm-vm-virgl-capture-v1"
 WORKLOADS = ("textured-scene", "kmscube", "glmark2-es2", "compositor")
+SUPPORTED_WORKLOADS = (*WORKLOADS, 'es2gears')
+# Independently verified four-workload driver retained byte-for-byte in the old
+# recordings. New es2gears recordings must use the current driver, not this one.
+LEGACY_CAPTURE_SHA256 = 'e2d2ead96ae72b2fbc470ef3ac1331a93651cd57ab1ffa4e9fcb4649010dbe67'
 
 
 def validate_events(events, read_blob):
@@ -211,7 +215,7 @@ def validate_events(events, read_blob):
     require(first.get("type") == "begin" and first.get("schema") == SCHEMA,
             "capture begin/schema missing")
     require(first.get("byteOrder") == "little", "capture must use little endian")
-    require(first.get("workload") in WORKLOADS, "unknown workload")
+    require(first.get("workload") in SUPPORTED_WORKLOADS, "unknown workload")
     require(last.get("type") == "end" and last.get("complete") is True
             and last.get("normalExit") is True and uint(last.get("openCalls"), "open calls", 0) == 0
             and uint(last.get("droppedRecords"), "dropped records", 0) == 0
@@ -427,7 +431,7 @@ def validate_capture(directory):
     require(not (directory / "FAILED").exists(), "recorder FAILED marker exists")
     manifest_bytes = (directory / "manifest.json").read_bytes()
     manifest = load_json(manifest_bytes)
-    require(manifest.get("schema") == SCHEMA and manifest.get("workload") in WORKLOADS,
+    require(manifest.get("schema") == SCHEMA and manifest.get("workload") in SUPPORTED_WORKLOADS,
             "manifest schema/workload invalid")
     workload = manifest["workload"]
     result = manifest.get("result", {})
@@ -486,8 +490,11 @@ def validate_capture(directory):
     require(inputs["hostRenderer"]["sourcePath"] in artifacts["host-library-maps.txt"].decode(),
             "pinned renderer was not observed in QEMU library maps")
     for name in ("recorder.c", "recorder.build.sh", "capture.py"):
-        require(name in artifacts and artifacts[name] == (ROOT / "tools/virgl-capture" / name).read_bytes(),
-                f"captured {name} differs from checked-in source")
+        current = (ROOT / "tools/virgl-capture" / name).read_bytes()
+        retained = (name == 'capture.py' and workload in WORKLOADS and name in artifacts
+                    and sha256(artifacts[name]) == LEGACY_CAPTURE_SHA256)
+        require(name in artifacts and (artifacts[name] == current or retained),
+                f"captured {name} differs from current or verified retained source")
     require("recorder.so" in artifacts and sha256(artifacts["recorder.so"]) == inputs["recorder"]["sha256"],
             "captured recorder binary differs from executed input")
     require("workloads-build-manifest.json" in artifacts, "missing workload build provenance")
@@ -507,8 +514,14 @@ def validate_capture(directory):
     workload_log = artifacts["workload.log"].decode(errors="replace")
     renderer_log = (artifacts.get("hyprland.log", b"").decode(errors="replace")
                     if workload == "compositor" else workload_log)
-    require(re.search(r'(?im)^.*(?:GL_RENDERER|renderer)\s*[:=]\s*"?virgl\b', renderer_log),
-            "actual guest renderer is not VirGL")
+    if workload == 'es2gears':
+        require('/usr/lib/libgallium-' in artifacts.get('gears-library-maps.txt',b'').decode()
+                and '/dev/dri/renderD128' in artifacts.get('gears-fds.txt',b'').decode()
+                and artifacts.get('gears-drm-driver.txt',b'').strip()==b'/sys/bus/virtio/drivers/virtio_gpu',
+                'original gears lacks actual Gallium/VirtIO DRM process provenance')
+    else:
+        require(re.search(r'(?im)^.*(?:GL_RENDERER|renderer)\s*[:=]\s*"?virgl\b', renderer_log),
+                "actual guest renderer is not VirGL")
     if workload == "textured-scene":
         require("TEXTURED_SCENE_END status=pass draws=3 checked_pixels=768" in workload_log
                 and workload_log.count("PIXELS_PASS") == 3, "textured scene lacks exact pixel proof")
@@ -517,9 +530,25 @@ def validate_capture(directory):
                 and "Validation: Unknown" not in workload_log, "glmark2 did not pass its pixel oracle")
     elif workload == "kmscube":
         require("Rendered 7 frames" in workload_log, "kmscube did not finish eight draws (one unreported warmup)")
+    elif workload == 'es2gears':
+        require(re.search(r'(?m)^[1-9][0-9]* frames in .* seconds = .* FPS$',workload_log),
+                'original gears did not report completed frames')
+        control = artifacts.get('gears-control.log',b'').decode().splitlines()
+        require(all(line in control for line in ('rendered=1','resized=1','window-close=0','client-exit=0','identity=1')),
+                'gears did not exit normally after its actual window was closed')
+        require('gears-build-manifest.json' in artifacts and 'es2gears_wayland' in artifacts,
+                'missing gears workload build/binary provenance')
+        gears = load_json(artifacts['gears-build-manifest.json'])
+        require(gears.get('schema') == 'virgl-gears-guest-workload-v1' and
+                sha256(artifacts['es2gears_wayland']) == gears.get('binary',{}).get('sha256'),
+                'gears binary differs from its pinned build')
     blob_cache = {}
     blob_total = 0
-    blob_budget = uint(manifest.get("limits", {}).get("blobBytes"), "capture blob budget", 512 * 1024 * 1024)
+    # The original animated gears client runs through its first five-second
+    # report. Preserve all backing snapshots with an explicit larger bound;
+    # the independently verified four recordings retain their original bound.
+    maximum_blobs = (1024 if workload == 'es2gears' else 512) * 1024 * 1024
+    blob_budget = uint(manifest.get("limits", {}).get("blobBytes"), "capture blob budget", maximum_blobs)
     require((directory / "blobs").is_dir() and not (directory / "blobs").is_symlink(),
             "missing/unsafe blob directory")
 

@@ -18,6 +18,9 @@ bounded resource store. Preserve backing/storage/generation/scratch budgets and
 owned sync/async upload/readback. Unsupported formats/roles remain rejected.
 Sampling, render destination alpha and inverse guest readback must each be
 faithful; allocation probes or an upload-only swizzle cannot prove all roles.
+The real unmodified gears candidate selects format233 B10G10R10X2_UNORM;
+include its packed10-bit channels and forced alpha rather than changing the
+workload to request RGBA8. The verified G1 inventory is authoritative.
 
 ## Deterministic acceptance
 
