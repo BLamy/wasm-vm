@@ -15,3 +15,8 @@ Reference-rendered images are never upload inputs.
 This is isolated required color storage evidence. New shader/body closure,
 depth, sampler-view specialization, inline writes, scanout conversion and live
 guest negotiation are subsequent boundaries. No performance gain is claimed.
+
+`verifier/manifest.json` binds the fresh critic's verified verdict, independent
+predictions, authentication and V8 audit, three seeded physical/role/quota
+attacks and separate packed-channel source fault. Its archive omits only the
+extracted worker-recording duplicates, which stay bound to the worker seal.

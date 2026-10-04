@@ -1,0 +1,21 @@
+{
+  "archive": {
+    "bytes": 346034,
+    "path": "recording.tar.gz",
+    "sha256": "256ddef416cb9740a8fb4c8e0e9f06617f47a1136fa71b03ed509d6197799471"
+  },
+  "boundary": "Fresh critic; authenticated worker/final clone preserved, independent physical attacks and source sabotage, scoped coverage.",
+  "independentAssertions": 2191,
+  "recordIndex": {
+    "bytes": 2242,
+    "path": "records.json",
+    "sha256": "8aa93191bbd9a2e605923ad9775e956c07fa0fc8f131887cd706bff17c2b1558"
+  },
+  "records": 15,
+  "schema": "virgl-color-verifier-seal-v1",
+  "sourceHead": "f0770a386271513fac56df8da26057e256a6ae8b",
+  "task": "E6-T12g2",
+  "verdict": "verified",
+  "verdictSha256": "27814a6f3086b6792f2fbeac3a0a81517238a485254931f08fc14b55749603d1",
+  "workerArchiveSha256": "ef5cd601c77585b597b85fda5f77e227694d6ddb1a3041dd50ae398b6920b273"
+}
