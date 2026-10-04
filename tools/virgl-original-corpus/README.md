@@ -40,6 +40,14 @@ unsafe counts, unsafe radial coefficients and unsafe copied alpha encodings.
 The retained shared-renderer raster leaf still proves enforcement before GPU
 effects; this direct shader harness does not invent a second production renderer.
 
+The canonical target also runs the fresh verifier's independent admission model
+and literal TGSI/output/source checker. Supplemental base-profile cases exercise
+the helper's radial, loop and access-only arms; they do not increase the captured
+original count. The access-only case uses the existing literal-0-vertex fixture
+and the sealed, hash-checked worker Wasm artifact, whose production compiler
+source is unchanged. Its declared access count remains authoritative even when
+there is no finite-bank domain record.
+
 Four historically negative authored grammar fixtures are now supported by the
 verified mask/PRECISE boundaries. `captured-grammar-migrations.json` names their
 exact input hashes, full metadata and rationale. They execute on the GPU as

@@ -20,12 +20,14 @@ python3 tools/virgl-original-corpus/native.py --binary renderer/virgl-shader/bui
 bash renderer/virgl-shader/build.sh wasm
 node tools/virgl-original-corpus/wasm.mjs --native "$evidence_dir/native/report.json" --output "$evidence_dir/wasm"
 node tools/virgl-original-corpus/consumer.mjs > "$evidence_dir/consumer.json"
+node tools/virgl-original-corpus/verifier-regressions.mjs > "$evidence_dir/admission-regressions.json"
 node tools/virgl-original-corpus/reference.mjs > "$evidence_dir/reference.json"
 node tools/virgl-original-corpus/browser.mjs --output "$evidence_dir/gpu"
 for seed in 430670705 2480340481; do
   node tools/virgl-original-corpus/reference.mjs "$seed" > "$evidence_dir/reference-$seed.json"
   node tools/virgl-original-corpus/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
 done
+python3 tools/virgl-original-corpus/verifier.py "$evidence_dir/gpu/report.json" "$evidence_dir/gpu-430670705/report.json" "$evidence_dir/gpu-2480340481/report.json" > "$evidence_dir/literal-verifier.jsonl"
 python3 tools/virgl-original-corpus/faults.py --output "$evidence_dir/fault"
 node tools/verify-virgl-shader.mjs --output "$evidence_dir/retained-literal"
 node tools/verify-virgl-captured-shaders.mjs --output "$evidence_dir/retained-scene"

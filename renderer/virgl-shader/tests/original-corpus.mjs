@@ -10,7 +10,7 @@ export function approve(metadata,words,activeCount){
  if(parsed.rasterDomain)return checkRasterBank(words,parsed.rasterDomain,!!parsed.constraint,!!parsed.radialDomain);
  if(parsed.radialDomain)return checkRadialBank(words,parsed.domain.count,!!parsed.constraint);
  if(parsed.constraint)return checkLoopBank(words,parsed.domain.count);
- if(parsed.access)return checkIndirectBank(words,parsed.domain.count,!!parsed.domain);
+ if(parsed.access)return checkIndirectBank(words,parsed.access.count,!!parsed.domain);
  if(parsed.domain)return checkFiniteBank(words,activeCount);
  return{ok:true,words:words.slice(0,activeCount*4)};
 }
