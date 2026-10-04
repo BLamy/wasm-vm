@@ -836,6 +836,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
       else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "MIN_PRECISE")) { raw.opcode = RAW_MIN_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "ADD_PRECISE")) { raw.opcode = RAW_ADD_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MUL_PRECISE")) { raw.opcode = RAW_MUL_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "UARL")) raw.opcode = RAW_UARL;
@@ -865,6 +866,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "TEX")) raw.opcode = RAW_TEX;
       else if (word(p, "DIV")) raw.opcode = RAW_DIV;
       else if (word(p, "MAX")) raw.opcode = RAW_MAX;
+      else if (word(p, "MIN")) raw.opcode = RAW_MIN;
       else if (word(p, "FRC")) raw.opcode = RAW_FRC;
       else if (word(p, "LRP")) raw.opcode = RAW_LRP;
       else if (word(p, "DP3")) raw.opcode = RAW_DP3;
@@ -900,7 +902,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
        * and bitwise payloads never pass through this typed minus parser. */
       bool arithmetic = s->raw && ((UINT64_C(1) << raw.opcode) & RAW_ARITHMETIC_OPCODES);
       if (s->raw && (((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES)) ||
-          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
+          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_MIN_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
       bool absolute = (arithmetic || raw.opcode == RAW_F2I) && punctuation(p, '|');
       if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0 << i;
@@ -1186,7 +1188,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
             ++p; space(&p);
             if (*p == '-') candidate = true;
          }
-      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "MAX_PRECISE") || word(&p, "FRC") || word(&p, "LRP") ||
+      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "MAX_PRECISE") || word(&p, "MIN") || word(&p, "MIN_PRECISE") || word(&p, "FRC") || word(&p, "LRP") ||
                  word(&p, "DP3") || word(&p, "RCP") || word(&p, "RSQ")) {
          candidate = numeric_candidate = true;
       }
@@ -1385,6 +1387,7 @@ static void precise_contract(const struct profile *profile)
       const struct raw_instruction *instruction = &profile->raw->instructions[i];
       if (!(instruction->flags & RAW_PRECISE)) continue;
       if ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) continue;
+      if (instruction->opcode == RAW_MIN_PRECISE) continue;
       used[instruction->opcode == RAW_FSEQ ? 0 : instruction->opcode == RAW_FSNE ? 1 :
          instruction->opcode == RAW_MAX_PRECISE ? 2 : 3] = true;
    }
@@ -1454,6 +1457,14 @@ static void scalar_contract(const struct profile *profile, const char *base)
       base, profile->stage ? "fragment" : "vertex", trunc ? "\"TRUNC\"" : "", trunc && ssg ? "," : "", ssg ? "\"SSG\"" : "");
 }
 
+static void minimum_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool plain = (ops & (UINT64_C(1) << RAW_MIN)) != 0, precise = (ops & (UINT64_C(1) << RAW_MIN_PRECISE)) != 0;
+   append(",\"minimumBaseProfile\":\"%s\",\"minimumWordContract\":{\"kind\":\"tgsi-minimum-word-local-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"ordinary\":\"existing-finite-numeric-authority\",\"precise\":\"ordered-less-first-otherwise-second-original-word\",\"modifiers\":\"negation-before-selection\",\"output\":\"existing-numeric-or-selected-raw-authority\"}",
+      base, profile->stage ? "fragment" : "vertex", plain ? "\"MIN\"" : "", plain && precise ? "," : "", precise ? "\"MIN_PRECISE\"" : "");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1489,9 +1500,10 @@ static void stage_result(const struct conversion *c)
    bool conversion = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_OPCODES);
    bool conversion_bank = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_BANK_USED);
    bool scalar = profile->raw && (profile->raw->opcode_mask & RAW_SCALAR_OPCODES);
+   bool minimum = profile->raw && (profile->raw->opcode_mask & RAW_MINIMUM_OPCODES);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
+      minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
@@ -1532,6 +1544,8 @@ static void stage_result(const struct conversion *c)
    if (conversion) conversion_contract(profile, info->num_consts,
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (scalar) scalar_contract(profile, conversion ? conversion_name :
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (minimum) minimum_contract(profile, scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    append("}");
 }

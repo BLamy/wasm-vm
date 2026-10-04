@@ -1227,3 +1227,23 @@ physical word mismatch. Three input seeds, the retained hardware leaves, native
 ASan/UBSan/counters, actual fixed-heap Wasm pressure, and a final scrubbed clone
 complete the scoped evidence. Guest3D negotiation remains disabled and no desktop
 MIPS or compositor responsiveness result is claimed here.
+
+Private minimum selection (`E6-T12g6g1`) adds ordinary `MIN` to the existing
+numeric path and instruction-local `MIN_PRECISE` to the raw-word path. Ordinary
+inputs require existing finite numeric authority; their emitted GLSL `min`
+retains the existing mathematical zero-sign allowance. The precise operation
+chooses the first original word only for an ordered strict less-than result.
+Equal values, both signed zeros and unordered operands choose the second
+original word, preserving its NaN payload and subnormal encoding. Source
+negation precedes selection. Masks, swizzles and aliased sources are captured
+before publishing writes. The selected result retains the previous raw/float
+provenance rules; private integer manufacture obtains no new numeric authority.
+
+Outer raw profile v32 carries `minimumWordContract` and one v1–v31
+`minimumBaseProfile`, retaining all whole older obligations. It cannot wrap
+itself; the complete descending chain has at most five wrappers. The old
+FSEQ/FSNE/MAX/MOV precision contract remains unchanged, and every instruction's
+PRECISE marker remains local. Copied-bank raster outputs retain the exact
+normal/zero component certificates. State consumers, production negotiation
+and demo imports are unchanged. The isolated native/Wasm and physical GPU
+acceptance is `make verify-E6-T12g6g1`; this boundary makes no performance claim.
