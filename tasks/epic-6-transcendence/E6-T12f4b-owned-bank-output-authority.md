@@ -92,3 +92,10 @@ entries still fail. Native/Wasm and physical schema prechecks passed; this
 repair changes tests and recording code only. Compiler and consumer runtime
 bytes remain unchanged. Freeze the repaired harness before the final recording
 and pristine-clone proof.
+
+The source-fault receipt precheck also found a recording-label collision: the
+intercepted method name overwrote the `domainOracleStop` event name. Preserve
+that method as `interceptedCall` while retaining the unchanged full stop object.
+This distinguishes the blocked attempt from an actual GPU upload, whose complete
+uniform readback remains mandatory. All three fault shapes passed the corrected
+reader's ephemeral precheck. No compiler or consumer runtime change was needed.

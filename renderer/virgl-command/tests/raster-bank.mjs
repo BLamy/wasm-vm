@@ -34,7 +34,7 @@ function instrument(gl,report){
       const stages=key==='uniform4uiv'?[locations.get(args[0])?.name?.startsWith('vs')?0:1]:[0,1];
       for(const stage of stages){const components=control.oracle.components[stage];if(!components)continue;
         const values=key==='uniform4uiv'?[...args[1]]:control.oracle.banks[stage],invalid=firstInvalid(values,components.filter(e=>e.register*4+3<values.length));
-        if(invalid){const stop={call:key,stage,...invalid,domainOracle:'literal normal-or-signed-zero',unsafeGpuCalled:false,label:control.label};report.oracleStops.push(stop);record('domainOracleStop',stop);throw new Error('Independent raster domain oracle stopped unsafe GPU effect: '+JSON.stringify(stop));}
+        if(invalid){const stop={call:key,stage,...invalid,domainOracle:'literal normal-or-signed-zero',unsafeGpuCalled:false,label:control.label};report.oracleStops.push(stop);const {call:interceptedCall,...details}=stop;record('domainOracleStop',{...details,interceptedCall});throw new Error('Independent raster domain oracle stopped unsafe GPU effect: '+JSON.stringify(stop));}
       }
     }
     const actual=fn.apply(target,args);let result=actual;
