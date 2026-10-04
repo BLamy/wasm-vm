@@ -2013,3 +2013,7 @@ verify-E6-T12g6g1:
 .PHONY: verify-E6-T12g6g2
 verify-E6-T12g6g2:
 	bash tools/verify-virgl-precise-fraction.sh
+
+.PHONY: verify-E6-T12g6h
+verify-E6-T12g6h:
+	bash tools/verify-virgl-saturation.sh
