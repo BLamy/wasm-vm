@@ -3,7 +3,7 @@ id: E6-T12g6g2
 epic: 6
 title: Admit exact instruction-local fractional-part arithmetic
 priority: 525.027010575
-status: pending
+status: in-progress
 depends_on: [E6-T12g6g1]
 estimate: S
 risk: high
@@ -37,4 +37,28 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — activation
+
+Activated this S/high boundary above independently verified minimum selection
+`5ec49cbc`. The pinned TGSI definition at
+`renderer/virgl-shader/tests/mesa-24.2.8-tgsi.rst:309-319` gives component-wise
+`x - floor(x)`; the pinned converter at `vendor/src/vrend/vrend_shader.c:5702`
+emits ordinary `fract`, whose existing path remains unchanged. The new private
+FRC_PRECISE contract evaluates the exact source equation and rounds once to
+binary32 nearest-even: integers and both zeros produce canonical positive zero,
+positive subnormals remain gradual, and tiny negative fractions can round to
+positive one. All NaNs and infinities produce canonical quiet `0x7fc00000`,
+matching the documented special-result doctrine of earlier private arithmetic.
+Negation precedes evaluation. A bounded unsigned helper avoids native floating
+arithmetic in the precise private result.
+
+Preserve existing numerical/output authority separately: unknown private words
+gain none, known results can use only the existing static normal-or-zero proof,
+and already authorized inputs retain the old bank-dependent numerical shadow
+policy. Preserve whole prior wrappers, ordinary FRC, precise ADD/MUL and
+selected-away proofs, with no new unknown computed F2I range promise. Record
+independent rational source predictions, direct native helper/sanitizer evidence,
+actual pinned token/converter witnesses, native/Wasm singles and pairs, physical
+word/pixel captures across masks/aliases/versions, state consumers, source-fault
+sensitivity, varied seeds and one final pristine clone. Submit to a fresh critic
+before the next dependency. Production negotiation and performance remain gated.
