@@ -188,7 +188,7 @@ def main():
             truth=equation(fragment['op'],fragment['input']);raw=bytes(fragment['rgbaBytes']);require(len(raw)==64 and sha(raw)==fragment['sha256'] and fragment['checkedPixels']==16,'actual RGBA8 capture')
             for row,values in zip(truth,fragment['allowedResults']):require(values and all(allowed(row,w,fragment['backend']) for w in values),'fragment predictions obey independent equation')
             expected=[sorted(set(((w>>fragment['plane'])&1)*255 for w in choices)) for choices in fragment['allowedResults']]
-            require(expected==fragment['allowedBytes'] and all(b in expected[i%4] for i,b in enumerate(raw)),'independent clamp bit-plane pixels')
+            require(expected==[sorted(values) for values in fragment['allowedBytes']] and all(b in expected[i%4] for i,b in enumerate(raw)),'independent clamp bit-plane pixels')
             pixels+=16
             if fragment['backend']=='mesa':primary_pixels+=16
         require(gpu['checkedWords']==sum(len(v['vectors'])*12 for v in gpu['vertices']) and gpu['checkedPixels']==len(gpu['fragments'])*16,'physical count completeness')
