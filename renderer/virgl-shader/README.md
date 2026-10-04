@@ -6,6 +6,23 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Hexadecimal FLT32 immediates — E6-T12g6c
+
+`FLT32` accepts the pinned TGSI binary32 spelling `0x` followed by exactly
+eight ASCII hexadecimal digits (either digit case). These digits encode bits;
+they do not convert an integer into a float. Signs, `0X`, short/long encodings,
+C hexadecimal floating-point notation and suffixes reject. Decimal FLT32 and
+decimal UINT32 parsing, immediate order and compiler bounds are unchanged.
+
+Private raw operations retain every 32-bit encoding, including signed zero,
+subnormals, infinities and NaN payloads. The existing numerical-use and output
+checks still govern those bits. Legacy float conversion applies its existing
+finite, normal-or-zero and magnitude checks to hexadecimal encodings.
+`make verify-E6-T12g6c` compares literal words with the pinned Mesa parser,
+checks native/Wasm equivalence and measures independent physical vertex
+carriers and fragment bit planes. The complete larger compositor programs
+remain gated on their other operations; production negotiation stays disabled.
+
 ## Compiler resource envelope — E6-T12g6b
 
 `make verify-E6-T12g6b` records checked text/instruction/register/depth limits,
@@ -238,8 +255,9 @@ PRECISE, modifiers, control
 flow, indirect addressing and ADDR remain unsupported. It retains the v5 bank,
 line, text, instruction, component and initialization bounds. All decimal UINT32
 words from 0 through 4294967295 are permitted in raw immediates; signs, exponent
-notation, suffixes and overflow reject. FLT32 immediates keep their existing
-finite parsing policy. TEMP lanes and immediate operands use highp unsigned
+notation, suffixes and overflow reject. FLT32 decimal parsing keeps its existing
+finite policy; canonical hexadecimal encodings follow the current boundary
+described above. TEMP lanes and immediate operands use highp unsigned
 32-bit storage/expressions. SHL and USHR always mask each count with `31u`, as
 specified by the captured Mesa TGSI revision. Every instruction first snapshots
 all consumed RHS lanes into `raw_rhs`, then commits destination lanes. Sparse

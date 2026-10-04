@@ -1989,3 +1989,7 @@ verify-E6-T12g6a:
 .PHONY: verify-E6-T12g6b
 verify-E6-T12g6b:
 	bash tools/verify-virgl-compiler-bounds.sh
+
+.PHONY: verify-E6-T12g6c
+verify-E6-T12g6c:
+	bash tools/verify-virgl-hex-literals.sh
