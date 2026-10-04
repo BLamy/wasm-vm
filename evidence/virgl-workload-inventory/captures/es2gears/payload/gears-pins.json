@@ -1,0 +1,34 @@
+{
+  "schema": "virgl-gears-source-pins-v1",
+  "mesa_demos": {
+    "version": "9.0.0",
+    "url": "https://archive.mesa3d.org/demos/mesa-demos-9.0.0.tar.xz",
+    "archive": "mesa-demos-9.0.0.tar.xz",
+    "bytes": 14839368,
+    "sha256": "3046a3d26a7b051af7ebdd257a5f23bfeb160cad6ed952329cdff1e9f1ed496b",
+    "license": "MIT; unchanged per-file source notices and full original archive retained",
+    "program": "es2gears_wayland"
+  },
+  "cross_compiler": {
+    "path": "/usr/bin/riscv64-linux-gnu-gcc-12",
+    "bytes": 1973824,
+    "sha256": "c6c471e91126c6b0fd91034f4d94be2bae7f49df33461f3e039843ffed077fa0",
+    "version_prefix": "riscv64-linux-gnu-gcc-12 (Debian 12.2.0-13) 12.2.0"
+  },
+  "sources": [
+    "src/egl/opengles2/es2gears.c",
+    "src/egl/eglut/eglut.c",
+    "src/egl/eglut/eglut_wayland.c",
+    "src/util/matrix.c"
+  ],
+  "headers_and_build": [
+    "src/egl/eglut/eglut.h",
+    "src/egl/eglut/eglutint.h",
+    "src/util/matrix.h",
+    "src/egl/opengles2/meson.build",
+    "src/egl/eglut/meson.build",
+    "src/util/meson.build",
+    "meson.build",
+    "README.rst"
+  ]
+}

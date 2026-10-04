@@ -1,0 +1,31 @@
+{
+  "additionalClientShaders": [
+    "80a42bf3c99720ded8979c28cf04fdf1e4080c5ff44f7c05f43d693b3e063e02",
+    "86d0ee793508f4c6b9fad89c1ce75714fb38a8de8f8f1f3743c30ad71e680a71"
+  ],
+  "archiveName": "mesa-demos-9.0.0.tar.xz",
+  "capture": {
+    "bytes": 12613,
+    "path": "captures/es2gears/manifest.json",
+    "sha256": "202500d87a7e31a5c04f192852bb9a23dedce8681fb3ee4850e0738aee30e8a8"
+  },
+  "claim": "Unmodified real guest client completion and literal client-only requirements. Browser mappings, new shader admission, pixels and performance are unproven.",
+  "frozenSourceHead": "a669aad01b93e03e3b528a931748d0800156e57c",
+  "gearsInventory": {
+    "bytes": 17951101,
+    "path": "es2gears-inventory.json",
+    "sha256": "fb91301b9e14b098e0d8a590ddb7fa33ead15972195211741a5efcc3d58e9a3c"
+  },
+  "kmscubeInventory": {
+    "bytes": 433396,
+    "path": "kmscube-inventory.json",
+    "sha256": "8a1fb71fdd3f4d4c3696104690e11af480e5f1b95634bd077a1fcef1636b7b8c"
+  },
+  "originalManifests": {
+    "compositor": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+    "glmark2-es2": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+    "kmscube": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+    "textured-scene": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf"
+  },
+  "schema": "virgl-required-workload-evidence-v1"
+}
