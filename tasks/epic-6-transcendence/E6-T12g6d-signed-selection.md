@@ -3,7 +3,7 @@ id: E6-T12g6d
 epic: 6
 title: Admit bounded signed integer comparison and maximum
 priority: 525.027010571
-status: implemented
+status: verified
 depends_on: [E6-T12g6c]
 estimate: S
 risk: high
@@ -123,8 +123,8 @@ restoration snapshots each, caller-byte mutation, unchanged atomic nonfinite
 packet rejection and zero final renderer/resource/native object budgets.
 
 Both emitted-source faults fail on actual `edge-0-8` feedback: removing signed
-bias changes ISLT lane4 from1065353215 to1056964608; changing IMAX's winning
-source changes lane8 from1056964608 to1056964864. Failure captures dispose all
+bias changes ISLT lane 4 from 1065353215 to 1056964608; changing IMAX's winning
+source changes lane 8 from 1056964608 to 1056964864. Failure captures dispose all
 objects and retain zero errors. Fault report digests:
 `7f5487d1c4775fc9b98c184fec451be3d920f8bc65f8a32be1a5fc03c1d5ef95`
 and `0526735e83bafd5847cb0966faa9afae56af03f15c68dcc54dc7ddb1b21871de`.
@@ -150,3 +150,129 @@ Expanded recordings are in `target/evidence/virgl-signed-integers` and
 `target/evidence/virgl-signed-integers-cold`; physical byte captures, actual
 primary GLSL, fixed fixture bytes, native binary/profiles, coverage, screenshots
 and consumer snapshots are sealed for a fresh adversarial verifier.
+
+### 2026-10-04 — verifier — fresh independent critic
+
+VERDICT: verified
+
+Predictions P1–P8 were recorded before evidence inspection. Verified only the
+private signed32 ISLT/IMAX boundary at frozen runtime/harness source
+`bc360945be9b9f20cc6cb2dc29475857b58f2382`, worker submission `d38d2870`, above
+verified G6c `0488546825fa63ee5740844c045ae7be0d43eeb9`. No implementation was
+edited and no duplicate pristine-clone acceptance was run.
+
+- P1 authenticity — HELD. Predicted exact head/member/source binding. Independently
+  authenticated all 65 unique archive members, all 203 source/generated hashes
+  and all 27 child records per hot/cold receipt, including retained cold binaries.
+  Both complete source sets match frozen Git plus generated files. Cold head,
+  command exit 0, scrub record, empty before/after statuses and log/receipt digests
+  agree. Point: verifier archive `authentication.json`, worker archive SHA-256
+  `ebba6b455cd12786a95b4531d6936e72906b9d5716a0f8234e9e5cffea95fb88`.
+- P2 signed words — HELD. Predicted INT_MIN<0 gives `0xffffffff` and
+  IMAX(INT_MIN,0) gives 0. Independently interpreted literal TGSI/control flow and
+  captured constant banks using signed `int.from_bytes`, then compared every
+  actual feedback byte and RGBA byte, never using `expectedWords` as the oracle.
+  All hot/cold recordings agree: 93,384 words / 29,696 pixels each, including
+  72,576 unrestricted owned words / 27,648 owned pixels. Every pair of the 16
+  endpoint/special classes executes. Point: hot `gpu-1369979863/report.json`
+  `acceptance.vertices[4].vectors[0]` reconstructs the all-ones ISLT mask;
+  vertex 155 reconstructs IMAX winners 0/1/2/65535. Report SHA-256
+  `1900d41c971ca3db99501b406491410f79a68697748792fd139ac8a9faeba2a1`;
+  byte points and digests are in verifier `interrogation.json`.
+- P3 masks/versions/joins — HELD. Predicted simultaneous old aliased/swizzled
+  source reads and preservation of unmasked lanes. The source interpreter agrees
+  with all actual carriers for masked and alias variants. Each operation has 144
+  recorded vectors at each condition 0/`0xffffffff` per seed, independently
+  selecting the correct predecessor. Old private versions, missing lanes and
+  unsafe/missing predecessors reject in native/Wasm. Point: verifier
+  `interrogation.json` totals/points plus `guards.json` named version/join cases.
+- P4 authority and novel attack — HELD. Predicted unknown IMAX keeps only common
+  bit facts and drops input-float authority. All 108 critic-owned native/Wasm
+  guards pass; ASan/UBSan returns identical results with empty diagnostics.
+  Across all 15 destination masks, complementary one-sided exponent facts reject
+  direct output/numeric use; common normal facts admit. Input locators and
+  escaped old versions remain private. Point: `guards.json` native[0],
+  `imax-complementary-facts-output-mask-x`, predicted false/observed false.
+  Guard report SHA-256
+  `f6262d1474d6c8a3f0f03f960676849188ac485f53e20c3c616dd0d35da5a439`;
+  sanitized fixture SHA-256
+  `bf5c28f89b96c641d34b48786bbfcf05fc0a7da56c9c29290ae5b38139026cdc`.
+- P5 independent reference/API/retained contract — HELD. All 432 native results
+  match 432 Wasm singles/pairs; rejection closes source/metadata. The 392 actual
+  pinned parser/converter witnesses carry signed32 source/destination types.
+  Native GL receives exact unrevised primary GLSL. ISLT references explicitly
+  map masks through finite UCMP predicates; IMAX references select normal/zero
+  words, with normal/zero alias/masked inputs. All owned raw words face the full
+  independent oracle. Original source hashes and complete old source/metadata
+  agree: 25 originals retain 23 admissions, 112 historical cases retain 5 explicit
+  admissions, and prior 402 join / 49 literal guards remain unchanged. Point:
+  verifier `interrogation.json`, authenticated native/Wasm/retained reports.
+- P6 physical reflection/ownership/lifetime — HELD. Every seed reports enabled
+  headed physical WebGL2 on Apple M4 Max and zero browser errors. Reflected
+  feedback/banks match the checked vec4/uvec4 ABI. Independently decoded real
+  wire packets bind both stages' A/B/A replacement/restoration snapshots and
+  physical uniform words, including async caller mutation. Nonfinite packet
+  rejection applies zero commands and preserves state. Renderer/resource/native
+  objects dispose to zero. Owned fourth seed 967929221 also passes 30,912 words /
+  9,856 pixels, including 24,192 owned words / 9,216 owned pixels; source/generated
+  hashes bind the frozen source and the independent interpreter agrees.
+  Point: verifier `gpu-independent/report.json`, SHA-256
+  `c0690f816b6b32b557d2bff0c9e3690cdf5a07f62892a1e6ab502410441d9ea1`.
+- P7 sensitivity/sabotage — HELD. Both authenticated emitted-source faults are
+  supplied to native GL and contradict independent predictions: ISLT wrong
+  signedness changes carrier lane 4 from 1065353215 to 1056964608; IMAX wrong winner
+  changes lane 8 from 1056964608 to 1056964864 (worker fault digests above).
+  An owned isolated build changes only unknown IMAX intersection to union. The
+  promoted guard fails at native[0]: predicted rejection, observed admission;
+  concrete A=positive-infinity and B=1 explain why one-sided facts are unsafe.
+  Authentic controls pass. Point: verifier `sensitivity.json`, SHA-256
+  `a1fdfcfbf53ee43d89184deeb94f3f17b2b509ea4e3f84bb4c80ea27418bf8a8`.
+- P8 coverage — HELD. Independently regenerated exact hot and cold published
+  LLVM exports from authenticated binaries/raw profiles. ISLT known/unknown
+  branches hit 2000/146, IMAX 1040/134; IMAX source-winner branches 614/426.
+  Every added executable runtime hunk in bridge.c/raw_bits.c executes, including
+  parser/lexical dispatch, known comparisons, unknown intersection and both
+  emitter branches. All 25 changed hunks are classified in `coverage-audit.json`:
+  runtime/harness/build paths exercised; opcode macros/static assertions are
+  compiled declarative waivers; documentation/task/queue are non-runtime
+  waivers. Uncovered defensive assertion/failure handling belongs to the harness.
+  No runtime hunk needs evidence or deletion. Audit SHA-256
+  `f32a442457dcfb38474d423bbe11fc2366606024cc32d0596d6f91406e11ee48`.
+
+SUITE: promoted `renderer/virgl-shader/tests/signed-integer-regressions.mjs`, 108
+predetermined native/Wasm authority/mask/version/join/grammar guards; source
+SHA-256 `3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3`.
+Root may add the following narrow recurring command to the acceptance harness:
+
+```sh
+node renderer/virgl-shader/tests/signed-integer-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output target/evidence/virgl-signed-integers/independent-signed-guards.json
+```
+
+Owned verifier evidence:
+`evidence/virgl-signed-integers/verifier/{manifest.json,records.json,recording.tar.gz}`.
+The deterministic archive has 37 members, 1,694,583 bytes, SHA-256
+`3fb492e9b9addbecedf462e27ac08ad9dcbe7e22d10aa6f92cac25952c17b777`;
+index SHA-256
+`2d18d13e974bd8a5c95154db3f85adf5c43726f7c7013538f8f0d2837346d4a4`.
+It seals predictions, independent audit scripts/results, physical fourth-seed
+capture/coverage/screenshot, guard fixture/results/ASan profile, owned authentic
+and sabotage native binaries/source, and cleanup proof. Exact commands and
+reopenable points are in its README/reports. All owned browsers/processes closed.
+
+Unchanged G6b/G6c/resource/storage proofs carry HELD; the verifier did not expand
+this task into production negotiation/imports, guest transport of arbitrary
+nonfinite words, guest boot, desktop acceleration or MIPS/FPS. The primary
+reference limitation is an explicit scoped proof restriction, not a full-word
+Mesa differential claim. All owned signed words are independently proven.
+
+### 2026-10-04 — worker — incremental critic guard integration
+
+Authenticated every member of the 37-member verifier seal and the exact promoted
+guard source hash. Added the critic's 108 native/Wasm guards to the recurring
+acceptance script and receipt completeness checks. The standalone guard command
+passes again with report SHA-256
+`5d2d5c2cfb732b0bc54ac00eac98f4f0868ac2a7b0e6b4988db68d28acd8b481`.
+`node --check`, `bash -n`, receipt `py_compile` and `git diff --check` pass for
+the touched harness. Runtime, dependencies and authenticated source evidence are
+unchanged; all independently HELD results carry forward without another full
+hot/cold recording. Production integration remains gated on the dependent tasks.

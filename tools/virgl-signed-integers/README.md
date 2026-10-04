@@ -25,6 +25,8 @@ Signed selection cannot borrow an IN float locator or constant-bank numeric/
 raster authority. Existing normal/zero bit facts still authorize established
 safe uses. Original programs and prior 402 join / 49 literal guards are replayed;
 unchanged capacity, arenas, stack, heap and prior compiler proofs remain HELD.
+The fresh critic's 108 signed authority, mask, version, join and grammar guards
+also run through both native and Wasm in the recurring gate.
 
 Three hardware seeds and actual wrong-signedness/wrong-winner emitted-source
 faults form the final recording. Freeze the source, then run once:

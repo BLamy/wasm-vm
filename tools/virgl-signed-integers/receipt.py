@@ -124,7 +124,8 @@ def main():
     retained = report('retained/report.json', task='E6-T12g6b')
     require(len(retained['originals']) == 25 and sum(c['native']['ok'] for c in retained['originals']) == 23, 'original partition unchanged')
     require(len(retained['historical']) == 112 and sum(c['native']['ok'] for c in retained['historical']) == 5, 'historical grammar unchanged')
-    for filename, count in [('independent-joins.json', 402), ('independent-hex-guards.json', 49)]:
+    for filename, count in [('independent-joins.json', 402), ('independent-hex-guards.json', 49),
+                            ('independent-signed-guards.json', 108)]:
         guard = json.loads(artifact(filename))
         require(guard['status'] == 'passed' and type(guard['cases']) is int and guard['cases'] == len(guard['native']) == len(guard['wasm']) == count, 'promoted guard completeness')
         for a, b in zip(guard['native'], guard['wasm']):
@@ -222,7 +223,8 @@ def main():
             artifact(str(file.relative_to(directory)))
     receipt = dict(schema='virgl-signed-integers-receipt-v1', task=TASK, status='passed', gitHead=head,
         guestExecution=False, productionNegotiation=False, nativeCases=432, primaryComparisons=392,
-        wasmCases=432, wasmPairs=432, retainedOriginals=25, retainedAdmissions=23, promotedBoundsCases=402, promotedHexCases=49,
+        wasmCases=432, wasmPairs=432, retainedOriginals=25, retainedAdmissions=23,
+        promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108,
         checkedWords=words, checkedPixels=pixels, primaryWords=primary_words, primaryPixels=primary_pixels, physicalOutputFaults=faults,
         sources=list(sources.values()), records=list(records.values()))
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
