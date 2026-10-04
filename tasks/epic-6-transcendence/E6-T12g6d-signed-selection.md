@@ -3,7 +3,7 @@ id: E6-T12g6d
 epic: 6
 title: Admit bounded signed integer comparison and maximum
 priority: 525.027010571
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6c]
 estimate: S
 risk: high
@@ -84,3 +84,69 @@ and fixed-memory Wasm compiler paths, prior literal/original/join guards,
 three physical seeds and two actual source faults, authenticated receipt and
 one pristine scrubbed exact-source clone. Unchanged prior renderer/resource/
 capacity proofs remain HELD. No Rust or live web source/import changed.
+
+### 2026-10-04 — worker — recorded submission
+
+Claim: at frozen runtime/harness source
+`bc360945be9b9f20cc6cb2dc29475857b58f2382` above verified G6c
+`0488546825fa63ee5740844c045ae7be0d43eeb9`, ISLT/IMAX admit exact private
+signed32 comparisons/maximum without changing prior output/numeric authority
+or storage limits. The record executes both signed endpoints, every pair of
+16 literal special/endpoint classes, three seeded sets, masks/swizzles/aliases,
+both conditional predecessors and real changing constant banks. Independent
+BigInt source equations and a separately recomputed Python receipt agree with
+every captured hardware word/pixel. Pinned parser/converter types and explicit
+finite predicate/selection references agree in their documented reference
+domain. All prior originals, join/literal guards and unsupported full compositor
+outcomes remain unchanged. Production imports/caps/negotiation are disabled;
+no MIPS, FPS or accelerated desktop claim is made.
+
+Final exact-source commands all passed:
+
+```sh
+make verify-E6-T12g6d
+python3 tools/virgl-signed-integers/cold.py --output target/evidence/virgl-signed-integers-cold
+python3 tools/virgl-signed-integers/seal.py --hot target/evidence/virgl-signed-integers --cold target/evidence/virgl-signed-integers-cold --output evidence/virgl-signed-integers/worker
+```
+
+Each hot/cold run records 432 ASan/UBSan native cases (empty diagnostics), 392
+actual pinned signed-type/GLSL witnesses, 432 equal Wasm singles/pairs, 25
+original bodies retaining23 admissions, 112 historical grammar cases retaining5
+explicit admissions, 402 promoted join/bank guards and49 promoted literal guards.
+Three hardware seeds1369979863/2804203833/3781791491 produce93,384 exact words and
+29,696 exact pixels;72,576 words and27,648 pixels exercise unrestricted owned
+integer results, the remainder the documented pinned reference domain. Actual
+transform-feedback reflection, uniforms, source hashes, GPU identity and empty
+console/page/request/GL errors are captured. Each seed also runs four real shared
+renderer rigs (both operations, sync/async), six captured A/B/A replacement/
+restoration snapshots each, caller-byte mutation, unchanged atomic nonfinite
+packet rejection and zero final renderer/resource/native object budgets.
+
+Both emitted-source faults fail on actual `edge-0-8` feedback: removing signed
+bias changes ISLT lane4 from1065353215 to1056964608; changing IMAX's winning
+source changes lane8 from1056964608 to1056964864. Failure captures dispose all
+objects and retain zero errors. Fault report digests:
+`7f5487d1c4775fc9b98c184fec451be3d920f8bc65f8a32be1a5fc03c1d5ef95`
+and `0526735e83bafd5847cb0966faa9afae56af03f15c68dcc54dc7ddb1b21871de`.
+
+Evidence of record:
+`evidence/virgl-signed-integers/worker/{manifest.json,records.json,recording.tar.gz}`.
+The deterministic archive has65 members,8,055,540 bytes, SHA-256
+`ebba6b455cd12786a95b4531d6936e72906b9d5716a0f8234e9e5cffea95fb88`;
+the record index SHA-256 is
+`bd2f737b4ae5b7ea03f87b4ce0c0c43c7e03cdf554beff461661142f81ab1741`.
+Hot receipt SHA-256:
+`067a3bd147ae5b363edfad861ebe8d1545a247bf2d396d93c8e2e56ab98629dc`;
+cold report:
+`f021e5f3c4eaec1c881612b1e315f7b6a223f3f93b53d0e1943560dc8f4446aa`;
+cold receipt:
+`be44d0e519fdd2976ae62a3b06a26b4fe7922890d7373b49a44cbef7132f517b`.
+Receipts bind203 source/generated hashes and27 diagnostic/capture records each.
+The pristine clone has exact source HEAD and empty status before/after:
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-signed-integers-cold-g43t1yxk/wasm-vm`.
+Cold log digest:
+`f09316f95ce6f29b2e9cb95b19469b7c18d22a18e22a24f6dd16e371019f8e0c`.
+Expanded recordings are in `target/evidence/virgl-signed-integers` and
+`target/evidence/virgl-signed-integers-cold`; physical byte captures, actual
+primary GLSL, fixed fixture bytes, native binary/profiles, coverage, screenshots
+and consumer snapshots are sealed for a fresh adversarial verifier.
