@@ -3,7 +3,7 @@ id: E6-T12g4
 epic: 6
 title: Execute required sampler-view swizzles addressing and filtering
 priority: 525.0270104
-status: pending
+status: in-progress
 depends_on: [E6-T12g3]
 estimate: S
 risk: high
@@ -38,4 +38,31 @@ correct physical results; unsupported requests cannot become no-ops.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — execution boundary
+
+The user's graphics-offload continuation selects this next eligible dependency
+at verified G3 `96d6b83fcde1765fc5e931a95808629f78d37b60`.
+G1's unchanged client sampler requirement is kmscube format67/target2,
+level/layer0, identity swizzle and clamp-edge linear non-mip filtering
+(resource5@125; VIEW at176/byte4400; SAMPLER at176/byte4444). The original
+gears client creates no sampler views. Preserve unsupported mip/layer/cube,
+depth-view and vertex-texture families explicitly; do not invent captured
+requirements or advertise those families.
+
+Extend exact-matching existing color views2/67/233 with bounded immutable
+selectors0–5, including ZERO/ONE, as the task's synthetic specialization
+proof. Native storage and alpha are the independently verified G2 boundary.
+Specialize the checked compiler's existing fragment 2D TEX output in a private
+per-program GLSL variant; do not mutate shared textures or add view images.
+Canonical program keys include every specialization dependency, preserve
+fixed legacy identity semantics, and reuse the original A program on A/B/A.
+Own and charge fragment variants alongside existing flat vertex variants;
+prove allocation/compile/link/reflection/quota rollback and deletion.
+
+Use unchanged original packets plus separate synthetic hardware sampling,
+swizzle/alpha, nearest/linear/clamp-edge, alias/role, A/B/A and poisoned-state
+oracles. A swizzle source fault must fail independent pixels. Retain affected
+color/depth/state/draw/async/tiny checks, then freeze the exact source, record
+final hardware/pristine-clone proof and submit to a fresh critic. This remains
+an isolated renderer boundary; production negotiation stays disabled.
+
