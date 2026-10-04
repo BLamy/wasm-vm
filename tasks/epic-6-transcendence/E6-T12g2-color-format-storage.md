@@ -75,7 +75,7 @@ python3 tools/virgl-command/colors-cold.py --output target/evidence/virgl-color-
 The gate passed syntax/format checks, rebuilt the pinned WASM shader compiler,
 ran the affected original decoder/resource/state/draw/async regressions, and
 recorded 822 metadata/role/layout assertions plus 941 hardware assertions on
-Chrome155 / ANGLE Metal Apple M4 Max. Selected unchanged original inputs are
+Chrome154.0.8037.93 / ANGLE Metal Apple M4 Max. Selected unchanged original inputs are
 kmscube BGRX surface event176, original es2gears packed10 surface event5115,
 and kmscube RGBA CPU upload event140. Physical GPU sampling and attachment
 readback confirm native [8,8,8,0], [8,8,8,8], [10,10,10,2] component sizes,
