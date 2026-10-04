@@ -32,10 +32,12 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES | RAW_V6_OPCODES)
 /* The remaining mask bit records a validated numeric modifier, not an opcode. */
 #define RAW_V5_NEGATION (UINT64_C(1) << 21)
-/* Separate from opcode bits: at least one checked numeric read used the bank. */
+/* Separate from opcode bits: a numeric read or guarded raster copy uses the bank. */
 #define RAW_FINITE_BANK_USED (UINT64_C(1) << 25)
 /* A retained instruction-local flag, separate from every opcode/domain bit. */
 #define RAW_PRECISE_WORD_USED (UINT64_C(1) << 36)
+/* A finalized copy certificate supplies only guarded ordinary raster access. */
+#define RAW_RASTER_BANK_USED (UINT64_C(1) << 37)
 #define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
 #define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
 #define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
@@ -85,10 +87,20 @@ struct radial_certificate {
    bool recognized, used;
    unsigned char reserved[2];
 };
+struct raster_certificate {
+   unsigned char components[CONST_REGISTERS], outputs[FILE_REGISTERS];
+};
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
    uint32_t immediates[FILE_REGISTERS][4];
-   struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];
+   /* TEMP facts die when semantic validation finishes. The emitter reads only
+    * recorded instructions and final OUT facts. Publish this small certificate
+    * in their arena only at that lifetime boundary, guarded by its feature bit. */
+   union {
+      struct raw_lane temporary[TEMP_REGISTERS][4];
+      struct raster_certificate raster;
+   };
+   struct raw_lane output[FILE_REGISTERS][4];
    unsigned count;
    struct raw_lane address;
    uint64_t opcode_mask, indirect_indices; /* Union of complete, checked use-site candidate sets. */
@@ -127,6 +139,9 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask);
  * A rejection publishes neither facts nor an instruction. */
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);
 bool raw_outputs_safe(const struct profile *profile);
+/* Finalize only unsafe output copies. Returns 1 on guarded admission, 0 on an
+ * unsupported dependency, or -1 on allocation failure. No partial publication. */
+int raw_certify_raster_outputs(const struct profile *profile);
 /* Only initialized predecessors are joined; structured writes have already
  * materialized each authorized value in its destination's physical shadow. */
 struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no);

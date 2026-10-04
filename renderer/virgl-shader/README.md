@@ -993,3 +993,45 @@ unit normal so their instruction-local MAX selects exact +0 while `.yz` copies
 distinct selector/texcoord words. This does not claim exact native RSQ/DP3
 intermediates, bank-derived raster alpha authority, guest GPU negotiation or
 300MIPS desktop throughput.
+
+Guarded bank copies to raster outputs — E6-T12f4b
+------------------------------------------------
+
+Raw profile27 adds a mandatory use-site component certificate for bank words
+copied to ordinary floating outputs. Its `rasterBaseProfile` retains every
+existing finite, indirect, signed-count, radial and instruction-local PRECISE
+obligation. The closed `constantRasterDomains` record names one bank and sorted
+register/component masks. It permits finite normals and both zero signs for
+those copied components. Subnormals remain valid private bank/count data but
+cannot become ordinary copied raster values. Computed integer values do not
+inherit this authority.
+
+The bounded backwards analysis follows checked control-flow predecessors,
+masked writes, pre-write aliases, copy/selection payloads and certified table
+indices. Existing numerical producers retain their previous authority. The
+recognized radial branch is pruned only under its mandatory coefficient domain.
+An integer table count cannot be used as copied floating output data. The
+16,516-byte iterative analysis arena has a 32 KiB cap; its small final certificate
+reuses TEMP facts only after semantic validation completes. The 26,480-byte IR,
+7,616-byte profile, 52,644-byte flow arena and 112-byte instruction stay unchanged.
+
+The shared renderer approves one owned immutable complete finite bank prefix
+before linking, uploads and draws. Combined predicates and copied components
+refer to that same snapshot. Restoration skips invalid current banks; async
+work retains and checks shader, program, context and bank identities. Replacing
+a bank requires fresh approval. No missing word is synthesized.
+
+`make verify-E6-T12f4b` records the complete predecessor workload and an explicit
+ledger of24 newly admitted singles,3 pairs and4 untouched original gradients.
+All other complete results stay unchanged. Literal copy, branch, alias and
+selection fixtures cover both stages, domain boundaries and the compiler caps.
+Actual GPU captures compare flat copied words and ordinary RGBA8 pixels against
+independent predictions. Replacement, restoration and varied async schedules
+must reject unsafe banks before effects. Three actual source faults omit a
+component, remove the consumer predicate or decode an unapproved bank word;
+independent domain or pixel oracles must refute them. Unsafe subnormal raster
+paths are stopped before invoking the native GPU method.
+
+The original bodies now compile18/19. ADD_PRECISE and MUL_PRECISE remain gated.
+This is guarded admission, without claiming real captured radial banks,
+production guest GPU negotiation or300MIPS desktop throughput.

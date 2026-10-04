@@ -13,6 +13,8 @@ export const PRECISE_WORD_KIND = "tgsi-precise-word-local-v1";
 export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
 export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
 export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
+export const RASTER_PROFILE = "virgl-webgl2-raw-bits-v27";
+export const RASTER_DOMAIN_KIND = "constant-bank-raster-copy-f32-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
@@ -59,12 +61,48 @@ function array(value, maximum) {
 }
 function failure(code, message) { return Object.freeze({ ok: false, error: Object.freeze({ code, message }) }); }
 
+function rasterContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === RASTER_DOMAIN_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent copied-bank raster domain.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47,
+    "Raster bank extent exceeds its declared bound.");
+  const components = array(domain.components, 46).map(value => record(value, ["register", "mask"]));
+  require(components.length > 0 && components.every((entry, position) =>
+    Number.isInteger(entry.register) && entry.register >= 0 && entry.register < Math.min(domain.count, 46) &&
+    Number.isInteger(entry.mask) && entry.mask >= 1 && entry.mask <= 15 &&
+    (position === 0 || components[position - 1].register < entry.register)),
+  "Raster components must be nonempty, bounded, sorted and unique.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
 /** Recognize a trusted compiler result without changing any of its metadata. */
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const raster = value.profile === RASTER_PROFILE;
+    require(raster === Object.hasOwn(value, "rasterBaseProfile") && raster === Object.hasOwn(value, "constantRasterDomains"),
+      "Copied-bank raster contract disagrees with its outer profile.");
+    if (raster) {
+      require(CONDITIONAL_PROFILES.has(value.rasterBaseProfile), "Raster profile requires an existing finite-bank base profile.");
+      const base = { ...value, profile: value.rasterBaseProfile };
+      delete base.rasterBaseProfile; delete base.constantRasterDomains;
+      // Only existing base profiles pass this gate, so recursion is exactly one
+      // level. Every simultaneous base obligation is parsed without alteration.
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      const domains = array(value.constantRasterDomains, 1);
+      require(domains.length === 1 && checked.domain !== null, "Raster profile requires one copied-word and one finite-bank domain.");
+      const rasterDomain = rasterContract(domains[0]);
+      require(rasterDomain.stage === expectedStage && rasterDomain.count === checked.domain.count &&
+        rasterDomain.name === checked.domain.name, "Raster domain disagrees with its complete finite bank.");
+      require(!checked.constraint || rasterDomain.components.every(entry => entry.register !== 9 || !(entry.mask & 1)),
+        "Integer loop count cannot acquire copied raster authority.");
+      return Object.freeze({ ...checked, rasterDomain });
+    }
     require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), "Unknown shader profile.");
     const precise = PRECISE_PROFILES.has(value.profile);
     require(precise === Object.hasOwn(value, "preciseWordContract"), "Shader precision contract disagrees with its profile.");
@@ -160,6 +198,13 @@ export function finiteBinary32Word(word) {
   return Number.isInteger(word) && word >= 0 && word <= 0xffffffff && (word & 0x7f800000) !== 0x7f800000;
 }
 
+/** The copied raster domain permits both zero signs and finite normals. */
+export function rasterBinary32Word(word) {
+  if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
+  const magnitude = word & 0x7fffffff, exponent = word & 0x7f800000;
+  return magnitude === 0 || (exponent !== 0 && exponent !== 0x7f800000);
+}
+
 /** Validate and own exactly the reflected prefix; no absent word is synthesized. */
 export function checkFiniteBank(words, uploadCount) {
   try {
@@ -225,4 +270,33 @@ export function checkRadialBank(words, declaredCount, counted = false) {
       return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
   }
   return checked;
+}
+
+/** All base and copied-word approvals refer to the same owned full prefix. */
+export function checkRasterBank(words, domain, counted = false, radial = false) {
+  try {
+    require(typeof counted === "boolean" && typeof radial === "boolean", "Invalid combined raster obligations.");
+    const contract = rasterContract(domain);
+    require(!counted || ((contract.count === 46 || contract.count === 47) &&
+      contract.components.every(entry => entry.register !== 9 || !(entry.mask & 1))),
+    "Integer loop count cannot supply ordinary raster data.");
+    require(!radial || contract.count >= 5, "Radial raster bank requires the coefficient register.");
+    const checked = checkIndirectBank(words, contract.count, true);
+    if (!checked.ok) return checked;
+    if (counted) {
+      const count = checked.words[36];
+      if (!(count >= 0x80000000 || count <= 18))
+        return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+    }
+    if (radial && (checked.words[16] & 0x7fffffff) < 0x3727c5ac)
+      return failure("constant-radial-domain-error", "Radial coefficient permits an undefined linear predecessor.");
+    for (const entry of contract.components)
+      for (let lane = 0; lane < 4; lane++)
+        if ((entry.mask & (1 << lane)) && !rasterBinary32Word(checked.words[entry.register * 4 + lane]))
+          return failure("constant-raster-domain-error", "Copied bank word is outside the normal-or-signed-zero raster domain.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-raster-domain-error", error.message);
+  }
 }

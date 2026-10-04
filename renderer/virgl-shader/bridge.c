@@ -946,10 +946,17 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
-   if (s->raw && (!s->raw->opcode_mask || !raw_outputs_safe(s) ||
+   if (s->raw && (!s->raw->opcode_mask ||
        (s->address_declared && !s->raw->indirect_indices))) {
       failure_code = "unsupported-feature";
       return false;
+   }
+   if (s->raw && !raw_outputs_safe(s)) {
+      int raster = raw_certify_raster_outputs(s);
+      if (raster != 1) {
+         failure_code = raster < 0 ? "translation-error" : "unsupported-feature";
+         return false;
+      }
    }
    return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
 }
@@ -1337,6 +1344,22 @@ static void precise_contract(const struct profile *profile)
    append("]}");
 }
 
+static void raster_contract(const struct profile *profile, unsigned count, const char *base)
+{
+   int stage = profile->stage;
+   append(",\"rasterBaseProfile\":\"%s\",\"constantRasterDomains\":[{\"kind\":\"constant-bank-raster-copy-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%u,\"components\":[",
+      base, stage ? "fragment" : "vertex", stage ? "fs" : "vs", count);
+   bool comma = false;
+   for (unsigned index = 0; index < CONST_REGISTERS; ++index) {
+      unsigned mask = profile->raw->raster.components[index];
+      if (mask) {
+         append("%s{\"register\":%u,\"mask\":%u}", comma ? "," : "", index, mask);
+         comma = true;
+      }
+   }
+   append("]}]");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1367,7 +1390,9 @@ static void stage_result(const struct conversion *c)
       c->profile.raw->opcode_mask & RAW_V4_OPCODES ? "virgl-webgl2-raw-bits-v4" :
       c->profile.raw->opcode_mask & RAW_V3_OPCODES ? "virgl-webgl2-raw-bits-v3" :
       c->profile.raw->opcode_mask & RAW_V2_OPCODES ? "virgl-webgl2-raw-bits-v2" : "virgl-webgl2-raw-bits-v1";
-   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":", name, stage ? "fragment" : "vertex");
+   bool raster = profile->raw && (profile->raw->opcode_mask & RAW_RASTER_BANK_USED);
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
+      raster ? "virgl-webgl2-raw-bits-v27" : name, stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
    if (!stage) io_metadata(profile, IN); else append("[]");
@@ -1401,6 +1426,7 @@ static void stage_result(const struct conversion *c)
       append(",\"constantRadialDomains\":[{\"kind\":\"constant-bank-radial-coefficient-f32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":4,\"component\":0,\"minimumMagnitude\":925353388}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    if (profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_WORD_USED)) precise_contract(profile);
+   if (raster) raster_contract(profile, info->num_consts, name);
    append("}");
 }
 
