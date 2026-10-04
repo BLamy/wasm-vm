@@ -8,7 +8,11 @@ import {createVirglShaderBridge} from '../../renderer/virgl-shader/index.mjs';
 const native=JSON.parse(fs.readFileSync(process.argv[2])),bridge=await createVirglShaderBridge();
 const report={schema:'virgl-signed-conversions-consumer-v1',task:'E6-T12g6e',status:'running',gitHead:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
   nativeSha256:createHash('sha256').update(fs.readFileSync(process.argv[2])).digest('hex'),contracts:[],forgeries:[],banks:[],combined:[],accessorInvocations:0};
-const bad=(metadata,stage,name)=>{const result=parseConstantDomain(metadata,stage);assert.equal(result.ok,false,name);assert.equal(result.error.code,'shader-domain-error');report.forgeries.push({name,metadata,result});};
+// Evidence serialization must not execute the rejected metadata either.
+const inert=value=>{if(value===null||typeof value!=='object')return value;
+  const copy=Array.isArray(value)?[]:{};for(const [key,d]of Object.entries(Object.getOwnPropertyDescriptors(value)))
+    if(d.enumerable)copy[key]=Object.hasOwn(d,'value')?inert(d.value):'[accessor]';return copy;};
+const bad=(metadata,stage,name)=>{const result=parseConstantDomain(metadata,stage);assert.equal(result.ok,false,name);assert.equal(result.error.code,'shader-domain-error');report.forgeries.push({name,metadata:inert(metadata),result});};
 for(const c of native.cases.filter(c=>c.ok)){
   const metadata=c.result.metadata,contract=parseConstantDomain(metadata,c.stage);assert.equal(contract.ok,true,c.name);assert.ok(contract.conversion);
   report.contracts.push({name:c.name,metadata,contract});

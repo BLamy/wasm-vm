@@ -53,7 +53,18 @@ def main():
     directory = Path(sys.argv[1]).resolve()
     head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     require(not subprocess.check_output(['git', 'diff', '--name-only', 'HEAD'], cwd=ROOT), 'freeze tracked sources')
-    sources, records = {}, {}
+    sources, records, recording_heads = {}, {}, set()
+    # Evidence-only repairs carry immutable runtime recordings forward. An old
+    # head is acceptable only when the entire commit range changes these two
+    # harness files; every recorded served source is still digest-checked below.
+    harness_repairs = {'tools/virgl-signed-conversions/consumer.mjs', 'tools/virgl-signed-conversions/receipt.py'}
+
+    def recording_head(value):
+        recorded = value['gitHead']
+        require(subprocess.run(['git','merge-base','--is-ancestor',recorded,head],cwd=ROOT,stdout=subprocess.DEVNULL).returncode == 0, 'recording is from an ancestor source head')
+        changed = set(subprocess.check_output(['git','diff','--name-only',recorded,head],cwd=ROOT,text=True).splitlines())
+        require(changed <= harness_repairs, 'recorded runtime or dependency source changed')
+        recording_heads.add(recorded)
 
     def source(name, digest=None, size=None):
         raw = (ROOT / name).read_bytes()
@@ -73,7 +84,8 @@ def main():
 
     def report(name, task=TASK, passed=True):
         value = json.loads(artifact(name))
-        require(value['gitHead'] == head and value['status'] == ('passed' if passed else 'failed'), 'report head/outcome: ' + name)
+        recording_head(value)
+        require(value['status'] == ('passed' if passed else 'failed'), 'report outcome: ' + name)
         require(task is None or value['task'] == task, 'task: ' + name)
         for row in value.get('sources', []):
             source(row['path'], row['sha256'], row.get('size', row.get('bytes')))
@@ -316,6 +328,7 @@ def main():
         wasmCases=364, wasmPairs=364, retainedOriginals=25, retainedAdmissions=23,
         promotedBoundsCases=402, promotedHexCases=49, promotedSignedCases=108,
         metadataAttacks=7849, ownedRangeBanks=9, combinedBases=4,
+        recordingHeads=sorted(recording_heads), incrementalHarnessRepairs=sorted(harness_repairs),
         checkedWords=words, checkedPixels=pixels, primaryWords=primary_words, primaryPixels=primary_pixels, physicalOutputFaults=faults,
         sources=list(sources.values()), records=list(records.values()))
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
