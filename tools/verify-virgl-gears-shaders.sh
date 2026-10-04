@@ -12,7 +12,7 @@ export EMCC
 set -x
 git rev-parse HEAD
 git diff --check
-for file in renderer/virgl-shader/tests/gears-originals.mjs tools/virgl-gears-shaders/*.mjs; do node --check "$file"; done
+for file in renderer/virgl-shader/tests/gears-originals.mjs renderer/virgl-shader/tests/gears-exact-alpha.mjs tools/virgl-gears-shaders/*.mjs; do node --check "$file"; done
 python3 -m py_compile tools/virgl-gears-shaders/*.py
 bash -n tools/verify-virgl-gears-shaders.sh
 # Proof-harness boundary: compiler/runtime semantics are unchanged. Rebuild the
@@ -24,6 +24,7 @@ node tools/virgl-gears-shaders/compiler.mjs "$evidence_dir/compiler.json"
 for seed in 1648868771 254715103 3281536249; do
   node tools/virgl-gears-shaders/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed" --provenance "$evidence_dir/provenance.json"
 done
+node renderer/virgl-shader/tests/gears-exact-alpha.mjs "$evidence_dir"/gpu-*/report.json
 for fault in lighting auxiliary forced-alpha; do
   if node tools/virgl-gears-shaders/browser.mjs --output "$evidence_dir/fault-$fault" --fault "$fault" --provenance "$evidence_dir/provenance.json"; then
     echo "ERROR: $fault escaped the independent physical shader oracle" >&2

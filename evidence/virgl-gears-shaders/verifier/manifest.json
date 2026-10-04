@@ -1,0 +1,33 @@
+{
+  "schema": "virgl-gears-original-critic-seal-v1",
+  "task": "E6-T12g6a",
+  "verdict": "verified",
+  "sourceHead": "2e7f43167fe29d8ad0da92591888e27e2dbae589",
+  "submission": "c1a7f03490275d0d8ef9077d598c1e9d735cfb3c",
+  "base": "ee0277231f1903633881d803ba6153b58d31fd1c",
+  "workerArchiveSha256": "9941036d869021078ce41f67e219b568c24a5b00294598dba4b6873c67b3af6e",
+  "workerIndexSha256": "66f7335f9d11d6cd9cca13b12bbf78e7ae4c43c8f0f3149baea41e514dcad5bb",
+  "logicalRecords": 54,
+  "storedUniqueMembers": 49,
+  "membersAuthenticate": true,
+  "duplicatePayloads": 0,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 1392033,
+    "sha256": "60f2783e02e62bd6cac757b948192a4d709f4d5ded35127c9d05ff51b35e5a24"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 11906,
+    "sha256": "9aa1c2cda4c4bda92f710869c182ce59d15f7f6d06afd9bd2f93682b7d293319"
+  },
+  "verdictSha256": "fd80c2be62756febd95c91e3c1353fafb300e9e779c8dd2eb338ddd133f7187c",
+  "promotedTest": {
+    "path": "renderer/virgl-shader/tests/gears-exact-alpha.mjs",
+    "sha256": "9b118502814dd7634fda76c1fc6df0d9eba679dbd73a469f413d8fd637a1f3da"
+  },
+  "exactAlphaWords": 432,
+  "novelHardwareWords": 3024,
+  "novelHardwarePixels": 39168,
+  "ownedBrowsersAndServersClosed": true
+}
