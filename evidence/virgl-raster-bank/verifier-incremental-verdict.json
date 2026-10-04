@@ -1,0 +1,246 @@
+{
+  "schema": "raster-bank-verifier-incremental-verdict-v1",
+  "verdict": "verified",
+  "task": "E6-T12f4b",
+  "role": "same fresh independent adversarial verifier; sole correction rechecked incrementally",
+  "correctionHead": "10cac3c8d813f959659c57bcd26cfbed1e4788be",
+  "previousVerifierHead": "2e9e90b8ea185ea754309f761a205b76c29bce67",
+  "submissionHead": "2a413b9f84e2556cb1c32fcf1c8fbff3127dd5b3",
+  "frozenHead": "4999a81ad93496fc25e78cbb0aeb7adec66006e3",
+  "parentHead": "596f294fd4889665a793d678e5e4d72556388199",
+  "runtimeRefuted": false,
+  "historicalScopeOverclaimRefuted": true,
+  "requiredCorrection": "Constrain approval before linking to draw-triggered linking, and approval before effects to effects consuming bank words. Explicit bank-independent linking/object creation may proceed; invalid banks are skipped by restoration, then draw preflight rejects. Append this worker claim correction without changing runtime/harness source. Reverify incrementally using existing HELD results and digests.",
+  "correctionSatisfied": true,
+  "correctedClaim": "The fresh verifier refuted the activation paragraph's unqualified claim that\nbank approval precedes all program linking. That sentence is superseded by this\nclaim: complete owned-bank approval precedes **draw-triggered linking** and the\nGPU effects that consume bank words. Explicit `LINK_SHADER`, program creation\nand program-cache growth remain bank independent and may succeed while a\nreplacement bank is invalid. Restoration checks the owned replacement and skips\nits constant upload; subsequent draw preflight rejects it before constant\nuploads and draw calls, preserving the framebuffer and held generations.\n\nThe verifier reproduced this distinction twice on actual hardware: explicit\nlinking with copied `C0.w = 0x00000001` grew the program count from 1 to 2, while\nrestoration issued no copied-bank upload and the later draw returned\n`constant-raster-domain-error`, `appliedCommands: 0`, unchanged pixels and no\nunsafe GPU call. Its complete evidence and preserved HELD checks are bound by the\npreceding verifier entry. This is a correction to the submitted claim; no\nruntime, harness, dependency, original capture or previously recorded artifact\nhas changed. The worker and pristine-clone recordings at frozen source\n`4999a81ad93496fc25e78cbb0aeb7adec66006e3` remain the evidence of record.\n\nResubmit the corrected claim for incremental independent verification. Production\nguest GPU enablement, real radial workload compatibility, graphics offload and\ndesktop 300 MIPS remain outside this claim.",
+  "predictions": [
+    {
+      "id": "P1",
+      "outcome": "HELD",
+      "observation": "All400 worker and402 cold archive members losslessly match live files; native and Wasm artifacts/receipts bind frozen4999a81a; named cold clone still clean at that head.",
+      "record": "identity-audit.json",
+      "sha256": "fb8fc89c36578800d574679fb5d541c1eec3bfbb544b44c15ce2be1ce96c6057"
+    },
+    {
+      "id": "P2",
+      "outcome": "HELD",
+      "observation": "All150 generated literal mask/alias certificates independently derived; exact v27/base/finite/indirect/count/radial/PRECISE obligations survive. Novel nested masked copy demands C0:9,C1:11,C4:5 in both stages.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P3",
+      "outcome": "HELD",
+      "observation": "The committed correction limits pre-link approval to draw-triggered linking and the guarded effects to effects consuming bank words. Both physical probes show legal explicit LINK/program growth, restoration skipping the invalid bank, and rejected draw with zero effects and unchanged pixels/generations. The exact written correction demand is satisfied.",
+      "record": "verifier-incremental-audit.json",
+      "sha256": "2244c38272c0f8ca0983e5fc7d82b52a68507d3a57e301f280fde393f8345acf",
+      "previousOutcome": "NEEDS EVIDENCE",
+      "historicalRecord": {
+        "id": "P3",
+        "outcome": "NEEDS EVIDENCE",
+        "observation": "Normal-or-signed-zero admission and before-upload/draw rejection HELD. The unqualified worker claim before program linking FAILED: explicit LINK succeeds with copied C0.w=1, creates Program22 and executes linkProgram at GL event212. Require the prepared scoped written claim correction; no runtime code is refuted.",
+        "record": "link-scope-audit.json",
+        "sha256": "69f710710ef45ecd2596505e727928f8a11ae15949b51539f174b282501fde71"
+      }
+    },
+    {
+      "id": "P4",
+      "outcome": "HELD",
+      "observation": "Independent lane/premultiplied-color equations matched1344 draws,2800 exact copied words and5505024 complete pixels across7 recordings; every uploaded bank prefix read back exactly. Wrong allowed-word decode fails physical pixels.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P5",
+      "outcome": "HELD",
+      "observation": "Invalid replacement remains exact CPU data, restoration skips upload, draw preserves complete state/framebuffer on rejection. Six async rigs per recording hold identical bank/shader generations;1932 real fences across7 recordings obey later-task polling and signaled deletion.",
+      "record": "direct-audit.json",
+      "sha256": "ff1bf23fe99dbdf8163b6e43ea54e9da2b7fb99dc02f93db56b9699d279505d9"
+    },
+    {
+      "id": "P6",
+      "outcome": "HELD",
+      "observation": "All19 bodies/hashes unchanged; only24 singles,3 pairs,4 originals migrate;18 originals admit. Entire unrelated baseline results agree; mandatory simultaneous contracts, count-as-output rejection and preserved retained leaves pass. Carry prior F4a/F3 HELD semantics at unchanged boundaries/digests.",
+      "record": "worker-replay.json",
+      "sha256": "6f2b3511865cec522cfea382c1e0473f29111ccdf04cc3309e08a0e102b138a5"
+    },
+    {
+      "id": "P7",
+      "outcome": "HELD",
+      "observation": "1501326 native calls,244 allocation failures including15 raster and20 upstream sites; actual16516-byte allocation fails transactionally.45696 Wasm calls,64 max-input stress and51 heap-pressure calls retain fixed16MiB buffer. IR26480/profile7616/flow52644, maximum GLSL58201 remain bounded; GPU/resource budgets zero.",
+      "record": "worker-replay.json",
+      "sha256": "6f2b3511865cec522cfea382c1e0473f29111ccdf04cc3309e08a0e102b138a5"
+    },
+    {
+      "id": "P8",
+      "outcome": "HELD",
+      "observation": "All three actual source faults independently rerun at seed4a57de19. Component omission and missing guard reach distinct domainOracleStop events with unsafeGpuCalled:false; wrong allowed decode produces pixel mismatch. Promoted guard-removal sensitivity fails at first unsafe lane with0 GPU calls.",
+      "record": "independent-physical-replay.json",
+      "sha256": "5ebe72e3d47b67a17c43503de2897293393df73f5afd4f997773556e6b60be11"
+    },
+    {
+      "id": "P9",
+      "outcome": "HELD",
+      "observation": "All54 changed hunks classified by actual execution/direct result or reasoned declaration/recorder/defense waiver. Sealed binaries/profiles reproduce complete LLVM exports. Independent V8 covers count/radial/descriptor helper failures omitted by browser schedules. No unproven product hunk remains for the guarded bank-consuming boundary.",
+      "record": "coverage-scope.json",
+      "sha256": "968a767317ddb0c31faeb600441f9ee4fb507b146a89c2179405ed855d871de7"
+    },
+    {
+      "id": "P10",
+      "outcome": "HELD",
+      "observation": "Novel predecessor/alias copy passes both stages,112 unsafe required-lane cases,2069 independent numeric-domain words and16 combined/hostile cases. Regression is actually guard-sabotage checked and syntax checked. Initial verifier descriptor-trap expectation was corrected to inherited DomainFault conversion; its failed diagnostic is preserved.",
+      "record": "independent-regressions.json",
+      "sha256": "d03ae5d0dd97426b54667eadc3e220c8437bfa9900b03e3d38bba92997defbf4"
+    }
+  ],
+  "incrementalPredictions": [
+    {
+      "id": "C1",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C2",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C3",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C4",
+      "outcome": "HELD"
+    }
+  ],
+  "historicalVerdict": {
+    "path": "verifier-verdict.json",
+    "bytes": 18143,
+    "sha256": "b10cebf6cb545264e1fcb8c6f4f35916b7f165be47f7641197f038946be8271b"
+  },
+  "historicalArchive": {
+    "path": "verifier.tar.gz",
+    "bytes": 5260576,
+    "sha256": "000794e482c88080a5c0e5261547851662546b73aedc46416b80c79c5df72194"
+  },
+  "audit": {
+    "path": "verifier-incremental-audit.json",
+    "bytes": 9605,
+    "sha256": "2244c38272c0f8ca0983e5fc7d82b52a68507d3a57e301f280fde393f8345acf"
+  },
+  "scopeReports": [
+    {
+      "path": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "bytes": 4098265,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "copiedWord": "0x00000001",
+      "register": 0,
+      "lane": 3,
+      "explicitLinkAppliedCommands": 1,
+      "programCounts": [
+        1,
+        2
+      ],
+      "createEvent": 209,
+      "linkEvent": 212,
+      "program": "Program:22",
+      "restorationCalls": [
+        "bindVertexArray",
+        "bindFramebuffer",
+        "useProgram"
+      ],
+      "copiedBankUploadsDuringRestoration": 0,
+      "drawRejection": {
+        "ok": false,
+        "error": {
+          "code": "constant-raster-domain-error",
+          "message": "Copied bank word is outside the normal-or-signed-zero raster domain.",
+          "byteOffset": 0,
+          "opcode": 8
+        },
+        "appliedCommands": 0,
+        "draws": []
+      },
+      "drawEvents": [
+        234,
+        234
+      ],
+      "pixelsCompared": 16384,
+      "pixelsUnchanged": true,
+      "heldGenerationsUnchanged": true,
+      "unsafeGpuCalled": false,
+      "scopeLine": 184124,
+      "linkLine": 14747,
+      "explicitLine": 185745,
+      "restorationLine": 185955
+    },
+    {
+      "path": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "bytes": 4097791,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "copiedWord": "0x00000001",
+      "register": 0,
+      "lane": 3,
+      "explicitLinkAppliedCommands": 1,
+      "programCounts": [
+        1,
+        2
+      ],
+      "createEvent": 209,
+      "linkEvent": 212,
+      "program": "Program:22",
+      "restorationCalls": [
+        "bindVertexArray",
+        "bindFramebuffer",
+        "useProgram"
+      ],
+      "copiedBankUploadsDuringRestoration": 0,
+      "drawRejection": {
+        "ok": false,
+        "error": {
+          "code": "constant-raster-domain-error",
+          "message": "Copied bank word is outside the normal-or-signed-zero raster domain.",
+          "byteOffset": 0,
+          "opcode": 8
+        },
+        "appliedCommands": 0,
+        "draws": []
+      },
+      "drawEvents": [
+        234,
+        234
+      ],
+      "pixelsCompared": 16384,
+      "pixelsUnchanged": true,
+      "heldGenerationsUnchanged": true,
+      "unsafeGpuCalled": false,
+      "scopeLine": 184124,
+      "linkLine": 14747,
+      "explicitLine": 185745,
+      "restorationLine": 185955
+    }
+  ],
+  "coverageHunksCarriedForward": 54,
+  "coverage": {
+    "id": "P9",
+    "outcome": "HELD",
+    "observation": "All54 changed hunks classified by actual execution/direct result or reasoned declaration/recorder/defense waiver. Sealed binaries/profiles reproduce complete LLVM exports. Independent V8 covers count/radial/descriptor helper failures omitted by browser schedules. No unproven product hunk remains for the guarded bank-consuming boundary.",
+    "record": "coverage-scope.json",
+    "sha256": "968a767317ddb0c31faeb600441f9ee4fb507b146a89c2179405ed855d871de7"
+  },
+  "promotedTest": {
+    "path": "renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+    "sha256": "0b37d641763f196f24408ec638f3fc8ce0c1eb26b93f0f52e59bd34526f4c290",
+    "command": "node renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+    "healthy": "passed",
+    "actualGuardRemoval": "AssertionError at first unsafe required lane;0 GPU calls"
+  },
+  "claimLimits": [
+    "No arbitrary finite/subnormal/NaN raster transport",
+    "No real radial workload-bank claim",
+    "No production GPU negotiation/guest execution/full offload/desktop300MIPS",
+    "No bank-approval-before-explicit-link claim"
+  ],
+  "runtimeOrHarnessChanged": false,
+  "newRuntimeRuns": 0,
+  "newColdClone": false,
+  "openFindings": []
+}

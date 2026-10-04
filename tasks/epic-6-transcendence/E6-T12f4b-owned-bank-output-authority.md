@@ -3,7 +3,7 @@ id: E6-T12f4b
 epic: 6
 title: Admit exact bank copies to ordinary outputs under a bounded raster domain
 priority: 525.02699142
-status: implemented
+status: verified
 depends_on: [E6-T12f3, E6-T12f4a]
 estimate: S
 risk: high
@@ -289,3 +289,56 @@ has changed. The worker and pristine-clone recordings at frozen source
 Resubmit the corrected claim for incremental independent verification. Production
 guest GPU enablement, real radial workload compatibility, graphics offload and
 desktop 300 MIPS remain outside this claim.
+
+### 2026-10-03 — verifier — incremental VERDICT: verified
+
+VERDICT: verified. The scoped worker correction at
+`10cac3c8d813f959659c57bcd26cfbed1e4788be` satisfies the precise written demand
+from verifier verdict `2e9e90b8ea185ea754309f761a205b76c29bce67`.
+
+- **C1 change boundary — HELD.** Predicted only task status and the scoped
+  correction changed; the intervening diff contains exactly those two Markdown
+  hunks. Compiler, consumer, harness, dependency, original evidence and promoted
+  regression blobs remain unchanged. The status hunk is a metadata waiver;
+  the correction hunk is judged against the actual physical records below.
+- **C2 explicit link scope — HELD.** Predicted the correction permits
+  bank-independent linking and program growth with an invalid replacement.
+  Both preserved physical reports show owned `C0.w = 0x00000001`, successful
+  explicit `LINK_SHADER` with `appliedCommands: 1`, program count 1 → 2,
+  `createProgram` event 209 and successful `linkProgram` event 212 for Program22.
+  `link-scope-gpu/report.json:14747` and `link-scope-repeat-gpu/report.json:14747`
+  bind the actual link. Digests remain
+  `b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3`
+  and `e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372`.
+- **C3 restoration/draw scope — HELD.** Predicted zero copied-bank uploads
+  during restoration followed by rejection before bank-consuming effects.
+  In both reports restoration calls only `bindVertexArray`, `bindFramebuffer`
+  and `useProgram`; the draw returns `constant-raster-domain-error` with
+  `appliedCommands: 0` and GL event interval `[234, 234]`. All 16,384 framebuffer
+  components remain equal, owned words and held generations agree, and there
+  is no unsafe GPU call. Report lines 184124/185745/185955 retain the complete
+  scope, explicit-link and restoration state. Approval before draw-triggered
+  linking and bank-consuming effects remains the held compiler/consumer claim.
+- **C4 incremental retention — HELD.** Predicted original source and evidence
+  bindings were unchanged. All 67 verifier records, both scope-report digests,
+  worker/cold archives and receipts, frozen source
+  `4999a81ad93496fc25e78cbb0aeb7adec66006e3`, and promoted-test digest match.
+  Carry P1/P2/P4–P10 and all 54 original hunk classifications forward unchanged;
+  P3's written scope demand is satisfied. The historical unqualified overclaim
+  stays preserved in the original verdict and lossless archive.
+
+**SUITE:** retain the previously promoted, actual-guard-sabotage-checked raster
+regression unchanged. No runtime/harness changes, repeated hardware gauntlet or
+new cold clone are needed for this sole written correction under the incremental
+policy. No open finding remains within the corrected bank-consuming boundary.
+
+The separately sealed `evidence/virgl-raster-bank/verifier-incremental-verdict.json`
+records the final verdict and all ten outcomes.
+`verifier-incremental-manifest.json` binds the prediction, complete audit script,
+audit result and verdict, and references the unchanged historical archive.
+The complete incremental audit is SHA-256
+`2244c38272c0f8ca0983e5fc7d82b52a68507d3a57e301f280fde393f8345acf`.
+Command: `python3 evidence/virgl-raster-bank/verifier-incremental-audit.py`.
+Incremental seal and `git diff --check` pass. `python3 tools/check_task_policy.py`
+passes with no active task; `python3 tools/build_queue.py` records 580 tasks,
+387 verified.

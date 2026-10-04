@@ -1,0 +1,194 @@
+{
+  "schema": "raster-bank-verifier-incremental-audit-v1",
+  "task": "E6-T12f4b",
+  "verdict": "verified",
+  "previousVerifierHead": "2e9e90b8ea185ea754309f761a205b76c29bce67",
+  "correctionHead": "10cac3c8d813f959659c57bcd26cfbed1e4788be",
+  "frozenHead": "4999a81ad93496fc25e78cbb0aeb7adec66006e3",
+  "changedFiles": [
+    "tasks/epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md"
+  ],
+  "correctionDiff": "diff --git a/tasks/epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md b/tasks/epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md\nindex 8ab1dbd0..1910791e 100644\n--- a/tasks/epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md\n+++ b/tasks/epic-6-transcendence/E6-T12f4b-owned-bank-output-authority.md\n@@ -3,7 +3,7 @@ id: E6-T12f4b\n epic: 6\n title: Admit exact bank copies to ordinary outputs under a bounded raster domain\n priority: 525.02699142\n-status: evidence-needed\n+status: implemented\n depends_on: [E6-T12f3, E6-T12f4a]\n estimate: S\n risk: high\n@@ -264,3 +264,28 @@ finding, raw citation and precise correction demand. Complete independent\n records are losslessly archived in `verifier.tar.gz`; `verifier-manifest.json`\n binds every member and its archive digest. Preserve all HELD outcomes for the\n written correction's incremental re-verification.\n+\n+### 2026-10-03 \u2014 worker \u2014 scoped claim correction\n+\n+The fresh verifier refuted the activation paragraph's unqualified claim that\n+bank approval precedes all program linking. That sentence is superseded by this\n+claim: complete owned-bank approval precedes **draw-triggered linking** and the\n+GPU effects that consume bank words. Explicit `LINK_SHADER`, program creation\n+and program-cache growth remain bank independent and may succeed while a\n+replacement bank is invalid. Restoration checks the owned replacement and skips\n+its constant upload; subsequent draw preflight rejects it before constant\n+uploads and draw calls, preserving the framebuffer and held generations.\n+\n+The verifier reproduced this distinction twice on actual hardware: explicit\n+linking with copied `C0.w = 0x00000001` grew the program count from 1 to 2, while\n+restoration issued no copied-bank upload and the later draw returned\n+`constant-raster-domain-error`, `appliedCommands: 0`, unchanged pixels and no\n+unsafe GPU call. Its complete evidence and preserved HELD checks are bound by the\n+preceding verifier entry. This is a correction to the submitted claim; no\n+runtime, harness, dependency, original capture or previously recorded artifact\n+has changed. The worker and pristine-clone recordings at frozen source\n+`4999a81ad93496fc25e78cbb0aeb7adec66006e3` remain the evidence of record.\n+\n+Resubmit the corrected claim for incremental independent verification. Production\n+guest GPU enablement, real radial workload compatibility, graphics offload and\n+desktop 300 MIPS remain outside this claim.\n",
+  "correctedClaim": "The fresh verifier refuted the activation paragraph's unqualified claim that\nbank approval precedes all program linking. That sentence is superseded by this\nclaim: complete owned-bank approval precedes **draw-triggered linking** and the\nGPU effects that consume bank words. Explicit `LINK_SHADER`, program creation\nand program-cache growth remain bank independent and may succeed while a\nreplacement bank is invalid. Restoration checks the owned replacement and skips\nits constant upload; subsequent draw preflight rejects it before constant\nuploads and draw calls, preserving the framebuffer and held generations.\n\nThe verifier reproduced this distinction twice on actual hardware: explicit\nlinking with copied `C0.w = 0x00000001` grew the program count from 1 to 2, while\nrestoration issued no copied-bank upload and the later draw returned\n`constant-raster-domain-error`, `appliedCommands: 0`, unchanged pixels and no\nunsafe GPU call. Its complete evidence and preserved HELD checks are bound by the\npreceding verifier entry. This is a correction to the submitted claim; no\nruntime, harness, dependency, original capture or previously recorded artifact\nhas changed. The worker and pristine-clone recordings at frozen source\n`4999a81ad93496fc25e78cbb0aeb7adec66006e3` remain the evidence of record.\n\nResubmit the corrected claim for incremental independent verification. Production\nguest GPU enablement, real radial workload compatibility, graphics offload and\ndesktop 300 MIPS remain outside this claim.",
+  "incrementalPredictions": [
+    {
+      "id": "C1",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C2",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C3",
+      "outcome": "HELD"
+    },
+    {
+      "id": "C4",
+      "outcome": "HELD"
+    }
+  ],
+  "scopeReports": [
+    {
+      "path": "target/evidence/virgl-raster-bank-verifier/link-scope-gpu/report.json",
+      "bytes": 4098265,
+      "sha256": "b7c66f5753ccc27b274634aa36c066204fabef4b21267aa949e24c43c5450cd3",
+      "copiedWord": "0x00000001",
+      "register": 0,
+      "lane": 3,
+      "explicitLinkAppliedCommands": 1,
+      "programCounts": [
+        1,
+        2
+      ],
+      "createEvent": 209,
+      "linkEvent": 212,
+      "program": "Program:22",
+      "restorationCalls": [
+        "bindVertexArray",
+        "bindFramebuffer",
+        "useProgram"
+      ],
+      "copiedBankUploadsDuringRestoration": 0,
+      "drawRejection": {
+        "ok": false,
+        "error": {
+          "code": "constant-raster-domain-error",
+          "message": "Copied bank word is outside the normal-or-signed-zero raster domain.",
+          "byteOffset": 0,
+          "opcode": 8
+        },
+        "appliedCommands": 0,
+        "draws": []
+      },
+      "drawEvents": [
+        234,
+        234
+      ],
+      "pixelsCompared": 16384,
+      "pixelsUnchanged": true,
+      "heldGenerationsUnchanged": true,
+      "unsafeGpuCalled": false,
+      "scopeLine": 184124,
+      "linkLine": 14747,
+      "explicitLine": 185745,
+      "restorationLine": 185955
+    },
+    {
+      "path": "target/evidence/virgl-raster-bank-verifier/link-scope-repeat-gpu/report.json",
+      "bytes": 4097791,
+      "sha256": "e38cd3217f791caf949b9ad5ccb344534ff98f397e04998329034908f946f372",
+      "copiedWord": "0x00000001",
+      "register": 0,
+      "lane": 3,
+      "explicitLinkAppliedCommands": 1,
+      "programCounts": [
+        1,
+        2
+      ],
+      "createEvent": 209,
+      "linkEvent": 212,
+      "program": "Program:22",
+      "restorationCalls": [
+        "bindVertexArray",
+        "bindFramebuffer",
+        "useProgram"
+      ],
+      "copiedBankUploadsDuringRestoration": 0,
+      "drawRejection": {
+        "ok": false,
+        "error": {
+          "code": "constant-raster-domain-error",
+          "message": "Copied bank word is outside the normal-or-signed-zero raster domain.",
+          "byteOffset": 0,
+          "opcode": 8
+        },
+        "appliedCommands": 0,
+        "draws": []
+      },
+      "drawEvents": [
+        234,
+        234
+      ],
+      "pixelsCompared": 16384,
+      "pixelsUnchanged": true,
+      "heldGenerationsUnchanged": true,
+      "unsafeGpuCalled": false,
+      "scopeLine": 184124,
+      "linkLine": 14747,
+      "explicitLine": 185745,
+      "restorationLine": 185955
+    }
+  ],
+  "historicalMemberCount": 67,
+  "historicalMemberDigestsUnchanged": true,
+  "evidencePins": [
+    {
+      "path": "evidence/virgl-raster-bank/manifest.json",
+      "bytes": 2946,
+      "sha256": "451625b15737130821f47d0e001955d77629ebe2f3efa18b536782419352cd1f"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/worker.tar.gz",
+      "bytes": 32313184,
+      "sha256": "399b2eb6c745bc256a123debd9b5af236b355231accc7653ebf179c276040f42"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/cold.tar.gz",
+      "bytes": 32336206,
+      "sha256": "ee58808d1d09981cc0cc47cd6fb925391165ed7d09ac351433b14f8adc6e40bd"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/worker-receipt.json",
+      "bytes": 40439,
+      "sha256": "2ebc9edb59b9f5297e51b7b4e04e10d69938ecc6de84c124d27f1d848b913997"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/cold-receipt.json",
+      "bytes": 40439,
+      "sha256": "bfdebdb2dba5abd47d0d6b3e5ee6b8434c9f571b2a3fdd10f9f2750cf692e6c1"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/cold-report.json",
+      "bytes": 82152,
+      "sha256": "846f9441b2ac946e0c172381ac18a4ade26e7c2277f1b896091580fef07c73ab"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/verifier.tar.gz",
+      "bytes": 5260576,
+      "sha256": "000794e482c88080a5c0e5261547851662546b73aedc46416b80c79c5df72194"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/verifier-manifest.json",
+      "bytes": 12024,
+      "sha256": "2736980b3ae01c214fbca88b969979deff1f4df681b718d7c96b7b8d992778ec"
+    },
+    {
+      "path": "evidence/virgl-raster-bank/verifier-verdict.json",
+      "bytes": 18143,
+      "sha256": "b10cebf6cb545264e1fcb8c6f4f35916b7f165be47f7641197f038946be8271b"
+    }
+  ],
+  "priorHeldCarriedForward": [
+    "P1",
+    "P2",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10"
+  ],
+  "P3Correction": "HELD: exact written demand satisfied; guarded domain/upload/draw observations carried unchanged",
+  "historicalOverclaimPreserved": true,
+  "coverageHunksCarriedForward": 54,
+  "runtimeOrHarnessChanged": false,
+  "runtimeReruns": 0,
+  "newColdClone": false,
+  "promotedTest": {
+    "path": "renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+    "bytes": 9353,
+    "sha256": "0b37d641763f196f24408ec638f3fc8ce0c1eb26b93f0f52e59bd34526f4c290"
+  }
+}
