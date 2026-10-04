@@ -12,7 +12,7 @@ export EMCC
 set -x
 git rev-parse HEAD
 git diff --check
-for file in renderer/virgl-shader/tests/compiler-bounds.mjs tools/virgl-compiler-bounds/*.mjs; do node --check "$file"; done
+for file in renderer/virgl-shader/tests/compiler-bounds.mjs renderer/virgl-shader/tests/compiler-bounds-joins.mjs tools/virgl-compiler-bounds/*.mjs; do node --check "$file"; done
 python3 -m py_compile tools/virgl-compiler-bounds/*.py
 bash -n tools/verify-virgl-compiler-bounds.sh
 bash renderer/virgl-shader/build.sh guard-check
@@ -26,6 +26,7 @@ cp renderer/virgl-shader/build/compiler-bounds-sanitize/compiler_bounds.su "$evi
 cp renderer/virgl-shader/build/compiler-bounds-wasm-stack/*.su "$evidence_dir/stack/"
 node tools/virgl-compiler-bounds/wasm.mjs "$evidence_dir/native/report.json" "$evidence_dir/wasm"
 node tools/virgl-compiler-bounds/retained.mjs "$evidence_dir/retained"
+node renderer/virgl-shader/tests/compiler-bounds-joins.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-joins.json"
 # Affected historical compiler/profile and pair boundaries, including their
 # unchanged original shaders. Carry unrelated renderer leaf recordings forward.
 bash renderer/virgl-shader/build.sh original-corpus-sanitize

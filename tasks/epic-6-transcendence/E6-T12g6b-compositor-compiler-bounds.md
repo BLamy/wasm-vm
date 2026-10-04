@@ -3,7 +3,7 @@ id: E6-T12g6b
 epic: 6
 title: Bound compiler arenas for the larger captured compositor bodies
 priority: 525.02701056
-status: implemented
+status: verified
 depends_on: [E6-T12g6a]
 estimate: S
 risk: high
@@ -144,3 +144,97 @@ cold report`ab084416411bab8c517943d55d52aa901333e59a2ad659ad581276cc16cdffb9`;
 cold receipt`9880378ec6192667f9377e43643bcf174b52a2fbe32fd41c00695e3e298b8a9a`.
 The worker submits the diff and recordings to a fresh critic; this is an
 implementation claim awaiting independent verification.
+
+### 2026-10-04 — verifier — VERDICT: verified
+
+Fresh adversarial session audited the full diff before opening evidence and wrote
+falsifiable predictions first. Frozen runtime/harness remains
+`07f47569525dfa898dadd6f95dfa0a7a4a8718e4`; submission
+`9921c1c0df69a0e4572bf4154cbd9fb2deeff264`. No implementation code was edited.
+All eleven predictions are **HELD**; `predictions.json` contains concrete
+recorded points plus SHA256 citations for each.
+
+- **AUTHENTICITY — HELD.** The worker archive has 104 unique safe members and
+  every member length/digest matches its index. Both hot/cold receipts bind 1514
+  source/generated entries; the source tree and submission are unchanged.
+  The pristine clone used the exact frozen head with empty status before/after
+  and scrubbed build environment. Citation: `authentication.json`,
+  `receipts/coldBefore/coldAfter/sourceBindingsSha256`, digest
+  `85722bfa659af503ff25ae50f8f7ad94d808b141426469c6f8e4204b8654c904`.
+- **LIMITS, STORAGE AND FAILURE RECOVERY — HELD.** Native and Wasm agree on 603
+  literal cases/23 pairs; all 752 allocation failures reject without partial
+  source and recover. Exact text 49152/non-END 768/TEMP511/IMM31/depth16, one-past
+  inputs, file/CONST/token/target/label/initialization bounds and output
+  truncation survive. The exact six-byte JSON strings use 1572866/3145732 bytes
+  inside 1589248/3179520. Fixed 16MiB memory exhaustion rejects and recovers;
+  the owned optimized frame sum 235392 excludes upstream/libc and is not a
+  whole-process stack assertion. Citation: `audit.json`, `native[0..1]`,
+  `b04b2a432e0e714124d9c38e0cb3bfc290e8248c5b2cf2004fc97a7619c5b411`.
+- **PHYSICAL OUTPUTS — HELD.** The critic recomputed every successful recorded
+  raw word/pixel using independent dyadic scalar equations, without importing
+  worker oracle helpers. Hot+cold and fresh seed 1875794577 yield 24192 exact
+  words/193536 pixels across seven passing schedules. Source dispatch, actual
+  reflection/uploads, hardware identity, zero errors and real disposal hold.
+  Three recorded high-register/join/counter mutations fail at independent
+  concrete readback points (`audit.json`, `physical[*].independentFaultPoints`).
+  Fresh record: `gpu-independent-1875794577/report.json`,
+  `acceptance.vertices[*].vectors[*].bytes/fragments[*].draws[*].rgbaBytes`,
+  digest `91a4acdbc25ca2b84e2bffb75358bc58dc5d6d3f3bd5bbc691849f2b1a5d1356`.
+- **RETAINED BOUNDARIES — HELD.** Twenty-five literal bodies keep 23 admissions;
+  unchanged admitted GLSL/metadata are byte-identical. Both larger complete
+  originals remain rejected. Only the literal historical TEMP0..118 declaration
+  newly admits. Prior unchanged F6/G6a oracles and exact-alpha results carry
+  forward, with current physical regressions intact. Citation: `audit.json`,
+  `retained[0..1]`, the audit digest above.
+- **COVERAGE — HELD.** `audit.json`, `coverage.points/otherHunks/functionCounts`,
+  classifies every added runtime line and all other hunks. Changed executable
+  paths run: register bounds 284330 calls, flow snapshots 13592, joins 11691,
+  raster graph 112 and raw emitter 1418. High addressed rows, all immediate rows,
+  long 768-op code and deepest frame 15 execute. Types/config/static assertions
+  and comments are waived with measured downstream consequences. The raster
+  depth17 true edge is redundant after complete public validation rejects
+  depth17; its false comparison and frame 15 execute. Nonblank-line overflow
+  is unreachable within the grammar's maximum 1394 distinct admitted lines,
+  below 1536; 809-line witnesses exercise the enlarged admission. No ignored
+  test or disabled-assertion change entered the diff.
+- **NOVEL ATTACK AND SABOTAGE — HELD.** Promoted
+  `renderer/virgl-shader/tests/compiler-bounds-joins.mjs` independently checks 402
+  native/Wasm cases: each TEMP511 lane at every join depth 1..16, a missing true
+  or false predecessor, wrong/canonical file indices, IMM32/depth17, exact and
+  one-past 512/49152 line/text bytes. Delivered default public artifacts pass.
+  Guard source digest
+  `26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62`;
+  `promoted-guard.json`, `native/wasm`, result digest
+  `f368d7d69dbea6494d367961378bfa15011f4e1a2a74676f9e80933d7dc90f57`.
+  Reducing scratch `flow_join` to legacy 118 rows causes
+  `vertex-depth1-x-true` to admit (expected false/observed true); the same guard
+  fails. Citation: `sabotage-join-report.json`, `failure.counterexample`,
+  `070b86ef3e70a2d63d2b3f8bcbf4d1b19ffd11288903431b2ce99648dde72e6e`.
+  Original runtime source was restored; shared generated products were unchanged.
+- **SUITE.** Promote the 402-case join/bank/line/text guard. Recurring command:
+  `node renderer/virgl-shader/tests/compiler-bounds-joins.mjs --native renderer/virgl-shader/build/native/virgl-shader`.
+  No unrelated regression wall needs restarting for this test-only promotion.
+
+Critic evidence is `target/evidence/virgl-compiler-bounds-verifier/{manifest.json,records.json,recording.tar.gz}`;
+full source bindings are an archived member. There are 28 unique members.
+Archive SHA256 `1c6e0d69048ccdcb9762acde6e9198b3d5e380e6fb6308aa1a5e9355fa01037d`; index SHA256 `fb78c6bc0fde0df3b9269787ced68d40d200de233bd45147321a1eea3636f821`.
+Worker archive remains the digest-bound dependency
+`2e9a57b80f05914377f852f17c3aaf597112f269d2ea67244b1a510944601756`.
+All owned browser/server/native resources are closed (`resources.json`,
+`92fa636405af202501a642a9fa72ffda57d9d15cf8f26cf7645e6321a85fff36`).
+No production negotiation/deployment, guest execution, performance or admission
+of the two larger originals is claimed. Root owns evidence preservation,
+policy/queue regeneration and the verifier commit.
+
+### 2026-10-04 — root — preserve verified result and recurring guard
+
+Authenticated the fresh critic's final 28-member seal, archive/index/guard
+digests and task-log citations, then copied the exact seal into
+`evidence/virgl-compiler-bounds/verifier`. Added the promoted guard invocation
+to `tools/verify-virgl-compiler-bounds.sh`; its Node and shell syntax checks pass.
+The direct recurring command passes all 402 native/Wasm cases with result
+SHA256 `f368d7d69dbea6494d367961378bfa15011f4e1a2a74676f9e80933d7dc90f57`.
+Only the touched test harness was checked for this promotion; runtime semantics
+and the frozen hot/cold proof remain unchanged, per incremental verification.
+The verifier's `verified` status is preserved. PR #444 remains open/draft; no
+merge or production graphics activation is authorized by this result.
