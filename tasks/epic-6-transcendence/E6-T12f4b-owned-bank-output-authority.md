@@ -3,7 +3,7 @@ id: E6-T12f4b
 epic: 6
 title: Admit exact bank copies to ordinary outputs under a bounded raster domain
 priority: 525.02699142
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12f3, E6-T12f4a]
 estimate: S
 risk: high
@@ -264,3 +264,28 @@ finding, raw citation and precise correction demand. Complete independent
 records are losslessly archived in `verifier.tar.gz`; `verifier-manifest.json`
 binds every member and its archive digest. Preserve all HELD outcomes for the
 written correction's incremental re-verification.
+
+### 2026-10-03 — worker — scoped claim correction
+
+The fresh verifier refuted the activation paragraph's unqualified claim that
+bank approval precedes all program linking. That sentence is superseded by this
+claim: complete owned-bank approval precedes **draw-triggered linking** and the
+GPU effects that consume bank words. Explicit `LINK_SHADER`, program creation
+and program-cache growth remain bank independent and may succeed while a
+replacement bank is invalid. Restoration checks the owned replacement and skips
+its constant upload; subsequent draw preflight rejects it before constant
+uploads and draw calls, preserving the framebuffer and held generations.
+
+The verifier reproduced this distinction twice on actual hardware: explicit
+linking with copied `C0.w = 0x00000001` grew the program count from 1 to 2, while
+restoration issued no copied-bank upload and the later draw returned
+`constant-raster-domain-error`, `appliedCommands: 0`, unchanged pixels and no
+unsafe GPU call. Its complete evidence and preserved HELD checks are bound by the
+preceding verifier entry. This is a correction to the submitted claim; no
+runtime, harness, dependency, original capture or previously recorded artifact
+has changed. The worker and pristine-clone recordings at frozen source
+`4999a81ad93496fc25e78cbb0aeb7adec66006e3` remain the evidence of record.
+
+Resubmit the corrected claim for incremental independent verification. Production
+guest GPU enablement, real radial workload compatibility, graphics offload and
+desktop 300 MIPS remain outside this claim.
