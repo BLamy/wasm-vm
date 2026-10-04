@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-inline-worker-seal-v1",
+  "task": "E6-T12g5",
+  "sourceHead": "7c155f8ff630d4a83786cb2f4c982ddb26e3ab69",
+  "base": "feb78352200139079db61257acf1de1004456037",
+  "records": 76,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 3524303,
+    "sha256": "04553ec60232a633120c7de041e13e297ce46134684712f6a6d39d75c76df157"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 12586,
+    "sha256": "992ce84526079024210ad159f0910e1d30954d349b4b2e0df4f6c7386f4f6bf1"
+  },
+  "hotReceiptSha256": "dfdf0a4ba11f1ae6109ffa4ba47956b80030bb947aa16780a78954c4cea23e18",
+  "coldReportSha256": "36c3a2078053a91075eb0529b41334f9eda9b3ab6d6dbf62de6178bb4a9b92c0",
+  "coldReceiptSha256": "51879851fad12cb85d8de49325b313c04f4f7a20dad2dca9471886897da790c2",
+  "nativeAssertions": 202,
+  "hardwareAssertions": 3907,
+  "productionNegotiation": false,
+  "guestExecution": false
+}
