@@ -1981,3 +1981,7 @@ verify-E6-T12g4:
 .PHONY: verify-E6-T12g5
 verify-E6-T12g5:
 	bash tools/verify-virgl-inline-uploads.sh
+
+.PHONY: verify-E6-T12g6a
+verify-E6-T12g6a:
+	bash tools/verify-virgl-gears-shaders.sh
