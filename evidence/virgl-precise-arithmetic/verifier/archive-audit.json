@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "sourceHead": "7e444f2e3523b5b46b4aedbff3ace0c409ff6a83",
+  "archives": [
+    {
+      "archive": "worker.tar.gz",
+      "sha256": "969c7d275f2cfdb3375fac1768f26a2cb7d8285628b3a4e73bb10d6a82e4d559",
+      "members": 1096,
+      "uncompressedBytes": 1948248586
+    },
+    {
+      "archive": "cold.tar.gz",
+      "sha256": "11a17d13128501bd809665619db32bc6c3d8264a1814534b0828b2fc46761c07",
+      "members": 1098,
+      "uncompressedBytes": 1948483738
+    }
+  ],
+  "sourceDigest": "All sealed receipt/artifact/inventory records also checked."
+}
