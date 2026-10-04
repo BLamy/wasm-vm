@@ -258,6 +258,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/signed_conversions.c \
       -lm -o build/signed-conversions-sanitize/signed-conversions-test
     ;;
+  scalar-operations-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/scalar_operations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/scalar_operations.c \
+      -lm -o build/scalar-operations-sanitize/scalar-operations-test
+    ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit

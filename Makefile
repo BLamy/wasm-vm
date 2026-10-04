@@ -2001,3 +2001,7 @@ verify-E6-T12g6d:
 .PHONY: verify-E6-T12g6e
 verify-E6-T12g6e:
 	bash tools/verify-virgl-signed-conversions.sh
+
+.PHONY: verify-E6-T12g6f
+verify-E6-T12g6f:
+	bash tools/verify-virgl-scalar-operations.sh

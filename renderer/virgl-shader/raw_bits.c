@@ -2,6 +2,7 @@
 #include "raw_bits.h"
 #include "raw_binary32.h"
 #include "raw_conversions.h"
+#include "raw_scalar.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -181,7 +182,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_TEX ||
       instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ||
-      instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ? 1 :
+      instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ||
+      instruction->opcode == RAW_TRUNC || instruction->opcode == RAW_SSG ? 1 :
       instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
    unsigned consumed = raw_consumed_mask(instruction->opcode, instruction->dst.mask);
    /* Capture read authority at the use site, before any aliased destination
@@ -253,6 +255,17 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          }
          if ((a.zero | a.one) == UINT32_MAX) result[lane] = known_word(raw_f2i_word(a.one));
          else if ((~a.zero & UINT32_C(0x7fffffff)) < UINT32_C(0x3f800000)) result[lane] = known_word(0);
+         break;
+      case RAW_TRUNC:
+      case RAW_SSG:
+         a = precise_source(ir, instruction, 0, lane, conditional);
+         if ((a.zero | a.one) == UINT32_MAX)
+            result[lane] = known_word(instruction->opcode == RAW_TRUNC ? raw_trunc_word(a.one) : raw_ssg_word(a.one));
+         else if (instruction->opcode == RAW_SSG)
+            /* Only +0/+1/-1 can be returned, even when sign is unknown. */
+            result[lane].zero = ~UINT32_C(0xbf800000);
+         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT |
+            ((checked.float_modes[0] >> (lane * 8)) & RAW_BANK_DEPENDENCY);
          break;
       case RAW_USEQ:
          if (known_operands(a, b)) result[lane] = known_word(a.one == b.one ? UINT32_MAX : 0);
@@ -698,6 +711,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_MUL_PRECISE)) emit(&w, "%s", raw_binary32_mul);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_I2F)) emit(&w, "%s", raw_binary32_i2f);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_F2I)) emit(&w, "%s", raw_binary32_f2i);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_TRUNC)) emit(&w, "%s", raw_binary32_trunc);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_SSG)) emit(&w, "%s", raw_binary32_ssg);
    /* Keep all previously admitted source byte-identical. Higher declarations
     * extend the physical arrays only when this checked stage needs them. */
    unsigned temporaries = LEGACY_TEMP_REGISTERS;
@@ -733,11 +748,12 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
       bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
       bool arithmetic = ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) != 0;
-      bool raw_shadow = arithmetic || instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I || instruction->opcode == RAW_MAX_PRECISE ||
+      bool scalar = ((UINT64_C(1) << instruction->opcode) & RAW_SCALAR_OPCODES) != 0;
+      bool raw_shadow = scalar || arithmetic || instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I || instruction->opcode == RAW_MAX_PRECISE ||
          ((instruction->flags & RAW_STRUCTURED) && !numeric &&
           instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP);
       if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);
-      if (numeric) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
+      if (numeric && !raw_shadow) emit(&w, " raw_rhs = floatBitsToUint(float_rhs");
       else {
          emit(&w, " raw_rhs = uvec4(");
          for (unsigned lane = 0; lane < 4; ++lane) {
@@ -749,7 +765,10 @@ char *raw_emit(const struct profile *p, unsigned const_count)
             if (op == RAW_ISGE || op == RAW_ISLT || op == RAW_IMAX) emit(&w, "(");
             if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, "raw_float_mask(");
             if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, "raw_float_equal_mask(");
-            if (op == RAW_I2F || op == RAW_F2I) {
+            if (scalar) {
+               emit(&w, op == RAW_TRUNC ? "raw_numeric_trunc(" : "raw_numeric_ssg(");
+               precise_operand(&w, p, instruction, 0, lane); emit(&w, ")");
+            } else if (op == RAW_I2F || op == RAW_F2I) {
                emit(&w, op == RAW_I2F ? "raw_signed_i2f(" : "raw_signed_f2i(");
                precise_operand(&w, p, instruction, 0, lane); emit(&w, ")");
             } else if (op == RAW_MAX_PRECISE || arithmetic) {
