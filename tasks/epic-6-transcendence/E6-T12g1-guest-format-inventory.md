@@ -37,6 +37,11 @@ the actual guest run at frozen source and a final pristine-clone acceptance.
 Report new shader admission or format gaps as requirements for later slices,
 never as inferred browser support.
 
+`make verify-E6-T12g1-variants` is the incremental synthetic decoder gate for
+branches absent from both real clients. Record its packet/backing inputs,
+independent assertions, state transitions, line hits and source-fault rejection
+separately; it cannot add real-client requirements or rendering claims.
+
 ## Adversarial verification
 
 Attack fake renderer/exit/FPS markers, early closure or timeout counted as

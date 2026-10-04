@@ -92,3 +92,14 @@ the final pristine-clone acceptance is recorded separately under `worker/cold/`.
 It passed at `928f4fb6e3ae4c134aca8fdd79a759045fbc877d` with clean Git status
 before and after. `source-bindings.json` inside that archive binds the exact
 code; its logs and native recorder artifacts retain all acceptance results.
+
+The fresh critic's initial review is sealed under `verifier/initial/`. All
+real-capture, provenance and client-join predictions held. Its remaining
+sufficiency finding concerns decoder variants neither real client emitted.
+`make verify-E6-T12g1-variants` records seven synthetic balanced API sessions,
+66 independent literal-field/lifetime assertions and an index-offset source
+fault rejection. It covers buffer views, MSAA metadata, split shader assembly,
+index/uniform binding and isolation, copy/inline payloads, reset/cleanup and
+ID reuse. These fixtures are explicitly decoder evidence, not additional real
+workload requirements or renderer support. The full target includes this gate.
+The preserved guest/cold proofs are not rerun for this harness-only supplement.

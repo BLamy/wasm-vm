@@ -15,4 +15,5 @@ python3 tools/virgl-capture/validate.py evidence/virgl-workload-inventory/captur
 python3 tools/virgl-capture/inventory.py evidence/virgl-corpus/captures/kmscube --output evidence/virgl-workload-inventory/kmscube-inventory.json
 python3 tools/virgl-capture/inventory.py evidence/virgl-workload-inventory/captures/es2gears --output evidence/virgl-workload-inventory/es2gears-inventory.json
 python3 tools/virgl-capture/inventory_acceptance.py --output "$evidence_dir/attacks.json"
+VIRGL_INVENTORY_VARIANTS_EVIDENCE_DIR="$evidence_dir/variants" bash tools/verify-virgl-inventory-variants.sh
 python3 tools/virgl-capture/tests/recorder_harness.py --container "${VIRGL_REFERENCE_CONTAINER:-wasm-vm-virgl-reference-research}" --output "$evidence_dir/recorder"
