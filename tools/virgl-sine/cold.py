@@ -46,7 +46,9 @@ def main():
             if report['cloneHead'] != head or report['statusBefore']:
                 raise ValueError('clone not pristine at exact head')
             source_output = clone / 'target/evidence/virgl-sine-cold'
-            env['VIRGL_EXPONENT_LOGARITHM_EVIDENCE_DIR'] = str(source_output)
+            env['VIRGL_SINE_EVIDENCE_DIR'] = str(source_output)
+            report['evidenceDirectory'] = str(source_output)
+            report['environmentOverride'] = 'VIRGL_SINE_EVIDENCE_DIR'
             result = subprocess.run(report['command'], cwd=clone, env=env,
                                     stdout=log, stderr=subprocess.STDOUT, timeout=900)
             report['exitCode'] = result.returncode

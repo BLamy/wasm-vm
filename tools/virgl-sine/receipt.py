@@ -16,9 +16,9 @@ def main():
     require(not subprocess.check_output(['git', 'diff', '--name-only', 'HEAD'], cwd=ROOT), 'freeze tracked sources')
     sources, records, recording_heads = {}, {}, set()
     # Evidence-only repairs carry immutable runtime recordings forward. An old
-    # head is acceptable only when the entire commit range changes this
-    # harness file; every recorded served source is still digest-checked below.
-    harness_repairs = {'tools/virgl-sine/receipt.py','tools/virgl-sine/cases.mjs','tools/virgl-sine/README.md','tools/virgl-sine/precision-source.json'}
+    # head is acceptable only when the entire commit range changes these
+    # harness files; every recorded served source is still digest-checked below.
+    harness_repairs = {'tools/virgl-sine/receipt.py','tools/virgl-sine/cold.py','tools/virgl-sine/cases.mjs','tools/virgl-sine/README.md','tools/virgl-sine/precision-source.json'}
 
     def recording_head(value):
         recorded = value['gitHead']
