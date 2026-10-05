@@ -61,7 +61,11 @@ def main():
  browsers=[]
  for seed in [608135816,2242054355,320440878]:
   report=json.loads((directory/f'gpu-{seed}/report.json').read_bytes());coverage=directory/f'gpu-{seed}'/report['browserCoverage']['path'];require(sha(coverage.read_bytes())==report['browserCoverage']['sha256'],'original browser coverage')
-  scripts=json.loads(coverage.read_text());require(any(s['url'].endswith('/renderer/virgl-command/constant-domain.mjs')for s in scripts),'actual browser consumer source')
+  recording=json.loads(coverage.read_text());require(recording['schema']==1,'recorded browser coverage format');scripts=recording['scripts']
+  for item in scripts:require(sha((ROOT/item['source']).read_bytes())==item['sha256'],'actual browser source bytes')
+  item=next(s for s in scripts if s['source']=='renderer/virgl-command/constant-domain.mjs');browserRanges=[r for f in item['coverage']['functions']for r in f['ranges']]
+  for needle in ['const policy = record(value.branchContract,','return checked.ok ? Object.freeze({ ...checked, branchLiveness: Object.freeze(policy) }) : checked;']:
+   offset=source.index(needle);applicable=[r for r in browserRanges if r['startOffset']<=offset<r['endOffset']];require(applicable and min(applicable,key=lambda r:r['endOffset']-r['startOffset'])['count']>0,'actual browser branch policy execution')
   browsers.append(dict(seed=seed,path=str(coverage.relative_to(directory)),sha256=sha(coverage.read_bytes()),scripts=len(scripts)))
  # Source-level inventory names every changed runtime hunk. The region points
  # above are the control decisions; assertions below are reached by the whole
