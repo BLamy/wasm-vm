@@ -20,7 +20,7 @@ export const maskOf=v=>v.startsWith('mask-')?Number(v.split('-')[1]):15;
 export const swizzlesOf=v=>v==='alias'?['wzyx','zxyw']:v==='alias-exponent'?['zxyw','wzyx']:v.startsWith('swizzle-')?v.slice(8).split('-'):v.startsWith('mask-')?[v.split('-')[2]??'xyzw',v.split('-')[3]??'xyzw']:['xyzw','xyzw'];
 export function selected(op,input,variant='direct',condition=0,modifier='',backend='owned'){
  const alternate=variant.startsWith('join')&&!condition,a=alternate?input.b:input.a,e=alternate?input.f:input.e,[sa,se]=swizzlesOf(variant);
- return Array.from({length:4},(_,lane)=>{const i=backend==='mesa'?lane:0;let w=a['xyzw'.indexOf(sa[i])],x=e['xyzw'.indexOf(se[i])];
+ return Array.from({length:4},(_,lane)=>{const i=backend==='mesa'?[0,1,2,3].filter(n=>n<lane&&(maskOf(variant)&(1<<n))).length:0;let w=a['xyzw'.indexOf(sa[i])],x=e['xyzw'.indexOf(se[i])];
   if(variant==='bit-bounded'){w=((w&0x7fffff)|0x3f800000)>>>0;x=((x&0x7fffff)|0x3f800000)>>>0;}
   if(modifier==='neg-base'||modifier==='neg-both')w=(w^0x80000000)>>>0;if(modifier==='neg-exponent'||modifier==='neg-both')x=(x^0x80000000)>>>0;
   return maskOf(variant)&(1<<lane)?{op:'POW',word:w,exponentWord:x}:{exact:variant==='alias-exponent'?input.e[lane]:input.a[lane]};});

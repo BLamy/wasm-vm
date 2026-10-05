@@ -27,7 +27,7 @@ def result_rows(text,condition,bank_a,bank_b,backend):
   m=re.fullmatch(r'(MOV|POW|UADD|AND|OR) (TEMP)\[(\d+)\](?:\.([xyzw]+))?, (.*)',line);assert m,line
   op,file,index,mask,args=m.groups();index=int(index);mask=mask or 'xyzw';values=[source(s) for s in args.split(', ')]
   if op=='MOV':out=values[0]
-  elif op in ['POW']:out=[dict(op=op,word=values[0][i if backend=='mesa' else 0],exponentWord=values[1][i if backend=='mesa' else 0]) for i in range(4)]
+  elif op in ['POW']:out=[dict(op=op,word=values[0][sum(c in mask for c in 'xyzw'[:i]) if backend=='mesa' else 0],exponentWord=values[1][sum(c in mask for c in 'xyzw'[:i]) if backend=='mesa' else 0]) for i in range(4)]
   elif op=='UADD':out=[(a+b)&0xffffffff for a,b in zip(*values)]
   elif op=='AND':out=[a&b for a,b in zip(*values)]
   else:out=[a|b for a,b in zip(*values)]

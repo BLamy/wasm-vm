@@ -10,6 +10,6 @@
   "exactCases": "identity, bounded integer powers and integer resulting powers of two, proven using Fraction arithmetic",
   "acceptance": "relative budget holds for every real value in the interval; conservative maximum observed relative error recorded per backend",
   "replication": "mesa-24.2.8-tgsi.rst POW equation and pinned tgsi_info.c POW FLOAT/REPL",
-  "pinnedConverterDiscrepancy": "virglrenderer1.3.0 vrend_shader.c:5902 emits componentwise pow; preserve and independently check original sources, canonical broadcasts and72 isolated literal statements",
+  "pinnedConverterDiscrepancy": "virglrenderer1.3.0 vrend_shader.c:5902 emits componentwise pow, then truncates with float/vecN before masked assignment; preserve and independently check original sources, canonical broadcasts and72 isolated literal statements",
   "byteCarrier": "One actual pixel exposes all four bytes of one result; byte I2F exact and DIV by255 <=2.5 ULP remains within RGBA8 half step."
 }

@@ -29,6 +29,8 @@ does not interpret that as an unambiguous portable accuracy guarantee.
 
 The pinned converter emits componentwise pow despite TGSI scalar replication.
 Its unmodified sources execute under separate componentwise predictions.
+The float/vecN result constructor truncates to the first N components before
+assignment into the destination mask; the reference preserves that packing.
 Canonical broadcasts and all72 original literal statements share the scalar
 equations. Concrete nonbroadcast deviations are recorded. Two finite feedback
 carriers preserve all32 bits; each RGBA8 pixel exposes all four bytes of a
