@@ -33,6 +33,9 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit45 is the signed conversion-bank feature. */
                   RAW_TRUNC = 46, RAW_SSG, RAW_MIN, RAW_MIN_PRECISE, RAW_FRC_PRECISE, RAW_MOV_SAT, RAW_DIV_SAT, RAW_EX2, RAW_LG2, RAW_SIN, RAW_POW };
 #define RAW_POWER_OPCODES (UINT64_C(1) << RAW_POW)
+/* Authenticated fragment builtin convention, never an opcode or range fact. */
+#define RAW_FRAGMENT_COORDINATES_USED (UINT64_C(1) << 57)
+_Static_assert(RAW_POW < 57, "fragment coordinate feature must not overlap an opcode");
 #define RAW_SINE_OPCODES (UINT64_C(1) << RAW_SIN)
 #define RAW_EXPONENT_OPCODES ((UINT64_C(1) << RAW_EX2) | (UINT64_C(1) << RAW_LG2))
 #define RAW_SATURATION_OPCODES ((UINT64_C(1) << RAW_MOV_SAT) | (UINT64_C(1) << RAW_DIV_SAT))
@@ -147,6 +150,7 @@ struct profile {
    bool flat[2][8];
    unsigned instructions, immediates, constant_extent, current_pc;
    bool ended, started, color0_property, address_declared, address_written;
+   bool coordinate_origin_property, coordinate_center_property;
    bool syntax_only, live;
    unsigned char raw_flags;
    int stage;

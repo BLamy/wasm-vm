@@ -666,7 +666,8 @@ static void emit(struct writer *w, const char *format, ...)
 
 static void input_float(struct writer *w, const struct profile *p, unsigned index, unsigned component)
 {
-   if (p->stage) emit(w, "vso_g%u.%c", p->semantic_index[IN][index], "xyzw"[component]);
+   if (p->stage && p->semantic[IN][index] == 1) emit(w, "gl_FragCoord.%c", "xyzw"[component]);
+   else if (p->stage) emit(w, "vso_g%u.%c", p->semantic_index[IN][index], "xyzw"[component]);
    else emit(w, "in_%u.%c", index, "xyzw"[component]);
 }
 

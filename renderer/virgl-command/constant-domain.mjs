@@ -35,6 +35,9 @@ export const POWER_PROFILE = "virgl-webgl2-raw-bits-v37";
 export const POWER_KIND = "tgsi-bounded-power-v1";
 export const SINE_PROFILE = "virgl-webgl2-raw-bits-v36";
 export const SINE_KIND = "tgsi-bounded-sine-v1";
+export const COORDINATE_PROFILE = "virgl-webgl2-raw-bits-v38";
+export const COORDINATE_KIND = "tgsi-fragment-position-v1";
+export const COORDINATE_KEY = "|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
@@ -45,6 +48,7 @@ const SATURATION_BASES = new Set(rawProfiles(...Array.from({ length: 33 }, (_, i
 const EXPONENT_BASES = new Set(rawProfiles(...Array.from({ length: 34 }, (_, i) => i + 1)));
 const POWER_BASES = new Set(rawProfiles(...Array.from({ length: 36 }, (_, i) => i + 1)));
 const SINE_BASES = new Set(rawProfiles(...Array.from({ length: 35 }, (_, i) => i + 1)));
+const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -124,8 +128,48 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const coordinates = value.profile === COORDINATE_PROFILE;
+    require(coordinates === Object.hasOwn(value, "coordinateBaseProfile") && coordinates === Object.hasOwn(value, "coordinateContract"),
+      "Coordinate convention disagrees with its profile.");
+    const inputEntries = array(value.inputs, 8);
+    const positionEntries = inputEntries.filter(input => {
+      require(input !== null && typeof input === "object" && !isArray(input), "Expected an input data record.");
+      const semantic = descriptors(input).semantic;
+      require(semantic && Object.hasOwn(semantic, "value"), "Input semantic must be an own data property.");
+      return semantic.value === "POSITION";
+    });
+    require(coordinates ? positionEntries.length === 1 : positionEntries.length === 0,
+      "Fragment POSITION requires its coordinate policy.");
+    if (coordinates) {
+      require(expectedStage === "fragment" && COORDINATE_BASES.has(value.coordinateBaseProfile),
+        "Coordinates require a fragment raw base profile.");
+      const policy = record(value.coordinateContract, ["kind", "stage", "input", "semanticIndex", "source", "interpolation", "origin", "pixelCenter", "components", "precision", "rasterization", "surfaceOrigin", "authority"]);
+      require(policy.kind === COORDINATE_KIND && policy.stage === "fragment" && policy.input === 0 && policy.semanticIndex === 0 &&
+        policy.source === "gl_FragCoord" && policy.interpolation === "linear" && policy.origin === "lower-left" &&
+        policy.pixelCenter === "half-integer" && policy.components === "window-xy-depth-z-reciprocal-clip-w" &&
+        policy.precision === "essl3-highp-builtin" && policy.rasterization === "single-sample-half-pixel" &&
+        policy.surfaceOrigin === "lower-left" && policy.authority === "existing-input-no-static-range-facts", "Unknown coordinate convention.");
+      const inputs = inputEntries.map(input => record(input, ["index", "name", "type", "semantic", "semanticIndex", "componentMask", "interpolation"]));
+      const registers = new Set(), semantics = new Set();
+      for (const input of inputs) {
+        require(Number.isInteger(input.index) && input.index >= 0 && input.index <= 7 && !registers.has(input.index) && input.type === "vec4", "Invalid coordinate interface register.");
+        registers.add(input.index);
+        if (input.semantic === "POSITION") {
+          require(input.index === 0 && input.name === "gl_FragCoord" && input.semanticIndex === 0 && input.componentMask === 15 && input.interpolation === "linear", "Invalid fragment POSITION metadata.");
+        } else {
+          require(input.semantic === "GENERIC" && input.index > 0 && Number.isInteger(input.semanticIndex) && input.semanticIndex >= 0 && input.semanticIndex <= 7 &&
+            input.name === `vso_g${input.semanticIndex}` && [3, 7, 15].includes(input.componentMask) && ["smooth", "flat"].includes(input.interpolation) &&
+            !semantics.has(input.semanticIndex), "Invalid GENERIC coordinate neighbor.");
+          semantics.add(input.semanticIndex);
+        }
+      }
+      const base = { ...value, profile: value.coordinateBaseProfile, inputs: inputs.filter(input => input.semantic !== "POSITION") };
+      delete base.coordinateBaseProfile; delete base.coordinateContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, coordinates: Object.freeze(policy) }) : checked;
+    }
     const power = value.profile === POWER_PROFILE;
     require(power === Object.hasOwn(value, "powerBaseProfile") && power === Object.hasOwn(value, "powerContract"),
       "Power contract disagrees with its profile.");
@@ -455,7 +499,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
