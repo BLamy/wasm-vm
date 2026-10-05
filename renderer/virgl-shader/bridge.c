@@ -1681,15 +1681,17 @@ static void discard_contract(const struct profile *profile, const char *base)
 
 static void known_arithmetic_contract(const struct profile *profile, const char *base)
 {
-   bool add = false, mul = false;
+   bool add = false, mul = false, rcp = false;
    for (unsigned pc = 0; pc < profile->raw->count; ++pc) {
       const struct raw_instruction *i = &profile->raw->instructions[pc];
       if (!(i->flags & RAW_KNOWN_RESULT)) continue;
       add |= i->opcode == RAW_ADD;
       mul |= i->opcode == RAW_MUL;
+      rcp |= i->opcode == RAW_RCP;
    }
-   append(",\"knownArithmeticBaseProfile\":\"%s\",\"knownArithmeticContract\":{\"kind\":\"tgsi-known-arithmetic-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"source\":\"fully-known-authorized-normal-or-zero-post-modifier\",\"rounding\":\"binary32-nearest-ties-to-even-integer\",\"result\":\"normal-or-zero-only\",\"emission\":\"literal-word-and-matching-shadow\",\"authority\":\"exact-emitted-producer-version-only\",\"storage\":\"unused-third-operand-four-word-cache\"}",
-      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "");
+   append(",\"knownArithmeticBaseProfile\":\"%s\",\"knownArithmeticContract\":{\"kind\":\"tgsi-known-arithmetic-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s%s%s],\"source\":\"fully-known-authorized-normal-or-zero-post-modifier\",\"rounding\":\"binary32-nearest-ties-to-even-integer\",\"result\":\"normal-or-zero-only\",\"emission\":\"literal-word-and-matching-shadow\",\"authority\":\"exact-emitted-producer-version-only\",\"storage\":\"unused-third-operand-four-word-cache\"}",
+      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "",
+      rcp && (add || mul) ? "," : "", rcp ? "\"RCP\"" : "");
 }
 
 static void branch_contract(const struct profile *profile, const char *base)

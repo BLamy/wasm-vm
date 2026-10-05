@@ -15,6 +15,16 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/mesa/compat -Ivendor/src/gallium/include
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
+  exact-reciprocal-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only "$source.c" native_tests/exact_reciprocal.c
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -fstack-usage -c "$source.c" -o "build/exact-reciprocal-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/exact-reciprocal-sanitize/bridge.o build/exact-reciprocal-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/exact_reciprocal.c -lm -o build/exact-reciprocal-sanitize/exact-reciprocal-test
+    ;;
   exact-pair-sanitize)
     instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
       -fprofile-instr-generate -fcoverage-mapping)
@@ -26,7 +36,7 @@ case "$mode" in
       "${sources[@]:2}" native_tests/exact_pair.c -lm -o build/exact-pair-sanitize/exact-pair-test
     ;;
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c native_tests/exact_reciprocal.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
   native)
@@ -380,5 +390,5 @@ case "$mode" in
       '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
-  *) echo 'Usage: build.sh guard-check|native|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;
+  *) echo 'Usage: build.sh guard-check|native|exact-reciprocal-sanitize|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;
 esac

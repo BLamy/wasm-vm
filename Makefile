@@ -2057,3 +2057,7 @@ verify-E6-T12g6m3b:
 .PHONY: verify-E6-T12g6m3c
 verify-E6-T12g6m3c:
 	bash tools/verify-virgl-exact-pair.sh
+
+.PHONY: verify-E6-T12g6m4a
+verify-E6-T12g6m4a:
+	bash tools/verify-virgl-exact-reciprocal.sh

@@ -264,6 +264,19 @@ static bool power_domain_proved(struct raw_lane base, struct raw_lane exponent)
    return product <= (UINT64_C(120) << -scale);
 }
 
+/* Reciprocal of a normal binary32 power of two is another exact normal word
+ * precisely when its biased exponent is at most 253. Compute the word with
+ * integers: the GPU will emit this literal, never an approximate division. */
+static bool exact_reciprocal_word(struct raw_lane source, uint32_t *word)
+{
+   if ((source.zero | source.one) != UINT32_MAX || !safe_raw_float(source)) return false;
+   uint32_t magnitude = source.one & UINT32_C(0x7fffffff);
+   unsigned exponent = magnitude >> 23;
+   if (!exponent || exponent > 253 || (magnitude & UINT32_C(0x007fffff))) return false;
+   *word = (source.one & UINT32_C(0x80000000)) | ((254u - exponent) << 23);
+   return true;
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -317,6 +330,16 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    if (instruction->opcode == RAW_POW &&
        !power_domain_proved(precise_source(ir, instruction, 0, 0, conditional),
                             precise_source(ir, instruction, 1, 0, conditional))) return false;
+   uint32_t reciprocal_word = 0;
+   bool known_reciprocal = instruction->opcode == RAW_RCP && ir->exact &&
+      instruction->src[0].file == CONST &&
+      (instruction->flags & RAW_KNOWN_RETRY) &&
+      exact_reciprocal_word(precise_source(ir, instruction, 0, 0, conditional), &reciprocal_word);
+   if (known_reciprocal) {
+      for (unsigned lane = 0; lane < 4; ++lane) checked.src[2].swizzle[lane] = reciprocal_word;
+      checked.src[2].index = instruction->dst.mask;
+      checked.flags |= RAW_KNOWN_RESULT;
+   }
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
@@ -475,6 +498,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_SIN:
       case RAW_POW:
       case RAW_TEX:
+         if (known_reciprocal) result[lane] = known_word(reciprocal_word);
          result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
          if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES | RAW_SINE_OPCODES | RAW_POWER_OPCODES)))
             result[lane].origin |= dependency;
@@ -775,6 +799,11 @@ static void float_operand(struct writer *w, const struct profile *p, const struc
 static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
 {
    enum raw_opcode op = instruction->opcode;
+   if (op == RAW_RCP && (instruction->flags & RAW_KNOWN_RESULT)) {
+      emit(w, " float_rhs = vec4(/* known:reciprocal */ uintBitsToFloat(%uu));\n",
+           instruction->src[2].swizzle[0]);
+      return;
+   }
    if (op == RAW_POW) {
       /* Capture both operands before any masked/aliased publication. */
       emit(w, " { highp float power_base = ");
