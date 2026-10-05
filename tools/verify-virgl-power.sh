@@ -37,13 +37,19 @@ python3 tools/virgl-power/held-exponent.py "$evidence_dir/held-exponent"
 python3 tools/virgl-power/held-sine.py "$evidence_dir/held-sine"
 node tools/virgl-power/legacy.mjs "$evidence_dir/legacy.json"
 node renderer/virgl-shader/tests/sine-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-sine-guards.json"
+node renderer/virgl-shader/tests/power-regressions.mjs --native renderer/virgl-shader/build/native/virgl-shader --output "$evidence_dir/independent-power-guards.json"
 node tools/virgl-power/consumer.mjs "$evidence_dir/native/report.json" "$evidence_dir/consumer.json"
 for seed in 608135816 2242054355 320440878; do
   node tools/virgl-power/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
+  python3 renderer/virgl-shader/tests/power-capture-regressions.py --report "$evidence_dir/gpu-$seed/report.json" --output "$evidence_dir/source-$seed-guards.json"
 done
 for fault in base exponent broadcast; do
   if node tools/virgl-power/browser.mjs --output "$evidence_dir/fault-$fault" --fault "$fault"; then
     echo "ERROR: $fault corruption escaped independent hardware oracle" >&2
+    exit 1
+  fi
+  if python3 renderer/virgl-shader/tests/power-capture-regressions.py --report "$evidence_dir/fault-$fault/report.json" --output "$evidence_dir/source-fault-$fault-guards.json"; then
+    echo "ERROR: $fault corruption escaped the critic's original-source oracle" >&2
     exit 1
   fi
 done

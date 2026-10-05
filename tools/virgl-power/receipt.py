@@ -101,7 +101,7 @@ def main():
         require(c['index']==w['index']==p['index'] and w['result']==c['result'] and p['result']['ok'] is c['ok'],'public wasm parity')
         if not c['ok']:require(not any(k in p['result'] for k in ['vertex','fragment','metadata']),'closed pair')
     retained=report('retained/report.json',task='E6-T12g6b');require(len(retained['originals'])==25 and sum(c['native']['ok'] for c in retained['originals'])==23 and len(retained['historical'])==112 and sum(c['native']['ok'] for c in retained['historical'])==5,'original full bodies remain gated')
-    for filename,count in [('joins',402),('hex',49),('signed',108),('conversion',1575),('scalar',1427),('minimum',4524),('fraction',4469),('saturation',1160),('exponent',1022),('sine',520)]:
+    for filename,count in [('joins',402),('hex',49),('signed',108),('conversion',1575),('scalar',1427),('minimum',4524),('fraction',4469),('saturation',1160),('exponent',1022),('sine',520),('power',1914)]:
         guard=json.loads(artifact('independent-'+filename+'-guards.json'));require(guard['status']=='passed' and guard['cases']==len(guard['native'])==len(guard['wasm'])==count,'promoted '+filename)
         for a,b in zip(guard['native'],guard['wasm']):require(a['result']==b['result'] or a['result'].get('error',{}).get('code')==b['result'].get('error',{}).get('code')=='invalid-input','promoted parity')
     held=json.loads(artifact('held-saturation/report.json'));require(held['status']=='passed' and held['physicalWords']==39576 and held['faultExit']!=0,'unchanged physical SAT oracle')
@@ -151,6 +151,9 @@ def main():
 
     for seed,plan in zip(SEEDS,plans):
         gpu=browser('gpu-'+str(seed));require(gpu['seed']==seed and gpu['fault'] is None,'varied seed')
+        critic=json.loads(artifact('source-'+str(seed)+'-guards.json'))
+        require(critic['status']=='passed' and critic['reportSha256']==records['gpu-'+str(seed)+'/report.json']['sha256'], 'critic original-source power capture binding')
+        source('renderer/virgl-shader/tests/power-capture-regressions.py',critic['testSha256'])
         planned_bytes=subprocess.check_output(['node','--input-type=module','-e',"import fs from 'node:fs';import {physicalPlan} from './tools/virgl-power/plan.mjs';process.stdout.write(JSON.stringify(physicalPlan("+str(seed)+",JSON.parse(fs.readFileSync('renderer/virgl-shader/build/power-primary.json')))));"],cwd=ROOT)
         require(sha(planned_bytes)==gpu['planSha256'] and len(plan['vertices'])==len(gpu['vertices']) and len(plan['fragments'])==len(gpu['fragments']),'whole physical schedule')
         for index,(v,p) in enumerate(zip(gpu['vertices'],plan['vertices'])):
@@ -196,6 +199,9 @@ def main():
     faults=[]
     for fault in ['base','exponent','broadcast']:
         gpu=browser('fault-'+fault,passed=False);require(gpu['fault']==fault and 'independent power word mismatch' in gpu['failure']['message'],'actual emitted source fault caught')
+        critic=json.loads(artifact('source-fault-'+fault+'-guards.json'))
+        require(critic['status']=='failed' and critic['reportSha256']==records['fault-'+fault+'/report.json']['sha256'], 'critic source fault independently contradicted')
+        source('renderer/virgl-shader/tests/power-capture-regressions.py',critic['testSha256'])
         changed=[v for v in gpu['vertices'] if v['mutation']];require(len(changed)==1,'one physical fault');v=changed[0];m=v['mutation']
         require(m['original']==v['pair']['vertex']['glsl'] and m['served']==m['original'].replace(m['needle'],m['replacement'],1),'exact source fault binding')
         point=next(x['failure'] for x in v['vectors'] if 'failure' in x);require(not allowed(point['oracle'],point['actual']),'independent fault contradiction');faults.append(dict(mode=fault,failure=point))
