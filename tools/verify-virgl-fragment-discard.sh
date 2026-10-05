@@ -30,6 +30,10 @@ done
 NODE_V8_COVERAGE="$discard_evidence/node-consumer-coverage" node tools/virgl-fragment-discard/consumer.mjs "$discard_evidence/native/report.json" "$discard_evidence/consumer.json"
 for seed in 2654435769 608135816 2242054355; do
  python3 tools/virgl-fragment-discard/reference.py "$seed" "renderer/virgl-shader/build/discard-reference-$seed.json"
+done
+# The shared collector binds every generated JSON. Freeze the complete table
+# before the first capture, including files retained from development runs.
+for seed in 2654435769 608135816 2242054355; do
  node tools/virgl-fragment-discard/browser.mjs --output "$discard_evidence/gpu-$seed" --seed "$seed"
  python3 tools/virgl-fragment-discard/capture-check.py "$discard_evidence/gpu-$seed/report.json" "$discard_evidence/capture-$seed.json"
 done
