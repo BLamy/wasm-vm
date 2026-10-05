@@ -3,7 +3,7 @@ id: E6-T12g6j1
 epic: 6
 title: Admit bounded sine evaluation for captured compositor equations
 priority: 525.027010578
-status: implemented
+status: verified
 depends_on: [E6-T12g6i]
 estimate: S
 risk: high
@@ -151,3 +151,101 @@ final cold receipt`c687ef5cad483d70a79249f4aba3e87762cc75e1e2143bb25dc1b71675d8f
 Production caps, negotiation, live imports, guest execution and measured FPS/MIPS
 remain gated. A fresh adversarial verifier must now interrogate this exact diff
 and archive before any dependent activates.
+
+### 2026-10-04 — fresh independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+Frozen runtime `ad31839ebc55e5f853c9d9853a44c9922767e7da`; worker submission
+`c6e56fa8`; final worker evidence `d44d2683941ab4cb32df53d4dcb84f045046caf9`.
+The critic did not implement or edit runtime code. Ten falsifiable predictions
+were recorded before inspecting outputs; all are HELD, with no findings.
+
+- P1 authentication — HELD. Every actual unique regular worker member135 and
+  every source binding727 matches its seal, index, archive and recorded head.
+  `authentication.json` authenticates the original collector failure and the
+  corrected uninterrupted pristine final clone, not a replacement happy story.
+- P2 domain/signedness — HELD.520 independently predicted native/Wasm guards
+  cover normal/zero/special and outward +/-8 neighbors, negation, enumerated
+  partial encoding cubes, joins, versions and closed rejections. The original
+  sanitizer binary records all520 again without diagnostics in
+  `critic-native-recording.json`; native/Wasm guard results are in
+  `independent-regressions-final.json`.
+- P3 scalar/masks/aliases — HELD. Independent original-TGSI execution holds all
+  words/pixels of six worker hardware runs and the critic seed; source snapshots
+  precede masked/aliased publication and untouched lanes retain earlier words.
+  `source-semantics.json` and `fourth-seed-semantics.json` bind every point. The
+  original92cb866a… file statements76/175 remain literal isolated broadcasts.
+- P4 numerical budget — HELD. A separate Machin-pi enclosure, rational quadrant
+  reduction and reduced sin/cos Taylor tails recompute expectations solely from
+  original input words. The conservative maximum error is
+  `6.859461500265203e-8` on both backends, below measured2^-20. Fourth capture
+  vertex180/181, vector0/lane0/condition0, input`0x3fc00000`, observed
+  `0x3f7f5bd6`, captureSHA`d45092409741ac8d046d48f8b0ca3aef4b16d84db875359388ee8b275e6876bf`
+  is a concrete bound point. Literal vendor GLSL stays unchanged;204 concrete
+  nonbroadcast component deviations per worker run remain explicit, alongside
+  canonical scalar/broadcast agreement. The host budget is measured;
+  [ESSL3.00 section4.5.1](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf)
+  provides no trigonometric precision guarantee.
+- P5 authority/liveness — HELD. Even SIN(0) creates no F2I or subsequent bounded
+  SIN/EX2/LG2 facts. Known old/repaired lanes remain usable while new computed or
+  poisoned sibling versions do not. All ten wrapper-selector arms preserve their
+  complete prior policies (`critic-native-recording.json`).
+- P6 consumer ownership — HELD.974 contracts,580 recorded plus274 independent
+  metadata/ownership/bank attacks and12 banks hold with0 getters. The fourth
+  actual sync/async A→B→A/restore run, poisoned caller bytes, atomic rejection,
+  physical reflection and zero GPU/resource budgets hold (`consumer-attacks.json`,
+  `consumer-boundary-attacks.json`, `fourth-seed-semantics.json`).
+- P7 heritage — HELD. `carry-forward.json` authenticates unchanged SAT/EX actual
+  capture/fault members and source-oracle digests; FRC seal/4469 guards carry.
+  Complete5861 predecessor results/adjacent obligations hold. Exactly two original
+  bounded plain-SIN rejections extend this admission; their original sealed
+  records remain intact and SIN_PRECISE remains unsupported. Original unsupported
+  complete workload paths stay gated.
+- P8 coverage — HELD. Both actual archived ASan/UBSan binaries reproduce the
+  original1006-case outputSHA`35c13f225f45827df2037f2c4a55db369b3872008d32027bf4f6c0d2ff31cedc`
+  with empty stderr. ORIGINAL profiles re-export identically.50 runtime diff
+  lines have original C/V8 or Node source-bound counts;12 individual declarations,
+  signatures and comments have sound waivers (`native-replays.json`,
+  `coverage-audit.json`). The critic520-case run additionally covers every new
+  metadata selector arm; no rebuilt substitute supplies original coverage.
+- P9 fourth physical seed — HELD. Decimal seed1834637033 at clean critic guard
+  head `f6facf82163965c5018abc054f50247f9f0928e2` checks8160 complete feedback words
+  and20352 whole RGBA8 pixels on headed ANGLE Metal Apple M4 Max, including80
+  fresh actual pinned converter witnesses. Every source, served byte, original
+  primary GLSL, V8 script and screenshot binding holds (`final-checks.json`).
+- P10 novel attack/sabotage — HELD. Aliased lane-locality and single repaired-lane
+  attacks hold. Scratch-only removed-domain, component-broadcast and fabricated
+  result-fact changes all fail the520 guards. All six actual archived shader
+  faults fail the independent source oracle. A fully rehashed capture with a
+  poisoned cached oracle still fails original-source mathematics
+  (`sabotage-regressions.json`, `sensitivity.json`).
+
+SUITE: promoted `sine-regressions.mjs` and `sine-capture-regressions.py`, wired
+into `make verify-E6-T12g6j1`, at critic guard commit
+`f6facf82163965c5018abc054f50247f9f0928e2`. Exact commands are recorded in the
+critic README and sealed scripts/logs. Checks include relevant node/python/bash
+syntax, diff hygiene, source/coverage authentication, actual original-binary
+replay, independently recorded guards and physical fourth seed; unrelated Rust
+regression walls were not restarted for this isolated unchanged compiler runtime.
+
+Qualifications: the initial worker pristine acceptance succeeded, but its first
+collector used the previous task's output variable and failed collection. Original
+failure/log/receipt remain sealed; the corrected final pristine clone passes.
+The critic's first fourth GPU run passed, then its freeze guard rejected the two
+new untracked guard files; its original capture/error remains archived, and the
+final fourth run at clean critic head passes. Mechanical artifact-script and seed
+label corrections are recorded separately. Only tests/acceptance wiring changed
+in critic work, so the final original cold runtime proof carries incrementally.
+No product refutation or evidence gap survives these qualifications.
+
+Critic evidence: `evidence/virgl-sine/verifier/recording.tar.gz` (115 actual members,
+20170281 bytes), SHA-256`904cb8b3a6cd3b8b6003458afa70aba854f4430d315242e304283e952f678525`;
+indexSHA`8cc8109602bf48d9fc449e9981e96d3f9622cb17f152c7d8046fdcecdac330cb`;
+verdictSHA`367b25f3d29ca10192f48a2d6d561abc2497c4a59bbf62515db18dad00a455dc`.
+ManifestSHA`4e7cb2eee168a686ff96e91b2f41260bb61cce160c819749e3e82ccc72e86e21`.
+Every citation above is relative to that seal and is digest-bound in
+`verdict.json`. The original135-member worker archive remains independently
+bound by SHA`184d0cbf61b1fe7d3d0c01f1c20d786afceed06a1fa2600bbc4259e38011dc2c`.
+Production caps, negotiation, live imports, guest execution, FPS/MIPS and original
+full-body computed argument bounds remain outside this private compiler proof.
