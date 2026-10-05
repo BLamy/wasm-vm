@@ -1,0 +1,286 @@
+{
+  "task": "E6-T12g6m3b",
+  "VERDICT": "verified",
+  "status": "passed",
+  "workerSourceHead": "e5db73f88d84f066ca15487f06741a54509874c5",
+  "runtimeHead": "42b452d0b8e4e8ce131bf3bff28843511c036281",
+  "base": "36a6d07cbf5708ceeaee9a186d8bacadd7278f6c",
+  "predictionsBeforeEvidenceSha256": "79a21e01ecc890b24f0419abc8ef71ac0cd1cfbb3da759ec5d1d9442ef268e22",
+  "predictions": [
+    {
+      "id": "P1-seal",
+      "prediction": "Every sealed member, receipt, original executable/profile and tracked frozen runtime matches its advertised digest; hot/cold sourceHead equals42b452d0b8e4e8ce131bf3bff28843511c036281 and cold before/after status is empty.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "authentication.json",
+          "sha256": "dd13a60e8f3b7ac8e059855e2b0cc2b7f8425fc786b3ad0b345e58e3d7306d20",
+          "point": "136 authenticated unique members; frozen hot/cold receipts and sourceHead42b"
+        },
+        {
+          "record": "reexport-replay.json",
+          "sha256": "5e162986739ebfa91bbcac2bcc8ac9d311d0f7b6075cedfeb5d1761a6e491fdd",
+          "point": "actual original hot binary replay and hot/cold raw-profile exports match sealed exports exactly"
+        }
+      ]
+    },
+    {
+      "id": "P2-ownership",
+      "prediction": "Native first semantic allocation and Wasm first malloc cannot observe later caller source/tuple mutations; strict own-schema accepts only dense canonical data tuples, executes no getters and rejects reflection faults without partial result.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "unpacked/hot/native/report.json",
+          "sha256": "8388b8f4e30fe4775c5b90b212e7d2ac1b06a0b1cebde3f918d2845a547e482e",
+          "point": "alias; actual first-calloc caller mutation retains entire saved result; 11 C ABI rejects"
+        },
+        {
+          "record": "unpacked/hot/node.json",
+          "sha256": "3307e464ee7c3eb849044dbb68c292e4142cd1480c08df9a7df87554e83c4f39",
+          "point": "ownership[0..1], allocationFaults[0..1], 100 schemaAttacks, getterInvocations0"
+        },
+        {
+          "record": "independent-bounds/report.json",
+          "sha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+          "point": "novel.traps1; nested opposite-stage full original-native result; earlier callerword2/textBOGUS; outer snapshot entire unchanged result; 33 own-schema attacks"
+        }
+      ]
+    },
+    {
+      "id": "P3-meaning",
+      "prediction": "Direct declared CONST0/45 only supplies actual swizzled raw words: integer1 != float1, rawnegativezero is nonzero UIF, signedffffffff is negative, unknown/indirect components remain unknown; overwritten/masked/dynamic-join facts never authorize unsafe live SIN.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "unpacked/hot/native/report.json",
+          "sha256": "8388b8f4e30fe4775c5b90b212e7d2ac1b06a0b1cebde3f918d2845a547e482e",
+          "point": "probes40 at both register0/45, four source components: zero/one/negative-zero/ffffffff/NaN raw; absent/indirect stay unknown"
+        },
+        {
+          "record": "independent-bounds/report.json",
+          "sha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+          "point": "cases known/other-lane/overwritten/missing-mask/conflicting-join across both stages and three independent seeds; typed SIN +/-zero accepted, rawinteger1/9.0 rejected"
+        }
+      ]
+    },
+    {
+      "id": "P4-complete-grammar",
+      "prediction": "Unsupported syntax/declarations/dead-loop/tail reject before liveness skips; canonical supplied tuple must be declared even if unused and existing certificates alone gate loop/range paths; complete92cb866a/c5806d5f remain rejected.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "independent-bounds/report.json",
+          "sha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+          "point": "unused-undeclared and valid unrecognized-complete-loop reject in both stages; unsupported dead SQRT rejects"
+        },
+        {
+          "record": "independent-bounds/native-coverage.json",
+          "sha256": "cc61d19217fbc7fbcc4046ce60c8105752388a248b3d419a5f7d1fa4b559eaf2",
+          "point": "check_input_attempt1333:23 loop_recognize true42/false0; grammar1331:11 true42; tuple declaration1320:20 true6"
+        },
+        {
+          "record": "unpacked/hot/native/report.json",
+          "sha256": "8388b8f4e30fe4775c5b90b212e7d2ac1b06a0b1cebde3f918d2845a547e482e",
+          "point": "cases[62..63] whole39261/14786byte original fragments reject exact/default/pair; literal original SHA bindings retained"
+        }
+      ]
+    },
+    {
+      "id": "P5-policy",
+      "prediction": "Each new admission emits v42 exact components including unused/pruned entries, stage/count and the full inherited descending numerical/coordinate/discard/known/branch policy; raw facts grant no unsupported ranges.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "unpacked/hot/node.json",
+          "sha256": "3307e464ee7c3eb849044dbb68c292e4142cd1480c08df9a7df87554e83c4f39",
+          "point": "every newly admitted result equals entire native metadata/GLSL; all supplied exact tuples including unused are retained; banks441 exercise inherited guards"
+        },
+        {
+          "record": "capture-audit.json",
+          "sha256": "c3de623fc1a87d7cafa4db430cbde9740c3eb7eac51fb66ef60cf674f609af9a",
+          "point": "fully pruned reflection and inherited F2I/raster attack captures independently checked"
+        },
+        {
+          "record": "carry-forward.json",
+          "sha256": "fcaf4fa8d7ced5ca9b172f89774cf85a7ebb9119cb407fe30d03cf7e236ac432",
+          "point": "unchanged m3a consumer, m1/m2 descending policy proofs and complete historical outcomes authenticated"
+        }
+      ]
+    },
+    {
+      "id": "P6-transaction",
+      "prediction": "Every successful/failing/allocation-failing exact call is independent from next exact/opposite-stage/default/pair/reset/radial/finite attempts. Old successful complete result bytes and predecessor10717/2683/177 remain unchanged.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "unpacked/hot/native/report.json",
+          "sha256": "8388b8f4e30fe4775c5b90b212e7d2ac1b06a0b1cebde3f918d2845a547e482e",
+          "point": "108 actual calloc failure positions and exact recovery; all66 default/exact/pair full outcomes"
+        },
+        {
+          "record": "independent-bounds/report.json",
+          "sha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+          "point": "all238 complete native/Wasm outcomes plus default/pair/exact recovery; six successful plain/finite demand compositions"
+        },
+        {
+          "record": "independent-bounds/native-coverage.json",
+          "sha256": "cc61d19217fbc7fbcc4046ce60c8105752388a248b3d419a5f7d1fa4b559eaf2",
+          "point": "demand_retry1198 true126; validate1202 true12/false114, mask branch6/6; finite validate1209 true6"
+        },
+        {
+          "record": "carry-forward.json",
+          "sha256": "fcaf4fa8d7ced5ca9b172f89774cf85a7ebb9119cb407fe30d03cf7e236ac432",
+          "point": "10717 full predecessor results/2683 pairs/177 closed extensions identical; raw_ir is freed before exact stack storage leaves"
+        }
+      ]
+    },
+    {
+      "id": "P7-physical",
+      "prediction": "Actual stage compiler outputs, unchanged original CREATE text and real decoded SET/DRAW reach both shared consumers; every full8x8 frame and native uniform word agrees with independent equations; every unsafe/missing-prefix/pruned obligation is rejected before DRAW/index/link/upload effects across independent schedules, contexts and generations.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "capture-audit.json",
+          "sha256": "c3de623fc1a87d7cafa4db430cbde9740c3eb7eac51fb66ef60cf674f609af9a",
+          "point": "all10 hot/cold actual captures and3 fresh headed Apple M4 Max Metal schedules audited; fresh909 frames/58176 pixels,891 rejected banks,384744 native uniformwords,111 disposed rigs; zero console/page/request errors and zero final native/resource budgets"
+        }
+      ]
+    },
+    {
+      "id": "P8-fault-sensitivity",
+      "prediction": "The exact original one-line C derive fault reaches wrong64green pixels under raw1; metadata removal reaches native raw2 and forbiddenDRAW over64red sentinel pixels. Source/build/Wasm delivery/capture digests bind; pixel/uniform/metadata sabotage is independently detected.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "capture-audit.json",
+          "sha256": "c3de623fc1a87d7cafa4db430cbde9740c3eb7eac51fb66ef60cf674f609af9a",
+          "point": "hot/cold actual derive captures rigs[0].draws[0]: raw1 admits but64green pixels; metadata rigs[0].attacks[0]: raw2 native upload+DRAW overwrites64red; source/build/deliveredWasm digests bind;3 forged pixel/upload/metadata records caught"
+        },
+        {
+          "record": "actual-wasm-sabotage.json",
+          "sha256": "f5b0d9c7dcd96d3612a81dab3f9672056b525efc290cfb34812d84822a60b478",
+          "point": "promoted assertions fail exit1 against both actual sealed one-line faulty C Wasm modules; runtime unchanged"
+        }
+      ]
+    },
+    {
+      "id": "P9-bounds",
+      "prediction": "Recorded max49152text/768instructions/512temporaries/184tuples calls pass; layout is111752IR/32448profile/12tuple/2996table. All nonrecursive owned helper stack frames plus MAX of three mutually exclusive serialized entry frames is221616<262144; unchanged upstream/libc are excluded.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "bounds-audit.json",
+          "sha256": "bfedb5c22fbf639e40c2e8b09a15120a078dd725976655be5fbb718080167f48",
+          "point": "Original max fixtures60/61 actually765instructions; worker advertised768 is preserved as a corrected evidence gap. Same sealed sanitizer/unchanged Wasm cases234..237 prove actual768 accepted and769 rejected in both conditional/ordinary paths, each49152text/512temporaries/184tuples. Layout111752/32448/12/2996; owned static60frames135584helpers+max86032entry=221616<262144, upstream/libc excluded."
+        },
+        {
+          "record": "metadata-size-proof.json",
+          "sha256": "001b73516eb29ba107a7b0c0b26ae78223932a8bd6fc42e1dd3391ec5b8c7c55",
+          "point": "all metadata formats widened and counted<=59376; owned JSON upper414120<1589248; no arbitrary text or control injection"
+        }
+      ]
+    },
+    {
+      "id": "P10-coverage",
+      "prediction": "Every changed executable line and native LLVM conditional alternative and V8 child is executed by original recorded profiles or precisely waived by source invariant/predecessor HELD with digests; no line-hit substitutes for child proof.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "coverage-audit.json",
+          "sha256": "546ec2034d954affbda093dc585bb3ed7dc081550f27b1f078cdd686245a6210",
+          "point": "195 changed source lines partitioned at every native/V8 code-region boundary;62sites124alternatives=115executed6waived3carried-HELD;168 native regions;73 V8 children all executed;gaps0"
+        },
+        {
+          "record": "carry-forward.json",
+          "sha256": "fcaf4fa8d7ced5ca9b172f89774cf85a7ebb9119cb407fe30d03cf7e236ac432",
+          "point": "v40/v39/v38 selector exact unchanged expression authenticated against m2 original counts16/4/4; unchanged descending descendants and consumer carry"
+        }
+      ]
+    },
+    {
+      "id": "P11-independent",
+      "prediction": "Varied independently chosen seeds and one bounded novel parser/value/source attack hold; useful attacks are promoted only after coverage/correctness hold.",
+      "verdict": "HELD",
+      "points": [
+        {
+          "record": "independent-bounds/predictions.json",
+          "sha256": "61a900397657fd6869c1beda9462eac1ab9263c9655ed2a9b388d04d0b2fc8fa",
+          "point": "all238 transactions and three seeds frozen before calls; bounded reentrant ownership attack"
+        },
+        {
+          "record": "independent-bounds/report.json",
+          "sha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+          "point": "238 results pass; seeds2773480762/1359893119/2600822924;33 schemas and nested transaction hold"
+        },
+        {
+          "record": "capture-audit.json",
+          "sha256": "c3de623fc1a87d7cafa4db430cbde9740c3eb7eac51fb66ef60cf674f609af9a",
+          "point": "same independent physical seeds vary sync/async/context/generation schedules; all pass; promoted critic source retained"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "runtimeLines": 195,
+    "nativeBranchSites": 62,
+    "nativeBranchAlternatives": 124,
+    "nativeRegions": 168,
+    "v8Children": 73,
+    "nativeAlternatives": {
+      "executed": 115,
+      "waived": 6,
+      "carried-HELD": 3
+    },
+    "v8Verdicts": {
+      "executed": 73
+    },
+    "gaps": 0
+  },
+  "freshPhysical": {
+    "seeds": [
+      2773480762,
+      1359893119,
+      2600822924
+    ],
+    "frames": 909,
+    "pixels": 58176,
+    "rejectedBanks": 891,
+    "nativeUniformWords": 384744,
+    "disposedRigs": 111
+  },
+  "suite": {
+    "promotedTest": "tools/virgl-exact-producer/critic.mjs",
+    "sha256": "3f4f4b77b96d5ca139a6c2210c110018dec4364829698cc7f7d4590c364d7afc",
+    "transactions": 238,
+    "schemas": 33,
+    "nativeBinarySha256": "f9b28bc78f42f14366bd910d27bc486154c5ae8a87a5bcfdae890c827d6d0e64",
+    "captureAuditors": [
+      "audit_captures.py",
+      "audit_coverage.py"
+    ],
+    "realFaultsCaught": 2,
+    "forgedCapturesCaught": 3
+  },
+  "scope": "One private owned exact-CONST stage compiler transaction. No full compositor admission, new loop/range certification, qualified pair fabrication, public import/negotiation, guest execution, deployment or performance claim. Upstream/libc excluded from owned stack claim. Cold42b proof carried unchanged.",
+  "runtimeModified": false,
+  "unresolvedFindings": [],
+  "closedProofGaps": [
+    {
+      "site": "bridge.c:1320",
+      "missing": "Unused undeclared obligations with complete grammar",
+      "closedBy": "independent-bounds/report.json unused-undeclared vertex/fragment; actual declaration-rejection6hits"
+    },
+    {
+      "site": "bridge.c:1333",
+      "missing": "Complete valid but unrecognized loop in dead arm",
+      "closedBy": "independent-bounds/report.json unrecognized-complete-loop vertex/fragment; grammar42true,loop_recognize42false"
+    },
+    {
+      "site": "worker claim maxima; fixtures60/61",
+      "missing": "Original literal fixtures have765instructions; worker claimed768",
+      "closedBy": "independent-bounds/report.json cases234..237 actual768accept/769reject, both conditional/ordinary; complete native/Wasm results; bounds-audit.json literalcounts",
+      "semanticContradiction": false
+    }
+  ],
+  "independentReportSha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10"
+}

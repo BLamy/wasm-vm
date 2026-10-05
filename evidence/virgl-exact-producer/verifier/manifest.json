@@ -1,0 +1,101 @@
+{
+  "schema": "virgl-exact-producer-verifier-seal-v1",
+  "task": "E6-T12g6m3b",
+  "VERDICT": "verified",
+  "workerSourceHead": "e5db73f88d84f066ca15487f06741a54509874c5",
+  "runtimeHead": "42b452d0b8e4e8ce131bf3bff28843511c036281",
+  "base": "36a6d07cbf5708ceeaee9a186d8bacadd7278f6c",
+  "records": 121,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 13721206,
+    "sha256": "52e9ca0664d85eff66f7333d2f7ad41d24038814798afa8d01de20b58e622eed"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 20397,
+    "sha256": "1de4b2df8d4fbb2420dea8f58781b6aab2646f36d81b57f51481f2ce5c98ed47"
+  },
+  "verdictSha256": "23b553bb6ed19300e5f5f0e4f307d0981dc6cf079e80061327bf29a2c74b3e03",
+  "predictionsSha256": "79a21e01ecc890b24f0419abc8ef71ac0cd1cfbb3da759ec5d1d9442ef268e22",
+  "coverageSha256": "546ec2034d954affbda093dc585bb3ed7dc081550f27b1f078cdd686245a6210",
+  "captureAuditSha256": "c3de623fc1a87d7cafa4db430cbde9740c3eb7eac51fb66ef60cf674f609af9a",
+  "promotedHarness": {
+    "promotedTest": "tools/virgl-exact-producer/critic.mjs",
+    "sha256": "3f4f4b77b96d5ca139a6c2210c110018dec4364829698cc7f7d4590c364d7afc",
+    "transactions": 238,
+    "schemas": 33,
+    "nativeBinarySha256": "f9b28bc78f42f14366bd910d27bc486154c5ae8a87a5bcfdae890c827d6d0e64",
+    "captureAuditors": [
+      "audit_captures.py",
+      "audit_coverage.py"
+    ],
+    "realFaultsCaught": 2,
+    "forgedCapturesCaught": 3
+  },
+  "workerEvidence": {
+    "path": "evidence/virgl-exact-producer/worker",
+    "manifestSha256": "0df5a7c880e90e1b0b6c0e141080a97f123a4753cc7c667fd319fbf3e7e665e6",
+    "archiveSha256": "d203fc0f7e2913637c3ac0040781d2a490b2fb5293e1ae45de4c078a376f777c",
+    "indexSha256": "3bf420c1eff64d03e13f7721cfce0defc5c5a9477f67165046a3627850139a09",
+    "extractionPrefix": "unpacked",
+    "reason": "Original hot/cold sanitizer executables, full profiles, generated modules, fault sources/build logs and10 physical captures are retained unchanged by this committed136-member source seal; original replay/exports and every fresh verifier record are retained here. Unpacked is an authenticated view of that external archive."
+  },
+  "coverage": {
+    "runtimeLines": 195,
+    "nativeBranchSites": 62,
+    "nativeBranchAlternatives": 124,
+    "nativeRegions": 168,
+    "v8Children": 73,
+    "nativeAlternatives": {
+      "executed": 115,
+      "waived": 6,
+      "carried-HELD": 3
+    },
+    "v8Verdicts": {
+      "executed": 73
+    },
+    "gaps": 0
+  },
+  "freshPhysical": {
+    "seeds": [
+      2773480762,
+      1359893119,
+      2600822924
+    ],
+    "frames": 909,
+    "pixels": 58176,
+    "rejectedBanks": 891,
+    "nativeUniformWords": 384744,
+    "disposedRigs": 111
+  },
+  "coldHeld": {
+    "runtimeHead": "42b452d0b8e4e8ce131bf3bff28843511c036281",
+    "reportSha256": "5f526179ee7a1b42e1a3dc611795cd2b8029ad27b9721d3a34f6c6eb466c1f4a",
+    "receiptSha256": "7f5ae1cdfe78fa2c4c91682f412341d9f359dd8f93f93c0cebae84f58960123c"
+  },
+  "runtimeModified": false,
+  "liveDeployment": false,
+  "guestExecution": false,
+  "boundsAuditSha256": "bfedb5c22fbf639e40c2e8b09a15120a078dd725976655be5fbb718080167f48",
+  "closedProofGaps": [
+    {
+      "site": "bridge.c:1320",
+      "missing": "Unused undeclared obligations with complete grammar",
+      "closedBy": "independent-bounds/report.json unused-undeclared vertex/fragment; actual declaration-rejection6hits"
+    },
+    {
+      "site": "bridge.c:1333",
+      "missing": "Complete valid but unrecognized loop in dead arm",
+      "closedBy": "independent-bounds/report.json unrecognized-complete-loop vertex/fragment; grammar42true,loop_recognize42false"
+    },
+    {
+      "site": "worker claim maxima; fixtures60/61",
+      "missing": "Original literal fixtures have765instructions; worker claimed768",
+      "closedBy": "independent-bounds/report.json cases234..237 actual768accept/769reject, both conditional/ordinary; complete native/Wasm results; bounds-audit.json literalcounts",
+      "semanticContradiction": false
+    }
+  ],
+  "finalIndependentReportSha256": "b4d4742c6e136cc3fa28f6f0bbafacf64dd9c81dbfd721cc06639b483d6ecd10",
+  "intermediateAttempts": "All original verifier attempts/profiles are retained, including the first new maximum-case harness attempt whose unconditional v42 expectation incorrectly included ordinary success. Final corrected assertion explicitly requires ordinary complete-result identity; final238-case run and real-fault runs pass/fail as predicted. Intermediate failed harness attempts are not acceptance evidence."
+}
