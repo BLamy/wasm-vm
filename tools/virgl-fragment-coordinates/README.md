@@ -42,3 +42,11 @@ https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf
 
 Production negotiation, guest integration, public imports and caps remain
 disabled. No live graphics offload, FPS or MIPS claim follows from this leaf.
+
+The fresh critic's permanent checks run in the same acceptance command:
+`independent-guards.mjs` checks 380 native/Wasm/pair admissions, source versions,
+the eight-input boundary, inert inherited/accessor fields and 480 copied-bank
+restrictions. `capture-check.py` computes forward clip projection, rational
+screen barycentrics and literal TGSI execution independently of the worker's
+reference tables, then validates all complete component words and both indexed
+consumers. The receipt binds both checks to their actual input recordings.
