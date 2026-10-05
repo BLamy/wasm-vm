@@ -41,6 +41,15 @@ source faults (inhibit, invert, x-only and unconditional omission) must fail
 the fixed pixel predictions. Receipt generation authenticates full sources,
 profiles, tables, screenshots, browser coverage and raw captures at one head.
 
+The promoted critic `independent-guards.mjs` adds 444 literal native/Wasm
+single/pair cases and ten inert metadata attacks. Its surviving-version join
+distinguishes killed negative words from surviving negative zero, and separate
+terminal-liveness and pair-key assertions detect the recorded sabotage.
+`independent-oracle.py` rechecks every direct and indexed raw capture with the
+critic's decoded IEEE words, forward TGSI interpreter and literal geometry;
+it imports neither the worker reference interpreter nor emitted GLSL. The
+acceptance command runs both guards, including the four actual source faults.
+
 Run `cold.py --output DIR` once at the final frozen head, then `seal.py --hot
 DIR --cold DIR --output evidence/virgl-fragment-discard/worker`. The cold clone
 uses a scrubbed environment. A fresh adversarial verifier must challenge the
