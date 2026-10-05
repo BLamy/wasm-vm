@@ -3,7 +3,7 @@ id: E6-T12g6l
 epic: 6
 title: Admit fragment discard with sound branch liveness
 priority: 525.027010581
-status: evidence-needed
+status: in-progress
 depends_on: [E6-T12g6k]
 estimate: S
 risk: high
@@ -250,3 +250,17 @@ verdict SHA256 `a83cb7e2f428d1fff53d6682c319742a41f4bad112283bbd8d9fc6bf9b926983
 SUITE: defer promotion until the sole coverage gap is cleared. The independently
 verified oracle/guards and physical/version fixtures are retained as bounded
 promotion candidates. Status is `evidence-needed`; no dependent may activate.
+
+### 2026-10-04 — worker — removing the sole dead guard
+
+The fresh critic returned custody at `23717bf47d75a64ba2db39f41fb8089c5eafa6ff`.
+Root independently authenticated all 69 critic members, its predictions/verdict,
+the immutable worker manifest, unchanged runtime and all 4,202 historical untracked
+paths (`/tmp/wasm-vm-discard-root-critic-authentication.json`). P1–P8, N1 and
+the scoped predecessor checks are HELD; no semantic contradiction was found.
+
+Remove exactly the unreachable five-line fragment extra-output guard at frozen
+`bridge.c:1043-1047`. The existing declaration parser already excludes every
+fragment OUT above zero. No syntax, initialization, stage or numerical rule is
+widened. Keep both original seals immutable, record corrected-source hot/cold
+receipts separately, and return to the critic for incremental coverage review.

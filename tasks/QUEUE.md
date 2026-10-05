@@ -620,7 +620,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010578` [E6-T12g6j1](epic-6-transcendence/E6-T12g6j1-sine.md) — Admit bounded sine evaluation for captured compositor equations *(deps: E6-T12g6i)*
 - [x] `525.027010579` [E6-T12g6j2](epic-6-transcendence/E6-T12g6j2-power.md) — Admit bounded power evaluation for captured compositor equations *(deps: E6-T12g6j1)*
 - [x] `525.02701058` [E6-T12g6k](epic-6-transcendence/E6-T12g6k-fragment-coordinates.md) — Lower captured fragment position and coordinate properties *(deps: E6-T12g6j2)*
-- [?] `525.027010581` [E6-T12g6l](epic-6-transcendence/E6-T12g6l-fragment-discard.md) — Admit fragment discard with sound branch liveness *(deps: E6-T12g6k)*
+- [~] `525.027010581` [E6-T12g6l](epic-6-transcendence/E6-T12g6l-fragment-discard.md) — Admit fragment discard with sound branch liveness *(deps: E6-T12g6k)*
 - [ ] `525.02701059` [E6-T12g6m](epic-6-transcendence/E6-T12g6m-larger-original-programs.md) — Prove the two larger original compositor shader programs *(deps: E6-T12g6l)*
 - [ ] `525.0270106` [E6-T12g6](epic-6-transcendence/E6-T12g6-required-format-closure.md) — Close original kmscube and es2gears format/view requirements *(deps: E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m)*
 - [x] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*
