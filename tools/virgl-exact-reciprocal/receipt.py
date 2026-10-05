@@ -48,9 +48,9 @@ def main():
                 'exact-head source ' + name)
         sources.append({'path': name, 'bytes': len(raw), 'sha256': sha(raw)})
     native = read(out / 'native-wasm.json')
-    require(native['status'] == 'passed' and native['gitHead'] == head and len(native['cases']) == 39,
+    require(native['status'] == 'passed' and native['gitHead'] == head and len(native['cases']) == 40,
             'complete native/Wasm parity and original source identities')
-    require(len(native['bankAttacks']) == 24 and len(native['metadataAttacks']) == 96,
+    require(len(native['bankAttacks']) == 25 and len(native['metadataAttacks']) == 100,
             'exact bank and strict metadata attacks')
     require(all(not c['exact']['ok'] for c in native['cases'] if c['mode'] == 'original'),
             'both full originals remain gated')
@@ -116,7 +116,7 @@ def main():
         records.append({'path': name, 'bytes': len(raw), 'sha256': sha(raw)})
     result = {'schema': 'virgl-exact-reciprocal-worker-receipt-v1', 'task': TASK,
               'status': 'passed', 'gitHead': head, 'sources': sources, 'records': records,
-              'nativeCases': 39, 'bankAttacks': 24, 'metadataAttacks': 96,
+              'nativeCases': 40, 'bankAttacks': 25, 'metadataAttacks': 100,
               'originalDraws': provenance['draws'], 'priorPairedFrames': prior['checkedFrames'],
               'priorPairedPixels': prior['checkedPixels'], 'captures': captures,
               'physicalFrames': 18, 'checkedChannels': 1152,
@@ -124,7 +124,7 @@ def main():
               'coverageLines': covered, 'guestExecution': False,
               'productionNegotiation': False}
     (out / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')
-    print(f'{TASK} exact-head receipt passed: 39 cases, 2271 capture draws, '
+    print(f'{TASK} exact-head receipt passed: 40 cases, 2271 capture draws, '
           '18 Metal frames, 1152 independent channels')
 
 

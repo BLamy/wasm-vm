@@ -3,13 +3,15 @@ import fs from 'node:fs';
 export const VERTEX='VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nEND\n';
 const imm='IMM[0] FLT32 {0.25,0.0,0.0,1.0}';
 const result=(word)=>((word&0x80000000)|((254-((word>>>23)&255))<<23))>>>0;
-function fragment({register=0,component=0,mask='w',modifier='',mode='branch',original=false,source='CONST',overwrite=false}={}){
+function fragment({register=0,component=0,mask='w',modifier='',mode='branch',original=false,source='CONST',overwrite=false,mixed=false}={}){
  const lane='xyzw'[component],written=mask[0],limit=original?33:1,temp=original?48:0;
  const header=['FRAG','DCL OUT[0], COLOR',`DCL CONST[0..${limit}]`,`DCL TEMP[0..${original?50:3}]`,imm];
  const direct=`CONST[${register}].${lane.repeat(4)}`;
  const src=`${modifier}${source==='TEMP'?'TEMP[3].xxxx':source==='IMM'?'IMM[1].xxxx':direct}${modifier==='|'?'|':''}`;
  const before=original?['MOV TEMP[47].x, IMM[0].xxxx'] :
   source==='TEMP'?[`MOV TEMP[3].x, ${direct}`]:source==='IMM'?['IMM[1] FLT32 {2.0,0.0,0.0,0.0}']:[];
+ if(mixed)before.push('ADD TEMP[2].x, CONST[0].xxxx, IMM[0].xxxx',
+                      'MUL TEMP[3].x, CONST[0].xxxx, IMM[0].xxxx');
  const rcp=`RCP TEMP[${temp}].${mask}, ${src}`;
  const tail=mode==='winner'?[]:mode==='pow'?
   [`POW TEMP[${original?49:1}].x, ${original?'TEMP[47].xxxx':'IMM[0].xxxx'}, TEMP[${temp}].${written.repeat(4)}`,
@@ -42,6 +44,7 @@ export function cases(){
  add('saved-temp-source-stays-opaque',0x40000000,{source:'TEMP'},false);
  add('immediate-source-stays-opaque',0x40000000,{source:'IMM'},false);
  add('overwritten-rcp-version',0x40000000,{overwrite:true},false);
+ add('mixed-known-arithmetic',0x40000000,{mask:'x',mode:'pow',mixed:true});
  add('c580-pc34-35',0x40000000,{register:30,component:0,mask:'x',mode:'pow',original:true});
  for(const [name,kind] of [['92cb','92cb866a'],['c580','c5806d5f']]){
   const shader=fs.readdirSync('evidence/virgl-workload-inventory/captures/es2gears/shaders').find(x=>x.startsWith(kind)&&x.endsWith('.tgsi'));

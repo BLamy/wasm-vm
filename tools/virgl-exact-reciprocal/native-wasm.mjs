@@ -45,6 +45,9 @@ for(let i=0;i<rows.length;i++){
   const p=exact.fragment,word=c.expectedWord;
   assert.equal(p.metadata.profile,'virgl-webgl2-raw-bits-v42');
   assert.ok(p.metadata.knownArithmeticContract.operations.includes('RCP'));
+  if(c.name==='mixed-known-arithmetic')
+   assert.deepEqual(p.metadata.knownArithmeticContract.operations,['ADD','MUL','RCP'],
+    'all three known operations in one admitted exact-bank stage');
   assert.match(p.glsl,new RegExp(`known:reciprocal \\*/ uintBitsToFloat\\(${word}u\\)`),c.name+' matching float literal');
   assert.match(p.glsl,new RegExp(`known:word \\*/ raw_rhs\\.[xyzw] = ${word}u`),c.name+' matching raw literal');
   const parsed=parseConstantDomain(p.metadata,'fragment');assert.equal(parsed.ok,true,c.name+' real strict consumer');
