@@ -1,0 +1,99 @@
+{
+  "schema": "virgl-known-arithmetic-critic-predictions-v1",
+  "task": "E6-T12g6m1",
+  "role": "fresh-adversarial-verifier",
+  "beforeWorkerEvidenceInspection": true,
+  "sourceHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "submissionHead": "5c6daa5fd87bccc7dc39398b6f6ba6d22991585c",
+  "base": "bfd5c97f7d71f510fccd2bd120f43b3d8b54159f",
+  "historicalUntracked": {
+    "count": 4202,
+    "sha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac"
+  },
+  "predictions": [
+    {
+      "id": "P0",
+      "boundary": "Custody and lineage",
+      "prediction": "All 100 worker archive members, both receipts and generated native/Wasm profiles hash to the submitted index; every committed source byte equals cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee, and source-relevant diff from there to submission is empty. Cold recording head matches with pristine before/after and scrubbed build/runtime env.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P1",
+      "boundary": "Integer rounding",
+      "prediction": "The original sanitizer stdout contains 11608 WORD results exactly equal to independent Fraction/integer binary32 RN-even calculations. In all four host rounding modes +1 + 2^-24 yields 0x3f800000; odd 0x3f800001 + 2^-24 yields 0x3f800002; +0 + -0 yields +0, -0 + -0 yields -0, exact cancellation yields +0 and multiplication uses XOR zero sign.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P2",
+      "boundary": "Literal emission and shadow",
+      "prediction": "Every admitted known-result masked destination in recorded carriers contains the independent folded word literal before the corresponding destination raw write; its matching float snapshot literal precedes the fact-consuming numeric computation. All 15 masks, both aliases, swizzles, source negation and ADD-to-MUL chain read old source versions before masked writes.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P3",
+      "boundary": "Unsafe and unknown operands",
+      "prediction": "Integer-manufactured unknown words, dynamic IN/CONST/TEMP sources, subnormal/nonfinite input, overflow/subnormal results never acquire the new fact; F2I/SIN consumers reject with no glsl/metadata. Exact underflow to zero is normal-or-zero and may fold. Missing live source lane and divergent/overwritten branch paths never preserve a known fact.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P4",
+      "boundary": "Join and address facts",
+      "prediction": "Identical known producer words survive live joins; divergent words do not grant unsafe F2I/SIN/address facts. Known F2I-to-UARL address equals truncated producer value and inherited CONST bounds remain mandatory. Address overwrite and out-of-range indices reject.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P5",
+      "boundary": "Whole-text retry and old results",
+      "prediction": "An original successful translation stays byte-identical including errors and metadata. The 10041 recorded predecessor cases compare complete single results; only exactly the five named source hashes in extensions.json transition unsupported-feature to v40. Predecessor discard pairs remain complete byte-identical.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P6",
+      "boundary": "Metadata authority",
+      "prediction": "A v40 wrapper admits only exact inert own-data policy with stage equality, base v1-v39 and nonempty sorted unique ADD/MUL subset. Missing fields, wrong scalar values, prototype/accessor/array forgeries reject without getter invocation. Stripping wrapper yields the unchanged inherited base contract.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P7",
+      "boundary": "Physical words and bytes",
+      "prediction": "Each of the three physical Chrome/Metal seed recordings yields the independent integer raw producer and F2I/I2F words; all 16 RGBA8 pixels per channel cell equal little-endian word bytes. Numeric shadow zero sign alone is qualified; raw zero sign remains exact via two carrier channels and RGBA bytes. Bounded SIN/POW/EX2/LG2 consumers match independently computed equations.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P8",
+      "boundary": "Owned consumer bank authority",
+      "prediction": "Sync and async state submissions own and restore the copied safe bank. Finite out-of-F2I-range replacement retains CPU state but performs no uniform upload, preserving prior GPU contents. Nonfinite wire replacement has appliedCommands=0, unchanged snapshot and zero native writes. Disposal leaves all GL objects and resource/state budgets zero.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P9",
+      "boundary": "Fault sensitivity and diagnostics",
+      "prediction": "Actual word-XOR and wrong-shadow shaderSource submissions contradict independent captured values at their first carrier while compile/link/GL/browser errors remain empty and objects disposed.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P10",
+      "boundary": "Storage and grammar",
+      "prediction": "Original native recorded LAYOUT begins 111744 112; maximum text 49152 and instruction/depth/operand grammar limits stay enforced during new retry. Cached unused operand is only used for ADD/MUL, cannot be interpreted as a source, and masked fact writes do not enlarge IR.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P11",
+      "boundary": "Remaining gate",
+      "prediction": "Both full larger literal source hashes remain unchanged and reject. Production negotiation and public imports remain disabled; the scoped diff adds neither public integration nor performance claim.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P12",
+      "boundary": "Executable coverage",
+      "prediction": "Original hot and cold LLVM region counts and original physical V8 ranges cover every newly changed runtime statement. Any unexecuted behavior needs a named proof; declarations, literals, layout and control syntax may be narrowly waived with a reason. Duplicate header function instances must be distinguished by original file-context profile.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P13",
+      "boundary": "Independent attack and sabotage",
+      "prediction": "One new finite-boundary/postmodifier/producer-version attack seed will match independent predetermined outputs and rejection states, including source-depth/text/count limits. A scratch mutation of RN-even rounding or cached emitter authority must make the new independent tests fail, with original runtime implementation untouched.",
+      "status": "PREDICTED"
+    }
+  ]
+}
