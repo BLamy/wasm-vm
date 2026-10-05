@@ -52,15 +52,20 @@ def main():
             raise ValueError('source drift after recording: ' + entry['path'])
         if entry['path'].startswith('renderer/virgl-shader/build/'):
             members['generated/' + entry['path'].removeprefix('renderer/virgl-shader/build/')] = raw
+        elif entry['path'].startswith('target/virgl-exact-bank-fault/'):
+            members['fault-source/' + entry['path'].removeprefix('target/virgl-exact-bank-fault/')] = raw
     # Preserve both actual sanitizer binaries; profile records cannot be
     # re-exported from a newly rebuilt or different clone's binary.
     cold_root = Path(cold['clone'])
     for entry in second['sources']:
-        if entry['path'].startswith('renderer/virgl-shader/build/'):
+        if entry['path'].startswith(('renderer/virgl-shader/build/', 'target/virgl-exact-bank-fault/')):
             raw = (cold_root / entry['path']).read_bytes()
             if sha(raw) != entry['sha256'] or len(raw) != entry['bytes']:
                 raise ValueError('cold generated source drift: ' + entry['path'])
-            members['cold-generated/' + entry['path'].removeprefix('renderer/virgl-shader/build/')] = raw
+            if entry['path'].startswith('renderer/virgl-shader/build/'):
+                members['cold-generated/' + entry['path'].removeprefix('renderer/virgl-shader/build/')] = raw
+            else:
+                members['cold-fault-source/' + entry['path'].removeprefix('target/virgl-exact-bank-fault/')] = raw
     a.output.mkdir(parents=True, exist_ok=True)
     index = dict(schema='virgl-exact-bank-worker-records-v1', task='E6-T12g6m3a', sourceHead=head,
         records=[dict(path=name, bytes=len(raw), sha256=sha(raw)) for name, raw in sorted(members.items())])
