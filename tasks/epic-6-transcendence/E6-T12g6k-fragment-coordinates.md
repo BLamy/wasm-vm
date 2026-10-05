@@ -3,7 +3,7 @@ id: E6-T12g6k
 epic: 6
 title: Lower captured fragment position and coordinate properties
 priority: 525.02701058
-status: implemented
+status: verified
 depends_on: [E6-T12g6j2]
 estimate: S
 risk: high
@@ -112,3 +112,53 @@ Sealed evidence: `evidence/virgl-fragment-coordinates/worker/`.
 127 archive members authenticated. Archive SHA256 `8bba25788029785c57fd48b2f1a47a522856b178f4b3d5025f14adce43c7d8e2`; record-index SHA256 `e6c6ab2af48ff5ca58e0794e163ee38075ead285f04c3df6ee822bb33d521bad`.
 Hot receipt `0035f91e92b4c47d05e39367d24e06dfe243fd1941d1a336b2d0b8a7afdd6e9d`; cold report `821210827dd50ba460b65a279b79f257da68a558ac79f8c8a15454913b474130`; cold receipt `e865adb3109c71d8fae482c401a374fce294387e992c5d43ce17879f237e5776`.
 Draft PR #455: <https://github.com/BLamy/wasm-vm/pull/455>. Independent criticism is pending; dependents stay gated.
+
+
+### 2026-10-04 — fresh critic — VERDICT: verified
+
+Frozen runtime `c947442bad912ebcd46d3ff30a0e4c71be87ca4a` against verified
+POW `574d633c17c7436545195c63e534d9fa7859ac74`. The fresh critic wrote all
+predictions before inspecting worker state and made no implementation edits.
+`make verify-E6-T12g6k` passed at promoted guard/wiring head
+`0eb794639b408c80aa6f35688bf85e15a433a845`, using
+`VIRGL_COORDINATE_EVIDENCE_DIR=target/evidence/virgl-fragment-coordinates-critic-current`.
+The complete run and actual critic artifacts are sealed under
+`evidence/virgl-fragment-coordinates/verifier/`.
+Archive SHA256 `a05686aa76631217e32eb2b598b48fc0305a0ab43e5b692d0934aad82323edc2`;
+record-index SHA256 `50372d59bfdca970e0ff520572c18bf0f4f0916222ed0190f2c2bff01b6672d4`;
+verdict SHA256 `a5f446813901b5e54b09e4330c604450d7cac3b1ce3461b893f77d71d6393c77`;
+predictions SHA256 `31d879d5b2e5dec5c331378378e7aac1cedc67be74762b3371a80e44595aa181`;
+manifest SHA256 `379c15316fe4e359e89e530f1c577fa185bbbbc05c43eb64952dcb6aa650520e`.
+All following archive points have full digest bindings in the record index and
+`critic/verdict.json#/predictions`.
+
+- P1 authenticity — HELD. All 127 worker members and 795 source bindings authenticate; both actual original sanitizer binaries/profiles remain preserved. Point: `critic/authentication.json#/members`, `critic/native-replays.json#/records`.
+- P2 primary semantics — HELD. Literal original lines 1–4, 285 unmodified Mesa token/GLSL witnesses and TGSI/ESSL conventions agree. Point: `critic/source-semantics.json`, worker `generated/coordinate-primary.json#/0/primary`.
+- P3 admission/authority — HELD. Original/reordered headers accept; invalid conventions, masks, bounds and coordinate-derived numerical fact laundering reject in 380 complete native/Wasm singles/pairs. Complete original bodies retain their admissions. Point: `acceptance/independent-coordinate-guards.json#/native`, `critic/carry-forward.json#/rejectedCompleteBodies`.
+- P4 wrapper/banks — HELD. All simultaneous underlying obligations survive; 561 original and 32 novel inert metadata attacks invoke zero getters, with four combined ports and 480 novel owned-bank cases. Point: worker `hot/consumer.json#/combined`, `acceptance/independent-coordinate-guards.json#/banks`.
+- P5 interface/key — HELD. POSITION stays outside GENERIC linkage, including GENERIC0/7; actual keys bind the complete convention and forged selectors reject atomically. Point: `critic/gpu-3737844652/report.json#/acceptance/consumers/0/pairRequests`.
+- P6 geometry/budget — HELD. Independent literal clip geometry and determinant barycentrics check 657,696 complete words across four distinct seeds. Exact XY/dyadic cases and outside sentinels hold; maximum variable-derived error 2^-21 is below 2^-20. Point: `critic/fourth-capture.json#/transcript/294`, raw SHA256 `680a769f44a0d90b2be014160c61311e977b36426a5c70214ebce219435a995d`, (3,1), actual 1080981990 / predicted 1080981992.
+- P7 versions/masks — HELD. Forward literal-source execution snapshots old operands; saved/reversed/killed versions, masks, raw/numeric operations and UIF agree with physical words and 300 novel version guards. Point: `critic/fourth-capture.json#/transcript`, `acceptance/independent-coordinate-guards.json#/predictions`.
+- P8 hardware/reflection — HELD. Headed WebGL2 Metal/Apple M4 Max, zero browser/GL errors, successful compile/link, no FragCoord uniform, COLOR0 at 0 and 8,173 created objects all disposed. Point: `critic/gpu-3737844652/report.json#/browser`, `#/acceptance/events`, `#/acceptance/objects`.
+- P9 actual async ownership — HELD. Both indexed consumers restore poisoned viewport/depth/raster state, own poisoned packets, match A/B/A pixels and reject 24 attacks each; async events are bounded completion fences and all budgets finish zero. Point: `critic/gpu-3737844652/report.json#/acceptance/consumers`.
+- P10 sabotage — HELD. Original hot/cold emitted X/Y/Z/W faults contradict the independent oracle. Isolated actual runtime admission mutation, wrong promoted-test mask and jointly forged pixel/cache word all fail at the intended point. Point: `critic/hot-capture-fault-x.json#/transcript/0/failurePoints`, `critic/hot-capture-fault-w.json#/transcript`, `critic/sabotage.json#/records`.
+- P11 coverage/carry — HELD. 118 changed runtime lines execute in original LLVM/V8/Node recordings; nine nonexecuting lines are individually waived below; zero executable gap. Ten unchanged predecessor HELD predictions carry by source boundary/digest. Point: `critic/coverage-audit.json#/lines`, `critic/carry-forward.json#/priorVerdict/predictions`.
+- P12 cold isolation — HELD. Authenticated pristine scrubbed c947442b acceptance passes clean before/after. Test/wiring-only promotions preserve that proof; no redundant clone. Point: `critic/authentication.json#/cold`, `critic/final-acceptance.json`.
+- P13 novel attack — HELD. Eight-register POSITION+GENERIC0/7, missing producers/ninth-register, masked versions, nonfinite/subnormal/signed-zero banks and inert metadata hold. Fresh preplanned seed 3737844652, step size 2, checks 162,568 words and 48 rejections. Point: `critic/fourth-command.json`, `critic/fourth-capture.json`, `acceptance/independent-coordinate-guards.json#/predictions`.
+
+Waivers, each bound to the original measured profiles in `critic/coverage-audit.json`:
+`bridge.c:988` COLOR0 comment; `:1013` direct-MOV comment; `:1334` GENERIC comment;
+`:1531` signature generates no instruction, body 1532–1534 executes 1,138 times
+per original profile; `:1535` blank separator; `raw_bits.h:36` comment;
+`:37` compile-time feature bit with executed uses 1014/1387/1577;
+`:38` compile-time separation assertion passes native/Wasm builds;
+`:153` field declaration with executed reads/writes 981–985/1009 and matching
+native/Wasm descriptors. No runtime behavior was waived.
+
+SUITE: promote `tools/virgl-fragment-coordinates/independent-guards.mjs` and
+`capture-check.py` into the acceptance target and receipt, committed at 0eb79463.
+Source sabotage used an isolated copy only. Original hot/cold binaries/profiles,
+actual supplementary replay profiles, new captures and sabotage inputs/results
+are sealed. Physical accuracy remains measured for this configuration; the
+combined/copy ports are isolated obligation probes. Original complete compositor
+bodies, production caps/public imports, guest integration, FPS and MIPS stay gated.
