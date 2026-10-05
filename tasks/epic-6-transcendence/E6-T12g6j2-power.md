@@ -3,7 +3,7 @@ id: E6-T12g6j2
 epic: 6
 title: Admit bounded power evaluation for captured compositor equations
 priority: 525.027010579
-status: implemented
+status: verified
 depends_on: [E6-T12g6j1]
 estimate: S
 risk: high
@@ -140,3 +140,136 @@ literal statements; they grant no original computed bounds. Production caps,
 negotiation, live imports and guest execution remain disabled. No offload,
 FPS or300MIPS claim follows. The fresh critic must independently attack
 all task criteria and audit changed-line coverage before setting verified.
+
+### 2026-10-04 — fresh verifier
+
+VERDICT: verified
+
+All ten predictions were written in `predictions.json` before recorded state was
+inspected. The implementation was not edited. Runtime and dependency bytes remain
+bound to `6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d`; worker submission is
+`39ef0d94f2ede843e88b476683de20208babe326`. Independent tests and verification
+wiring were promoted at `fcf065acf2397362057ab85b75708212ca09fe29` before the
+fresh physical capture, whose recorded `trackedChanges=[]`.
+
+- P1 authentication and isolation — HELD. Predicted all147 archive members,
+  exact-source receipts and successful scrubbed cold clone. Authenticated the
+  claimed worker archive/index and all members;384 tracked hot/cold sources
+  agree, with13 incidental hot-only generated fixtures absent from the passing
+  clone. Replayed **each actual sealed sanitizer binary** on its own fixture and
+  re-exported **each own original profile**; outputs and coverage match the
+  originals. Citation: `authentication.json#/receipts`,
+  `native-replays.json#/records`, `carry-forward.json#/coldIncremental`.
+- P2 complete static domain — HELD. Predicted rejection of zero-capable joined
+  bases with zero/negative exponents, including exponent bit cubes containing
+  zero despite positive endpoints. Independent native/Wasm1914-case guards held;
+  concrete novel case1091 joins base0/.5 and exponents0x00800000/0x01000000 and
+  rejects atomically. The unchanged sealed hot binary supplements the worker's
+  unhit rejection: `raw_bits.c:212,column35` true20/false6. Citation:
+  `independent-regressions.json#/native/1091`,
+  `critic-native-recording.json`, `coverage-audit.json#/domainBranches`.
+- P3 source versions, masks and aliases — HELD. Predicted both post-swizzle x
+  operands before publication, scalar replication, preserved unwritten words,
+  consumed-lane initialization and irrelevant unused special lanes. All15 masks,
+  swizzle pairs and both source aliases held in independent guards and
+  original-TGSI physical equations. Citation:
+  `independent-regressions.json#/native/1857` (base alias), `/native/1861`
+  (exponent alias), `fourth-source-guards.json#/physical/points`.
+- P4 provenance, modifiers and bank obligations — HELD. Predicted valid saved
+  versions survive kills, invalid live/opaque versions reject, modifiers precede
+  proof/evaluation, and results grant no exact/range/F2I facts. Saved/invalid
+  versions, every result lane, opaque producers and inherited bank constraints
+  held. A scratch runtime that forges a known-zero result is refuted. Citation:
+  `independent-regressions.json#/native/1853` and `/native/1854`,
+  `consumer-boundary-attacks.json#/ownership`,
+  `sabotage-regressions.json#/records` (`result-facts`).
+- P5 independent primary semantics — HELD. Predicted1167 matching native/Wasm
+  singles and pairs per checkout,1106 authentic FLOAT/REPL witnesses, literal
+  originals and distinct scalar versus vendor componentwise/constructor packing
+  equations. Original vendor GLSL stays unchanged. Independent enumeration finds
+  all72 literal sites/14 exact exponent words; four distinct seeds preserve856
+  concrete vendor deviations and14496 canonical primary words. Citation:
+  `native-replays.json`, `reference-audit.json#/captures`,
+  `final-audits.json#/allUniquePhysicalSeeds`.
+- P6 numerical truth and budget — HELD. Predicted exact owned +0 and nonzero
+  relative error <=2^-14 from original TGSI source and exact binary32 inputs.
+  The independent oracle uses outward1040-bit dyadic atanh/exp series with
+  proved geometric tails, exact binary range reduction and outward squarings;
+  all80 reference equations nest strictly inside both worker160/220-decimal
+  intervals. Four unique seeds check49536 feedback words/87040 full RGBA8 pixels.
+  Maximum conservative relative errors: owned `1.1862894318599564e-6`, Mesa
+  `6.09422101737745e-8`. The owned maximum is fourth vertex180/vector0/lane0,
+  base1078410713, exponent1105759987, observed1464186247, raw SHA-256
+  `18b3428dd6f3f2fcfc444e26b9808e53a50c3fb00fc38b4f88cfa2178befa783`.
+  Citation: `reference-audit.json#/rows`,
+  `fourth-source-guards.json#/physical/maximumObservedError`,
+  `final-audits.json#/maximumObservedRelativeError`.
+- P7 fresh physical state — HELD. Predicted an independently seeded physical
+  run with unchanged served sources, complete reflection/capture bytes, no
+  errors, clean tracked state and zero live objects. Seed2654435769 passes on
+  headed ANGLE Metal Apple M4 Max WebGL2:12384 words/21760 pixels,80 fresh pinned
+  native witnesses and equations fixed before observation. All source, served
+  bytes, screenshot and V8 bindings held; generated worker files were restored.
+  Citation: `fourth-command.json`, `fourth-plan.json`,
+  `gpu-2654435769/report.json#/trackedChanges` (report SHA-256
+  `be687024737603ed3f22b66e9f1d232dabdf4e1a0a779827a9e03e939790333b`),
+  `final-audits.json#/fourthCoverage`.
+- P8 ownership and actual consumers — HELD. Predicted immutable recursive
+  delegation, closed forged/accessor policies, bank preservation and actual
+  sync/async poison/restore behavior.298 additional policy/bank attacks held
+  with zero getters; both physical consumers poison caller storage, restore
+  A/B/A banks, reject with no applied commands and dispose every object.
+  Citation: `consumer-boundary-attacks.json`,
+  `gpu-2654435769/report.json#/acceptance/consumers/0` and `/1`.
+- P9 source and test sensitivity — HELD. Predicted actual source faults and
+  sabotaged expectations fail the independent oracle. All six sealed hot/cold
+  base/exponent/broadcast faults fail original-source predictions, even with a
+  forged cached oracle around the faulty observation. Four actual scratch
+  runtime mutations (zero-capable admission, exponent snapshot, zero bypass,
+  result facts) and two test-source mutations fail promoted guards. Actual
+  mutations/binaries and counterexamples are sealed. The exact promoted receipt
+  statements pass authenticated records and reject four tampered records.
+  Citation: `sensitivity.json#/records`, `sabotage-regressions.json#/records`,
+  `wiring-checks.json#/tamperChecks`.
+- P10 sufficiency and carried authority — HELD. Predicted every changed runtime
+  hunk/selector arm exercised or explicitly justified, and unchanged HELD proofs
+  preserved.77 runtime lines and all11 selector arms execute.17 nonexecuting
+  declarations/documentation lines are waived individually. The only waived
+  branch outcome is `raw_bits.c:232,column40` comparison true: when scale>=0,
+  significand>=2^23 and nonunit integer log_size>=1 force product>=2^23>120;
+  unit/zero-product identities return earlier. Both scale<7 outcomes and the
+  comparison false outcome execute. SAT/EX/SIN source oracles/seals,15256 prior
+  promoted guards,6867 complete prior responses,3 declared old POW admissions
+  and2 carried SIN admissions retain their authority.26 computed/uniform
+  original sites and both full larger bodies stay gated. Citation:
+  `coverage-audit.json#/waivers` and `/selectorArms`, `carry-forward.json`,
+  `final-audits.json#/unchangedTrackedSources`.
+
+SUITE: promoted1914 independent native/Wasm guards and the independent
+original-source capture oracle into `make verify-E6-T12g6j2`; receipt wiring binds
+positive/fault records and oracle sources. Commands included archived
+`authenticate.py`, `replay.py`, `supplement.py`, `consumer_attacks.mjs`,
+`fourth.py`, `coverage_audit.py`, `sabotage.py`, `sensitivity.py`,
+`reference_audit.py`, `carry_forward.py`, `final_audits.py`, `wiring_checks.py`,
+the promoted capture CLI on the fourth report, `write_verdict.py` and `seal.py`.
+Syntax checks and `git diff --check` passed. The single final scrubbed clone proof
+at the frozen runtime head is carried forward incrementally; the later promotion
+changes tests and verification wiring only, so no new clone or unrelated gauntlet
+was run. After status update: `python3 tools/check_task_policy.py`, then
+`python3 tools/build_queue.py`, then commit.
+
+Critic evidence: `evidence/virgl-power/verifier/{README.md,manifest.json,
+records.json,recording.tar.gz}`. The118-member archive SHA-256 is
+`587e4a7e29d643d241a8db44f9021ad7d79dfe9f05ec8cfa0888871efb026394`;
+index `ef1c1c9cfab71f19a73c38d838685f205946b59f686dbaa15ae7470896fad894`;
+verdict `85b542ec19517a5bf265563ccd69412219e81987e41b37b3cb9b41714b133717`;
+before-inspection predictions
+`ee3bf783fecdabad3734faa699f9885c8b1d26460aa4516fa20a6e47145c072c`.
+Every cited member has its own byte length and SHA-256 in the authenticated index;
+`verdict.json` records all ten predictions, observations and point bindings.
+
+Scope qualification held: the budget is measured on the physical host, not a
+portable ESSL pow guarantee. Original computed domains and full compositor
+bodies acquire no new authority. Production caps/negotiation/live imports/guest
+execution remain disabled. No offload, FPS or MIPS claim follows. All PRs remain
+open; verification does not authorize a merge.

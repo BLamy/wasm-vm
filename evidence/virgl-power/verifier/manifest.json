@@ -1,0 +1,55 @@
+{
+  "schema": "virgl-power-critic-seal-v1",
+  "task": "E6-T12g6j2",
+  "verdict": "verified",
+  "prerequisite": "ff4692e52a3ea52ee75368358b46fed1bd3fce9b",
+  "workerSubmissionHead": "39ef0d94f2ede843e88b476683de20208babe326",
+  "workerEvidenceHead": "6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d",
+  "frozenRuntime": "6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d",
+  "criticHead": "fcf065acf2397362057ab85b75708212ca09fe29",
+  "records": 118,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 5286106,
+    "sha256": "587e4a7e29d643d241a8db44f9021ad7d79dfe9f05ec8cfa0888871efb026394"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 19611,
+    "sha256": "ef1c1c9cfab71f19a73c38d838685f205946b59f686dbaa15ae7470896fad894"
+  },
+  "verdictSha256": "85b542ec19517a5bf265563ccd69412219e81987e41b37b3cb9b41714b133717",
+  "predictionsSha256": "ee3bf783fecdabad3734faa699f9885c8b1d26460aa4516fa20a6e47145c072c",
+  "workerManifestSha256": "2666f7a98aa649fd1171a6a8a061ac76e28f58ec2a9d26e82b7b0eb2742aee8f",
+  "workerArchiveSha256": "5630a4ff3fcc271a812096b602d04c73b31bb3691fc6f39e1b6b9a653f02f3a2",
+  "workerRecordIndexSha256": "3043e4458999f7a0f6024348ea2e2e18251c505c1bdfbfb6da43bcedb30e3363",
+  "independentGuards": 1914,
+  "independentMetadataAttacks": 298,
+  "originalWorkerMetadataAttacks": 516,
+  "fourthSeed": 2654435769,
+  "fourthWords": 12384,
+  "fourthPixels": 21760,
+  "uniquePhysicalSeeds": 4,
+  "totalUniqueWords": 49536,
+  "totalUniquePixels": 87040,
+  "canonicalPrimaryWords": 14496,
+  "concreteVendorDeviations": 856,
+  "changedRuntimeLines": 77,
+  "waivers": 18,
+  "selectorArms": 11,
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "coldProof": {
+    "sourceHead": "6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d",
+    "reportSha256": "99ab9a9128b1f7b37809d6ba06e1fbc35e634fabb6640be1decb38312521f9e7",
+    "incremental": true,
+    "additionalClone": false
+  },
+  "qualifications": [
+    "Measured physical-host relative budget, not a portable ESSL accuracy guarantee.",
+    "Original componentwise vendor GLSL remains unchanged and is independently evaluated; scalar and mask-rank equations are distinguished.",
+    "Known initializers isolate literal statements, never authorize computed/uniform original domains or full compositor bodies.",
+    "One authenticated final pristine clone at frozen runtime head is carried forward incrementally after test/wiring-only promotions.",
+    "No production capability/offload/performance/FPS/MIPS claim."
+  ]
+}
