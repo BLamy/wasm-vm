@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m3a]
+depends_on: [E6-T12g6m3b]
 estimate: S
 risk: high
 capstone: false
@@ -53,3 +53,7 @@ checks. Add the ordered S/high E6-T12g6m2 leaf for raw predicate liveness after
 full unchanged text validation. Acceptance above is unchanged. Observed captured
 bank values supply no authority; original bank, geometry and indirect range
 proofs remain necessary before either full literal pair can be admitted.
+
+### 2026-10-05 — worker — producer prerequisite discovery
+
+The exact-bank consumer E6-T12g6m3a is independently verified. Add ordered S/high E6-T12g6m3b to derive conditional raw CONST facts from owned whole source text and emit the enforced exact preconditions. This does not select specializations at DRAW, recognize new loops or prove geometry/numerical ranges. The full original acceptance above remains unchanged and both complete compositor bodies remain gated.
