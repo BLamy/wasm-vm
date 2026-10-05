@@ -3,7 +3,7 @@ id: E6-T12g6m
 epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m4a]
 estimate: S
 risk: high
@@ -69,3 +69,7 @@ Private paired interface prerequisite E6-T12g6m3c is independently verified at `
 ### 2026-10-05 — worker — reciprocal prerequisite discovery
 
 The unchanged c5806d5f fragment uses `RCP TEMP[48].x, CONST[30].xxxx` at pc34 as the exponent of two subsequent `POW`s. The complete observed exact bank fixes `CONST[30].x` at binary32 `2.0`, but the compiler's ordinary reciprocal produces no static word fact, so a sound later domain proof cannot even identify its exact `0.5` exponent. Add one ordered S/high E6-T12g6m4a leaf to materialize only exact power-of-two reciprocal results in the private exact-bank retry, with literal matching raw/shadow emission and real physical evidence. This does not authorize either original geometry-dependent base or the full pair; the acceptance above is unchanged.
+
+### 2026-10-05 — worker — resumed after reciprocal proof
+
+The independent critic verified E6-T12g6m4a at `8db5b1843a7d0c09c063edd086fd4a75b8310fe3`, including the mixed known-arithmetic metadata branch. Resume this parent to determine whether the remaining original geometry-dependent `POW` domains can be proven without widening the private exact-bank authority or the public renderer path.
