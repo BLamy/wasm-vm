@@ -1,0 +1,29 @@
+{
+  "schema": "virgl-exact-pair-worker-seal-v1",
+  "task": "E6-T12g6m3c",
+  "sourceHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "base": "8840833b7fc8196a72c7acf2752b2dff684f6670",
+  "records": 136,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 34349685,
+    "sha256": "84324f32042372e11af30429a8997bff17eeec6d4b18fbe6fcfe97de426b9869"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 23572,
+    "sha256": "c132aca9072cb5d0f67286241ab528f8c2579d283cea3f16aadfb4639fc95865"
+  },
+  "hotReceiptSha256": "12f6b205e42ba1606a3f88609eb8ac2c30db7eb3867b40bf2e48c5abcb7c308e",
+  "coldReportSha256": "61650caed09ce1fd958b8a0cc681a915bcc95962f4222e4a33e9a38b798a138c",
+  "coldReceiptSha256": "e0ab3e2b32985ff910228edbbd4ab7d6551b53ac0b38eeade0a069ba7fada20c",
+  "checkedUploadWords": 1020096,
+  "checkedPixels": 53952,
+  "nativeCases": 118,
+  "schemaAttacks": 175,
+  "allocationFaults": 1939,
+  "ownedWasmPeakUpperBoundBytes": 240240,
+  "trustedHostMetadataWrapper": false,
+  "productionNegotiation": false,
+  "guestExecution": false
+}
