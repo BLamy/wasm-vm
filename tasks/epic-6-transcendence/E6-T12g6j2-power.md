@@ -3,7 +3,7 @@ id: E6-T12g6j2
 epic: 6
 title: Admit bounded power evaluation for captured compositor equations
 priority: 525.027010579
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6j1]
 estimate: S
 risk: high
@@ -84,3 +84,59 @@ uses. Captured uniform exponents are2/3, but this inventory is input context
 and grants no domain authority. Use the stated integer envelope, independent
 outward references, actual physical outputs, final pristine clone and fresh
 critic. Production admission and performance claims remain gated.
+
+### 2026-10-04 — worker — implemented, fresh critic required
+
+Frozen source: `6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d`, predecessor
+`ff4692e52a3ea52ee75368358b46fed1bd3fce9b`. Commands recorded once at the frozen head:
+`make verify-E6-T12g6j2` (C guard compilation and pinned sources, ASan/UBSan,
+native coverage, pinned TGSI conversion, Wasm, all inherited narrow guards,
+whole legacy responses, mathematical predictions, ownership consumers,
+three actual GPU seeds and three numerical source faults);
+`python3 tools/virgl-power/cold.py --output target/evidence/virgl-power-cold-final`
+(the single final pristine clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-power-cold-7c20pvzx/wasm-vm`, scrubbed build/runtime variables,
+exact head, exit0, empty before/after status);
+`python3 tools/virgl-power/seal.py --hot target/evidence/virgl-power --cold
+ target/evidence/virgl-power-cold-final --output evidence/virgl-power/worker`.
+Evidence: `evidence/virgl-power/worker/{manifest.json,records.json,recording.tar.gz}`.
+The147-member archive SHA-256 is `5630a4ff3fcc271a812096b602d04c73b31bb3691fc6f39e1b6b9a653f02f3a2`;
+index `3043e4458999f7a0f6024348ea2e2e18251c505c1bdfbfb6da43bcedb30e3363`; hot receipt `e02ad44fc5473da72b8f99308c3dd7f5cfe30d5806039a715272f92cb2c42f0f`;
+cold report `99ab9a9128b1f7b37809d6ba06e1fbc35e634fabb6640be1decb38312521f9e7`; cold receipt `9b48f5d7434576de3fe10bce24990ace3e94a41a4b661939a2317785fdb95251`.
+Both actual sanitizer binaries and original profiles are sealed. Hot/cold
+tracked sources agree;13 incidental old generated files are bound only in hot,
+and the clean clone passed without them. No recorded runtime repair occurred.
+
+The recordings demonstrate the conservative integer bit-cube domain, both
+post-swizzle scalar reads before publication, explicit zero handling and no
+new static result/range/F2I authority. Each checkout has1167 matching native/
+Wasm singles and1167 pairs,1106 pinned FLOAT/REPL witnesses,6867 complete
+predecessor responses,15256 promoted native/Wasm guards,1110 owned policies,
+516 metadata attacks (zero accessor calls),10 immutable banks and4 compound
+base obligations. Actual synchronous/asynchronous consumers poison caller
+storage, restore A/B/A banks, reject atomically and dispose all objects.
+Three seeds608135816/2242054355/320440878 check37152 physical feedback words
+and65280 full RGBA8 pixels, including72 unchanged literal-exponent statements.
+Independent outward160/220-digit references enforce relative <=2^-14 or exact
+owned +0. Maximum conservative relative errors: owned
+1.125381678622123e-06, Mesa
+6.09422101737745e-08 (identical hot/cold).
+Owned maximum is hot/cold `gpu-608135816/report.json`, vertex168/lane0,
+base1076450002, exponent1103063417, observed1346364585, raw SHA
+`250ba73a0f4c2db94c8ce967686d228c1712ac97abc793acca80d5c53c5f4abb`.
+The pinned converter's componentwise pow and float/vecN destination packing
+are preserved and independently evaluated:642 concrete scalar deviations,
+10872 canonical primary words,18576 total primary words and32640 primary
+pixels per checkout. Actual base/exponent/broadcast source faults fail on
+owned physical words. Earlier SAT39576/EX13152/SIN8160-word captures pass
+unchanged promoted source oracles; three old plain-POW spelling rejections
+are declared new bounded admissions, and two prior SIN admissions preserve
+complete results. Earlier sealed fixtures stay unchanged; only current
+unsupported spellings migrate to POW_PRECISE with binary arity preserved.
+
+Qualification: this is a measured physical-host budget, not an unambiguous
+portable ESSL pow accuracy guarantee. The26 original computed/uniform exponent
+sites and both full larger bodies remain gated. Known initializers isolate
+literal statements; they grant no original computed bounds. Production caps,
+negotiation, live imports and guest execution remain disabled. No offload,
+FPS or300MIPS claim follows. The fresh critic must independently attack
+all task criteria and audit changed-line coverage before setting verified.
