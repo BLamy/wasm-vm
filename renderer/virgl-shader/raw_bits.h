@@ -133,6 +133,14 @@ struct radial_certificate {
 struct raster_certificate {
    unsigned char components[CONST_REGISTERS], outputs[FILE_REGISTERS];
 };
+/* Owned by one serialized private compiler call. No pointer survives cleanup.
+ * Presence is independent of the raw word, including both zero encodings. */
+struct raw_exact_bank {
+   struct bridge_exact_word components[BRIDGE_MAX_EXACT_WORDS];
+   uint32_t words[CONST_REGISTERS][4];
+   unsigned char present[CONST_REGISTERS];
+   unsigned count;
+};
 struct raw_ir {
    struct raw_instruction instructions[BRIDGE_MAX_INSTRUCTIONS];
    uint32_t immediates[IMM_REGISTERS][4];
@@ -150,6 +158,7 @@ struct raw_ir {
    struct loop_certificate loop;
    struct demand_certificate demand;
    struct radial_certificate radial;
+   const struct raw_exact_bank *exact;
 };
 struct profile {
    bool declared[FILE_COUNT][TEMP_REGISTERS];
@@ -171,7 +180,8 @@ _Static_assert(sizeof(struct raw_ir) <= 114688, "raw IR allocation bound");
 _Static_assert(sizeof(struct raw_destination) == 12, "checked destination layout");
 _Static_assert(sizeof(struct raw_source) == 24, "checked source layout");
 _Static_assert(sizeof(struct raw_instruction) == 112, "unchanged instruction layout");
-_Static_assert(sizeof(struct raw_ir) == 111744, "bounded compositor IR allocation");
+_Static_assert(sizeof(struct raw_ir) == 111752, "bounded conditional compositor IR allocation");
+_Static_assert(sizeof(struct bridge_exact_word) == 12, "private exact tuple ABI");
 _Static_assert(sizeof(struct loop_certificate) == 96, "compact loop certificate");
 _Static_assert(sizeof(struct demand_certificate) == 112, "compact demand certificate");
 _Static_assert(sizeof(struct radial_certificate) == 16, "compact radial certificate");

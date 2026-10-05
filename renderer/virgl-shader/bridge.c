@@ -1189,7 +1189,9 @@ static bool demand_retry(struct profile *profile, const char *text, size_t lengt
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
    unsigned flags = profile->raw_flags;
+   const struct raw_exact_bank *exact = ir->exact;
    memset(ir, 0, sizeof(*ir));
+   ir->exact = exact;
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
@@ -1213,7 +1215,9 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
    unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & (RAW_KNOWN_RETRY | RAW_BRANCH_RETRY));
+   const struct raw_exact_bank *exact = ir->exact;
    memset(ir, 0, sizeof(*ir));
+   ir->exact = exact;
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
@@ -1230,7 +1234,19 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    return validate(checked, profile) && ir->radial.used && (ir->opcode_mask & RAW_FINITE_BANK_USED);
 }
 
-static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, unsigned retry_flags)
+static bool exact_declarations(const struct profile *profile, const struct raw_exact_bank *exact)
+{
+   for (unsigned i = 0; i < exact->count; ++i) {
+      const struct bridge_exact_word *word = &exact->components[i];
+      if (!profile->declared[CONST][word->reg] ||
+          !(profile->components[CONST][word->reg] & (1u << word->component)) ||
+          word->reg >= profile->constant_extent) return false;
+   }
+   return true;
+}
+
+static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, unsigned retry_flags,
+                                     const struct raw_exact_bank *exact)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
    if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
@@ -1287,19 +1303,22 @@ static const char *check_input_attempt(struct profile *profile, const char *text
          candidate = numeric_candidate = true;
       }
    }
-   if (candidate) {
+   if (candidate || exact) {
       profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
          (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags;
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+      profile->raw->exact = exact;
    }
-   if (profile->raw && (retry_flags & RAW_BRANCH_RETRY) && !loop_candidate) {
+   if (profile->raw && ((retry_flags & RAW_BRANCH_RETRY) || exact) && !loop_candidate) {
       /* Complete original grammar must pass before any dead semantic read is
        * skipped. Keep every slot for existing graph/certificate indexes. */
       profile->syntax_only = true;
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error";
       if (!validate(checked, profile)) return numeric_rejection();
+      if (exact && !exact_declarations(profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
       demand_reset(profile, profile->stage, profile->raw, profile->raw_flags);
    }
    if (loop_candidate) {
@@ -1308,7 +1327,10 @@ static const char *check_input_attempt(struct profile *profile, const char *text
       profile->syntax_only = true;
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error";
-      if (!validate(checked, profile) || !loop_recognize(profile->raw)) {
+      bool grammar = validate(checked, profile);
+      if (grammar && exact && !exact_declarations(profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+      if (!grammar || !loop_recognize(profile->raw)) {
          profile->syntax_only = false;
          return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
             !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
@@ -1355,6 +1377,7 @@ static const char *check_input_attempt(struct profile *profile, const char *text
       (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags};
    profile->raw = calloc(1, sizeof(*profile->raw));
    if (!profile->raw) return numeric_rejection();
+   profile->raw->exact = exact;
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
    missing_numeric_authority = missing_initialization = false;
@@ -1366,7 +1389,7 @@ static const char *check_input_attempt(struct profile *profile, const char *text
 
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
-   const char *failed = check_input_attempt(profile, text, length, 0);
+   const char *failed = check_input_attempt(profile, text, length, 0, NULL);
    if (!failed) return NULL;
    bool parse_failure = strstr(failed, "\"code\":\"parse-error\"") != NULL;
    if (!parse_failure && !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
@@ -1376,7 +1399,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    if (!parse_failure) {
       free(profile->raw);
       *profile = (struct profile){.stage = stage};
-      const char *known = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY);
+      const char *known = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY, NULL);
       if (!known && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
          response_used = 0; response_overflow = false;
          return NULL;
@@ -1384,7 +1407,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    }
    free(profile->raw);
    *profile = (struct profile){.stage = stage};
-   const char *retry = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY);
+   const char *retry = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, NULL);
    if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_BRANCH_LIVENESS_USED)) {
       response_used = 0; response_overflow = false;
       return NULL;
@@ -1724,8 +1747,10 @@ static void stage_result(const struct conversion *c)
    const char *base_profile =
       power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
+   const char *inherited_profile = branch ? "virgl-webgl2-raw-bits-v41" : known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile;
+   const struct raw_exact_bank *exact = profile->raw ? profile->raw->exact : NULL;
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      branch ? "virgl-webgl2-raw-bits-v41" : known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
+      exact ? "virgl-webgl2-raw-bits-v42" : inherited_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1782,6 +1807,16 @@ static void stage_result(const struct conversion *c)
    if (discard) discard_contract(profile, coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    if (branch) branch_contract(profile, known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (exact) {
+      append(",\"exactBaseProfile\":\"%s\",\"constantExactDomains\":[{\"kind\":\"constant-bank-exact-u32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"components\":[",
+         inherited_profile, stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+      for (unsigned i = 0; i < exact->count; ++i) {
+         const struct bridge_exact_word *word = &exact->components[i];
+         append("%s{\"register\":%u,\"component\":%u,\"word\":%u}",
+            i ? "," : "", word->reg, word->component, word->word);
+      }
+      append("]}]");
+   }
    append("}");
 }
 
@@ -1797,6 +1832,66 @@ const char *bridge_translate(int stage, const char *text, size_t length)
    cleanup(&c);
    if (retry_failed) return numeric_rejection();
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+   return response;
+}
+
+const char *bridge_translate_exact(int stage, const char *text, size_t length,
+                                  const struct bridge_exact_word *components, size_t count)
+{
+   begin_response(false);
+   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   if (!text || !components || !count || count > BRIDGE_MAX_EXACT_WORDS)
+      return error("invalid-input", "Provide complete text and 1..184 canonical exact components.");
+   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   /* No semantic allocation or callback can observe caller-owned input after
+    * these copies. The bounded table lives until the conversion is cleaned. */
+   char owned_text[BRIDGE_MAX_TEXT + 1];
+   memcpy(owned_text, text, length); owned_text[length] = 0;
+   struct raw_exact_bank exact = {.count = (unsigned)count};
+   memcpy(exact.components, components, count * sizeof(*components));
+   unsigned previous = 0;
+   for (unsigned i = 0; i < exact.count; ++i) {
+      const struct bridge_exact_word *word = &exact.components[i];
+      if (word->reg >= CONST_REGISTERS || word->component >= 4)
+         return error("invalid-input", "Exact register/component is outside the private bank.");
+      unsigned key = word->reg * 4 + word->component;
+      if (i && key <= previous) return error("invalid-input", "Exact components must be unique and canonically ordered.");
+      previous = key;
+      exact.words[word->reg][word->component] = word->word;
+      exact.present[word->reg] |= (unsigned char)(1u << word->component);
+   }
+   struct conversion c = {.profile = {.stage = stage}};
+   const char *failed = check_input(&c.profile, owned_text, length);
+   if (!failed) {
+      /* Valid private assumptions never alter an already admitted old result. */
+      if (!exact_declarations(&c.profile, &exact)) {
+         cleanup(&c);
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+      }
+      failed = convert(&c, owned_text, length, NULL);
+      if (!failed) { append("{\"ok\":true,"); stage_result(&c); append("}"); }
+      bool retry_failed = (c.profile.raw_flags & RAW_CONDITIONAL) && (failed || response_overflow);
+      cleanup(&c);
+      if (retry_failed) return numeric_rejection();
+      if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+      return response;
+   }
+   bool eligible = strstr(failed, "\"code\":\"parse-error\"") || strstr(failed, "\"code\":\"unsupported-feature\"");
+   char original[256];
+   snprintf(original, sizeof(original), "%s", failed);
+   cleanup(&c);
+   if (!eligible) return response;
+   c = (struct conversion){.profile = {.stage = stage}};
+   failed = check_input_attempt(&c.profile, owned_text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, &exact);
+   bool invalid = failed && strstr(failed, "\"code\":\"invalid-input\"");
+   if (!failed) failed = convert(&c, owned_text, length, NULL);
+   if (!failed) {
+      begin_response(false);
+      append("{\"ok\":true,"); stage_result(&c); append("}");
+   }
+   bool rejected = failed || response_overflow;
+   cleanup(&c);
+   if (rejected && !invalid) { begin_response(false); append("%s", original); }
    return response;
 }
 

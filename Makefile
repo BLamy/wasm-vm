@@ -2049,3 +2049,7 @@ verify-E6-T12g6m2:
 .PHONY: verify-E6-T12g6m3a
 verify-E6-T12g6m3a:
 	bash tools/verify-virgl-exact-bank.sh
+
+.PHONY: verify-E6-T12g6m3b
+verify-E6-T12g6m3b:
+	bash tools/verify-virgl-exact-producer.sh

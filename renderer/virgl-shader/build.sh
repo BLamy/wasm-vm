@@ -279,6 +279,16 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/precise_fraction.c \
       -lm -o build/precise-fraction-sanitize/precise-fraction-test
     ;;
+  exact-producer-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/exact_producer.c
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=exact_producer_calloc -fstack-usage -c "$source.c" -o "build/exact-producer-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/exact-producer-sanitize/bridge.o build/exact-producer-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/exact_producer.c -lm -o build/exact-producer-sanitize/exact-producer-test
+    ;;
   known-branch-sanitize)
     instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
       -fprofile-instr-generate -fcoverage-mapping)
@@ -357,7 +367,7 @@ case "$mode" in
       -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 \
       -sINITIAL_MEMORY=16777216 -sALLOW_MEMORY_GROWTH=0 \
       -sSTACK_SIZE=262144 -sABORTING_MALLOC=0 \
-      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_malloc","_free"]' \
+      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
   *) echo 'Usage: build.sh guard-check|native|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;
