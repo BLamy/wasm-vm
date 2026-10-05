@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-exact-bank-worker-seal-v1",
+  "task": "E6-T12g6m3a",
+  "sourceHead": "38d7f930e012d8430e112d5dc3192a17ea4e164d",
+  "base": "eb0658dbda25bee84991f47e13a374fdd13f1ab6",
+  "records": 104,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 17110271,
+    "sha256": "aa1fc589c46a0ce20fac6b76284583aefa4be61878d78a5b2c9aedf16ad955d2"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 17951,
+    "sha256": "f1cda6ea72729fdb682cebf9bdc48c06c9c672741e7570e07baed8725dd9a639"
+  },
+  "hotReceiptSha256": "64a9d7144882232ab778abb33df896d99125c1132b684d7d5587370aa86bfab5",
+  "coldReportSha256": "a78f583b8b27711ca7f8070a26e0c84cbea3081a6d76449e34a763598b616aca",
+  "coldReceiptSha256": "a5ce20446107a67e726406a9d2e4d00328b1af3f70e40c5714d35a70d9a3e260",
+  "checkedUploadWords": 184380,
+  "checkedPixels": 25152,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

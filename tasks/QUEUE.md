@@ -623,7 +623,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010581` [E6-T12g6l](epic-6-transcendence/E6-T12g6l-fragment-discard.md) — Admit fragment discard with sound branch liveness *(deps: E6-T12g6k)*
 - [x] `525.027010585` [E6-T12g6m1](epic-6-transcendence/E6-T12g6m1-known-arithmetic.md) — Materialize exact known ADD and MUL producer words for bounded consumers *(deps: E6-T12g6l)*
 - [x] `525.027010587` [E6-T12g6m2](epic-6-transcendence/E6-T12g6m2-known-branch-liveness.md) — Exclude proved unreachable raw UIF edges after complete validation *(deps: E6-T12g6m1)*
-- [~] `525.027010588` [E6-T12g6m3a](epic-6-transcendence/E6-T12g6m3a-exact-bank-consumer.md) — Enforce owned exact raw constant words before shared renderer effects *(deps: E6-T12g6m2)*
+- [?] `525.027010588` [E6-T12g6m3a](epic-6-transcendence/E6-T12g6m3a-exact-bank-consumer.md) — Enforce owned exact raw constant words before shared renderer effects *(deps: E6-T12g6m2)*
 - [ ] `525.02701059` [E6-T12g6m](epic-6-transcendence/E6-T12g6m-larger-original-programs.md) — Prove the two larger original compositor shader programs *(deps: E6-T12g6m3a)*
 - [ ] `525.0270106` [E6-T12g6](epic-6-transcendence/E6-T12g6-required-format-closure.md) — Close original kmscube and es2gears format/view requirements *(deps: E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m)*
 - [x] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*
