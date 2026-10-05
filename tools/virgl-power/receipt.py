@@ -164,7 +164,7 @@ def main():
                 reconstructed=[((observed[8+i]&511)<<23)|(observed[4+i]&0x7fffff) for i in range(4)]
                 require(reconstructed==x['reconstructed'] and all(allowed(r,w) for r,w in zip(truth,reconstructed)),'independent real-value bound')
                 for lane,(row,word) in enumerate(zip(truth,reconstructed)):
-                    measure(v['backend'],row,word,dict(seed=seed,stage='vertex',record=index,condition=x['condition'],position=x['position'],lane=lane,inputWord=row.get('word'),observedWord=word,rawSha256=x['sha256']))
+                    measure(v['backend'],row,word,dict(seed=seed,stage='vertex',record=index,condition=x['condition'],position=x['position'],lane=lane,inputWord=row.get('word'),exponentWord=row.get('exponentWord'),observedWord=word,rawSha256=x['sha256']))
                 for i,w in enumerate(reconstructed):require(observed[4+i]==(w&0x7fffff)|0x3f000000 and observed[8+i]==(w>>23)|0x3f000000,'complete finite carriers')
                 require(x['checkedWords']==12,'word count');words+=12
                 if v['backend']=='mesa':
@@ -180,7 +180,7 @@ def main():
             truth=result_rows(f['text'],0,f['input']['a'],f['input']['e'],f['backend'])[f['lane']];require(truth==f['oracle'],'source-derived fragment equation')
             raw=bytes(f['rgbaBytes']);require(len(raw)==64 and sha(raw)==f['sha256'] and f['checkedPixels']==16,'physical byte capture');reconstructed=list(struct.unpack('<16I',raw))
             require(reconstructed==f['reconstructed'] and all(allowed(truth,w) for w in reconstructed),'one whole result word per actual RGBA8 pixel');pixels+=16
-            for pixel,word in enumerate(reconstructed):measure(f['backend'],truth,word,dict(seed=seed,stage='fragment',record=fragment_index,pixel=pixel,inputWord=truth.get('word'),observedWord=word,rawSha256=f['sha256']))
+            for pixel,word in enumerate(reconstructed):measure(f['backend'],truth,word,dict(seed=seed,stage='fragment',record=fragment_index,pixel=pixel,inputWord=truth.get('word'),exponentWord=truth.get('exponentWord'),observedWord=word,rawSha256=f['sha256']))
             upload=f['bankUpload']
             if upload:require(upload['words'][:4]==upload['observedA']==f['input']['a'] and all(w==0xdeadbeef for w in upload['callerAfter']),'owned reflected fragment bank')
             if f['backend']=='mesa':primary_pixels+=16
