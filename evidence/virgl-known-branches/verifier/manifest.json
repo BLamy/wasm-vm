@@ -1,0 +1,56 @@
+{
+  "schema": "virgl-known-branches-critic-seal-v1",
+  "task": "E6-T12g6m2",
+  "verdict": {
+    "path": "verdict.md",
+    "bytes": 8295,
+    "sha256": "ff972f4c075f145e203d367beaf2f78f7e76fb8970a5292528738ac6a9b6c0de"
+  },
+  "submittedHead": "126f9454b6a8a69d6547fc938bb72b6d7673f751",
+  "runtimeSourceHead": "1363810b97aad6f6d93077fe466babec94311cab",
+  "recordedSourceHead": "8e6e3848b2df4a3bf5703a517e33d345e3b0c96c",
+  "verifiedBase": "97dc44d2fbc9284705ad81630998bb533186c9a1",
+  "role": "fresh adversarial verifier, never implementer",
+  "records": 74,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 4041486,
+    "sha256": "7015633108939a747138fdfe549982106c95164fa915874b554f802b6470ce08"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 11975,
+    "sha256": "616e971e6b0f3758f57a72eb247feeae53849a508cd3cf97d1b0affb28d12e31"
+  },
+  "judgmentSha256": "2db0609a77cb550c856fd7b195625ab63a5bce41c64bb7cf648d5f84fe10ff4e",
+  "promotedRecorderSha256": "c7b86d94c5bcc36bc1e97542bff43bb62f1a02254c8a96e820ade606d315dc1c",
+  "workerEvidence": {
+    "manifestSha256": "3060fcc17713548f4ccc9e266c401449156c3fbe25d3a9885a4b3506117a1b11",
+    "archiveSha256": "c5cf668e9591991c253a976104e2bf7a9f95825e4baac6aa645897164fc23e29",
+    "indexSha256": "3e984daf15c2d029330251a1653d69efbd07f1e5df6d5fb29fa1cdb44ce21da3"
+  },
+  "originalBinaryAuthority": [
+    {
+      "member": "generated/known-branch-sanitize/known-branch-test",
+      "sha256": "f6b310eca0495cc3a12601b8ab6a05c9c531c5284224b557bbfdbf2bd5915070"
+    },
+    {
+      "member": "cold-generated/known-branch-sanitize/known-branch-test",
+      "sha256": "b2c7b6a3e32c0d172975fe98922e967a66ffa1f3e18a6a52044e3553387cfdd5"
+    }
+  ],
+  "newIndependentCases": 174,
+  "newOwnedPolicyAttacks": 25,
+  "independentSeeds": [
+    2752067618,
+    698298832
+  ],
+  "runtimeEditedByCritic": false,
+  "originalEvidenceEdited": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "deployment": false,
+  "performanceClaim": false,
+  "historicalUntrackedPaths": 4202,
+  "historicalNulFilenameListSha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac"
+}

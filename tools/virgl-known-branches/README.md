@@ -37,3 +37,21 @@ Record the pristine exact-head proof with `python3 tools/virgl-known-branches/co
 profiles, complete inputs/results, raw pixel/word captures and screenshots intact.
 A fresh critic is required before verification. Public imports, guest GPU
 negotiation and live offload remain disabled. There is no FPS or MIPS claim.
+
+The fresh critic's permanent regression schedule runs against authenticated
+retained native/Wasm artifacts:
+
+```
+node tools/virgl-known-branches/critic.mjs UNPACKED_ORIGINAL NEW_OUTPUT
+```
+
+`UNPACKED_ORIGINAL` is the worker archive unpacked after authenticating its
+manifest, index and actual members; `NEW_OUTPUT` must be a separate evidence
+directory. The critic writes predictions and complete literal fixture bytes
+before executing 174 singles/pairs over seeds `0xa4093822` and `0x299f31d0`.
+It checks complete native/Wasm results, raw swizzles and producer versions,
+aliasing, joins and discard, live initialization, original grammar and bounds,
+certified-loop composition, original result priority, and 25 strict owned
+policy attacks. Profiles must be re-exported from the exact binary named and
+hashed in the resulting report. The optional fourth argument selects a scratch
+policy module for deliberate sabotage; it is never a runtime fix.
