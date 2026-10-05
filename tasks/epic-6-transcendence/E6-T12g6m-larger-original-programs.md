@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m4b]
+depends_on: [E6-T12g6m4c]
 estimate: S
 risk: high
 capstone: false
@@ -76,4 +76,8 @@ The independent critic verified E6-T12g6m4a at `8db5b1843a7d0c09c063edd086fd4a75
 
 ### 2026-10-05 — worker — zero-capped branch prerequisite discovery
 
-Replay of the authenticated context-5/subcontext-2 command stream finds all three original c580 draw-bank variants bind `CONST[29].x` to zero. Its pc28 `MIN(TEMP[43].x, CONST[29].x)` therefore cannot be greater than zero (or an ordered positive value), and pc29 `FSLT(0, TEMP[44].x)` cannot take pc30's branch. Current raw-word bit cubes cannot express that disjunctive nonpositive result, so the compiler still rejects at pc31's geometry-dependent `POW`. Add ordered S/high E6-T12g6m4b for just the checked zero-capped MIN → ordered-comparison false fact in the private exact retry. This proves neither the later live-path math nor the complete original pair; the parent acceptance is unchanged.
+Replay of the authenticated context-5/subcontext-2 command stream finds all three original c580 draw-bank variants bind `CONST[29].x` to zero. This suggested that pc28 `MIN(TEMP[43].x, CONST[29].x)` and pc29 `FSLT(0, TEMP[44].x)` might close the branch before pc31's geometry-dependent `POW`. The following NaN audit found that the cap alone is insufficient; this observation grants no predicate fact or original-pair admission. The parent acceptance is unchanged.
+
+### 2026-10-05 — worker — finite-source split after NaN audit
+
+The earlier zero-cap argument omitted GLSL ES's permitted non-NaN result from an operation on NaN. An exploratory unbounded predicate bypass translated the full c580 pair under its three captured banks, which is beyond a sound narrow proof. No runtime change was committed. E6-T12g6m4b now certifies finite inputs through the exact original pc0..27 prefix; E6-T12g6m4c then proves the zero-capped MIN/FSLT branch. The full original pair stays gated until both and its own physical-body acceptance pass.
