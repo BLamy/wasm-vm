@@ -1,0 +1,49 @@
+{
+  "schema": "virgl-exact-bank-critic-seal-v1",
+  "task": "E6-T12g6m3a",
+  "verdict": "verified",
+  "claimHead": "b3dd41b2633adf4dd5d29d8cac848294b8fa4e9f",
+  "workerSourceHead": "38d7f930e012d8430e112d5dc3192a17ea4e164d",
+  "workerDigests": {
+    "manifest.json": "fa75a5bb326f970d56a8634696e8cdf6e38213b0ba0ac6939946e5c84af16d90",
+    "records.json": "f1cda6ea72729fdb682cebf9bdc48c06c9c672741e7570e07baed8725dd9a639",
+    "recording.tar.gz": "aa1fc589c46a0ce20fac6b76284583aefa4be61878d78a5b2c9aedf16ad955d2"
+  },
+  "members": 63,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 7581018,
+    "sha256": "6f67a8e72b96d12ddc5c1bc3d25abc4b2cc58b459ae62985312338eddd00793a"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 10145,
+    "sha256": "bbad5748750ef30765bfcdeeae12ad80e84dfa0fd89080fa7bdf4ab3536b43c7"
+  },
+  "verdictSha256": "ff0f030ca04161cbe3dda9071265c7f4a009589ca7134b21420a86142d23ac4f",
+  "summary": {
+    "changedRuntimeLines": 85,
+    "conditionalChildren": 72,
+    "executedChildren": 71,
+    "waivedChildren": 1,
+    "evidenceGaps": 0,
+    "criticCases": 164,
+    "criticMetadataAttacks": 138,
+    "criticGetterCalls": 0,
+    "criticPhysicalSeeds": [
+      2343432205,
+      324508640,
+      3512640993
+    ],
+    "criticFrames": 393,
+    "criticPixels": 25152,
+    "criticRejections": 807,
+    "criticUploadWords": 184380,
+    "unwrappedFrames": 8,
+    "unwrappedRejections": 4,
+    "oldResultsHeld": 10717,
+    "oldPairsHeld": 2683,
+    "closedExtensionsHeld": 177
+  },
+  "originalWorkerArchiveMembersReferenced": 104
+}
