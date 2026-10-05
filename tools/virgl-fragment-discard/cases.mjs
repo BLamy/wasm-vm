@@ -34,9 +34,10 @@ export function branch(kind) {
   'both-killed':['UIF CONST[0].xxxx','KILL','ELSE','KILL','ENDIF'],
   'nested':['UIF CONST[0].xxxx','UIF CONST[0].yyyy','KILL','ELSE','MOV OUT[0], IMM[0]','ENDIF','ELSE','KILL','ENDIF'],
   'unconditional-fault':['MOV OUT[0], IMM[0]','UIF CONST[0].xxxx','KILL','ENDIF'],
-  'raster-bank':['UIF CONST[1].xxxx','KILL','ELSE','MOV OUT[0], CONST[0]','ENDIF']
+  'raster-bank':['UIF CONST[1].xxxx','KILL','ELSE','MOV OUT[0], CONST[0]','ENDIF'],
+  'conditional-raster-bank':['UIF CONST[1].xxxx','KILL_IF IMM[1]','ELSE','MOV OUT[0], CONST[0]','ENDIF']
  }[kind];if(!body)throw new Error(kind);
- return ['FRAG','DCL OUT[0], COLOR',`DCL CONST[0${kind==='raster-bank'?'..1':''}]`,'IMM[0] FLT32 {.25,.5,.75,1}',...body,'END',''].join('\n');
+ return ['FRAG','DCL OUT[0], COLOR',`DCL CONST[0${kind.includes('raster-bank')?'..1':''}]`,'IMM[0] FLT32 {.25,.5,.75,1}',...(kind==='conditional-raster-bank'?['IMM[1] UINT32 {3212836864,0,0,0}']:[]),...body,'END',''].join('\n');
 }
 export function spatial(kind='conditional', lane='x') {
  const tail=kind==='conditional'?['AND TEMP[0], TEMP[0], IMM[1]','KILL_IF -TEMP[0]','MOV OUT[0], IMM[0]']:
@@ -67,6 +68,7 @@ export function physicalPlan(seed=SEEDS[0]) {
  }
  add('kill-only','FRAG\nDCL OUT[0], COLOR\nKILL\nEND\n',[],{variant:'kill-only',portablePrimary:true});
  add('raster-bank-survivor',branch('raster-bank'),[0x3e800000,0x3f000000,0x3f400000,0x3f800000,0,0,0,0],{variant:'raster-bank',portablePrimary:true});
+ for(const selector of [0,0x3f800000])add('conditional-raster-bank-'+selector,branch('conditional-raster-bank'),[0x3e800000,0x3f000000,0x3f400000,0x3f800000,selector,0,0,0],{variant:'conditional-raster-bank',portablePrimary:true});
  return probes;
 }
 export function getCases() {

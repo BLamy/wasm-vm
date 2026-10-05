@@ -6,7 +6,9 @@ applied before negation. Ordered binary32 `< 0` is false for both zeros and
 all NaNs; negative finite values, subnormals and negative infinity discard.
 No destination, numeric range or initialization fact follows from a discard.
 Only an exact checked negative word removes a conditional survivor edge.
-Surviving branches retain their own output, temporary, address and bank proofs;
+Surviving branches retain their own output, temporary, address and bank proofs.
+Both unconditional and statically guaranteed conditional discard edges are
+exercised with surviving copied-bank output certificates;
 dead text still passes the existing parser and initialization restrictions.
 
 The raw predicate uses integer encodings. ESSL 3.00 allows subnormal flushing

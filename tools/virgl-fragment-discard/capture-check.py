@@ -47,7 +47,7 @@ def main():
  for consumer in a['consumers']:
   require(consumer['commandsPerStep']==1+seed%3,'varied command budget')
   require(all(v==0 for v in consumer['finalBudgets'].values())and all(v==0 for v in consumer['finalResourceBudgets'].values()),'zero consumer budgets')
-  require(len(consumer['captures'])==18 and len(consumer['rejections'])==10,'complete consumer schedule')
+  require(len(consumer['captures'])==20 and len(consumer['rejections'])==10,'complete consumer schedule')
   for submission in consumer['submissions']:require(all(v==255 for v in submission['after']),'caller wire ownership')
   for capture in consumer['captures']:
    original=plan[capture['sourceIndex']];require(original['backend']=='owned'and capture['fragmentText']==original['text']and capture['words']==original['words'],'selected literal program')

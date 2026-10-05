@@ -47,7 +47,7 @@ def main():
  for c,w in zip(native['cases'],wasm['cases']):require(w['name']==c['name']and w['result']==c['result']and w['pair']==c['pairResult'],'complete Wasm singles/pairs')
  consumer=report('consumer.json');require(consumer['nativeSha256']==records['native/report.json']['sha256']and len(consumer['contracts'])==sum(c['ok']for c in expected)and consumer['accessorInvocations']==0,'strict owned policy table')
  require(len(consumer['forgeries'])>=800 and all(c['result']['ok']is False for c in consumer['forgeries']),'closed inert forgeries')
- require(len(consumer['combined'])==4 and len(consumer['banks'])==5,'all simultaneous obligations and copied bank')
+ require(len(consumer['combined'])==4 and len(consumer['banks'])==6,'all simultaneous obligations and copied banks')
  for c in consumer['combined']:require(c['base']==c['restored'],'whole previous metadata restored')
  for bank in consumer['banks']:require(all(c['result']['ok']is c['wanted']for c in bank['checks']),'inherited numeric bank restrictions')
  legacy=report('legacy.json');require(len(legacy['cases'])==8349 and len(legacy['extensions'])==2 and sum(c['extension']for c in legacy['cases'])==2,'authenticated predecessor count')
@@ -80,7 +80,7 @@ def main():
    require(all(p[k]==v for k,v in wanted.items())and p['mutation']is None,'unchanged literal source and geometry')
    witness=next(c['primary']for c in primary if c['text']==wanted['text']);require(p['primary']==witness,'unmodified pinned comparison shader')
   require(len(a['consumers'])==2,'both execution modes')
-  for c in a['consumers']:require(c['commandsPerStep']==1+seed%3 and len(c['captures'])==18 and len(c['rejections'])==10,'varied complete consumer schedule')
+  for c in a['consumers']:require(c['commandsPerStep']==1+seed%3 and len(c['captures'])==20 and len(c['rejections'])==10,'varied complete consumer schedule')
  for fault in ['inhibit','invert','x-only','unconditional']:
   a=browser('fault-'+fault,passed=False);checker=report('capture-fault-'+fault+'.json');require(checker['sourceReportSha256']==records['fault-'+fault+'/report.json']['sha256']and checker['fault']==fault and len(checker['faults'])==1,'fault checker binding')
   require('independent discard pixel mismatch'in a['failure']['message']and len([p for p in a['probes']if p['mutation']])==1 and any(row['failureCount']for row in checker['rows']),'actual source fault contradicted physical pixels');faults.extend(checker['faults'])
@@ -89,6 +89,6 @@ def main():
  for name in ['native/virgl-shader','wasm/virgl-shader.mjs','wasm/virgl-shader.wasm']:source('renderer/virgl-shader/build/'+name)
  for f in sorted(directory.rglob('*')):
   if f.is_file()and f.name not in ['receipt.json','acceptance.log']:artifact(str(f.relative_to(directory)))
- result=dict(schema='virgl-fragment-discard-receipt-v1',task=TASK,status='passed',gitHead=head,guestExecution=False,productionNegotiation=False,nativeCases=len(expected),wasmCases=len(expected),wasmPairs=len(expected),primaryComparisons=len(primary),legacyCases=len(legacy['cases']),legacyExtensions=2,metadataAttacks=len(consumer['forgeries']),ownedBanks=5,combinedBases=4,seeds=SEEDS,directPixels=direct_pixels,consumerPixels=consumer_pixels,checkedPixels=direct_pixels+consumer_pixels,qualifiedPrimaryPixels=qualifications,physicalOutputFaults=faults,sources=list(sources.values()),records=list(records.values()))
+ result=dict(schema='virgl-fragment-discard-receipt-v1',task=TASK,status='passed',gitHead=head,guestExecution=False,productionNegotiation=False,nativeCases=len(expected),wasmCases=len(expected),wasmPairs=len(expected),primaryComparisons=len(primary),legacyCases=len(legacy['cases']),legacyExtensions=2,metadataAttacks=len(consumer['forgeries']),ownedBanks=6,combinedBases=4,seeds=SEEDS,directPixels=direct_pixels,consumerPixels=consumer_pixels,checkedPixels=direct_pixels+consumer_pixels,qualifiedPrimaryPixels=qualifications,physicalOutputFaults=faults,sources=list(sources.values()),records=list(records.values()))
  (directory/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print(f'{TASK} receipt passed: {result["checkedPixels"]} literal physical pixels')
 if __name__=='__main__':main()

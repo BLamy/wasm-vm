@@ -15,5 +15,5 @@ await runVirglBrowser({options,task:'E6-T12g6l',boundary:'private fragment disca
  validate(a){assert.equal(a.seed,seed);assert.equal(a.fault,fault);assert.equal(a.objects.live,0);assert.equal(a.probes.length,physicalPlan(seed).length);
   for(const backend of ['owned','mesa'])for(let lane=0;lane<4;lane++)assert.ok(a.probes.some(p=>p.backend===backend&&p.lane===lane));
   assert.equal(a.directPixels,a.probes.reduce((n,p)=>n+p.geometry.width*p.geometry.height,0));assert.equal(a.consumerPixels,a.consumers.reduce((n,c)=>n+c.captures.length*1024,0));assert.equal(a.checkedPixels,a.directPixels+a.consumerPixels);
-  assert.equal(a.consumers.length,2);for(const c of a.consumers){assert.equal(c.captures.length,18);assert.equal(c.rejections.length,10);}
+  assert.equal(a.consumers.length,2);for(const c of a.consumers){assert.equal(c.captures.length,20);assert.equal(c.rejections.length,10);}
  },successMessage:a=>`${a.checkedPixels} literal physical discard pixels; all objects disposed.`});

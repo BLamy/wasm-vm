@@ -132,7 +132,7 @@ async function consumerProbe(gl,bridge,plan,references,asynchronous,seed,report)
  const clear=()=>packet(7,0,[4,...CLEAR.map(v=>floatWord(v/255)),0,0,0]);
  const draw=()=>packet(8,0,[0,6,4,1,1,0,0,0,0,0,5,0]);
  const selection=p=>p.backend==='owned'&&(
-  p.variant==='spatial'||['killed-true','killed-false','unconditional-fault','kill-only','raster-bank'].includes(p.variant)||
+  p.variant==='spatial'||['killed-true','killed-false','unconditional-fault','kill-only','raster-bank','conditional-raster-bank'].includes(p.variant)||
   p.variant==='uniform'&&p.modifier==='plain'&&p.lane===2&&['positive-zero','negative-zero','negative-one','negative-min-subnormal'].some(n=>p.name.startsWith(n+'-')));
  try{
   ok(store.createContext(1),'discard resource context');ok(renderer.createContext(1),'discard state context');
