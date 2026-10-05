@@ -43,6 +43,8 @@ export const DISCARD_KIND = "tgsi-fragment-discard-v1";
 export const DISCARD_KEY = "|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-";
 export const KNOWN_ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v40";
 export const KNOWN_ARITHMETIC_KIND = "tgsi-known-arithmetic-v1";
+export const BRANCH_PROFILE = "virgl-webgl2-raw-bits-v41";
+export const BRANCH_KIND = "tgsi-proved-raw-uif-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
@@ -56,6 +58,7 @@ const SINE_BASES = new Set(rawProfiles(...Array.from({ length: 35 }, (_, i) => i
 const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i) => i + 1)));
 const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) => i + 1)));
 const KNOWN_ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 39 }, (_, i) => i + 1)));
+const BRANCH_BASES = new Set(rawProfiles(...Array.from({ length: 40 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -135,8 +138,24 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract", "branchBaseProfile", "branchContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const branch = value.profile === BRANCH_PROFILE;
+    require(branch === Object.hasOwn(value, "branchBaseProfile") && branch === Object.hasOwn(value, "branchContract"),
+      "Branch contract disagrees with its profile.");
+    if (branch) {
+      require(BRANCH_BASES.has(value.branchBaseProfile), "Branch liveness requires an existing raw base profile.");
+      const policy = record(value.branchContract, ["kind", "stage", "condition", "proof", "liveness", "syntax", "deadReads", "indices", "authority", "storage"]);
+      require(policy.kind === BRANCH_KIND && policy.stage === expectedStage && policy.condition === "post-swizzle-x-raw-word-nonzero" &&
+        policy.proof === "producer-known-zero-or-proved-one-bit" && policy.liveness === "exclude-proved-unreachable-predecessors" &&
+        policy.syntax === "complete-unmodified-original-before-pruning" && policy.deadReads === "declarations-and-grammar-only-no-published-facts" &&
+        policy.indices === "original-instruction-positions" && policy.authority === "no-new-dynamic-word-numeric-or-bank-facts" &&
+        policy.storage === "instruction-flags-no-ir-growth", "Unknown proved branch policy.");
+      const base = { ...value, profile: value.branchBaseProfile };
+      delete base.branchBaseProfile; delete base.branchContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, branchLiveness: Object.freeze(policy) }) : checked;
+    }
     const knownArithmetic = value.profile === KNOWN_ARITHMETIC_PROFILE;
     require(knownArithmetic === Object.hasOwn(value, "knownArithmeticBaseProfile") && knownArithmetic === Object.hasOwn(value, "knownArithmeticContract"),
       "Known arithmetic contract disagrees with its profile.");
@@ -547,7 +566,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic", "branchLiveness"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],

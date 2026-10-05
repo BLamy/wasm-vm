@@ -2041,3 +2041,7 @@ verify-E6-T12g6l:
 .PHONY: verify-E6-T12g6m1
 verify-E6-T12g6m1:
 	bash tools/verify-virgl-known-arithmetic.sh
+
+.PHONY: verify-E6-T12g6m2
+verify-E6-T12g6m2:
+	bash tools/verify-virgl-known-branches.sh

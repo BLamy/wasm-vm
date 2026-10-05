@@ -189,6 +189,7 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
                    enum raw_opcode opcode, unsigned role)
 {
    struct reg r;
+   bool dead = !s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY) && !s->live;
    if (!register_name(p, &r, SOURCE)) return false;
    /* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */
    if (r.file != INDIRECT_CONST &&
@@ -201,7 +202,14 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
    if (r.file == INDIRECT_CONST) {
       failure_code = "unsupported-feature";
       if (!s->raw || !s->address_declared) return false;
-      if (!s->syntax_only) {
+      if (s->raw_flags & RAW_BRANCH_RETRY) {
+         bool declared = false;
+         for (unsigned i = 0; i < CONST_REGISTERS; ++i)
+            declared |= s->declared[CONST][i] && (s->components[CONST][i] & needed) == needed;
+         if (!declared) return false;
+      }
+      if (dead) s->dead_indirect = true;
+      if (!s->syntax_only && !dead) {
          if (!s->address_written) return false;
          uint64_t candidates = 0;
          if (s->raw->loop.checked)
@@ -220,7 +228,7 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
          s->raw->indirect_indices |= candidates;
       }
    } else if ((s->components[r.file][r.index] & needed) != needed) return false;
-   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) {
+   if (!s->syntax_only && !dead && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) {
       const struct demand_certificate *c = s->raw ? &s->raw->demand : NULL;
       bool permitted = c && c->checked && role == 1 &&
          ((s->current_pc == c->lrp && opcode == RAW_LRP) ||
@@ -737,6 +745,8 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
 {
    failure_code = "unsupported-feature";
    struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   bool pruning = !s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY);
+   if (pruning && !s->live) raw.flags |= RAW_DEAD;
    bool loop = opcode == RAW_BGNLOOP || opcode == RAW_ENDLOOP;
    if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0], opcode, 0)) return false;
    unsigned target = 0;
@@ -757,8 +767,17 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
       frame->has_else = frame->has_else_target = false;
       frame->entry_live = s->live; frame->saved_live = frame->exit_live = false;
       if (!s->syntax_only) {
-         if (frame->is_loop) loop_header(s);
+         if (frame->is_loop) { if (!pruning || s->live) loop_header(s); }
          else flow_snapshot(s, frame, false);
+         if (!frame->is_loop && pruning && s->live) {
+            int truth = raw_uif_truth(s->raw, &raw.src[0]);
+            if (truth >= 0) {
+               raw.flags |= truth ? RAW_UIF_TRUE : RAW_UIF_FALSE;
+               s->raw->opcode_mask |= RAW_BRANCH_LIVENESS_USED;
+               if (truth) frame->entry_live = false;
+               else s->live = false;
+            }
+         }
          if (!frame->is_loop && s->raw->radial.recognized &&
              s->current_pc == s->raw->radial.branch) {
             /* The owned finite bank must satisfy the coefficient domain
@@ -773,17 +792,23 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
       while (depth && !flow->frames[depth - 1].is_loop) --depth;
       if (!depth) return false;
       if (!s->syntax_only) {
-         if (s->current_pc != s->raw->loop.break_pc || !s->live) return false;
          struct flow_frame *frame = &flow->frames[depth - 1];
-         flow_snapshot(s, frame, false); frame->exit_live = true;
-         s->live = false;
+         if (s->current_pc != s->raw->loop.break_pc || (!s->live && (!pruning || frame->entry_live))) return false;
+         if (s->live) {
+            flow_snapshot(s, frame, false); frame->exit_live = true;
+            s->live = false;
+         }
       }
    } else {
       if (!flow->depth) return false;
       struct flow_frame *frame = &flow->frames[flow->depth - 1];
       if (opcode == RAW_ENDLOOP) {
-         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || !frame->exit_live))) return false;
-         if (!s->syntax_only) { flow_snapshot(s, frame, true); s->live = true; }
+         bool dead_loop = pruning && !frame->entry_live;
+         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || (!frame->exit_live && !dead_loop)))) return false;
+         if (!s->syntax_only) {
+            if (!dead_loop) { flow_snapshot(s, frame, true); s->live = true; raw.flags &= ~RAW_DEAD; }
+            else s->live = false;
+         }
          --flow->depth;
       } else {
          if (frame->is_loop) return false;
@@ -828,11 +853,16 @@ static bool discard_instruction(const char **p, struct profile *s, enum raw_opco
    ++s->instructions;
    if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
    else {
-      if (raw_discard_guaranteed(s->raw, &raw)) {
-         s->live = false;
-         raw.flags |= RAW_TERMINATING_DISCARD;
+      if ((s->raw_flags & RAW_BRANCH_RETRY) && !s->live) {
+         raw.flags |= RAW_DEAD;
+         s->raw->instructions[s->raw->count++] = raw;
+      } else {
+         if (raw_discard_guaranteed(s->raw, &raw)) {
+            s->live = false;
+            raw.flags |= RAW_TERMINATING_DISCARD;
+         }
+         raw_record(s->raw, &raw);
       }
-      raw_record(s->raw, &raw);
    }
    failure_code = "parse-error";
    return true;
@@ -955,6 +985,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
       raw.flags |= s->raw_flags;
+      if (!s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY) && !s->live) {
+         /* The earlier whole-text syntax pass validated this original slot.
+          * Keep its index, but publish no lane, address, domain or written fact. */
+         raw.flags |= RAW_DEAD;
+         s->raw->instructions[s->raw->count++] = raw;
+         failure_code = "parse-error";
+         return true;
+      }
       if (!s->syntax_only && s->raw->demand.checked && s->current_pc == s->raw->demand.lrp)
          raw.flags |= RAW_GUARDED_LRP;
       if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
@@ -1043,7 +1081,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    for (unsigned i = 0; i < 8; ++i)
       if (s->live && s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
    if (s->raw && (!s->raw->opcode_mask ||
-       (s->address_declared && !s->raw->indirect_indices))) {
+       (s->address_declared && !s->raw->indirect_indices && !s->dead_indirect))) {
       failure_code = "unsupported-feature";
       return false;
    }
@@ -1174,7 +1212,7 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    if (!profile->raw || !(profile->raw_flags & RAW_STRUCTURED)) return false;
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
-   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & RAW_KNOWN_RETRY);
+   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & (RAW_KNOWN_RETRY | RAW_BRANCH_RETRY));
    memset(ir, 0, sizeof(*ir));
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
@@ -1192,7 +1230,7 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    return validate(checked, profile) && ir->radial.used && (ir->opcode_mask & RAW_FINITE_BANK_USED);
 }
 
-static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, bool known_retry)
+static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, unsigned retry_flags)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
    if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
@@ -1251,9 +1289,18 @@ static const char *check_input_attempt(struct profile *profile, const char *text
    }
    if (candidate) {
       profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
-         (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0);
+         (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags;
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+   }
+   if (profile->raw && (retry_flags & RAW_BRANCH_RETRY) && !loop_candidate) {
+      /* Complete original grammar must pass before any dead semantic read is
+       * skipped. Keep every slot for existing graph/certificate indexes. */
+      profile->syntax_only = true;
+      memcpy(checked, text, length); checked[length] = 0;
+      failure_code = "parse-error";
+      if (!validate(checked, profile)) return numeric_rejection();
+      demand_reset(profile, profile->stage, profile->raw, profile->raw_flags);
    }
    if (loop_candidate) {
       /* Syntax-only records share the one bounded IR; they never reach emit.
@@ -1276,7 +1323,7 @@ static const char *check_input_attempt(struct profile *profile, const char *text
       ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;
       ir->address = (struct raw_lane){0};
       *profile = (struct profile){.stage = stage, .raw = ir,
-         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (known_retry ? RAW_KNOWN_RETRY : 0)};
+         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | retry_flags};
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
       if (validate(checked, profile)) return NULL;
@@ -1305,7 +1352,7 @@ static const char *check_input_attempt(struct profile *profile, const char *text
    int stage = profile->stage;
    free(profile->raw);
    *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |
-      (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0)};
+      (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags};
    profile->raw = calloc(1, sizeof(*profile->raw));
    if (!profile->raw) return numeric_rejection();
    memcpy(checked, text, length); checked[length] = 0;
@@ -1319,19 +1366,30 @@ static const char *check_input_attempt(struct profile *profile, const char *text
 
 static const char *check_input(struct profile *profile, const char *text, size_t length)
 {
-   const char *failed = check_input_attempt(profile, text, length, false);
-   if (!failed || !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
+   const char *failed = check_input_attempt(profile, text, length, 0);
+   if (!failed) return NULL;
+   bool parse_failure = strstr(failed, "\"code\":\"parse-error\"") != NULL;
+   if (!parse_failure && !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
    /* Existing successful source/metadata bytes win. A fresh final transaction
     * may materialize known producers; failed retries preserve the old error. */
    int stage = profile->stage;
+   if (!parse_failure) {
+      free(profile->raw);
+      *profile = (struct profile){.stage = stage};
+      const char *known = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY);
+      if (!known && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
+         response_used = 0; response_overflow = false;
+         return NULL;
+      }
+   }
    free(profile->raw);
    *profile = (struct profile){.stage = stage};
-   const char *retry = check_input_attempt(profile, text, length, true);
-   if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
+   const char *retry = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY);
+   if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_BRANCH_LIVENESS_USED)) {
       response_used = 0; response_overflow = false;
       return NULL;
    }
-   return numeric_rejection();
+   return parse_failure ? error("parse-error", "TGSI is malformed or outside the documented straight-line profile.") : numeric_rejection();
 }
 
 static const char *convert(struct conversion *c, const char *text, size_t length,
@@ -1342,7 +1400,7 @@ static const char *convert(struct conversion *c, const char *text, size_t length
        * value-only metadata from declarations already checked by our guard. */
       c->info.num_consts = (int)c->profile.constant_extent;
       for (unsigned i = 0; i < c->profile.raw->count; ++i)
-         if (c->profile.raw->instructions[i].opcode == RAW_TEX)
+         if (c->profile.raw->instructions[i].opcode == RAW_TEX && !(c->profile.raw->instructions[i].flags & RAW_DEAD))
             c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;
       if (c->profile.stage) {
          struct vrend_fs_shader_info *fs = &c->variable.fs_info;
@@ -1445,11 +1503,18 @@ static void constant_domain(int stage, int count)
 
 /* The outer profile keeps every simultaneous obligation mandatory. A precision
  * record cannot replace a finite/indirect/loop/radial admission contract. */
+/* A dead loop retains its independent syntax certificate for the emitter and
+ * graph. Only a reachable loop requires the live count/bank consumer policy. */
+static bool live_loop(const struct raw_ir *ir)
+{
+   return ir->loop.checked && !(ir->instructions[ir->loop.begin].flags & RAW_DEAD);
+}
+
 static const char *precise_profile(const struct raw_ir *ir)
 {
-   if (ir->radial.used) return ir->loop.checked ? "virgl-webgl2-raw-bits-v26" :
+   if (ir->radial.used) return live_loop(ir) ? "virgl-webgl2-raw-bits-v26" :
       ir->indirect_indices ? "virgl-webgl2-raw-bits-v25" : "virgl-webgl2-raw-bits-v24";
-   if (ir->loop.checked) return "virgl-webgl2-raw-bits-v23";
+   if (live_loop(ir)) return "virgl-webgl2-raw-bits-v23";
    if (ir->indirect_indices) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
       "virgl-webgl2-raw-bits-v22" : "virgl-webgl2-raw-bits-v21";
    if (ir->opcode_mask & RAW_STRUCTURED_OPCODES) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
@@ -1462,6 +1527,7 @@ static void precise_contract(const struct profile *profile)
    bool used[4] = {false};
    for (unsigned i = 0; i < profile->raw->count; ++i) {
       const struct raw_instruction *instruction = &profile->raw->instructions[i];
+      if (instruction->flags & RAW_DEAD) continue;
       if (!(instruction->flags & RAW_PRECISE)) continue;
       if ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) continue;
       if (instruction->opcode == RAW_MIN_PRECISE || instruction->opcode == RAW_FRC_PRECISE) continue;
@@ -1603,6 +1669,12 @@ static void known_arithmetic_contract(const struct profile *profile, const char 
       base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "");
 }
 
+static void branch_contract(const struct profile *profile, const char *base)
+{
+   append(",\"branchBaseProfile\":\"%s\",\"branchContract\":{\"kind\":\"tgsi-proved-raw-uif-v1\",\"stage\":\"%s\",\"condition\":\"post-swizzle-x-raw-word-nonzero\",\"proof\":\"producer-known-zero-or-proved-one-bit\",\"liveness\":\"exclude-proved-unreachable-predecessors\",\"syntax\":\"complete-unmodified-original-before-pruning\",\"deadReads\":\"declarations-and-grammar-only-no-published-facts\",\"indices\":\"original-instruction-positions\",\"authority\":\"no-new-dynamic-word-numeric-or-bank-facts\",\"storage\":\"instruction-flags-no-ir-growth\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1619,9 +1691,9 @@ static void stage_result(const struct conversion *c)
    }
    const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
       profile->raw->opcode_mask & RAW_PRECISE_WORD_USED ? precise_profile(profile->raw) :
-      profile->raw->radial.used ? (profile->raw->loop.checked ? "virgl-webgl2-raw-bits-v16" :
+      profile->raw->radial.used ? (live_loop(profile->raw) ? "virgl-webgl2-raw-bits-v16" :
          profile->raw->indirect_indices ? "virgl-webgl2-raw-bits-v15" : "virgl-webgl2-raw-bits-v14") :
-      c->profile.raw->loop.checked ? "virgl-webgl2-raw-bits-v12" :
+      live_loop(c->profile.raw) ? "virgl-webgl2-raw-bits-v12" :
       c->profile.raw->indirect_indices ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
       c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
@@ -1647,12 +1719,13 @@ static void stage_result(const struct conversion *c)
    bool coordinates = profile->raw && (profile->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED);
    bool discard = profile->raw && (profile->raw->opcode_mask & RAW_DISCARD_OPCODES);
    bool known_arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED);
+   bool branch = profile->raw && (profile->raw->opcode_mask & RAW_BRANCH_LIVENESS_USED);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    const char *base_profile =
       power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
+      branch ? "virgl-webgl2-raw-bits-v41" : known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1669,7 +1742,7 @@ static void stage_result(const struct conversion *c)
    append("]");
    if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
       constant_domain(stage, info->num_consts);
-   else if (profile->raw && profile->raw->loop.checked)
+   else if (profile->raw && live_loop(profile->raw))
       constant_domain(stage, info->num_consts); /* Explicit loop policy, not a fabricated numeric dependency. */
    if (profile->raw && profile->raw->indirect_indices) {
       append(",\"constantAccesses\":[{\"kind\":\"constant-bank-static-indirect-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"indices\":[",
@@ -1680,7 +1753,7 @@ static void stage_result(const struct conversion *c)
       }
       append("]}]");
    }
-   if (profile->raw && profile->raw->loop.checked)
+   if (profile->raw && live_loop(profile->raw))
       append(",\"constantConstraints\":[{\"kind\":\"constant-bank-counted-table-i32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":9,\"component\":0,\"maximum\":18}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    if (profile->raw && profile->raw->radial.used)
@@ -1708,6 +1781,7 @@ static void stage_result(const struct conversion *c)
    if (coordinates) coordinate_contract(base_profile);
    if (discard) discard_contract(profile, coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (branch) branch_contract(profile, known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    append("}");
 }
 

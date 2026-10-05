@@ -37,6 +37,8 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_DISCARD_OPCODES ((UINT64_C(1) << RAW_KILL) | (UINT64_C(1) << RAW_KILL_IF))
 /* A materialized producer word, independent of all opcode/bank policies. */
 #define RAW_KNOWN_ARITHMETIC_USED (UINT64_C(1) << 60)
+/* A proved raw UIF edge, never a dynamic numerical or bank fact. */
+#define RAW_BRANCH_LIVENESS_USED (UINT64_C(1) << 61)
 #define RAW_POWER_OPCODES (UINT64_C(1) << RAW_POW)
 /* Authenticated fragment builtin convention, never an opcode or range fact. */
 #define RAW_FRAGMENT_COORDINATES_USED (UINT64_C(1) << 57)
@@ -86,7 +88,8 @@ enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
        RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
        RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792,
-       RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192 };
+       RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192,
+       RAW_BRANCH_RETRY = 16384, RAW_DEAD = 32768, RAW_UIF_FALSE = 65536, RAW_UIF_TRUE = 131072 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -158,7 +161,7 @@ struct profile {
    unsigned instructions, immediates, constant_extent, current_pc;
    bool ended, started, color0_property, address_declared, address_written;
    bool coordinate_origin_property, coordinate_center_property;
-   bool syntax_only, live;
+   bool syntax_only, live, dead_indirect;
    unsigned raw_flags;
    int stage;
    struct raw_ir *raw;
@@ -184,6 +187,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);
 /* Only exact checked post-modifier source words can end a conditional edge.
  * This supplies liveness, never a source/destination numerical fact. */
 bool raw_discard_guaranteed(const struct raw_ir *ir, const struct raw_instruction *instruction);
+/* -1 means unknown; otherwise the post-swizzle raw x predicate is false/true. */
+int raw_uif_truth(const struct raw_ir *ir, const struct raw_source *source);
 bool raw_outputs_safe(const struct profile *profile);
 /* Finalize only unsafe output copies. Returns 1 on guarded admission, 0 on an
  * unsupported dependency, or -1 on allocation failure. No partial publication. */
