@@ -1,0 +1,33 @@
+{
+  "schema": "fragment-discard-critic-seal-v1",
+  "task": "E6-T12g6l",
+  "verdict": "needs-evidence",
+  "sourceHead": "4a1e9a36e33e072a58fd60815b1e6ae8c93460ab",
+  "base": "cca9a570fe061107ff05e3697b99cfc3566fabe5",
+  "workerSubmissionHead": "509b6d3462b06f55e51426d81160a9626628bd88",
+  "records": 69,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 6202033,
+    "sha256": "65a9e6775bf946e20fda667e6e83daa04aefdd0c0e19549860b32f4a4603bc60"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 11997,
+    "sha256": "9cbc5263cc7fa006fe303deb4e952494311d6048eae45bd0fc682d3d94f941d9"
+  },
+  "verdictPath": "critic/verdict.json",
+  "verdictSha256": "a83cb7e2f428d1fff53d6682c319742a41f4bad112283bbd8d9fc6bf9b926983",
+  "predictionsPath": "critic/preinspection-predictions.md",
+  "predictionsSha256": "a7a7d66014c7e5396b7dc15581b1945fc610b1dd9bffb4ccf7ecbac4bda87d59",
+  "workerManifestSha256": "daf510538b80e3da376a7d003457657f6266ce07a6b23fcac638733efbbcd31a",
+  "coverageAuditSha256": "eae1bc82e481ad3f40e971c9ba7abef76cd721685dee41300ffd02678da23564",
+  "independentGuardCases": 444,
+  "independentMetadataAttacks": 10,
+  "independentPhysicalCells": 864,
+  "originalRecordingCellsPerRun": 324480,
+  "soleFinding": "dead bridge.c:1043-1047 guard",
+  "productClaimRefuted": false,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

@@ -3,7 +3,7 @@ id: E6-T12g6l
 epic: 6
 title: Admit fragment discard with sound branch liveness
 priority: 525.027010581
-status: implemented
+status: evidence-needed
 depends_on: [E6-T12g6k]
 estimate: S
 risk: high
@@ -138,3 +138,115 @@ The fresh critic has prepared predictions before opening evidence. Status is
 implemented pending its adversarial review. This is a private compiler/consumer
 boundary; production GPU negotiation, guest execution and public imports/caps
 remain disabled. This run supports no deployment, FPS or MIPS claim.
+
+
+### 2026-10-04 — fresh critic — VERDICT: needs-evidence
+
+VERDICT: needs-evidence. The product claim was not contradicted. The sole gap is
+an unreachable added runtime guard that the repository charter requires deleting.
+Frozen source `4a1e9a36e33e072a58fd60815b1e6ae8c93460ab`, worker submission
+`509b6d3462b06f55e51426d81160a9626628bd88`, base
+`cca9a570fe061107ff05e3697b99cfc3566fabe5`. Predictions were written before evidence
+inspection (SHA256 `a7a7d66014c7e5396b7dc15581b1945fc610b1dd9bffb4ccf7ecbac4bda87d59`); all five oriented runtime source
+digests remained unchanged through the worker's harness repair. The critic made
+no implementation edits.
+
+- P1 ordered words — HELD. Both original hot/cold recordings independently match
+  literal IEEE decoding and TGSI control execution for 324,480 cells each, including
+  all four lanes, modifiers, signed zeros, subnormals, infinities and NaNs. Every
+  owned cell is exact. Point: sealed `critic/recording-audit.json#/0/directPixels`
+  and `#/1/consumerPixels`, `critic/independent-pixel-predictions.json`.
+- P2/P3 versions, masks and surviving authority — HELD. 444 fresh native/Wasm
+  singles/pairs with seed `1831565813` exercise aliases, saved/overwritten words,
+  initialization masks, dead text, killed-only numeric/address facts and the novel
+  killed `-1` versus surviving `-0` join. Missing survivor initialization rejects;
+  the surviving version remains `-0`. Point: `critic/independent/report.json#/cases`
+  and `critic/novel-gpu/report.json#/acceptance/captures/0`.
+- P4 conservative termination/raster banks — HELD. Original profiles execute
+  `raw_discard_guaranteed` 14,108 times and `raster_graph` eight times, covering both
+  unconditional and statically terminating conditional bank edges. Unknown sign
+  knowledge stays nonterminal; negative-zero/NaN survivors keep output obligations.
+  Point: `critic/original-profile-audit.json#/0/functions`,
+  `critic/recording-audit.json#/0/browserMarkers`.
+- P5 policy/domain ownership — HELD. 1,011 original and ten fresh inert metadata
+  attacks reject with zero getter invocations; six copied banks and four complete
+  compound predecessor metadata restores retain their numerical restrictions.
+  Point: worker `hot/consumer.json#/combined`, critic
+  `independent/report.json#/forgeries`. Existing own-descriptor behavior is preserved;
+  no new requirement about harmless record prototypes is introduced.
+- P6 bounds/stage/dead paths — HELD. Wrong-stage discard, malformed operands,
+  source masks, depth 17, instruction 769 and mismatched label targets reject;
+  depth 16 and instruction 768 accept. Dead text remains initialized/checked.
+  Matching leading-zero labels preserve the inherited instruction-label parser.
+  Point: `critic/independent/report.json#/cases`,
+  `critic/recording-audit.json#/0/markers`.
+- P7 physical reflection, selectors and consumers — HELD. Original captures and
+  24 fresh headed Metal cases expose actual compile/link/reflection and 864 new
+  literal pixels. Missing output/`NONE` is terminal-only; CLEAR and subsequent
+  surviving raster-bank draws restore COLOR0. Synchronous/asynchronous consumers
+  own poisoned inputs, reject ten scoped faults per path and end with zero budgets
+  and live objects. Point: worker `hot/gpu-2654435769/report.json#/acceptance/consumers`,
+  `critic/novel-gpu/report.json#/acceptance`.
+- P8 fault/test sensitivity — HELD. The original four physically compiled source
+  faults each contradict 42 covered cells, first at `(2,1)`. An actual isolated
+  C zero-predicate mutation fails native case 442; removing the native C admission
+  assertions still fails the independent terminal-liveness oracle. Removing that
+  independent assertion still fails its separate checked pair-key oracle. Both
+  sabotage binaries and all supplementary profiles are preserved. Point:
+  `critic/recording-audit.json#/0/faults`, `critic/sabotage.json#/records`.
+- P9 coverage — NEEDS EVIDENCE; dead code. Predicted every changed executable
+  path would execute in a valid public run or be deleted. Observed zero hits at
+  `renderer/virgl-shader/bridge.c:1045-1046` in both original hot/cold LLVM profiles.
+  The entire added guard at `:1043-1047` is unreachable: `register_name` permits
+  ranges only for TEMP/CONST (`:151-154`), and `declaration` permits fragment OUT
+  only as COLOR at index zero (`:330-342`); its loop at `:363` is the only writer
+  of OUT declaration bits. Discard is fragment-only (`:819`). Therefore no admitted
+  request can satisfy `declared[OUT][i>0]`. Demand: delete the unreachable guard,
+  retain the parser's existing output-domain rejection, carry unchanged HELD results
+  forward and submit source-bound proof of the deletion. Point:
+  `critic/parser-reachability.json`, `critic/coverage-audit.json`; coverage digest
+  `eae1bc82e481ad3f40e971c9ba7abef76cd721685dee41300ffd02678da23564`. Original hot profraw
+  `1b41db286acc2ec0e961f3f8e37d9102da20f6422effded3084700fe70ae9bf5`, cold profraw
+  `94dcb454a56a92aec6408951ae9dc72f08836dd5bbc74787384337d5ebe9e273`, merged profdata
+  `d5993ff58cad388fd2bfa42db9dfb4cc364809a66835c850c16f3421b5883b9b`.
+
+All 150 worker members, 431 hot/411 cold source bindings, both receipts and original
+sanitizer binaries/profiles authenticate. Re-merging and exporting each original
+profile with its preserved original binary reproduces the recorded coverage exactly;
+both original sanitizer fixtures replay byte-for-byte with zero diagnostics.
+The changed-line audit records 120 executing lines, twenty individually justified
+nonbehavior waivers and only the two dead statements plus their closing guard line.
+The new raw-opcode labels are exhaustive enum cases without an executable body:
+`raw_record` already handles control opcodes before the per-destination switch.
+Types, static assertions, signatures and documentation have individual waivers.
+No other runtime behavior is waived. The 532-member predecessor critic seal
+also authenticates; 8,347 complete legacy results carry unchanged, excluding the two
+explicit new discard admissions. The original `c580` and `92cb` bodies remain gated.
+The authenticated pristine proof holds for the frozen source; it is not relabeled
+for a future head. Point: `critic/authentication.json`, `critic/carry-forward.json`.
+
+The 6,336 Mesa primary special-value cells per original run are explicitly qualified,
+as allowed by [ESSL3.00 sections 4.5.1/8.3](https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf);
+finite-normal/zero primary cells and all outside pixels remain exact. The critic
+checked literal source/geometry, not an inverse, emitted-GLSL or captured-pixel oracle.
+No production negotiation, public import, guest execution, deployment, FPS or MIPS
+claim is added.
+
+Commands: independent original `xcrun llvm-profdata merge` and `llvm-cov export`;
+`python3 /tmp/e6-t12g6l-critic/audit-recordings.py`;
+`python3 /tmp/e6-t12g6l-critic/coverage-audit.py`;
+`node /tmp/e6-t12g6l-critic/independent-guards.mjs`;
+`node /tmp/e6-t12g6l-critic/independent-gpu.mjs`;
+isolated `build.sh discard-sanitize` and the three recorded sabotage gate runs.
+Scripts, inputs, results, native replays, original/supplementary profiles, actual
+sabotage binaries, pre-observation predictions, novel GPU raw cells and screenshot
+are preserved in `evidence/virgl-fragment-discard/verifier/`.
+69 critic archive members authenticate. Manifest SHA256
+`21ce3644f99d69b8c4c7bc2518e395baebc45adc129699c508e7842d12d8c6cd`;
+archive SHA256 `65a9e6775bf946e20fda667e6e83daa04aefdd0c0e19549860b32f4a4603bc60`;
+index SHA256 `9cbc5263cc7fa006fe303deb4e952494311d6048eae45bd0fc682d3d94f941d9`;
+verdict SHA256 `a83cb7e2f428d1fff53d6682c319742a41f4bad112283bbd8d9fc6bf9b926983`.
+
+SUITE: defer promotion until the sole coverage gap is cleared. The independently
+verified oracle/guards and physical/version fixtures are retained as bounded
+promotion candidates. Status is `evidence-needed`; no dependent may activate.
