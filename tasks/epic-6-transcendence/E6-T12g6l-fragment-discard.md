@@ -3,7 +3,7 @@ id: E6-T12g6l
 epic: 6
 title: Admit fragment discard with sound branch liveness
 priority: 525.027010581
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6k]
 estimate: S
 risk: high
@@ -264,3 +264,47 @@ Remove exactly the unreachable five-line fragment extra-output guard at frozen
 fragment OUT above zero. No syntax, initialization, stage or numerical rule is
 widened. Keep both original seals immutable, record corrected-source hot/cold
 receipts separately, and return to the critic for incremental coverage review.
+
+### 2026-10-04 — worker — revised proof submitted
+
+Frozen corrected head: `e7137ce55e714c4a5759175529a82cc056a6d097`.
+Its runtime diff from the initial frozen head is exactly five deleted lines in
+`bridge.c`; all other runtime and harness bytes are unchanged. The unreachable
+extra-output guard is removed. Existing fragment declaration rejection, surviving
+initialization, numerical ownership and reflection restrictions remain intact.
+P1–P8, N1 and scoped predecessor HELD results carry forward unchanged.
+
+```sh
+VIRGL_DISCARD_EVIDENCE_DIR=target/evidence/virgl-fragment-discard-revised make verify-E6-T12g6l
+python3 tools/virgl-fragment-discard/cold.py --output target/evidence/virgl-fragment-discard-cold-revised
+python3 tools/virgl-fragment-discard/seal.py --hot target/evidence/virgl-fragment-discard-revised --cold target/evidence/virgl-fragment-discard-cold-revised --output evidence/virgl-fragment-discard/worker/revision-2
+```
+
+Both corrected-source runs passed: 2,007 native/Wasm singles and pairs, 1,975
+pinned primary comparisons, 1,011 inert metadata attacks, six banks, four compound
+obligations, 8,349 predecessor cases with the two explicit extensions, promoted
+guards and 324,480 physical cells per run. The three schedules and four actual
+source-fault recordings pass their independent literal oracle/sensitivity gates.
+The same 6,336 primary special-value cells remain explicitly qualified; owned
+emission stays exact for every word class. Console/page/request errors, leaked GPU
+objects and budgets are zero. The new pristine clone records the corrected
+detached head and empty tracked status before/after. This is new proof, not an
+old receipt relabeled for the deletion. No production or performance claim changes.
+
+The separate revised seal contains 148 authenticated members, including both
+original corrected sanitizer binaries/profiles. Initial worker and critic seals
+remain byte-identical. Root authenticated every revised member, receipt, pristine
+report and source binding with `/tmp/authenticate-discard-worker-revision-2.py`;
+result `/tmp/wasm-vm-discard-root-worker-revision-2-authentication.json`.
+Evidence: `evidence/virgl-fragment-discard/worker/revision-2/`.
+
+SHA-256:
+- manifest: `a7e58892ccf37211ac6c2b14b02a5fee08850aec4e560c929fa10bdcd0233439`
+- archive: `50136a98be6a8e559f69a783eb96bae859ff5afb60765c07da77177d5e49107e`
+- index: `02958d5e896190be2704d42a8f58cc7fc00e5dfc5bd2e5259b97d1822bb70883`
+- hot receipt: `c3538b29013db7b55289b585c85c134da8f450799a0714bcdf1bdcc40956272c`
+- cold report: `26d27585df1c594e7b0eae6448c64367bc5adbfd6ffca288998b57c57013f976`
+- cold receipt: `609ef3929ade036a98aef94485ef760172cf3c2994692a27ecc0b0471cf2b07c`
+
+Status: implemented pending the critic's incremental P9/source-custody verdict.
+PR #456 remains draft, open and unmerged.
