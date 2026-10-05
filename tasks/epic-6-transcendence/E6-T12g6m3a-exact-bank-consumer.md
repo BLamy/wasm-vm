@@ -48,3 +48,21 @@ The new wrapper is private metadata consumption only. Earlier valid CREATE/BIND
 may compile/link before a bank exists; invalid metadata must reject before shader
 allocation. A mismatched current bank must reject before every effect of DRAW
 and skip that stage's non-draw upload, while preserving honest CPU SET prefixes.
+
+The wrapper accepts descending raw v1–v41 bases and the original straight-line
+v5 bank profile, whose existing uvec4/float32-bits declaration can retain extent47.
+The real old order47 fixtures supply that declaration without editing TGSI or
+uniform metadata. The strict new bank descriptor must match the actual inherited
+uniform; this changes no compiler admission or old result.
+
+### 2026-10-05 — worker — self-validation notes (not final evidence)
+
+The first physical run passes 131 independently checked full frames and 269
+rejections, including genuinely pruned uniforms, C46 padding preservation and
+inherited F2I/raster guards. Equality-only sabotage produces an actual raw2
+upload, one DRAW and 64 green pixels instead of unchanged blue-gray pixels.
+18 complete unchanged native/Wasm pairs, 322 owned metadata attacks and 323
+bank checks pass. A descriptor-trap repro initially split an inherited count46
+from a later count45 uniform/domain snapshot. The new parser coherence check
+rejects that split before allocation, and the adversarial regression is retained.
+These iterative runs are not the frozen worker submission.

@@ -45,6 +45,8 @@ export const KNOWN_ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v40";
 export const KNOWN_ARITHMETIC_KIND = "tgsi-known-arithmetic-v1";
 export const BRANCH_PROFILE = "virgl-webgl2-raw-bits-v41";
 export const BRANCH_KIND = "tgsi-proved-raw-uif-v1";
+export const EXACT_BANK_PROFILE = "virgl-webgl2-raw-bits-v42";
+export const EXACT_BANK_KIND = "constant-bank-exact-u32-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
@@ -59,6 +61,7 @@ const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i
 const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) => i + 1)));
 const KNOWN_ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 39 }, (_, i) => i + 1)));
 const BRANCH_BASES = new Set(rawProfiles(...Array.from({ length: 40 }, (_, i) => i + 1)));
+const EXACT_BANK_BASES = new Set(["virgl-webgl2-straight-line-v5", ...rawProfiles(...Array.from({ length: 41 }, (_, i) => i + 1))]);
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -134,12 +137,51 @@ function conversionBankContract(value) {
   return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
 }
 
+function exactBankContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === EXACT_BANK_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent exact-word bank domain.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47,
+    "Exact-word bank extent exceeds its declared bound.");
+  const components = array(domain.components, 184).map(value => record(value, ["register", "component", "word"]));
+  require(components.length > 0 && components.every((entry, position) =>
+    Number.isInteger(entry.register) && entry.register >= 0 && entry.register < Math.min(domain.count, 46) &&
+    Number.isInteger(entry.component) && entry.component >= 0 && entry.component <= 3 &&
+    Number.isInteger(entry.word) && entry.word >= 0 && entry.word <= 0xffffffff &&
+    (position === 0 || components[position - 1].register * 4 + components[position - 1].component < entry.register * 4 + entry.component)),
+  "Exact-word components must be nonempty, bounded, sorted and unique exact u32s.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
 /** Recognize a trusted compiler result without changing any of its metadata. */
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract", "branchBaseProfile", "branchContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract", "branchBaseProfile", "branchContract", "exactBaseProfile", "constantExactDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const exact = value.profile === EXACT_BANK_PROFILE;
+    require(exact === Object.hasOwn(value, "exactBaseProfile") && exact === Object.hasOwn(value, "constantExactDomains"),
+      "Exact-word contract disagrees with its profile.");
+    if (exact) {
+      require(EXACT_BANK_BASES.has(value.exactBaseProfile), "Exact-word bank requires an existing raw base profile.");
+      const base = { ...value, profile: value.exactBaseProfile };
+      delete base.exactBaseProfile; delete base.constantExactDomains;
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      const domains = array(value.constantExactDomains, 1), uniforms = array(value.uniforms, 1);
+      require(domains.length === 1 && uniforms.length === 1, "Exact-word bank requires one domain and one declared uniform.");
+      const exactDomain = exactBankContract(domains[0]);
+      const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+      require(exactDomain.stage === expectedStage && uniform.name === exactDomain.name &&
+        uniform.count === exactDomain.count && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits",
+      "Exact-word domain disagrees with its complete declared bank.");
+      for (const key of ["domain", "access", "constraint", "radialDomain", "rasterDomain", "conversionDomain"])
+        if (checked[key] != null) require(checked[key].stage === exactDomain.stage && checked[key].slot === 0 &&
+          checked[key].name === exactDomain.name && checked[key].count === exactDomain.count,
+        "Exact-word and inherited metadata disagree on their declared bank.");
+      return Object.freeze({ ...checked, exactDomain, exactBase: checked });
+    }
     const branch = value.profile === BRANCH_PROFILE;
     require(branch === Object.hasOwn(value, "branchBaseProfile") && branch === Object.hasOwn(value, "branchContract"),
       "Branch contract disagrees with its profile.");
@@ -560,6 +602,39 @@ export function signedConversionBinary32Word(word) {
   if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
   const magnitude = word & 0x7fffffff;
   return magnitude < 0x4f000000 || (word >= 0x80000000 && magnitude === 0x4f000000);
+}
+
+/** All inherited checks and exact comparisons use the same owned declared prefix. */
+export function checkExactBank(words, domain, base) {
+  try {
+    const contract = exactBankContract(domain);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic", "branchLiveness"], ["ok", "domain"]);
+    require(base.ok === true && base.domain !== undefined, "Exact-word bank requires an approved inherited contract.");
+    for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
+      ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
+      ["radialDomain", RADIAL_DOMAIN_KIND, ["register", "component", "minimumMagnitude"]],
+      ["rasterDomain", RASTER_DOMAIN_KIND, ["components"]], ["conversionDomain", CONVERSION_DOMAIN_KIND, ["components"]]]) {
+      if (base[key] != null) {
+        const obligation = record(base[key], [...DOMAIN_KEYS, ...extra]);
+        require(obligation.kind === kind && obligation.stage === contract.stage && obligation.slot === 0 &&
+          obligation.name === contract.name && obligation.count === contract.count,
+        "Exact-word and inherited obligations disagree on their bank.");
+        base[key] = obligation;
+      }
+    }
+    const checked = base.conversionDomain ? checkConversionBank(words, base.conversionDomain, base) :
+      base.rasterDomain ? checkRasterBank(words, base.rasterDomain, !!base.constraint, !!base.radialDomain) :
+      base.radialDomain ? checkRadialBank(words, contract.count, !!base.constraint) : base.constraint ?
+        checkLoopBank(words, contract.count) : checkIndirectBank(words, contract.count, base.domain !== null);
+    if (!checked.ok) return checked;
+    for (const entry of contract.components)
+      if (checked.words[entry.register * 4 + entry.component] !== entry.word)
+        return failure("constant-exact-domain-error", "Current constant word disagrees with the exact shader assumption.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-exact-domain-error", error.message);
+  }
 }
 
 /** Every base approval and F2I component check uses one owned complete prefix. */
