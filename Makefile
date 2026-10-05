@@ -2037,3 +2037,7 @@ verify-E6-T12g6k:
 .PHONY: verify-E6-T12g6l
 verify-E6-T12g6l:
 	bash tools/verify-virgl-fragment-discard.sh
+
+.PHONY: verify-E6-T12g6m1
+verify-E6-T12g6m1:
+	bash tools/verify-virgl-known-arithmetic.sh

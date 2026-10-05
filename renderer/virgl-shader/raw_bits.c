@@ -4,6 +4,7 @@
 #include "raw_conversions.h"
 #include "raw_scalar.h"
 #include "raw_fraction.h"
+#include "raw_known_arithmetic.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -426,7 +427,24 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          break;
       case RAW_UCMP: result[lane] = selected(a, b, checked_source(ir, instruction, 2, lane, conditional), mixed); break;
       case RAW_ADD:
-      case RAW_MUL:
+      case RAW_MUL: {
+         a = precise_source(ir, instruction, 0, lane, conditional);
+         b = precise_source(ir, instruction, 1, lane, conditional);
+         if ((instruction->flags & RAW_KNOWN_RETRY) && known_operands(a, b) && safe_raw_float(a) && safe_raw_float(b)) {
+            uint32_t word = instruction->opcode == RAW_ADD ? known_add(a.one, b.one) : known_mul(a.one, b.one);
+            if (safe_raw_float(known_word(word))) {
+               result[lane] = known_word(word);
+               /* ADD/MUL have no third operand. Its four unused swizzle words
+                * hold the exact emission cache; index holds the lane mask. */
+               checked.src[2].swizzle[lane] = word;
+               checked.src[2].index |= 1u << lane;
+               checked.flags |= RAW_KNOWN_RESULT;
+            }
+         }
+         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT |
+            ((checked.float_modes[0] | checked.float_modes[1]) >> (lane * 8) & RAW_BANK_DEPENDENCY);
+         break;
+      }
       case RAW_MAD:
       case RAW_DIV:
       case RAW_MOV_SAT:
@@ -487,6 +505,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    if (arithmetic) ir->opcode_mask |= RAW_PRECISE_ARITHMETIC_USED;
    else if ((instruction->flags & RAW_PRECISE) && instruction->opcode != RAW_MIN_PRECISE && instruction->opcode != RAW_FRC_PRECISE)
       ir->opcode_mask |= RAW_PRECISE_WORD_USED;
+   if (instruction->flags & RAW_KNOWN_RESULT) ir->opcode_mask |= RAW_KNOWN_ARITHMETIC_USED;
    return true;
 }
 
@@ -795,7 +814,9 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
       if (lane) emit(w, ", ");
       if (!(instruction->float_mask & (1u << lane))) { emit(w, "0.0"); continue; }
       emit(w, "(");
-      if (op == RAW_UCMP) {
+      if ((instruction->flags & RAW_KNOWN_RESULT) && (instruction->src[2].index & (1u << lane))) {
+         emit(w, "/* known:shadow */ uintBitsToFloat(%uu)", instruction->src[2].swizzle[lane]);
+      } else if (op == RAW_UCMP) {
          unsigned yes = lane_mode(instruction, 1, lane), no = lane_mode(instruction, 2, lane);
          /* A known selector may choose an authorized shadow while the other
           * payload is arbitrary raw data. Never decode that unselected arm. */
@@ -1008,6 +1029,9 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          }
       }
       emit(&w, ");\n");
+      if (instruction->flags & RAW_KNOWN_RESULT)
+         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->src[2].index & (1u << lane))
+            emit(&w, " /* known:word */ raw_rhs.%c = %uu;\n", "xyzw"[lane], instruction->src[2].swizzle[lane]);
       if (instruction->float_mask && raw_shadow) {
          emit(&w, " float_rhs = vec4(");
          for (unsigned lane = 0; lane < 4; ++lane) {

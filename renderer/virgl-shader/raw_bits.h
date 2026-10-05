@@ -35,6 +35,8 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit57 authenticates fragment coordinates, not an opcode. */
                   RAW_KILL = 58, RAW_KILL_IF };
 #define RAW_DISCARD_OPCODES ((UINT64_C(1) << RAW_KILL) | (UINT64_C(1) << RAW_KILL_IF))
+/* A materialized producer word, independent of all opcode/bank policies. */
+#define RAW_KNOWN_ARITHMETIC_USED (UINT64_C(1) << 60)
 #define RAW_POWER_OPCODES (UINT64_C(1) << RAW_POW)
 /* Authenticated fragment builtin convention, never an opcode or range fact. */
 #define RAW_FRAGMENT_COORDINATES_USED (UINT64_C(1) << 57)
@@ -84,7 +86,7 @@ enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
        RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
        RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792,
-       RAW_TERMINATING_DISCARD = 2048 };
+       RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -157,7 +159,7 @@ struct profile {
    bool ended, started, color0_property, address_declared, address_written;
    bool coordinate_origin_property, coordinate_center_property;
    bool syntax_only, live;
-   unsigned char raw_flags;
+   unsigned raw_flags;
    int stage;
    struct raw_ir *raw;
 };

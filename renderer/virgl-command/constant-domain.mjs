@@ -41,6 +41,8 @@ export const COORDINATE_KEY = "|tgsi-fragment-position-v1:in0/linear/lower-left/
 export const DISCARD_PROFILE = "virgl-webgl2-raw-bits-v39";
 export const DISCARD_KIND = "tgsi-fragment-discard-v1";
 export const DISCARD_KEY = "|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-";
+export const KNOWN_ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v40";
+export const KNOWN_ARITHMETIC_KIND = "tgsi-known-arithmetic-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
@@ -53,6 +55,7 @@ const POWER_BASES = new Set(rawProfiles(...Array.from({ length: 36 }, (_, i) => 
 const SINE_BASES = new Set(rawProfiles(...Array.from({ length: 35 }, (_, i) => i + 1)));
 const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i) => i + 1)));
 const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) => i + 1)));
+const KNOWN_ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 39 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -132,8 +135,26 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const knownArithmetic = value.profile === KNOWN_ARITHMETIC_PROFILE;
+    require(knownArithmetic === Object.hasOwn(value, "knownArithmeticBaseProfile") && knownArithmetic === Object.hasOwn(value, "knownArithmeticContract"),
+      "Known arithmetic contract disagrees with its profile.");
+    if (knownArithmetic) {
+      require(KNOWN_ARITHMETIC_BASES.has(value.knownArithmeticBaseProfile), "Known arithmetic requires an existing raw base profile.");
+      const policy = record(value.knownArithmeticContract, ["kind", "stage", "operations", "source", "rounding", "result", "emission", "authority", "storage"]);
+      require(policy.kind === KNOWN_ARITHMETIC_KIND && policy.stage === expectedStage &&
+        policy.source === "fully-known-authorized-normal-or-zero-post-modifier" && policy.rounding === "binary32-nearest-ties-to-even-integer" &&
+        policy.result === "normal-or-zero-only" && policy.emission === "literal-word-and-matching-shadow" &&
+        policy.authority === "exact-emitted-producer-version-only" && policy.storage === "unused-third-operand-four-word-cache", "Unknown known arithmetic policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["ADD", "MUL"].includes(op) &&
+        (i === 0 || operations[i - 1] === "ADD" && op === "MUL")), "Invalid known arithmetic operation set.");
+      const base = { ...value, profile: value.knownArithmeticBaseProfile };
+      delete base.knownArithmeticBaseProfile; delete base.knownArithmeticContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, knownArithmetic: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
     const discard = value.profile === DISCARD_PROFILE;
     require(discard === Object.hasOwn(value, "discardBaseProfile") && discard === Object.hasOwn(value, "discardContract"),
       "Discard contract disagrees with its profile.");
@@ -526,7 +547,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
