@@ -36,7 +36,7 @@ export function getSineRegressions(){
  for(const lane of 'xyzw')for(const consumer of ['SIN TEMP[1]','F2I TEMP[1]'])add('novel-aliased-lane-'+lane+'-'+consumer,program([],['MOV TEMP[0], IMM[0]','SIN TEMP[0].yw, -TEMP[0].xxxx',`${consumer}, TEMP[0].${lane.repeat(4)}`,'MOV OUT[0], IMM[0]']),lane==='x'||lane==='z');
  for(const overwrite of ['MOV TEMP[0].y, IMM[0].xxxx','MOV TEMP[0].y, IN[0].xxxx','UADD TEMP[0].y, CONST[0], CONST[1]'])add('novel-repaired-one-lane-'+overwrite,program([],['MOV TEMP[0], IMM[0]','SIN TEMP[0].yw, IMM[0]',overwrite,'SIN TEMP[1], TEMP[0].yyyy','MOV OUT[0], IMM[0]']),overwrite.startsWith('MOV TEMP[0].y, IMM'));
  for(const kill of ['UADD TEMP[0].x, CONST[0], CONST[1]','MOV TEMP[0].x, IN[0].xxxx'])add('join-killed-version-'+kill,program([],['MOV TEMP[0], IMM[0]','UIF CONST[43].xxxx',kill,'ELSE','MOV TEMP[0].x, IMM[0].xxxx','ENDIF','SIN TEMP[1], TEMP[0]','MOV OUT[0], IMM[0]']),false);
- for(const op of ['SIN_PRECISE','SIN_SAT','sin','COS','POW'])add('unsupported-'+op,program([],[`${op} TEMP[0], IMM[0]${op==='POW'?', IMM[0]':''}`,'MOV OUT[0], IMM[0]']),false);
+ for(const op of ['SIN_PRECISE','SIN_SAT','sin','COS','POW_PRECISE'])add('unsupported-'+op,program([],[`${op} TEMP[0], IMM[0]${op==='POW_PRECISE'?', IMM[0]':''}`,'MOV OUT[0], IMM[0]']),false);
  for(const token of ['|IMM[0]|','- |IMM[0]|','IMM[0].xy','CONST[46]'])add('bad-source-'+token,program([],[`SIN TEMP[1], ${token}`,'MOV OUT[0], IMM[0]']),false);
  // Exercise every new wrapper-selector arm while preserving its complete
  // existing consumer obligations; these are independent, minimal programs.

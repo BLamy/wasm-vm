@@ -118,7 +118,7 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
    /* TGSI scalar operations consume post-swizzle x/xyz independently of the
     * written lanes. Use the same rule for initialization and float authority. */
    if (opcode == RAW_DP3) return 7u;
-   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL || opcode == RAW_EX2 || opcode == RAW_LG2 || opcode == RAW_SIN) return 1u;
+   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL || opcode == RAW_EX2 || opcode == RAW_LG2 || opcode == RAW_SIN || opcode == RAW_POW) return 1u;
    return opcode == RAW_TEX ? 3u : destination_mask;
 }
 
@@ -195,6 +195,45 @@ static bool sine_domain_proved(struct raw_lane value)
    return safe_raw_float(value) && (~value.zero & UINT32_C(0x7fffffff)) <= UINT32_C(0x41000000);
 }
 
+/* Enclose log2(base) by integer binary exponents, then compare its largest
+ * magnitude times the maximum exponent magnitude using significand/scale
+ * integers. Facts describe every possible encoding, not just join endpoints.
+ * Neither host libm nor the output of native pow grants admission authority. */
+static bool power_domain_proved(struct raw_lane base, struct raw_lane exponent)
+{
+   const uint32_t sign = UINT32_C(0x80000000), magnitude = UINT32_C(0x7fffffff);
+   const uint32_t exponent_bits = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);
+   if (!safe_raw_float(base) || !safe_raw_float(exponent)) return false;
+   bool positive_exponent = (exponent.zero & sign) && (exponent.one & exponent_bits);
+   /* Either sign of a known zero has the owned +0 result, for strictly
+    * positive exponents only. Never pass it through native pow. */
+   if ((base.zero & magnitude) == magnitude) return positive_exponent;
+   if (!(base.zero & sign)) return false;
+   if (!(base.one & magnitude) && !positive_exponent) return false;
+   uint32_t lower = base.one & magnitude;
+   if (!lower) {
+      /* safe_raw_float forces all mantissa bits to zero in this case. The
+       * lowest optional exponent bit is the smallest possible positive base. */
+      uint32_t possible = ~base.zero & exponent_bits;
+      lower = possible & (~possible + 1u);
+   }
+   uint32_t upper = ~base.zero & magnitude;
+   int low_log = (int)(lower >> 23) - 127;
+   int high_log = (int)(upper >> 23) - 127 + ((upper & mantissa) != 0);
+   unsigned low_size = low_log < 0 ? (unsigned)-low_log : (unsigned)low_log;
+   unsigned high_size = high_log < 0 ? (unsigned)-high_log : (unsigned)high_log;
+   unsigned log_size = low_size > high_size ? low_size : high_size;
+   uint32_t maximum = ~exponent.zero & magnitude;
+   unsigned field = maximum >> 23;
+   uint64_t significand = (maximum & mantissa) | (field ? UINT32_C(0x00800000) : 0);
+   uint64_t product = significand * log_size;
+   if (!product) return true;
+   int scale = (int)field - 150;
+   if (scale >= 0) return scale < 7 && product <= (UINT64_C(120) >> scale);
+   if (scale <= -31) return true;
+   return product <= (UINT64_C(120) << -scale);
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -245,6 +284,9 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
        !exponent_domain_proved(instruction->opcode, precise_source(ir, instruction, 0, 0, conditional))) return false;
    if (instruction->opcode == RAW_SIN &&
        !sine_domain_proved(precise_source(ir, instruction, 0, 0, conditional))) return false;
+   if (instruction->opcode == RAW_POW &&
+       !power_domain_proved(precise_source(ir, instruction, 0, 0, conditional),
+                            precise_source(ir, instruction, 1, 0, conditional))) return false;
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
@@ -384,9 +426,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_EX2:
       case RAW_LG2:
       case RAW_SIN:
+      case RAW_POW:
       case RAW_TEX:
          result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
-         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES | RAW_SINE_OPCODES)))
+         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES | RAW_SINE_OPCODES | RAW_POWER_OPCODES)))
             result[lane].origin |= dependency;
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
@@ -674,6 +717,15 @@ static void float_operand(struct writer *w, const struct profile *p, const struc
 static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
 {
    enum raw_opcode op = instruction->opcode;
+   if (op == RAW_POW) {
+      /* Capture both operands before any masked/aliased publication. */
+      emit(w, " { highp float power_base = ");
+      float_operand(w, p, instruction, 0, 0);
+      emit(w, "; highp float power_exponent = ");
+      float_operand(w, p, instruction, 1, 0);
+      emit(w, "; float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n");
+      return;
+   }
    if (op == RAW_SIN) {
       /* One post-swizzle x evaluation precedes every masked/aliased write. */
       emit(w, " float_rhs = vec4(/* sine:SIN */ sin(");

@@ -1,0 +1,15 @@
+{
+  "source": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+  "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f",
+  "section": "4.5.1 and 8.2",
+  "powPrecisionQualification": "The inherited expression exp2(x*log2(y)) apparently swaps pow(base,exponent); do not claim an unambiguous portable precision budget.",
+  "measuredPhysicalRelativeBudget": "2^-14 for nonzero; exact owned +0 for zero",
+  "argument": "normal-or-zero inputs, nonnegative base, zero-capable bases require positive exponent; integer log exponent envelope product <=120",
+  "referenceSource": "https://docs.python.org/3/library/decimal.html#decimal.Decimal.ln",
+  "referenceMethod": "correctly rounded nearest-even Decimal ln/exp with outward last-place units and directed multiplication;160 and independently nested220 decimal significant digits",
+  "exactCases": "identity, bounded integer powers and integer resulting powers of two, proven using Fraction arithmetic",
+  "acceptance": "relative budget holds for every real value in the interval; conservative maximum observed relative error recorded per backend",
+  "replication": "mesa-24.2.8-tgsi.rst POW equation and pinned tgsi_info.c POW FLOAT/REPL",
+  "pinnedConverterDiscrepancy": "virglrenderer1.3.0 vrend_shader.c:5902 emits componentwise pow; preserve and independently check original sources, canonical broadcasts and72 isolated literal statements",
+  "byteCarrier": "One actual pixel exposes all four bytes of one result; byte I2F exact and DIV by255 <=2.5 ULP remains within RGBA8 half step."
+}
