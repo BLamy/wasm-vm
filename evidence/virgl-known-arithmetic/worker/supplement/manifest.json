@@ -1,0 +1,283 @@
+{
+  "schema": "virgl-known-arithmetic-supplement-seal-v1",
+  "task": "E6-T12g6m1",
+  "status": "passed",
+  "runtimeHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "harnessHead": "5353cf8591a94dbd962f92ee69b488ff18b8ebf0",
+  "records": 42,
+  "preservedSeals": [
+    {
+      "path": "evidence/virgl-known-arithmetic/worker",
+      "manifestSha256": "e211633f326cd8e43e37a1585d9c892f84fa8d1eea5f13ac00bcf98d4104d15f",
+      "archiveSha256": "cde41a7216f85761baf09b9b8646777e8703f1f449b0af270b31daf87a3813aa",
+      "indexSha256": "67a4726f63fe00ab9fd9f9c708c26ea89d47dff988aeb53fd6dd169d3fe017b0"
+    },
+    {
+      "path": "evidence/virgl-known-arithmetic/verifier",
+      "manifestSha256": "c9b4adfe834ac13e6f343ab8048ee059fc67b2d3a6405335d8ed6d6a7aa1502f",
+      "archiveSha256": "baf7e9f401baff5e1042f7b826345e6893dfee8e7069bec0e11390470b71f67f",
+      "indexSha256": "40afc73663871d44d0da14430e4e1d6bb44a531a77adbbdd241be8a11f3be315"
+    }
+  ],
+  "sources": [
+    {
+      "path": "tools/virgl-known-arithmetic/supplement.mjs",
+      "bytes": 12123,
+      "sha256": "f2ede860a49ba55f1529b758417b7a78a983f0637aa0c150cb62d0fed0120360"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/supplement-cases.json",
+      "bytes": 3146,
+      "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/supplement-seal.py",
+      "bytes": 7467,
+      "sha256": "6d04dac8d99a48db6130406c6a46aca31680f621a68a6be4ce4091b343b4f4e8"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/receipt.py",
+      "bytes": 7367,
+      "sha256": "ad756ed8daba65c6d04b1ef022e9d9d08f5dc30637002aa5d9722049eaf6b4ff"
+    },
+    {
+      "path": "tools/verify-virgl-known-arithmetic.sh",
+      "bytes": 2214,
+      "sha256": "37edd36da9b522f979982788f49ab783ead9f8dc94318209d72a3fb7b879f730"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/README.md",
+      "bytes": 2692,
+      "sha256": "faa9972b1c382cc26e76bc0eeeb346420587a5bbc83400d1580d6014f5e52475"
+    }
+  ],
+  "runtimeSources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "e3cae66fd843e9eadfd435967b04d3f546cb1b100c69750a6d9c8f8c17348398"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "b4792108de3105ef0ba62d3c58bf148039c0ab0bcd9b0aaaa472bcf22f252b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "91409c2fa31857b1e917fd5fd3f8d759aedbf181bea6008257c2fa26ad05b9ce"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+    }
+  ],
+  "recordings": [
+    {
+      "kind": "hot",
+      "reportSha256": "ea34a8367f772d027bbb853d30470c432259872ecca1f12d07f43ab2e77bb3af",
+      "binarySha256": "28bbf65f360d93c674ec2b035d871136e958d42be6f00261820d5f922df606da",
+      "nativeRegions": [
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            8,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "bridge.c:stage_result",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+          "region": [
+            1710,
+            115,
+            1710,
+            142,
+            4,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "v8Regions": [
+        {
+          "startOffset": 11519,
+          "endOffset": 11565,
+          "count": 1
+        },
+        {
+          "startOffset": 11978,
+          "endOffset": 11987,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "reportSha256": "d9dfbc43167247bf0bea21839aca7fec4eb19677f058aa3b5934f23bee33b637",
+      "binarySha256": "c4eeae93534814d9ccc1f2beded36781275946da8fb97dba0499a662150d74f2",
+      "nativeRegions": [
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            8,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "function": "bridge.c:stage_result",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/bridge.c",
+          "region": [
+            1710,
+            115,
+            1710,
+            142,
+            4,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "v8Regions": [
+        {
+          "startOffset": 11519,
+          "endOffset": 11565,
+          "count": 1
+        },
+        {
+          "startOffset": 11978,
+          "endOffset": 11987,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 3808404,
+    "sha256": "987800d6a1d94ab0527b406f88236bf818c6f19374c701e68f940edcc3e04c5c"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 6940,
+    "sha256": "7784a22b0ab540b159241182c0281dad8c2ac534204f7653138219f63e681d97"
+  },
+  "carriedHeld": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P13"
+  ],
+  "productionNegotiation": false,
+  "guestExecution": false
+}

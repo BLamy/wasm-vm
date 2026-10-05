@@ -3,7 +3,7 @@ id: E6-T12g6m1
 epic: 6
 title: Materialize exact known ADD and MUL producer words for bounded consumers
 priority: 525.027010585
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12g6l]
 estimate: S
 risk: high
@@ -241,3 +241,51 @@ actual sabotage source/binary/output. Digests:
 - archive `baf7e9f401baff5e1042f7b826345e6893dfee8e7069bec0e11390470b71f67f`
 - index `40afc73663871d44d0da14430e4e1d6bb44a531a77adbbdd241be8a11f3be315`
 - verdict `977540db11b82f90f9cdc26254877e575e5b2d07aee25fc1dae13ce0eee878da`
+
+
+### 2026-10-05 — worker — targeted coverage supplement
+
+Runtime remains byte-identical to `cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee`.
+The harness-only repair is frozen at `5353cf8591a94dbd962f92ee69b488ff18b8ebf0`.
+No earlier worker/critic seal is overwritten. All HELD arithmetic, hardware,
+legacy, ownership, novel/sabotage and pristine-clone claims are carried forward.
+No runtime or portability change requires restarting those proofs.
+
+The exact nine command records and their outputs are in supplemental
+`commands.json` and `checks.log`. They include affected Node/Python/Bash syntax,
+`git diff --check`, task policy, and the following for each corresponding
+original executable and Wasm module from the authenticated worker archive:
+
+```sh
+node tools/virgl-known-arithmetic/supplement.mjs ORIGINAL_KNOWN_TEST ORIGINAL_WASM_MODULE target/evidence/virgl-known-arithmetic-supplement-final/KIND
+python3 tools/virgl-known-arithmetic/receipt.py --supplement target/evidence/virgl-known-arithmetic-supplement-final/KIND/report.json ORIGINAL_NATIVE_REPORT
+python3 tools/virgl-known-arithmetic/supplement-seal.py --input target/evidence/virgl-known-arithmetic-supplement-final --output evidence/virgl-known-arithmetic/worker/supplement
+```
+
+`KIND` is hot or cold; the archived commands contain the exact paths. The binary
+bytes equal the respective original hot/cold artifacts, rather than a rebuild.
+Both runs execute the critic's exact zero-return and coordinate fixture texts,
+two literal ADD zero identities in all four rounding modes, a complete ADD/MUL
+wrapper and the original ADD/SIN fixture. All four complete singles/pairs match
+original Wasm. Specific LLVM kind-0 regions now have counts `[8,4,4,4,4]` in both
+runs: both raw_bits.c returns, both standalone oracle returns and the known
+coordinate selector. Original-source Node startup V8 coverage gives counts
+`[1,2]` at exact offsets `11519–11565` and `11978–11987`. Coordinate metadata is
+v40/base v38 with its inherited policy, valid two-operation metadata approves,
+and deleting inherited sineContract rejects. Three accessor attacks invoke
+zero getters; native and Node stderr are empty. Layout stays 111744/112.
+The new replay guard is part of the future canonical acceptance recipe.
+
+Separate supplemental seal: `evidence/virgl-known-arithmetic/worker/supplement/`,
+42 authenticated members including both actual original executables, original
+Wasm modules, fixtures, complete native/Wasm/consumer results, raw/merged LLVM
+profiles, full original coverage exports, Node V8 profiles, command logs and
+frozen harness sources. Manifest SHA256
+`eafc73232ac1d2d807bde62ad21c8a11473b985c3ad06ee85ce3194d9c7a4841`;
+archive `987800d6a1d94ab0527b406f88236bf818c6f19374c701e68f940edcc3e04c5c`
+(3808404 bytes); index
+`7784a22b0ab540b159241182c0281dad8c2ac534204f7653138219f63e681d97`.
+The runtime head and harness head are bound separately, and original worker and
+critic digests are retained in the manifest. This is a worker coverage claim,
+submitted to the existing independent critic for incremental review. Full
+original compositor admission, live offload, and performance remain unproven.
