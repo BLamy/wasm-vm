@@ -1,0 +1,107 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-critic-seal-v1",
+  "task": "E6-T12g6m1",
+  "verdict": "verified",
+  "runtimeHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "harnessHead": "5353cf8591a94dbd962f92ee69b488ff18b8ebf0",
+  "submissionHead": "3b55b8b6685885024cafe6d384cd45405a08547e",
+  "records": 137,
+  "predictionsSha256": "6e2897ead7da34b19bdf3ca10809532e5133a85fea712932f88e4b7754135680",
+  "verdictSha256": "f7f1bde9f1d31559e8427d7d5acad6305896797af83e3ccfd93bd11b7dfac114",
+  "preservedSeals": [
+    {
+      "path": "evidence/virgl-known-arithmetic/worker",
+      "manifestSha256": "e211633f326cd8e43e37a1585d9c892f84fa8d1eea5f13ac00bcf98d4104d15f",
+      "archiveSha256": "cde41a7216f85761baf09b9b8646777e8703f1f449b0af270b31daf87a3813aa",
+      "indexSha256": "67a4726f63fe00ab9fd9f9c708c26ea89d47dff988aeb53fd6dd169d3fe017b0"
+    },
+    {
+      "path": "evidence/virgl-known-arithmetic/verifier",
+      "manifestSha256": "c9b4adfe834ac13e6f343ab8048ee059fc67b2d3a6405335d8ed6d6a7aa1502f",
+      "archiveSha256": "baf7e9f401baff5e1042f7b826345e6893dfee8e7069bec0e11390470b71f67f",
+      "indexSha256": "40afc73663871d44d0da14430e4e1d6bb44a531a77adbbdd241be8a11f3be315"
+    },
+    {
+      "path": "evidence/virgl-known-arithmetic/worker/supplement",
+      "manifestSha256": "eafc73232ac1d2d807bde62ad21c8a11473b985c3ad06ee85ce3194d9c7a4841",
+      "archiveSha256": "987800d6a1d94ab0527b406f88236bf818c6f19374c701e68f940edcc3e04c5c",
+      "indexSha256": "7784a22b0ab540b159241182c0281dad8c2ac534204f7653138219f63e681d97"
+    }
+  ],
+  "promotedSources": [
+    {
+      "path": "tools/virgl-known-arithmetic/supplement-cases.json",
+      "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/supplement.mjs",
+      "sha256": "f2ede860a49ba55f1529b758417b7a78a983f0637aa0c150cb62d0fed0120360"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/receipt.py",
+      "sha256": "ad756ed8daba65c6d04b1ef022e9d9d08f5dc30637002aa5d9722049eaf6b4ff"
+    },
+    {
+      "path": "tools/verify-virgl-known-arithmetic.sh",
+      "sha256": "37edd36da9b522f979982788f49ab783ead9f8dc94318209d72a3fb7b879f730"
+    }
+  ],
+  "unchangedBoundarySources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "e3cae66fd843e9eadfd435967b04d3f546cb1b100c69750a6d9c8f8c17348398"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "b4792108de3105ef0ba62d3c58bf148039c0ab0bcd9b0aaaa472bcf22f252b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "91409c2fa31857b1e917fd5fd3f8d759aedbf181bea6008257c2fa26ad05b9ce"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+    }
+  ],
+  "carriedHeld": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P13"
+  ],
+  "resolvedFindings": [
+    "C1",
+    "C2",
+    "J1"
+  ],
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 6423178,
+    "sha256": "97c4e8b32de9631b7951731dfe9b1e41674a3b5fbb859b62136afd7826735dd7"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 23679,
+    "sha256": "3aa4773e5e701eaf743ddcdd6c91ef3d1969297f491ac3054dedec19561bfb51"
+  },
+  "historicalUntracked": {
+    "count": 4202,
+    "sha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac"
+  },
+  "productionNegotiation": false,
+  "guestExecution": false
+}

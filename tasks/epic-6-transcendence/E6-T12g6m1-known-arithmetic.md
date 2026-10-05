@@ -3,7 +3,7 @@ id: E6-T12g6m1
 epic: 6
 title: Materialize exact known ADD and MUL producer words for bounded consumers
 priority: 525.027010585
-status: implemented
+status: verified
 depends_on: [E6-T12g6l]
 estimate: S
 risk: high
@@ -289,3 +289,100 @@ The runtime head and harness head are bound separately, and original worker and
 critic digests are retained in the manifest. This is a worker coverage claim,
 submitted to the existing independent critic for incremental review. Full
 original compositor admission, live offload, and performance remain unproven.
+
+### 2026-10-05 — incremental fresh critic — VERDICT: verified
+
+VERDICT: verified. Runtime remains `cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee`;
+harness source `5353cf8591a94dbd962f92ee69b488ff18b8ebf0`, submission
+`3b55b8b6685885024cafe6d384cd45405a08547e`. This closes only C1/C2/J1 from the
+`a8dfaf55` critique. Six incremental predictions were saved before inspecting
+the supplement: `evidence/virgl-known-arithmetic/verifier/supplement/predictions.json`,
+SHA256 `6e2897ead7da34b19bdf3ca10809532e5133a85fea712932f88e4b7754135680`.
+
+- I0 lineage — HELD. All 42 supplemental members authenticate. The six harness
+  sources equal their frozen Git bytes; all five runtime bindings and the entire
+  compiler/consumer dependency boundary are unchanged. Each hot/cold native and
+  Wasm artifact equals its corresponding original worker archive member. Both
+  earlier seals retain their exact manifest/archive/index digests. Point:
+  `verifier/supplement/authentication.json`; worker supplement manifest
+  `eafc73232ac1d2d807bde62ad21c8a11473b985c3ad06ee85ce3194d9c7a4841`.
+- C1 zero identities — HELD. Re-merging each original supplemental raw profile
+  reproduces `e1b22983ce2dba1f0bcc1f7127f31ac87696a57275cef9e641e6ebc80311d9d9`;
+  exporting it with that recording's corresponding original executable reproduces
+  its complete archived LLVM export byte-for-byte. The exact kind-0 returns
+  `raw_known_arithmetic.h:34:13–34:21` and `:35:13–35:21` have counts 8/4 in
+  `raw_bits.c:known_add` and counts 4/4 in `known_arithmetic.c:known_add`, in both
+  recordings. Two literal ADD zero identities return `0x3fc00000` in four host
+  rounding modes. Exact prior case16, text SHA256
+  `b0909ad597f132fa4662444c8172098183fb694c2859aff2d6a9047e7e5d4db3`,
+  exercises the compiler returns and complete native/Wasm singles/pairs. Point:
+  `verifier/supplement/recording-audit.json:variants[*].llvm[0..3]`, original
+  supplemental native.log lines1–4. Independent rational predictions also check
+  every emitted word/shadow cache across all four fixtures, including 3/4 and 3/8.
+- C2 coordinate wrapper — HELD. Exact `bridge.c:stage_result` region
+  `1710:115–1710:142` has count 4 in each corresponding original executable.
+  Exact prior case54, text SHA256
+  `c4b060eb6d1914bfb388991e1e3a6895398c42b9e675c525c9e08f557ab5b312`,
+  produces v40/basev38 and inherited lower-left/half-integer coordinate metadata.
+  Full native/Wasm single/pair results match and the original-source consumer
+  approves. Points: `recording-audit.json:variants[*].llvm[4]`, original
+  supplemental native.log lines5–6 and consumer.json results[1].
+- J1 JavaScript proof — HELD. Original-source Node V8 profiles have exact nested
+  range counts 1/2 at 11519–11565 and 11978–11987 in `constant-domain.mjs:152,156`.
+  Source SHA256 remains
+  `0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b`.
+  Valid `[ADD,MUL]` approves; deleting only inherited sineContract from original
+  otherwise-valid ADD/SIN metadata rejects. Three accessor attacks invoke zero
+  getters. Points: `recording-audit.json:variants[*].v8`, original supplemental
+  consumer.json results[2] and attacks[0]; full Node profiles are retained.
+- H1/H2 touched harness — HELD. A direct replay with the original hot executable
+  and original Wasm passes. Actual native-output word/shadow corruption fails
+  the literal assertions at `supplement.mjs:82,83`; reversed policy operations
+  fail consumer approval at `:22`. Sixteen missing/zero coverage, executable,
+  count/rounding and provenance receipt attacks reject. Node/Python/Bash syntax,
+  diff and task-policy checks pass. Points: `guard-attacks.json`,
+  `final-checks.json`, actual outputs in the incremental archive. Critic source-line
+  and duplicate-shadow injection corrections preserve their initial attempts in
+  `guard-attack-correction.json`; no faulty report was accepted. Canonical shell
+  invocation and receipt call are declarative wiring to these directly exercised
+  implementations, individually waived without restarting unrelated acceptance.
+
+P0–P11 and P13 remain HELD from the original critique: integer arithmetic,
+literal authority, unsafe/unknown facts, joins/address/grammar/storage, all old
+results and the closed extension inventory, metadata/bank ownership, actual
+physical GPU words/RGBA/math and source faults, novel attacks/sabotage and the
+accepted scrubbed pristine clone. Their runtime, dependency and evidence bytes
+are unchanged. P12 is now HELD: all 126 changed native nonblank lines classify
+as 83 HELD/43 prior waivers; all 23 JS lines as 19 HELD/4 prior waivers; zero
+remaining executable proof gaps. LLVM containing/nested region semantics are
+retained, rather than guessed exact-line counts. No full, cold-clone or GPU
+repeat was needed. Full original compositor sources, dynamic uniform/geometry/
+indirect ranges, production negotiation/imports and performance remain gated.
+
+SUITE: adopt the already committed `supplement-cases.json` literal zero identity
+and coordinate texts from the independent critic, plus the two policy fixtures,
+as permanent deterministic regressions through `supplement.mjs` in the canonical
+`make verify-E6-T12g6m1` recipe. Complete results, literal caches, inherited policy,
+inert getters and specific original coverage points are asserted. Promoted
+fixture/guard/receipt/recipe source hashes are sealed in `final-checks.json` and
+the incremental manifest. The broader independent oracle, novel seed and real
+sabotage evidence remain preserved in the first critic archive.
+
+Incremental critic seal: `evidence/virgl-known-arithmetic/verifier/supplement/`,
+137 indexed members, 6,423,178 archive bytes: authenticated original binaries,
+raw/merged original profiles, complete independently re-exported LLVM coverage,
+original Node V8, complete results, positive replay, actual guard fault outputs,
+receipt attacks and promoted-source bytes. Previous worker/critic seals are
+immutable; all 4,202 historical untracked paths retain filename-list SHA256
+`17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac`.
+
+- Manifest `b09541da5a384c3b1edf283e6ec25725616e865cfd55eb29bc9f516192ffe532`.
+- Archive `97c4e8b32de9631b7951731dfe9b1e41674a3b5fbb859b62136afd7826735dd7`.
+- Index `3aa4773e5e701eaf743ddcdd6c91ef3d1969297f491ac3054dedec19561bfb51`.
+- Verdict `f7f1bde9f1d31559e8427d7d5acad6305896797af83e3ccfd93bd11b7dfac114`.
+
+Commands: incremental critic `authenticate.py`, `audit_recording.py` (original
+`xcrun llvm-profdata merge -sparse`/`llvm-cov export`), original-hot-binary
+`supplement.mjs` replay with Node V8, `receipt.py --supplement`, `attack_guard.py`,
+`final_checks.py`, `write_verdict.py`, `seal.py`; policy and queue regenerated
+before committing verified status. No runtime implementation was edited.

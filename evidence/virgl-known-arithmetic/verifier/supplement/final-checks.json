@@ -1,0 +1,187 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-final-checks-v1",
+  "status": "passed",
+  "commands": [
+    {
+      "argv": [
+        "node",
+        "--check",
+        "tools/virgl-known-arithmetic/supplement.mjs"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "tools/verify-virgl-known-arithmetic.sh"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exit": 0,
+      "stdout": "task-policy: OK (active=E6-T12g6m1)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/virgl-known-arithmetic/receipt.py",
+        "--supplement",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-known-arithmetic-critic-supplement/guard-replay/report.json",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-known-arithmetic-critic/unpacked/hot/native/report.json"
+      ],
+      "exit": 0,
+      "stdout": "E6-T12g6m1 targeted coverage receipt gate passed\n",
+      "stderr": ""
+    },
+    {
+      "gate": "Python syntax, without creating __pycache__",
+      "sources": [
+        "tools/virgl-known-arithmetic/receipt.py",
+        "tools/virgl-known-arithmetic/supplement-seal.py",
+        "evidence/virgl-known-arithmetic/verifier/supplement/attack_guard.py",
+        "evidence/virgl-known-arithmetic/verifier/supplement/audit_recording.py",
+        "evidence/virgl-known-arithmetic/verifier/supplement/authenticate.py",
+        "evidence/virgl-known-arithmetic/verifier/supplement/final_checks.py"
+      ],
+      "status": "passed"
+    }
+  ],
+  "oldCoverageSha256": "0a35c329fa84eaf29458c3872c73ef62637e108a6be526d322cbd776331f34cd",
+  "coverageClosure": {
+    "native": {
+      "changedLines": 126,
+      "held": 83,
+      "waived": 43,
+      "needsEvidence": 0
+    },
+    "javascript": {
+      "changedLines": 23,
+      "held": 19,
+      "waived": 4,
+      "needsEvidence": 0
+    },
+    "resolved": [
+      "C1",
+      "C2",
+      "J1"
+    ],
+    "method": "original LLVM containing/nested kind-0 ranges and exact original-source V8 ranges"
+  },
+  "carriedHeld": [
+    {
+      "id": "P0",
+      "status": "HELD",
+      "boundary": "Custody and lineage"
+    },
+    {
+      "id": "P1",
+      "status": "HELD",
+      "boundary": "Integer rounding"
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "boundary": "Literal emission and shadow"
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "boundary": "Unsafe and unknown operands"
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "boundary": "Join and address facts"
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "boundary": "Whole-text retry and old results"
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "boundary": "Metadata authority"
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "boundary": "Physical words and bytes"
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "boundary": "Owned consumer bank authority"
+    },
+    {
+      "id": "P9",
+      "status": "HELD",
+      "boundary": "Fault sensitivity and diagnostics"
+    },
+    {
+      "id": "P10",
+      "status": "HELD",
+      "boundary": "Storage and grammar"
+    },
+    {
+      "id": "P11",
+      "status": "HELD",
+      "boundary": "Remaining gate"
+    },
+    {
+      "id": "P13",
+      "status": "HELD",
+      "boundary": "Independent attack and sabotage"
+    }
+  ],
+  "promotedSuite": {
+    "reason": "Adopt the two exact first-critic public fixtures and independent literal zero identities, now committed with two policy fixtures and the canonical recurring guard. No redundant implementation-mirroring test is added.",
+    "sources": [
+      {
+        "path": "tools/virgl-known-arithmetic/supplement-cases.json",
+        "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+      },
+      {
+        "path": "tools/virgl-known-arithmetic/supplement.mjs",
+        "sha256": "f2ede860a49ba55f1529b758417b7a78a983f0637aa0c150cb62d0fed0120360"
+      },
+      {
+        "path": "tools/virgl-known-arithmetic/receipt.py",
+        "sha256": "ad756ed8daba65c6d04b1ef022e9d9d08f5dc30637002aa5d9722049eaf6b4ff"
+      },
+      {
+        "path": "tools/verify-virgl-known-arithmetic.sh",
+        "sha256": "37edd36da9b522f979982788f49ab783ead9f8dc94318209d72a3fb7b879f730"
+      }
+    ],
+    "directResult": "four full native/Wasm singles/pairs, literal word/shadow producer checks, inherited coordinates/rejection, three inert getters, five LLVM and two V8 points"
+  },
+  "harnessWiringWaiver": "Canonical shell invocation and main receipt call are declarative wiring; static inspection binds them to the same replay/check_supplement implementations executed directly. Full acceptance walls remain HELD and are not restarted for harness-only wiring.",
+  "historicalUntracked": {
+    "count": 4202,
+    "sha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac"
+  },
+  "runtimeChanges": false,
+  "coldCloneRepeated": false,
+  "gpuRepeated": false
+}
