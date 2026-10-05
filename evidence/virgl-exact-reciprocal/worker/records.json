@@ -1,0 +1,777 @@
+{
+  "schema": "virgl-exact-reciprocal-worker-records-v1",
+  "task": "E6-T12g6m4a",
+  "sourceHead": "bcf97ceb60d139e38d924525c7c00f72092ba576",
+  "records": [
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/exact-reciprocal-sanitize/exact-reciprocal-test",
+      "bytes": 3587160,
+      "sha256": "920e82953742f53435c9b4eb5cc16007a16b23d8a96a56f46c529e5a5f576a89"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 9545,
+      "sha256": "f0b10ba4b17c05ff5c3db99608a402476ac2e91b482e7cdc3238704f59a58a41"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 347708,
+      "sha256": "e94ab5ad12df62f0dd78ddd8360e44906ae514d085aed5f547ee394ee37fc3a9"
+    },
+    {
+      "path": "cold-generated/target/virgl-exact-reciprocal-fault/bridge.c",
+      "bytes": 113767,
+      "sha256": "ccd3f71b5ee0cd3aa72da9a8ac64e764cf585b862857913e53ae7f01c332280b"
+    },
+    {
+      "path": "cold-generated/target/virgl-exact-reciprocal-fault/manifest.json",
+      "bytes": 1187,
+      "sha256": "b48be39f58a938a12b05e99ea7d665f4baac998dc94a0ebdb5515b9072f24664"
+    },
+    {
+      "path": "cold-generated/target/virgl-exact-reciprocal-fault/raw_bits.c",
+      "bytes": 60969,
+      "sha256": "1e6f0ce7f4fd06af2b7eb1b5b3d6b0dfedf4c96b937762d24ca30113c968f8e9"
+    },
+    {
+      "path": "cold-generated/target/virgl-exact-reciprocal-fault/virgl-shader.wasm",
+      "bytes": 347714,
+      "sha256": "939024c126e7b1210037f4888958f346369bf16fd085f07fca69bb8e0d212d22"
+    },
+    {
+      "path": "cold/acceptance.log",
+      "bytes": 13729,
+      "sha256": "b86262757ab87eff14c997423573ff4080313a5da80b37faebaed525fb3297f3"
+    },
+    {
+      "path": "cold/capture-1.json",
+      "bytes": 170,
+      "sha256": "cceee919b9a4c56c026de7f111aa830d69b556186be7eab1e2da883f4dd49ce8"
+    },
+    {
+      "path": "cold/capture-2.json",
+      "bytes": 170,
+      "sha256": "36a8237829dbfa17dc7ecde9c796c0e073a6f76e9f1fc471197403e4009a531c"
+    },
+    {
+      "path": "cold/capture-3.json",
+      "bytes": 170,
+      "sha256": "f65fe1622e5dde959fc6c3486b848819b718a004df4b60d87819f4a829ee813b"
+    },
+    {
+      "path": "cold/capture-fault.json",
+      "bytes": 168,
+      "sha256": "46770eddfe007f926f435160e25eaf5f98fc988f458d5a1a62750e67eaa6e515"
+    },
+    {
+      "path": "cold/cold.log",
+      "bytes": 13992,
+      "sha256": "ca752cced6b332f3ce9b34edb4feda8318f85b5b74ff9f78f87c845487c0b4db"
+    },
+    {
+      "path": "cold/fault-shadow/browser-coverage.json",
+      "bytes": 42468,
+      "sha256": "2e1a3c55b482b6300a6921d21119b7ee8e6b9dda4867e7e844122835ce9cfc5d"
+    },
+    {
+      "path": "cold/fault-shadow/failure.png",
+      "bytes": 38614,
+      "sha256": "a1257adf1c27cf93682a01bd1e266117b9ef80d4028e7b65143c28bfec1388f8"
+    },
+    {
+      "path": "cold/fault-shadow/report.json",
+      "bytes": 66178,
+      "sha256": "95dd8e44fa734e924cbc4ede4e042ea45f95e83148b22ad9c1dd00ff1f998102"
+    },
+    {
+      "path": "cold/gpu-1/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "07efb11f5e153601fa6f9586944ce99e21b1b51b1fab9e0077aec210bff24cca"
+    },
+    {
+      "path": "cold/gpu-1/browser.png",
+      "bytes": 55567,
+      "sha256": "9fb241fdf03ca82186ed671a0fdca7d246b4bdd0aa67d4c918cccec897ceea9c"
+    },
+    {
+      "path": "cold/gpu-1/report.json",
+      "bytes": 84306,
+      "sha256": "acbf92e2a432b2325ef8ac7f03582992258e71edd73059ebf031ea27cfb96900"
+    },
+    {
+      "path": "cold/gpu-2/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "3b577e4695c5cc58dab709d8d701215bef1640ad2f3967d52adbea3e82a8a60d"
+    },
+    {
+      "path": "cold/gpu-2/browser.png",
+      "bytes": 55991,
+      "sha256": "5a65f4e6f6349e71b3add3da602a998ed6ca2fc80e7576ed636abf68c582e90c"
+    },
+    {
+      "path": "cold/gpu-2/report.json",
+      "bytes": 84306,
+      "sha256": "5d3879d88f7f0d450a36b7e33337f5313a1d722865d2020bf86235b631fe523e"
+    },
+    {
+      "path": "cold/gpu-3/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "edb1e24d824abad60f9539240b77968b92b53a1da9c1f07e9300c376a043c9c0"
+    },
+    {
+      "path": "cold/gpu-3/browser.png",
+      "bytes": 55819,
+      "sha256": "ac7357ddfd106e6a170bb45a9af9e40ab156e8bb0dac8a762c6966a06c669541"
+    },
+    {
+      "path": "cold/gpu-3/report.json",
+      "bytes": 84306,
+      "sha256": "8deff27a33a11a404d560abc1a124a2f7f374cca3f877a4d5fd547c8a071f306"
+    },
+    {
+      "path": "cold/inputs.bin",
+      "bytes": 66246,
+      "sha256": "c84f0a1f293fe3ac85c2391ed37d65f2f5620a4386284e1e2d1ca5926e5e05b7"
+    },
+    {
+      "path": "cold/native-coverage.json",
+      "bytes": 15024796,
+      "sha256": "7e06630ff24fa98369771f9eb5968d823aac5b403124a637bb561f91af8fab3f"
+    },
+    {
+      "path": "cold/native-wasm.json",
+      "bytes": 181605,
+      "sha256": "a4928fb07aeac04a5f3a4c873a33efdb2664a7bcbce0deb01c8552505294e0d6"
+    },
+    {
+      "path": "cold/native.profdata",
+      "bytes": 63992,
+      "sha256": "7286ef4544a0b2022c485e750d1e8bda3deff83d583af400c6f10c2773cf0722"
+    },
+    {
+      "path": "cold/native.profraw",
+      "bytes": 107528,
+      "sha256": "7611e14f91cd54a3d700aa778507b190c6db2aae11d3898e025f8429617bf955"
+    },
+    {
+      "path": "cold/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cold/native.stdout",
+      "bytes": 105241,
+      "sha256": "c36816e6891ce77f74b601d33040a4f8d2565b7a339b49d445c4c21aed5ae5af"
+    },
+    {
+      "path": "cold/node-v8/coverage-78826-1791207105656-0.json",
+      "bytes": 267072,
+      "sha256": "ac25fb0118e92bd18a74f8f5ee4e6822e095a434c1b6e1c60f91d53ce0cc7cde"
+    },
+    {
+      "path": "cold/prior-exact-pair.log",
+      "bytes": 14037,
+      "sha256": "a463475a0b9300810709eb419e6fc68de4ed605c3a2ff98d9d29491e812aca3f"
+    },
+    {
+      "path": "cold/prior-exact-pair/acceptance.log",
+      "bytes": 13999,
+      "sha256": "f837ec372f5eb92f523564c6373fe743d701fe0006f2b01ec20c1393113b7752"
+    },
+    {
+      "path": "cold/prior-exact-pair/capture-1013904242.json",
+      "bytes": 769,
+      "sha256": "db3c0d3efac07f1b8366edff5473491fa5ace7ecb3eb2c98f073be972a8967af"
+    },
+    {
+      "path": "cold/prior-exact-pair/capture-1779033703.json",
+      "bytes": 769,
+      "sha256": "5745f7d49d8f09fdb8263e83bf96f18604085d2a1a202b992d4c81b0e2244d67"
+    },
+    {
+      "path": "cold/prior-exact-pair/capture-3144134277.json",
+      "bytes": 769,
+      "sha256": "cdbd655c5bd4b36d3bb26d7d08d7a388467b0a461c0bea65d01037bb21073a8e"
+    },
+    {
+      "path": "cold/prior-exact-pair/capture-fault-interface.json",
+      "bytes": 39995,
+      "sha256": "fa194ba41e2d764d23a037b63f19e22251b240c9a6f12849b9b16ab13bc54608"
+    },
+    {
+      "path": "cold/prior-exact-pair/capture-fault-metadata.json",
+      "bytes": 38369,
+      "sha256": "d9cfb20b6913af909f605f4e5e57f84afd1176252bb3a5fbffdbee00f96ac959"
+    },
+    {
+      "path": "cold/prior-exact-pair/coverage-audit.json",
+      "bytes": 239310,
+      "sha256": "41c162e0df310259fe92fac4e9905b5887cd8ea039b9151414bd25f7fbc7d326"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-interface/browser-coverage.json",
+      "bytes": 118635,
+      "sha256": "3572d58ab6fb5637052d858200bea83cab99e88f058046591ada2b7576c0225d"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-interface/failure.png",
+      "bytes": 50744,
+      "sha256": "93878067f0ad78adda1f710903a2c30fba89d6190487f9db09a6826b77dfe099"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-interface/report.json",
+      "bytes": 163981,
+      "sha256": "1db3985f50631846cdeff88092bc555af56abd315e398c01dc25408259a6928e"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-metadata/browser-coverage.json",
+      "bytes": 118101,
+      "sha256": "4790d874b7d762c5b254dcfa21e75aad15b6a46ffc798d7caf703b4671674b29"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-metadata/failure.png",
+      "bytes": 47486,
+      "sha256": "9363a53fb5328dfafd3fce7325a74962ee7a7cb07dfed8b040a628f904fca3bd"
+    },
+    {
+      "path": "cold/prior-exact-pair/fault-metadata/report.json",
+      "bytes": 158367,
+      "sha256": "486bc2fbdbce70eed4bf8b37e399b2ec94d4ac3945717180c25bb50ce588af89"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1013904242/browser-coverage.json",
+      "bytes": 162618,
+      "sha256": "249f9af9829c74398507761865a7610e7d546a40e0c01530a099fef8881fd3be"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1013904242/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1013904242/report.json",
+      "bytes": 82491460,
+      "sha256": "82680f5653e3cee5c900c57dc2a08f09c11d311c9f5972e1e2233034a0af9759"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1779033703/browser-coverage.json",
+      "bytes": 162753,
+      "sha256": "b064d56d505b9747aa876682b5fd62a28a34d77a55c0d1344d1682fac3cedfb5"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1779033703/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-1779033703/report.json",
+      "bytes": 82446488,
+      "sha256": "d094473fdafcd6cd93ad9ca39eaa00e49c52185b5eef878c44b91a4d2edb77f6"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-3144134277/browser-coverage.json",
+      "bytes": 162621,
+      "sha256": "fea5fdfc0f9384410b8fa78d463a871468f5a234688df5cf6a1939c7d457e895"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-3144134277/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "cold/prior-exact-pair/gpu-3144134277/report.json",
+      "bytes": 82543337,
+      "sha256": "2ed07d562903b31609bd290f8c19bfda0f7977847342c98b3351ba373c4cc70f"
+    },
+    {
+      "path": "cold/prior-exact-pair/legacy-original/virgl-shader",
+      "bytes": 364736,
+      "sha256": "722d35ca908c1109598ab83f8e0c69d40875127ec0c7f1b0f696750045b7ddbc"
+    },
+    {
+      "path": "cold/prior-exact-pair/legacy-original/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "cold/prior-exact-pair/legacy-original/virgl-shader.wasm",
+      "bytes": 339292,
+      "sha256": "5bc734aa578cd384e77cef975a0866fa10d1a568adb96a5f8a51916522eca21a"
+    },
+    {
+      "path": "cold/prior-exact-pair/legacy.json",
+      "bytes": 5004113,
+      "sha256": "740e5a003d019fba7ac584ffca446ebb571f0416aaba2f032c276daaa022eabb"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/cases.bin",
+      "bytes": 630594,
+      "sha256": "f01e46a63855adbfbce206ab02b2868c9f1bb52494eaf42e99410afe8717484a"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/coverage.json",
+      "bytes": 15305872,
+      "sha256": "1add670273dd2416ed71977af07ae679c5748abc9c6e64cf4f1c045e1d55ff32"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/native.log",
+      "bytes": 25203649,
+      "sha256": "431ad3d2435849f4803009e37aaf6b589e8eac822f37c2fe39443a8cec35c21f"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/native.profdata",
+      "bytes": 76544,
+      "sha256": "704fbd3d08efcc698c9f42f092033030cc1758ab838883366c96d692312de0e7"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/native.profraw",
+      "bytes": 108016,
+      "sha256": "396211e965a15157f5c5692a34a0a3f725d1f4a906d42f320b7946055c15db2c"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/predictions.json",
+      "bytes": 803982,
+      "sha256": "701e0c101be94d15c5f87ff3f483d38b2ae57fedc823d495e38f3a7eeca7f08b"
+    },
+    {
+      "path": "cold/prior-exact-pair/native/report.json",
+      "bytes": 31297522,
+      "sha256": "522ba9af9d3969d6b6da8ba245d3a08508dfcbc2ebb8538d764b0f5931cc40fb"
+    },
+    {
+      "path": "cold/prior-exact-pair/node-v8/coverage-79273-1791207131746-0.json",
+      "bytes": 263722,
+      "sha256": "9f99740858bd0fcb289f9f8335dc8cb4975fa84653ac4cbb2a116144d8061eea"
+    },
+    {
+      "path": "cold/prior-exact-pair/node.json",
+      "bytes": 6154178,
+      "sha256": "58fb2cb657342b1339440d96fb77d56063217608964d0e99bbd780cc468a2353"
+    },
+    {
+      "path": "cold/prior-exact-pair/receipt.json",
+      "bytes": 155719,
+      "sha256": "2814c9c889ffeca9f649f3e80139ad8de489e0c69ed741fbf1c94e4fd0dad299"
+    },
+    {
+      "path": "cold/prior-exact-pair/stack/bridge.su",
+      "bytes": 1782,
+      "sha256": "2fa69167b7d8eff8d904fb95cd16be36c0b7af5c49702a345afc504cf4c80dc2"
+    },
+    {
+      "path": "cold/prior-exact-pair/stack/raw_bits.su",
+      "bytes": 881,
+      "sha256": "3602dbded29e56e0164dc638a01ed25418e93b4c60d6b7b0beb9ca0b939fdfe3"
+    },
+    {
+      "path": "cold/provenance.json",
+      "bytes": 3259,
+      "sha256": "6087deeaca8e7650bdf3336349b188b2d738e541586322af29e8380e353bc974"
+    },
+    {
+      "path": "cold/receipt.json",
+      "bytes": 9252,
+      "sha256": "b1d7bc9e29d776a19c31da8aed35630310e0c993ab6efbef959471cad3d3e521"
+    },
+    {
+      "path": "cold/report.json",
+      "bytes": 871,
+      "sha256": "37adcf81c123d70280b3e1c6d211890af5797f491fa1bf5367dbc3a812c1abe6"
+    },
+    {
+      "path": "cold/sabotage.log",
+      "bytes": 1040,
+      "sha256": "5157c517ab75c1db353594bb621c6fc70f1dfa66cfcb5583d7464b593a3528fc"
+    },
+    {
+      "path": "cold/sabotaged.json",
+      "bytes": 62902,
+      "sha256": "81d5a1dd521a7c5d1339170b9f86b7866e411c9c40d411545c37b7eb2c8119ea"
+    },
+    {
+      "path": "generated/renderer/virgl-shader/build/exact-reciprocal-sanitize/exact-reciprocal-test",
+      "bytes": 3586040,
+      "sha256": "08021e4734471c0836cee99040ef5a0a8f8b52785ebe7ef943fc46505cf8eeb5"
+    },
+    {
+      "path": "generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 9545,
+      "sha256": "f0b10ba4b17c05ff5c3db99608a402476ac2e91b482e7cdc3238704f59a58a41"
+    },
+    {
+      "path": "generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 347708,
+      "sha256": "e94ab5ad12df62f0dd78ddd8360e44906ae514d085aed5f547ee394ee37fc3a9"
+    },
+    {
+      "path": "generated/target/virgl-exact-reciprocal-fault/bridge.c",
+      "bytes": 113767,
+      "sha256": "ccd3f71b5ee0cd3aa72da9a8ac64e764cf585b862857913e53ae7f01c332280b"
+    },
+    {
+      "path": "generated/target/virgl-exact-reciprocal-fault/manifest.json",
+      "bytes": 1187,
+      "sha256": "b48be39f58a938a12b05e99ea7d665f4baac998dc94a0ebdb5515b9072f24664"
+    },
+    {
+      "path": "generated/target/virgl-exact-reciprocal-fault/raw_bits.c",
+      "bytes": 60969,
+      "sha256": "1e6f0ce7f4fd06af2b7eb1b5b3d6b0dfedf4c96b937762d24ca30113c968f8e9"
+    },
+    {
+      "path": "generated/target/virgl-exact-reciprocal-fault/virgl-shader.wasm",
+      "bytes": 347714,
+      "sha256": "939024c126e7b1210037f4888958f346369bf16fd085f07fca69bb8e0d212d22"
+    },
+    {
+      "path": "hot/acceptance.log",
+      "bytes": 11956,
+      "sha256": "a7e3879f468c20b463a2e93bb5a0a9c894157fbbe2ee81dc6602b4561e84e7e8"
+    },
+    {
+      "path": "hot/capture-1.json",
+      "bytes": 170,
+      "sha256": "42bb82e23b02380a37a526ea5b6a8fec694df79bbb14aa65107748d175af068b"
+    },
+    {
+      "path": "hot/capture-2.json",
+      "bytes": 170,
+      "sha256": "23bf986f23c140965b4ad32f39cd4c56c5f27346621e02b8bb3304f3e4186635"
+    },
+    {
+      "path": "hot/capture-3.json",
+      "bytes": 170,
+      "sha256": "151e94ead8dc239f1e8a52ca7ce0e1fb803593e302b81e153d4d112686238aee"
+    },
+    {
+      "path": "hot/capture-fault.json",
+      "bytes": 168,
+      "sha256": "796c6bcc29366cfe86571cea4c714d962bf0107606e285052e8b7d5765f91c23"
+    },
+    {
+      "path": "hot/fault-shadow/browser-coverage.json",
+      "bytes": 42468,
+      "sha256": "5f298301b875683c8db56efce93ceb0c7e63cd18105549d73797b3a78254d3df"
+    },
+    {
+      "path": "hot/fault-shadow/failure.png",
+      "bytes": 38614,
+      "sha256": "a1257adf1c27cf93682a01bd1e266117b9ef80d4028e7b65143c28bfec1388f8"
+    },
+    {
+      "path": "hot/fault-shadow/report.json",
+      "bytes": 70546,
+      "sha256": "2a5f16eb0f864471815ffd7959da68c352195a8752cd5a9c2e68a67337fa18a0"
+    },
+    {
+      "path": "hot/gpu-1/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "226a53e626b056f154575bf568def83a6a7f7c2af90786a33c246d7d70b7ed7f"
+    },
+    {
+      "path": "hot/gpu-1/browser.png",
+      "bytes": 55567,
+      "sha256": "9fb241fdf03ca82186ed671a0fdca7d246b4bdd0aa67d4c918cccec897ceea9c"
+    },
+    {
+      "path": "hot/gpu-1/report.json",
+      "bytes": 88842,
+      "sha256": "f2c3ff9d98f12b52d21209b1991574549559912c51e2f11121ac0c665b3ca6fa"
+    },
+    {
+      "path": "hot/gpu-2/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "d1ace06bbfd33c76cddad92ca6af2b92ccb19b79c2b392321460449b6eec0dd2"
+    },
+    {
+      "path": "hot/gpu-2/browser.png",
+      "bytes": 55991,
+      "sha256": "5a65f4e6f6349e71b3add3da602a998ed6ca2fc80e7576ed636abf68c582e90c"
+    },
+    {
+      "path": "hot/gpu-2/report.json",
+      "bytes": 88842,
+      "sha256": "d2367f638d52946d3035761130f7334790e0b2633c4cccda88c7c0de422b4332"
+    },
+    {
+      "path": "hot/gpu-3/browser-coverage.json",
+      "bytes": 42376,
+      "sha256": "67d2a5c694ec5f5306523be1a0cedd352b5edc517f56ba9fb9779d82b037a1ed"
+    },
+    {
+      "path": "hot/gpu-3/browser.png",
+      "bytes": 55819,
+      "sha256": "ac7357ddfd106e6a170bb45a9af9e40ab156e8bb0dac8a762c6966a06c669541"
+    },
+    {
+      "path": "hot/gpu-3/report.json",
+      "bytes": 88841,
+      "sha256": "b6e836179d3dcb55847bd6d45188840f99ad39b546bf2aacd2bf8ac320595ef8"
+    },
+    {
+      "path": "hot/inputs.bin",
+      "bytes": 66246,
+      "sha256": "c84f0a1f293fe3ac85c2391ed37d65f2f5620a4386284e1e2d1ca5926e5e05b7"
+    },
+    {
+      "path": "hot/native-coverage.json",
+      "bytes": 13308732,
+      "sha256": "a3b23c025cb81e88d6714c044f547dabfda233ada828f10ed685a74b820475c9"
+    },
+    {
+      "path": "hot/native-wasm.json",
+      "bytes": 181605,
+      "sha256": "8ee2d6fa69c55008c9fc4a29754b5dae14a442ec3b7b006e4414f5c4c35a2756"
+    },
+    {
+      "path": "hot/native.profdata",
+      "bytes": 63992,
+      "sha256": "7286ef4544a0b2022c485e750d1e8bda3deff83d583af400c6f10c2773cf0722"
+    },
+    {
+      "path": "hot/native.profraw",
+      "bytes": 107528,
+      "sha256": "d2e35598ac522ce99bbe0d726e8674e48e2fab9bb84e4ae340155582adf29eef"
+    },
+    {
+      "path": "hot/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hot/native.stdout",
+      "bytes": 105241,
+      "sha256": "c36816e6891ce77f74b601d33040a4f8d2565b7a339b49d445c4c21aed5ae5af"
+    },
+    {
+      "path": "hot/node-v8/coverage-63842-1791206930447-0.json",
+      "bytes": 266792,
+      "sha256": "ed5705be60fd6ec714a38234ad28286bc6901abd6b381c90ffa35230974b8a33"
+    },
+    {
+      "path": "hot/prior-exact-pair.log",
+      "bytes": 12382,
+      "sha256": "d29e9586f087aa9fd71cfa5356697e9c9da0a790613acbc77736ed87e570077d"
+    },
+    {
+      "path": "hot/prior-exact-pair/acceptance.log",
+      "bytes": 12344,
+      "sha256": "469cd891f794ef2a268cdb65fa9640097ed8f2956ce1f620fb46a5fe284a0b34"
+    },
+    {
+      "path": "hot/prior-exact-pair/capture-1013904242.json",
+      "bytes": 769,
+      "sha256": "ab912ce5343bd7d57d25c845c822ad0d8febf0ab640903f885f4418e1b38ddd3"
+    },
+    {
+      "path": "hot/prior-exact-pair/capture-1779033703.json",
+      "bytes": 769,
+      "sha256": "588ab31eb9085ae366d9a55842075839465bbc0be5bbb15dcaa180dd1e919893"
+    },
+    {
+      "path": "hot/prior-exact-pair/capture-3144134277.json",
+      "bytes": 769,
+      "sha256": "704d494505bd0f1e9ab2b17f1910a3238aff57089db5df78c0be0f9940738d2f"
+    },
+    {
+      "path": "hot/prior-exact-pair/capture-fault-interface.json",
+      "bytes": 39995,
+      "sha256": "b71cd530825ef130e03abc25aa71e965d253b89c69225bec2027a08db0c5a43a"
+    },
+    {
+      "path": "hot/prior-exact-pair/capture-fault-metadata.json",
+      "bytes": 38369,
+      "sha256": "5c66b697da4d6723944d7ab91eae34b0e8d1e986d6f6dc3ad06195815470e3fe"
+    },
+    {
+      "path": "hot/prior-exact-pair/coverage-audit.json",
+      "bytes": 239310,
+      "sha256": "e0812dc034f9db48be46682c5bca9fad51dbd87a208868b524e1a9e8ddae2e8b"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-interface/browser-coverage.json",
+      "bytes": 118635,
+      "sha256": "a52722d1175219ac5590ecbe90a19b6333fe5cc7c181c8cd6e8c670d5c787b14"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-interface/failure.png",
+      "bytes": 50744,
+      "sha256": "93878067f0ad78adda1f710903a2c30fba89d6190487f9db09a6826b77dfe099"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-interface/report.json",
+      "bytes": 168405,
+      "sha256": "acf9fefb056cc6a7b0dd094e188e96f5a87aa1302307921281c1289ad268881b"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-metadata/browser-coverage.json",
+      "bytes": 118101,
+      "sha256": "5265c73e10cdd41f74304563388ecac315745d6eb40b56467e71a04efd6671c5"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-metadata/failure.png",
+      "bytes": 47486,
+      "sha256": "a5910ad02dea1cc4e870cad25328f36a5c7d3d637478199ac7d9dd2562aebf61"
+    },
+    {
+      "path": "hot/prior-exact-pair/fault-metadata/report.json",
+      "bytes": 162791,
+      "sha256": "c1d76f99c94a5a6fcb3bd6b9690e1abdd08a06af758b1fa3513bcd6fe383b38d"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1013904242/browser-coverage.json",
+      "bytes": 162618,
+      "sha256": "c972c7b6b880d82728067d91b72ce767e7616ef2d289dc99a4d9ccac4b497b21"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1013904242/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1013904242/report.json",
+      "bytes": 82495996,
+      "sha256": "35c89be6112be22d5dce92dabf6b7d29415cb5fbe931d1a7d7febfe623eb9006"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1779033703/browser-coverage.json",
+      "bytes": 162753,
+      "sha256": "62e46a9a3a947e4b17e8841668636aa06d04798d890cdb547e2b1f978a89d361"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1779033703/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-1779033703/report.json",
+      "bytes": 82451024,
+      "sha256": "f21145fb5060c46db7b6f227898004f6d2e4f2dca5296e79882f91e402ce3dc3"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-3144134277/browser-coverage.json",
+      "bytes": 162621,
+      "sha256": "4a8aec43f520e6a0891f2cd82a8d4e29cbdb78172381360ef642f245afa4fb64"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-3144134277/browser.png",
+      "bytes": 72751,
+      "sha256": "c3bb363582502bcadd1905a406a273376f8349c060f498d1dd695e02eb286273"
+    },
+    {
+      "path": "hot/prior-exact-pair/gpu-3144134277/report.json",
+      "bytes": 82547873,
+      "sha256": "9a39bf2d958bf27393044516eb3f26c80d67e73f8bb78108c520b79269cafb12"
+    },
+    {
+      "path": "hot/prior-exact-pair/legacy-original/virgl-shader",
+      "bytes": 364736,
+      "sha256": "722d35ca908c1109598ab83f8e0c69d40875127ec0c7f1b0f696750045b7ddbc"
+    },
+    {
+      "path": "hot/prior-exact-pair/legacy-original/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "hot/prior-exact-pair/legacy-original/virgl-shader.wasm",
+      "bytes": 339292,
+      "sha256": "5bc734aa578cd384e77cef975a0866fa10d1a568adb96a5f8a51916522eca21a"
+    },
+    {
+      "path": "hot/prior-exact-pair/legacy.json",
+      "bytes": 5004113,
+      "sha256": "740e5a003d019fba7ac584ffca446ebb571f0416aaba2f032c276daaa022eabb"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/cases.bin",
+      "bytes": 630594,
+      "sha256": "f01e46a63855adbfbce206ab02b2868c9f1bb52494eaf42e99410afe8717484a"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/coverage.json",
+      "bytes": 13589640,
+      "sha256": "c6707e2f522df1dabfa65c71c13453201ae579e6982154b7589d2d62af006fef"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/native.log",
+      "bytes": 25203649,
+      "sha256": "431ad3d2435849f4803009e37aaf6b589e8eac822f37c2fe39443a8cec35c21f"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/native.profdata",
+      "bytes": 76544,
+      "sha256": "704fbd3d08efcc698c9f42f092033030cc1758ab838883366c96d692312de0e7"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/native.profraw",
+      "bytes": 108016,
+      "sha256": "770a302ffd6774d0935bcb333be38c730cc4e531b40dd3b89bec1ea7a045a2a2"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/predictions.json",
+      "bytes": 803982,
+      "sha256": "701e0c101be94d15c5f87ff3f483d38b2ae57fedc823d495e38f3a7eeca7f08b"
+    },
+    {
+      "path": "hot/prior-exact-pair/native/report.json",
+      "bytes": 31297522,
+      "sha256": "6ec42475024c872779e667dfd5c14e98f3de0153b08dab4829eeee8faac522d9"
+    },
+    {
+      "path": "hot/prior-exact-pair/node-v8/coverage-64236-1791206955721-0.json",
+      "bytes": 263387,
+      "sha256": "7ca0e00294adb35d3cc621209794c1a8806e7ad36d1bf9bc0dde916f8ff07a7c"
+    },
+    {
+      "path": "hot/prior-exact-pair/node.json",
+      "bytes": 6154178,
+      "sha256": "88d152d1a06981b511f8f183ff42d3b0fe7c2a8771ec154135b564f78b133873"
+    },
+    {
+      "path": "hot/prior-exact-pair/receipt.json",
+      "bytes": 160388,
+      "sha256": "710014ada76b976999f933618083bfd497d9911188cfe2d8218a6d8c2ddb9c71"
+    },
+    {
+      "path": "hot/prior-exact-pair/stack/bridge.su",
+      "bytes": 1782,
+      "sha256": "2fa69167b7d8eff8d904fb95cd16be36c0b7af5c49702a345afc504cf4c80dc2"
+    },
+    {
+      "path": "hot/prior-exact-pair/stack/raw_bits.su",
+      "bytes": 881,
+      "sha256": "3602dbded29e56e0164dc638a01ed25418e93b4c60d6b7b0beb9ca0b939fdfe3"
+    },
+    {
+      "path": "hot/provenance.json",
+      "bytes": 3259,
+      "sha256": "6087deeaca8e7650bdf3336349b188b2d738e541586322af29e8380e353bc974"
+    },
+    {
+      "path": "hot/receipt.json",
+      "bytes": 9251,
+      "sha256": "34d9be135506ddfb918b72a53c59444e0be6fec334e26877aeba7fec080449d9"
+    },
+    {
+      "path": "hot/sabotage.log",
+      "bytes": 816,
+      "sha256": "f55cdb7faf2d9e4712ccaf6e7024c17fa48d784dae1c9980595d252b47352b85"
+    },
+    {
+      "path": "hot/sabotaged.json",
+      "bytes": 66766,
+      "sha256": "c9dcd1ee63d8fd39b89d621b5024a6ae648c5637b36296dd3af7a8fc4b5ad4d3"
+    }
+  ]
+}
