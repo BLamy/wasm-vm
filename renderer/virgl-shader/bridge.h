@@ -39,4 +39,13 @@ const char *bridge_translate_exact(int stage, const char *text, size_t length,
 const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
                                   const char *fragment_text, size_t fragment_length);
 
+/* Private paired transaction. Each canonical list has 0..184 stage-local
+ * components; at least one list is nonempty. Both complete texts and lists
+ * are owned before compilation. The checked fragment interface is retained
+ * across the conditional attempt; no caller-provided shader key is accepted. */
+const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_length,
+                                        const struct bridge_exact_word *vertex_components, size_t vertex_count,
+                                        const char *fragment_text, size_t fragment_length,
+                                        const struct bridge_exact_word *fragment_components, size_t fragment_count);
+
 #endif

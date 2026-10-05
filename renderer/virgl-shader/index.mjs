@@ -14,6 +14,36 @@ export const LIMITS = Object.freeze({
 
 const failure = (code, message) => ({ ok: false, error: { code, message } });
 
+// This helper belongs only to the private paired facet. Every primitive is
+// copied once; no caller-owned tuple or array reaches a native allocation.
+function pairExactComponents(input) {
+  if (!Array.isArray(input)) return null;
+  const length = Object.getOwnPropertyDescriptor(input, "length");
+  if (!length || !("value" in length) || !Number.isInteger(length.value) || length.value < 0 || length.value > 184) return null;
+  const count = length.value, own = Reflect.ownKeys(input);
+  if (own.length !== count + 1 || own.some((key) => key !== "length" &&
+      (typeof key !== "string" || !/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= count))) return null;
+  const components = [];
+  let previous = -1;
+  for (let i = 0; i < count; ++i) {
+    const entry = Object.getOwnPropertyDescriptor(input, String(i));
+    if (!entry || !("value" in entry) || !entry.value || typeof entry.value !== "object" || Array.isArray(entry.value)) return null;
+    const record = entry.value, names = Reflect.ownKeys(record);
+    if (names.length !== 3 || names.some((key) => !["register", "component", "word"].includes(key))) return null;
+    const fields = ["register", "component", "word"].map((key) => Object.getOwnPropertyDescriptor(record, key));
+    if (fields.some((field) => !field || !("value" in field))) return null;
+    const [register, component, word] = fields.map((field) => field.value);
+    if (!Number.isInteger(register) || register < 0 || register > 45 ||
+        !Number.isInteger(component) || component < 0 || component > 3 ||
+        !Number.isInteger(word) || word < 0 || word > 0xffffffff) return null;
+    const key = register * 4 + component;
+    if (key <= previous) return null;
+    previous = key;
+    components.push({ register, component, word });
+  }
+  return components;
+}
+
 /** Create an isolated compiler instance. Each translate result owns its JS
  * strings/metadata; no views into Wasm memory escape. The Wasm API is synchronous
  * and calls are serialized by the JavaScript event loop. */
@@ -21,6 +51,66 @@ export async function createVirglShaderBridge(options = {}) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
   return Object.freeze({
+    translatePairExact(request) {
+      let vertexText, fragmentText, vertexComponents, fragmentComponents;
+      try {
+        if (!request || typeof request !== "object" || Array.isArray(request)) {
+          return failure("invalid-input", "Provide both stage texts and canonical component arrays.");
+        }
+        const names = ["vertexText", "fragmentText", "vertexComponents", "fragmentComponents"], keys = Reflect.ownKeys(request);
+        if (keys.length !== 4 || keys.some((key) => !names.includes(key))) {
+          return failure("invalid-input", "Provide only the four paired exact fields.");
+        }
+        const fields = names.map((key) => Object.getOwnPropertyDescriptor(request, key));
+        if (fields.some((field) => !field || !("value" in field))) {
+          return failure("invalid-input", "Paired exact fields must be own data properties.");
+        }
+        const values = fields.map((field) => field.value);
+        [vertexText, fragmentText] = values;
+        if (typeof vertexText !== "string" || typeof fragmentText !== "string") {
+          return failure("invalid-input", "Provide two primitive stage text strings.");
+        }
+        vertexComponents = pairExactComponents(values[2]);
+        fragmentComponents = pairExactComponents(values[3]);
+        if (!vertexComponents || !fragmentComponents || !(vertexComponents.length || fragmentComponents.length)) {
+          return failure("invalid-input", "Provide canonical 0..184 stage-local components with a nonempty paired union.");
+        }
+      } catch {
+        return failure("invalid-input", "Paired exact request reflection failed.");
+      }
+      for (const text of [vertexText, fragmentText]) {
+        if (text.length > LIMITS.textBytes) return failure("input-too-large", "TGSI text exceeds 49152 bytes.");
+        if (/[^\x09\x0a\x0d\x20-\x7e]/.test(text)) return failure("invalid-input", "TGSI must be printable ASCII without NUL bytes.");
+      }
+      const texts = [vertexText, fragmentText], components = [vertexComponents, fragmentComponents];
+      const textPointers = [0, 0], tuplePointers = [0, 0];
+      try {
+        for (let stage = 0; stage < 2; ++stage) {
+          const text = texts[stage], words = components[stage];
+          const ptr = textPointers[stage] = module._malloc(text.length + 1);
+          if (!ptr) return failure("allocation-failed", "Wasm paired input allocation failed.");
+          for (let i = 0; i < text.length; ++i) module.HEAPU8[ptr + i] = text.charCodeAt(i);
+          module.HEAPU8[ptr + text.length] = 0;
+          if (!words.length) continue;
+          const tuples = tuplePointers[stage] = module._malloc(words.length * 12);
+          if (!tuples) return failure("allocation-failed", "Wasm paired component allocation failed.");
+          const view = new DataView(module.HEAPU8.buffer);
+          for (let i = 0; i < words.length; ++i) {
+            const at = tuples + i * 12, word = words[i];
+            view.setUint32(at, word.register, true); view.setUint32(at + 4, word.component, true); view.setUint32(at + 8, word.word, true);
+          }
+        }
+        const result = module._bridge_translate_pair_exact(textPointers[0], vertexText.length,
+          tuplePointers[0], vertexComponents.length, textPointers[1], fragmentText.length,
+          tuplePointers[1], fragmentComponents.length);
+        return JSON.parse(module.UTF8ToString(result));
+      } finally {
+        for (let stage = 1; stage >= 0; --stage) {
+          if (tuplePointers[stage]) module._free(tuplePointers[stage]);
+          if (textPointers[stage]) module._free(textPointers[stage]);
+        }
+      }
+    },
     translateExact(request) {
       let stage, text, components;
       try {

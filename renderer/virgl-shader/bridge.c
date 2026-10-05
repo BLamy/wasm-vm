@@ -1922,3 +1922,121 @@ const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
    return response;
 }
+
+/* Keep the two owned source copies on the bounded entry stack, and the two
+ * conversions in one checked heap arena. No second entry frame is nested. */
+struct exact_pair_input {
+   char text[BRIDGE_MAX_TEXT + 1];
+   struct raw_exact_bank exact;
+};
+_Static_assert(sizeof(struct exact_pair_input) * 2 <= 104320, "owned pair input bound");
+
+static bool pair_exact_components(struct raw_exact_bank *exact,
+                                  const struct bridge_exact_word *components, size_t count)
+{
+   exact->count = (unsigned)count;
+   if (count) memcpy(exact->components, components, count * sizeof(*components));
+   unsigned previous = 0;
+   for (unsigned i = 0; i < exact->count; ++i) {
+      const struct bridge_exact_word *word = &exact->components[i];
+      if (word->reg >= CONST_REGISTERS || word->component >= 4) return false;
+      unsigned key = word->reg * 4 + word->component;
+      if (i && key <= previous) return false;
+      previous = key;
+      exact->words[word->reg][word->component] = word->word;
+      exact->present[word->reg] |= (unsigned char)(1u << word->component);
+   }
+   return true;
+}
+
+static bool pair_exact_eligible(const char *failed)
+{
+   return strstr(failed, "\"code\":\"parse-error\"") || strstr(failed, "\"code\":\"unsupported-feature\"");
+}
+
+static const char *pair_exact_stage(struct conversion *c, const struct exact_pair_input *input,
+                                   size_t length, bool qualified)
+{
+   const struct raw_exact_bank *exact = &input->exact;
+   const char *failed = check_input(&c->profile, input->text, length);
+   if (!failed) {
+      if (exact->count && !exact_declarations(&c->profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+   } else if (qualified && exact->count && pair_exact_eligible(failed)) {
+      int stage = c->profile.stage;
+      cleanup(c);
+      memset(c, 0, sizeof(*c)); c->profile.stage = stage;
+      failed = check_input_attempt(&c->profile, input->text, length,
+         RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, exact);
+   }
+   return failed;
+}
+
+static const char *pair_exact_finish(struct conversion *stages, const struct exact_pair_input *inputs,
+                                    const size_t *lengths)
+{
+   struct conversion *vertex = &stages[0], *fragment = &stages[1];
+   if (!match_interface(&vertex->profile, &fragment->profile))
+      return error("incompatible-interface", "Fragment GENERIC inputs require matching fully written vertex outputs.");
+   const char *failed = convert(fragment, inputs[1].text, lengths[1], NULL);
+   if (!failed && !checked_fragment_interface(fragment))
+      failed = error("translation-error", "Upstream fragment interpolation metadata differs from the checked interface.");
+   if (!failed) failed = convert(vertex, inputs[0].text, lengths[0], &fragment->variable.fs_info);
+   if (!failed) {
+      begin_response(true);
+      append("{\"ok\":true,\"vertex\":{"); stage_result(vertex);
+      append("},\"fragment\":{"); stage_result(fragment);
+      append("},\"interfaceKey\":"); interface_key(&fragment->profile); append("}");
+   }
+   return failed;
+}
+
+const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_length,
+                                        const struct bridge_exact_word *vertex_components, size_t vertex_count,
+                                        const char *fragment_text, size_t fragment_length,
+                                        const struct bridge_exact_word *fragment_components, size_t fragment_count)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || vertex_count > BRIDGE_MAX_EXACT_WORDS ||
+       fragment_count > BRIDGE_MAX_EXACT_WORDS || !(vertex_count || fragment_count) ||
+       (vertex_count && !vertex_components) || (fragment_count && !fragment_components))
+      return error("invalid-input", "Provide both texts and bounded canonical stage-local exact components.");
+   if (vertex_length > BRIDGE_MAX_TEXT || fragment_length > BRIDGE_MAX_TEXT)
+      return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   struct exact_pair_input inputs[2] = {0};
+   const size_t lengths[2] = {vertex_length, fragment_length};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, fragment_text, fragment_length);
+   if (!pair_exact_components(&inputs[0].exact, vertex_components, vertex_count) ||
+       !pair_exact_components(&inputs[1].exact, fragment_components, fragment_count))
+      return error("invalid-input", "Exact components must be bounded, unique and canonically ordered.");
+   /* Both input banks/texts now belong to this call, before the first actual
+    * allocation. All conversion pointers are released before inputs expire. */
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) return error("allocation-failed", "Paired conversion allocation failed.");
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], false);
+   if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], false);
+   if (!failed) failed = pair_exact_finish(stages, inputs, lengths);
+   bool conditional = ((stages[0].profile.raw_flags | stages[1].profile.raw_flags) & RAW_CONDITIONAL) != 0;
+   bool invalid_input = failed && strstr(failed, "\"code\":\"invalid-input\"");
+   if (conditional && (failed || response_overflow) && !invalid_input) failed = numeric_rejection();
+   else if (response_overflow) failed = error("translation-error", "JSON output exceeded its bound.");
+   bool eligible = failed && pair_exact_eligible(failed);
+   char original[256];
+   if (eligible) snprintf(original, sizeof(original), "%s", failed);
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   if (eligible) {
+      memset(stages, 0, 2 * sizeof(*stages)); stages[1].profile.stage = 1;
+      begin_response(true);
+      failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], true);
+      if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], true);
+      bool invalid = failed && strstr(failed, "\"code\":\"invalid-input\"");
+      if (!failed) failed = pair_exact_finish(stages, inputs, lengths);
+      bool rejected = failed || response_overflow;
+      cleanup(&stages[0]); cleanup(&stages[1]);
+      if (rejected && !invalid) { begin_response(true); append("%s", original); }
+   }
+   free(stages);
+   return response;
+}
