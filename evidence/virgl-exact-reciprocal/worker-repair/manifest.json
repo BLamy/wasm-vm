@@ -1,0 +1,35 @@
+{
+  "schema": "virgl-exact-reciprocal-worker-repair-seal-v1",
+  "task": "E6-T12g6m4a",
+  "sourceHead": "f9319de8c94a88d2670971c6aa927b680b3e3cd7",
+  "records": 30,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 2112501,
+    "sha256": "d7e746d17a73dc3a541e9db22e45a240c7902b7401c3ade9c78a6183c5d195f1"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 4993,
+    "sha256": "d9cd268048091fe033b4502977bb6974d43654e16cd9580b20f88e7e9daca342"
+  },
+  "hotReceiptSha256": "269fe3550f6e2a9e81222e4c90b19d2918eb30e6dbbaf44d77c4d06780508347",
+  "heldWorkerSealSha256": "ad2cdc4bda86e02f04eb24b88ae9270372dd26849d98f098c53c9839917a70ce",
+  "heldColdReceiptSha256": "b1d7bc9e29d776a19c31da8aed35630310e0c993ab6efbef959471cad3d3e521",
+  "mixedOperations": [
+    "ADD",
+    "MUL",
+    "RCP"
+  ],
+  "mixedBranch": {
+    "line": 1694,
+    "column": 15,
+    "true": 1,
+    "false": 24
+  },
+  "nativeCases": 40,
+  "bankAttacks": 25,
+  "metadataAttacks": 100,
+  "guestExecution": false,
+  "productionNegotiation": false
+}

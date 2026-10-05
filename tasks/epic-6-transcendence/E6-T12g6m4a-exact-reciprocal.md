@@ -3,7 +3,7 @@ id: E6-T12g6m4a
 epic: 6
 title: Materialize exact bank-bound power-of-two reciprocal words
 priority: 525.0270105889
-status: evidence-needed
+status: implemented
 depends_on: [E6-T12g6m3c]
 estimate: S
 risk: high
@@ -45,3 +45,9 @@ The recording exercises 39 native/Wasm reciprocal cases, 24 bank attacks, 96 met
 - COVERAGE disposition: new `raw_bits.c` executable hunks and the RCP-only `bridge.c` path are exercised; metadata mixed-operation branch is **needs-evidence**. Build target, guard checks, native/Wasm cases, physical browser path, source fault, pixel sabotage, receipt/seal and cold-clone scripts executed in the sealed run. Static comments, usage text and declarations are waived. SUITE: defer promotion until this coverage gap closes.
 
 Verifier commands: `git diff 7f8cefbb..bcf97ceb`; SHA-256 audit of `evidence/virgl-exact-reciprocal/worker/{manifest.json,records.json,recording.tar.gz}` and all 154 tar members; independent source-hash and hot/cold receipt checks; independent exponent audit; `python3 tools/virgl-exact-reciprocal/capture-provenance.py evidence/virgl-exact-reciprocal/verifier/provenance.json`; bounded direct/indirect, bank, metadata and source-version Wasm attacks; native/Node coverage inspection; screenshot inspection. No implementation source changed.
+
+### 2026-10-05 — worker — evidence repair; incremental verification requested
+
+Harness-only commit `f9319de8c94a88d2670971c6aa927b680b3e3cd7` adds one hand-authored admitted stage with known ADD and MUL followed by direct exact-bank RCP. `node tools/virgl-exact-reciprocal/native-wasm.mjs target/evidence/virgl-exact-reciprocal-repair-smoke` first passed during the edit loop; at the frozen commit, `make verify-E6-T12g6m4a` passed and recorded `target/evidence/virgl-exact-reciprocal/receipt.json`. Its native/Wasm result is 40 cases, 25 strict bank attacks and 100 metadata attacks. The new `mixed-known-arithmetic` case admits only in the exact retry, emits `['ADD','MUL','RCP']`, passes `parseConstantDomain` and the complete bank check, and rejects changed/short banks. `native-coverage.json` records `bridge.c:1694`'s previously uncovered mixed-operation branch with 1 true and 24 false hits. No runtime compiler or consumer source changed between the held original source head and this harness-only commit.
+
+The 30-member supplement `evidence/virgl-exact-reciprocal/worker-repair/recording.tar.gz` (SHA-256 `d7e746d17a73dc3a541e9db22e45a240c7902b7401c3ade9c78a6183c5d195f1`) seals this frozen-head receipt, every receipt-listed recording, native/Wasm binaries, and acceptance log; `manifest.json` links the held original 154-member seal and its pristine-clone receipt. An independent second pass rehashed all 30 supplement members and all 154 held members against their indexes; the historical 4,202 untracked paths remain present. Per the verifier's evidence-only disposition, the original cold-clone result and every HELD prediction are carried forward without a new clone. The repair closes only the missing mixed-contract recording; full originals and live guest offload remain unproven.
