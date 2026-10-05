@@ -1,0 +1,25 @@
+{
+  "schema": "virgl-fragment-coordinate-worker-seal-v1",
+  "task": "E6-T12g6k",
+  "sourceHead": "c947442bad912ebcd46d3ff30a0e4c71be87ca4a",
+  "base": "574d633c17c7436545195c63e534d9fa7859ac74",
+  "records": 127,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 17406171,
+    "sha256": "8bba25788029785c57fd48b2f1a47a522856b178f4b3d5025f14adce43c7d8e2"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 22093,
+    "sha256": "e6c6ab2af48ff5ca58e0794e163ee38075ead285f04c3df6ee822bb33d521bad"
+  },
+  "hotReceiptSha256": "0035f91e92b4c47d05e39367d24e06dfe243fd1941d1a336b2d0b8a7afdd6e9d",
+  "coldReportSha256": "821210827dd50ba460b65a279b79f257da68a558ac79f8c8a15454913b474130",
+  "coldReceiptSha256": "e865adb3109c71d8fae482c401a374fce294387e992c5d43ce17879f237e5776",
+  "directPixels": 298520,
+  "consumerPixels": 196608,
+  "checkedPixels": 495128,
+  "productionNegotiation": false,
+  "guestExecution": false
+}
