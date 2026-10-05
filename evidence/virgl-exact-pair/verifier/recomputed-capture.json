@@ -1,0 +1,17 @@
+{
+  "task": "E6-T12g6m3c",
+  "status": "passed",
+  "gitHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "reportSha256": "61a1bc4f838e71ae591283d108aafd76ddf67c6a6991458ddfc569babbd7e8a1",
+  "nodeReportSha256": "a8fa9b6c601db83767ec44b3f3d30acf8eaf22378d8d7d66f4999c3d5541f92e",
+  "nativeReportSha256": "0a6649d90621e59dc76fd0a046aafe170b5df3253c3fa8ae9c43d2a706886ed5",
+  "checkedPixels": 17984,
+  "checkedFrames": 281,
+  "checkedAttacks": 266,
+  "checkedUploadWords": 340032,
+  "contradictions": [],
+  "oracle": "literal provoking indices, barycentric fractions, packed FragCoord float32 and ordered negative discard; complete actual compiler and packet/upload binding",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "trustedHostWrapper": false
+}

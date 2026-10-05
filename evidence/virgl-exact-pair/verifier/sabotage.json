@@ -1,0 +1,19 @@
+{
+  "task": "E6-T12g6m3c",
+  "status": "caught",
+  "change": "one byte of first complete physical frame flipped in verifier-only copy",
+  "point": "gpu-1779033703/report.json acceptance.rigs[0].draws[0].rgbaBytes[0]",
+  "original": 0,
+  "sabotaged": 1,
+  "sourceSha256": "61a1bc4f838e71ae591283d108aafd76ddf67c6a6991458ddfc569babbd7e8a1",
+  "sabotagedSha256": "a4033d040d45eedbe2accf18c819ef65677823c63549204700eeefca50a258d0",
+  "exitCode": 1,
+  "stderrTail": "AssertionError: both-qualified-flat baseline independent whole-frame equations",
+  "command": [
+    "python3",
+    "tools/virgl-exact-pair/capture-check.py",
+    "evidence/virgl-exact-pair/verifier/sabotage-report.json",
+    "evidence/virgl-exact-pair/verifier/unpacked/hot/node.json",
+    "evidence/virgl-exact-pair/verifier/sabotage-output.json"
+  ]
+}
