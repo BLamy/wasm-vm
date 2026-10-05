@@ -30,6 +30,12 @@ supplies upload authority; this is the existing consumer behavior.
 both original native executables and profiles; the critic must use them rather
 than rebuilt binaries. A fresh critic checks coverage and scoped attacks.
 
+`supplement.mjs BINARY WASM_MODULE OUTPUT` records two literal zero identities,
+four complete public native/Wasm fixtures, and original-source Node V8 policy
+coverage. It checks both duplicate identity return bodies, coordinate composition,
+canonical ADD/MUL validation and inherited rejection without invoking getters.
+The original worker and critic archives remain immutable when adding this proof.
+
 The complete larger original bodies still reject. This prerequisite does not
 prove their dynamic uniform, geometry or indirect ranges. No guest production
 negotiation, public import, deployment, FPS or MIPS claim follows.

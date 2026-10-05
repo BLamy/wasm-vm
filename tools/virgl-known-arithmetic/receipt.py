@@ -7,6 +7,9 @@ SEEDS=[1779033703,3144134277,1013904242]
 def sha(b):return hashlib.sha256(b).hexdigest()
 def require(v,label):
  if not v:raise ValueError(label)
+def check_supplement(s,n):
+ require(s['arithmeticPredictions']==2 and s['hostRoundingModes']==4 and s['publicSinglesPairs']==4 and len(s['nativeRegions'])==5 and len(s['v8Regions'])==2,'targeted original-source coverage')
+ require(s['binary']['sha256']==n['binary']['sha256'] and all(r['region'][4]>0 for r in s['nativeRegions']) and all(r['count']>0 for r in s['v8Regions']),'matching executable and positive nested coverage')
 def main():
  directory=Path(sys.argv[1]).resolve();head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
  require(not subprocess.check_output(['git','diff','--name-only','HEAD'],cwd=ROOT),'freeze tracked sources');sources={};records={}
@@ -30,6 +33,8 @@ def main():
  require(n['hostRoundingModes']==4 and n['arithmeticPredictions']==11608 and n['layout'][:2]==[111744,112],'integer/environment/storage proof')
  artifact('native/cases.bin',n['fixtureSha256']);artifact('native/native.log',n['logSha256']);require(not artifact('native/native.stderr',n['stderrSha256']),'zero sanitizer errors');artifact('native/coverage.json',n['coverageSha256']);source(n['binary']['path'],n['binary']['sha256'])
  require(c['getterInvocations']==0 and len(c['attacks'])>=100 and len(c['banks'])==1,'inert owned policies')
+ supplement=report('supplement/report.json')
+ check_supplement(supplement,n)
  require(len(old['cases'])==10041 and len(old['extensions'])==5,'closed predecessor inventory')
  for p in old['predecessors']:
   for name in ['manifest.json','records.json']:source(p['path']+'/'+name)
@@ -55,4 +60,9 @@ def main():
   if f.is_file()and f.name not in ['receipt.json','acceptance.log']:artifact(str(f.relative_to(directory)))
  result=dict(schema='virgl-known-arithmetic-receipt-v1',task='E6-T12g6m1',status='passed',gitHead=head,nativeCases=len(wanted),arithmeticPredictions=n['arithmeticPredictions'],seeds=SEEDS,legacyCases=10041,legacyExtensions=5,metadataAttacks=len(c['attacks']),checkedWords=words,checkedPixels=pixels,physicalOutputFaults=faults,guestExecution=False,productionNegotiation=False,sources=list(sources.values()),records=list(records.values()))
  (directory/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print(f'E6-T12g6m1 receipt passed: {words} words, {pixels} pixels')
-if __name__=='__main__':main()
+if __name__=='__main__':
+ if sys.argv[1]=='--supplement':
+  s=json.loads(Path(sys.argv[2]).read_bytes());n=json.loads(Path(sys.argv[3]).read_bytes())
+  require(s['status']=='passed' and s['task']=='E6-T12g6m1' and s['gitHead']==subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'exact supplemental report')
+  check_supplement(s,n);print('E6-T12g6m1 targeted coverage receipt gate passed')
+ else:main()

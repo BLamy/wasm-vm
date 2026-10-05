@@ -22,6 +22,7 @@ node tools/virgl-known-arithmetic/native.mjs "$evidence_dir/native"
 bash renderer/virgl-shader/build.sh wasm
 node tools/virgl-known-arithmetic/wasm.mjs "$evidence_dir/native/report.json" "$evidence_dir/wasm"
 node tools/virgl-known-arithmetic/consumer.mjs "$evidence_dir/native/report.json" "$evidence_dir/consumer.json"
+node tools/virgl-known-arithmetic/supplement.mjs renderer/virgl-shader/build/known-arithmetic-sanitize/known-test renderer/virgl-shader/build/wasm/virgl-shader.mjs "$evidence_dir/supplement"
 node tools/virgl-known-arithmetic/legacy.mjs "$evidence_dir/legacy.json"
 for seed in 1779033703 3144134277 1013904242; do
   node tools/virgl-known-arithmetic/browser.mjs --output "$evidence_dir/gpu-$seed" --seed "$seed"
