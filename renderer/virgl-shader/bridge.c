@@ -1040,11 +1040,6 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    /* A direct MOV of the builtin needs no fabricated opcode or static facts. */
    if (coordinates) s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
    if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
-   if (s->raw && (s->raw->opcode_mask & RAW_DISCARD_OPCODES))
-      for (unsigned i = 1; i < FILE_REGISTERS; ++i) if (s->declared[OUT][i]) {
-         failure_code = "unsupported-feature";
-         return false;
-      }
    for (unsigned i = 0; i < 8; ++i)
       if (s->live && s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
    if (s->raw && (!s->raw->opcode_mask ||
