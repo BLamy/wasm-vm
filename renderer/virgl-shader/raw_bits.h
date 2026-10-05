@@ -90,6 +90,11 @@ enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792,
        RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192,
        RAW_BRANCH_RETRY = 16384, RAW_DEAD = 32768, RAW_UIF_FALSE = 65536, RAW_UIF_TRUE = 131072 };
+/* An optional conservative |value| <= 2^N certificate lives above the eight
+ * authority bits. Zero means no bound; N+1 is stored for 0 <= N <= 100.
+ * It never grants float access, output permission or an exact raw word. */
+#define RAW_FINITE_EXP_SHIFT 16u
+#define RAW_FINITE_EXP_MASK (UINT32_C(255) << RAW_FINITE_EXP_SHIFT)
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -199,6 +204,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);
 bool raw_discard_guaranteed(const struct raw_ir *ir, const struct raw_instruction *instruction);
 /* -1 means unknown; otherwise the post-swizzle raw x predicate is false/true. */
 int raw_uif_truth(const struct raw_ir *ir, const struct raw_source *source);
+/* UINT32_MAX if no finite magnitude certificate; otherwise |value| <= 2^N. */
+unsigned raw_finite_exp(struct raw_lane value);
 bool raw_outputs_safe(const struct profile *profile);
 /* Finalize only unsafe output copies. Returns 1 on guarded admission, 0 on an
  * unsupported dependency, or -1 on allocation failure. No partial publication. */
