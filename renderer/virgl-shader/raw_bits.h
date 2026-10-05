@@ -31,7 +31,10 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit40 is the precise arithmetic feature, not an opcode. */
                   RAW_ISLT = 41, RAW_IMAX, RAW_I2F, RAW_F2I,
                   /* Bit45 is the signed conversion-bank feature. */
-                  RAW_TRUNC = 46, RAW_SSG, RAW_MIN, RAW_MIN_PRECISE, RAW_FRC_PRECISE, RAW_MOV_SAT, RAW_DIV_SAT, RAW_EX2, RAW_LG2, RAW_SIN, RAW_POW };
+                  RAW_TRUNC = 46, RAW_SSG, RAW_MIN, RAW_MIN_PRECISE, RAW_FRC_PRECISE, RAW_MOV_SAT, RAW_DIV_SAT, RAW_EX2, RAW_LG2, RAW_SIN, RAW_POW,
+                  /* Bit57 authenticates fragment coordinates, not an opcode. */
+                  RAW_KILL = 58, RAW_KILL_IF };
+#define RAW_DISCARD_OPCODES ((UINT64_C(1) << RAW_KILL) | (UINT64_C(1) << RAW_KILL_IF))
 #define RAW_POWER_OPCODES (UINT64_C(1) << RAW_POW)
 /* Authenticated fragment builtin convention, never an opcode or range fact. */
 #define RAW_FRAGMENT_COORDINATES_USED (UINT64_C(1) << 57)
@@ -63,7 +66,7 @@ _Static_assert(RAW_POW < 57, "fragment coordinate feature must not overlap an op
 #define RAW_PRECISE_ARITHMETIC_USED (UINT64_C(1) << 40)
 #define RAW_STRUCTURED_OPCODES ((UINT64_C(1) << RAW_UIF) | (UINT64_C(1) << RAW_ELSE) | (UINT64_C(1) << RAW_ENDIF))
 #define RAW_LOOP_OPCODES ((UINT64_C(1) << RAW_BGNLOOP) | (UINT64_C(1) << RAW_BRK) | (UINT64_C(1) << RAW_ENDLOOP))
-#define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES)
+#define RAW_CONTROL_OPCODES (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES | RAW_DISCARD_OPCODES)
 _Static_assert(RAW_MAX_PRECISE < 36, "opcode/precision feature separation");
 _Static_assert(RAW_ADD_PRECISE == 38 && RAW_MUL_PRECISE == 39, "arithmetic/feature separation");
 _Static_assert(RAW_ISLT == 41 && RAW_IMAX == 42 && RAW_IMAX < 64, "signed opcode/feature separation");
@@ -75,11 +78,13 @@ _Static_assert(RAW_MOV_SAT == 51 && RAW_DIV_SAT == 52 && RAW_DIV_SAT < 64, "satu
 _Static_assert(RAW_EX2 == 53 && RAW_LG2 == 54 && RAW_LG2 < 64, "exponent opcode/feature separation");
 _Static_assert(RAW_POW == 56 && RAW_POW < 64, "power opcode/feature separation");
 _Static_assert(RAW_SIN == 55 && RAW_SIN < 64, "sine opcode/feature separation");
+_Static_assert(RAW_KILL == 58 && RAW_KILL_IF == 59 && RAW_KILL_IF < 64, "discard opcode/feature separation");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
        RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
-       RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792 };
+       RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792,
+       RAW_TERMINATING_DISCARD = 2048 };
 /* Checked operands retain only validated use-site fields. The compact
  * destination leaves room for float authority without growing the IR. */
 struct raw_source { enum file file; unsigned index, swizzle[4]; };
@@ -174,6 +179,9 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask);
 /* Called after operand validation; false means a numeric use lacks authority.
  * A rejection publishes neither facts nor an instruction. */
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *instruction);
+/* Only exact checked post-modifier source words can end a conditional edge.
+ * This supplies liveness, never a source/destination numerical fact. */
+bool raw_discard_guaranteed(const struct raw_ir *ir, const struct raw_instruction *instruction);
 bool raw_outputs_safe(const struct profile *profile);
 /* Finalize only unsafe output copies. Returns 1 on guarded admission, 0 on an
  * unsupported dependency, or -1 on allocation failure. No partial publication. */

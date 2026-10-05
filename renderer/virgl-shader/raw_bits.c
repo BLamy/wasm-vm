@@ -154,6 +154,21 @@ static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_
    return value;
 }
 
+bool raw_discard_guaranteed(const struct raw_ir *ir, const struct raw_instruction *instruction)
+{
+   if (instruction->opcode == RAW_KILL) return true;
+   for (unsigned lane = 0; lane < 4; ++lane) {
+      struct raw_lane value = precise_source(ir, instruction, 0, lane, false);
+      uint32_t magnitude = value.one & UINT32_C(0x7fffffff);
+      /* Ordered binary32 < +0: NaNs and both zeros are false. Unknown
+       * encodings retain a possibly surviving edge, even with a known sign. */
+      if ((value.zero | value.one) == UINT32_MAX &&
+          (value.one & UINT32_C(0x80000000)) && magnitude &&
+          magnitude <= UINT32_C(0x7f800000)) return true;
+   }
+   return false;
+}
+
 /* SAT introduces no numerical source authority. A statically known, normal
  * divisor is required at this exact post-modifier source version. Unit magnitude
  * preserves the existing numeric domain; nonunit division requires a known
@@ -440,6 +455,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_ENDLOOP:
       case RAW_UIF:
       case RAW_ELSE:
+      case RAW_KILL:
+      case RAW_KILL_IF:
       case RAW_ENDIF: break; /* Recorded above without a destination. */
       }
       /* Each structured predecessor owns a physical shadow for every value
@@ -508,7 +525,9 @@ static bool raster_graph(const struct raw_ir *ir, struct raster_analysis *a)
    for (unsigned pc = 0; pc < ir->count; ++pc) {
       enum raw_opcode op = ir->instructions[pc].opcode;
       a->next[pc][0] = pc + 1; a->next[pc][1] = RASTER_NONE;
-      if (op == RAW_UIF || op == RAW_BGNLOOP) {
+      if (op == RAW_KILL || (ir->instructions[pc].flags & RAW_TERMINATING_DISCARD)) {
+         a->next[pc][0] = RASTER_NONE;
+      } else if (op == RAW_UIF || op == RAW_BGNLOOP) {
          if (depth == BRIDGE_MAX_FLOW_DEPTH) return false;
          frames[depth].open = pc;
          frames[depth].otherwise = frames[depth].breaking = RASTER_NONE;
@@ -872,6 +891,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_TRUNC)) emit(&w, "%s", raw_binary32_trunc);
    if (p->raw->opcode_mask & (UINT64_C(1) << RAW_SSG)) emit(&w, "%s", raw_binary32_ssg);
    if (p->raw->opcode_mask & RAW_FRACTION_OPCODES) emit(&w, "%s", raw_binary32_fraction);
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_KILL_IF))
+      emit(&w, "bool raw_discard_negative(highp uint word) {\n highp uint magnitude = word & 2147483647u;\n return (word & 2147483648u) != 0u && magnitude != 0u && magnitude <= 2139095040u;\n}\n");
    /* Keep all previously admitted source byte-identical. Higher declarations
     * extend the physical arrays only when this checked stage needs them. */
    unsigned temporaries = LEGACY_TEMP_REGISTERS;
@@ -887,6 +908,18 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       if (instruction->opcode == RAW_BGNLOOP) { emit(&w, " do {\n"); continue; }
       if (instruction->opcode == RAW_BRK) { emit(&w, " break;\n"); continue; }
       if (instruction->opcode == RAW_ENDLOOP) { emit(&w, " } while (true);\n"); continue; }
+      if (instruction->opcode == RAW_KILL) { emit(&w, " discard;\n"); continue; }
+      if (instruction->opcode == RAW_KILL_IF) {
+         emit(&w, " if (");
+         for (unsigned lane = 0; lane < 4; ++lane) {
+            if (lane) emit(&w, " || ");
+            emit(&w, "raw_discard_negative(");
+            precise_operand(&w, p, instruction, 0, lane);
+            emit(&w, ")");
+         }
+         emit(&w, ") discard;\n");
+         continue;
+      }
       if (instruction->opcode == RAW_UARL) {
          emit(&w, " raw_addr = "); operand(&w, p, &instruction->src[0], 0); emit(&w, ";\n");
          continue;
@@ -998,7 +1031,7 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       }
       if (guarded) emit(&w, " }\n");
    }
-   for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
+   for (unsigned index = 0; p->live && index < FILE_REGISTERS; ++index) if (p->declared[OUT][index]) {
       for (unsigned lane = 0; lane < 4; ++lane) if (p->components[OUT][index] & (1u << lane)) {
          unsigned semantic = p->semantic[OUT][index];
          if (semantic == 1) emit(&w, " gl_Position");

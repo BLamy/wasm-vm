@@ -38,6 +38,9 @@ export const SINE_KIND = "tgsi-bounded-sine-v1";
 export const COORDINATE_PROFILE = "virgl-webgl2-raw-bits-v38";
 export const COORDINATE_KIND = "tgsi-fragment-position-v1";
 export const COORDINATE_KEY = "|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w";
+export const DISCARD_PROFILE = "virgl-webgl2-raw-bits-v39";
+export const DISCARD_KIND = "tgsi-fragment-discard-v1";
+export const DISCARD_KEY = "|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
@@ -49,6 +52,7 @@ const EXPONENT_BASES = new Set(rawProfiles(...Array.from({ length: 34 }, (_, i) 
 const POWER_BASES = new Set(rawProfiles(...Array.from({ length: 36 }, (_, i) => i + 1)));
 const SINE_BASES = new Set(rawProfiles(...Array.from({ length: 35 }, (_, i) => i + 1)));
 const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i) => i + 1)));
+const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -128,8 +132,31 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const discard = value.profile === DISCARD_PROFILE;
+    require(discard === Object.hasOwn(value, "discardBaseProfile") && discard === Object.hasOwn(value, "discardContract"),
+      "Discard contract disagrees with its profile.");
+    if (discard) {
+      require(expectedStage === "fragment" && DISCARD_BASES.has(value.discardBaseProfile), "Discard requires a fragment raw base profile.");
+      const policy = record(value.discardContract, ["kind", "stage", "operations", "source", "comparison", "modifiers", "liveness", "authority", "alwaysDiscards"]);
+      require(policy.kind === DISCARD_KIND && policy.stage === "fragment" && policy.source === "all-four-post-swizzle-word-lanes" &&
+        policy.comparison === "ordered-binary32-any-negative-zero-and-nan-false" && policy.modifiers === "absolute-before-negation" &&
+        policy.liveness === "exclude-proved-discarded-predecessors" && policy.authority === "no-new-numeric-range-or-initialization-facts" &&
+        typeof policy.alwaysDiscards === "boolean", "Unknown fragment discard policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["KILL", "KILL_IF"].includes(op) &&
+        (i === 0 || operations[i - 1] === "KILL" && op === "KILL_IF")), "Invalid discard operation set.");
+      const outputs = array(value.outputs, 1).map(output => record(output, ["index", "name", "type", "semantic", "semanticIndex", "componentMask", "writtenMask"]));
+      require(outputs.length === 1 && outputs[0].index === 0 && outputs[0].name === "fsout_c0" && outputs[0].type === "vec4" &&
+        outputs[0].semantic === "COLOR" && outputs[0].semanticIndex === 0 && outputs[0].componentMask === 15 &&
+        Number.isInteger(outputs[0].writtenMask) && outputs[0].writtenMask >= 0 && outputs[0].writtenMask <= 15 &&
+        (policy.alwaysDiscards || outputs[0].writtenMask === 15), "Discard output lacks its surviving initialization proof.");
+      const base = { ...value, profile: value.discardBaseProfile, outputs };
+      delete base.discardBaseProfile; delete base.discardContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, discard: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
     const coordinates = value.profile === COORDINATE_PROFILE;
     require(coordinates === Object.hasOwn(value, "coordinateBaseProfile") && coordinates === Object.hasOwn(value, "coordinateContract"),
       "Coordinate convention disagrees with its profile.");
@@ -499,7 +526,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
