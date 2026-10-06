@@ -104,6 +104,23 @@ case "$mode" in
       --preload-file build/$mode/geometry.bin@/geometry.bin \
       -o build/$mode/original-92cb-raster.js
     ;;
+  original-92cb-power-domain-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/original_92cb_power_domain.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" native_tests/original_92cb_power_domain.c -lm \
+      -o build/$mode/original-92cb-power-domain-test
+    ;;
+  original-92cb-power-domain-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/geometry.bin || { echo 'Missing authenticated geometry.bin' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 native_tests/original_92cb_power_domain.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-power-domain.js
+    ;;
   original-c580-wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
@@ -129,7 +146,7 @@ case "$mode" in
       "${sources[@]:2}" native_tests/exact_pair.c -lm -o build/exact-pair-sanitize/exact-pair-test
     ;;
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c native_tests/exact_reciprocal.c native_tests/coordinate_prefix.c native_tests/zero_cap.c native_tests/original_c580.c native_tests/original_92cb_geometry.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c native_tests/exact_reciprocal.c native_tests/coordinate_prefix.c native_tests/zero_cap.c native_tests/original_c580.c native_tests/original_92cb_geometry.c native_tests/original_92cb_power_domain.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
   native)

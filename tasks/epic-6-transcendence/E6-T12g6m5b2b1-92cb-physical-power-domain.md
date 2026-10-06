@@ -16,7 +16,7 @@ For the authenticated original 7bf4/92cb quad, three paired banks and single-sam
 
 ## Deterministic acceptance
 
-`make verify-E6-T12g6m5b2b1` authenticates the full predecessor capture; runs native/Wasm-identical checks and physical WebGL2 draws for original vertex pc0..6 and fragment pc2,218..222 arithmetic with complete original bank words; records all input/output words, shader reflection, pixels, renderer identity, source and draw-state digests; independently bounds every covered center under a documented highp/interpolation budget or records a sound rejection. Exercise both active and inactive first-power branches, viewport/edge variants, nonfinite and negative mutations, and source/bank/geometry faults. Record exact-head and pristine-clone evidence and submit to a fresh critic. Ordinary/full original shader rejection remains unchanged.
+`make verify-E6-T12g6m5b2b1` authenticates the full predecessor capture; runs native/Wasm-identical checks and physical WebGL2 draws for original vertex pc0..8 and fragment pc2,208,215,218..222 arithmetic with complete original bank words; records all input/output words, shader reflection, pixels, renderer identity, source and draw-state digests; independently bounds every covered center under a documented highp/interpolation budget or records a sound rejection. Exercise both active and inactive first-power branches, viewport/edge variants, nonfinite and negative mutations, and source/bank/geometry faults. Record exact-head and pristine-clone evidence and submit to a fresh critic. Ordinary/full original shader rejection remains unchanged.
 
 ## Adversarial verification
 
