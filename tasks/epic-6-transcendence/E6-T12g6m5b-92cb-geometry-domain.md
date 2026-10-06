@@ -3,7 +3,7 @@ id: E6-T12g6m5b
 epic: 6
 title: Bound the first geometry-dependent power in the original 92cb compositor
 priority: 525.027010582
-status: in-progress
+status: cancelled
 depends_on: [E6-T12g6m5a]
 estimate: S
 risk: high
@@ -12,7 +12,7 @@ capstone: false
 
 ## Boundary
 
-Under complete authenticated 7bf4d0d0/92cb866a source, paired bank and geometry provenance, prove or soundly reject the original pc221/222 `POW` base domain. The base is computed from varying coordinates via `MAX(x, -x)`, with captured exponent `CONST[6].x = 2`. Exact bank values alone do not bound varying inputs. Keep all other original operations gated unless separately proven; do not grant general `POW` authority.
+Planning container replaced by ordered S tasks E6-T12g6m5b1 (draw-time geometry provenance) and E6-T12g6m5b2 (first original `POW` compiler/physical proof). Exact bank values alone do not bound varying inputs. Keep all other original operations gated unless separately proven; do not grant general `POW` authority.
 
 ## Deterministic acceptance
 
@@ -23,6 +23,10 @@ Under complete authenticated 7bf4d0d0/92cb866a source, paired bank and geometry 
 Attack geometry ownership, viewport extremes, NaN/overflow, base sign, exponent source, bank/source substitutions, and live branch reachability. Inspect actual numeric values and generated hardware reflection before claiming a domain. Reject any evidence that only assumes sampled pixels bound every accepted geometry input.
 
 ## Verification log
+
+### 2026-10-05 — worker — decomposition
+
+The captured 1,957 draws share a four-vertex quad resource, but the private paired translator accepts only source and constants and cannot bind admission to draw-time vertex bytes. The geometry capture/ownership audit and the compiler/physical-domain admission are separate high-risk boundaries. E6-T12g6m5b1 authenticates the former; E6-T12g6m5b2 retains this task's original pc0..222 native/Wasm/WebGL2 acceptance. No general or production geometry authority is granted by the split.
 
 ### 2026-10-05 — worker — prerequisite discovery
 
