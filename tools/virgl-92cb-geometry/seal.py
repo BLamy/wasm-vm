@@ -45,9 +45,8 @@ def main():
             if sha(data) != digest:
                 raise ValueError(prefix + ' generated binary drift: ' + name)
             members[prefix + '-generated/' + name] = data
-        for file in sorted(directory.rglob('*')):
-            if file.is_file():
-                members[prefix + '/' + str(file.relative_to(directory))] = file.read_bytes()
+        for name in sorted([*receipt['files'], 'receipt.json']):
+            members[prefix + '/' + name] = (directory / name).read_bytes()
     members['cold/report.json'] = (cold / 'report.json').read_bytes()
     members['cold/cold.log'] = (cold / 'cold.log').read_bytes()
     output.mkdir(parents=True, exist_ok=True)
