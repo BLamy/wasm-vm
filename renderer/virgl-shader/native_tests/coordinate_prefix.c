@@ -113,8 +113,32 @@ static unsigned probe(const struct raw_exact_bank *exact, bool coordinates, bool
    *x = raw_finite_exp(ir->temporary[41][0]);
    *y = raw_finite_exp(ir->temporary[41][1]);
    unsigned result = raw_finite_exp(ir->temporary[43][0]);
+   if (result <= 100u) {
+      struct raw_instruction negated = {
+         .opcode = RAW_ADD, .dst = {.file = TEMP, .index = 50, .mask = 1},
+         .flags = RAW_MIXED | RAW_CONDITIONAL | RAW_KNOWN_RETRY |
+                  RAW_BRANCH_RETRY | RAW_NEGATE_SOURCE0,
+         .src = {S(TEMP, 43, "xxxx"), S(IMM, 1, "yyyy")}
+      };
+      require(raw_record(ir, &negated), "negated finite source stays numerically usable");
+      require(raw_finite_exp(ir->temporary[50][0]) == UINT32_MAX,
+              "unused signed path cannot inherit the prefix bound");
+   }
    free(ir);
    return result;
+}
+
+static void bound_is_not_authority(void)
+{
+   struct raw_ir *ir = calloc(1, sizeof(*ir));
+   require(ir != NULL, "authority IR allocation");
+   ir->temporary[42][0].origin = 32u << RAW_FINITE_EXP_SHIFT;
+   struct raw_instruction instruction = {
+      .opcode = RAW_ADD, .dst = {.file = TEMP, .index = 50, .mask = 1},
+      .src = {S(TEMP, 42, "xxxx"), S(IMM, 1, "yyyy")}
+   };
+   require(!raw_record(ir, &instruction), "finite bits alone cannot grant float access");
+   free(ir);
 }
 
 int main(int argc, char **argv)
@@ -174,6 +198,7 @@ int main(int argc, char **argv)
    }
    require(fgetc(bank_input) == EOF && !ferror(bank_input), "no trailing bytes");
    require(fclose(bank_input) == 0, "close bank file");
+   bound_is_not_authority();
    puts("STATUS passed");
    return 0;
 }

@@ -171,7 +171,7 @@ unsigned raw_finite_exp(struct raw_lane value)
 
 static void set_finite_exp(struct raw_lane *result, unsigned exponent)
 {
-   if (exponent <= 100u)
+   if ((result->origin & UINT32_C(255)) && exponent <= 100u)
       result->origin = (result->origin & ~RAW_FINITE_EXP_MASK) |
          ((exponent + 1u) << RAW_FINITE_EXP_SHIFT);
 }
@@ -261,11 +261,7 @@ struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no)
    if (float_mode(yes) && float_mode(no))
       origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |
          (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);
-   unsigned yes_exp = finite_exp(yes), no_exp = finite_exp(no);
-   struct raw_lane result = {.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
-   if (yes_exp <= 100u && no_exp <= 100u)
-      set_finite_exp(&result, yes_exp > no_exp ? yes_exp : no_exp);
-   return result;
+   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
 }
 
 static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no, bool mixed)
@@ -323,8 +319,8 @@ static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_
       uint32_t zero = value.zero;
       value.zero = (value.zero & ~sign) | (value.one & sign);
       value.one = (value.one & ~sign) | (zero & sign);
-      if (value.origin & UINT32_C(255)) value.origin = RAW_FLOAT_SHADOW |
-         (value.origin & (RAW_BANK_DEPENDENCY | RAW_OUTPUT | RAW_FINITE_EXP_MASK));
+      if (value.origin & UINT32_C(255))
+         value.origin = RAW_FLOAT_SHADOW | (value.origin & (RAW_BANK_DEPENDENCY | RAW_OUTPUT));
    }
    return value;
 }
@@ -704,8 +700,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
        * with numerical authority. A join can therefore retain a value without
        * borrowing another arm's IN locator or decoding a computed raw value. */
       if (structured && float_mode(result[lane]))
-         result[lane].origin = RAW_FLOAT_SHADOW |
-            (result[lane].origin & (RAW_BANK_DEPENDENCY | RAW_FINITE_EXP_MASK)) |
+         result[lane].origin = RAW_FLOAT_SHADOW | (result[lane].origin & RAW_BANK_DEPENDENCY) |
             (output_legal(result[lane]) ? RAW_OUTPUT : 0);
    }
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];

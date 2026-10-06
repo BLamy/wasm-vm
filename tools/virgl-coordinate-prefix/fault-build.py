@@ -11,8 +11,8 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / 'renderer/virgl-shader'
-NEEDLE = 'if (exponent <= 100u)\n      result->origin ='
-REPLACEMENT = 'if (exponent <= 10u)\n      result->origin ='
+NEEDLE = 'if ((result->origin & UINT32_C(255)) && exponent <= 100u)\n      result->origin ='
+REPLACEMENT = 'if ((result->origin & UINT32_C(255)) && exponent <= 10u)\n      result->origin ='
 
 
 def sha(data):
