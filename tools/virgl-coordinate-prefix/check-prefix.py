@@ -59,6 +59,11 @@ def main():
             ox, oy = f32(words[31 * 4]), f32(words[31 * 4 + 1])
             require(width >= 1 and height >= 1 and f32(words[29 * 4]) == 0,
                     'finite positive denominators and zero cap')
+            require(words[29 * 4] == 0 and words[33 * 4 + 2] == 0xbf800000,
+                    'captured positive zero and negative unit coefficient')
+            signed_zero = f32(words[29 * 4]) * f32(words[33 * 4 + 2])
+            require(signed_zero.is_zero() and signed_zero.is_signed(),
+                    'pc15 signed-zero multiplication stays inside the finite envelope')
             for x, y in [(Decimal('0.5'), Decimal('0.5')),
                          (width - Decimal('0.5'), height - Decimal('0.5')),
                          (Decimal(2) ** 31 - Decimal('0.5'), Decimal('0.5')),
@@ -77,6 +82,7 @@ def main():
                                 'pc25x': str(px), 'pc25y': str(py), 'pc27x': str(low)})
     report = {'schema': 'virgl-coordinate-prefix-independent-v1',
               'sourceInstructionsChecked': len(actual), 'banks': len(lines),
+              'signedZeroPc15Banks': len(lines),
               'sampleCount': len(samples), 'samples': samples}
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + '\n')

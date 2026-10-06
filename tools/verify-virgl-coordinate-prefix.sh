@@ -28,6 +28,14 @@ bash renderer/virgl-shader/build.sh exact-reciprocal-sanitize > "$evidence/recip
 LLVM_PROFILE_FILE="$PWD/$evidence/reciprocal.profraw" \
   node tools/virgl-exact-reciprocal/native-wasm.mjs "$evidence/reciprocal-regression" \
   > "$evidence/reciprocal-regression.log"
+python3 - "$evidence/reciprocal-regression/native-wasm.json" <<'PY'
+import json,sys
+run=json.load(open(sys.argv[1]))
+cases={case['name']:case for case in run['cases']}
+assert run['status']=='passed'
+for name in ['full-original-92cb','full-original-c580']:
+    assert cases[name]['accept'] is False, name
+PY
 node tools/virgl-coordinate-prefix/browser.mjs --output "$evidence/browser" \
   > "$evidence/browser.log" 2>&1
 if node tools/virgl-coordinate-prefix/browser.mjs --output "$evidence/browser-fault" \
@@ -66,9 +74,31 @@ p=Path(sys.argv[1]); sha=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
 files=['banks.bin','banks.json','native.out','wasm.out','independent.json','browser/report.json',
        'browser/browser.png','browser-fault/report.json','source-fault/manifest.json',
        'sabotage/rejection.log','native-coverage.json']
-receipt={'schema':'virgl-coordinate-prefix-worker-receipt-v1',
-         'head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-         'files':{name:sha(p/name) for name in files}}
+sources=['Makefile','renderer/virgl-shader/bridge.c','renderer/virgl-shader/build.sh',
+         'renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/raw_bits.h',
+         'renderer/virgl-shader/native_tests/coordinate_prefix.c',
+         'renderer/virgl-shader/tests/coordinate-prefix.mjs',
+         'tools/verify-virgl-coordinate-prefix.sh',
+         'tools/virgl-coordinate-prefix/browser.mjs',
+         'tools/virgl-coordinate-prefix/capture-banks.py',
+         'tools/virgl-coordinate-prefix/check-prefix.py',
+         'tools/virgl-coordinate-prefix/cold.py',
+         'tools/virgl-coordinate-prefix/fault-build.py',
+         'tools/virgl-coordinate-prefix/seal.py',
+         'tasks/epic-6-transcendence/E6-T12g6m4b-coordinate-prefix-range.md']
+generated=['renderer/virgl-shader/build/coordinate-prefix-sanitize/coordinate-prefix-test',
+           'renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js',
+           'renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm',
+           'renderer/virgl-shader/build/wasm/virgl-shader.wasm']
+head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+dirty=subprocess.check_output(['git','diff','--name-only','HEAD'],text=True).strip()
+assert not dirty, f'exact-head recording requires committed sources: {dirty}'
+browser=json.loads((p/'browser/report.json').read_text())
+assert browser['gitHead']==head and not browser['trackedChanges'] and browser['status']=='passed'
+receipt={'schema':'virgl-coordinate-prefix-worker-receipt-v2','status':'passed',
+         'gitHead':head,'files':{name:sha(p/name) for name in files},
+         'sources':{name:sha(Path(name)) for name in sources},
+         'generated':{name:sha(Path(name)) for name in generated}}
 (p/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
 print('c580 finite prefix: native/Wasm, 3 banks, 48 physical pixels, both source faults and sabotage passed')
 PY
