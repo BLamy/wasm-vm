@@ -16,7 +16,7 @@ Independently bind every original 7bf4/92cb draw's active viewport, framebuffer 
 
 ## Deterministic acceptance
 
-`make verify-E6-T12g6m5b2a` replays all 1,957 selected draws and packet/snapshot citations, emits per-bank ideal pixel-center bounds with independently checked original packet bytes, and rejects viewport, sample-count, and bank substitutions. Native/Wasm numerical auditors agree byte-for-byte for all covered framebuffer pixel centers; an independent rational oracle checks their complete output and report fields. Record exact-head guest-layer evidence and a pristine clone; submit to a fresh critic. Existing full-original rejection remains unchanged.
+`make verify-E6-T12g6m5b2a` replays all 1,957 selected draws and packet/snapshot citations, emits per-bank ideal pixel-center bounds with independently checked original packet bytes, and rejects viewport, sample-count, and bank substitutions. Native/Wasm numerical auditors agree byte-for-byte for all covered framebuffer pixel centers; an independent rational oracle checks their complete output and report fields. Record exact-head command-capture evidence and a pristine clone; submit to a fresh critic. Existing full-original rejection remains unchanged.
 
 ## Adversarial verification
 
