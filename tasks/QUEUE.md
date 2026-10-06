@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T12g6m5b2b** — Prove first original 92cb powers with enforced draw geometry
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -626,7 +625,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0270105821` [E6-T12g6m5b1](epic-6-transcendence/E6-T12g6m5b1-92cb-geometry-provenance.md) — Authenticate original 92cb compositor draw-time quad geometry *(deps: E6-T12g6m5a)*
 - [-] `525.0270105822` [E6-T12g6m5b2](epic-6-transcendence/E6-T12g6m5b2-92cb-first-power.md) — Bind authenticated quad geometry to the first original 92cb powers *(deps: E6-T12g6m5b1)*
 - [x] `525.02701058221` [E6-T12g6m5b2a](epic-6-transcendence/E6-T12g6m5b2a-92cb-raster-provenance.md) — Authenticate original 92cb viewport and raster power-base domain *(deps: E6-T12g6m5b1)*
-- [ ] `525.02701058222` [E6-T12g6m5b2b](epic-6-transcendence/E6-T12g6m5b2b-92cb-first-power-compiler.md) — Prove first original 92cb powers with enforced draw geometry *(deps: E6-T12g6m5b2a)*
+- [~] `525.02701058222` [E6-T12g6m5b2b](epic-6-transcendence/E6-T12g6m5b2b-92cb-first-power-compiler.md) — Prove first original 92cb powers with enforced draw geometry *(deps: E6-T12g6m5b2a)*
 - [x] `525.027010585` [E6-T12g6m1](epic-6-transcendence/E6-T12g6m1-known-arithmetic.md) — Materialize exact known ADD and MUL producer words for bounded consumers *(deps: E6-T12g6l)*
 - [x] `525.027010587` [E6-T12g6m2](epic-6-transcendence/E6-T12g6m2-known-branch-liveness.md) — Exclude proved unreachable raw UIF edges after complete validation *(deps: E6-T12g6m1)*
 - [x] `525.027010588` [E6-T12g6m3a](epic-6-transcendence/E6-T12g6m3a-exact-bank-consumer.md) — Enforce owned exact raw constant words before shared renderer effects *(deps: E6-T12g6m2)*
