@@ -8,6 +8,7 @@
 #include "bridge.h"
 #include "checked_upstream.h"
 #include "raw_bits.h"
+#include "private_92cb_inputs.h"
 #include "vrend/vrend_shader.h"
 #include "tgsi/tgsi_text.h"
 #include "util/os_misc.h"
@@ -1983,7 +1984,7 @@ static const char *pair_exact_stage(struct conversion *c, const struct exact_pai
 }
 
 static const char *pair_exact_finish(struct conversion *stages, const struct exact_pair_input *inputs,
-                                    const size_t *lengths)
+                                    const size_t *lengths, int private_bank)
 {
    struct conversion *vertex = &stages[0], *fragment = &stages[1];
    if (!match_interface(&vertex->profile, &fragment->profile))
@@ -1996,7 +1997,16 @@ static const char *pair_exact_finish(struct conversion *stages, const struct exa
       begin_response(true);
       append("{\"ok\":true,\"vertex\":{"); stage_result(vertex);
       append("},\"fragment\":{"); stage_result(fragment);
-      append("},\"interfaceKey\":"); interface_key(&fragment->profile); append("}");
+      append("},\"interfaceKey\":"); interface_key(&fragment->profile);
+      if (private_bank >= 0)
+         append(",\"private92cbFirstPower\":{\"kind\":\"original-92cb-pc221-222-v1\","
+            "\"bank\":%d,\"completeVertexSha256\":\"7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e\","
+            "\"completeFragmentSha256\":\"92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba\","
+            "\"geometrySha256\":\"0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac\","
+            "\"viewport\":[0,0,1024,768],\"samples\":0,\"colorFormat\":34836,"
+            "\"mode\":5,\"first\":0,\"count\":4,\"drawTimeRecheckRequired\":true,"
+            "\"productionDrawAuthority\":false}", private_bank);
+      append("}");
    }
    return failed;
 }
@@ -2027,7 +2037,7 @@ const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_l
    stages[1].profile.stage = 1;
    const char *failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], false);
    if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], false);
-   if (!failed) failed = pair_exact_finish(stages, inputs, lengths);
+   if (!failed) failed = pair_exact_finish(stages, inputs, lengths, -1);
    bool conditional = ((stages[0].profile.raw_flags | stages[1].profile.raw_flags) & RAW_CONDITIONAL) != 0;
    bool invalid_input = failed && strstr(failed, "\"code\":\"invalid-input\"");
    if (conditional && (failed || response_overflow) && !invalid_input) failed = numeric_rejection();
@@ -2042,11 +2052,103 @@ const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_l
       failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], true);
       if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], true);
       bool invalid = failed && strstr(failed, "\"code\":\"invalid-input\"");
-      if (!failed) failed = pair_exact_finish(stages, inputs, lengths);
+      if (!failed) failed = pair_exact_finish(stages, inputs, lengths, -1);
       bool rejected = failed || response_overflow;
       cleanup(&stages[0]); cleanup(&stages[1]);
       if (rejected && !invalid) { begin_response(true); append("%s", original); }
    }
    free(stages);
+   return response;
+}
+
+static uint32_t private_92cb_word(const unsigned char *bytes)
+{
+   return (uint32_t)bytes[0] | (uint32_t)bytes[1] << 8 |
+      (uint32_t)bytes[2] << 16 | (uint32_t)bytes[3] << 24;
+}
+
+/* The observer preserves every original declaration and instruction through
+ * pc222. Only the two open branch targets are retargeted to a new output tail.
+ * No original pc223+ operation is parsed, translated or certified. */
+static char *private_92cb_prefix(size_t *length)
+{
+   const char *source = private_92cb_fragment;
+   const char *line216 = strstr(source, "\n216: UIF TEMP[167].xxxx :272\n");
+   const char *line217 = strstr(source, "\n217:   UIF TEMP[168].xxxx :242\n");
+   const char *line218 = strstr(source, "\n218:     MUL TEMP[169].xy,");
+   const char *line223 = strstr(source, "\n223:     ADD TEMP[173].x,");
+   if (!line216 || !line217 || !line218 || !line223 ||
+       !(line216 < line217 && line217 < line218 && line218 < line223)) return NULL;
+   static const char branches[] =
+      "\n216: UIF TEMP[167].xxxx :228\n217:   UIF TEMP[168].xxxx :225";
+   static const char tail[] =
+      "\n223: MOV OUT[0].xy, TEMP[170].xyxx"
+      "\n224: MOV OUT[0].zw, TEMP[172].xyxy"
+      "\n225: ELSE :227"
+      "\n226: MOV OUT[0], IMM[0].yyyy"
+      "\n227: ENDIF"
+      "\n228: ELSE :230"
+      "\n229: MOV OUT[0], IMM[0].yyyy"
+      "\n230: ENDIF"
+      "\n231: END\n";
+   size_t before = (size_t)(line216 - source);
+   size_t middle = (size_t)(line223 - line218);
+   *length = before + sizeof(branches) - 1 + middle + sizeof(tail) - 1;
+   if (*length > BRIDGE_MAX_TEXT) return NULL;
+   char *prefix = malloc(*length + 1);
+   if (!prefix) return NULL;
+   memcpy(prefix, source, before);
+   memcpy(prefix + before, branches, sizeof(branches) - 1);
+   memcpy(prefix + before + sizeof(branches) - 1, line218, middle);
+   memcpy(prefix + before + sizeof(branches) - 1 + middle, tail, sizeof(tail));
+   return prefix;
+}
+
+const char *bridge_translate_original_92cb_first_power(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || !geometry || !draw || bank >= 3 ||
+       vertex_length != sizeof(private_92cb_vertex) - 1 ||
+       fragment_length != sizeof(private_92cb_fragment) - 1 ||
+       geometry_length != sizeof(private_92cb_geometry) ||
+       memcmp(vertex_text, private_92cb_vertex, vertex_length) ||
+       memcmp(fragment_text, private_92cb_fragment, fragment_length) ||
+       memcmp(geometry, private_92cb_geometry, geometry_length))
+      return error("invalid-input", "Complete original 92cb sources and three-bank geometry must match the pinned capture.");
+   if (draw->viewport_x || draw->viewport_y || draw->viewport_width != 1024 ||
+       draw->viewport_height != 768 || draw->samples || draw->color_format != 0x8814 ||
+       draw->mode != 5 || draw->first || draw->count != 4)
+      return error("invalid-input", "The private first-power certificate requires the original single-sample RGBA32F strip draw state.");
+   size_t prefix_length = 0;
+   char *prefix = private_92cb_prefix(&prefix_length);
+   if (!prefix) return error("translation-error", "The pinned original first-power prefix cannot be derived.");
+   struct exact_pair_input inputs[2] = {0};
+   struct bridge_exact_word vertex_words[16], fragment_words[148];
+   const unsigned char *bank_bytes = geometry + 72 + bank * 656;
+   for (unsigned i = 0; i < 16; ++i)
+      vertex_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 4 * i)};
+   for (unsigned i = 0; i < 148; ++i)
+      fragment_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 64 + 4 * i)};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, prefix, prefix_length);
+   bool canonical = pair_exact_components(&inputs[0].exact, vertex_words, 16) &&
+      pair_exact_components(&inputs[1].exact, fragment_words, 148);
+   if (!canonical) { free(prefix); return error("translation-error", "Pinned exact 92cb bank is not canonical."); }
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) { free(prefix); return error("allocation-failed", "Private paired conversion allocation failed."); }
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], vertex_length, true);
+   if (!failed) failed = check_input_attempt(&stages[1].profile, inputs[1].text, prefix_length,
+      RAW_KNOWN_RETRY | RAW_BRANCH_RETRY | RAW_PRIVATE_92CB_POWER, &inputs[1].exact);
+   if (!failed) failed = pair_exact_finish(stages, inputs,
+      (size_t[2]){vertex_length, prefix_length}, (int)bank);
+   bool rejected = failed || response_overflow;
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   free(stages); free(prefix);
+   if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
    return response;
 }

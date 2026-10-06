@@ -121,6 +121,27 @@ case "$mode" in
       --preload-file build/$mode/geometry.bin@/geometry.bin \
       -o build/$mode/original-92cb-power-domain.js
     ;;
+  original-92cb-private-power-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/original_92cb_private_power.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/original_92cb_private_power.c -lm -o build/$mode/original-92cb-private-power-test
+    ;;
+  original-92cb-private-power-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    for name in vertex.tgsi fragment.tgsi geometry.bin; do
+      test -f "build/$mode/$name" || { echo "Missing authenticated original $name" >&2; exit 1; }
+    done
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/original_92cb_private_power.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
+      --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-private-power.js
+    ;;
   original-c580-wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
@@ -497,7 +518,7 @@ case "$mode" in
       -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 \
       -sINITIAL_MEMORY=16777216 -sALLOW_MEMORY_GROWTH=0 \
       -sSTACK_SIZE=262144 -sABORTING_MALLOC=0 \
-      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_malloc","_free"]' \
+      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
   *) echo 'Usage: build.sh guard-check|native|exact-reciprocal-sanitize|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;

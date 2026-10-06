@@ -2085,3 +2085,7 @@ verify-E6-T12g6m5b2a:
 .PHONY: verify-E6-T12g6m5b2b1
 verify-E6-T12g6m5b2b1:
 	bash tools/verify-virgl-original-92cb-power-domain.sh
+
+.PHONY: verify-E6-T12g6m5b2b2
+verify-E6-T12g6m5b2b2:
+	bash tools/verify-virgl-original-92cb-private-power.sh

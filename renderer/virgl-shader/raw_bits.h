@@ -89,7 +89,8 @@ enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_CONDITIONAL = 16, RAW_STRUCTURED = 32, RAW_GUARDED_LRP = 64,
        RAW_PRECISE = 128, RAW_ABSOLUTE_SOURCE0 = 256, RAW_ABSOLUTE_SOURCES = 1792,
        RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192,
-       RAW_BRANCH_RETRY = 16384, RAW_DEAD = 32768, RAW_UIF_FALSE = 65536, RAW_UIF_TRUE = 131072 };
+       RAW_BRANCH_RETRY = 16384, RAW_DEAD = 32768, RAW_UIF_FALSE = 65536, RAW_UIF_TRUE = 131072,
+       RAW_PRIVATE_92CB_POWER = 262144 };
 /* An optional conservative |value| <= 2^N certificate lives above the eight
  * authority bits. Zero means no bound; N+1 is stored for 0 <= N <= 100.
  * It never grants float access, output permission or an exact raw word. */

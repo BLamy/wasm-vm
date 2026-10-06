@@ -48,4 +48,18 @@ const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_l
                                         const char *fragment_text, size_t fragment_length,
                                         const struct bridge_exact_word *fragment_components, size_t fragment_count);
 
+/* Private physical 92cb first-power observer. Inputs are authenticated against
+ * the complete captured sources and 3-bank geometry before an internal pc0..222
+ * prefix is built. Its result is conditional on the draw-time state below and
+ * is never a full-fragment or production DRAW admission. */
+struct bridge_92cb_draw_state {
+   uint32_t viewport_x, viewport_y, viewport_width, viewport_height;
+   uint32_t samples, color_format, mode, first, count;
+};
+const char *bridge_translate_original_92cb_first_power(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw);
+
 #endif

@@ -533,7 +533,23 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
        !sine_domain_proved(precise_source(ir, instruction, 0, 0, conditional))) return false;
    if (instruction->opcode == RAW_POW &&
        !power_domain_proved(precise_source(ir, instruction, 0, 0, conditional),
-                            precise_source(ir, instruction, 1, 0, conditional))) return false;
+                            precise_source(ir, instruction, 1, 0, conditional))) {
+      /* The sole private exception is the two original power sites. The
+       * entry point authenticated the complete source, all three banks and
+       * geometry; its result still requires a physical draw-time check. */
+      unsigned pc = ir->count;
+      unsigned component = pc == 221 ? 0u : 1u;
+      if (!(instruction->flags & RAW_PRIVATE_92CB_POWER) ||
+          (pc != 221 && pc != 222) || !ir->exact ||
+          instruction->dst.file != TEMP || instruction->dst.index != 172 ||
+          instruction->dst.mask != (1u << component) ||
+          instruction->src[0].file != TEMP || instruction->src[0].index != 171 ||
+          instruction->src[0].swizzle[0] != component ||
+          instruction->src[1].file != CONST || instruction->src[1].index != 6 ||
+          instruction->src[1].swizzle[0] != 0 ||
+          !(ir->exact->present[6] & 1u) ||
+          ir->exact->words[6][0] != UINT32_C(0x40000000)) return false;
+   }
    uint32_t reciprocal_word = 0;
    bool known_reciprocal = instruction->opcode == RAW_RCP && ir->exact &&
       instruction->src[0].file == CONST &&
