@@ -8,6 +8,8 @@ const root='/evidence/virgl-workload-inventory/captures/es2gears/shaders/';
 const geometryPath='/target/evidence/virgl-92cb-raster/geometry.bin';
 const rasterPath='/target/evidence/virgl-92cb-raster/raster.json';
 const width=1024,height=768;
+const certifiedRenderer='ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)';
+const certifiedPrecision={rangeMin:127,rangeMax:127,precision:23};
 const float=word=>new Float32Array(new Uint32Array([word]).buffer)[0];
 
 async function compressedReadback(bytes){
@@ -148,8 +150,20 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    gl.getParameter(gl.VIEWPORT).join(',')==='0,0,1024,768'&&
    gl.getParameter(gl.SAMPLES)===0&&
    [gl.DITHER,gl.BLEND,gl.DEPTH_TEST,gl.CULL_FACE,gl.SCISSOR_TEST,gl.STENCIL_TEST]
-    .every(capability=>!gl.isEnabled(capability)),
+   .every(capability=>!gl.isEnabled(capability)),
    'physical WebGL2 draw state still satisfies private certificate');
+  const rendererInfo=gl.getExtension('WEBGL_debug_renderer_info');
+  const precisionAtDraw={};
+  for(const [stageName,shaderType] of [['vertex',gl.VERTEX_SHADER],['fragment',gl.FRAGMENT_SHADER]]){
+   const value=gl.getShaderPrecisionFormat(shaderType,gl.HIGH_FLOAT);
+   precisionAtDraw[stageName]={rangeMin:value?.rangeMin,rangeMax:value?.rangeMax,
+    precision:value?.precision};
+  }
+  const rendererAtDraw=rendererInfo&&gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL);
+  require(rendererAtDraw===certifiedRenderer&&
+   Object.values(precisionAtDraw).every(value=>
+    JSON.stringify(value)===JSON.stringify(certifiedPrecision)),
+   'recorded M4 Max renderer and highp precision still satisfy private certificate');
   const observedQuad=new Float32Array(16);
   gl.getBufferSubData(gl.ARRAY_BUFFER,0,observedQuad);
   require(new Uint32Array(observedQuad.buffer).every((word,i)=>word===quad[i]),
@@ -209,7 +223,7 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    vertexGlsl:vertex.glsl,fragmentGlsl:fragment.glsl,
    vertexMetadata:vertex.metadata,fragmentMetadata:fragment.metadata,
    certificate:translated.private92cbFirstPower,attributes,uniforms,blocks,
-   drawState:observedDraw,logs:built.logs};
+   drawState:observedDraw,rendererAtDraw,precisionAtDraw,logs:built.logs};
  }finally{
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindVertexArray(null);gl.useProgram(null);
   gl.deleteFramebuffer(framebuffer);gl.deleteTexture(texture);gl.deleteBuffer(buffer);gl.deleteVertexArray(vao);
@@ -233,13 +247,16 @@ export async function runAcceptance({fault=null}={}){
  const debug=gl.getExtension('WEBGL_debug_renderer_info');
  require(debug&&gl.getExtension('EXT_color_buffer_float'),'hardware identity and float attachments');
  report.renderer=gl.getParameter(debug.UNMASKED_RENDERER_WEBGL);
- require(!/swiftshader|llvmpipe|softpipe|software/i.test(report.renderer),'hardware renderer');
+ require(report.renderer===certifiedRenderer,'recorded M4 Max physical renderer');
  const precision=stage=>{
   const value=gl.getShaderPrecisionFormat(stage,gl.HIGH_FLOAT);
   require(value,'reported highp float precision');
   return {rangeMin:value.rangeMin,rangeMax:value.rangeMax,precision:value.precision};
  };
  report.precision={vertex:precision(gl.VERTEX_SHADER),fragment:precision(gl.FRAGMENT_SHADER)};
+ require(Object.values(report.precision).every(value=>
+  JSON.stringify(value)===JSON.stringify(certifiedPrecision)),
+  'recorded vertex/fragment highp precision');
  const paths=[root+vertexHash+'.tgsi',root+fragmentHash+'.tgsi',geometryPath,rasterPath];
  const responses=await Promise.all(paths.map(path=>fetch(path)));
  require(responses.every(response=>response.ok),'served original sources and predecessor evidence');

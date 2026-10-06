@@ -54,6 +54,10 @@ def inspect_bank(row, vertex, fragment, index):
           row['drawState'] == {'viewport': [0, 0, WIDTH, HEIGHT],
                                'samples': 0, 'framebufferStatus': 36053,
                                'colorFormat': 34836, 'mode': 5, 'count': 4} and
+          row['rendererAtDraw'] == 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)' and
+          row['precisionAtDraw'] == {
+              'vertex': {'rangeMin': 127, 'rangeMax': 127, 'precision': 23},
+              'fragment': {'rangeMin': 127, 'rangeMax': 127, 'precision': 23}} and
           row['logs'] == {'vertex': '', 'fragment': '', 'link': ''},
           'generated and reflected original prefix program')
     zipped = base64.b64decode(row['readbackGzipBase64'], validate=True)
@@ -141,9 +145,10 @@ def main(directory):
           accepted['productionDrawAuthority'] is False and
           accepted['compilerAuthority'] == 'conditional pc221/222 prefix only' and
           len(accepted['banks']) == 3 and
-          'Apple M4 Max' in accepted['renderer'] and
-          all(accepted['precision'][stage]['precision'] >= 23
-              for stage in ('vertex', 'fragment')) and
+          accepted['renderer'] == 'ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)' and
+          accepted['precision'] == {
+              'vertex': {'rangeMin': 127, 'rangeMax': 127, 'precision': 23},
+              'fragment': {'rangeMin': 127, 'rangeMax': 127, 'precision': 23}} and
           report['browser']['gpu']['featureStatus'][report['browser']['webglFeature']] == 'enabled',
           'exact-head physical private compiler evidence scope')
     check(sha(VERTEX.read_bytes()) == VERTEX.stem and
