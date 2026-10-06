@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,3 +23,7 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-05 — worker — activation
+
+The physical 92cb first-power domain (E6-T12g6m5b2b1) is independently verified at `8c855549`. This task will bind the exact original source and draw state to a private compiler certificate for pc221/222, while retaining ordinary and full-original rejection outside that narrow boundary.
