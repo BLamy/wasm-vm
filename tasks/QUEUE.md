@@ -623,7 +623,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010581` [E6-T12g6l](epic-6-transcendence/E6-T12g6l-fragment-discard.md) — Admit fragment discard with sound branch liveness *(deps: E6-T12g6k)*
 - [x] `525.027010581` [E6-T12g6m5a](epic-6-transcendence/E6-T12g6m5a-c580-full-original.md) — Prove the unchanged c580 compositor pair on physical WebGL2 *(deps: E6-T12g6m4c)*
 - [-] `525.027010582` [E6-T12g6m5b](epic-6-transcendence/E6-T12g6m5b-92cb-geometry-domain.md) — Bound the first geometry-dependent power in the original 92cb compositor *(deps: E6-T12g6m5a)*
-- [?] `525.0270105821` [E6-T12g6m5b1](epic-6-transcendence/E6-T12g6m5b1-92cb-geometry-provenance.md) — Authenticate original 92cb compositor draw-time quad geometry *(deps: E6-T12g6m5a)*
+- [~] `525.0270105821` [E6-T12g6m5b1](epic-6-transcendence/E6-T12g6m5b1-92cb-geometry-provenance.md) — Authenticate original 92cb compositor draw-time quad geometry *(deps: E6-T12g6m5a)*
 - [ ] `525.0270105822` [E6-T12g6m5b2](epic-6-transcendence/E6-T12g6m5b2-92cb-first-power.md) — Bind authenticated quad geometry to the first original 92cb powers *(deps: E6-T12g6m5b1)*
 - [x] `525.027010585` [E6-T12g6m1](epic-6-transcendence/E6-T12g6m1-known-arithmetic.md) — Materialize exact known ADD and MUL producer words for bounded consumers *(deps: E6-T12g6l)*
 - [x] `525.027010587` [E6-T12g6m2](epic-6-transcendence/E6-T12g6m2-known-branch-liveness.md) — Exclude proved unreachable raw UIF edges after complete validation *(deps: E6-T12g6m1)*
