@@ -35,6 +35,8 @@ def main():
     report = {'schema': 'virgl-original-92cb-physical-power-cold-v1',
               'task': 'E6-T12g6m5b2b1', 'gitHead': head, 'clone': str(clone),
               'removedEnvironmentNames': removed,
+              'setupCommand': ['npm', 'ci', '--prefix', 'web', '--ignore-scripts',
+                               '--no-audit', '--no-fund'],
               'command': ['make', 'verify-E6-T12g6m5b2b1'], 'status': 'running'}
     log_path = output / 'cold.log'
     try:
@@ -47,6 +49,8 @@ def main():
             report['statusBefore'] = git('status', '--porcelain', '--untracked-files=all', cwd=clone)
             if report['cloneHead'] != head or report['statusBefore']:
                 raise ValueError('cold checkout is not pristine at exact head')
+            subprocess.run(report['setupCommand'], cwd=clone, env=env,
+                           stdout=log, stderr=subprocess.STDOUT, timeout=300, check=True)
             result = subprocess.run(report['command'], cwd=clone, env=env,
                                     stdout=log, stderr=subprocess.STDOUT, timeout=1200)
             report['exitCode'] = result.returncode
