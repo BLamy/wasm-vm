@@ -135,8 +135,8 @@ def replay(report, predecessor):
     check(count == 1957 and color_ids == Counter({21: 1953, 72: 4}) and
           depth_ids == Counter({20: 1953}) and len(viewport_ids) == 1 and
           report['viewportPacketDraws'] == dict(viewport_ids) and
-          report['colorResourceDraws'] == dict(color_ids) and
-          report['depthResourceDraws'] == dict(depth_ids) and
+          report['colorResourceDraws'] == {str(k): v for k, v in color_ids.items()} and
+          report['depthResourceDraws'] == {str(k): v for k, v in depth_ids.items()} and
           len(framebuffer_ids) == 400 and report['framebufferPackets'] == 400,
           'original complete viewport/framebuffer replay')
 
