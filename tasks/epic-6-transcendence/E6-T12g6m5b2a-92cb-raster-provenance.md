@@ -3,7 +3,7 @@ id: E6-T12g6m5b2a
 epic: 6
 title: Authenticate original 92cb viewport and raster power-base domain
 priority: 525.02701058221
-status: implemented
+status: verified
 depends_on: [E6-T12g6m5b1]
 estimate: S
 risk: high
@@ -46,3 +46,12 @@ Evidence: `evidence/virgl-92cb-raster/worker/recording.tar.gz` SHA-256 `f1ba852a
 Source head `163cf70a026f88a684ba678099c847a2073b1397`. The receipt now requires exactly three ordered banks and two axes per bank before iterating any envelope. The permanent `omit-bank` and `omit-axis` faults each delete a report element while preserving the original packet citations and native/Wasm output; both fail with `complete three-bank two-axis original raster inventory`. `make verify-E6-T12g6m5b2a` and the scrubbed pristine clone `python3 tools/virgl-92cb-raster/cold.py target/evidence/virgl-92cb-raster/cold-exact` passed with empty before/after clone status. The changed files are the private receipt, fault driver, acceptance script and task log; per incremental re-verification, the earlier packet/rational/native-Wasm findings stand for adversarial review without repeating unrelated workspace gates.
 
 Repaired evidence: `evidence/virgl-92cb-raster/worker/recording.tar.gz` SHA-256 `038029dbce95e94f6710723004ec2c948a40de1564335e8e81fa5025f5e97968`; `manifest.json` and `records.json` index 38 sealed hot/cold records. Hot receipt SHA-256 `68fbf7ddd6f15ae4ba7d0d1e03f7d99bf8878ea0a68b927d20243509e1bcc758`; cold receipt SHA-256 `5634947c6a3a53644079c3b4d53bee595e2edec8fde4fe7dd4e9d480b392e5fb`. `make ci` was not repeated after this harness-only edit; the recorded pre-existing `Machine::enable_syscon` compile failure remains in `target/evidence/virgl-92cb-raster/make-ci.log`.
+
+### 2026-10-05 — fresh verifier
+
+VERDICT: verified
+
+- PREDICTION complete inventory — HELD. The exact-head sealed `hot/omit-bank-fault.log`, `hot/omit-axis-fault.log`, and corresponding cold logs each reject at `receipt.py:153` with `complete three-bank two-axis original raster inventory`; the permanent acceptance script runs and checks both faults. Independently replayed the sealed hot report through `receipt.py`: the original three-bank/two-axis report passed, while removing bank 2, replacing the list with `[]`, and removing bank 1's y axis each failed at the predicted inventory guard. Reordering banks 0/1 and substituting bank 0 for bank 2 failed at the expected paired-bank identity check (`receipt.py:165`). Predictions and results: `target/evidence/virgl-92cb-raster/verifier-inventory-repair/{predictions,results}.json`; result SHA-256 `f04be13fd37eeb30868a63ff7ac2a62685d88929928ff636cfb28223c74388e2`. The mutated reports and exact failure logs are retained in that directory.
+- PREDICTION exact-head cold proof — HELD. Independently authenticated all 38 members of `evidence/virgl-92cb-raster/worker/recording.tar.gz` (SHA-256 `038029dbce95e94f6710723004ec2c948a40de1564335e8e81fa5025f5e97968`) against `records.json`, both receipts, the source files at `163cf70a026f88a684ba678099c847a2073b1397`, and the generated binaries. `cold/report.json` records `cloneHead` equal to that source head, empty before/after status, exit 0, and matching cold log/receipt digests. Hot and cold `raster.json`, `geometry.bin`, and native/Wasm output digests match. The prior `make ci` result is accurately logged as the unrelated `jit-runtime/tests/timekeeping.rs:90` missing `Machine::enable_syscon` build failure.
+- PREDICTION original live packet state and ideal-center separation — HELD carried forward from the 2026-10-05 first verifier entry. The authenticated capture, geometry, numerical C code, and binary/report outputs are unchanged across the repair. The changed receipt guard and its fault branches executed in the sealed hot/cold runs and independent attacks; task metadata is non-runtime. The report still denies numeric compiler and production DRAW authority.
+- SUITE: the permanent `omit-bank` and `omit-axis` faults in `make verify-E6-T12g6m5b2a` retain the missing-inventory regression. The verifier's reorder/substitution probes are diagnostic and remain in ignored evidence; no additional production fixture is warranted for this private receipt boundary.
