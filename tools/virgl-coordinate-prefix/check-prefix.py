@@ -42,7 +42,8 @@ def main():
     native = native_path.read_text()
     wasm = wasm_path.read_text()
     require(native == wasm and native.endswith('STATUS passed\n'), 'identical native/Wasm certificates')
-    lines = re.findall(r'^BANK (\d+) pc25\.x<=2\^(\d+) pc25\.y<=2\^(\d+) pc27\.x<=2\^(\d+)$', native, re.M)
+    lines = re.findall(r'^BANK (\d+) source\.x<=2\^(\d+) source\.y<=2\^(\d+) '
+                       r'pc25\.x<=2\^(\d+) pc25\.y<=2\^(\d+) pc27\.x<=2\^(\d+)$', native, re.M)
     require(len(lines) == 3 and [int(line[0]) for line in lines] == [0, 1, 2],
             'three ordered native/Wasm bank results')
     data = bank_file.read_bytes()
@@ -53,7 +54,7 @@ def main():
     samples = []
     with localcontext() as context:
         context.prec = 80
-        for index, (_, xb, yb, selected) in enumerate(lines):
+        for index, (_, source_x, source_y, xb, yb, selected) in enumerate(lines):
             words = struct.unpack_from('<136I', data, 8 + index * 136 * 4)
             width, height = f32(words[32 * 4]), f32(words[32 * 4 + 1])
             ox, oy = f32(words[31 * 4]), f32(words[31 * 4 + 1])
@@ -64,17 +65,26 @@ def main():
             signed_zero = f32(words[29 * 4]) * f32(words[33 * 4 + 2])
             require(signed_zero.is_zero() and signed_zero.is_signed(),
                     'pc15 signed-zero multiplication stays inside the finite envelope')
+            # GLint viewport origins range through -2^31..2^31-1, and a
+            # nonnegative GLsizei viewport width/height can approach 2^31.
+            # Test centers at both signed-origin and summed positive edges.
+            far = Decimal(2) ** 32 - Decimal('2.5')
+            near = -(Decimal(2) ** 31) + Decimal('0.5')
             for x, y in [(Decimal('0.5'), Decimal('0.5')),
                          (width - Decimal('0.5'), height - Decimal('0.5')),
                          (Decimal(2) ** 31 - Decimal('0.5'), Decimal('0.5')),
-                         (Decimal('0.5'), Decimal(2) ** 31 - Decimal('0.5'))]:
+                         (Decimal('0.5'), Decimal(2) ** 31 - Decimal('0.5')),
+                         (far, Decimal('0.5')), (Decimal('0.5'), far),
+                         (near, Decimal('0.5')), (Decimal('0.5'), near)]:
                 # Algebraically independent reduction of the signed-mask
                 # pc0..27 sequence; each physical operation has ample margin
                 # inside the deliberately coarse binary exponent certificate.
                 px = abs(x - ox - width / 2) - width / 2 + 1 / width
                 py = abs(Decimal(768) - y - oy - height / 2) - height / 2 + 1 / height
                 low = min(px, py)
-                require(abs(px) < Decimal(2) ** int(xb) and
+                require(abs(x) < Decimal(2) ** int(source_x) and
+                        abs(y) < Decimal(2) ** int(source_y) and
+                        abs(px) < Decimal(2) ** int(xb) and
                         abs(py) < Decimal(2) ** int(yb) and
                         abs(low) < Decimal(2) ** int(selected),
                         'high-precision source equation enclosed by checked bounds')

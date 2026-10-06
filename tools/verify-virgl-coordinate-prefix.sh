@@ -100,5 +100,5 @@ receipt={'schema':'virgl-coordinate-prefix-worker-receipt-v2','status':'passed',
          'sources':{name:sha(Path(name)) for name in sources},
          'generated':{name:sha(Path(name)) for name in generated}}
 (p/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-print('c580 finite prefix: native/Wasm, 3 banks, 48 physical pixels, both source faults and sabotage passed')
+print('c580 finite prefix: native/Wasm, 3 banks, 96 physical pixels, both source faults and sabotage passed')
 PY

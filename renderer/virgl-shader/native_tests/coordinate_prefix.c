@@ -13,6 +13,7 @@ static void require(bool valid, const char *reason)
 
 static FILE *bank_input;
 static bool alter_pc8;
+static unsigned source_x_bound, source_y_bound;
 
 static uint32_t word(void)
 {
@@ -113,7 +114,16 @@ static unsigned probe(const struct raw_exact_bank *exact, bool coordinates, bool
    *x = raw_finite_exp(ir->temporary[41][0]);
    *y = raw_finite_exp(ir->temporary[41][1]);
    unsigned result = raw_finite_exp(ir->temporary[43][0]);
+   source_x_bound = raw_finite_exp(ir->temporary[9][0]);
+   struct raw_instruction coordinate_y = {
+      .opcode = RAW_MOV, .dst = {.file = TEMP, .index = 51, .mask = 2},
+      .src = {S(IN, 0, "yyyy")}
+   };
+   require(raw_record(ir, &coordinate_y), "direct y coordinate probe");
+   source_y_bound = raw_finite_exp(ir->temporary[51][1]);
    if (result <= 100u) {
+      require(source_x_bound == 33u && source_y_bound == 33u,
+              "signed viewport plus extent fits the coordinate source envelope");
       struct raw_instruction negated = {
          .opcode = RAW_ADD, .dst = {.file = TEMP, .index = 50, .mask = 1},
          .flags = RAW_MIXED | RAW_CONDITIONAL | RAW_KNOWN_RETRY |
@@ -160,7 +170,8 @@ int main(int argc, char **argv)
       unsigned x, y;
       unsigned selected = probe(&exact, true, false, &x, &y);
       require(x <= 100 && y <= 100 && selected <= 100, "finite pc27 dependencies");
-      printf("BANK %u pc25.x<=2^%u pc25.y<=2^%u pc27.x<=2^%u\n", bank, x, y, selected);
+      printf("BANK %u source.x<=2^%u source.y<=2^%u pc25.x<=2^%u pc25.y<=2^%u pc27.x<=2^%u\n",
+             bank, source_x_bound, source_y_bound, x, y, selected);
       require(probe(&exact, true, true, &x, &y) == UINT32_MAX,
               "changed original pc8 source has no terminal certificate");
       require(probe(&exact, false, false, &x, &y) == UINT32_MAX,

@@ -21,6 +21,6 @@ const report=await runVirglBrowser({options,task:'E6-T12g6m4b',
  html:browserDocument({title:'Original c580 coordinate prefix',
   heading:'Original compositor coordinate arithmetic on WebGL2',
   description:'Private finite-envelope evidence for the authenticated c580 fragment prefix.'}),
- validate(a){assert.equal(a.frames.length,3);assert.equal(a.frames.reduce((n,frame)=>n+frame.pixels.length,0),48);},
- successMessage:a=>`${a.frames.length} original banks, 48 physical float pixels checked.`});
+ validate(a){assert.equal(a.frames.length,6);assert.equal(a.frames.reduce((n,frame)=>n+frame.pixels.length,0),96);},
+ successMessage:a=>`3 original banks, two viewport origins, 96 physical float pixels checked.`});
 process.exit(report.status==='passed'?0:1);

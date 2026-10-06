@@ -68,12 +68,13 @@ static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_sou
    }
    if (r->file == IN) {
       unsigned origin = (1 + r->index * 4 + component) | RAW_OUTPUT;
-      /* A generated fragment occupies a pixel of a GLsizei-sized attachment.
-       * Its lower-left, half-integer window x/y lies in [0, 2^31]. This is
+      /* A signed viewport origin plus a nonnegative GLsizei extent can reach
+       * almost 2^32 before framebuffer tests. Keep another bit for highp
+       * rounding and rasterization edges: |window x/y| <= 2^33. This is
        * only a finite magnitude bound, never an exact coordinate word. */
       if (complete_prefix_bank(ir) && r->index == 0 && component < 2 &&
           (ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
-         origin |= 32u << RAW_FINITE_EXP_SHIFT;
+         origin |= 34u << RAW_FINITE_EXP_SHIFT;
       return (struct raw_lane){.origin = origin};
    }
    if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)

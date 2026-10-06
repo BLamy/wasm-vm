@@ -62,9 +62,8 @@ export async function runAcceptance({fault=null}={}){
    const program=built.program,created=[];
    try{
     gl.useProgram(program);
-    const blocks=[];report.frames.push({bank,sourceSha256:await digest(fragmentText),
-      glslSha256:await digest(source),profile:pair.fragment.metadata.profile,
-      logs:built.logs,pixels:[],systemBlocks:bindSystemBlocks(gl,program,pair.vertex.metadata,blocks)});
+    const blocks=[];
+    const systemBlocks=bindSystemBlocks(gl,program,pair.vertex.metadata,blocks);
     created.push(...blocks);
     const location=gl.getUniformLocation(program,'fsconst0[0]');
     require(location!==null,'active original fragment constant array');
@@ -82,23 +81,29 @@ export async function runAcceptance({fault=null}={}){
     gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texture,0);
     require(gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE,'float framebuffer');
     for(const cap of [gl.DITHER,gl.BLEND,gl.DEPTH_TEST,gl.CULL_FACE,gl.SCISSOR_TEST,gl.STENCIL_TEST])gl.disable(cap);
-    gl.viewport(0,0,4,4);gl.drawArrays(gl.TRIANGLES,0,3);
-    const values=new Float32Array(4*4*4);gl.readPixels(0,0,4,4,gl.RGBA,gl.FLOAT,values);
-    require(gl.getError()===gl.NO_ERROR,'physical prefix draw');
-    for(let y=0;y<4;y++)for(let x=0;x<4;x++){
-     const actual=[...values.subarray((y*4+x)*4,(y*4+x+1)*4)];
-     const prediction=expected(words,x+0.5,y+0.5);
-     const error=actual.map((value,lane)=>Math.abs(value-prediction[lane]));
-     report.frames.at(-1).pixels.push({x,y,actual,prediction,error});
-     require(error.every(value=>Number.isFinite(value)&&value<=0.02),
-      `independent original-prefix pixel bank${bank} (${x},${y}): ${JSON.stringify({actual,prediction,error})}`);
+    for(const viewport of [{x:0,y:0,width:4,height:4},{x:-1,y:-1,width:5,height:5}]){
+     report.frames.push({bank,viewport,sourceSha256:await digest(fragmentText),
+      glslSha256:await digest(source),profile:pair.fragment.metadata.profile,
+      logs:built.logs,pixels:[],systemBlocks});
+     gl.viewport(viewport.x,viewport.y,viewport.width,viewport.height);
+     gl.drawArrays(gl.TRIANGLES,0,3);
+     const values=new Float32Array(4*4*4);gl.readPixels(0,0,4,4,gl.RGBA,gl.FLOAT,values);
+     require(gl.getError()===gl.NO_ERROR,'physical prefix draw');
+     for(let y=0;y<4;y++)for(let x=0;x<4;x++){
+      const actual=[...values.subarray((y*4+x)*4,(y*4+x+1)*4)];
+      const prediction=expected(words,x+0.5,y+0.5);
+      const error=actual.map((value,lane)=>Math.abs(value-prediction[lane]));
+      report.frames.at(-1).pixels.push({x,y,actual,prediction,error});
+      require(error.every(value=>Number.isFinite(value)&&value<=0.02),
+       `independent original-prefix pixel bank${bank} viewport ${JSON.stringify(viewport)} (${x},${y}): ${JSON.stringify({actual,prediction,error})}`);
+     }
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindVertexArray(null);
     gl.deleteFramebuffer(framebuffer);gl.deleteTexture(texture);gl.deleteBuffer(buffer);gl.deleteVertexArray(vao);
    }finally{gl.useProgram(null);for(const block of created)gl.deleteBuffer(block);gl.deleteProgram(program);}
   }
   require(!fault,'injected source fault must contradict physical pixels');
-  report.status='passed';document.querySelector('#status').textContent='48 float pixels checked on physical WebGL2';
+  report.status='passed';document.querySelector('#status').textContent='96 float pixels checked on physical WebGL2';
   document.querySelector('#renderer').textContent=report.renderer;
  }catch(error){report.status='failed';report.failure={message:error.message};throw error;}
  return report;
