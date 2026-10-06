@@ -38,7 +38,8 @@ struct.pack_into('<I',raw,8+64+16*4+24*4,0)
 (root/'exponent-fault.bin').write_bytes(raw)
 PY
 for fault in geometry exponent; do
-  if renderer/virgl-shader/build/original-92cb-geometry-sanitize/original-92cb-geometry-test \
+  if LLVM_PROFILE_FILE="$PWD/$evidence/$fault.profraw" \
+     renderer/virgl-shader/build/original-92cb-geometry-sanitize/original-92cb-geometry-test \
       "$vertex" "$fragment" "$evidence/$fault-fault.bin" \
       > "$evidence/$fault-fault.log" 2>&1; then
     echo "Original 92cb $fault mutation unexpectedly accepted." >&2
