@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: implemented
+status: verified
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,17 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — fresh verifier
+
+VERDICT: verified
+
+- **PREDICTION isolated physical draw — HELD.** A page-realm `addInitScript` hook on `getUniform`, `uniform4uiv`, `drawArrays`, `OffscreenCanvas.getContext`, and `fetch` should see no calls from the physical run and should not change bank 1's certified exponent. An independent Chrome run observed zero calls to all five hooks, a real `DedicatedWorkerGlobalScope` at the exact worker URL, and a served worker SHA-256 of `2eec3a8c0aa66275f37b39bd93c0d9bbaaac228d8c12833950a1af852784b023`. A passive probe inside that worker observed three `(mode, first, count) = (5, 0, 4)` draws with live `fsconst0[6].x = 0x40000000` each time; the returned full-readback digests match `hot/browser/report.json` in the sealed archive. Calling `runPhysicalAcceptance()` directly in the page rejected with `isolated physical WebGL worker`. The worker entry and page dispatch are `renderer/virgl-shader/tests/original-92cb-private-power-worker.mjs:1-10` and `renderer/virgl-shader/tests/original-92cb-private-power.mjs:303-318,370-390`.
+- **PREDICTION worker-local fault sensitivity — HELD.** For each of `post-buffer-exponent` and `post-clear-exponent`, an independent worker probe observed the live bank-1 exponent change from `0x40000000` to `0x40400000` after draw 1, then `bound physical fsconst0 words still equal the certified bank` before draw 2. The sealed hot and cold named fault reports agree; all 19 faults on each side have the stated rejection message. A separate sabotage probe suppressed the first worker `drawArrays` and the oracle rejected at `missing original pixel (356,228)`, so a report cannot pass merely by returning a success string. The relevant code is `original-92cb-private-power.mjs:183-195,237-243`.
+- **PREDICTION evidence and unchanged compiler boundary — HELD.** The archive SHA-256 is `66fc1985148f66ce6cc8b7bea1c3a7f2a89ccd6a5727a28625f16364e7846d96`; its 120 members match `records.json` (SHA-256 `d9d7ba5e7f82c448b6a3d69d99a50d0d85bcfd609e727ea28a7822a065d3cbde`). Both receipts match all 53 archived files, 19 `git show de7d3f38` sources, and five generated binaries. The cold report records a scrubbed pristine `de7d3f38` clone, exit 0, and empty status before/after. Six full readbacks each decompress to 12,582,912 bytes and match their hashes. Core bridge/index/input source hashes, four generated Wasm artifacts, native/Wasm output, and all three readback digests are unchanged from the previous HELD proof. Thus the independent 1,612,644-pixel oracle and ordinary/full-original rejection carry forward at that unchanged boundary; branch counts remain `[16,0,16]` and maximum relative power error `1.1920895e-7`.
+- **COVERAGE and SUITE.** The sealed page CDP coverage correctly records only page dispatch; worker execution is instead evidenced by the observed worker target, three live draws, complete pixels, and the success/error messages from the actual served worker. Success and catch paths of the new worker entry execute in the clean and fault recordings; both page dispatch branches, OffscreenCanvas creation, receipt checks, and the 19 fault outcomes are exercised. The other changed hunks are metadata and wording. Existing `make verify-E6-T12g6m5b2b2` and its named faults remain the permanent suite artifact; the ad hoc prototype-hook probes are browser/renderer-specific and add no cheap deterministic fixture. A privileged `worker.evaluate` hook can still change a uniform after the final reflected read, but it injects code into the trusted, hash-bound worker realm and is outside the page-realm interception boundary tested here.
+
+Commands: independent SHA-256/tar/receipt/`git show` audit; native/Wasm and prior-digest comparison; independent Chrome/Playwright page-hook, direct-page, passive-worker, two fault, and no-draw sabotage probes; `node --check` on the worker module; `python3 tools/check_task_policy.py`. Source head `de7d3f38213c4fab541523619a918a68204151ee`; submitted evidence head `94dadd8cb96ee0a6446b8b64bf7e1a0974dc0166`.
 
 ### 2026-10-06 — worker — isolated physical certificate draw; resubmitted
 
