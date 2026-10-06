@@ -208,6 +208,8 @@ def main(directory):
         'post-bound-vertex': 'bound physical vsconst0 words still equal the certified bank',
         'post-bound-attribute': 'physical VAO input bindings still equal the certified original quad',
         'post-bound-color': 'physical float framebuffer attachment still satisfies private certificate',
+        'post-buffer-exponent': 'bound physical fsconst0 words still equal the certified bank',
+        'post-clear-exponent': 'bound physical fsconst0 words still equal the certified bank',
     }
     for fault, message in fault_messages.items():
         failed = json.loads((directory.parent / f'fault-{fault}/report.json').read_text())

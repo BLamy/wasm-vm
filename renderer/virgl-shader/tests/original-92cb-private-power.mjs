@@ -168,8 +168,31 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    bank.vertex.every((word,i)=>word===liveGeometry.banks[index].vertex[i])&&
    bank.fragment.every((word,i)=>word===liveGeometry.banks[index].fragment[i]),
    'owned quad and both bound stage banks still equal the certified geometry');
-  const boundVertexWords=boundWords(gl,program,'vsconst0',bank.vertex);
-  const boundFragmentWords=boundWords(gl,program,'fsconst0',bank.fragment);
+  const rendererInfo=gl.getExtension('WEBGL_debug_renderer_info');
+  const precisionAtDraw={};
+  for(const [stageName,shaderType] of [['vertex',gl.VERTEX_SHADER],['fragment',gl.FRAGMENT_SHADER]]){
+   const value=gl.getShaderPrecisionFormat(shaderType,gl.HIGH_FLOAT);
+   precisionAtDraw[stageName]={rangeMin:value?.rangeMin,rangeMax:value?.rangeMax,
+    precision:value?.precision};
+  }
+  const rendererAtDraw=rendererInfo&&gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL);
+  require(rendererAtDraw===certifiedRenderer&&
+   Object.values(precisionAtDraw).every(value=>
+    JSON.stringify(value)===JSON.stringify(certifiedPrecision)),
+   'recorded M4 Max renderer and highp precision still satisfy private certificate');
+  const observedQuad=new Float32Array(16);
+  gl.getBufferSubData(gl.ARRAY_BUFFER,0,observedQuad);
+  require(new Uint32Array(observedQuad.buffer).every((word,i)=>word===quad[i]),
+   'bound quad bytes still equal the pinned original geometry');
+  if(fault==='post-buffer-exponent'&&index===1){
+   const words=new Uint32Array(bank.fragment.slice(24,28));words[0]=0x40400000;
+   gl.uniform4uiv(gl.getUniformLocation(program,'fsconst0[6]'),words);
+  }
+  gl.clearColor(-10000,-10000,-10000,-10000);gl.clear(gl.COLOR_BUFFER_BIT);
+  if(fault==='post-clear-exponent'&&index===1){
+   const words=new Uint32Array(bank.fragment.slice(24,28));words[0]=0x40400000;
+   gl.uniform4uiv(gl.getUniformLocation(program,'fsconst0[6]'),words);
+  }
   const boundAttributes=attributes.map(({location,offset})=>({
    location,offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),
    enabled:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_ENABLED),
@@ -211,23 +234,10 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    [gl.DITHER,gl.BLEND,gl.DEPTH_TEST,gl.CULL_FACE,gl.SCISSOR_TEST,gl.STENCIL_TEST]
    .every(capability=>!gl.isEnabled(capability)),
    'physical WebGL2 draw state still satisfies private certificate');
-  const rendererInfo=gl.getExtension('WEBGL_debug_renderer_info');
-  const precisionAtDraw={};
-  for(const [stageName,shaderType] of [['vertex',gl.VERTEX_SHADER],['fragment',gl.FRAGMENT_SHADER]]){
-   const value=gl.getShaderPrecisionFormat(shaderType,gl.HIGH_FLOAT);
-   precisionAtDraw[stageName]={rangeMin:value?.rangeMin,rangeMax:value?.rangeMax,
-    precision:value?.precision};
-  }
-  const rendererAtDraw=rendererInfo&&gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL);
-  require(rendererAtDraw===certifiedRenderer&&
-   Object.values(precisionAtDraw).every(value=>
-    JSON.stringify(value)===JSON.stringify(certifiedPrecision)),
-   'recorded M4 Max renderer and highp precision still satisfy private certificate');
-  const observedQuad=new Float32Array(16);
-  gl.getBufferSubData(gl.ARRAY_BUFFER,0,observedQuad);
-  require(new Uint32Array(observedQuad.buffer).every((word,i)=>word===quad[i]),
-   'bound quad bytes still equal the pinned original geometry');
-  gl.clearColor(-10000,-10000,-10000,-10000);gl.clear(gl.COLOR_BUFFER_BIT);
+  // Every preparatory WebGL call is complete. Reflect all constants last,
+  // then issue the draw with no intervening WebGL operation or callback.
+  const boundVertexWords=boundWords(gl,program,'vsconst0',bank.vertex);
+  const boundFragmentWords=boundWords(gl,program,'fsconst0',bank.fragment);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   const pixels=new Float32Array(width*height*4);
   gl.readPixels(0,0,width,height,gl.RGBA,gl.FLOAT,pixels);
@@ -294,7 +304,8 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
 export async function runAcceptance({fault=null}={}){
  require([null,'source','bank','negative','nonfinite','geometry','viewport','zero-crossing',
   'post-source','post-bank','post-geometry','post-parsed-bank','post-parsed-quad','post-sample',
-  'post-bound-exponent','post-bound-vertex','post-bound-attribute','post-bound-color'].includes(fault),
+  'post-bound-exponent','post-bound-vertex','post-bound-attribute','post-bound-color',
+  'post-buffer-exponent','post-clear-exponent'].includes(fault),
   'known original physical fault');
  const report={schema:'virgl-original-92cb-private-power-compiler-v1',status:'running',
   guestExecution:false,compilerAuthority:'conditional pc221/222 prefix only',productionDrawAuthority:false,
