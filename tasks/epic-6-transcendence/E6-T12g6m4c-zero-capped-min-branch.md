@@ -3,7 +3,7 @@ id: E6-T12g6m4c
 epic: 6
 title: Prove zero-capped MIN cannot enter an ordered positive branch
 priority: 525.0270105895
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m4b]
 estimate: S
 risk: high
