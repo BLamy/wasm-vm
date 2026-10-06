@@ -110,6 +110,9 @@ def replay(report, predecessor):
                           'reported draw order and authenticated bank are original')
                     check(viewport and row['viewport'] == viewport[1] and
                           tuple(viewport[0][1:]) == tuple(report['viewportWords']) and
+                          tuple(report['viewportWords']) ==
+                          (0, 0x44000000, 0x43c00000, 0x3f000000,
+                           0x44000000, 0x43c00000, 0x3f000000) and
                           viewport[1] == report['viewportPacket'],
                           'original viewport packet is live at every draw')
                     check(framebuffer and len(framebuffer[0]) == 4 and
@@ -214,8 +217,6 @@ def main(directory):
     check(report['schema'] == 'virgl-original-92cb-raster-v1' and
           report['sourceEventsSha256'] == sha((CAPTURE / 'events.jsonl').read_bytes()) and
           report['geometryBinarySha256'] == sha(binary) == predecessor['binarySha256'] and
-          report['viewportWords'] == [0, 0x44000000, 0x43c00000, 0x3f000000,
-                                      0x44000000, 0x43c00000, 0x3f000000] and
           report['singleSampleCenterRule'] == 'GLSL ES 3.00 section 4.3.9' and
           report['numericCompilerAuthority'] is False and
           report['productionDrawAuthority'] is False,
