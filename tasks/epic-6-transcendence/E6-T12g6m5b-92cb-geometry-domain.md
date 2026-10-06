@@ -3,7 +3,7 @@ id: E6-T12g6m5b
 epic: 6
 title: Bound the first geometry-dependent power in the original 92cb compositor
 priority: 525.027010582
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m5a]
 estimate: S
 risk: high
