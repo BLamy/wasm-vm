@@ -8,6 +8,10 @@ Each of the 1,068 submission snapshots contains the same first 64 bytes: four
 `(position.xy, uv.xy)` vertices `(0,0), (0,1), (1,0), (1,1)`. A single original
 `TRANSFER3D` packet uploads the backing before the first draw. The artifact
 retains all draw and snapshot citations and the three complete paired banks.
+The independent receipt rereads every bank word from its cited original
+`SET_CONSTANT_BUFFER` packet and replays the live set at each bank's first
+draw. The permanent fault changes used `CONST[5].x` while refreshing the
+artifact's own hashes; packet comparison must still reject it.
 
 The unchanged vertex source moves `IN[1].xy` to perspective `GENERIC[0].xy` and
 sets clip W to 1. Finite affine clip positions, clipping, and triangle

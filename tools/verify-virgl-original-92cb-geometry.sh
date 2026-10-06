@@ -48,6 +48,36 @@ for fault in geometry exponent; do
 done
 rg -q 'four finite \[0,1\]' "$evidence/geometry-fault.log"
 rg -q 'captured center and positive integer exponent' "$evidence/exponent-fault.log"
+mkdir -p "$evidence/sabotage-bank"
+python3 - "$evidence" <<'PY'
+from pathlib import Path
+import hashlib,json,struct,sys
+root=Path(sys.argv[1]); altered=root/'sabotage-bank'
+raw=bytearray((root/'geometry.bin').read_bytes())
+proof=json.loads((root/'geometry.json').read_text())
+sha=lambda data:hashlib.sha256(data).hexdigest()
+offset=8+16*4+16*4+5*4*4  # bank 0 fragment CONST[5].x
+assert offset==216 and struct.unpack_from('<I',raw,offset)[0]==0
+old=proof['pairs'][0]['sha256']
+struct.pack_into('<I',raw,offset,0x3f800000)
+new=sha(raw[8+16*4:8+16*4+164*4])
+proof['pairs'][0]['sha256']=new
+proof['binarySha256']=sha(raw)
+changed=0
+for draw in proof['drawCitations']:
+    if draw['pairSha256']==old:
+        draw['pairSha256']=new;changed+=1
+assert changed==proof['pairs'][0]['draws']==1847
+(altered/'geometry.bin').write_bytes(raw)
+(altered/'geometry.json').write_text(json.dumps(proof,indent=2)+'\n')
+PY
+if python3 tools/virgl-92cb-geometry/receipt.py "$evidence/sabotage-bank" \
+     > "$evidence/bank-fault.log" 2>&1; then
+  echo 'Changed used fragment bank word unexpectedly survived packet audit.' >&2
+  exit 1
+fi
+rg -q 'complete emitted bank differs from authenticated SET_CONSTANT_BUFFER packet' \
+  "$evidence/bank-fault.log"
 xcrun llvm-profdata merge -sparse "$evidence/native.profraw" -o "$evidence/native.profdata"
 xcrun llvm-cov export renderer/virgl-shader/build/original-92cb-geometry-sanitize/original-92cb-geometry-test \
   -instr-profile="$evidence/native.profdata" > "$evidence/native-coverage.json"

@@ -2,12 +2,16 @@
 """Check exact-head geometry evidence independently of the capture producer."""
 from collections import Counter
 from decimal import Decimal
+import gzip
 import hashlib
 import json
 from pathlib import Path
 import struct
 import subprocess
 import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools/virgl-capture'))
+from validate import COMMANDS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 TASK = 'E6-T12g6m5b1'
@@ -27,6 +31,102 @@ def require(ok, reason):
 
 def f32(word):
     return Decimal.from_float(struct.unpack('<f', struct.pack('<I', word))[0])
+
+
+def authenticated_packet(lines, cite, cache):
+    seq = cite['event']
+    require(1 <= seq <= len(lines), 'packet citation event in original stream')
+    event = json.loads(lines[seq - 1])
+    require(event['seq'] == seq and event['type'] == 'submit_cmd' and
+            event.get('phase') == 'enter' and event.get('ctxId') == 5,
+            'packet citation belongs to compositor submission')
+    ref = event['blobs'][0]
+    require(cite['blobSha256'] == ref['sha256'], 'packet citation original blob identity')
+    if ref['sha256'] not in cache:
+        path = ROOT / 'evidence/virgl-workload-inventory/captures/es2gears/blobs' / (
+            ref['sha256'] + '.bin.gz')
+        raw = gzip.decompress(path.read_bytes())
+        require(len(raw) == ref['bytes'] and sha(raw) == ref['sha256'],
+                'authenticated packet blob bytes')
+        cache[ref['sha256']] = raw
+    raw = cache[ref['sha256']]
+    offset = cite['offset']
+    require(isinstance(offset, int) and offset >= 0 and offset + 4 <= len(raw),
+            'bounded cited packet header')
+    header, = struct.unpack_from('<I', raw, offset)
+    end = offset + 4 * (1 + (header >> 16))
+    require(end <= len(raw) and (header & 255) in COMMANDS and
+            sha(raw[offset:end]) == cite['packetSha256'],
+            'cited complete original packet digest')
+    words = struct.unpack_from('<' + 'I' * (1 + (header >> 16)), raw, offset)
+    return COMMANDS[header & 255], words
+
+
+def check_live_bank_packets(lines, proof, bank_words):
+    """Read every emitted word from its packet, then replay its live set at DRAW."""
+    cache = {}
+    first_draws = {}
+    for pair, (vertex, fragment) in zip(proof['pairs'], bank_words):
+        for stage, citation, expected in [
+            (0, pair['vertexSet'], vertex), (1, pair['fragmentSet'], fragment)]:
+            name, words = authenticated_packet(lines, citation, cache)
+            require(name == 'SET_CONSTANT_BUFFER' and words[1:3] == (stage, 0) and
+                    tuple(words[3:]) == expected,
+                    'complete emitted bank differs from authenticated SET_CONSTANT_BUFFER packet')
+        draw = pair['firstDraw']
+        name, words = authenticated_packet(lines, draw, cache)
+        require(name == 'DRAW_VBO' and tuple(words[1:]) ==
+                (0, 4, 5, 0, 1, 0, 0, 0, 0, 0, 3, 0),
+                'first bank draw is original four-vertex strip')
+        first_draws[(draw['event'], draw['offset'])] = pair
+    require(len(first_draws) == 3, 'three distinct first-draw packet citations')
+    subcontext = 0
+    shader = [None, None]
+    bank_set = [None, None]
+    seen = set()
+    last_event = max(seq for seq, _ in first_draws)
+    for line in lines[:last_event]:
+        event = json.loads(line)
+        if event['type'] != 'submit_cmd' or event.get('phase') != 'enter' or event.get('ctxId') != 5:
+            continue
+        ref = event['blobs'][0]
+        if ref['sha256'] not in cache:
+            path = ROOT / 'evidence/virgl-workload-inventory/captures/es2gears/blobs' / (
+                ref['sha256'] + '.bin.gz')
+            raw = gzip.decompress(path.read_bytes())
+            require(len(raw) == ref['bytes'] and sha(raw) == ref['sha256'],
+                    'replayed submission blob identity')
+            cache[ref['sha256']] = raw
+        raw = cache[ref['sha256']]
+        offset = 0
+        while offset < len(raw):
+            require(offset + 4 <= len(raw), 'complete replayed packet header')
+            header, = struct.unpack_from('<I', raw, offset)
+            count = header >> 16
+            end = offset + 4 * (count + 1)
+            require(end <= len(raw) and (header & 255) in COMMANDS,
+                    'bounded replayed packet')
+            words = struct.unpack_from('<' + 'I' * (count + 1), raw, offset)
+            name = COMMANDS[header & 255]
+            cite = {'event': event['seq'], 'blobSha256': ref['sha256'],
+                    'offset': offset, 'packetSha256': sha(raw[offset:end])}
+            if name == 'SET_SUB_CTX':
+                subcontext = words[1]
+            elif name == 'DESTROY_SUB_CTX' and words[1] == 2:
+                shader = [None, None]; bank_set = [None, None]
+            elif subcontext == 2:
+                if name == 'BIND_SHADER' and words[2] in (0, 1):
+                    shader[words[2]] = words[1]
+                elif name == 'SET_CONSTANT_BUFFER' and words[1] in (0, 1) and words[2] == 0:
+                    bank_set[words[1]] = cite
+                elif name == 'DRAW_VBO' and (event['seq'], offset) in first_draws:
+                    pair = first_draws[(event['seq'], offset)]
+                    require(shader == [439, 440] and
+                            bank_set == [pair['vertexSet'], pair['fragmentSet']],
+                            'cited complete banks are live at original first DRAW')
+                    seen.add((event['seq'], offset))
+            offset = end
+    require(seen == set(first_draws), 'all three first draws have live authenticated banks')
 
 
 def main(directory):
@@ -65,13 +165,17 @@ def main(directory):
                 c['snapshotSha256'] ==
                 'ea9c2d35066239343903a8fde34b1d8403b8a236c6cd54b9affbea15a16f3b8c'
                 for c in proof['drawCitations']), 'each draw has its preceding quad snapshot')
+    bank_words = [struct.unpack_from('<164I', raw, 8 + 16 * 4 + i * 164 * 4)
+                  for i in range(3)]
+    check_live_bank_packets(events.splitlines(), proof,
+                            [(tuple(words[:16]), tuple(words[16:])) for words in bank_words])
     require((directory / 'native.out').read_bytes() == (directory / 'wasm.out').read_bytes(),
             'byte-identical native and Wasm results')
     lines = (directory / 'native.out').read_text().splitlines()
     require(len(lines) == 7 and lines[-1] == 'STATUS passed', 'complete executable audit')
     bounds = []
     for index, pair in enumerate(proof['pairs']):
-        words = struct.unpack_from('<164I', raw, 8 + 16 * 4 + index * 164 * 4)
+        words = bank_words[index]
         require(sha(struct.pack('<164I', *words)) == pair['sha256'] and
                 pair['vertexWords'] == 16 and pair['fragmentWords'] == 148,
                 'canonical full paired source-bank record')
@@ -112,6 +216,7 @@ def main(directory):
     file_names = ['geometry.bin', 'geometry.json', 'capture.log', 'self-test.log',
                   'native-build.log', 'native.out', 'wasm-build.log', 'wasm.out',
                   'guard-check.log', 'geometry-fault.log', 'exponent-fault.log',
+                  'bank-fault.log',
                   'native-coverage.json']
     generated = ['renderer/virgl-shader/build/original-92cb-geometry-sanitize/original-92cb-geometry-test',
                  'renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js',
