@@ -68,7 +68,6 @@ sources=['Makefile','renderer/virgl-shader/build.sh','renderer/virgl-shader/raw_
          'tasks/epic-6-transcendence/E6-T12g6m4c-zero-capped-min-branch.md']
 generated=['renderer/virgl-shader/build/zero-cap-sanitize/zero-cap-test',
            'renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js',
-           'renderer/virgl-shader/build/zero-cap-wasm/zero-cap.mjs',
            'renderer/virgl-shader/build/zero-cap-wasm/zero-cap.data',
            'renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm',
            'renderer/virgl-shader/build/wasm/virgl-shader.mjs',
