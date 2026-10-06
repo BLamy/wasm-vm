@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: implemented
+status: in-progress
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,17 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — fresh verifier
+
+VERDICT: refuted
+
+- **PREDICTION final draw-state custody — FAILED.** Predicted that bank 1's physical `fsconst0[6].x` would remain the certified `0x40000000` at draw 2, or the altered draw would be rejected. In two independent Playwright runs at source head `bb6d781d13196dbff50d06312695582edb6c9937`, an `addInitScript` wrapper delegated the second program's 41st and final `getUniform` call, returned the authentic `fsconst0[36]` value `[9,0,0,0]`, then used the original `uniform4uiv` to change `fsconst0[6].x` from `1073741824` to `1077936128` (`0x40400000`). The wrapper's immediate WebGL readback saw `1077936128`. The `drawArrays` wrapper observed all three draws, with exponents `[1073741824,1077936128,1073741824]`, `(mode,first,count)=(5,0,4)`, viewport `[0,0,1024,768]`, and samples `0`; `runAcceptance()` still returned `status: passed`, branch counts `[16,0,16]`, and no page or request errors. The temporal opening is the final reflected read in `renderer/virgl-shader/tests/original-92cb-private-power.mjs:240` followed by the unchecked `drawArrays` at line 241. Bank 1 has zero active power branches in sealed `hot/browser/physical-audit.json`, so the pixel oracle cannot expose the changed exponent. Make a mutation made as the final uniform read returns fail before the second physical draw, then re-record exact-head proof.
+- **PREDICTION previous timing escapes — HELD.** A fourth-`uniform4uiv` wrapper changed bank 1's fragment word 24 to `0x40400000`; an independent second-`getBufferSubData` wrapper delegated the read and then changed the same bound word. Each attack read back `1077936128`, failed with `bound physical fsconst0 words still equal the certified bank`, and observed only draw 1. The sealed hot and cold `fault-post-buffer-exponent/report.json` and `fault-post-clear-exponent/report.json` show the same guard at `original-92cb-private-power.mjs:240`. The clean control passed with three draws and original exponent `1073741824` on each.
+- **PREDICTION evidence custody and prior numeric/source gates — HELD.** SHA-256 `e67a41d43101d2aec07dc8e0d8817ab0eb7d57e5f6609daa40f43a650e8edb33` matches the 120-member `worker-draw-boundary/recording.tar.gz`; every member matches `records.json` (index SHA-256 `5d0ba92c93f267be647a1a47ff6404492ac578ebdcf4be537f9cbb0f1b8bc90b`). Both receipts match 53 archived files, 18 `git show bb6d781d` sources, and five generated binaries. The cold report names a pristine scrubbed `bb6d781d` clone, empty status before and after, and exit 0. Bridge/index/geometry, native and Wasm outputs, generated Wasm, and all three float-readback digests are byte-identical to the previously HELD `worker-repair` evidence. Covered counts `[96100,786432,730112]`, active branches `[16,0,16]`, and maximum relative power error `1.1920895e-7` carry forward; ordinary and full-original rejection remains HELD at that unchanged code and evidence boundary.
+- **COVERAGE and SUITE.** Sealed `hot/browser/browser-coverage.json` attributes three executions to the moved renderer, buffer, clear, VAO, framebuffer, and final draw-state checks (`original-92cb-private-power.mjs:171-241`), six `boundWords` calls and 123 register reads. The new fault bodies at lines 188-194 are reached by the hot/cold named fault reports; the shell fault loop and receipt mappings are exercised by those records. The other changed hunks are comments, fault-name data, and evidence metadata. No changed behavior lacks execution evidence. The successful final-read sabotage refutes the boundary, so defer suite promotion.
+
+Commands: independent SHA-256/tar/receipt and `git show` custody audit; V8 coverage-to-source audit; independent physical Playwright `addInitScript` attacks on the fourth uniform upload and second buffer read, plus the final `getUniform` return mutation (repeated twice), with clean controls. Submitted task head `a9580dafd3f6a13cfe871417aaa9b3aab9435446`.
 
 ### 2026-10-06 — worker — final WebGL state check after preparation; resubmitted
 
