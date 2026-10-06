@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: implemented
+status: in-progress
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,16 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-05 — fresh verifier
+
+VERDICT: refuted
+
+- PREDICTION draw-time bank ownership — FAILED. The physical draw should reject if the GPU's bound `fsconst0[6].x` differs from the authenticated bank's `0x40000000` exponent. In an independent Playwright run, an `addInitScript` wrapper changed the fourth `WebGL2RenderingContext.uniform4uiv` upload (bank 1 fragment bank, word 24) to `0x40400000`. A `drawArrays` wrapper then read `getUniform(CURRENT_PROGRAM, getUniformLocation(program, 'fsconst0[6]'))[0] == 1077936128` at draw 2, with `mode=5`, `first=0`, `count=4`, viewport `[0,0,1024,768]` and samples `0`; `runAcceptance()` nevertheless returned `status: passed` and branch counts `[16,0,16]`. Repeating the attack gave the same result. The certified word is read from the pinned geometry by `renderer/virgl-shader/bridge.c:2131-2135`; the physical upload occurs at `renderer/virgl-shader/tests/original-92cb-private-power.mjs:111-112`, but the checks at lines 134-170 compare the JS bank to the source binary and never read the actual GPU uniform before line 172 draws. The sealed `hot/browser/report.json:4214-4216` confirms bank 1 has zero active branches, so its pixel oracle cannot expose this exponent substitution. Recheck the bound GPU constants at the draw boundary and make this mutation fail *before* `drawArrays`; then re-record exact-head evidence.
+- PREDICTION source custody, ordinary gate and numeric output — HELD for unchanged code. The sealed archive SHA-256 `d7aecf8578374d1f98a56ebcebc2a70eba4d94e134a2292190fadc5a45b2a0df` has 96 members that match `records.json`; both receipts match all 41 files, 18 `git show d78af4ea` sources and five generated binaries, and the browser-served Wasm matches those binaries. Independent full readback of `hot/browser/report.json` reproduced covered counts `[96100,786432,730112]`, active counts `[16,0,16]`, maximum input gap `7.7330545e-6`, and maximum relative power error `1.1920895e-7`; raw readback SHA-256 values are `2d9579eb8e0b4e2951bc304f2fff279f1cff1e6cc10442ada712eeaa3a5c3c3e`, `cfadd44a103cbd6d5726fa07b27d7aad2f67ed3930ff96901c486a5beaf7e723`, and `672ab3006241d7ae5f7474c2324e402bf0ce7c4a2ddde73d77b472f79d0669c7`. A separate Wasm bridge probe rejected changed source, bank selector, quad, exponent, negative/NaN/infinite/overflow coefficient, viewport and sample state as `invalid-input`; ordinary and exact full-original pairs remained `unsupported-feature` for all banks. The sealed cold report records a pristine `d78af4ea` checkout and exit code 0. These held results may carry forward if their code boundary and evidence digest stay unchanged.
+- COVERAGE and SUITE: Native coverage reaches the private bridge success path, the two POW exceptions and the rejection guards (`hot/native-coverage.json`); browser coverage and fault reports reach the new draw path and named fault checks. The intercepted uniform upload is a successful-run sabotage of the new test: actual certified draw state was wrong while the test passed. Defer suite promotion and any remaining hunk classification until the semantic boundary is repaired.
+
+Commands: independent archive/receipt SHA-256 audit; independent full WebGL2 readback oracle; Node/Wasm mutation probes; Playwright physical uniform substitution with `page.addInitScript` and `getUniform` inside the second `drawArrays`. Worker source head `d78af4ea7ff322700ee5df5bb25ddda6928dfa62`; submitted task head `15befd53a439587621765d136f151ef71215f88e`.
 
 ### 2026-10-05 — worker — implemented; conditional private pc221/222 prefix
 
