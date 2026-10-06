@@ -2065,3 +2065,7 @@ verify-E6-T12g6m4a:
 .PHONY: verify-E6-T12g6m4b
 verify-E6-T12g6m4b:
 	bash tools/verify-virgl-coordinate-prefix.sh
+
+.PHONY: verify-E6-T12g6m4c
+verify-E6-T12g6m4c:
+	bash tools/verify-virgl-zero-cap.sh

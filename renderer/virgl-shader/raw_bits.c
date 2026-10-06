@@ -10,6 +10,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Private to the captured c580 pc28 result. It is neither floating authority
+ * nor a raw-word fact, and only the adjacent original pc29 may consume it. */
+#define C580_NONPOSITIVE (UINT32_C(1) << 24)
+
 static bool complete_prefix_bank(const struct raw_ir *ir)
 {
    if (!ir->exact || ir->exact->count != 34u * 4u) return false;
@@ -217,9 +221,10 @@ static const struct prefix_shape c580_prefix[28] = {
    {RAW_MIN_PRECISE, 43, 1, {{TEMP, 41, {0,0,0,0}}, {TEMP, 41, {1,0,0,0}}}}
 };
 
-static bool c580_prefix_matches(const struct raw_ir *ir, const struct raw_instruction *current)
+static bool c580_prefix_matches(const struct raw_ir *ir, const struct raw_instruction *current,
+                                unsigned count)
 {
-   if (ir->count != 27 || !complete_prefix_bank(ir) ||
+   if (ir->count != count || !complete_prefix_bank(ir) ||
        !(ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED)) return false;
    static const uint32_t expected_imm[3][4] = {
       {UINT32_C(0xbf800000), UINT32_C(0x3f000000), 0, UINT32_C(0x40000000)},
@@ -243,6 +248,48 @@ static bool c580_prefix_matches(const struct raw_ir *ir, const struct raw_instru
       }
    }
    return true;
+}
+
+static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_instruction *instruction,
+                                      unsigned source, unsigned lane, bool conditional);
+
+/* The original MIN reads the already certified pc27 value and a directly
+ * owned zero bank word. Negating only the cap admits -0 as well as +0; no
+ * other modifier or changed instruction can receive this sign certificate. */
+static bool c580_zero_cap_matches(const struct raw_ir *ir, const struct raw_instruction *instruction)
+{
+   if (ir->count != 28 || !c580_prefix_matches(ir, &ir->instructions[27], 28) ||
+       instruction->opcode != RAW_MIN || instruction->dst.file != TEMP ||
+       instruction->dst.index != 44 || instruction->dst.mask != 1 ||
+       (instruction->flags & (RAW_NEGATE_SOURCES | RAW_ABSOLUTE_SOURCES | RAW_DEAD | RAW_PRECISE)) !=
+          (instruction->flags & (RAW_NEGATE_SOURCE0 << 1))) return false;
+   const struct raw_source *value = &instruction->src[0], *cap = &instruction->src[1];
+   if (value->file != TEMP || value->index != 43 ||
+       cap->file != CONST || cap->index != 29) return false;
+   for (unsigned lane = 0; lane < 4; ++lane)
+      if (value->swizzle[lane] || cap->swizzle[lane]) return false;
+   struct raw_lane source = precise_source(ir, instruction, 0, 0, false);
+   struct raw_lane zero = precise_source(ir, instruction, 1, 0, false);
+   return finite_exp(source) <= 100u &&
+      (zero.zero | zero.one) == UINT32_MAX &&
+      (zero.one & UINT32_C(0x7fffffff)) == 0;
+}
+
+static bool c580_positive_test_matches(const struct raw_ir *ir,
+                                       const struct raw_instruction *instruction,
+                                       struct raw_lane value)
+{
+   if (ir->count != 29 || !(value.origin & C580_NONPOSITIVE) ||
+       instruction->opcode != RAW_FSLT || instruction->dst.file != TEMP ||
+       instruction->dst.index != 45 || instruction->dst.mask != 1 ||
+       (instruction->flags & (RAW_NEGATE_SOURCES | RAW_ABSOLUTE_SOURCES | RAW_DEAD | RAW_PRECISE)))
+      return false;
+   const struct raw_source *zero = &instruction->src[0], *source = &instruction->src[1];
+   if (zero->file != IMM || zero->index != 0 ||
+       source->file != TEMP || source->index != 44) return false;
+   for (unsigned lane = 0; lane < 4; ++lane)
+      if (zero->swizzle[lane] != 2 || source->swizzle[lane]) return false;
+   return ir->immediates[0][2] == 0;
 }
 
 static unsigned float_mode(struct raw_lane value)
@@ -578,6 +625,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_FSLT:
       case RAW_FSGE:
          if (known_operands(a, b)) result[lane] = known_word(ordered_float_mask(a.one, b.one, instruction->opcode == RAW_FSGE));
+         else if (lane == 0 && c580_positive_test_matches(ir, instruction, b))
+            result[lane] = known_word(0);
          break;
       case RAW_FSEQ:
       case RAW_FSNE:
@@ -664,6 +713,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
             result[lane].origin |= dependency;
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
+         if (lane == 0 && c580_zero_cap_matches(ir, instruction))
+            result[lane].origin |= C580_NONPOSITIVE;
          break;
       case RAW_UARL: break; /* Recorded above into the dedicated scalar state. */
       case RAW_BGNLOOP:
@@ -687,7 +738,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
                unsigned maximum = left > right ? left : right;
                unsigned bound = instruction->opcode == RAW_MUL ? left + right + 2u :
                   instruction->opcode == RAW_ADD ? maximum + 2u : maximum;
-               if (instruction->opcode != RAW_MIN_PRECISE || c580_prefix_matches(ir, instruction))
+               if (instruction->opcode != RAW_MIN_PRECISE || c580_prefix_matches(ir, instruction, 27))
                   set_finite_exp(&result[lane], bound);
             }
          } else if (instruction->opcode == RAW_RCP && instruction->src[0].file == CONST) {
@@ -702,7 +753,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
        * borrowing another arm's IN locator or decoding a computed raw value. */
       if (structured && float_mode(result[lane]))
          result[lane].origin = RAW_FLOAT_SHADOW | (result[lane].origin & RAW_BANK_DEPENDENCY) |
-            (output_legal(result[lane]) ? RAW_OUTPUT : 0);
+            (output_legal(result[lane]) ? RAW_OUTPUT : 0) |
+            (result[lane].origin & C580_NONPOSITIVE) |
+            (complete_prefix_bank(ir) && (ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED) &&
+             ir->count <= 28 ? result[lane].origin & RAW_FINITE_EXP_MASK : 0);
    }
    struct raw_lane *destination = instruction->dst.file == TEMP ? ir->temporary[instruction->dst.index] : ir->output[instruction->dst.index];
    for (unsigned lane = 0; lane < 4; ++lane)
