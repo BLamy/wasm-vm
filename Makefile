@@ -2073,3 +2073,7 @@ verify-E6-T12g6m4c:
 .PHONY: verify-E6-T12g6m5a
 verify-E6-T12g6m5a:
 	bash tools/verify-virgl-original-c580.sh
+
+.PHONY: verify-E6-T12g6m5b1
+verify-E6-T12g6m5b1:
+	bash tools/verify-virgl-original-92cb-geometry.sh
