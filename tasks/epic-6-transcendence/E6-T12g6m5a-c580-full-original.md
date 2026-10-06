@@ -3,7 +3,7 @@ id: E6-T12g6m5a
 epic: 6
 title: Prove the unchanged c580 compositor pair on physical WebGL2
 priority: 525.027010581
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m4c]
 estimate: S
 risk: high
@@ -27,3 +27,7 @@ Predict actual constant-bank words, active uniform layout, survivor pixels, disc
 ### 2026-10-05 — worker — activation
 
 The prerequisite E6-T12g6m4c is independently verified at `379c8707d792cffbfd9dbd326adbe093aee8f0dd`. Initial read-only exact-bank replay found 2,271 original draws and three paired banks (12 vertex and 136 fragment words); the unchanged pair translated and linked on hardware under each. The exploratory draw is not the final acceptance proof.
+
+### 2026-10-05 — worker — implemented claim, awaiting independent critic
+
+Frozen source head `3d79918858975d1f44f6da2145930acc1660f23e`. `make verify-E6-T12g6m5a` passed at that exact head, then `make verify-E6-T12g6m4c` and `make verify-E6-T12g6m3c` passed as predecessor and paired-interface regressions. The final pristine-clone command `python3 tools/virgl-original-c580/cold.py target/evidence/virgl-original-c580-cold` passed on the same head. Evidence is sealed in `evidence/virgl-original-c580/worker/recording.tar.gz` (SHA-256 `b0e6a1d568612aa9befbe53c5cb3130d246018ad4778b5ca5eb4926ed4e9ba99`) with `records.json` (SHA-256 `e6962f9217d359f2339ce107ca3144b228d9346e49ed7f252b492f1285379517`) and `manifest.json`. The archive carries exact-head source/binary receipts, complete native/Wasm pair JSON, three source-authenticated banks from 2,271 original DRAWs, physical ANGLE Metal WebGL2 logs/reflection, 96 raw float pixels across near/far edge cases (42 survivors, 54 discards), full-source handwritten color/coordinate oracle comparisons, and two deliberate GLSL source faults that contradict the pixels. Default pair admission and positive-cap/partial-bank/altered-source negatives remain rejected. This proves the private complete c580 pair for the tested authenticated banks and constructed geometry; it does not prove all possible live guest DRAW state or MIPS improvement. `make ci` was attempted and fails before this path on existing macOS-incompatible `crates/wvseccomp` syscall constants and existing `clippy::items_after_test_module` in untouched `crates/core/src/dev/virtio/gpu/mod.rs`; its log is included in the archive.

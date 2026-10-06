@@ -1,0 +1,14 @@
+{
+  "schema": "virgl-original-c580-worker-seal-v1",
+  "task": "E6-T12g6m5a",
+  "sourceHead": "3d79918858975d1f44f6da2145930acc1660f23e",
+  "records": 67,
+  "archiveSha256": "b0e6a1d568612aa9befbe53c5cb3130d246018ad4778b5ca5eb4926ed4e9ba99",
+  "archiveBytes": 4571112,
+  "recordIndexSha256": "e6962f9217d359f2339ce107ca3144b228d9346e49ed7f252b492f1285379517",
+  "hotReceiptSha256": "cae3f5d309b5385ac46b024f2a213bbadfbfc96335b1ab16586c91be0b9185e3",
+  "coldReportSha256": "0ce35ba25d411b26d30061570c94fcf615f217391c5aeae1e031f7269991a5b2",
+  "coldReceiptSha256": "6996a094048001f1225526fc68305cc8670f69236cf443690359ac1557c1101d",
+  "guestExecution": false,
+  "productionNegotiation": false
+}

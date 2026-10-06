@@ -621,7 +621,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027010579` [E6-T12g6j2](epic-6-transcendence/E6-T12g6j2-power.md) — Admit bounded power evaluation for captured compositor equations *(deps: E6-T12g6j1)*
 - [x] `525.02701058` [E6-T12g6k](epic-6-transcendence/E6-T12g6k-fragment-coordinates.md) — Lower captured fragment position and coordinate properties *(deps: E6-T12g6j2)*
 - [x] `525.027010581` [E6-T12g6l](epic-6-transcendence/E6-T12g6l-fragment-discard.md) — Admit fragment discard with sound branch liveness *(deps: E6-T12g6k)*
-- [~] `525.027010581` [E6-T12g6m5a](epic-6-transcendence/E6-T12g6m5a-c580-full-original.md) — Prove the unchanged c580 compositor pair on physical WebGL2 *(deps: E6-T12g6m4c)*
+- [?] `525.027010581` [E6-T12g6m5a](epic-6-transcendence/E6-T12g6m5a-c580-full-original.md) — Prove the unchanged c580 compositor pair on physical WebGL2 *(deps: E6-T12g6m4c)*
 - [ ] `525.027010582` [E6-T12g6m5b](epic-6-transcendence/E6-T12g6m5b-92cb-geometry-domain.md) — Bound the first geometry-dependent power in the original 92cb compositor *(deps: E6-T12g6m5a)*
 - [x] `525.027010585` [E6-T12g6m1](epic-6-transcendence/E6-T12g6m1-known-arithmetic.md) — Materialize exact known ADD and MUL producer words for bounded consumers *(deps: E6-T12g6l)*
 - [x] `525.027010587` [E6-T12g6m2](epic-6-transcendence/E6-T12g6m2-known-branch-liveness.md) — Exclude proved unreachable raw UIF edges after complete validation *(deps: E6-T12g6m1)*
