@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,38 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — worker — isolated physical certificate draw; resubmitted
+
+Source head `de7d3f38213c4fab541523619a918a68204151ee` passed
+`make verify-E6-T12g6m5b2b2` and
+`python3 tools/virgl-92cb-power-domain/private_cold.py
+target/evidence/virgl-92cb-private-power/cold-worker-isolation` from a
+pristine, scrubbed clone at the same head. `python3
+tools/virgl-92cb-power-domain/private_seal.py
+target/evidence/virgl-92cb-private-power
+target/evidence/virgl-92cb-private-power/cold-worker-isolation
+evidence/virgl-92cb-private-power/worker-isolation` sealed 120 hot/cold
+records. Archive `evidence/virgl-92cb-private-power/worker-isolation/recording.tar.gz`
+has SHA-256 `66fc1985148f66ce6cc8b7bea1c3a7f2a89ccd6a5727a28625f16364e7846d96`.
+Both receipts hash 53 acceptance files, 19 mutation outcomes, 19 source
+paths including the served worker module, and five generated binaries. The
+cold report records exit 0 and empty checkout status before and after.
+
+The physical WebGL2 context now belongs to a dedicated worker-created
+`OffscreenCanvas`. The worker itself fetches the complete pinned sources and
+geometry, obtains the M4 Max context, certifies the program, rechecks all
+physical draw state, and issues the draw; the page only requests the run and
+receives a serialized result. This removes page-realm WebGL method wrappers
+from the draw's execution realm. In worker-loop replay of the verifier's
+page-level second-buffer-read hook, the page observed zero WebGL calls and
+no mutation while the worker returned the normal three-bank result. Internal
+worker faults after the buffer read and clear still change bank 1's actual
+bound exponent and fail before draw. The independent full-readback oracle
+again checked 1,612,644 covered pixels, 16/0/16 active branches and maximum
+relative power error 1.1921e-7; browser errors are empty. Prior HELD source,
+numeric and full-original gate results retain their cited digests. This
+isolated proof does not grant production DRAW or claim a guest MIPS increase.
 
 ### 2026-10-06 — fresh verifier
 
