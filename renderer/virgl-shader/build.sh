@@ -87,6 +87,23 @@ case "$mode" in
       --preload-file build/$mode/geometry.bin@/geometry.bin \
       -o build/$mode/original-92cb-geometry.js
     ;;
+  original-92cb-raster-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/original_92cb_raster.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" native_tests/original_92cb_raster.c -lm \
+      -o build/$mode/original-92cb-raster-test
+    ;;
+  original-92cb-raster-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/geometry.bin || { echo 'Missing authenticated geometry.bin' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 native_tests/original_92cb_raster.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-raster.js
+    ;;
   original-c580-wasm)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
