@@ -34,6 +34,8 @@ def main():
         del env[key]
     report = {'schema': 'virgl-coordinate-prefix-cold-v1', 'task': 'E6-T12g6m4b',
               'gitHead': head, 'clone': str(clone), 'removedEnvironmentNames': removed,
+              'dependencyCommand': ['npm', 'ci', '--prefix', 'web', '--ignore-scripts',
+                                    '--no-audit', '--no-fund'],
               'command': ['make', 'verify-E6-T12g6m4b'], 'status': 'running'}
     log_path = output / 'cold.log'
     try:
@@ -46,6 +48,8 @@ def main():
             report['statusBefore'] = git('status', '--porcelain', '--untracked-files=all', cwd=clone)
             if report['cloneHead'] != head or report['statusBefore']:
                 raise ValueError('cold checkout is not pristine at exact head')
+            subprocess.run(report['dependencyCommand'], cwd=clone, env=env,
+                           stdout=log, stderr=subprocess.STDOUT, timeout=300, check=True)
             result = subprocess.run(report['command'], cwd=clone, env=env,
                                     stdout=log, stderr=subprocess.STDOUT, timeout=1200)
             report['exitCode'] = result.returncode
