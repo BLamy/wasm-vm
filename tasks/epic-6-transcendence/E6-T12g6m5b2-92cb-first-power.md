@@ -3,7 +3,7 @@ id: E6-T12g6m5b2
 epic: 6
 title: Bind authenticated quad geometry to the first original 92cb powers
 priority: 525.0270105822
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m5b1]
 estimate: S
 risk: high
@@ -23,3 +23,7 @@ Under complete authenticated 7bf4d0d0/92cb866a source, paired bank and geometry 
 Attack geometry ownership, viewport extremes, NaN/overflow, base sign, exponent source, bank/source substitutions, and live branch reachability. Inspect actual numeric values and generated hardware reflection before claiming a domain. Reject any evidence that only assumes sampled pixels bound every accepted geometry input.
 
 ## Verification log
+
+### 2026-10-05 — worker — activation
+
+The required E6-T12g6m5b1 geometry and bank provenance was independently verified at `d7e091c9b90a97bb2f4417d29193d372a4e5b3a0`. The full original 7bf4/92cb pair remains rejected at pc221; this task must either establish a draw-enforced numeric domain for the first pc221/222 powers or reject it with an exact repro. The captured quad alone is not compiler authority.
