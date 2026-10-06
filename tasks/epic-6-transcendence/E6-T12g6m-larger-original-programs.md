@@ -3,7 +3,7 @@ id: E6-T12g6m
 epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m4c]
 estimate: S
 risk: high
@@ -36,6 +36,10 @@ oracle. Each finding names a report/trace point and digest. Unexecuted runtime
 hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
+
+### 2026-10-05 — worker — resumed after finite zero-cap proof
+
+The independent critic verified E6-T12g6m4c at `379c8707d792cffbfd9dbd326adbe093aee8f0dd`. This parent resumes full unchanged original-pair compilation and physical-body acceptance. Private exact-bank compilation by itself does not establish pixel correctness or live guest GPU offload.
 
 ### 2026-10-04 — worker — prerequisite discovery
 
