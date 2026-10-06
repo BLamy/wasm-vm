@@ -149,7 +149,9 @@ def main(directory):
     check(sha(VERTEX.read_bytes()) == VERTEX.stem and
           sha(FRAGMENT.read_bytes()) == FRAGMENT.stem and
           sha(GEOMETRY.read_bytes()) == GEOMETRY_SHA and
-          json.loads(RASTER.read_text())['geometryBinarySha256'] == GEOMETRY_SHA,
+          json.loads(RASTER.read_text())['geometryBinarySha256'] == GEOMETRY_SHA and
+          (directory.parent / 'geometry.bin').read_bytes() == GEOMETRY.read_bytes() and
+          (directory.parent / 'raster.json').read_bytes() == RASTER.read_bytes(),
           'verified complete original source and geometry')
     listed_sources = {row['path']: row['sha256'] for row in report['sources']}
     listed_served = {row['path']: row['sha256'] for row in report['servedFiles']}
@@ -197,7 +199,8 @@ def main(directory):
     (directory / 'physical-audit.json').write_text(json.dumps({
         'schema': 'virgl-original-92cb-private-power-audit-v1',
         'status': 'passed', 'gitHead': head, 'results': results}, indent=2) + '\n')
-    files = ['predecessor.log', 'native-build.log', 'native.out', 'wasm-build.log',
+    files = ['predecessor.log', 'geometry.bin', 'raster.json',
+             'native-build.log', 'native.out', 'wasm-build.log',
              'production-wasm-build.log', 'wasm.out', 'native.profraw',
              'native.profdata', 'native-coverage.json', 'browser/report.json',
              'browser/browser.png', 'browser/browser-coverage.json',
@@ -215,6 +218,7 @@ def main(directory):
                'tools/virgl-92cb-power-domain/pin_private_inputs.py',
                'tools/virgl-92cb-power-domain/private_browser.mjs',
                'tools/virgl-92cb-power-domain/private_receipt.py',
+               'tools/virgl-92cb-power-domain/receipt.py',
                'tools/virgl-92cb-power-domain/private_cold.py',
                'tools/virgl-92cb-power-domain/private_seal.py',
                'tasks/epic-6-transcendence/E6-T12g6m5b2b2-92cb-private-power-compiler.md']

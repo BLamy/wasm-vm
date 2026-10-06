@@ -8,6 +8,8 @@ fragment=evidence/virgl-workload-inventory/captures/es2gears/shaders/92cb866af48
 
 # Re-run the independently verified physical domain on this exact source head.
 make verify-E6-T12g6m5b2b1 > "$evidence/predecessor.log" 2>&1
+cp target/evidence/virgl-92cb-raster/geometry.bin "$evidence/geometry.bin"
+cp target/evidence/virgl-92cb-raster/raster.json "$evidence/raster.json"
 python3 tools/virgl-92cb-power-domain/pin_private_inputs.py --check
 python3 -m py_compile tools/virgl-92cb-power-domain/private_*.py
 node --check renderer/virgl-shader/index.mjs
