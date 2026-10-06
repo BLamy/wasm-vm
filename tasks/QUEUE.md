@@ -627,7 +627,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0270105885` [E6-T12g6m3b](epic-6-transcendence/E6-T12g6m3b-exact-bank-producer.md) — Derive guarded raw CONST facts in a private owned compiler transaction *(deps: E6-T12g6m3a)*
 - [x] `525.02701058875` [E6-T12g6m3c](epic-6-transcendence/E6-T12g6m3c-exact-bank-pair.md) — Preserve full paired interfaces in owned exact-bank compilation *(deps: E6-T12g6m3b)*
 - [x] `525.0270105889` [E6-T12g6m4a](epic-6-transcendence/E6-T12g6m4a-exact-reciprocal.md) — Materialize exact bank-bound power-of-two reciprocal words *(deps: E6-T12g6m3c)*
-- [?] `525.027010589` [E6-T12g6m4b](epic-6-transcendence/E6-T12g6m4b-coordinate-prefix-range.md) — Bound the original c580 fragment-coordinate prefix before its zero-cap branch *(deps: E6-T12g6m4a)*
+- [~] `525.027010589` [E6-T12g6m4b](epic-6-transcendence/E6-T12g6m4b-coordinate-prefix-range.md) — Bound the original c580 fragment-coordinate prefix before its zero-cap branch *(deps: E6-T12g6m4a)*
 - [ ] `525.0270105895` [E6-T12g6m4c](epic-6-transcendence/E6-T12g6m4c-zero-capped-min-branch.md) — Prove zero-capped MIN cannot enter an ordered positive branch *(deps: E6-T12g6m4b)*
 - [ ] `525.02701059` [E6-T12g6m](epic-6-transcendence/E6-T12g6m-larger-original-programs.md) — Prove the two larger original compositor shader programs *(deps: E6-T12g6m4c)*
 - [ ] `525.0270106` [E6-T12g6](epic-6-transcendence/E6-T12g6-required-format-closure.md) — Close original kmscube and es2gears format/view requirements *(deps: E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m)*
