@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: implemented
+status: in-progress
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,15 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — fresh verifier — VERDICT: refuted
+
+- **PREDICTION draw-time bank ownership — FAILED.** After the physical-state recheck, bank 1 must still have `fsconst0[6].x == 0x40000000` at its `drawArrays`, or the draw must be rejected. In two independent Playwright runs against source head `e69506b2cace03ce6eae2a5a19af58183d1b13f4`, an `addInitScript` wrapper delegated the **second** `WebGL2RenderingContext.getBufferSubData`, then replaced that bound uniform's first word with `0x40400000` using the original `uniform4uiv`. The wrapper read back `1077936128` immediately. A `drawArrays` wrapper observed three draws, with fragment exponents `[1073741824, 1077936128, 1073741824]` and each draw `(mode, first, count) == (5, 0, 4)`; nevertheless `runAcceptance()` returned `status: passed`, branches `[16, 0, 16]`. The repair checks uniforms at `renderer/virgl-shader/tests/original-92cb-private-power.mjs:171-172`, then calls `getBufferSubData` at line 227 and `drawArrays` at line 231. Reproduce by installing those wrappers with `page.addInitScript` before importing `runAcceptance()`, changing only the second buffer read. Bind the actual draw state to the certificate after the final mutable call, or make this late mutation fail before draw 2; re-record exact-head proof. The bank-1 pixel oracle cannot detect the substitution because that bank has zero active POW pixels (`hot/browser/physical-audit.json` in the sealed repair archive).
+- **PREDICTION original fourth-upload sabotage — HELD after repair.** The prior attack, changing word 24 of the fourth `uniform4uiv` upload to `0x40400000`, now fails with `bound physical fsconst0 words still equal the certified bank`; the injected GPU readback is `1077936128`, and only draw 1 executes. An independent unused-word change at `fsconst0[36].w` also fails at the same check before draw 2. A changed VAO divisor and an RGBA16F attachment with complete framebuffer and no WebGL error each fail at their respective physical checks before draw 2. The sealed hot and cold `fault-post-bound-{exponent,vertex,attribute,color}/report.json` records likewise fail at their named boundaries.
+- **PREDICTION evidence custody and numeric output — HELD.** SHA-256 `0c665d3e49bf5815587ac555761e1ca72a16d7449007725e659344c07a65226f` matches the 112-member `worker-repair/recording.tar.gz`; every member matches `records.json`. Both receipts match all 49 archived files, 18 exact-head `git show` sources, and five generated binaries. The cold report records a scrubbed pristine `e69506b2` checkout, exit 0, and empty status before and after. Each successful bank's reflected 16 vertex and 148 fragment words equals `hot/geometry.bin`; its full 12,582,912-byte readback matches the recorded SHA-256. The three readback digests, generated Wasm binaries, core bridge/index source digests, and native/Wasm output are unchanged from the prior HELD verification, so its independent full-pixel oracle and ordinary/full-original rejection carry forward. Covered/active counts remain `[96100,786432,730112]` / `[16,0,16]` with maximum relative power error `1.1920895e-7`.
+- **COVERAGE and SUITE.** Precise browser coverage in `hot/browser/browser-coverage.json` records six `boundWords` calls and 123 per-register reads, plus three executions of the VAO and attachment checks and result serialization. Four new hot and cold fault reports reach their rejection guards; the shell loop and receipt assertions cover those outcomes. The late mutation is a semantic refutation, so no suite artifact is promoted until it is repaired.
+
+Commands: independent SHA-256/tar/receipt audit; independent geometry/uniform/readback digest audit; V8 browser-coverage audit; independent Playwright `addInitScript` attacks on fourth uniform upload, unused uniform word, VAO divisor, RGBA16F attachment, and the late second `getBufferSubData` mutation (late attack repeated twice). Source head `e69506b2cace03ce6eae2a5a19af58183d1b13f4`; submitted evidence head `c70c28f249f6db2848545db241d96f62ddd56b9e`.
 
 ### 2026-10-06 — worker — repaired draw-state ownership; resubmitted
 
