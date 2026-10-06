@@ -53,6 +53,21 @@ function geometry(binary){
  return {quad,banks};
 }
 
+function boundWords(gl,program,name,expected){
+ const observed=[];
+ for(let register=0;register<expected.length/4;register++){
+  const location=gl.getUniformLocation(program,`${name}[${register}]`);
+  require(location!==null,`active physical ${name}[${register}] uniform`);
+  const value=gl.getUniform(program,location);
+  require(value instanceof Uint32Array&&value.length===4,
+   `physical ${name}[${register}] raw uvec4 reflection`);
+  observed.push(...value);
+ }
+ require(observed.length===expected.length&&observed.every((word,i)=>word===expected[i]),
+  `bound physical ${name} words still equal the certified bank`);
+ return observed;
+}
+
 function expectedAxis(vertex,fragment,axis,pixel){
  const scale=axis?384:512;
  const start=scale*(float(vertex[8+axis])+1);
@@ -129,6 +144,18 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
   if(fault==='post-parsed-bank'&&index===0)bank.fragment[24]^=1;
   if(fault==='post-parsed-quad'&&index===0)quad[0]^=1;
   if(fault==='post-sample'&&index===0)drawState.samples=1;
+  if(fault==='post-bound-exponent'&&index===1){
+   const words=new Uint32Array(bank.fragment.slice(24,28));words[0]=0x40400000;
+   gl.uniform4uiv(gl.getUniformLocation(program,'fsconst0[6]'),words);
+  }
+  if(fault==='post-bound-vertex'&&index===1){
+   const words=new Uint32Array(bank.vertex.slice(8,12));words[0]^=1;
+   gl.uniform4uiv(gl.getUniformLocation(program,'vsconst0[2]'),words);
+  }
+  if(fault==='post-bound-attribute'&&index===1)
+   gl.vertexAttribPointer(attributes[1].location,2,gl.FLOAT,false,8,0);
+  if(fault==='post-bound-color'&&index===1)
+   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,width,height,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
   // Recheck the complete source/bank/quad snapshot after program setup. From
   // this point through drawArrays there is no await or callback into the page.
   const atDraw=bridge.translateOriginal92cbFirstPower(request());
@@ -141,6 +168,38 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    bank.vertex.every((word,i)=>word===liveGeometry.banks[index].vertex[i])&&
    bank.fragment.every((word,i)=>word===liveGeometry.banks[index].fragment[i]),
    'owned quad and both bound stage banks still equal the certified geometry');
+  const boundVertexWords=boundWords(gl,program,'vsconst0',bank.vertex);
+  const boundFragmentWords=boundWords(gl,program,'fsconst0',bank.fragment);
+  const boundAttributes=attributes.map(({location,offset})=>({
+   location,offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),
+   enabled:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_ENABLED),
+   size:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_SIZE),
+   type:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_TYPE),
+   normalized:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_NORMALIZED),
+   stride:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_STRIDE),
+   divisor:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_DIVISOR),
+   bufferMatches:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)===buffer,
+   expectedOffset:offset}));
+  require(boundAttributes.every(item=>item.enabled&&item.size===2&&
+   item.type===gl.FLOAT&&!item.normalized&&item.stride===16&&
+   item.offset===item.expectedOffset&&item.divisor===0&&item.bufferMatches),
+   'physical VAO input bindings still equal the certified original quad');
+  const attachment={
+   objectType:gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,
+    gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE),
+   textureMatches:gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,
+    gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)===texture,
+   componentType:gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,
+    gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE),
+   channelBits:[gl.FRAMEBUFFER_ATTACHMENT_RED_SIZE,gl.FRAMEBUFFER_ATTACHMENT_GREEN_SIZE,
+    gl.FRAMEBUFFER_ATTACHMENT_BLUE_SIZE,gl.FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE]
+    .map(parameter=>gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,parameter))};
+  require(attachment.objectType===gl.TEXTURE&&attachment.textureMatches&&
+   attachment.componentType===gl.FLOAT&&attachment.channelBits.every(bits=>bits===32)&&
+   gl.checkFramebufferStatus(gl.FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE&&
+   Array.from(gl.getParameter(gl.COLOR_WRITEMASK)).every(enabled=>enabled)&&
+   !gl.isEnabled(gl.RASTERIZER_DISCARD),
+   'physical float framebuffer attachment still satisfies private certificate');
   require(observedDraw.viewport.join(',')==='0,0,1024,768'&&
    observedDraw.samples===0&&observedDraw.framebufferStatus===gl.FRAMEBUFFER_COMPLETE&&
    gl.getParameter(gl.FRAMEBUFFER_BINDING)===framebuffer&&
@@ -223,7 +282,8 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
    vertexGlsl:vertex.glsl,fragmentGlsl:fragment.glsl,
    vertexMetadata:vertex.metadata,fragmentMetadata:fragment.metadata,
    certificate:translated.private92cbFirstPower,attributes,uniforms,blocks,
-   drawState:observedDraw,rendererAtDraw,precisionAtDraw,logs:built.logs};
+   drawState:observedDraw,boundVertexWords,boundFragmentWords,boundAttributes,
+   attachment,rendererAtDraw,precisionAtDraw,logs:built.logs};
  }finally{
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindVertexArray(null);gl.useProgram(null);
   gl.deleteFramebuffer(framebuffer);gl.deleteTexture(texture);gl.deleteBuffer(buffer);gl.deleteVertexArray(vao);
@@ -233,7 +293,8 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
 
 export async function runAcceptance({fault=null}={}){
  require([null,'source','bank','negative','nonfinite','geometry','viewport','zero-crossing',
-  'post-source','post-bank','post-geometry','post-parsed-bank','post-parsed-quad','post-sample'].includes(fault),
+  'post-source','post-bank','post-geometry','post-parsed-bank','post-parsed-quad','post-sample',
+  'post-bound-exponent','post-bound-vertex','post-bound-attribute','post-bound-color'].includes(fault),
   'known original physical fault');
  const report={schema:'virgl-original-92cb-private-power-compiler-v1',status:'running',
   guestExecution:false,compilerAuthority:'conditional pc221/222 prefix only',productionDrawAuthority:false,

@@ -39,7 +39,8 @@ cmp "$evidence/native.out" "$evidence/wasm.out"
 
 node tools/virgl-92cb-power-domain/private_browser.mjs --output "$evidence/browser"
 for fault in source bank negative nonfinite geometry zero-crossing \
-    post-source post-bank post-geometry post-parsed-bank post-parsed-quad post-sample viewport; do
+    post-source post-bank post-geometry post-parsed-bank post-parsed-quad post-sample viewport \
+    post-bound-exponent post-bound-vertex post-bound-attribute post-bound-color; do
   if node tools/virgl-92cb-power-domain/private_browser.mjs \
       --output "$evidence/fault-$fault" --fault "$fault" \
       > "$evidence/fault-$fault.log" 2>&1; then

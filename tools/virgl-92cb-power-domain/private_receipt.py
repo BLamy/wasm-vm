@@ -31,6 +31,19 @@ def inspect_bank(row, vertex, fragment, index):
                    'colorFormat': 34836, 'mode': 5, 'first': 0, 'count': 4,
                    'drawTimeRecheckRequired': True, 'productionDrawAuthority': False},
           'complete source/bank/geometry and conditional draw certificate')
+    attributes = {item['name']: item['location'] for item in row['attributes']}
+    expected_attributes = [
+        {'location': attributes[name], 'offset': offset, 'enabled': True,
+         'size': 2, 'type': 5126, 'normalized': False, 'stride': 16,
+         'divisor': 0, 'bufferMatches': True, 'expectedOffset': offset}
+        for name, offset in [('in_0', 0), ('in_1', 8)]]
+    check(row['boundVertexWords'] == list(vertex) and
+          row['boundFragmentWords'] == list(fragment) and
+          row['boundAttributes'] == expected_attributes and
+          row['attachment'] == {'objectType': 5890, 'textureMatches': True,
+                                'componentType': 5126,
+                                'channelBits': [32, 32, 32, 32]},
+          'reflected physical uniforms, VAO and float attachment match the certified draw')
     check(row['vertexGlslSha256'] == sha(row['vertexGlsl'].encode()) and
           row['fragmentGlslSha256'] == sha(row['fragmentGlsl'].encode()) and
           row['fragmentGlsl'].count('pow(') >= 2 and
@@ -191,6 +204,10 @@ def main(directory):
         'post-parsed-quad': 'owned quad and both bound stage banks',
         'post-sample': 'draw-time compiler certificate',
         'viewport': 'physical WebGL2 draw state still satisfies private certificate',
+        'post-bound-exponent': 'bound physical fsconst0 words still equal the certified bank',
+        'post-bound-vertex': 'bound physical vsconst0 words still equal the certified bank',
+        'post-bound-attribute': 'physical VAO input bindings still equal the certified original quad',
+        'post-bound-color': 'physical float framebuffer attachment still satisfies private certificate',
     }
     for fault, message in fault_messages.items():
         failed = json.loads((directory.parent / f'fault-{fault}/report.json').read_text())
