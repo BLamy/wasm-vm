@@ -71,7 +71,7 @@ def replay(report, predecessor):
     resources, objects = {}, {}
     sub, shader, viewport, framebuffer = 0, [None, None], None, None
     count = 0
-    color_ids, framebuffer_ids = Counter(), set()
+    color_ids, depth_ids, viewport_ids, framebuffer_ids = Counter(), Counter(), Counter(), set()
     for line in (CAPTURE / 'events.jsonl').read_bytes().splitlines():
         event = json.loads(line)
         if event['type'] == 'resource_create' and event.get('phase') == 'enter':
@@ -124,9 +124,16 @@ def replay(report, predecessor):
                           ('MSAA_SURFACE', framebuffer[0][3]) not in objects,
                           'live ordinary single-sample color/depth attachments')
                     color_ids[color['resourceId']] += 1
+                    if depth:
+                        depth_ids[depth['resourceId']] += 1
+                    viewport_ids[viewport[1]['packetSha256']] += 1
                     framebuffer_ids.add((framebuffer[1]['event'], framebuffer[1]['offset']))
                     count += 1
     check(count == 1957 and color_ids == Counter({21: 1953, 72: 4}) and
+          depth_ids == Counter({20: 1953}) and len(viewport_ids) == 1 and
+          report['viewportPacketDraws'] == dict(viewport_ids) and
+          report['colorResourceDraws'] == dict(color_ids) and
+          report['depthResourceDraws'] == dict(depth_ids) and
           len(framebuffer_ids) == 400 and report['framebufferPackets'] == 400,
           'original complete viewport/framebuffer replay')
 
@@ -187,7 +194,12 @@ def check_envelopes(report, predecessor, binary, native):
             check(axis_report['nearestPixel'] == nearest and
                   axis_report['coveredCenterCount'] == len(covered) and
                   axis_report['branchCenterCount'] == len(branch) and
-                  abs(axis_report['minimumIdealBase'] - float(minimum)) < 1e-9,
+                  all(abs(axis_report[name] - float(value)) < 1e-9 for name, value in (
+                      ('windowStart', first), ('windowEnd', last),
+                      ('nearestCoordinate', closest[2]),
+                      ('minimumIdealBase', minimum),
+                      ('maximumIdealBase', maximum),
+                      ('branchMaximumIdealBase', branch_maximum))),
                   'producer center inventory matches rational replay')
 
 
@@ -202,6 +214,9 @@ def main(directory):
     check(report['schema'] == 'virgl-original-92cb-raster-v1' and
           report['sourceEventsSha256'] == sha((CAPTURE / 'events.jsonl').read_bytes()) and
           report['geometryBinarySha256'] == sha(binary) == predecessor['binarySha256'] and
+          report['viewportWords'] == [0, 0x44000000, 0x43c00000, 0x3f000000,
+                                      0x44000000, 0x43c00000, 0x3f000000] and
+          report['singleSampleCenterRule'] == 'GLSL ES 3.00 section 4.3.9' and
           report['numericCompilerAuthority'] is False and
           report['productionDrawAuthority'] is False,
           'original raster evidence scope and sources')
