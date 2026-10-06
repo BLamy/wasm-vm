@@ -39,14 +39,16 @@ done
 for fault in bank negative nonfinite geometry zero-crossing; do
   python3 tools/virgl-92cb-power-domain/faults.py "$evidence/geometry.bin" \
     "$evidence/native-fault-$fault.bin" "$fault"
-  if renderer/virgl-shader/build/original-92cb-power-domain-sanitize/original-92cb-power-domain-test \
+  if LLVM_PROFILE_FILE="$PWD/$evidence/native-fault-$fault.profraw" \
+       renderer/virgl-shader/build/original-92cb-power-domain-sanitize/original-92cb-power-domain-test \
        "$evidence/native-fault-$fault.bin" > "$evidence/native-fault-$fault.log" 2>&1; then
     echo "Original 92cb native $fault fault unexpectedly passed." >&2
     exit 1
   fi
 done
 
-xcrun llvm-profdata merge -sparse "$evidence/native.profraw" -o "$evidence/native.profdata"
+xcrun llvm-profdata merge -sparse "$evidence/native.profraw" \
+  "$evidence"/native-fault-*.profraw -o "$evidence/native.profdata"
 xcrun llvm-cov export renderer/virgl-shader/build/original-92cb-power-domain-sanitize/original-92cb-power-domain-test \
   -instr-profile="$evidence/native.profdata" > "$evidence/native-coverage.json"
 python3 tools/virgl-92cb-power-domain/receipt.py "$evidence/browser"

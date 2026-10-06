@@ -274,13 +274,15 @@ def main(directory):
         'readbackSha256': [row['readbackSha256'] for row in acceptance['banks']],
         'results': results}, indent=2) + '\n')
     files = ['predecessor.log', 'geometry.bin', 'native-build.log', 'native.out',
-             'wasm-build.log', 'production-wasm-build.log', 'wasm.out', 'native-coverage.json',
+             'wasm-build.log', 'production-wasm-build.log', 'wasm.out',
+             'native.profraw', 'native.profdata', 'native-coverage.json',
              'browser/report.json', 'browser/browser.png',
              'browser/browser-coverage.json', 'browser/physical-audit.json']
     for fault in fault_messages:
         files.extend([f'fault-{fault}.log', f'fault-{fault}/report.json'])
     for fault in native_fault_messages:
-        files.extend([f'native-fault-{fault}.log', f'native-fault-{fault}.bin'])
+        files.extend([f'native-fault-{fault}.log', f'native-fault-{fault}.bin',
+                      f'native-fault-{fault}.profraw'])
     sources = ['Makefile', 'renderer/virgl-shader/build.sh',
                'renderer/virgl-shader/native_tests/original_92cb_power_domain.c',
                'renderer/virgl-shader/tests/original-92cb-power-domain.mjs',
