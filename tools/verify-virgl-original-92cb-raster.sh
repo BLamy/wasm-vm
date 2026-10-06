@@ -24,7 +24,7 @@ EMCC="$emcc_bin" bash renderer/virgl-shader/build.sh original-92cb-raster-wasm \
   node original-92cb-raster.js /geometry.bin) > "$evidence/wasm.out"
 cmp "$evidence/native.out" "$evidence/wasm.out"
 
-for fault in viewport sample bank; do
+for fault in viewport sample bank omit-bank omit-axis; do
   if python3 tools/virgl-92cb-raster/faults.py "$evidence" "$evidence/fault-$fault" "$fault" \
        > "$evidence/$fault-fault.log" 2>&1; then
     echo "Original 92cb $fault raster fault unexpectedly passed." >&2
@@ -34,6 +34,8 @@ done
 rg -q 'original viewport packet is live at every draw' "$evidence/viewport-fault.log"
 rg -q 'live single-sample framebuffer resource' "$evidence/sample-fault.log"
 rg -q 'original raster evidence scope and sources' "$evidence/bank-fault.log"
+rg -q 'complete three-bank two-axis original raster inventory' "$evidence/omit-bank-fault.log"
+rg -q 'complete three-bank two-axis original raster inventory' "$evidence/omit-axis-fault.log"
 
 xcrun llvm-profdata merge -sparse "$evidence/native.profraw" -o "$evidence/native.profdata"
 xcrun llvm-cov export renderer/virgl-shader/build/original-92cb-raster-sanitize/original-92cb-raster-test \

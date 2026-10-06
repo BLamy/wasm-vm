@@ -36,8 +36,16 @@ def main(source, scratch, fault):
         objects = {('SURFACE', handle):
                    ((0, handle, rid, 67, 0, 0), row['color']['surfaceCreate'])}
         receipt.surface(handle, objects, {rid: raw}, (2, 67, 1024, 768, 0, 0))
+    elif fault == 'omit-bank':
+        report['banks'] = report['banks'][:2]
+        (scratch / 'raster.json').write_text(json.dumps(report) + '\n')
+        receipt.main(scratch)
+    elif fault == 'omit-axis':
+        report['banks'][0]['axis'] = report['banks'][0]['axis'][:1]
+        (scratch / 'raster.json').write_text(json.dumps(report) + '\n')
+        receipt.main(scratch)
     else:
-        raise ValueError('viewport|bank|sample fault required')
+        raise ValueError('viewport|bank|sample|omit-bank|omit-axis fault required')
     raise AssertionError('raster fault unexpectedly passed')
 
 

@@ -150,6 +150,10 @@ def exact_float(word):
 def check_envelopes(report, predecessor, binary, native):
     check(binary[:4] == b'G921' and struct.unpack_from('<I', binary, 4)[0] == 3,
           'original three-bank geometry header')
+    check(isinstance(report['banks'], list) and len(report['banks']) == 3 and
+          all(isinstance(item['axis'], list) and len(item['axis']) == 2
+              for item in report['banks']),
+          'complete three-bank two-axis original raster inventory')
     lines = native.splitlines()
     check(len(lines) == 7 and lines[-1] == 'STATUS passed; no shader or future-DRAW authority',
           'complete recorded numerical auditor')
@@ -227,7 +231,8 @@ def main(directory):
     check_envelopes(report, predecessor, binary, native)
     files = ['raster.json', 'geometry.bin', 'predecessor.log', 'capture.log', 'native-build.log',
              'native.out', 'wasm-build.log', 'wasm.out', 'viewport-fault.log',
-             'sample-fault.log', 'bank-fault.log', 'native-coverage.json']
+             'sample-fault.log', 'bank-fault.log', 'omit-bank-fault.log',
+             'omit-axis-fault.log', 'native-coverage.json']
     sources = ['Makefile', 'renderer/virgl-shader/build.sh',
                'renderer/virgl-shader/native_tests/original_92cb_raster.c',
                'tools/verify-virgl-original-92cb-raster.sh',
