@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b1
 epic: 6
 title: Measure and bound original 92cb first-power inputs on physical WebGL2
 priority: 525.027010582221
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m5b2a]
 estimate: S
 risk: high
@@ -23,3 +23,7 @@ For the authenticated original 7bf4/92cb quad, three paired banks and single-sam
 Attack the interpolation error budget, half-pixel location, viewport sign and extent, quad W and UV, bank/source lifetime, zero crossings, positive subnormals, branch reachability, GPU precision and framebuffer readback. Samples cannot substitute for a bound over every covered pixel center; an ideal-center gap alone fails.
 
 ## Verification log
+
+### 2026-10-05 — worker — activation
+
+E6-T12g6m5b2a is verified and proves original draw-state identity plus exact ideal pixel-center envelopes. This task will quantify interpolation and arithmetic uncertainty on the physical WebGL2 path before any compiler exception is attempted. The dependent draw-bound compiler task remains gated.
