@@ -274,7 +274,7 @@ def main(directory):
         'readbackSha256': [row['readbackSha256'] for row in acceptance['banks']],
         'results': results}, indent=2) + '\n')
     files = ['predecessor.log', 'geometry.bin', 'native-build.log', 'native.out',
-             'wasm-build.log', 'wasm.out', 'native-coverage.json',
+             'wasm-build.log', 'production-wasm-build.log', 'wasm.out', 'native-coverage.json',
              'browser/report.json', 'browser/browser.png',
              'browser/browser-coverage.json', 'browser/physical-audit.json']
     for fault in fault_messages:
@@ -294,7 +294,9 @@ def main(directory):
                'tasks/epic-6-transcendence/E6-T12g6m5b2b1-92cb-physical-power-domain.md']
     generated = ['renderer/virgl-shader/build/original-92cb-power-domain-sanitize/original-92cb-power-domain-test',
                  'renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js',
-                 'renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm']
+                 'renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm',
+                 'renderer/virgl-shader/build/wasm/virgl-shader.mjs',
+                 'renderer/virgl-shader/build/wasm/virgl-shader.wasm']
     receipt = {'schema': 'virgl-original-92cb-physical-power-receipt-v1',
                'task': 'E6-T12g6m5b2b1', 'status': 'passed', 'gitHead': head,
                'observedPixels': 1612644, 'portableDomainCertified': False,

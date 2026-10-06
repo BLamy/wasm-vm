@@ -22,6 +22,8 @@ cp "$evidence/geometry.bin" renderer/virgl-shader/build/original-92cb-power-doma
 emcc_bin=$(bash tools/setup-virgl-emsdk.sh)
 EMCC="$emcc_bin" bash renderer/virgl-shader/build.sh original-92cb-power-domain-wasm \
   > "$evidence/wasm-build.log" 2>&1
+EMCC="$emcc_bin" bash renderer/virgl-shader/build.sh wasm \
+  > "$evidence/production-wasm-build.log" 2>&1
 (cd renderer/virgl-shader/build/original-92cb-power-domain-wasm && \
   node original-92cb-power-domain.js /geometry.bin) > "$evidence/wasm.out"
 cmp "$evidence/native.out" "$evidence/wasm.out"
