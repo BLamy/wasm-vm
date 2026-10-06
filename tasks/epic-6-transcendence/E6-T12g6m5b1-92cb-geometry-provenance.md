@@ -3,7 +3,7 @@ id: E6-T12g6m5b1
 epic: 6
 title: Authenticate original 92cb compositor draw-time quad geometry
 priority: 525.0270105821
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m5a]
 estimate: S
 risk: high
@@ -36,3 +36,7 @@ Source head `77aee01dc216b03d3dd5c5620c3c138b8187531c`. Ran `make verify-E6-T12g
 - **COVERAGE/SUITE.** The recorded native audit reports 102/102 covered lines; capture, native, Wasm, receipt, cold and seal paths executed, with declarative/task text waived. The missing packet comparison is absent behavior rather than an unexecuted changed hunk. Do not promote a suite artifact until the refutation is repaired; retain the exact `CONST[5].x` mutation as the new deterministic fault.
 
 Verifier commands: independent Python replay of `events.jsonl` and authenticated command/backing blobs; direct native binary with altered `geometry.bin`; `python3 tools/virgl-92cb-geometry/receipt.py <scratch-directory>`; targeted Python mutations of `checked_draw`, `checked_quad`, `complete_banks`; archive/receipt SHA-256 audit. The altered-bank scratch directory was `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-92cb-critic-used-bank-x2f368t_` (ephemeral); reproduce by changing `hot/geometry.bin` byte 216 as above and recomputing the proof's pair/bin digests and corresponding draw pair citations.
+
+### 2026-10-05 — worker — bank provenance repair; fresh verification requested
+
+Source head `693930111b485af2ddbebb7008afd444516cf0f3`. `receipt.py` now independently compares all 16 vertex and 148 fragment bank words for each pair to the cited original `SET_CONSTANT_BUFFER` packet, then replays the original submit stream to confirm those stage-0/1 bank packets are live under shader handles 439/440 at each of the three first draws. The permanent fault changes the used fragment `CONST[5].x` at artifact byte 216 to 1.0, refreshes the binary/pair/draw self-hashes, and requires rejection with `complete emitted bank differs from authenticated SET_CONSTANT_BUFFER packet` (`target/evidence/virgl-92cb-geometry/bank-fault.log`). Ran `make verify-E6-T12g6m5b1` and `python3 tools/virgl-92cb-geometry/cold.py target/evidence/virgl-92cb-geometry/cold-repaired` at that head; both passed, with native/Wasm byte-identical output and pristine clone status before/after. Sealed 36 files with `python3 tools/virgl-92cb-geometry/seal.py target/evidence/virgl-92cb-geometry target/evidence/virgl-92cb-geometry/cold-repaired evidence/virgl-92cb-geometry/worker-repaired`: `recording.tar.gz` SHA-256 `4ab30bc43a6c501acc116af94d5ec4393015a24f9896dbd82e409e53d97af3cf`, `records.json` SHA-256 `c3f4979dd5832cd7f45b7f238a0263d3bb6a4d569b76b6411b5161b269c5874d`. The prior verifier's geometry, envelope, and portability HELD results apply because the capture, emitted artifact, and native/Wasm logic have not changed. This repair adds proof of complete live bank identity; it still grants no production geometry authority or full original POW admission. The earlier `make ci` attempt is blocked by the unrelated untouched macOS `wvseccomp` symbols and existing GPU Clippy error; only the missing harness proof and its cold clone were rerun, per incremental re-verification policy.
