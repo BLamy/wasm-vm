@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-original-92cb-private-power-seal-v1",
+  "task": "E6-T12g6m5b2b2",
+  "sourceHead": "bb6d781d13196dbff50d06312695582edb6c9937",
+  "records": 120,
+  "archiveSha256": "e67a41d43101d2aec07dc8e0d8817ab0eb7d57e5f6609daa40f43a650e8edb33",
+  "archiveBytes": 5416668,
+  "recordIndexSha256": "5d0ba92c93f267be647a1a47ff6404492ac578ebdcf4be537f9cbb0f1b8bc90b",
+  "hotReceiptSha256": "a2938fb1ded0af322228341013e3960fd139075eaed345189edec3201d23d1d4",
+  "coldReportSha256": "f6a9b817efe2ad95d4d4740c7a0ce36f0fb49a19da00a5c7314ecc8d2ce9ef99",
+  "coldReceiptSha256": "1bc3061c42835ca6edaacef1c94a758d596d2b996f0013d72b15a3a4dc64595f",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "compilerAuthority": "private-pc221-222",
+  "productionDrawAuthority": false
+}

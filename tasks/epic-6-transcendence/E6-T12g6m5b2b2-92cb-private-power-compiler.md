@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,37 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — worker — final WebGL state check after preparation; resubmitted
+
+Source head `bb6d781d13196dbff50d06312695582edb6c9937` passed
+`make verify-E6-T12g6m5b2b2` and
+`python3 tools/virgl-92cb-power-domain/private_cold.py
+target/evidence/virgl-92cb-private-power/cold-draw-boundary` from a pristine,
+scrubbed exact-head clone. `python3
+tools/virgl-92cb-power-domain/private_seal.py
+target/evidence/virgl-92cb-private-power
+target/evidence/virgl-92cb-private-power/cold-draw-boundary
+evidence/virgl-92cb-private-power/worker-draw-boundary` sealed 120 hot/cold
+records. Archive `evidence/virgl-92cb-private-power/worker-draw-boundary/recording.tar.gz`
+has SHA-256 `e67a41d43101d2aec07dc8e0d8817ab0eb7d57e5f6609daa40f43a650e8edb33`.
+Both receipts hash 53 files, including all 19 browser mutation outcomes, the
+complete float readbacks, reflection and coverage; the cold report records
+empty checkout status before and after and exit 0.
+
+The buffer read, clear, renderer/precision inspection, VAO and framebuffer
+checks now precede the final readback of every bound vertex and fragment
+uniform. No preparatory WebGL operation remains between that readback and
+`drawArrays`. Faults changing bank 1's exponent immediately after the buffer
+read and immediately after clear both fail at this final check before draw.
+The fresh verifier's exact `addInitScript` second-`getBufferSubData` sabotage
+was also replayed in the worker loop: its WebGL readback observed the changed
+3.0 exponent, acceptance failed with `bound physical fsconst0 words still
+equal the certified bank`, and only draw 1 executed. The independent pixel
+oracle still reports 1,612,644 covered pixels and active branches 16/0/16,
+with unchanged maximum relative power error 1.1921e-7. Prior HELD source,
+numeric and full-original gate results retain their original digests. This
+private prefix remains outside production DRAW and makes no MIPS claim.
 
 ### 2026-10-06 — fresh verifier — VERDICT: refuted
 
