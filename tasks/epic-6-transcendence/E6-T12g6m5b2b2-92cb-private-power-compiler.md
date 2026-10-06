@@ -3,7 +3,7 @@ id: E6-T12g6m5b2b2
 epic: 6
 title: Bind first original 92cb powers to a private draw-time certificate
 priority: 525.027010582222
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m5b2b1]
 estimate: S
 risk: high
@@ -23,6 +23,39 @@ Consume the verified numeric domain only for exact original fragment pc221/222 u
 Attack certificate ownership and mutation between compile and draw, source/bank substitution, viewport and sample-state drift, negative/NaN/overflow inputs, exponent source, branch reachability and hidden full-original admission. Reject proof that does not execute the physical draw with the certified inputs.
 
 ## Verification log
+
+### 2026-10-06 — worker — repaired draw-state ownership; resubmitted
+
+Source head `e69506b2cace03ce6eae2a5a19af58183d1b13f4` passed
+`make verify-E6-T12g6m5b2b2` and
+`python3 tools/virgl-92cb-power-domain/private_cold.py
+target/evidence/virgl-92cb-private-power/cold-repair` at the same exact head
+in a pristine clone with scrubbed build environment. The hot and cold
+`receipt.json` files independently identify and hash the recorded source,
+generated native/Wasm binaries, browser report, full float readbacks,
+coverage and 17 fault outcomes. `python3
+tools/virgl-92cb-power-domain/private_seal.py
+target/evidence/virgl-92cb-private-power
+target/evidence/virgl-92cb-private-power/cold-repair
+evidence/virgl-92cb-private-power/worker-repair` sealed 112 records in
+`evidence/virgl-92cb-private-power/worker-repair/recording.tar.gz`, SHA-256
+`0c665d3e49bf5815587ac555761e1ca72a16d7449007725e659344c07a65226f`.
+
+The repaired browser run reflects every one of the 4 vertex and 37 fragment
+`uvec4` constants from the bound WebGL program, compares their exact raw words
+with the authenticated bank immediately before each draw, and records the
+actual VAO input bindings and RGBA32F attachment component type/channel bits.
+An explicit bank-1 exponent substitution to 3.0, where no power branch is
+active and the pixel oracle cannot expose the substitution, now rejects at
+the bound-uniform check before `drawArrays`. Vertex-bank, attribute-stride,
+and RGBA8-attachment substitutions likewise reject before draw. The
+independent full-readback oracle still checked 1,612,644 covered pixels with
+active branch counts 16/0/16 and maximum relative power error
+1.1921e-7; native and Wasm outputs remain byte-identical. The previous
+verifier's unchanged source-custody, ordinary-gate and numeric-output results
+remain HELD at their cited digest; this submission specifically repairs the
+failed draw-state custody boundary. No production DRAW or guest MIPS gain is
+claimed by this private compiler step.
 
 ### 2026-10-05 — fresh verifier
 
