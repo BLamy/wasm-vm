@@ -11,7 +11,7 @@ const files=[
  'target/evidence/virgl-92cb-raster/geometry.bin',
  'target/evidence/virgl-92cb-raster/raster.json'];
 const report=await runVirglBrowser({options,task:'E6-T12g6m5b2b2',
- boundary:'physical original pc0..222 private compiler and draw-time certificate',
+ boundary:'dedicated-worker physical original pc0..222 private compiler and draw-time certificate',
  reportFields:{productionNegotiation:false},
  modulePath:'/renderer/virgl-shader/tests/original-92cb-private-power.mjs',
  windowReportKey:'__virglOriginal92cbPrivatePowerReport',serializedAcceptance:true,
@@ -22,6 +22,7 @@ const report=await runVirglBrowser({options,task:'E6-T12g6m5b2b2',
   heading:'Original pc0..222 powers on WebGL2',
   description:'Private physical prefix and draw-time certificate; no production renderer DRAW authority.'}),
  validate(a){
+  assert.equal(a.executionRealm,'dedicated-offscreen-worker');
   assert.equal(a.banks.length,3);
   assert.deepEqual(a.banks.map(bank=>bank.branches),[16,0,16]);
   assert.ok(a.banks.every(bank=>bank.minimum>.49&&bank.maxDeltaError<.1));

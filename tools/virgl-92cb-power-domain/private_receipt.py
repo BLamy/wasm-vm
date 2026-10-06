@@ -155,6 +155,7 @@ def main(directory):
           report['trackedChanges'] == [] and
           report['browserErrors'] == {'console': [], 'page': [], 'requests': []} and
           accepted['fault'] is None and accepted['guestExecution'] is False and
+          accepted['executionRealm'] == 'dedicated-offscreen-worker' and
           accepted['productionDrawAuthority'] is False and
           accepted['compilerAuthority'] == 'conditional pc221/222 prefix only' and
           len(accepted['banks']) == 3 and
@@ -175,6 +176,7 @@ def main(directory):
     listed_served = {row['path']: row['sha256'] for row in report['servedFiles']}
     for path in [VERTEX, FRAGMENT, GEOMETRY, RASTER,
                  ROOT / 'renderer/virgl-shader/tests/original-92cb-private-power.mjs',
+                 ROOT / 'renderer/virgl-shader/tests/original-92cb-private-power-worker.mjs',
                  ROOT / 'renderer/virgl-shader/index.mjs']:
         relative = path.relative_to(ROOT).as_posix()
         check(listed_sources[relative] == listed_served[relative] == sha(path.read_bytes()),
@@ -238,6 +240,7 @@ def main(directory):
                'renderer/virgl-shader/private_92cb_inputs.h',
                'renderer/virgl-shader/native_tests/original_92cb_private_power.c',
                'renderer/virgl-shader/tests/original-92cb-private-power.mjs',
+               'renderer/virgl-shader/tests/original-92cb-private-power-worker.mjs',
                'tools/verify-virgl-original-92cb-private-power.sh',
                'tools/virgl-92cb-power-domain/pin_private_inputs.py',
                'tools/virgl-92cb-power-domain/private_browser.mjs',

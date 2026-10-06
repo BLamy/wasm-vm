@@ -301,19 +301,21 @@ async function renderBank(gl,quad,bank,index,bridge,inputs,fault){
  }
 }
 
-export async function runAcceptance({fault=null}={}){
+export async function runPhysicalAcceptance({fault=null}={}){
  require([null,'source','bank','negative','nonfinite','geometry','viewport','zero-crossing',
   'post-source','post-bank','post-geometry','post-parsed-bank','post-parsed-quad','post-sample',
   'post-bound-exponent','post-bound-vertex','post-bound-attribute','post-bound-color',
   'post-buffer-exponent','post-clear-exponent'].includes(fault),
   'known original physical fault');
+ require(typeof document==='undefined'&&typeof OffscreenCanvas==='function',
+  'isolated physical WebGL worker');
  const report={schema:'virgl-original-92cb-private-power-compiler-v1',status:'running',
   guestExecution:false,compilerAuthority:'conditional pc221/222 prefix only',productionDrawAuthority:false,
+  executionRealm:'dedicated-offscreen-worker',
   portableDomain:'not certified: private certificate applies only to the authenticated draw',
   observedDomain:'positive normal on this renderer and certified draw only',
   maxAllowedDeltaError:0.1,fault,banks:[]};
- window.__virglOriginal92cbPrivatePowerReport=report;
- const canvas=document.querySelector('#gpu');canvas.width=width;canvas.height=height;
+ const canvas=new OffscreenCanvas(width,height);
  const gl=canvas.getContext('webgl2',{antialias:false,preserveDrawingBuffer:true,failIfMajorPerformanceCaveat:true});
  require(gl instanceof WebGL2RenderingContext,'physical WebGL2 context');
  const debug=gl.getExtension('WEBGL_debug_renderer_info');
@@ -362,7 +364,26 @@ export async function runAcceptance({fault=null}={}){
  require(report.banks[0].branches===16&&report.banks[1].branches===0&&
   report.banks[2].branches===16,'original first-power branch center counts');
  report.status='passed';
- document.querySelector('#status').textContent='Private original 92cb power prefix passed';
- document.querySelector('#renderer').textContent=report.renderer;
  return report;
+}
+
+export async function runAcceptance({fault=null}={}){
+ const worker=new Worker(new URL('./original-92cb-private-power-worker.mjs',import.meta.url),
+  {type:'module',name:'original-92cb-private-power'});
+ try{
+  const report=await new Promise((resolve,reject)=>{
+   worker.addEventListener('message',({data})=>{
+    if(data.error)reject(new Error(data.error));
+    else resolve(JSON.parse(data.report));
+   },{once:true});
+   worker.addEventListener('error',event=>reject(new Error(event.message)),{once:true});
+   worker.postMessage({fault});
+  });
+  window.__virglOriginal92cbPrivatePowerReport=report;
+  document.querySelector('#status').textContent='Private original 92cb power prefix passed';
+  document.querySelector('#renderer').textContent=report.renderer;
+  return report;
+ }finally{
+  worker.terminate();
+ }
 }
