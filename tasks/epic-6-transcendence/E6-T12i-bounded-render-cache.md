@@ -3,7 +3,7 @@ id: E6-T12i
 epic: 6
 title: Cache WebGL2 shader programs and state with complete bounded keys
 priority: 525.02703
-status: pending
+status: in-progress
 depends_on: [E6-T12h]
 estimate: S
 risk: high
@@ -40,4 +40,19 @@ dropped draws. Cached objects must release on reset and context destruction.
 
 ## Verification log
 
-(empty)
+### 2026-10-09 — worker — activation
+
+Continue the user's production graphics offload dependency chain from independently
+verified E6-T12h at `bc2c619f72c0bb13ced896411829cd19954ba163`. This high-risk
+atomic cache boundary precedes truthful guest negotiation. The unrelated queue
+work remains outside this explicit graphics request.
+
+Implement bounded, context-owned translation/program/state reuse with exact
+equality behind hash buckets, eviction and explicit accounting. Preserve complete
+GL restoration and live uniform/storage validation; cached state cannot inherit
+host bindings or authorize stale resource generations. Record real translation,
+link and draw counters and an explicitly host-labelled bounded frame dump. Prove
+10,000 blend toggles through physical WebGL pixels, pressure/recreation, collisions,
+generation/cleanup attacks, affected retained gates, source fault sensitivity and
+a final pristine clone. This layer does not advertise production caps, certify
+live kmscube hit rates or claim FPS/MIPS.
