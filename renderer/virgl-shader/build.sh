@@ -166,7 +166,7 @@ case "$mode" in
     done
     "$emcc" "${common[@]}" -O2 build/$mode/bridge.o build/$mode/raw_bits.o \
       "${sources[@]:2}" native_tests/original_92cb_complete.c -lm \
-      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 -sSTACK_SIZE=262144 -sSTACK_OVERFLOW_CHECK=2 -sABORTING_MALLOC=0 \
       --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
       --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
       --preload-file build/$mode/geometry.bin@/geometry.bin \
