@@ -1957,6 +1957,10 @@ verify-E6-T12f6:
 	bash tools/verify-virgl-original-corpus.sh
 
 # Real unchanged Mesa demos client, authenticated original packets and roles.
+.PHONY: verify-E6-T12g
+verify-E6-T12g:
+	bash tools/verify-virgl-required-formats.sh
+
 .PHONY: verify-E6-T12g1
 verify-E6-T12g1:
 	bash tools/verify-virgl-workload-inventory.sh
