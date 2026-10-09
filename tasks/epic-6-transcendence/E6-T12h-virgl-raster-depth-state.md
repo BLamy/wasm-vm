@@ -3,7 +3,7 @@ id: E6-T12h
 epic: 6
 title: Execute required VirGL raster depth and vertex state without coordinate drift
 priority: 525.02702
-status: pending
+status: in-progress
 depends_on: [E6-T12g6]
 estimate: S
 risk: high
@@ -40,4 +40,12 @@ feature families discovered during workload bring-up need separate S tasks.
 
 ## Verification log
 
-(empty)
+### 2026-10-09 — worker — activation
+
+Continue the production graphics dependency chain explicitly requested by the
+user. E6-T12g6 is independently verified at `10adfaaf3badf5f70ad9375f4e0bff6a615418f6`.
+This high-risk boundary adds actual required draw/state behavior to the isolated
+renderer; it does not yet advertise guest acceleration or claim live FPS/MIPS.
+Original client packets require triangle strips, RGB32F fetches, negative-Y
+viewports, lower-left winding and Z16 depth attachments. Active stencil,
+instancing, points/lines and other unsupported fields remain explicit errors.
