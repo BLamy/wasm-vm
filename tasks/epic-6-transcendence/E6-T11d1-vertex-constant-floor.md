@@ -3,7 +3,7 @@ id: E6-T11d1
 epic: 6
 title: Execute the GLES2 ordinary vertex constant-bank floor
 priority: 525.027035
-status: pending
+status: in-progress
 depends_on: [E6-T12i]
 estimate: S
 risk: high
@@ -48,4 +48,13 @@ check so the pixel/boundary oracle fails. Carry unchanged proof leaves forward.
 
 ## Verification log
 
-(empty)
+### 2026-10-09 — worker — activated
+
+Continue the explicitly requested production graphics chain from the verified
+E6-T12i boundary (`fcb908e756a5e2fe7eb6f29864e23b0e46652b37`). The negative
+ordinary-Wasm readiness recording in
+`evidence/virgl-production-readiness/constant-floor.json` demonstrates the
+128-vector vertex-bank gap. This slice changes ordinary finite vertex capacity
+and its actual reflection/upload only. Private raw/certificate and fragment
+limits stay at 46 guest registers; no guest capset or production authority is
+enabled by this slice.
