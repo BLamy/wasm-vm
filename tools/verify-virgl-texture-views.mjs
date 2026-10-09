@@ -15,7 +15,7 @@ assert.ok(options.output);assert.ok(!options.sabotage||['swizzle'].includes(opti
 assert.ok(!options['node-only']||options['node-only']==='true');
 const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sourcePaths=[
-  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs',
+  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',
   'renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/texture-views.mjs',
   'renderer/virgl-command/tests/flat-pairs.mjs','renderer/virgl-shader/tests/pairs.mjs','renderer/virgl-shader/tests/components.mjs','renderer/virgl-shader/tests/browser.mjs','renderer/virgl-shader/tests/corpus.mjs',
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',

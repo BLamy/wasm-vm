@@ -106,7 +106,7 @@ function budgetCheck(rig,flatBytes) {
   for(const ctx of snapshot.contexts)for(const sub of ctx.subContexts){
     for(const obj of sub.objects)if(obj.translation)expected+=obj.fields.text.length+obj.translation.glsl.length;
     for(const program of sub.programs){equal(program.variantBytes,program.interfaceKey.includes('/flat')?flatBytes:0,'owned variant GLSL budget');expected+=program.variantBytes;
-      equal(program.key,`${program.vertexGeneration}:${program.fragmentGeneration}:${program.interfaceKey}`,'generation+interface program key');}
+      equal(program.key,`${sub.generation}:${program.vertexGeneration}:${program.fragmentGeneration}:${program.interfaceKey}|${program.samplingKey}`,'owner+generation+interface+view program key');}
   }
   equal(snapshot.budgets.shaderBytes,expected,'independent selector+variant byte accounting');return snapshot;
 }
@@ -128,10 +128,11 @@ async function phase(rig,ctx,name,mode,order,report,flatBytes,sabotage=false) {
 function snapshotLinkFailure(rig,ctx,mode,report) {
   const before=rig.snapshot(),liveBefore=rig.watch.counts(),eventsBefore=rig.watch.events.length;rig.watch.control.mode=mode;
   const result=bad(rig.execute(ctx,bind(2,1),`controlled ${mode}`),mode);rig.watch.control.mode=null;
-  const after=rig.snapshot();equal(after,before,`${mode} unchanged publication and budgets`);equal(rig.watch.counts(),liveBefore,`${mode} no native object leaks`);
+  const after=rig.snapshot();equal({contexts:after.contexts,budgets:nativeBudgets(after.budgets)},{contexts:before.contexts,budgets:nativeBudgets(before.budgets)},`${mode} unchanged publication and native budgets`);equal(after.work.failedSubmissions,before.work.failedSubmissions+1,`${mode} truthful failed submission counter`);equal(rig.watch.counts(),liveBefore,`${mode} no native object leaks`);
   if(mode.startsWith('bad-')||mode==='missing-pair')require(!rig.watch.events.slice(eventsBefore).some(e=>/^create/.test(e.call)),`${mode} no GL allocation`);
   report.failure={mode,result,before,after,liveBefore,liveAfter:rig.watch.counts(),events:rig.watch.events.slice(eventsBefore)};
 }
+const nativeBudgets = budgets => {const {cacheBytes,...native}=budgets;return native;};
 export async function runRendererPairs(gl,{bridge,sources,anchors},report,sabotage) {
   report.draws=[];report.lifecycle=[];report.faults=[];report.quota=[];
   const flatBytes=anchors.find(a=>a.name==='flat').result.vertex.glsl.length;
@@ -147,7 +148,7 @@ export async function runRendererPairs(gl,{bridge,sources,anchors},report,sabota
     const f=await phase(rig,1,'renderer flat012 reused','flat',[0,1,2],report,flatBytes);
     equal([c.programId,e.programId],[a.programId,a.programId],'same smooth native program reused');equal([d.programId,f.programId],[b.programId,b.programId],'same flat native program reused');
     equal(primary.pairTranslations.length,pairCalls,'warm links avoid pair conversion');equal(rig.watch.events.filter(e=>e.call.startsWith('create')).length,allocationCount,'warm links avoid allocations');
-    equal(rig.snapshot().budgets,stable.budgets,'warm cache bounded');
+    const warm=rig.snapshot();equal(nativeBudgets(warm.budgets),nativeBudgets(stable.budgets),'warm native cache residency unchanged');for(const cache of Object.values(warm.caches))require(cache.bytes<=cache.limits.bytes&&cache.entries<=cache.limits.entries,'warm complete-key state cache remains bounded');
     const before=rig.snapshot(),oldVS=subOf(before,1).bindings.vertexShader;
     rig.run(1,packet(3,4,[1]),'destroy bound vertex selector');const retained=rig.snapshot();equal(retained.budgets,before.budgets,'bound destroyed vertex remains live');
     rig.run(1,shaderPacket(1,0,sources.vertex.text),'reuse public vertex handle');rig.run(1,bind(1,0),'bind new vertex generation');
@@ -191,7 +192,7 @@ export async function runRendererPairs(gl,{bridge,sources,anchors},report,sabota
   const negatives={name:'stage-semantic-errors'};report.negatives=negatives;const n=makeRig(gl,bridge,sources,negatives);
   try{createResources(n);createContext(n,1);setupSub(n,1);await phase(n,1,'negative baseline smooth','smooth',[0,1,2],report,flatBytes);
     const texts=[['missing',sources.missingVertex.text],['components',sources.partialVertex.text]];negatives.errors=[];
-    for(const [name,text]of texts){n.run(1,shaderPacket(20,0,text),`${name} producer`);const before=n.snapshot(),count=n.watch.events.length;const result=bad(n.execute(1,link(20,2),`${name} flat link`),name);equal(n.snapshot(),before,`${name} unchanged state`);require(!n.watch.events.slice(count).some(e=>e.call.startsWith('create')),`${name} reject before GL allocation`);negatives.errors.push({name,inputSha256:await digest(text),result});n.run(1,packet(3,4,[20]),'delete negative producer');}
+    for(const [name,text]of texts){n.run(1,shaderPacket(20,0,text),`${name} producer`);const before=n.snapshot(),count=n.watch.events.length;const result=bad(n.execute(1,link(20,2),`${name} flat link`),name);const after=n.snapshot();equal({contexts:after.contexts,budgets:after.budgets},{contexts:before.contexts,budgets:before.budgets},`${name} unchanged state`);equal(after.work.failedSubmissions,before.work.failedSubmissions+1,`${name} truthful rejection counter`);require(!n.watch.events.slice(count).some(e=>e.call.startsWith('create')),`${name} reject before GL allocation`);negatives.errors.push({name,inputSha256:await digest(text),result});n.run(1,packet(3,4,[20]),'delete negative producer');}
     negatives.errors.push({name:'wrong-stage',result:bad(n.execute(1,bind(2,0),'wrong stage binding'),'wrong stage')});
     await phase(n,1,'negative flat recovery','flat',[0,1,2],report,flatBytes);
   }finally{n.dispose();}

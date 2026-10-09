@@ -111,7 +111,7 @@ try {
   } finally { clearTimeout(timer); }
   report.browserMs = performance.now() - begin;
   const coverage = await coverageSession.send('Profiler.takePreciseCoverage');
-  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs','renderer/virgl-command/scanout.mjs','web/dist/src/sink/virgl-scanout-presenter.js'].map((filename) => {
+  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/scanout.mjs','web/dist/src/sink/virgl-scanout-presenter.js'].map((filename) => {
     const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
     assert.equal(matches.length, 1, `coverage must name served runtime ${filename}`);
     return { source: filename, sha256: sha256(servedSources.get(filename)), coverage: matches[0] };

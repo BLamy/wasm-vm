@@ -231,11 +231,11 @@ function mutateServed(filename, original, report) {
   return altered;
 }
 const { ORIGINAL_INPUTS } = await import('../renderer/virgl-shader/tests/components.mjs');
-const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs'];
+const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs'];
 const runtimePins = await Promise.all(runtime.map(async filename => {const bytes=await fs.readFile(path.join(repo,filename));return {path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
 await runVirglBrowser({options,task:'E6-T12e3b',boundary:'authored raw184-word constant packets; actual command renderer; conservative active-prefix reflection; production disabled',
  reportFields:{currentGuest3dAdvertisement:false}, modulePath:'/renderer/virgl-command/tests/constants.mjs',windowReportKey:'__virglConstantsReport',
- servedFiles:[...ORIGINAL_INPUTS.map(value=>value.path),...runtime],pinnedFiles:[...ORIGINAL_INPUTS,...runtimePins],coveragePaths:['renderer/virgl-command/state.mjs','renderer/virgl-command/decoder.mjs'],
+ servedFiles:[...ORIGINAL_INPUTS.map(value=>value.path),...runtime],pinnedFiles:[...ORIGINAL_INPUTS,...runtimePins],coveragePaths:['renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/decoder.mjs'],
  html:browserDocument({title:'E6-T12e3b constant transport proof',heading:'Bounded guest constant transport',description:'184 words per stage · real command renderer · high-index geometry and color · isolated state and active reflection'}),
  validate(acceptance) {assert.equal(acceptance.schema,'wasm-vm-constant-browser-v1');assert.equal(acceptance.corpus.length,19);assert.equal(acceptance.corpus.filter(value=>value.result.ok).length,12);assert.equal(acceptance.shaderFixtures.length,8);assert.equal(acceptance.rigs.length,10);assert.equal(acceptance.validationRigs.length,25);assert.equal(acceptance.productionVirgl,false);assert.ok(acceptance.checkedPixels>30000);},
  successMessage:acceptance=>`E6-T12e3b: ${acceptance.checkedPixels} exact hardware pixels; full constant transport, reflection and ownership passed.`,
