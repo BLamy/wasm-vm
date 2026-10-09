@@ -15,6 +15,7 @@ bash renderer/virgl-shader/build.sh guard-check > "$evidence/guard-check.log" 2>
 mkdir -p target/evidence/virgl-92cb-geometry target/evidence/virgl-92cb-raster
 python3 tools/virgl-92cb-geometry/capture.py target/evidence/virgl-92cb-geometry/geometry.bin > "$evidence/capture.log"
 python3 tools/virgl-92cb-raster/capture.py target/evidence/virgl-92cb-raster/raster.json >> "$evidence/capture.log"
+cp target/evidence/virgl-92cb-geometry/geometry.bin target/evidence/virgl-92cb-raster/geometry.bin
 python3 tools/virgl-92cb-power-domain/pin_private_inputs.py --check
 cp target/evidence/virgl-92cb-geometry/geometry.bin "$evidence/geometry.bin"
 cp target/evidence/virgl-92cb-raster/raster.json "$evidence/raster.json"
