@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-render-cache-seal-v1",
+  "task": "E6-T12i",
+  "sourceHead": "6ec98cebea12fc9551e333746d9616999be1e5d2",
+  "records": 168,
+  "archiveSha256": "ad9165fcca40cca50382079c4df648d37525951bbae2e0b17012c236e9b097b7",
+  "archiveBytes": 7143802,
+  "recordIndexSha256": "68a61aac2fc646cf0ae26ab71b7a7bf94de8affe77c539181d800b79b448593b",
+  "hotReceiptSha256": "18b7d6767af582fa3325b4418c9bd39c0e1651568bda170f6cb8803648f06824",
+  "coldReportSha256": "159ecceb50bbb04dabd8b4653303f24081db41cd439058ddc99227700a7f9117",
+  "coldReceiptSha256": "29ad7d679a6734336ba45a4673621796f5d06d017c37bdeb414a45b3e7f025b0",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-bounded-render-caches",
+  "productionDrawAuthority": false
+}
