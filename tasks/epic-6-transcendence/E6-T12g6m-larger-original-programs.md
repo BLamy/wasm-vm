@@ -3,7 +3,7 @@ id: E6-T12g6m
 epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
-status: in-progress
+status: implemented
 depends_on: [E6-T12g6m4c, E6-T12g6m5b2b2]
 estimate: S
 risk: high
@@ -93,3 +93,76 @@ The earlier zero-cap argument omitted GLSL ES's permitted non-NaN result from an
 ### 2026-10-09 — worker — full-source integration activation
 
 The independent critic verified the private first-power worker boundary E6-T12g6m5b2b2 at `f18232d88fa0cc4673c5af7c0d414046803c0883`. Resume the unchanged two-pair acceptance. The predecessor authenticates complete original inputs but emits only pc0..222 plus an observer; it does not prove pc223+ or authorize production guest graphics.
+
+### 2026-10-09 — worker — complete original-program submission
+
+Frozen source/harness head `3f0db236825e4389c4cd78e82192f81dc9b5cf90`;
+base `f18232d88fa0cc4673c5af7c0d414046803c0883`. Commands (all exit0):
+
+```
+make verify-E6-T12g6m
+python3 tools/virgl-original-programs/cold.py target/evidence/virgl-original-programs-cold
+python3 tools/virgl-original-programs/seal.py target/evidence/virgl-original-programs target/evidence/virgl-original-programs-cold evidence/virgl-original-programs/worker
+```
+
+The sealed415-member recording is `evidence/virgl-original-programs/worker/recording.tar.gz`,
+SHA256 `a90cd34bf49f9dbe9dc8ebb54e2f0a95f544a1f72c78d28e436f1ba16beb5a12`;
+indexSHA256 `f4f0cb900be5582b9fc29270304d045ac458ae2e926baaac726a65a315cf8e96`.
+Hot receiptSHA256 `fd5f3b87fdd71796c4944c745ebaf59b2e9dc6d3da05c38e73073b553f26b1f9`;
+cold receiptSHA256 `c855204d1a129a6c0d35d378fb647b3108277dc1a66d9cecd7f2ffc0ab77a417`;
+cold reportSHA256 `862d579ceee2ffb9734d80ee112f3d50a65663b7318d7d0adb8701cbf09fb56d`.
+The scrubbed clone is pristine before and after the complete command. Source
+and generated native/Wasm binaries, real raw readbacks, coverage, physical
+screenshots, fault transcripts and retained original programs are bound.
+
+The unchanged716-instruction92cb body runs with its unchanged7bf4 partner
+under all three complete authenticated banks and quad/draw-state pins. Native
+ASan/UBSan and real Wasm test outputs are byte-identical. Allocation fault and
+borrowed-input mutation hooks exercise all nine actual native allocations;
+real JS input allocation/cleanup failures and96 varied source/bank mutations
+reject or recover without partial admission. Ordinary/public and ordinary-exact
+full92cb stay rejected. The private bit alone without owned exact input rejects.
+Full c580 execution and the original nineteen plus G6a's four additional bodies
+retain their native/Wasm/physical numerical and source-fault checks at this head.
+The historical G6a wrapper's older-source identity premise is not weakened:
+its actual component checks run and are bound directly by this parent receipt.
+
+Physical Chrome154 / ANGLE Metal Apple M4 Max records1,612,644 covered pixels:
+banks0/1/2 survive6088/1791/17168 and discard90012/784641/712944 respectively.
+Maximum primary absolute error is0.0000203735, below the0.0001 budget. All29
+live original power sites execute; independent handwritten equations predict
+branch, inputs, color, alpha and discard before output inspection. Each actual
+POW result is checked against its snapshotted post-modifier operands within
+2^-14 relative error. Default mode retains original KILL/output; diagnostic
+mode preserves per-site observations on discarded pixels.22 literal boundary
+cases physically execute the emitted helper and actual first POW snapshot,
+including exact+0 and rejection paths.27 attacks cover input/source/state/
+reflection/binding ownership, altered outputs/discard and five invalid dynamic
+operands. Raw readbacks are replayed by the offline audit. Every run disposes
+real objects and reports zero unexpected GL/console/page/request errors.
+
+The emitted guard rejects negative, subnormal and nonfinite operands, zero
+with nonpositive exponent, and products beyond a conservative119-bit envelope
+before native pow. It gives no static word or conversion/index authority. Only
+pcs231/260/293/319 skip negative fade powers, because their sole pinned UCMP
+consumer selects exact zero precisely on that path. The dedicated worker owns
+the compiler, inputs, context and draw; page hooks cannot reach its final issue.
+This remains bounded numerical original-body proof. Production imports, caps,
+live guest DRAW authority, portable accuracy and FPS/MIPS are not claimed.
+
+The first cold prechecks found missing regeneration of predecessor geometry;
+the final committed command regenerates both canonical geometry and raster
+inputs, checks the pin and passes in the pristine clone. The full Wasm test
+uses the existing production256KiB stack with overflow checking; production
+memory/stack limits are not widened. Earlier exploratory/failed/interrupted
+recordings are excluded from the final archive.
+
+An extra `make ci` workspace-wall attempt at runtime19f9da0f passed formatting
+and stopped in pre-existing unrelated Rust checks: Linux-only wvseccomp symbols
+on macOS, JIT test feature/method mismatches, CLI dead-code and core test-module
+placement warnings. No Rust file changes in this task; the prescribed affected
+native/Wasm/compiler/physical command above is green. The wall transcript is
+`evidence/virgl-original-programs/worker/unrelated-ci-wall.log`, SHA256
+`b2754fe4a10d45ec47ee2dd34b6e23654cddf4fdcc8ee442470b77cf45ad89c0`. It is a separately cited limitation, not a passed submission gate.
+A fresh adversarial critic must judge the full diff, predictions, coverage and
+source-fault sensitivity before the dependent G6 task activates.
