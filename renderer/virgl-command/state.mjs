@@ -1,4 +1,4 @@
-/** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
+/** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY } from "./constant-domain.mjs";
@@ -12,6 +12,8 @@ export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
+const vertexComponents = (element) => element.sourceFormat === 30 ? 3 : 2;
+const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
 function freeze(value) {
   if (value && typeof value === "object") { for (const child of Object.values(value)) freeze(child); Object.freeze(value); }
   return value;
@@ -197,9 +199,9 @@ function createRenderer(options, drawing, asynchronous = false) {
         vao = gl.createVertexArray(); framebuffer = gl.createFramebuffer();
         require(vao && framebuffer, "backend-error", "Subcontext helper allocation failed."); check();
         const sub = { id, generation: generation(), names: new Map(), live: new Set(), programs: new Map(), vao, framebuffer,
-          blend: null, rasterizer: null, dsa: null, vertexElements: null, shaders: [null, null], surfaces: [],
+          blend: null, rasterizer: null, dsa: null, vertexElements: null, shaders: [null, null], surfaces: [], depthSurface: null,
           vertexBuffers: [], indexBuffer: null, views: [Array(32).fill(null), Array(32).fill(null)],
-          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []], viewport: null,
+          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []], viewport: null, scissor: null,
           blendColor: [0, 0, 0, 0], stencilRef: { front: 0, back: 0 }, defaults: { width: 0, height: 0 }, resets: {} };
         subCount++; return sub;
       } catch (error) { if (vao) gl.deleteVertexArray(vao); if (framebuffer) gl.deleteFramebuffer(framebuffer); throw error; }
@@ -245,6 +247,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       for (const program of [...sub.programs.values()]) deleteProgram(sub, program);
       for (const surface of sub.surfaces) objectRef(sub, surface, null);
       sub.surfaces = [];
+      sub.depthSurface = objectRef(sub, sub.depthSurface, null);
       for (const slots of sub.views) for (let slot = 0; slot < slots.length; slot++) slots[slot] = objectRef(sub, slots[slot], null);
       for (let stage = 0; stage < 2; stage++) sub.shaders[stage] = objectRef(sub, sub.shaders[stage], null);
       for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
@@ -258,7 +261,6 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(objects.size < limits.objects, "limit-exceeded", "Live object limit exceeded.");
       const object = { handle: fields.handle, type, name: command.objectName, generation: generation(), fields, public: true, references: 1 };
       try {
-        if (type === 2) require(!fields.scissor, "unsupported-feature", "Active scissor rasterization is unsupported.");
         if (type === 5) {
           require(fields.elements.length <= maxAttributes, "limit-exceeded", "Vertex elements exceed host attribute slots.");
           for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
@@ -501,7 +503,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         require(buffer.fields.stride <= 255 && buffer.fields.stride % 4 === 0 && buffer.fields.offset % 4 === 0,
           "invalid-state", "Vertex buffer stride/offset is not supported by WebGL.");
         require(buffer.fields.offset <= buffer.metadata.byteLength && element.sourceOffset <= buffer.metadata.byteLength - buffer.fields.offset &&
-          8 <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
+          vertexComponents(element) * 4 <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
     const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format);
@@ -553,13 +555,15 @@ function createRenderer(options, drawing, asynchronous = false) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, 0);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, sub.depthSurface ? resolve(sub.depthSurface.lease).storage.texture : null, 0);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
       // WebGL requires every enabled color buffer to have an active output.
       // A checked terminal discard may have no reflected output. Disable it
       // only for that draw; CLEAR and ordinary restoration retain the surface.
       const discardOnly = plan && program.fragment.discardContract?.alwaysDiscards === true &&
         program.reflection.outputs.length === 1 && program.reflection.outputs[0].location === -1;
       gl.drawBuffers([surface && !discardOnly ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE);
-      if (surface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
+      if (surface || sub.depthSurface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
       gl.useProgram(program?.native ?? null);
       for (let slot = 0; slot < maxAttributes; slot++) {
         gl.disableVertexAttribArray(slot); gl.vertexAttribDivisor(slot, 0); gl.vertexAttrib4f(slot, 0, 0, 0, 1);
@@ -568,7 +572,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         const element = sub.vertexElements.fields.elements[attribute.index], buffer = element ? sub.vertexBuffers[element.vertexBufferIndex] : null;
         if (!buffer) continue;
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
-        gl.vertexAttribPointer(attribute.location, 2, gl.FLOAT, false, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        gl.vertexAttribPointer(attribute.location, vertexComponents(element), gl.FLOAT, false, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
         gl.enableVertexAttribArray(attribute.location);
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -587,6 +591,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       for (let slot = 0; slot < uniformBindings; slot++) gl.bindBufferBase(gl.UNIFORM_BUFFER, slot, null);
       if (program) {
         for (const block of program.blocks) {
+          new DataView(block.data.buffer).setFloat32(640, sub.viewport?.scale[1] < 0 ? -1 : 1, true);
           gl.bindBuffer(gl.UNIFORM_BUFFER, block.buffer); gl.bufferSubData(gl.UNIFORM_BUFFER, 0, block.data);
           gl.uniformBlockBinding(program.native, block.index, 0); gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, block.buffer);
         }
@@ -603,15 +608,22 @@ function createRenderer(options, drawing, asynchronous = false) {
         gl.UNPACK_IMAGE_HEIGHT, gl.UNPACK_SKIP_PIXELS, gl.UNPACK_SKIP_ROWS, gl.UNPACK_SKIP_IMAGES]) gl.pixelStorei(pname, 0);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
-      for (const cap of [gl.DEPTH_TEST, gl.STENCIL_TEST, gl.SCISSOR_TEST, gl.RASTERIZER_DISCARD, gl.POLYGON_OFFSET_FILL,
+      for (const cap of [gl.STENCIL_TEST, gl.RASTERIZER_DISCARD, gl.POLYGON_OFFSET_FILL,
         gl.SAMPLE_ALPHA_TO_COVERAGE, gl.SAMPLE_COVERAGE]) gl.disable(cap);
-      gl.depthMask(false); gl.depthFunc(gl.NEVER); gl.clearDepth(1); gl.clearStencil(0);
+      const dsa = sub.dsa?.fields;
+      if (dsa?.depthEnable) gl.enable(gl.DEPTH_TEST); else gl.disable(gl.DEPTH_TEST);
+      gl.depthMask(dsa?.depthWriteMask ?? false);
+      gl.depthFunc([gl.NEVER, gl.LESS, gl.EQUAL, gl.LEQUAL, gl.GREATER, gl.NOTEQUAL, gl.GEQUAL, gl.ALWAYS][dsa?.depthFunction ?? 0]);
+      gl.clearDepth(1); gl.clearStencil(0);
       gl.stencilMaskSeparate(gl.FRONT, 0); gl.stencilMaskSeparate(gl.BACK, 0);
       gl.stencilFuncSeparate(gl.FRONT, gl.NEVER, sub.stencilRef.front, 0);
       gl.stencilFuncSeparate(gl.BACK, gl.NEVER, sub.stencilRef.back, 0);
       gl.stencilOpSeparate(gl.FRONT_AND_BACK, gl.KEEP, gl.KEEP, gl.KEEP);
       gl.polygonOffset(0, 0); gl.lineWidth(1); gl.sampleCoverage(1, false);
       const rasterizer = sub.rasterizer?.fields;
+      if (rasterizer?.scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
+      const scissor = sub.scissor;
+      gl.scissor(scissor?.minX ?? 0, scissor?.minY ?? 0, scissor ? scissor.maxX - scissor.minX : 0, scissor ? scissor.maxY - scissor.minY : 0);
       if (rasterizer?.cullFace === 2) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
       // All supported resource flags are zero: pinned lower-left FBOs invert
       // Gallium front_ccw (vrend_update_frontface_state).
@@ -627,20 +639,21 @@ function createRenderer(options, drawing, asynchronous = false) {
       gl.colorMask(...mask);
       if (sub.viewport) {
         const { scale, translate } = sub.viewport;
-        gl.viewport(translate[0] - scale[0], translate[1] - scale[1], scale[0] * 2, scale[1] * 2);
+        gl.viewport(...viewportRectangle(sub.viewport));
         gl.depthRange(translate[2] - scale[2], translate[2] + scale[2]);
       } else { gl.viewport(0, 0, 0, 0); gl.depthRange(0, 1); }
       check();
     };
     const prepareDraw = (ctx, sub, command, submission) => {
       const fields = command.fields;
-      require(fields.indexed && fields.start === 0 && fields.count > 0,
-        "unsupported-draw", "Only nonempty indexed draws with start zero are supported.");
+      require(fields.count > 0 && (fields.indexed ? fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
+        "unsupported-draw", "Draws must be nonempty; indexed start must be zero and array ranges must fit signed GL integers.");
       require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= drawLimits.indicesPerSubmission - submission.indices,
         "limit-exceeded", "Submission draw or index budget exceeded.");
       require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
-      require(sub.surfaces[0] && sub.viewport && sub.vertexElements && sub.indexBuffer,
-        "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and index buffer.");
+      require(sub.surfaces[0] && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
+        "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
+      require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a Z16 depth attachment.");
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
@@ -668,19 +681,19 @@ function createRenderer(options, drawing, asynchronous = false) {
         return { attribute, element, buffer };
       });
       vertexLayout(sub);
-      const index = sub.indexBuffer, indexStorage = resolve(index.lease), indexOffset = index.fields.offset;
+      const index = fields.indexed ? sub.indexBuffer : null, indexStorage = index ? resolve(index.lease) : null, indexOffset = index?.fields.offset ?? 0;
       // Pinned indexed draws use the index-binding byte offset; DRAW.start is not
       // added to it. Subtraction proves the range before multiplying or reading.
-      require(fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
+      require(!index || fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
         "out-of-bounds", "Index draw range exceeds retained storage.");
-      const indexByteLength = fields.count * 2;
+      const indexByteLength = index ? fields.count * 2 : 0;
       return Object.freeze({ ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength,
         program, shaders, banks, uploads });
     };
     const issueDraw = (plan, bytes, submission) => {
       const { ctx, sub, command, fields, surface, attributes, indexStorage, indexOffset, indexByteLength } = plan;
-      const indices = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-      let actualMinIndex = 65535, actualMaxIndex = 0;
+      const indices = fields.indexed ? new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength) : null;
+      let actualMinIndex = fields.indexed ? 65535 : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
       for (let offset = 0; offset < indexByteLength; offset += 2) {
         const value = indices.getUint16(offset, true);
         // WebGL2's fixed primitive restart is always enabled. The wire profile
@@ -690,32 +703,36 @@ function createRenderer(options, drawing, asynchronous = false) {
       }
       const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
-        // vertexLayout proved that the first complete RG32 element fits. Bound
+        const elementBytes = vertexComponents(element) * 4;
+        // vertexLayout proved that the first complete element fits. Bound
         // the largest actual fetch with division, independent of wire hints.
-        require(actualMaxIndex <= Math.floor((buffer.metadata.byteLength - offset - 8) / stride),
-          "out-of-bounds", "An actual index fetch exceeds vertex storage.");
+        require(actualMaxIndex <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
+          "out-of-bounds", "An actual vertex fetch exceeds retained storage.");
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
-          stride, offset, firstByte: offset + actualMinIndex * stride, requiredEnd: offset + actualMaxIndex * stride + 8 };
+          stride, offset, components: vertexComponents(element), firstByte: offset + actualMinIndex * stride, requiredEnd: offset + actualMaxIndex * stride + elementBytes };
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
       restore(sub, plan);
-      gl.drawElements(gl.TRIANGLES, fields.count, gl.UNSIGNED_SHORT, indexOffset);
+      const mode = fields.mode === 5 ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
+      if (fields.indexed) gl.drawElements(mode, fields.count, gl.UNSIGNED_SHORT, indexOffset);
+      else gl.drawArrays(mode, fields.start, fields.count);
       check();
       submission.indices += fields.count;
-      submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count,
+      submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count, indexed: fields.indexed, mode: fields.mode, start: fields.start,
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
-        indexResourceId: indexStorage.metadata.id, indexResourceGeneration: indexStorage.generation,
+        indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
-          width: surface.metadata.width, height: surface.metadata.height },
+          width: surface.metadata.width, height: surface.metadata.height,
+          depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]) });
     };
     const draw = (ctx, sub, command, submission) => {
       const plan = prepareDraw(ctx, sub, command, submission);
-      const bytes = unwrap(resources.readStorage(plan.index.lease,
-        { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 })).bytes;
+      const bytes = plan.index ? unwrap(resources.readStorage(plan.index.lease,
+        { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 })).bytes : null;
       issueDraw(plan, bytes, submission);
     };
     const apply = (ctx, command, submission) => {
@@ -734,19 +751,27 @@ function createRenderer(options, drawing, asynchronous = false) {
         case 4: {
           if (fields.viewports.length === 0) break;
           const viewport = fields.viewports[0], { scale, translate } = viewport;
-          require(scale[0] >= 0 && scale[1] >= 0 && scale[0] * 2 <= maxViewport[0] && scale[1] * 2 <= maxViewport[1] &&
-            [translate[0] - scale[0], translate[1] - scale[1], scale[0] * 2, scale[1] * 2].every((v) => Number.isInteger(v) && v >= -0x80000000 && v <= 0x7fffffff) &&
+          require(scale[0] >= 0 && scale[0] * 2 <= maxViewport[0] && Math.abs(scale[1]) * 2 <= maxViewport[1] &&
+            viewportRectangle(viewport).every((v) => Number.isInteger(v) && v >= -0x80000000 && v <= 0x7fffffff) &&
             translate[2] - scale[2] >= 0 && translate[2] + scale[2] <= 1 && scale[2] >= 0,
-          "unsupported-feature", "Viewport must be an integer positive rectangle with normalized depth range.");
+          "unsupported-feature", "Viewport must have integer bounded dimensions and a normalized GL depth range.");
           sub.viewport = viewport; break;
         }
         case 5: {
           const surfaces = fields.colorSurfaces.map((handle) => lookup(sub, handle, 8, true));
+          const depthSurface = lookup(sub, fields.depthStencilSurface, 8, true);
+          if (depthSurface) {
+            require(depthSurface.metadata.kind === "depth-texture", "incompatible-resource", "The depth attachment requires a Z16 surface.");
+            resolve(depthSurface.lease);
+          }
           for (const surface of surfaces) if (surface) {
             require(surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
             resolve(surface.lease);
+            require(!depthSurface || (surface.metadata.width === depthSurface.metadata.width && surface.metadata.height === depthSurface.metadata.height),
+              "incompatible-resource", "Color and depth attachment dimensions differ.");
           }
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
+          sub.depthSurface = objectRef(sub, sub.depthSurface, depthSurface);
           sub.surfaces = surfaces; break;
         }
         case 6: {
@@ -762,11 +787,20 @@ function createRenderer(options, drawing, asynchronous = false) {
           for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
           sub.vertexBuffers = buffers; break;
         }
-        case 7:
-          require(sub.surfaces[0], "incomplete-framebuffer", "CLEAR needs a color surface.");
+        case 7: {
+          require(!(fields.buffers & 4) || sub.surfaces[0], "incomplete-framebuffer", "Color CLEAR needs a color surface.");
+          require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
           restore(sub);
-          gl.colorMask(true, true, true, !xAlpha(sub)); gl.clearColor(...fields.color); gl.clear(gl.COLOR_BUFFER_BIT);
-          gl.colorMask(...colorMask(sub)); check(); return;
+          // Gallium full clear ignores scissor and component/depth write masks.
+          // Pinned vrend_clear restores these after issuing the complete clear.
+          gl.disable(gl.SCISSOR_TEST);
+          if (fields.buffers & 4) { gl.colorMask(true, true, true, !xAlpha(sub)); gl.clearColor(...fields.color); }
+          if (fields.buffers & 1) { gl.depthMask(true); gl.clearDepth(fields.depth); }
+          gl.clear((fields.buffers & 4 ? gl.COLOR_BUFFER_BIT : 0) | (fields.buffers & 1 ? gl.DEPTH_BUFFER_BIT : 0));
+          gl.colorMask(...colorMask(sub)); gl.depthMask(sub.dsa?.fields.depthWriteMask ?? false);
+          if (sub.rasterizer?.fields.scissor) gl.enable(gl.SCISSOR_TEST);
+          check(); return;
+        }
         case 8:
           if (!drawing) throw new StateFault("unsupported-draw", "DRAW_VBO execution belongs to the next renderer boundary.");
           draw(ctx, sub, command, submission); return;
@@ -795,6 +829,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           break;
         case 13: sub.stencilRef = fields; break;
         case 14: sub.blendColor = fields.color; break;
+        case 15: if (fields.scissors.length) sub.scissor = fields.scissors[0]; break;
         case 28:
           require(ctx.subs.has(fields.subContextId), "missing-subcontext", "Subcontext is not live."); ctx.current = fields.subContextId; break;
         case 29:
@@ -828,12 +863,12 @@ function createRenderer(options, drawing, asynchronous = false) {
         public: object.public, references: object.references, fields: object.fields,
         ...(object.lease ? { resourceGeneration: object.resourceGeneration } : {}),
         ...(object.translation ? { translation: object.translation } : {}) })),
-      bindings: { blend: ref(sub.blend), rasterizer: ref(sub.rasterizer), dsa: ref(sub.dsa), vertexElements: ref(sub.vertexElements),
+      bindings: { blend: ref(sub.blend), rasterizer: ref(sub.rasterizer), dsa: ref(sub.dsa), vertexElements: ref(sub.vertexElements), depthSurface: ref(sub.depthSurface),
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]), framebuffer: sub.surfaces.map(ref),
         vertexBuffers: sub.vertexBuffers.map((buffer) => buffer ? { ...buffer.fields, resourceGeneration: buffer.resourceGeneration } : null),
         indexBuffer: sub.indexBuffer ? { ...sub.indexBuffer.fields, resourceGeneration: sub.indexBuffer.resourceGeneration } : null,
         samplerViews: sub.views.map((slots) => slots.map(ref)), samplerStates: sub.samplers.map((slots) => slots.map(ref)),
-        constants: sub.constants.map((words) => [...words]), viewport: sub.viewport, blendColor: [...sub.blendColor],
+        constants: sub.constants.map((words) => [...words]), viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor],
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
         vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation,
@@ -941,6 +976,9 @@ function createRenderer(options, drawing, asynchronous = false) {
             // Planning may link a program, so account for even a failed prefix.
             job.serial++;
             const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
+            if (!plan.index) {
+              issueDraw(plan, null, job.submission); job.index++; budget--; continue;
+            }
             require(plan.indexByteLength <= jobLimits.transferBytes, "limit-exceeded", "Index staging exceeds job byte limit.");
             const read = unwrap(asyncAccess.beginStorageRead(plan.index.lease,
               { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 }));

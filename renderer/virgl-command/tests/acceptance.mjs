@@ -374,7 +374,7 @@ export function runAcceptance(fixtures, options = {}) {
   };
   // Unknown dispatch, object bytes, exact arities and atomic whole-submission failure.
   reject(packet(255, 0, []), "unknown opcode", "unsupported-command", 0, 255);
-  reject(packet(15, 0, [0]), "out-of-profile scissor opcode", "unsupported-command");
+  reject(packet(15, 0, [0, 0]), "partial scissor bounds", "payload-length");
   reject(packet(1, 255, [1]), "unknown create object", "unsupported-object");
   reject(packet(1, 9, [1]), "unsupported query object", "unsupported-object");
   reject(packet(2, 4, [1]), "shader through generic bind object", "unsupported-object");
@@ -663,7 +663,7 @@ export function runAcceptance(fixtures, options = {}) {
     acceptedSubmissionResultJsonBytes: JSON.stringify(maximumBytesResult).length,
     acceptedCommandCount: 4096, commandCountSubmissionBytes: 32768,
     acceptedCommandCountResultJsonBytes: JSON.stringify(maximumCommandsResult).length,
-    maximumShaderTextBytes: 16384, maximumShaderTokens: 8192,
+    maximumShaderTextBytes: 49152, maximumShaderTokens: 8192,
     oversizedSubmissionBytes: 262148, oversizedCommandCount: 4097 },
   assertions, attacks, decodedSubmissions };
 }
