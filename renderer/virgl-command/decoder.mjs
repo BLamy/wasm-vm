@@ -37,6 +37,8 @@ const OBJECT_NAMES = Object.freeze([
 const STAGE_NAMES = Object.freeze(["vertex", "fragment", "geometry", "tessControl", "tessEvaluation", "compute"]);
 const MAX_U32 = 0xffffffff;
 const MAX_I32 = 0x7fffffff;
+// Pinned pipe_blendfactor values. Dual-source factors remain outside this profile.
+const BLEND_FACTORS = new Set([1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 19, 20, 21, 23, 24]);
 
 function freeze(value) {
   if (value !== null && typeof value === "object") {
@@ -128,13 +130,14 @@ function decodeBlend(p, handle) {
       alphaDestinationFactor: (word >>> 22) & 31, colorMask: (word >>> 27) & 15,
     };
     if (index > 0) p.require(word === 0, "unsupported-feature", "Only RT0 may carry blend state.");
-    else if (rt.blendEnable) {
-      p.require(rt.rgbFunction === 0 && rt.alphaFunction === 0 &&
-        [1, 3].includes(rt.rgbSourceFactor) && rt.rgbDestinationFactor === 19 &&
-        rt.alphaSourceFactor === 1 && rt.alphaDestinationFactor === 19,
-      "unsupported-feature", "Only standard additive alpha blending is supported.");
-    } else {
-      p.require((word & 0x07ffffff) === 0, "unsupported-feature", "Inactive blend function/factors must be zero.");
+    else {
+      p.require(rt.rgbFunction <= 4 && rt.alphaFunction <= 4,
+        "unsupported-feature", "Unknown blend equation.");
+      for (const [factor, source] of [[rt.rgbSourceFactor, true], [rt.rgbDestinationFactor, false],
+        [rt.alphaSourceFactor, true], [rt.alphaDestinationFactor, false]]) {
+        p.require((!rt.blendEnable && factor === 0) || BLEND_FACTORS.has(factor) && (source || factor !== 6),
+          "unsupported-feature", "Unknown, dual-source or invalid destination blend factor.");
+      }
     }
     return rt;
   });

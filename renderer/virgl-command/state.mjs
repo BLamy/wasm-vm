@@ -17,6 +17,17 @@ const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS"
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 const vertexComponents = (element) => element.sourceFormat === 30 ? 3 : 2;
 const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
+const BLEND_EQUATIONS = Object.freeze(["FUNC_ADD", "FUNC_SUBTRACT", "FUNC_REVERSE_SUBTRACT", "MIN", "MAX"]);
+const BLEND_FACTORS = Object.freeze({ 1: "ONE", 2: "SRC_COLOR", 3: "SRC_ALPHA", 4: "DST_ALPHA", 5: "DST_COLOR",
+  6: "SRC_ALPHA_SATURATE", 7: "CONSTANT_COLOR", 8: "CONSTANT_ALPHA", 17: "ZERO", 18: "ONE_MINUS_SRC_COLOR",
+  19: "ONE_MINUS_SRC_ALPHA", 20: "ONE_MINUS_DST_ALPHA", 21: "ONE_MINUS_DST_COLOR", 23: "ONE_MINUS_CONSTANT_COLOR", 24: "ONE_MINUS_CONSTANT_ALPHA" });
+function mixedBlendConstants(target) {
+  return target?.blendEnable === true && target.rgbFunction < 3 &&
+    ([7, 23].includes(target.rgbSourceFactor) && [8, 24].includes(target.rgbDestinationFactor) ||
+     [8, 24].includes(target.rgbSourceFactor) && [7, 23].includes(target.rgbDestinationFactor));
+}
+const blendFoldFor = (sub, fragment) => mixedBlendConstants(sub.blend?.fields.renderTargets[0]) &&
+  fragment?.discardContract?.alwaysDiscards !== true ? sub.blend.fields.renderTargets[0].rgbSourceFactor : 0;
 function freeze(value) {
   if (value && typeof value === "object") { for (const child of Object.values(value)) freeze(child); Object.freeze(value); }
   return value;
@@ -393,19 +404,35 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "View-specialized GLSL exceeds the compiler output bound.");
       return variant;
     };
+    const specializeBlend = (text, fold, metadata) => {
+      if (!fold) return null;
+      require(metadata.outputs.length === 1 && metadata.outputs[0].name === "fsout_c0" &&
+        metadata.outputs[0].type === "vec4" && !text.includes("wv_rgb_blend_factor") && !text.includes("wv_unblended_main"),
+      "shader-link-error", "Constant blend folding requires the checked single color output.");
+      const main = /\bvoid\s+main\s*\(\s*(?:void)?\s*\)/g;
+      require([...text.matchAll(main)].length === 1, "shader-link-error", "Constant blend folding requires one checked main.");
+      const variant = text.replace(main, "void wv_unblended_main(void)") +
+        "\nuniform highp vec4 wv_rgb_blend_factor;\nvoid main(void){wv_unblended_main();" +
+        "fsout_c0.rgb=clamp(fsout_c0.rgb,0.0,1.0)*wv_rgb_blend_factor.rgb;}\n";
+      require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "Blend-specialized GLSL exceeds the compiler output bound.");
+      return variant;
+    };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment);
+      const blendFold = blendFoldFor(sub, fragment);
       let vs = vertex.translation.metadata;
       const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
-      const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}`;
+      const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
+        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "");
       const cached = programCache.get(sub, key);
       if (cached) return cached;
       const program = { key, generation: generation(), vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
+        blendFold, blendUniform: null,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
       try {
         if (interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
@@ -423,7 +450,8 @@ function createRenderer(options, drawing, asynchronous = false) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
           }
         }
-        const fragmentText = specializeFragment(fragment.translation.glsl, sampling);
+        let fragmentText = specializeFragment(fragment.translation.glsl, sampling);
+        fragmentText = specializeBlend(fragmentText ?? fragment.translation.glsl, blendFold, fs) ?? fragmentText;
         program.vertexText ??= vertex.translation.glsl;
         program.fragmentText = fragmentText ?? fragment.translation.glsl;
         const requiredVariantBytes = (interfaceInfo.flat ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);
@@ -524,6 +552,18 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         require(program.blocks.length === 1 && gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORM_BLOCKS) === 1,
           "shader-reflection-error", "Every active block must match the system block.");
+        if (blendFold) {
+          const name = "wv_rgb_blend_factor", index = gl.getUniformIndices(program.native, [name])?.[0];
+          program.blendUniform = gl.getUniformLocation(program.native, name);
+          require(program.blendUniform !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+            gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.FLOAT_VEC4 &&
+            gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,
+          "shader-reflection-error", "Blend factor uniform reflection mismatch.");
+          const components = program.reflection.uniforms.filter(uniform => uniform.stage === "fragment")
+            .reduce((sum, uniform) => sum + uniform.activeCount * 4, 4);
+          require(components <= hostUniformComponents[1], "shader-reflection-error", "Blend factor exceeds the host fragment uniform limit.");
+          program.reflection.blend = { sourceFactor: blendFold, uniform: name, type: "vec4", count: 1 };
+        }
         for (const output of fs.outputs) {
           const location = gl.getFragDataLocation(program.native, output.name);
           require(output.semantic === "COLOR" && (location === 0 || location === -1 && fragment.discardContract?.alwaysDiscards === true),
@@ -636,6 +676,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
         sub.programs.get(program.key) === program && programs.has(program) &&
         samplingFor(sub, shaders[1]).key === program.samplingKey &&
+        blendFoldFor(sub, shaders[1]) === program.blendFold &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
     };
@@ -694,6 +735,12 @@ function createRenderer(options, drawing, asynchronous = false) {
           gl.uniform4uiv(uniform.location, words);
         }
         for (const sampler of program.samplers) gl.uniform1i(sampler.location, sampler.unit);
+        if (program.blendFold) {
+          const color = state.blendColor.map(value => Math.max(0, Math.min(1, value)));
+          let factor = [8, 24].includes(program.blendFold) ? Array(3).fill(color[3]) : color.slice(0, 3);
+          if ([23, 24].includes(program.blendFold)) factor = factor.map(value => 1 - value);
+          gl.uniform4fv(program.blendUniform, new Float32Array([...factor, 1]));
+        }
       }
       gl.bindBuffer(gl.UNIFORM_BUFFER, null);
       for (const target of [gl.COPY_READ_BUFFER, gl.COPY_WRITE_BUFFER, gl.PIXEL_PACK_BUFFER, gl.PIXEL_UNPACK_BUFFER]) gl.bindBuffer(target, null);
@@ -725,9 +772,13 @@ function createRenderer(options, drawing, asynchronous = false) {
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
       if (target?.blendEnable) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
-      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-      gl.blendFuncSeparate(target?.blendEnable ? (target.rgbSourceFactor === 3 ? gl.SRC_ALPHA : gl.ONE) : gl.ONE,
-        target?.blendEnable ? gl.ONE_MINUS_SRC_ALPHA : gl.ZERO, gl.ONE, target?.blendEnable ? gl.ONE_MINUS_SRC_ALPHA : gl.ZERO);
+      const enabled = target?.blendEnable === true, ignoresRgbFactors = enabled && target.rgbFunction >= 3;
+      gl.blendEquationSeparate(enabled ? gl[BLEND_EQUATIONS[target.rgbFunction]] : gl.FUNC_ADD,
+        enabled ? gl[BLEND_EQUATIONS[target.alphaFunction]] : gl.FUNC_ADD);
+      gl.blendFuncSeparate(enabled && !ignoresRgbFactors && !mixedBlendConstants(target) ? gl[BLEND_FACTORS[target.rgbSourceFactor]] : gl.ONE,
+        enabled && !ignoresRgbFactors ? gl[BLEND_FACTORS[target.rgbDestinationFactor]] : gl.ZERO,
+        enabled && target.alphaSourceFactor !== 6 ? gl[BLEND_FACTORS[target.alphaSourceFactor]] : gl.ONE,
+        enabled ? gl[BLEND_FACTORS[target.alphaDestinationFactor]] : gl.ZERO);
       gl.blendColor(...state.blendColor);
       const mask = state.mask;
       gl.colorMask(...mask);

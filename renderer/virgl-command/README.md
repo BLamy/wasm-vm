@@ -198,8 +198,11 @@ explicitly rejected by this narrower profile.
 
 - **BLEND:** `handle`, named independent/logicop/dither/alpha controls,
   `logicopFunction`, and eight `renderTargets` with named enable, RGB/alpha
-  functions/factors and color masks. RT0 supports disabled blending or additive
-  `(ONE or SRC_ALPHA, INV_SRC_ALPHA)` RGB and `(ONE, INV_SRC_ALPHA)` alpha.
+  functions/factors and color masks. RT0 supports disabled blending or independent
+  RGB/alpha ADD, SUBTRACT, REVERSE_SUBTRACT, MIN and MAX with all non-dual-source
+  GLES2 factors. SRC_ALPHA_SATURATE is source-only; its alpha factor is ONE.
+  Mixed constant-color/constant-alpha RGB factors use a bounded fragment variant
+  because WebGL disallows the direct native pair. See [blend-README.md](blend-README.md).
   Disabled function/factors and RT1–7 must be zero; any RT0 color mask and optional
   dithering are allowed. Logic operations, independent blending, alpha coverage
   and alpha-to-one are rejected.
