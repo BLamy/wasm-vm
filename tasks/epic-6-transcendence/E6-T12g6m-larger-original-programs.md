@@ -3,7 +3,7 @@ id: E6-T12g6m
 epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
-status: pending
+status: in-progress
 depends_on: [E6-T12g6m4c, E6-T12g6m5b2b2]
 estimate: S
 risk: high
@@ -89,3 +89,7 @@ Replay of the authenticated context-5/subcontext-2 command stream finds all thre
 ### 2026-10-05 — worker — finite-source split after NaN audit
 
 The earlier zero-cap argument omitted GLSL ES's permitted non-NaN result from an operation on NaN. An exploratory unbounded predicate bypass translated the full c580 pair under its three captured banks, which is beyond a sound narrow proof. No runtime change was committed. E6-T12g6m4b now certifies finite inputs through the exact original pc0..27 prefix; E6-T12g6m4c then proves the zero-capped MIN/FSLT branch. The full original pair stays gated until both and its own physical-body acceptance pass.
+
+### 2026-10-09 — worker — full-source integration activation
+
+The independent critic verified the private first-power worker boundary E6-T12g6m5b2b2 at `f18232d88fa0cc4673c5af7c0d414046803c0883`. Resume the unchanged two-pair acceptance. The predecessor authenticates complete original inputs but emits only pc0..222 plus an observer; it does not prove pc223+ or authorize production guest graphics.
