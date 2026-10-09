@@ -277,7 +277,15 @@ def main(directory):
     for name, digest in held['files'].items():
         record('regression/' + name, digest)
     promoted = json.loads(record('promoted-cache/report.json'))
-    need(promoted['status'] == 'passed' and promoted['gitHead'] == head, 'promoted cache result')
+    need(promoted['status'] == 'passed' and promoted['sourceHead'] == head
+         and promoted['repositoryHead'] == head, 'promoted cache result')
+    need(promoted['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'promoted cache browser errors')
+    for item in promoted['sources']:
+        source(item['path'], item['sha256'])
+    for item in promoted['pixelRecords']:
+        record('promoted-cache/' + item['path'], item['sha256'])
+    record('promoted-cache/browser-coverage.json', promoted['coverageSha256'])
+    record('promoted-cache/browser.png', promoted['screenshotSha256'])
     # Includes every checked/pinned compiler source, not just its bridge entry point.
     names = subprocess.check_output(['git', 'ls-files', 'renderer/virgl-shader'], cwd=ROOT, text=True).splitlines()
     names += ['Makefile', 'renderer/virgl-command/README.md', 'renderer/virgl-command/blend-README.md',
