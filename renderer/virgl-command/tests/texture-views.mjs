@@ -172,7 +172,7 @@ function checkedOutputGuards(gl,bridge,fixtures,c){
     const injected={...bridge,translate(request){const result=bridge.translate(request);if(!armed||!result.ok||request.stage!=='fragment')return result;const out=structuredClone(result);
       if(mode==='lookup')out.glsl=out.glsl.replace(/texture\(fssamp0, [^;]*?\.xy\)/,'texelFetch(fssamp0, ivec2(0), 0)');
       if(mode==='main')out.glsl=out.glsl.replace('\nvoid main(','\nvoid   main(');
-      if(mode==='length')out.glsl=out.glsl.padEnd(65536,' ');
+      if(mode==='length')out.glsl=out.glsl.padEnd(262145,' ');
       if(mode==='sampler-name')out.metadata.samplers[0].name='fssamp_wrong';
       if(mode==='sampler-type')out.metadata.samplers[0].type='samplerCube';
       if(mode==='sampler-index')out.metadata.samplers[0].index=8;
