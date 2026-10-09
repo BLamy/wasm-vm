@@ -642,7 +642,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02702` [E6-T12h](epic-6-transcendence/E6-T12h-virgl-raster-depth-state.md) — Execute required VirGL raster depth and vertex state without coordinate drift *(deps: E6-T12g6)*
 - [x] `525.02703` [E6-T12i](epic-6-transcendence/E6-T12i-bounded-render-cache.md) — Cache WebGL2 shader programs and state with complete bounded keys *(deps: E6-T12h)*
 - [x] `525.027035` [E6-T11d1](epic-6-transcendence/E6-T11d1-vertex-constant-floor.md) — Execute the GLES2 ordinary vertex constant-bank floor *(deps: E6-T12i)*
-- [~] `525.027036` [E6-T11d3](epic-6-transcendence/E6-T11d3-float-vertex-fetch.md) — Execute scalar through four-component float vertex fetches *(deps: E6-T11d2)*
+- [?] `525.027036` [E6-T11d3](epic-6-transcendence/E6-T11d3-float-vertex-fetch.md) — Execute scalar through four-component float vertex fetches *(deps: E6-T11d2)*
 - [x] `525.027037` [E6-T11d2](epic-6-transcendence/E6-T11d2-single-target-blend.md) — Execute single-target blend equations and factors for guest qualification *(deps: E6-T11d1)*
 - [b] `525.02704` [E6-T11d](epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md) — Advertise proven VirGL capabilities and initialize real guest Mesa *(deps: E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3)*
 
