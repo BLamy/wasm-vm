@@ -12,11 +12,11 @@ for source in renderer/virgl-shader/index.mjs renderer/virgl-shader/tests/origin
 done
 bash -n tools/verify-virgl-original-programs.sh
 bash renderer/virgl-shader/build.sh guard-check > "$evidence/guard-check.log" 2>&1
-mkdir -p target/evidence/virgl-92cb-raster
-python3 tools/virgl-92cb-geometry/capture.py target/evidence/virgl-92cb-raster/geometry.bin > "$evidence/capture.log"
+mkdir -p target/evidence/virgl-92cb-geometry target/evidence/virgl-92cb-raster
+python3 tools/virgl-92cb-geometry/capture.py target/evidence/virgl-92cb-geometry/geometry.bin > "$evidence/capture.log"
 python3 tools/virgl-92cb-raster/capture.py target/evidence/virgl-92cb-raster/raster.json >> "$evidence/capture.log"
 python3 tools/virgl-92cb-power-domain/pin_private_inputs.py --check
-cp target/evidence/virgl-92cb-raster/geometry.bin "$evidence/geometry.bin"
+cp target/evidence/virgl-92cb-geometry/geometry.bin "$evidence/geometry.bin"
 cp target/evidence/virgl-92cb-raster/raster.json "$evidence/raster.json"
 bash renderer/virgl-shader/build.sh original-92cb-complete-sanitize > "$evidence/native-build.log" 2>&1
 LLVM_PROFILE_FILE="$PWD/$evidence/native.profraw" \
