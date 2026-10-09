@@ -17,8 +17,8 @@ python3 -m py_compile tools/virgl-command/blend-{receipt,cold,seal}.py
 bash -n tools/verify-virgl-blend-equations.sh
 mkdir -p "$evidence_dir/abi"
 for mode in native sanitize; do
-  flags=()
-  if [[ $mode == sanitize ]]; then flags=(-fsanitize=address,undefined -fno-omit-frame-pointer); fi
+  flags=(-g)
+  if [[ $mode == sanitize ]]; then flags+=(-fsanitize=address,undefined -fno-omit-frame-pointer); fi
   clang -std=gnu11 -Wall -Wextra -Werror "${flags[@]}" \
     -DUTIL_ARCH_LITTLE_ENDIAN=1 -DUTIL_ARCH_BIG_ENDIAN=0 \
     -Irenderer/virgl-shader/vendor/src/gallium/include \
