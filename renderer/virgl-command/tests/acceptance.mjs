@@ -440,7 +440,7 @@ export function runAcceptance(fixtures, options = {}) {
   reject(setWord(shaderPacket, 5, 1), "shader stream output declaration", "unsupported-feature");
   reject(setWord(shaderPacket, 4, 0), "shader zero token count", "limit-exceeded");
   reject(setWord(shaderPacket, 4, 8193), "shader over token budget", "limit-exceeded");
-  reject(setWord(shaderPacket, 3, 16386), "shader declared text over budget", "limit-exceeded");
+  reject(setWord(shaderPacket, 3, 49154), "shader declared text over budget", "limit-exceeded");
   reject(setWord(shaderPacket, 3, 1), "empty shader declaration", "invalid-value");
   const embeddedNul = shaderPacket.slice(); embeddedNul[28] = 0;
   reject(embeddedNul, "shader embedded NUL", "invalid-value");
@@ -450,9 +450,10 @@ export function runAcceptance(fixtures, options = {}) {
   reject(badPadding, "shader nonzero alignment padding", "invalid-value");
   const nonAscii = shaderPacket.slice(); nonAscii[24] = 128;
   reject(nonAscii, "shader non-ASCII byte", "invalid-value");
-  const maxShader = accept(shader("x".repeat(16384), 1, 8192), "maximum shader text and token budgets");
-  equal(maxShader.commands[0].fields.text.length, 16384, "maximum text preserved");
-  reject(shader("x".repeat(16385)), "actual shader text above budget", "limit-exceeded");
+  accept(shader("x".repeat(16384), 1, 8192), "historical 16KiB shader remains admitted");
+  const maxShader = accept(shader("x".repeat(49152), 1, 8192), "maximum shader text and token budgets");
+  equal(maxShader.commands[0].fields.text.length, 49152, "maximum text preserved");
+  reject(shader("x".repeat(49153)), "actual shader text above budget", "limit-exceeded");
 
   for (const [event, offset, word, name] of [
     [161, 5304, 2, "viewport"], [161, 5072, 1, "blend color"], [161, 5336, 3, "inline constant"],
