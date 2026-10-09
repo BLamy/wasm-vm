@@ -3,7 +3,7 @@ id: E6-T11d2
 epic: 6
 title: Execute single-target blend equations and factors for guest qualification
 priority: 525.027037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d1]
 estimate: S
 risk: high
@@ -66,3 +66,46 @@ probe is an original-form CREATE_OBJECT BLEND carrying ADD with source ONE and
 destination ZERO in both RGB and alpha: it currently rejects with
 `unsupported-feature: Only standard additive alpha blending is supported.` The
 production capset remains disabled while this minimum operation is repaired.
+
+### 2026-10-09 — worker — recorded submission for fresh falsification
+
+Frozen source `0ed130ff0b9a3efa1273ac485d87dad656efcef4`, diff from independently
+verified parent `3c6295a93d6b088c62a5c6f1cc434f226e090340`. Commands:
+`make verify-E6-T11d2`;
+`python3 tools/virgl-command/blend-cold.py --output target/evidence/virgl-blend-cold`;
+`python3 tools/virgl-command/blend-seal.py target/evidence/virgl-blend target/evidence/virgl-blend-cold evidence/virgl-blend/worker`.
+
+Both full submissions pass. The exact-head pristine clone has empty status
+before/after and scrubbed environment. Each run authenticates 390 source files,
+the generated fixed-memory Wasm and 116 recorded artifacts. The 536 Node/wire
+predicates admit 120 and reject 136 factor-field cases. The real headed hardware
+browser draws 2,302 frames (589,312 pixels) and holds 23,637 predicates with zero
+console/page/request errors. Its raw stream is independently recomputed using
+Python Fractions, with at most one stored UNORM8/UNORM10 component unit accepted.
+Every RGB and alpha pair/equation is drawn; mixed source constants, clamps,
+alpha saturation on both minimum branches, masks, X-alpha, disabled zero fields,
+terminal discard, destroyed/reused state objects, A/B/A and real subcontexts,
+bounded eviction, later-task native fences and typed allocation/size/component
+failures recover. Native settings, reflected variants, owned uploads, complete
+packet/TGSI/ESSL frame dumps and V8 changed-source coverage accompany the pixels.
+
+The physical source faults fail exactly at `rgb-0-1-1` (equation swap),
+`rgb-0-1-4` (destination factor), and `rgb-0-7-8` (fold upload); raw pixels
+independently contradict their predictions, with no unrelated browser error.
+Affected I/H/G5 renderer/resource/indexed/async/raster gates and the promoted
+three-seed cache attacks pass at this head. The unchanged compiler/private
+profile semantics carry the independently verified D1 boundary. Early harness
+runs found the system Bash empty-array/nounset case and the promoted cache
+report's `sourceHead` field; these recording fixes precede the frozen full runs.
+
+Evidence of record: `evidence/virgl-blend/worker/recording.tar.gz` (242 records,
+9,896,153 bytes), archive SHA256
+`ee7ef868a4e8d98e8121c37116a8d3d06497b6cc88ef3c9c4581254f3a522b1f`,
+record-index SHA256
+`1c6b9f26fae9591017986598f241272b084505d251e34460c5c315f322108d7c`.
+Hot receipt `22d754268302c8ff528706d385ba11e76cd23dafb0a56b415a784af10eced6f7`;
+cold receipt `7af314b1ded202c86688796d365b4629bd958eed6e7c8121e6e6b6438f6ccbc7`.
+Unpacked working artifacts remain in `target/evidence/virgl-blend` and
+`target/evidence/virgl-blend-cold`. This is an isolated normalized blend claim:
+production capability negotiation stays disabled, with no guest boot or
+performance claim. This worker does not set `verified`.
