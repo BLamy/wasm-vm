@@ -67,7 +67,20 @@ def main():
         screen = value.get('screenshot') or value.get('failureScreenshot')
         require(screen and sha((directory / name / screen['path']).read_bytes()) == screen['sha256'], 'capture drift: ' + name)
         coverage = value['browserCoverage']
-        require(sha((directory / name / coverage['path']).read_bytes()) == coverage['sha256'], 'coverage drift: ' + name)
+        counters = (directory / name / coverage['path']).read_bytes()
+        require(sha(counters) == coverage['sha256'], 'coverage drift: ' + name)
+        mutation = value.get('sabotage', {})
+        table = {item['path']:item for item in value['sources']}
+        served = {item['path']:item for item in value['servedFiles']}
+        for script in json.loads(counters)['scripts']:
+            expected = mutation['servedSha256'] if script['source'] == mutation.get('path') else table[script['source']]['sha256']
+            require(script['sha256'] == expected, 'coverage not bound to served source: ' + name)
+        for item in value['sources']:
+            file = item['path']
+            if file.startswith('renderer/') and file.endswith(('.mjs', '.wasm')) and '/' + file in served:
+                expected = mutation['servedSha256'] if file == mutation.get('path') else item['sha256']
+                require(served['/' + file]['sha256'] == expected, 'different runtime bytes served: ' + name)
+        require(served['/fixtures.json']['sha256'] == value['fixtureTransport']['sha256'], 'different fixtures served: ' + name)
         return value
 
     closure = json.loads((directory / 'closure.json').read_bytes())
@@ -80,6 +93,8 @@ def main():
     require(all(t['requiredMips'] == t['requiredCubeFaces'] == t['requiredArrayLayers'] == 0 for t in closure['topology']), 'original topology requirements changed')
     for item in closure['inputs']:
         source(item['path'], item['sha256'])
+    for digest in closure['shaderBodies']:
+        source('evidence/virgl-workload-inventory/captures/es2gears/shaders/' + digest + '.tgsi', digest)
     inline = json.loads((directory / 'runtime/receipt.json').read_bytes())
     require(inline['gitHead'] == head and inline['status'] == 'passed' and inline['task'] == 'E6-T12g5', 'retained affected runtime receipt')
     for item in inline['sources'] + inline['inputs']:
