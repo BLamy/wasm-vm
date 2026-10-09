@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-raster-depth-seal-v1",
+  "task": "E6-T12h",
+  "sourceHead": "49c408e10b2a5126157f099765b2da6890dd2c16",
+  "records": 126,
+  "archiveSha256": "c49cbffdd4e273b0a38ed4ed49bea91553ef78fab5c347f77f4acd81d179ca78",
+  "archiveBytes": 4688113,
+  "recordIndexSha256": "7126f218b7e944b92a66f41e9ea1b76cd07b31f309c0a74c532e02736a7181f7",
+  "hotReceiptSha256": "5333dd56678bbddbd817509906851221afe12fde4fe88f73ebf3c3a2c895f825",
+  "coldReportSha256": "5c981a07cf1b1119bfd7f83c0e028fb3fc5eccb704cc861b59f0957cb55fe2db",
+  "coldReceiptSha256": "dc1d2be8e66d5fed012cf7ea6ffd7c5630c4de48f326c2b0ba1d8fc196d0a5ff",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-original-draw-state",
+  "productionDrawAuthority": false
+}

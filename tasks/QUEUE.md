@@ -639,7 +639,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02701059` [E6-T12g6m](epic-6-transcendence/E6-T12g6m-larger-original-programs.md) — Prove the two larger original compositor shader programs *(deps: E6-T12g6m4c, E6-T12g6m5b2b2)*
 - [x] `525.0270106` [E6-T12g6](epic-6-transcendence/E6-T12g6-required-format-closure.md) — Close original kmscube and es2gears format/view requirements *(deps: E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m)*
 - [x] `525.02702` [E6-T10b](epic-6-transcendence/E6-T10b-guest-graphics-corpus.md) — Capture the current guest graphics driver and command requirements *(deps: E6-T10a)*
-- [~] `525.02702` [E6-T12h](epic-6-transcendence/E6-T12h-virgl-raster-depth-state.md) — Execute required VirGL raster depth and vertex state without coordinate drift *(deps: E6-T12g6)*
+- [?] `525.02702` [E6-T12h](epic-6-transcendence/E6-T12h-virgl-raster-depth-state.md) — Execute required VirGL raster depth and vertex state without coordinate drift *(deps: E6-T12g6)*
 - [ ] `525.02703` [E6-T12i](epic-6-transcendence/E6-T12i-bounded-render-cache.md) — Cache WebGL2 shader programs and state with complete bounded keys *(deps: E6-T12h)*
 - [ ] `525.02704` [E6-T11d](epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md) — Advertise proven VirGL capabilities and initialize real guest Mesa *(deps: E6-T12i)*
 
