@@ -52,7 +52,7 @@ def main():
     members['cold/cold.log'] = (cold / 'cold.log').read_bytes()
     output.mkdir(parents=True, exist_ok=True)
     records = {'schema': 'virgl-required-formats-records-v1',
-               'task': 'E6-T12g', 'sourceHead': head,
+               'task': 'E6-T12g6', 'sourceHead': head,
                'records': [{'path': name, 'bytes': len(data), 'sha256': sha(data)}
                            for name, data in sorted(members.items())]}
     index = (json.dumps(records, indent=2) + '\n').encode()
@@ -67,7 +67,7 @@ def main():
     packed = archive.getvalue()
     (output / 'recording.tar.gz').write_bytes(packed)
     manifest = {'schema': 'virgl-required-formats-seal-v1',
-                'task': 'E6-T12g', 'sourceHead': head, 'records': len(members),
+                'task': 'E6-T12g6', 'sourceHead': head, 'records': len(members),
                 'archiveSha256': sha(packed), 'archiveBytes': len(packed),
                 'recordIndexSha256': sha(index),
                 'hotReceiptSha256': sha((hot / 'receipt.json').read_bytes()),

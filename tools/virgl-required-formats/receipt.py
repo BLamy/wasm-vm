@@ -139,7 +139,9 @@ def main():
                 for name, digest in original['sources'].items():
                     if name != 'Makefile' and not name.startswith('tasks/'):
                         source(name, digest)
-        held.append({'task':task, 'sourceHead':manifest['sourceHead'], 'archiveSha256':sha(archive),
+        source_head = manifest.get('sourceHead', manifest.get('frozenSourceHead'))
+        require(source_head is not None, 'held source head absent: ' + task)
+        held.append({'task':task, 'sourceHead':source_head, 'archiveSha256':sha(archive),
                      'indexSha256':sha(index), 'records':len(records)})
     verifier = 'evidence/virgl-original-programs/verifier/manifest.json'
     verdict = json.loads(source(verifier))

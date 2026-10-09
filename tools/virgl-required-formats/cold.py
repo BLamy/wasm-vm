@@ -33,7 +33,7 @@ def main():
     for key in removed:
         del env[key]
     report = {'schema': 'virgl-required-formats-cold-v1',
-              'task': 'E6-T12g', 'gitHead': head, 'clone': str(clone),
+              'task': 'E6-T12g6', 'gitHead': head, 'clone': str(clone),
               'removedEnvironmentNames': removed,
               'setupCommand': ['npm', 'ci', '--prefix', 'web', '--ignore-scripts',
                                '--no-audit', '--no-fund'],
