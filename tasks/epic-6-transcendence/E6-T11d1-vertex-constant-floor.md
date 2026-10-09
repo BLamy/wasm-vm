@@ -3,7 +3,7 @@ id: E6-T11d1
 epic: 6
 title: Execute the GLES2 ordinary vertex constant-bank floor
 priority: 525.027035
-status: implemented
+status: verified
 depends_on: [E6-T12i]
 estimate: S
 risk: high
@@ -121,3 +121,99 @@ one-bit input and preserves each text/line/index boundary. These are explicit
 harness updates, not new runtime branch admissions. Demo imports remain absent
 for this isolated prerequisite; production bring-up resumes only after fresh
 verification.
+
+
+### 2026-10-09 — fresh adversarial verifier
+
+VERDICT: verified
+
+- P1 custody — HELD. Independently authenticated all 254 worker archive members,
+  both 393-source exact-head receipts and their generated binaries against frozen
+  source `92c98c7361cad2518200bfa99765ed5895ef4f95`. The pristine clone's before/after
+  status is empty and its scrubbed command exited zero. Citations:
+  `evidence/virgl-vertex-constant/verifier/authentication.json:/receipts` and
+  the worker archive/index digests in the submission above.
+- P2 ordinary/private boundary — HELD. All 29 complete native, ASan/UBSan and
+  delivered-Wasm responses agree. Highest MOV/ADD/MUL/MAD and pairs use ordinary
+  v6; high128, fragment46/127, holes, duplicate/overlapping/aliased declarations,
+  raw and private high tuples reject without GLSL or partial pair payloads.
+  Citations: sealed `hot/native/sanitize.jsonl`, lines1–29, and
+  `recording-audit.json:/reports`. Seven additional complete native/Wasm high
+  absolute/negative/raw/dead-branch witnesses and four forged authority contracts
+  reject in `boundary-attacks.json:/records` and `/forged`.
+- P3 physical words/pixels/owners — HELD. An independent rational-arithmetic,
+  binary32-packing and RGBA8 oracle checked every byte in all 30 sealed hot/cold
+  raw16x16 frames, original512-word VirGL packets and complete responses. Context
+  A/B/A, actual cache pressure and all delays0/1/3 fence predicates hold; every
+  recorded browser error collection is empty. Citations:
+  `recording-audit.json:/reports/0/frames` and `/reports/1/frames`;
+  sealed `hot/hardware/report.json:/browserResult/result/jobs` and cold equivalent.
+- P4 reflection/upload — HELD. Declared/retained129 is capped at128 guest vectors;
+  host511, malformed/short/nonfinite banks and metadata forgeries perform zero
+  native draws. A fresh swizzle/partial-write probe independently exercises
+  nonadjacent slots61/93, an unused declared127, finalCONST0, six exact physical
+  frames across two owners and recovery. ANGLE actually retains129; the whole128
+  guest prefix is required even when only94 vectors are referenced. Citations:
+  `physical-final/report.json:/result/frames`, `/result/assertions`;
+  `recording-audit.json:/reports`; `state.mjs:459–482` in the frozen diff.
+- P5 scratch cancellation/recovery — HELD. The actual16MiB module returns a
+  complete typed TGSI allocation error under genuine heap exhaustion and recovers
+  identical output. The recorded64-byte sanitized transaction exercises longjmp.
+  A fresh sanitized test injects12 initial arena failures, recovers identical
+  single/paired output12 times and executes three out-of-transaction hash schedules.
+  Nine actual-Wasm exhaustion schedules with varied allocation sizes/free orders
+  also recover exactly. Citations: `scratch-boundaries.json`,
+  `critic-scratch-coverage.json` for `checked_tgsi_sanity.c:19,22–25,32,48`,
+  `wasm-pressure.json:/pressure`, and sealed `hot/native/report.json:/memory`.
+- P6 sufficiency/bounds — HELD. Audited all881 changed lines in27 files against
+  original sanitized binaries/profiles, retained compiler coverage and actual
+  served browser ranges. Every behavioral hunk executes; declarative includes,
+  signatures, preprocessor bindings, documentation and recording/receipt harness
+  branches have per-line waivers in `coverage-audit.json` (no gaps). The pinned
+  checker/hash bodies are unchanged and their allocation calls hit the guard.
+  Text49152, tokens8192, GLSL262144, stack262144, raw46/exact184 and parser/IR arenas
+  stay bounded. Three fresh seeded maximum768-instruction,512-TEMP,128-CONST
+  programs have identical native/sanitized/Wasm responses; exact text limit passes
+  and one byte beyond rejects. Citations: `wasm-pressure.json:/records`,
+  `/limits` in `final-audit.json`, sealed stack-usage files and the unchanged
+  `raw_bits.h` digest in `carry-forward.json`.
+- P7 retained proof/harness — HELD. Independently authenticated the previous
+  55-record I critic seal and carried forward12 unchanged resource/cache/raw
+  boundaries, current I/H/G5 recordings, both10,000-draw cache runs and three
+  promoted chaos schedules. The four layout numbers match the already-landed
+  exact-bank pointer types; this diff changes no raw/profile structure. Audited
+  all402 join adaptations: AND of unknown IN with literal1 preserves two live
+  predecessors across384 witnesses, and missing-arm lanes still reject. Text,
+  line and canonical index boundaries are preserved. Citations:
+  `carry-forward.json`, `join-audit.json` and sealed compiler bound reports.
+- P8 critic prediction correction — Initial driver-prefix inference FAILED,
+  without a product refutation: a highest referenced slot93 did not imply native
+  active94 on ANGLE. Its actual129 reflection made the short94 bank correctly
+  reject before draw. Preserved the exact initial probe source, report and digest
+  in `initial-reflection-test.mjs`, `physical-reflection/report.json` and
+  `prediction-correction.json`; wrote the corrected prediction before rerunning
+  with the complete128 guest prefix. The corrected pixel/boundary prediction HELD.
+- P9 sabotage — HELD. Independently truncating the actual upload to93 vectors
+  produces `[64,0,191,0]` instead of literal `[159,8,255,72]` on the first partial
+  high-slot draw. It fails the physical pixel oracle with empty browser/import
+  error collections. Citation: `sabotage-physical/report.json:/result/failure`,
+  its exact served mutation binding and reported raw pixel values; original upload46 sabotage
+  also fails the worker MOV oracle. No implementation correction was made.
+- SUITE: promoted `renderer/virgl-command/tests/vertex-constant-boundaries.mjs`
+  for physical partial-write/swizzle, retained suffix, ownership and invalid-bank
+  recovery, and `renderer/virgl-shader/native_tests/tgsi_scratch_boundaries.c`
+  for initial allocation cancellation, outside-hash fallback and exact recovery.
+  Repro commands are the sealed `physical.mjs`, `build-scratch.sh` and
+  `wasm-pressure.mjs`; archive records include their complete sources and outputs.
+
+All verifier evidence is sealed in
+`evidence/virgl-vertex-constant/verifier/recording.tar.gz` (54 records), SHA256
+`36d18cbf16f9736618c4a435f494961f3476f92a52edd442ee9425b54bda4850`;
+index SHA256 `3e7f1f18f18b94f1067da6dc736860b3762d535d86d3743e1cd9b1ae7a084326`.
+`final-audit.json` SHA256
+`9ba3ab5f12a59783d1bcd6ea4043708ed653af38a5bd4f4895e342d9985f682f`;
+coverage audit SHA256
+`353afbc116f3c6d16a033e0d06a12f62c5e96cd957ee101763d001fef736c15e`.
+Only the isolated ordinary vertex128 capacity is verified. Raw/private/fragment46
+remain bounded; production capsets, live guest acceleration, FPS/MIPS and general
+API conformance remain outside this verdict. No deployment or merge was performed.
