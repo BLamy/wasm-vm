@@ -60,7 +60,15 @@ def main(directory):
             assert f'checked invocation domain rejected {fault}' in message
         else:
             assert 'Error:' in message and 'timeout' not in message.lower()
-    for name in ['retained-gears/receipt.json', 'c580/receipt.json']:
+    for seed in [1648868771, 254715103, 3281536249]:
+        held = json.loads((directory / f'retained-gears/gpu-{seed}/report.json').read_text())
+        assert held['gitHead'] == head and held['status'] == 'passed'
+        assert held['browserErrors'] == {'console': [], 'page': [], 'requests': []}
+    for fault in ['lighting', 'auxiliary', 'forced-alpha']:
+        held = json.loads((directory / f'retained-gears/fault-{fault}/report.json').read_text())
+        assert held['gitHead'] == head and held['status'] == 'failed'
+        assert 'independent' in held['failure']['message'] and 'timeout' not in held['failure']['message'].lower()
+    for name in ['retained-gears/retained-f6/report.json', 'c580/receipt.json']:
         held = json.loads((directory / name).read_text())
         assert held['gitHead'] == head and held['status'] == 'passed'
     assert sha((directory / 'browser/browser.png').read_bytes()) == report['screenshot']['sha256']
@@ -74,7 +82,7 @@ def main(directory):
     files = {p.relative_to(directory).as_posix(): sha(p.read_bytes()) for p in directory.rglob('*')
              if p.is_file() and p.name != 'receipt.json'}
     # Include nested original receipts, which are records, not this receipt itself.
-    for name in ['retained-gears/receipt.json', 'c580/receipt.json']:
+    for name in ['c580/receipt.json']:
         files[name] = sha((directory / name).read_bytes())
     result = {'schema': 'virgl-original-programs-receipt-v1', 'task': TASK,
               'status': 'passed', 'gitHead': head, 'pixels': 1612644, 'powerSites': 29,

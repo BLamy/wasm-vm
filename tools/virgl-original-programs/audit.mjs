@@ -103,7 +103,18 @@ for(let index=0;index<3;index++){
   results.push({bank:index,covered,survived,discarded,maxOutputError,probes,readbackSha256:row.readbackSha256});
 }
 assert.deepEqual(a.guard.cases.map(({name,base,exponent,expected})=>[name,base,exponent,expected]),GUARD_CASES);
-for(const item of a.guard.cases)assert.deepEqual(item.actual,[item.expected?1:0,0,0,1]);
+for(const item of a.guard.cases){
+  const ideal=item.expected?(f(item.base)===0?0:Math.pow(f(item.base),f(item.exponent))):0;
+  assert.equal(item.ideal,ideal);assert.equal(item.actual[0],item.expected?1:-1);
+  assert.equal(item.actual[2],ideal===0?1:0);assert.equal(item.actual[3],1);
+  if(ideal===0)assert.equal(item.actual[1],0);
+  else assert.ok(Math.abs(item.actual[1]-ideal)/ideal<=1/16384);
+}
+assert.equal(a.guard.snapshotSha256,sha(a.guard.snapshot));
+const literalSnapshot=a.banks[0].fragmentGlsl.slice(a.banks[0].fragmentGlsl.indexOf(' { highp float power_base = '));
+assert.ok(literalSnapshot.startsWith(a.guard.snapshot.replace('power_base = uintBitsToFloat(words.x);',
+  literalSnapshot.match(/power_base = [^;]+;/)[0]).replace('power_exponent = uintBitsToFloat(words.y);',
+  literalSnapshot.match(/power_exponent = [^;]+;/)[0])));
 assert.equal(a.guard.helperSha256,sha(a.guard.helper));assert.ok(a.banks[0].fragmentGlsl.includes(a.guard.helper));
 assert.equal(results.reduce((sum,row)=>sum+row.covered,0),1612644);
 for(const pc of POWER_SITES)assert.ok(results.reduce((sum,row)=>sum+row.probes.find(probe=>probe.pc===pc).hits,0)>0,

@@ -50,8 +50,24 @@ xcrun llvm-cov export renderer/virgl-shader/build/original-92cb-complete-sanitiz
 node tools/virgl-original-programs/audit.mjs "$evidence" > "$evidence/audit.log"
 # Carry the original nineteen and G6a four new bodies through the actual native,
 # Wasm and physical pipeline, without re-litigating their unchanged HELD proofs.
-EMCC="$emcc_bin" VIRGL_GEARS_SHADER_EVIDENCE_DIR="$PWD/$evidence/retained-gears" \
-  make verify-E6-T12g6a > "$evidence/retained-gears.log" 2>&1
+held="$evidence/retained-gears"
+mkdir -p "$held"
+bash renderer/virgl-shader/build.sh native > "$held/native-build.log" 2>&1
+python3 tools/virgl-gears-shaders/provenance.py --output "$held/provenance.json"
+node tools/virgl-gears-shaders/compiler.mjs "$held/compiler.json"
+for seed in 1648868771 254715103 3281536249; do
+  node tools/virgl-gears-shaders/browser.mjs --output "$held/gpu-$seed" --seed "$seed" \
+    --provenance "$held/provenance.json" > "$held/gpu-$seed.log" 2>&1
+done
+node renderer/virgl-shader/tests/gears-exact-alpha.mjs "$held"/gpu-*/report.json > "$held/exact-alpha.log"
+for fault in lighting auxiliary forced-alpha; do
+  if node tools/virgl-gears-shaders/browser.mjs --output "$held/fault-$fault" --fault "$fault" \
+      --provenance "$held/provenance.json" > "$held/fault-$fault.log" 2>&1; then
+    echo "Retained original $fault mutation unexpectedly passed." >&2
+    exit 1
+  fi
+done
+node tools/virgl-original-corpus/browser.mjs --output "$held/retained-f6" > "$held/retained-f6.log" 2>&1
 bash renderer/virgl-shader/build.sh original-corpus-sanitize > "$evidence/retained-native-build.log" 2>&1
 python3 tools/virgl-original-corpus/native.py \
   --binary renderer/virgl-shader/build/original-corpus-sanitize/original-corpus-test \

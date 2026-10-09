@@ -373,6 +373,12 @@ async function checkGuard(gl,fullSource){
  const end=fullSource.indexOf('\n}\n',start)+3;
  require(start>=0&&end>start,'actual emitted numerical guard');
  const helper=fullSource.slice(start,end);
+ const snapshotStart=fullSource.indexOf(' { highp float power_base = ');
+ const snapshotEnd=fullSource.indexOf('}\n',snapshotStart)+2;
+ require(snapshotStart>=0&&snapshotEnd>snapshotStart,'actual emitted power snapshot');
+ const snapshot=fullSource.slice(snapshotStart,snapshotEnd)
+  .replace(/power_base = [^;]+;/,'power_base = uintBitsToFloat(words.x);')
+  .replace(/power_exponent = [^;]+;/,'power_exponent = uintBitsToFloat(words.y);');
  const vertex={glsl:'#version 300 es\nprecision highp float;\nvoid main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));gl_Position=vec4(p*2.0-1.0,0,1);}'};
  const fragment={glsl:`#version 300 es
 precision highp float;
@@ -380,7 +386,10 @@ precision highp int;
 uniform highp uvec2 test_words[${GUARD_CASES.length}];
 layout(location=0) out vec4 score;
 ${helper}
-void main(){int at=int(gl_FragCoord.x);uvec2 words=test_words[at];score=vec4(private_power_domain(uintBitsToFloat(words.x),uintBitsToFloat(words.y))?1.0:0.0,0,0,1);}`};
+void main(){int at=int(gl_FragCoord.x);uvec2 words=test_words[at];
+ vec4 float_rhs;bool private_power_fault=false;vec4 private_probe=vec4(0);int private_probe_pc=105;
+ ${snapshot}
+ score=vec4(private_power_fault?-1.0:1.0,float_rhs.x,floatBitsToUint(float_rhs.x)==0u?1.0:0.0,1.0);}`};
  const {program,logs}=createProgram(gl,vertex,fragment);
  const texture=gl.createTexture(),framebuffer=gl.createFramebuffer(),vao=gl.createVertexArray();
  require(texture&&framebuffer&&vao,'guard physical objects');
@@ -402,11 +411,14 @@ void main(){int at=int(gl_FragCoord.x);uvec2 words=test_words[at];score=vec4(pri
   require(gl.getError()===gl.NO_ERROR,'physical numerical guard');
   const cases=GUARD_CASES.map(([name,base,exponent,expected],i)=>{
    const actual=[...pixels.subarray(i*4,i*4+4)];
-   require(actual[0]===(expected?1:0)&&actual[1]===0&&actual[2]===0&&actual[3]===1,
-    `literal numerical guard ${name}`);
-   return {name,base,exponent,expected,actual};
+   const ideal=expected?(float(base)===0?0:Math.pow(float(base),float(exponent))):0;
+   const relative=ideal===0?0:Math.abs(actual[1]-ideal)/ideal;
+   require(actual[0]===(expected?1:-1)&&Number.isFinite(actual[1])&&
+    (ideal===0?actual[1]===0:relative<=1/16384)&&actual[2]===(ideal===0?1:0)&&actual[3]===1,
+    `literal numerical guard and emitted power ${name}`);
+   return {name,base,exponent,expected,actual,ideal,relative};
   });
-  return {cases,helper,helperSha256:await digest(helper),logs};
+  return {cases,helper,helperSha256:await digest(helper),snapshot,snapshotSha256:await digest(snapshot),logs};
  }finally{
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindVertexArray(null);gl.useProgram(null);
   gl.deleteProgram(program);gl.deleteFramebuffer(framebuffer);gl.deleteTexture(texture);gl.deleteVertexArray(vao);
