@@ -225,8 +225,9 @@ explicitly rejected by this narrower profile.
   declaration, not a TGSI parser result. Shader grammar, token truth and stage
   agreement remain the shader bridge's responsibility.
 - **VERTEX_ELEMENTS:** `handle,elements[{sourceOffset,instanceDivisor,
-  vertexBufferIndex,sourceFormat}]`; per-vertex R32G32_FLOAT (29), divisor zero,
-  buffer index below 16, sourceOffset+8 fits u32.
+  vertexBufferIndex,sourceFormat}]`; per-vertex R32/RG32/RGB32/RGBA32_FLOAT (28..31), divisor zero,
+  buffer index below 16, float-aligned sourceOffset and its actual element end
+  (4/8/12/16 bytes) fit u32.
 - **SAMPLER_VIEW:** `handle,resourceHandle,format,target,firstLayer,lastLayer,
   firstLevel,lastLevel,swizzle[4]`; normalized color formats2/67/233, 2D (2), level/layer zero; swizzle
   components 0–5 (RGBA/ZERO/ONE). Resource type compatibility is deferred.

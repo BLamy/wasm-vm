@@ -2113,3 +2113,7 @@ verify-E6-T11d1:
 .PHONY: verify-E6-T11d2
 verify-E6-T11d2:
 	bash tools/verify-virgl-blend-equations.sh
+
+.PHONY: verify-E6-T11d3
+verify-E6-T11d3:
+	bash tools/verify-virgl-float-vertex-fetch.sh

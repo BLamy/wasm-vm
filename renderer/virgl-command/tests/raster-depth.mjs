@@ -27,8 +27,8 @@ export function runNativeRasterAcceptance(){
   const c=checks();
   for(let bits=0;bits<32;bits++){const f=c.ok(decodeSubmission(packet(1,3,[1,bits,0,0,0])),'depth word '+bits).commands[0].fields;c.equal([f.depthEnable,f.depthWriteMask,f.depthFunction],[Boolean(bits&1),Boolean(bits&2),(bits>>>2)&7],'independent depth bit fields '+bits);}
   for(const[words,label]of [[[1,256,0,0,0],'alpha'],[[1,0,1,0,0],'front stencil'],[[1,0,0,1,0],'back stencil']])c.bad(decodeSubmission(packet(1,3,words)),'closed '+label,'unsupported-feature');
-  for(const fmt of [29,30]){const n=fmt===30?12:8;c.ok(decodeSubmission(packet(1,5,[1,0xffffffff-n,0,15,fmt])),'exact vertex address '+fmt);c.bad(decodeSubmission(packet(1,5,[1,0xffffffff-n+1,0,15,fmt])),'overflow vertex address '+fmt,'invalid-value');}
-  for(const fmt of [0,16,28,31,64,67,177,233])c.bad(decodeSubmission(packet(1,5,[1,0,0,0,fmt])),'closed vertex format '+fmt,'unsupported-feature');
+  for(const fmt of [28,29,30,31]){const n=(fmt-27)*4,last=Math.floor((0xffffffff-n)/4)*4;c.ok(decodeSubmission(packet(1,5,[1,last,0,15,fmt])),'exact aligned vertex address '+fmt);c.bad(decodeSubmission(packet(1,5,[1,last+4,0,15,fmt])),'overflow vertex address '+fmt,'invalid-value');}
+  for(const fmt of [0,16,27,32,64,67,177,233])c.bad(decodeSubmission(packet(1,5,[1,0,0,0,fmt])),'closed vertex format '+fmt,'unsupported-feature');
   c.bad(decodeSubmission(packet(1,5,[1,0,1,0,30])),'instanced vertex fetch','unsupported-feature');
   c.equal(c.ok(decodeSubmission(scissor(1,2,3,4)),'packed scissor').commands[0].fields.scissors,[{minX:1,minY:2,maxX:4,maxY:6}],'unsigned packed scissor coordinates');
   for(const b of [packet(15,0,[0,0]),packet(15,0,[0,0,0,0]),packet(15,0,[1,0,0]),packet(15,0,[0,7,6])])c.bad(decodeSubmission(b),'invalid scissor shape/range');
@@ -119,7 +119,7 @@ async function literal(gl,bridge,c){
   run(join(packet(2,1,[0]),packet(2,2,[6]),packet(2,3,[7]),viewport(),constant([0,1,0,1]),draw()),'adjacent reset all raster state');frames.push(await pixels(r,c,1,()=>green,'adjacent disabled depth blend scissor positive-Y'));
   const faults=[];const reject=(bytes,label,code)=>{const count=r.calls.length,res=c.bad(r.run(1,bytes,label),label,code);c.equal(r.calls.length,count,label+' issues no draw');c.equal(gl.getError(),gl.NO_ERROR,label+' zero GL errors');faults.push({label,error:res.error});};
   reject(draw(0x7ffffffe,4),'signed array range','unsupported-draw');reject(draw(10,4),'array fetch end','out-of-bounds');
-  reject(packet(1,5,[88,2,0,0,30]),'unaligned RGB source offset','invalid-state');reject(packet(6,0,[12,2,3]),'unaligned vertex buffer','out-of-bounds');
+  reject(packet(1,5,[88,2,0,0,30]),'unaligned RGB source offset','invalid-value');reject(packet(6,0,[12,2,3]),'unaligned vertex buffer','out-of-bounds');
   reject(packet(5,0,[1,3,4]),'color/depth role swap','incompatible-resource');
   c.ok(r.store.createResource(metadata(4,2,16,1,8,8)),'mismatched depth resource');c.ok(r.store.attachContext(1,4),'mismatched depth membership');run(packet(1,8,[99,4,16,0,0]),'mismatched depth surface');reject(packet(5,0,[1,99,3]),'mismatched attachment dimensions','incompatible-resource');
   run(join(packet(2,3,[8]),packet(5,0,[1,0,3])),'unbind active depth');reject(draw(),'depth test missing attachment','incomplete-draw');reject(clear(1),'depth clear missing attachment','incomplete-framebuffer');run(packet(5,0,[1,4,3]),'restore depth attachment');
