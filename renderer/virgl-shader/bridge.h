@@ -10,6 +10,7 @@
 #define BRIDGE_MAX_INSTRUCTIONS 768u
 #define BRIDGE_MAX_TEMPORARIES 512u
 #define BRIDGE_MAX_IMMEDIATES 32u
+#define BRIDGE_MAX_VERTEX_CONSTANTS 128u
 #define BRIDGE_MAX_FLOW_DEPTH 16u
 #define BRIDGE_MAX_LINES 1536u
 #define BRIDGE_MAX_LINE_BYTES 512u
@@ -20,7 +21,7 @@
 
 /* stage: 0 = vertex, 1 = fragment. The returned JSON is borrowed until the
  * next call. No input pointer is retained. Calls must be serialized. The
- * checked opcode set internally selects the legacy v5 or owned raw-bit stage;
+ * checked opcode set internally selects the ordinary v5/v6 or owned raw-bit stage;
  * callers cannot select a backend or bypass output-domain validation. */
 const char *bridge_translate(int stage, const char *text, size_t length);
 

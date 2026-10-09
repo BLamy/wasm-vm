@@ -10,6 +10,7 @@ export const LIMITS = Object.freeze({
   samplerSlots: 32,
   constantSlots: 15,
   constantWords: 184,
+  vertexConstantWords: 512,
   shaderBufferSlots: 16,
   imageSlots: 32,
   atomicBufferSlots: 16,
@@ -374,7 +375,7 @@ function decodeFields(p, objectType) {
       return { resourceHandle, indexSize, offset };
     }
     case 12: {
-      const count = p.arrayCount(2, 1, LIMITS.constantWords), stage = p.stage(1), index = p.u(2);
+      const stage = p.stage(1), count = p.arrayCount(2, 1, stage === 0 ? LIMITS.vertexConstantWords : LIMITS.constantWords), index = p.u(2);
       p.require(index < LIMITS.constantSlots, "limit-exceeded", "Constant buffer slot exceeds profile limit.");
       p.require(count % 4 === 0, "payload-length", "Inline constants must contain whole vec4 values.");
       p.require(count === 0 || (stage <= 1 && index === 0), "unsupported-feature", "Active constants require VS/FS slot zero.");

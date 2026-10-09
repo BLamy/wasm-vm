@@ -524,7 +524,8 @@ export function runAcceptance(fixtures, options = {}) {
     accept(packet(op, 0, [0, 32]), `sampler opcode ${op} empty at end of slot range`);
   }
   reject(packet(12, 0, [0, 0, 0]), "inline constants incomplete vec4", "payload-length");
-  reject(packet(12, 0, [0, 0, ...Array(188).fill(0)]), "inline constants over word budget", "limit-exceeded");
+  reject(packet(12, 0, [0, 0, ...Array(516).fill(0)]), "vertex inline constants over word budget", "limit-exceeded");
+  reject(packet(12, 0, [1, 0, ...Array(188).fill(0)]), "fragment inline constants over word budget", "limit-exceeded");
   reject(packet(12, 0, [1, 0, ...Array(183).fill(0)]), "high inline constants incomplete vec4", "payload-length");
   reject(packet(12, 0, [0, 15]), "constant slot budget", "limit-exceeded");
   reject(packet(12, 0, [0, 1, 0, 0, 0, 0]), "active nonzero constant slot", "unsupported-feature");

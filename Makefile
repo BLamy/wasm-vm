@@ -2105,3 +2105,7 @@ verify-E6-T12h:
 .PHONY: verify-E6-T12i
 verify-E6-T12i:
 	bash tools/verify-virgl-render-cache.sh
+
+.PHONY: verify-E6-T11d1
+verify-E6-T11d1:
+	bash tools/verify-virgl-vertex-constants.sh

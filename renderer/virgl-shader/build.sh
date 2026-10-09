@@ -5,9 +5,11 @@ python3 verify_sources.py
 mode=${1:-native}
 mkdir -p "build/$mode"
 sources=(bridge.c raw_bits.c generated/u_format_table.c checked_upstream.c
-  vendor/src/gallium/auxiliary/tgsi/*.c
-  vendor/src/gallium/auxiliary/cso_cache/cso_hash.c vendor/src/gallium/auxiliary/cso_cache/cso_cache.c
-  vendor/src/mesa/util/u_debug.c)
+  checked_tgsi_sanity.c checked_cso_hash.c)
+for source in vendor/src/gallium/auxiliary/tgsi/*.c; do
+  [[ "$source" == */tgsi_sanity.c ]] || sources+=("$source")
+done
+sources+=(vendor/src/gallium/auxiliary/cso_cache/cso_cache.c vendor/src/mesa/util/u_debug.c)
 common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -DUTIL_ARCH_LITTLE_ENDIAN=1 -DUTIL_ARCH_BIG_ENDIAN=0
   -DHAVE___BUILTIN_CLZ=1 -DHAVE___BUILTIN_CLZLL=1 -DHAVE___BUILTIN_POPCOUNT=1
@@ -202,6 +204,19 @@ case "$mode" in
     ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
+    ;;
+  vertex-constant-native|vertex-constant-sanitize|vertex-constant-scratch-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" != vertex-constant-native ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    if [[ "$mode" == vertex-constant-scratch-sanitize ]]; then
+      instrument+=(-DBRIDGE_TGSI_SCRATCH_BYTES=64)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/vertex_constants.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/vertex_constants.c \
+      -lm -o "build/$mode/vertex-constant-test"
     ;;
   selected-lanes-pair-native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" native_tests/selected_lanes_pair.c -lm -o build/selected-lanes-pair-native/pair-test
@@ -536,7 +551,7 @@ case "$mode" in
     "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
     # Same owned source and optimization as the delivered module. These objects
     # only measure compiler stack frames; the public acceptance uses build/wasm.
-    for source in bridge raw_bits; do
+    for source in bridge raw_bits checked_tgsi_sanity checked_cso_hash; do
       "$emcc" "${common[@]}" -O2 -fstack-usage -c "$source.c" -o "build/$mode/$source.o"
     done
     ;;
