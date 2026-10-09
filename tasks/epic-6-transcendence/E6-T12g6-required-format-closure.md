@@ -3,7 +3,7 @@ id: E6-T12g6
 epic: 6
 title: Close original kmscube and es2gears format/view requirements
 priority: 525.0270106
-status: pending
+status: in-progress
 depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m]
 estimate: S
 risk: high
@@ -52,3 +52,14 @@ wider desktop-format, live guest-offload or FPS support from this closure.
 ## Verification log
 
 (empty)
+
+### 2026-10-09 — worker activation
+
+E6-T12g6m was independently verified at `c30e72f0`; all dependencies are
+verified. Continue the user-authorized production graphics path through this
+client format/view closure ahead of the unrelated E5 desktop snapshot item.
+This layer binds the complete immutable client inventories to the admitted
+roles and original packets. Carry unchanged shader numerical proofs by digest;
+rerun the affected physical resource/view/upload boundaries at the frozen head.
+Production negotiation remains disabled until raster state, cache and real
+guest bring-up are independently proven.
