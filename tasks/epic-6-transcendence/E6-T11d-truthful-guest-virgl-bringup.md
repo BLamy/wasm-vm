@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1]
-blocked_on: E6-T11d1
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2]
+blocked_on: E6-T11d2
 estimate: S
 risk: high
 capstone: false
@@ -78,3 +78,17 @@ itself. Resume bring-up after that fresh verification, then test the full actual
 qualification/handshake. Normal entry also rejects complete92cb/c580 sources;
 private numerical proof is not live admission. Any additional gap found during
 bring-up follows the same ordered-fix rule.
+
+### 2026-10-09 — worker — constant floor verified; next baseline boundary
+
+E6-T11d1 is independently verified at `3c6295a9`. Its 128-vector capacity does
+not qualify the complete API. The next direct readiness probe submits a BLEND
+object for additive ONE/ZERO in both RGB and alpha. It still returns
+`unsupported-feature: Only standard additive alpha blending is supported.`
+Reproduce with `node --input-type=module` importing `decodeSubmission` from
+`renderer/virgl-command/decoder.mjs` and decoding the little-endian dwords
+`[721153,777,0,0,2084708881,0,0,0,0,0,0,0]`. This is a core valid blend operation
+under the pinned Gallium enum and GLES2 contract. Ordered S prerequisite
+E6-T11d2 covers single-target equations/factors, including WebGL’s mixed constant
+restriction; it cannot grant production capsets by itself. The explicit user
+request to finish guest graphics continues this ordered graphics chain.
