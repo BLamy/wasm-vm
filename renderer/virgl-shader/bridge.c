@@ -1670,6 +1670,20 @@ static void sine_contract(const struct profile *profile, const char *base)
 
 static void power_contract(const struct profile *profile, const char *base)
 {
+   if (profile->raw_flags & RAW_PRIVATE_92CB_COMPLETE) {
+      append(",\"powerBaseProfile\":\"%s\",\"powerContract\":{"
+         "\"kind\":\"tgsi-private-invocation-guarded-power-v1\","
+         "\"stage\":\"fragment\",\"operations\":[\"POW\"],"
+         "\"source\":\"post-swizzle-x-pair-replicated-before-mask\","
+         "\"proof\":\"checked-actual-operands-before-evaluation\","
+         "\"domain\":\"zero-positive-or-positive-normal-log-envelope-120\","
+         "\"maskedNegativeSites\":[231,260,293,319],"
+         "\"invalidResult\":\"explicit-fault-sentinel\","
+         "\"error\":\"measured-relative-le-2^-14-zero-exact\","
+         "\"result\":\"ordinary-highp-no-static-range-facts\"}", base);
+      return;
+   }
+
    append(",\"powerBaseProfile\":\"%s\",\"powerContract\":{\"kind\":\"tgsi-bounded-power-v1\",\"stage\":\"%s\",\"operations\":[\"POW\"],\"source\":\"post-swizzle-x-pair-replicated-before-mask\",\"proof\":\"static-post-modifier-word-facts-integer-exponent-envelope\",\"domain\":\"zero-positive-or-positive-normal-log-envelope-120\",\"error\":\"relative-le-2^-14-zero-exact\",\"precision\":\"measured-physical-host-explicit-budget\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-authority\",\"result\":\"ordinary-highp-no-static-range-facts\"}",
       base, profile->stage ? "fragment" : "vertex");
 }
@@ -1998,7 +2012,7 @@ static const char *pair_exact_finish(struct conversion *stages, const struct exa
       append("{\"ok\":true,\"vertex\":{"); stage_result(vertex);
       append("},\"fragment\":{"); stage_result(fragment);
       append("},\"interfaceKey\":"); interface_key(&fragment->profile);
-      if (private_bank >= 0)
+      if (private_bank >= 0 && private_bank < 3)
          append(",\"private92cbFirstPower\":{\"kind\":\"original-92cb-pc221-222-v1\","
             "\"bank\":%d,\"completeVertexSha256\":\"7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e\","
             "\"completeFragmentSha256\":\"92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba\","
@@ -2006,6 +2020,26 @@ static const char *pair_exact_finish(struct conversion *stages, const struct exa
             "\"viewport\":[0,0,1024,768],\"samples\":0,\"colorFormat\":34836,"
             "\"mode\":5,\"first\":0,\"count\":4,\"drawTimeRecheckRequired\":true,"
             "\"productionDrawAuthority\":false}", private_bank);
+      if (private_bank >= 3) {
+         append(",\"private92cbComplete\":{\"kind\":\"original-92cb-full-guarded-v1\","
+            "\"bank\":%d,\"instructions\":716,\"completeSource\":true,"
+            "\"completeVertexSha256\":\"7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e\","
+            "\"completeFragmentSha256\":\"92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba\","
+            "\"geometrySha256\":\"0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac\","
+            "\"viewport\":[0,0,1024,768],\"samples\":0,\"colorFormat\":34836,"
+            "\"mode\":5,\"first\":0,\"count\":4,"
+            "\"powerGuard\":\"normal-or-zero-nonnegative-envelope-120\","
+            "\"maskedNegativePowers\":[231,260,293,319],"
+            "\"diagnosticAttachment\":1,\"drawTimeRecheckRequired\":true,"
+            "\"productionDrawAuthority\":false,\"powerSites\":[", private_bank - 3);
+         bool comma = false;
+         for (unsigned pc = 0; pc < fragment->profile.raw->count; ++pc) {
+            const struct raw_instruction *i = &fragment->profile.raw->instructions[pc];
+            if (i->opcode != RAW_POW || (i->flags & RAW_DEAD)) continue;
+            append("%s%u", comma ? "," : "", pc); comma = true;
+         }
+         append("]}");
+      }
       append("}");
    }
    return failed;
@@ -2149,6 +2183,52 @@ const char *bridge_translate_original_92cb_first_power(
    bool rejected = failed || response_overflow;
    cleanup(&stages[0]); cleanup(&stages[1]);
    free(stages); free(prefix);
+   if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
+   return response;
+}
+
+const char *bridge_translate_original_92cb_complete(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || !geometry || !draw || bank >= 3 ||
+       vertex_length != sizeof(private_92cb_vertex) - 1 ||
+       fragment_length != sizeof(private_92cb_fragment) - 1 ||
+       geometry_length != sizeof(private_92cb_geometry) ||
+       memcmp(vertex_text, private_92cb_vertex, vertex_length) ||
+       memcmp(fragment_text, private_92cb_fragment, fragment_length) ||
+       memcmp(geometry, private_92cb_geometry, geometry_length))
+      return error("invalid-input", "Complete original 92cb sources and three-bank geometry must match the pinned capture.");
+   if (draw->viewport_x || draw->viewport_y || draw->viewport_width != 1024 ||
+       draw->viewport_height != 768 || draw->samples || draw->color_format != 0x8814 ||
+       draw->mode != 5 || draw->first || draw->count != 4)
+      return error("invalid-input", "The private full-source certificate requires the original single-sample RGBA32F strip draw state.");
+   struct exact_pair_input inputs[2] = {0};
+   struct bridge_exact_word vertex_words[16], fragment_words[148];
+   const unsigned char *bank_bytes = geometry + 72 + bank * 656;
+   for (unsigned i = 0; i < 16; ++i)
+      vertex_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 4 * i)};
+   for (unsigned i = 0; i < 148; ++i)
+      fragment_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 64 + 4 * i)};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, fragment_text, fragment_length);
+   bool canonical = pair_exact_components(&inputs[0].exact, vertex_words, 16) &&
+      pair_exact_components(&inputs[1].exact, fragment_words, 148);
+   if (!canonical) { return error("translation-error", "Pinned exact 92cb bank is not canonical."); }
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) { return error("allocation-failed", "Private paired conversion allocation failed."); }
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], vertex_length, true);
+   if (!failed) failed = check_input_attempt(&stages[1].profile, inputs[1].text, fragment_length,
+      RAW_KNOWN_RETRY | RAW_BRANCH_RETRY | RAW_PRIVATE_92CB_COMPLETE, &inputs[1].exact);
+   if (!failed) failed = pair_exact_finish(stages, inputs,
+      (size_t[2]){vertex_length, fragment_length}, (int)bank + 3);
+   bool rejected = failed || response_overflow;
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   free(stages);
    if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
    return response;
 }
