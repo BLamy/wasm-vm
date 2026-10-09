@@ -3,7 +3,7 @@ id: E6-T11d2
 epic: 6
 title: Execute single-target blend equations and factors for guest qualification
 priority: 525.027037
-status: implemented
+status: verified
 depends_on: [E6-T11d1]
 estimate: S
 risk: high
@@ -109,3 +109,80 @@ Unpacked working artifacts remain in `target/evidence/virgl-blend` and
 `target/evidence/virgl-blend-cold`. This is an isolated normalized blend claim:
 production capability negotiation stays disabled, with no guest boot or
 performance claim. This worker does not set `verified`.
+
+### 2026-10-09 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Reviewed frozen source `0ed130ff0b9a3efa1273ac485d87dad656efcef4` from
+verified parent `3c6295a93d6b088c62a5c6f1cc434f226e090340`; submission
+`2b720fcac4da27b57397aa70ed3ba84a4d2c0b1e`. Predictions preceded state
+inspection; runtime remained unchanged. Detailed predictions: `evidence/virgl-blend/verifier/predictions.json:1` SHA256 `2148bf33099f1c1738a10de6d52d622a2f916e6ab1ed95a551866724947482d2`.
+
+- P1 authentication — HELD. Independently reopened all 242 worker members and checked
+  sizes, archive/index digests, 780 hot/cold tracked-source bindings, 232 receipt files,
+  actual served/coverage sources, exact fault substitutions, and generated hot/cold/current
+  JS/Wasm equality. `evidence/virgl-blend/verifier/authentication.json:1` SHA256 `6605053aa65287e6ed19576c81b03ed62ea10dd9391fbaf4fdc9b42c8c576653`.
+- P2 wire/native enums — HELD. Pinned C compiled/executed freshly with native and
+  ASan/UBSan clang; both match the sealed enum output. Equations 0..4 and 15 source
+  factors agree. Destination SATURATE, unknown/dual-source, active zero, logic/independent
+  and extra targets reject with provenance. `evidence/virgl-blend/verifier/enum-audit.json:1` SHA256 `f1165432e44138a9cdbe408897f58388c39ff6e5d81e3fe0404997a390d6801c`; `evidence/virgl-blend/verifier/unpacked/hot/hardware/report.json:3483` SHA256 `84d292c2697d4eb5d0fa0dd45980a2823d906f94173022cfa4bb480144cfc9e8`.
+- P3 physical equations — HELD. Independent exact IEEE32/Fraction packet decoding
+  checked full dumps and all 589,312 pixels in each 2,302-frame original hot/cold run,
+  including all 2,100 RGB/alpha pair/equation cases, masks, clamps and X-alpha storage.
+  Maximum permitted deviation is one stored component unit. `evidence/virgl-blend/verifier/recording-audit.json:1` SHA256 `0ef34a9b30ee395e24ca999d97d7f3082ec360fa8df95e9f4d3aa3bb27629d01`.
+- P4 fold/native settings — HELD. Actual cache identities/reflection/uploads use owned
+  clamped source coefficients, native RGB ONE, and untouched alpha. MIN/MAX and terminal
+  discard avoid the variant. `evidence/virgl-blend/verifier/hot-hardware-audit.jsonl:91` SHA256 `9f5bbeecafc4296982e11893a49ae98f69ad86b9ee62b1f66f98bf4de3e9b359` (original `evidence/virgl-blend/verifier/unpacked/hot/hardware/report.json:266711`, raw offset 92160, raw SHA256 `e9a410a2ae2930425475fc620d2b0099223d97be7fd3ead93e414b8da19cedd0`); `evidence/virgl-blend/verifier/hot-hardware-audit.jsonl:721` SHA256 `9f5bbeecafc4296982e11893a49ae98f69ad86b9ee62b1f66f98bf4de3e9b359` (original `evidence/virgl-blend/verifier/unpacked/hot/hardware/report.json:641195`, raw offset 737280, raw SHA256 `e9a410a2ae2930425475fc620d2b0099223d97be7fd3ead93e414b8da19cedd0`); `evidence/virgl-blend/verifier/gpu-1779033703/report.json:227930` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`.
+- P5 lifetime/restoration/eviction — HELD. Fresh state-only A/B/A and subcontext draws
+  restore colors, banks and factors after host poisoning; latest-color and destroy/reused-ID
+  binding produce distinct predicted pixels. `evidence/virgl-blend/verifier/fresh-1779033703-audit.jsonl:2451` SHA256 `ac13389989bdcb00fea8102e7d80522b8456b3d2a971e615a1bf8ab02eb6fc54` (original `evidence/virgl-blend/verifier/gpu-1779033703/report.json:1690404`, raw offset 2508800, raw SHA256 `ecc5afdd634606029a0e5426ef4362357ff4890b3bd44bcfc75e7432a15768d9`); `evidence/virgl-blend/verifier/fresh-1779033703-audit.jsonl:2456` SHA256 `ac13389989bdcb00fea8102e7d80522b8456b3d2a971e615a1bf8ab02eb6fc54` (original `evidence/virgl-blend/verifier/gpu-1779033703/report.json:1693439`, raw offset 2513920, raw SHA256 `ecc5afdd634606029a0e5426ef4362357ff4890b3bd44bcfc75e7432a15768d9`);
+  `evidence/virgl-blend/verifier/fresh-1779033703-audit.jsonl:2458` SHA256 `ac13389989bdcb00fea8102e7d80522b8456b3d2a971e615a1bf8ab02eb6fc54` (original `evidence/virgl-blend/verifier/gpu-1779033703/report.json:1694653`, raw offset 2515968, raw SHA256 `ecc5afdd634606029a0e5426ef4362357ff4890b3bd44bcfc75e7432a15768d9`); `evidence/virgl-blend/verifier/fresh-1779033703-audit.jsonl:2461` SHA256 `ac13389989bdcb00fea8102e7d80522b8456b3d2a971e615a1bf8ab02eb6fc54` (original `evidence/virgl-blend/verifier/gpu-1779033703/report.json:1696472`, raw offset 2519040, raw SHA256 `ecc5afdd634606029a0e5426ef4362357ff4890b3bd44bcfc75e7432a15768d9`); bounded program/state eviction: `evidence/virgl-blend/verifier/gpu-1779033703/report.json:224112` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`.
+- P6 bounds/cleanup — HELD. Actual native allocation, GLSL-output and host-component
+  failures reject before drawing, ordinary/mixed recovery succeeds, and disposal deletes
+  all native objects and reaches zero budgets. Fresh linked location/index/type/size faults
+  also reject. `evidence/virgl-blend/verifier/gpu-1779033703/report.json:224508` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`; `evidence/virgl-blend/verifier/gpu-1779033703/report.json:227420` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`; `evidence/virgl-blend/verifier/gpu-1779033703/report.json:226980` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`;
+  `evidence/virgl-blend/verifier/gpu-1779033703/report.json:230180` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`; `evidence/virgl-blend/verifier/gpu-1779033703/report.json:228098` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`; `evidence/virgl-blend/verifier/fresh-audit.json:1` SHA256 `e349bdcef1e169164861ebf091edf7ebaab390c9314aae92e746df58c4a81b5b`.
+- P7 schedules — HELD. Independent seeded physical runs exercise owned bytes after
+  caller mutation and delayed real fences 0/1/3, with bounded completion and correct uploads.
+  `evidence/virgl-blend/verifier/gpu-1779033703/report.json:226638` SHA256 `9295269be46d9b375f24b52fb3482758bddde1e0cb274922b6bd3f999036593e`; complete jobs/pixels in `evidence/virgl-blend/verifier/fresh-audit.json:1` SHA256 `e349bdcef1e169164861ebf091edf7ebaab390c9314aae92e746df58c4a81b5b`.
+- P8 sabotage/oracle — HELD. All six original hot/cold faults fail their named equation,
+  factor or fold pixel. Fresh actual fold sabotage deviates 25 units; promoted test detects
+  91 units on its first frame: predicted `[108,149,164,41]`, observed `[123,149,255,41]`.
+  Forging stored expectations to the corrupted actual value still fails the independent
+  packet oracle. `evidence/virgl-blend/verifier/final-audit.json:1` SHA256 `6dd499ea01622edf37dd89967bdb8fbebc7b9a41f3b35fda4d31e14771d009b2`.
+- P9 independent attacks/novel seam — HELD. Seeds 1779033703/3144134277/1013904242
+  each pass 2,470 frames and 25,859 predicates with zero browser errors, using binary-exact
+  sixty-fourth colors, all eight mixed classes, masks 1/2/4/8/11/14, distinct alpha equations,
+  and both saturation minima. Novel physical nonidentity sampler-view/blend wrapper A/B/A
+  composition preserves both semantics: `evidence/virgl-blend/verifier/fresh-1779033703-audit.jsonl:2468` SHA256 `ac13389989bdcb00fea8102e7d80522b8456b3d2a971e615a1bf8ab02eb6fc54` (original `evidence/virgl-blend/verifier/gpu-1779033703/report.json:1700713`, raw offset 2526208, raw SHA256 `ecc5afdd634606029a0e5426ef4362357ff4890b3bd44bcfc75e7432a15768d9`); `evidence/virgl-blend/verifier/fresh-audit.json:1` SHA256 `e349bdcef1e169164861ebf091edf7ebaab390c9314aae92e746df58c4a81b5b`.
+  The promoted actual WebGL probe rejects all eight forbidden native pairs with
+  INVALID_OPERATION and unchanged factors: `evidence/virgl-blend/verifier/final-audit.json:1` SHA256 `6dd499ea01622edf37dd89967bdb8fbebc7b9a41f3b35fda4d31e14771d009b2`.
+- P10 coverage/carry — HELD. Every added runtime line (10 decoder, 56 state) has an
+  authenticated positive V8 witness; zero hunk gaps. `evidence/virgl-blend/verifier/coverage-audit.json:1` SHA256 `ada9146038c6b73091647d4b87de34db6a2976eeeb67cf52f9bada2f6b755e15`.
+  Narrow unreachable false arms of checked output/main and trusted draw-identity guards
+  are classified individually, without waiving packet behavior: `evidence/virgl-blend/verifier/guard-waivers.json:1` SHA256 `d7890d42b93f24898b0765b490731e5fdd1e7652979ed9be52cf338ae8eab3e5`.
+  The unchanged D1 checked compiler/private limits and older dependency HELD results carry
+  forward after authenticating its 54-record seal and dependency equality; 44 affected
+  retained hot/cold gates hold. `evidence/virgl-blend/verifier/carry-forward.json:1` SHA256 `0ae675ed2d23b147e52cd0507eba1874f8527674a8bec648bea535531db0f83c`.
+- P11 isolation — HELD. The single final frozen-head pristine clone was clean before/after,
+  scrubbed overrides and served its own matching generated fixed-memory Wasm. Actual retained
+  clone artifacts were rehashed; another clone/full compiler run is unnecessary.
+  `evidence/virgl-blend/verifier/authentication.json:1` SHA256 `6605053aa65287e6ed19576c81b03ed62ea10dd9391fbaf4fdc9b42c8c576653`.
+
+Critic fixture correction (not a product refutation): the initial novel attack reused
+public ID 92 for a sampler and view; the renderer correctly rejected it. The corrected
+100/101/102 views pass with unchanged runtime. Initial evidence is preserved:
+`evidence/virgl-blend/verifier/prediction-correction.json:1` SHA256 `b95e188dc52852d684135dde6bb7a08d8b73efbeac98acf4270812998b723ae2`.
+
+SUITE: promote `renderer/virgl-command/tests/blend-boundaries.mjs` SHA256
+`9ccadf5102df2c93d9b58a2f88c7a7a16b2b02e4f663bc3ac87c79fb3f70d7c7`.
+`node renderer/virgl-command/tests/blend-boundaries.mjs --output evidence/virgl-blend/verifier/promoted`
+passes 22 frames / 633 predicates. Critic replay/audit commands and native enum commands
+are sealed with the reports, raw pixels, actual harnesses, captures and coverage.
+
+Critic seal: `evidence/virgl-blend/verifier/recording.tar.gz`, 81 records,
+5,600,794 bytes; SHA256 `7a3dd7bdd542f66e6d852b059be0145d4e93d5b8be0283ad4f41e2c71238ae64`;
+record-index SHA256 `80f7601bc8573a3458de5606756012655d47f1d77d65406ed7c25a5c6802e0c3`. Reopened and rehashed every member.
+No FAILED or NEEDS EVIDENCE acceptance result remains. Authority is confined to normalized
+single-target blend; no production capset, guest boot, GPU portability or performance claim.
