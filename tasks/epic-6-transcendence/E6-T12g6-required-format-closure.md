@@ -3,7 +3,7 @@ id: E6-T12g6
 epic: 6
 title: Close original kmscube and es2gears format/view requirements
 priority: 525.0270106
-status: implemented
+status: verified
 depends_on: [E6-T12g1, E6-T12g2, E6-T12g3, E6-T12g4, E6-T12g5, E6-T12g6a, E6-T12g6m]
 estimate: S
 risk: high
@@ -118,3 +118,95 @@ task claims. No web/demo production import changed in this proof-only layer.
 
 A fresh adversarial verifier must judge the diff, original requirement join,
 recordings and unchanged HELD dependencies before E6-T12h activates.
+
+### 2026-10-09 — fresh adversarial verifier
+
+VERDICT: verified
+
+- **P1 custody — HELD.** Independently authenticated the cited archive/index,
+  all 118 unique regular members, 713 frozen source files, generated Wasm/JS,
+  28 headed hardware reports and served/fixture/coverage/screenshot hashes.
+  Reviewed diff: `c30e72f0..096d2c8a`; frozen runtime/harness `5ad750b4`.
+  Subsequent submission changes are only status/log/queue and sealed evidence.
+  No new ignored tests, disabled assertions or unexpected recorded panic.
+  Citation: verifier `authentication.json`, worker archive
+  `aaf797f2914f32519af9eed6ae55c32b2172b0d6ebaa89503eceedc0913c57db`.
+- **P2 original inventory — HELD.** An independent little-endian wire walk,
+  without worker decoder/fixture helpers, reproduces all 38 client resource
+  lifetimes, 536 original object packets, five CPU-input transfers and six
+  additional literal shader bodies. Packet/event/snapshot/blob hashes match.
+  Client mip/cube/array matrices are empty; supporting-only 1/20/177 stay
+  explicit gates. Citation: verifier `inventory-audit.json`; all original
+  citations are retained there and match both hot and cold `closure.json`.
+- **P3 physical roles — HELD.** Literal channels/precision and forced alpha
+  match for 2/67/233; all 65,536 Z16 encodings have maximum sampling error
+  `2.9801867640344426e-8`, with a real 16-bit depth attachment and zero stencil
+  bits. Channel/alpha/byte-order source faults fail their named pixel oracle.
+  Points: worker `hot/runtime/regression/colors/report.json:12753,15627`,
+  `hot/runtime/regression/depth/report.json:60264`; full member digests and
+  cold counterparts are in verifier `record-audit.json`.
+- **P4 view/upload attacks — HELD.** All 26 physical swizzle cases per color
+  format, ZERO/ONE, native nearest/linear/clamp, odd/partial rows, original
+  packet selections and delayed jobs hold with zero unexpected errors.
+  Incompatible reinterpretation and guest depth views reject; internal Z16
+  sampling does not admit a guest depth sampler. Swizzle/offset/stride faults
+  fail independent pixels. Points: worker
+  `hot/runtime/regression/views/report.json:92529,13180`,
+  `hot/runtime/hardware/report.json:7881`; digests in `record-audit.json`.
+- **P5 carried leaves — HELD.** All 874 members across the seven G1–G5/G6a/G6m
+  archives authenticate, as does the complete-original critic seal. Runtime
+  and compiler dependencies at `3f0db236` are unchanged; only retained tests
+  differ. Carry the reviewed numerical/original results, including all 29
+  power sites and 1,612,644 original physical pixels. Caller custody reran.
+  Citation: `authentication.json` and worker `hot/custody.log`; no unrelated
+  shader/workspace wall was restarted.
+- **P6 changed test boundaries — HELD.** Decoder cases are recorded in Node,
+  not browser coverage: the layer attribution in the initial prediction is
+  corrected. Their hashed named cases and fresh precise counters exercise
+  historical 16,384, admitted 49,152, rejected 49,153 and declared 49,154 at
+  `acceptance.mjs:443,453,454,455,456` (each count 1). The unchanged 16,384
+  summary field is historical metadata, not the bound oracle. Shrinking the
+  isolated decoder to 16KiB or admitting one extra byte fails. A fresh headed
+  hardware run covers `texture-views.mjs:175` (count 1), rejects 262,145-byte
+  output, and reports zero browser errors; restoring its obsolete 65,536-byte
+  test literal fails at `checked output boundary length rejects`.
+  Citations: `coverage-audit.json`, `boundary-sensitivity.json`,
+  `current-view-test/report.json`, `obsolete-view-test/report.json`.
+- **P7 cold/isolation — HELD.** The authenticated final clone is pristine before
+  and after at `5ad750b4`; command/setup, scrubbed override logic, receipt and
+  log digests match. The clone remains pristine at review and hot/cold generated
+  runtime bytes are identical. No portability/isolation failure requires a
+  repeated cold run. Receipt replay is structurally identical and independent
+  re-sealing is byte-identical. Twelve tamper attacks reject incomplete
+  inventory, forged authority, drift, dirty cold state and unrelated fault
+  failures. Citations: `authentication.json`, `harness-sensitivity.json`.
+- **P8 bounded novel attack — HELD.** Independent odd-dimension format/bind
+  matrices hold 288 role checks, 35 rejects before allocation and 3,905 wire
+  checks, including every combined legal swizzle. Public ID reuse cannot turn
+  an old RGBA lease into replacement 10-bit storage. Sabotage admitting a
+  render-only sampler fails; resolving a lease through the public ID fails
+  with `233 !== 67`. Citations: `novel-format-role-attack.json`,
+  `promoted-test-sensitivity.json`.
+
+COVERAGE: `coverage-audit.json` classifies every changed hunk. Waived only
+metadata-only backend stubs that explicitly deny pixel authority, exception-only
+proof cleanup/reporting, and declarative docs/status/queue/serialization. No
+changed runtime hunk remains unexecuted. Required mip/cube/array hardware oracles
+are not invented for absent requirements; those requests remain rejected.
+
+SUITE: promoted `renderer/virgl-command/tests/required-format-roles.mjs`, run with
+`node renderer/virgl-command/tests/required-format-roles.mjs`. Retain existing
+physical source-fault and input/output-bound regressions. The new test has two
+recorded independent source sabotage controls; it makes no GPU pixel claim.
+
+Review commands: independent `authenticate.py`, `inventory_audit.py`,
+`record_audit.py`, `coverage_audit.py`, `harness_sensitivity.py`; four-seed
+`boundary_replay.mjs`; current/obsolete headed view runs; promoted role test and
+two isolated source mutations; syntax/byte checks. Authoritative recorded
+acceptance remains the worker's frozen `make verify-E6-T12g` plus final cold run.
+Review seal: `evidence/virgl-required-formats/verifier/{manifest.json,records.json,recording.tar.gz}`.
+Its 54 members re-authenticate. Archive SHA256
+`ccc2953847c35bec033ed338241fd98c9e375db0abedd4cd72001af555257090`;
+index SHA256 `b1aa1ec66dee8af518be06adc5a094431caa84a253e9211bce1414b9e56f32b4`.
+Scope remains isolated client format/view closure; production negotiation,
+live guest DRAW authority, portable power accuracy and FPS/MIPS stay later claims.
