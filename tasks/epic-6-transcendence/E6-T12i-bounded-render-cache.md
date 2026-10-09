@@ -3,7 +3,7 @@ id: E6-T12i
 epic: 6
 title: Cache WebGL2 shader programs and state with complete bounded keys
 priority: 525.02703
-status: implemented
+status: verified
 depends_on: [E6-T12h]
 estimate: S
 risk: high
@@ -116,3 +116,145 @@ measure JS heap/driver memory, or claim live guest execution, FPS or MIPS.
 The renderer remains outside demo imports; production hookup/deployment belongs
 to E6-T11d. A fresh adversarial verifier must interrogate this claim and diff
 before the task can become verified. No merge is performed.
+
+
+### 2026-10-09 — fresh adversarial verifier
+
+VERDICT: verified
+
+Reviewed the complete task and H-to-I diff before inspecting evidence; recorded
+falsifiable P0–P8 predictions first. This session did not implement or modify
+runtime code or the worker harness. Source remains
+`6ec98cebea12fc9551e333746d9616999be1e5d2`, based on verified H
+`bc2c619f72c0bb13ced896411829cd19954ba163`. Fresh report repository head
+`6566e23fc81785feaf5f51842f85c5c76fb5e915` adds submission metadata only;
+all executed runtime bytes independently match the frozen source.
+
+- **P0 custody/cold isolation — HELD.** Authenticated all 168 unique safe regular
+  worker archive members and 143 frozen source files, generated Wasm, served
+  source, screenshots and precise V8 source digests. Worker archive
+  `ad9165fcca40cca50382079c4df648d37525951bbae2e0b17012c236e9b097b7`
+  and index `68a61aac2fc646cf0ae26ab71b7a7bf94de8affe77c539181d800b79b448593b`
+  match. The retained cold clone is still pristine at the frozen source; its
+  authenticated identical gate passed before/after with override scrubbing.
+  No portability finding requires repeating that final cold run. Citation:
+  critic `authentication.json`, worker `cold/{report.json,cold.log,receipt.json}`.
+- **P1 physical toggles — HELD.** Independently compared every byte of all four
+  frozen hot/cold hardware/collision streams (40,960,000 bytes), then two fresh
+  hardware/collision streams (20,480,000 bytes), against literal alternating
+  `[255,0,0,64]` / `[64,0,191,255]` predictions. All 10,000 ordered native
+  `drawArrays(TRIANGLE_STRIP,0,4)` calls in each stream agree with blend parity.
+  Warm work deltas are 10,000 draws, 30,000 applied commands and zero translation,
+  compile or link invocations. Shared pixel SHA256:
+  `dbf578ae8f10724d735c5c696ef118d4e2e717156b11dccd9c3091202e476af4`.
+  Citation: `recording-audit.json`, `final-audits.json`, each `toggles.rgba`
+  at byte offsets `1024*n..1024*(n+1)` and reports `/browserResult/result/toggles`.
+- **P2 ownership/LRU/pressure — HELD.** Exact strings and private owners survive
+  real FNV collisions and forcing every hash to zero. Primitive byte pressure
+  evicts the two least recent values exactly once; same-key replacement releases
+  the old owned value without double charge. Recorded renderer pressure produces
+  17 native program, 50 state and 5 translation evictions while all residency
+  and native allocation limits hold. Referenced selectors survive eviction and
+  recreate real native programs. Citation: worker hot/cold reports
+  `/native/assertions`, `/browserResult/result/pressure`; critic
+  `promoted-physical/report.json:/result/{primitive,schedules}`.
+- **P3 generations and teardown — HELD.** Another context/subcontext with equal
+  TGSI makes its own two real stage translations and native programs. Public
+  selector reuse changes owned identity and physical color; stale resource
+  context generations issue no draw. Target formats 2/233/67 and altered vertex
+  layouts have four distinct complete state keys while unchanged ESSL reuses one
+  program key. Twenty context cycles end with every renderer/native/cache budget
+  zero. Fresh subcontext id reuse receives a newer private generation, renders
+  literal blue and preserves the other owner. Citation: worker reports
+  `/browserResult/result/{ownership,pressure/frames/1}` and critic
+  `promoted-physical/report.json:/result/schedules`.
+- **P4 real work/accounting — HELD.** Exported translation, pair, compile, link,
+  draw and allocation counts equal independent bridge/GL calls. A fresh semantic
+  prefix applies exactly one uniform command, reports one failed attempt and
+  zero draws; captured outcome is `[false,1,0]`. Completed jobs retire actual
+  native fences; disposal of unfinished accepted work increments failures rather
+  than losing an attempt. Three new schedules vary timeout counts and task
+  delays with seeds `0x417c8b13`, `0x93a26e57`, `0xe5180ca9`, each requiring real
+  driver completion. Citation: worker `/browserResult/result/jobs`; critic
+  `promoted-physical/report.json:/result/schedules/*/{prefixDump,state,polls}`.
+- **P5 capture honesty — HELD.** Independently walked owned raw command hex,
+  checked extent/count, constant banks, viewport/scissor and native program
+  generations against capture bindings. Captured ESSL matches actual attached
+  native shader sources. Host labels say `presented:false`; overflow explicitly
+  drops 99 submissions, 100 draws and 100 outcomes while end counters still
+  count all 100 real draws and debug charge remains within 16,384 bytes. Reset,
+  owner destruction and disposal release cached/native payloads. Citation:
+  `recording-audit.json`; worker reports `/browserResult/result/{pressure/frames,
+  diagnostics/dump,jobs}`; fresh active capture inspection exercises
+  `state.mjs:1177`.
+- **P6 source faults and retained failures — HELD.** Fresh omission of blend state
+  fails `blend toggle 1 literal physical pixels`; omission of exact stage text
+  fails `pressure shader 0 literal physical pixels`. All hashes zero pass exact
+  output. Independently compared all twelve retained flat-link failure snapshots:
+  contexts/native budgets/native allocation sets are unchanged and failed
+  attempts increment. Twelve view native faults, six uncached checked-output
+  guards and exact/one-byte-short variant quotas hold in both recordings.
+  CPU translation residency after native failure remains bounded and permitted;
+  leaked native allocation is forbidden. Citation: critic `carry-forward.json`
+  and `final-audits.json`; worker view report `/browserResult/result/{flat/faults,
+  budgets,checkedOutput}`. Wrapper-only module-list additions are transport
+  metadata and introduce no additional runtime branch.
+- **P7 coverage — HELD.** Source-authenticated precise V8 ranges execute all 52
+  substantive added cache lines and 187 substantive added state lines. The
+  remaining 35 added lines are comments, blank lines or punctuation, individually
+  waived in the ledger. No changed runtime branch is unproven. The novel run
+  closes the replacement-release path at `cache.mjs:48` and active-frame
+  inspection at `state.mjs:1177`; syntax/receipt/policy gates cover declarative
+  target, docs, status and transport-list changes. Citation:
+  `coverage-audit.json` (all per-line ranges, counts and record digests), SHA256
+  `991d487ff45a1bbef46bd8c436d490148d9e6d339cf0e1965b7a5dcb692af9b2`.
+- **P8 bounded novel attack/promotion — HELD.** Three independent physical GPU
+  schedules interleave two subcontexts under a one-program quota with changing
+  uniform/scissor state, 19 program evictions each, copied asynchronous command
+  input, id reuse, stale-context rejection and complete native cleanup. Every
+  one of 144 recorded 16x16 rectangle frames matches an independent coordinate
+  oracle; 147 actual draws and 4,593 predicates hold. Sabotaging only the scissor
+  key makes pair `0/1` paint green at `(4,4)` where literal black was predicted.
+  The promoted test itself was rerun and sabotaged. Citation:
+  `promoted-physical/{report.json,seed-*.rgba,browser-coverage.json}` and
+  `promoted-sabotage/report.json:/result/error/message`; normal report SHA256
+  `6a8b6efc99a2a978e6bdcd3dab66f0c172844413c3c54c21711281141f010a32`.
+
+SUITE: promoted `renderer/virgl-command/tests/cache-boundaries.mjs` as a direct
+recurring physical regression for private subcontext isolation, referenced
+program eviction, id reuse, state-key scissor sensitivity, failure-prefix
+accounting, and actual fence retirement. The test also permanently covers exact
+owner replacement in the LRU. Unchanged H/G6/compiler numerical boundaries carry
+forward: resources, decoder, constant-domain and shader source are unchanged;
+the generated shader module/Wasm digests equal the verified H seal. No broad
+Rust/compiler wall is rerun for this JavaScript cache diff.
+
+Commands (source mutations affect served copies only and exit 1 as predicted):
+
+```sh
+python3 evidence/virgl-render-cache/verifier/authenticate.py
+python3 evidence/virgl-render-cache/verifier/audit_recording.py
+python3 evidence/virgl-render-cache/verifier/audit_coverage.py
+python3 evidence/virgl-render-cache/verifier/carry_forward.py
+node tools/verify-virgl-render-cache.mjs --output evidence/virgl-render-cache/verifier/independent-hardware
+node tools/verify-virgl-render-cache.mjs --output evidence/virgl-render-cache/verifier/independent-hash-collision --mutation hash-collision
+node tools/verify-virgl-render-cache.mjs --output evidence/virgl-render-cache/verifier/independent-fault-blend --mutation blend-key
+node tools/verify-virgl-render-cache.mjs --output evidence/virgl-render-cache/verifier/independent-fault-text --mutation translation-text
+node renderer/virgl-command/tests/cache-boundaries.mjs --output evidence/virgl-render-cache/verifier/promoted-physical
+node renderer/virgl-command/tests/cache-boundaries.mjs --output evidence/virgl-render-cache/verifier/promoted-sabotage --sabotage scissor-key
+python3 evidence/virgl-render-cache/verifier/final_audits.py
+python3 evidence/virgl-render-cache/verifier/seal.py
+```
+
+Committed critic seal: `evidence/virgl-render-cache/verifier/{manifest.json,
+records.json,recording.tar.gz}`, 55 members / 1,477,694 archive bytes. All members
+re-authenticate. Archive SHA256
+`c6932986a04f4382148547ee5f06720fc496f0dce932eedb6f9b7c4e8a35105c`;
+index SHA256 `55037f473afd9ac72ec791625dd100067ebb20e57f8e07af9543f1429aed2f1f`.
+Audit scripts, predictions, exact diff, source snapshots, raw pixels, actual
+native calls, V8 ranges and browser captures are preserved inside the archive.
+
+Authority remains isolated bounded renderer reuse and host-labelled capture.
+Byte charges estimate bounded owned payloads; they do not measure JS heap or GPU
+memory. This verdict does not qualify capsets, live guest/compositor frames,
+presentation, kmscube hit rates, FPS or MIPS. No push or merge is performed.
