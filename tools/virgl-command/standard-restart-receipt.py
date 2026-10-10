@@ -57,7 +57,7 @@ def main(directory):
 
     def physical(name, task, frames, fault=False):
         report = json.loads(record(name + '/report.json'))
-        need(report['task'] == task and report['status'] == ('failed' if fault else 'passed') and report['gitHead'] == head,
+        need(report['task'] == task and report['status'] == ('failed' if fault else 'passed') and report['gitHead'] == recorded_head,
              'physical exact-head task/status: ' + name)
         need(report['fixedMemory'] == {'bytes': 16777216, 'stageExport': 'function', 'pairExport': 'function'}, 'fixed native compiler')
         need(report['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'browser errors: ' + name)
@@ -106,7 +106,12 @@ def main(directory):
         return result
 
     wire = json.loads(record('wire/report.json'))
-    need(wire['status'] == 'passed' and wire['gitHead'] == head and len(wire['wire']['records']) == 292
+    recorded_head = wire['gitHead']
+    if recorded_head != head:
+        subprocess.check_call(['git', 'merge-base', '--is-ancestor', recorded_head, head], cwd=ROOT)
+        changed = set(git('diff', '--name-only', recorded_head, head).splitlines())
+        need(changed <= {'tools/virgl-command/standard-restart-receipt.py'}, 'historical physical carry permits only this receipt correction')
+    need(wire['status'] == 'passed' and wire['gitHead'] == recorded_head and len(wire['wire']['records']) == 292
          and all(row['held'] for row in wire['wire']['predictions']), 'literal Node restart/legacy/hostile packets')
     for row in wire['sources']:
         source(row['path'], row['sha256'])
@@ -131,6 +136,9 @@ def main(directory):
         jobs = run['inspection']['jobs']
         need(all(jobs[key] == 0 for key in ['reads', 'stagingBytes', 'normalizedBuffers', 'normalizedBytes', 'normalizationScratchBytes']), 'all owned budgets released')
         for row in run['normalizationEvents']:
+            if row['name'] == 'forced-createBuffer-null':
+                need(row['allocation'] == 2, 'explicit second native allocation sabotage')
+                continue
             need(row['bytes'] <= 262144 and row['inspection']['normalizedBytes'] <= 262144
                  and row['inspection']['normalizedBuffers'] <= 64, 'derived GPU bounds')
             if row['name'] == 'normalized-upload':
@@ -147,7 +155,7 @@ def main(directory):
         old_audit = json.loads(record('retained-' + name + '/physical-audit.json'))
         need(old_audit['status'] == 'passed' and len(old_audit['frames']) == frames and old_audit['pixels'] == pixels, 'retained physical boundary ' + name)
     retained = json.loads(record('retained-standard-draw/receipt.json'))
-    need(retained['status'] == 'passed' and retained['gitHead'] == head and retained['frames'] == 37
+    need(retained['status'] == 'passed' and retained['gitHead'] == recorded_head and retained['frames'] == 37
          and retained['checkedPhysicalPixels'] == 10296, 'retained full D6/legacy receipt')
     for name, digest in retained['files'].items():
         record('retained-standard-draw/' + name, digest)
@@ -175,7 +183,7 @@ def main(directory):
     for item in directory.rglob('*'):
         if item.is_file() and item.name != 'receipt.json':
             record(item.relative_to(directory).as_posix())
-    receipt = dict(schema='standard-primitive-restart-receipt-v1', task=TASK, status='passed', gitHead=head,
+    receipt = dict(schema='standard-primitive-restart-receipt-v1', task=TASK, status='passed', gitHead=head, physicalSourceHead=recorded_head,
                    frames=189, checkedPhysicalPixels=139008, guestExecution=False, productionNegotiation=False,
                    authority='isolated-standard-primitive-restart', productionDrawAuthority=False,
                    carriedCompilerAndOwnershipHead=PREDECESSOR, carriedVerifiedEvidence=carried,
