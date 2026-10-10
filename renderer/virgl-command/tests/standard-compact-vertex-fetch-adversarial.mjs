@@ -1,12 +1,12 @@
 import {createVirglStandardShaderBridge} from '../../virgl-shader/standard.mjs';
-import {decodeStandardSubmission} from '../decoder.mjs';
+import {decodeStandardSubmission,decodeSubmission,floatingVertexFormat} from '../decoder.mjs';
 import {checks,packet,join,hex,blob,clear,meta,add,dispose} from './standard-instanced-draws.mjs';
 import {compactSpec,compactSetup,compactRig,compactSubmit,compactDraw} from './standard-compact-vertex-fetch.mjs';
 import {criticModel,criticCompare,criticFormat} from '../../../tools/virgl-command/standard-compact-adversarial-oracle.mjs';
 
 const SEED=0x6b82d1f3;
 export async function runAcceptance({smoke=false,mutation}={}) {
- const c=checks(),report={schema:'standard-compact-critic-seeded-v1',seed:SEED,status:'running',frames:[],runs:[],rejections:[],suspensions:[],ownership:[],blobs:[],predictions:c.rows,guestExecution:false,productionNegotiation:false,portableNaNPayload:false};
+ const c=checks(),report={schema:'standard-compact-critic-seeded-v1',seed:SEED,status:'running',frames:[],runs:[],wire:[],rejections:[],suspensions:[],ownership:[],blobs:[],predictions:c.rows,guestExecution:false,productionNegotiation:false,portableNaNPayload:false};
  window.__standardCompactEvidence=report;
  const gl=document.querySelector('#gpu').getContext('webgl2',{antialias:false,depth:false,stencil:false,preserveDrawingBuffer:true});if(!gl)throw Error('critic requires actual WebGL2');
  const debug=gl.getExtension('WEBGL_debug_renderer_info');report.gpu={vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER),version:gl.getParameter(gl.VERSION)};
@@ -44,6 +44,12 @@ export async function runAcceptance({smoke=false,mutation}={}) {
  }
  function done(r){const inspect=c.ok(r.renderer.inspect(),'critic ownership');for(const k of ['reads','stagingBytes','normalizedBuffers','normalizedBytes','normalizationScratchBytes'])c.same(inspect.jobs[k],0,'critic zero '+k);report.runs.push({inspection:inspect,history:r.history,exchanges:r.exchanges,events:r.trace.events,calls:r.trace.calls.map(({program,...a})=>a)});dispose(r);}
  async function draw(options,label){const s=compactSpec(options),r=make(s),bytes=join(compactSetup(r,s),compactDraw(s)),expected=prediction(r,s,bytes);await frame(r,await compactSubmit(r,1,bytes,label),expected);done(r);}
+ for(const base of [28,48,56,64,74,91])for(let lane=0;lane<4;lane++)for(const divisor of [0,3,0xffffffff])for(const offset of [0,1,0xffffffff-criticFormat(base+lane).bytes*(lane+1),0xffffffff-criticFormat(base+lane).bytes*(lane+1)+1]){
+  const format=base+lane,spec=criticFormat(format),expected=offset+spec.bytes*spec.components<=0xffffffff,legacyExpected=base===28&&divisor===0&&offset%4===0&&expected,raw=packet(1,5,[777,offset,divisor,0,format]);
+  const standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw);c.same(standard.ok,expected,'critic literal standard packet end');c.same(legacy.ok,legacyExpected,'critic literal legacy packet');report.wire.push({hex:hex(raw),expected,legacyExpected,standard,legacy});
+ }
+ for(const format of [0,27,32,52,60,68,78,95,0xffffffff]){const raw=packet(1,5,[777,0,0,0,format]),standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw);c.same([standard.ok,legacy.ok],[false,false],'critic unsupported original enum');report.wire.push({hex:hex(raw),expected:false,legacyExpected:false,standard,legacy});}
+ for(const value of [NaN,Infinity,null,undefined,'28',{},-1])c.same(floatingVertexFormat(value),null,'critic descriptor caller type does not coerce');
  if(smoke){await draw({format:67,shared:true,ids:[2,5,11],values:[[17,65,193,255],[255,1,125,33],[0,99,237,248]],...(mutation==='constant-unpack'?{stride:0}:{})},'critic-sabotage-'+mutation);report.status='passed';return report;}
  for(const base of [48,56,64,74,91])for(let lane=0;lane<4;lane++)for(const constant of [false,true]){
   const format=base+lane,spec=criticFormat(format),ids=[2+next()%3,9+next()%3,15+next()%5],signed=base===56||base===74,top=spec.bytes===1?(signed?127:255):(signed?32767:65535);
