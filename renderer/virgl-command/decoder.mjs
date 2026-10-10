@@ -151,15 +151,16 @@ function decodeBlend(p, handle) {
 function decodeRasterizer(p, handle) {
   p.exact(9);
   const bits = p.u(2);
-  // Point/sprite fields are inert because the draw profile only allows triangles.
-  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30);
+  // The selected standard facet binds fixed/per-vertex native point size.
+  // Generic sprite-coordinate replacement remains outside this boundary.
+  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0);
   p.require((bits & ~allowed) === 0 && (bits & 2) !== 0 && (bits & (1 << 29)) !== 0,
     "unsupported-feature", "Unsupported rasterizer feature or coordinate convention.");
   const cullFace = (bits >>> 8) & 3;
   p.require(cullFace === 0 || cullFace === 2, "unsupported-feature", "Only no culling or back-face culling is supported.");
   const pointSize = p.f(3), spriteCoordEnable = p.u(4), stipple = p.u(5), lineWidth = p.f(6);
   const offsetUnits = p.f(7), offsetScale = p.f(8), offsetClamp = p.f(9);
-  p.require(pointSize === 1 && spriteCoordEnable === 0 && stipple === 0xffff && lineWidth === 1 &&
+  p.require((p.standard ? Number.isFinite(pointSize) && pointSize > 0 : pointSize === 1) && spriteCoordEnable === 0 && stipple === 0xffff && lineWidth === 1 &&
     offsetUnits === 0 && offsetScale === 0 && offsetClamp === 0,
   "unsupported-feature", "Unsupported point, line, clip or polygon-offset state.");
   return { handle, flatshade: false, depthClip: true, clipHalfZ: false, rasterizerDiscard: false,
@@ -168,7 +169,7 @@ function decodeRasterizer(p, handle) {
     scissor: Boolean(bits & (1 << 14)), frontCcw: Boolean(bits & (1 << 15)),
     clampVertexColor: false, clampFragmentColor: false, offsetLine: false, offsetPoint: false,
     offsetTri: false, polygonSmooth: false, polygonStippleEnable: false, pointSmooth: false,
-    pointSizePerVertex: false, multisample: false, lineSmooth: false, lineStippleEnable: false,
+    pointSizePerVertex: Boolean(bits & (1 << 24)), multisample: false, lineSmooth: false, lineStippleEnable: false,
     lineLastPixel: false, halfPixelCenter: true, bottomEdgeRule: Boolean(bits & (1 << 30)), forcePerSampleInterpolation: false,
     pointSize, spriteCoordEnable, lineStipplePattern: 0xffff, lineStippleFactor: 0,
     clipPlaneEnable: 0, lineWidth, offsetUnits, offsetScale, offsetClamp };
@@ -360,10 +361,10 @@ function decodeFields(p, objectType) {
       const fields = { start: p.u(1), count: p.u(2), mode: p.u(3), indexed: p.boolean(4), instanceCount: p.u(5),
         indexBias: p.i(6), startInstance: p.u(7), primitiveRestart: p.boolean(8), restartIndex: p.u(9),
         minIndex: p.u(10), maxIndex: p.u(11), countFromStreamOutput: p.u(12) };
-      p.require((p.standard ? [1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
+      p.require((p.standard ? [0, 1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
         fields.startInstance === 0 && (p.standard ? (fields.primitiveRestart ? fields.indexed : fields.restartIndex === 0) :
           !fields.primitiveRestart && fields.restartIndex === 0) && fields.countFromStreamOutput === 0,
-      "unsupported-feature", p.standard ? "Only core lines and triangles with indexed restart and without base offsets or stream output are supported." :
+      "unsupported-feature", p.standard ? "Only core points, lines and triangles with indexed restart and without base offsets or stream output are supported." :
         "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
       p.require(fields.start <= MAX_U32 - fields.count && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");

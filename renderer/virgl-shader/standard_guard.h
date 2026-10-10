@@ -14,7 +14,7 @@
 enum standard_file { STD_IN, STD_OUT, STD_TEMP, STD_CONST, STD_IMM,
                      STD_SAMP, STD_SVIEW, STD_ADDR, STD_SV, STD_FILES };
 enum standard_semantic { STD_ATTRIBUTE, STD_POSITION, STD_GENERIC, STD_COLOR,
-                         STD_VERTEXID, STD_INSTANCEID };
+                         STD_VERTEXID, STD_INSTANCEID, STD_PSIZE, STD_PCOORD };
 struct standard_io {
    uint8_t semantic, sid, mask, writes, flat;
 };

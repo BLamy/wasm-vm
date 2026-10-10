@@ -2169,3 +2169,7 @@ verify-E6-T11d9-adversarial:
 .PHONY: verify-E6-T11d10
 verify-E6-T11d10:
 	bash tools/verify-virgl-standard-assembly.sh
+
+.PHONY: verify-E6-T11d11
+verify-E6-T11d11:
+	bash tools/verify-virgl-standard-points.sh

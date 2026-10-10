@@ -69,7 +69,7 @@ export async function restartFrame(r,record,{allowError=false}={}){
 export function runWireAcceptance(){const c=checks(),records=[];
  const test=(words,expected,old,label)=>{const bytes=packet(8,0,words),standard=decodeStandardSubmission(bytes),legacy=decodeSubmission(bytes);c.same(standard.ok,expected,label+' standard');c.same(legacy.ok,old,label+' legacy');records.push({label,hex:hex(bytes),expected,legacyExpected:old,standard,legacy});};
  for(const mode of [0,1,2,3,4,5,6,7])for(const enabled of [0,1,2])for(const indexed of [0,1,2])for(const marker of [0,255,65535,4294967295]){
-  const expected=mode>=1&&mode<=6&&indexed<=1&&enabled<=1&&(enabled===1?indexed===1:marker===0),old=[4,5].includes(mode)&&enabled===0&&marker===0&&indexed<=1;
+  const expected=mode>=0&&mode<=6&&indexed<=1&&enabled<=1&&(enabled===1?indexed===1:marker===0),old=[4,5].includes(mode)&&enabled===0&&marker===0&&indexed<=1;
   test([0,4,mode,indexed,1,0,0,enabled,marker,0,0,0],expected,old,'restart-'+[mode,indexed,enabled,marker].join('-'));}
  for(const [at,value]of [[5,1],[6,1],[11,1]]){const words=[0,4,2,1,3,0,0,1,17,0,0,0];words[at]=value;test(words,false,false,'unsupported-'+at);}
  const bytes=join(restartDraw(restartSpec()),packet(8,0,[]));c.same(decodeStandardSubmission(bytes).ok,false,'malformed complete snapshot');c.same(decodeSubmission(bytes).ok,false,'malformed legacy snapshot');records.push({label:'malformed-tail',hex:hex(bytes),expected:false,legacyExpected:false});

@@ -1,0 +1,1323 @@
+{
+  "schema": "standard-point-changed-hunk-coverage-v1",
+  "sources": [
+    {
+      "path": "worker/hot/coverage/points.json",
+      "sha256": "0613c19e5fefe8bd8679e3ef2bc30958ccac4039713ba3500a08425811dda0b1"
+    },
+    {
+      "path": "worker/hot/retained-compiler/coverage/matrix.json",
+      "sha256": "7a350513bd01e7df15e4cd455e67a5e7cd1c91f2860fade24d84be01478a024b"
+    },
+    {
+      "path": "worker/hot/retained-compiler/coverage/allocations.json",
+      "sha256": "b9dac922f098429869579a10782179b6f00bb450220caa486058d86aa30ec978"
+    },
+    {
+      "path": "worker/hot/hardware/browser-coverage.json",
+      "sha256": "228545272cfaba77869948504ac996bc5b5fc846b8c2aaef952dca18c4935b0f"
+    },
+    {
+      "path": "worker/hot/retained-assembly/hardware/browser-coverage.json",
+      "sha256": "badeded1bc08eb6aa97999adea2d4f9586780db8e22de4b360f02f3c722f2cdb"
+    },
+    {
+      "path": "worker/hot/retained-restart/hardware/browser-coverage.json",
+      "sha256": "4434ea9529aef4b588111e4a7dd0d60dd1ead53bbc48a0b9d64f3374602e0ecd"
+    },
+    {
+      "path": "novel/browser-coverage.json",
+      "sha256": "52e484e3ebce4f96d31b097b4fab70bc536f0e7fe47909d8e75a4853f69bef4c"
+    }
+  ],
+  "runtimeSources": {
+    "renderer/virgl-shader/bridge.c": "b732da2dec8cbb2121ad9059ce461185260dc7ca551c5faec28462600fb84898",
+    "renderer/virgl-shader/standard_emit.c": "76102e93e05151b3cf6ec44f1f2caaf470374386db99d1536cf4949fa184d402",
+    "renderer/virgl-shader/standard_guard.c": "1d7c94c83243122ccc1b52607722e5088ed593aab10c3b568db87af256b7db4d",
+    "renderer/virgl-shader/standard_guard.h": "dc6ca7d1c093a0d194ed4f94c59187347929c2a264d1026e7357825f1b6a6616",
+    "renderer/virgl-command/state.mjs": "04b88c74fcc9f36f3bc17aa29107296ba011757aa360ab05c58f0689d644a671",
+    "renderer/virgl-command/constant-domain.mjs": "3c04624cd731d744b96d4a1b0647dcfe44d0a096fa67c96261877f5204925e69",
+    "renderer/virgl-command/decoder.mjs": "6fec17ead8589567db3eb7f62050638ccb97b161374de2bde2d54443ae7d00b0"
+  },
+  "lines": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2251,
+      "text": "#include \"tgsi/tgsi_build.h\"",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2300,
+      "text": "/* This pinned converter predates NIR's PCOORD system-value declaration. Give",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2301,
+      "text": " * upstream validation one private unused input alias; public metadata and the",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2302,
+      "text": " * word emitter still consume the complete original tokens. Rebuilding bounds",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2303,
+      "text": " * the extra interpolation token and avoids changing any caller-owned stream. */",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2304,
+      "text": "static const char *standard_point_tokens(const struct standard_profile *p,",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2305,
+      "text": "                                         const struct tgsi_token *original,",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2306,
+      "text": "                                         struct tgsi_token **result)",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2307,
+      "text": "{",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2308,
+      "text": "   unsigned system = 2, input = 0;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2309,
+      "text": "   for (unsigned i = 0; i < 2; ++i)",
+      "count": 1104,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2310,
+      "text": "      if (p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD) system = i;",
+      "count": 736,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2311,
+      "text": "   if (system == 2) return NULL;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2312,
+      "text": "   while (input < STANDARD_IO && p->declared[STD_IN][input]) ++input;",
+      "count": 112,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2313,
+      "text": "   if (input == STANDARD_IO) return error(\"translation-error\", \"No bounded private point-coordinate alias.\");",
+      "count": 56,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2314,
+      "text": "   struct tgsi_token *tokens = calloc(BRIDGE_MAX_TOKENS, sizeof(*tokens));",
+      "count": 56,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2315,
+      "text": "   if (!tokens) return error(\"allocation-failed\", \"Point-coordinate validation allocation failed.\");",
+      "count": 56,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2316,
+      "text": "   struct tgsi_parse_context parser;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2317,
+      "text": "   if (tgsi_parse_init(&parser, original) != TGSI_PARSE_OK) {",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2318,
+      "text": "      free(tokens); return error(\"translation-error\", \"Original point-coordinate token parsing failed.\");",
+      "count": 0,
+      "classification": "waived-unreachable-defensive",
+      "reason": "standard_point_tokens receives the same trusted token header already accepted by tgsi_text_translate and standard_constant_order/tgsi_parse_init. No caller-owned token stream exists; re-parsing cannot fail without internal memory corruption. Inspection confirms scratch is freed before returning even in that defensive branch."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2319,
+      "text": "   }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2320,
+      "text": "   struct tgsi_header header = tgsi_build_header();",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2321,
+      "text": "   struct tgsi_processor processor = tgsi_build_processor(parser.FullHeader.Processor.Processor, &header);",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2322,
+      "text": "   memcpy(tokens + 1, &processor, sizeof(processor));",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2323,
+      "text": "   unsigned used = 2; bool ok = true;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2324,
+      "text": "   while (!tgsi_parse_end_of_tokens(&parser)) {",
+      "count": 2785,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2325,
+      "text": "      if (!tgsi_parse_token(&parser)) { ok = false; break; }",
+      "count": 2747,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2326,
+      "text": "      unsigned built = 0;",
+      "count": 2747,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2327,
+      "text": "      switch (parser.FullToken.Token.Type) {",
+      "count": 2747,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2328,
+      "text": "      case TGSI_TOKEN_TYPE_DECLARATION: {",
+      "count": 1119,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2329,
+      "text": "         struct tgsi_full_declaration *d = &parser.FullToken.FullDeclaration;",
+      "count": 1119,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2330,
+      "text": "         if (d->Declaration.File == TGSI_FILE_SYSTEM_VALUE && d->Range.First == system) {",
+      "count": 1119,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2331,
+      "text": "            d->Declaration.File = TGSI_FILE_INPUT;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2332,
+      "text": "            d->Range.First = d->Range.Last = input;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2333,
+      "text": "            d->Declaration.Interpolate = 1;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2334,
+      "text": "            d->Interp.Interpolate = TGSI_INTERPOLATE_LINEAR;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2335,
+      "text": "            d->Interp.Location = TGSI_INTERPOLATE_LOC_CENTER;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2336,
+      "text": "         }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2337,
+      "text": "         built = tgsi_build_full_declaration(d, tokens + used, &header, BRIDGE_MAX_TOKENS - used);",
+      "count": 1119,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2338,
+      "text": "         break;",
+      "count": 1119,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2339,
+      "text": "      }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2340,
+      "text": "      case TGSI_TOKEN_TYPE_IMMEDIATE:",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2341,
+      "text": "         built = tgsi_build_full_immediate(&parser.FullToken.FullImmediate, tokens + used, &header, BRIDGE_MAX_TOKENS - used);",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2342,
+      "text": "         break;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2343,
+      "text": "      case TGSI_TOKEN_TYPE_PROPERTY:",
+      "count": 8,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2344,
+      "text": "         built = tgsi_build_full_property(&parser.FullToken.FullProperty, tokens + used, &header, BRIDGE_MAX_TOKENS - used);",
+      "count": 8,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2345,
+      "text": "         break;",
+      "count": 8,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2346,
+      "text": "      case TGSI_TOKEN_TYPE_INSTRUCTION: {",
+      "count": 1616,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2347,
+      "text": "         struct tgsi_full_instruction *i = &parser.FullToken.FullInstruction;",
+      "count": 1616,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2348,
+      "text": "         for (unsigned j = 0; j < i->Instruction.NumSrcRegs; ++j)",
+      "count": 4736,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2349,
+      "text": "            if (i->Src[j].Register.File == TGSI_FILE_SYSTEM_VALUE && i->Src[j].Register.Index == (int)system) {",
+      "count": 3120,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2350,
+      "text": "               i->Src[j].Register.File = TGSI_FILE_INPUT; i->Src[j].Register.Index = (int)input;",
+      "count": 3098,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2351,
+      "text": "            }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2352,
+      "text": "         built = tgsi_build_full_instruction(i, tokens + used, &header, BRIDGE_MAX_TOKENS - used);",
+      "count": 1616,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2353,
+      "text": "         break;",
+      "count": 1616,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2354,
+      "text": "      }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2355,
+      "text": "      default: break;",
+      "count": 0,
+      "classification": "waived-unreachable-defensive",
+      "reason": "The standard grammar and successfully translated immutable TGSI stream contain only DECLARATION, IMMEDIATE, PROPERTY and INSTRUCTION body tokens. Processor/header tokens are consumed by parse_init; the default label cannot be reached by an admitted original shader."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2356,
+      "text": "      }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2357,
+      "text": "      if (!built) { ok = false; break; }",
+      "count": 2747,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2358,
+      "text": "      used += built;",
+      "count": 2747,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2359,
+      "text": "   }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2360,
+      "text": "   tgsi_parse_free(&parser);",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2361,
+      "text": "   if (!ok) { free(tokens); return error(\"translation-error\", \"Bounded point-coordinate validation rebuild failed.\"); }",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2362,
+      "text": "   memcpy(tokens, &header, sizeof(header)); *result = tokens;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2363,
+      "text": "   return NULL;",
+      "count": 54,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2364,
+      "text": "}",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2381,
+      "text": "   struct tgsi_token *point_tokens = NULL;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2382,
+      "text": "   const char *failed = standard_point_tokens(&c->profile, tokens, &point_tokens);",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2383,
+      "text": "   if (failed) return failed;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2385,
+      "text": "   bool ok = vrend_convert_shader(NULL, &cfg, point_tokens ? point_tokens : tokens, 0, &key, &c->info, &c->variable, &c->shader);",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2386,
+      "text": "   free(point_tokens);",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2430,
+      "text": "   static const char *semantics[] = {\"ATTRIBUTE\", \"POSITION\", \"GENERIC\", \"COLOR\", \"VERTEXID\", \"INSTANCEID\", \"PSIZE\", \"PCOORD\"};",
+      "count": 1235,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2438,
+      "text": "      else if (io->semantic == STD_PSIZE) snprintf(name, sizeof(name), \"gl_PointSize\");",
+      "count": 144,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2439,
+      "text": "      else if (io->semantic == STD_PCOORD) snprintf(name, sizeof(name), \"gl_PointCoord\");",
+      "count": 89,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2442,
+      "text": "         comma ? \",\" : \"\", i, name, io->semantic == STD_PSIZE ? \"float\" : file == STD_SV && io->semantic != STD_PCOORD ? \"int\" : io->semantic == STD_GENERIC && io->flat ? \"uvec4\" : \"vec4\", semantics[io->semantic], io->sid, io->mask);",
+      "count": 1138,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2445,
+      "text": "      if ((io->semantic == STD_POSITION || io->semantic == STD_PCOORD) && file == STD_IN && p->stage) append(\",\\\"interpolation\\\":\\\"linear\\\"\");",
+      "count": 1138,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2476,
+      "text": "   append(\"],\\\"rasterUniforms\\\":[\");",
+      "count": 367,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2477,
+      "text": "   bool point_coord = false;",
+      "count": 367,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2478,
+      "text": "   for (unsigned i = 0; i < STANDARD_IO; ++i)",
+      "count": 12111,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2479,
+      "text": "      point_coord |= p->declared[STD_IN][i] && p->input[i].semantic == STD_PCOORD;",
+      "count": 11744,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2480,
+      "text": "   for (unsigned i = 0; i < 2; ++i)",
+      "count": 1101,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2481,
+      "text": "      point_coord |= p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD;",
+      "count": 734,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2482,
+      "text": "   if (!p->stage) append(\"{\\\"name\\\":\\\"wv_point_size\\\",\\\"type\\\":\\\"vec2\\\",\\\"semantic\\\":\\\"POINT_SIZE\\\"}\");",
+      "count": 367,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2483,
+      "text": "   else if (point_coord) append(\"{\\\"name\\\":\\\"wv_point_coord_y\\\",\\\"type\\\":\\\"float\\\",\\\"semantic\\\":\\\"POINT_COORD_Y\\\"}\");",
+      "count": 233,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 39,
+      "text": "      else if (io->semantic == STD_PCOORD) snprintf(name, 48, \"wv_point_coord()\");",
+      "count": 269,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 43,
+      "text": "      if (p->system[index].semantic == STD_PCOORD) snprintf(name, 48, \"wv_point_coord()\");",
+      "count": 802,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 44,
+      "text": "      else snprintf(name, 48, \"uvec4(uint(%s))\", p->system[index].semantic == STD_VERTEXID ? \"gl_VertexID\" : \"gl_InstanceID\");",
+      "count": 2,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 86,
+      "text": "   if (!p->stage) put(o, \"layout(std140) uniform VirglBlock {\\nvec4 clipp[8];\\nuint stipple_pattern[32];\\nfloat winsys_adjust_y;\\nfloat alpha_ref_val;\\nbool clip_plane_enabled;\\nint drawid_base;\\n};\\nuniform vec2 wv_point_size;\\n\");",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 87,
+      "text": "   bool point_coord = false;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 88,
+      "text": "   for (unsigned j = 0; j < STANDARD_IO; ++j)",
+      "count": 12144,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 89,
+      "text": "      point_coord |= p->declared[STD_IN][j] && p->input[j].semantic == STD_PCOORD;",
+      "count": 11776,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 90,
+      "text": "   for (unsigned j = 0; j < 2; ++j)",
+      "count": 1104,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 91,
+      "text": "      point_coord |= p->declared[STD_SV][j] && p->system[j].semantic == STD_PCOORD;",
+      "count": 736,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 92,
+      "text": "   if (point_coord) put(o, \"uniform float wv_point_coord_y;\\nuvec4 wv_point_coord() {\\nreturn floatBitsToUint(vec4(gl_PointCoord.x, mix(1.0 - gl_PointCoord.y, gl_PointCoord.y, clamp(wv_point_coord_y, 0.0, 1.0)), 0.0, 1.0));\\n}\\n\");",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 96,
+      "text": "   unsigned point_size = STANDARD_IO;",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 102,
+      "text": "      else if (io->semantic == STD_PSIZE) point_size = j;",
+      "count": 55,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 103,
+      "text": "   }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 104,
+      "text": "   if (!p->stage) {",
+      "count": 368,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 105,
+      "text": "      put(o, \"gl_Position.y *= winsys_adjust_y;\\ngl_PointSize = wv_point_size.y > 0.5 ? \");",
+      "count": 134,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 106,
+      "text": "      if (point_size < STANDARD_IO) put(o, \"uintBitsToFloat(o%u).x\", point_size);",
+      "count": 134,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 107,
+      "text": "      else put(o, \"1.0\"); /* Unwritten PSIZE retains native undefined-domain authority. */",
+      "count": 134,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "line": 108,
+      "text": "      put(o, \" : wv_point_size.x;\\n\");",
+      "count": 134,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 123,
+      "text": "      } else if (word(s, \"PSIZE\")) {",
+      "count": 174,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 124,
+      "text": "         if (p->stage || r.file != STD_OUT) return false;",
+      "count": 61,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 125,
+      "text": "         io.semantic = STD_PSIZE;",
+      "count": 58,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 126,
+      "text": "         if (take(s, '[') && (!number(s, 0, &sid) || !take(s, ']'))) return false;",
+      "count": 58,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 127,
+      "text": "      } else if (word(s, \"PCOORD\")) {",
+      "count": 120,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 128,
+      "text": "         if (!p->stage || (r.file != STD_IN && r.file != STD_SV)) return false;",
+      "count": 120,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 129,
+      "text": "         io.semantic = STD_PCOORD;",
+      "count": 120,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 130,
+      "text": "         if (take(s, '[') && (!number(s, 0, &sid) || !take(s, ']'))) return false;",
+      "count": 120,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "line": 135,
+      "text": "         if (io.semantic == STD_POSITION || io.semantic == STD_PCOORD) { if (!word(s, \"LINEAR\")) return false; }",
+      "count": 198,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "line": 17,
+      "text": "                         STD_VERTEXID, STD_INSTANCEID, STD_PSIZE, STD_PCOORD };",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 20,
+      "text": "const DRAW_MODES = Object.freeze({ 0: \"POINTS\", 1: \"LINES\", 2: \"LINE_LOOP\", 3: \"LINE_STRIP\", 4: \"TRIANGLES\", 5: \"TRIANGLE_STRIP\", 6: \"TRIANGLE_FAN\" });",
+      "count": 1,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 466,
+      "text": "        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}) },",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 467,
+      "text": "        ...(standard ? { rasterUniforms: [] } : {}) };",
+      "count": 1520,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 528,
+      "text": "          if (standard) for (const uniform of metadata.rasterUniforms) {",
+      "count": 624,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 529,
+      "text": "            const pointSize = uniform.semantic === \"POINT_SIZE\";",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 530,
+      "text": "            require(pointSize ? stage === 0 && uniform.name === \"wv_point_size\" && uniform.type === \"vec2\" :",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 531,
+      "text": "              stage === 1 && uniform.semantic === \"POINT_COORD_Y\" && uniform.name === \"wv_point_coord_y\" && uniform.type === \"float\",",
+      "count": 133,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 532,
+      "text": "            \"shader-reflection-error\", \"Unsupported raster uniform metadata.\");",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 533,
+      "text": "            const type = pointSize ? gl.FLOAT_VEC2 : gl.FLOAT;",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 534,
+      "text": "            const location = gl.getUniformLocation(program.native, uniform.name), index = gl.getUniformIndices(program.native, [uniform.name])?.[0];",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 535,
+      "text": "            const active = location !== null || index !== gl.INVALID_INDEX;",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 536,
+      "text": "            if (active) require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 537,
+      "text": "              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === type &&",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 538,
+      "text": "              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 539,
+      "text": "            \"shader-reflection-error\", \"Raster uniform reflection mismatch.\");",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 540,
+      "text": "            else require(!pointSize, \"shader-reflection-error\", \"Missing native point-size binding.\");",
+      "count": 1,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 541,
+      "text": "            program.rasterUniforms.push({ semantic: uniform.semantic, location });",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 542,
+      "text": "            program.reflection.rasterUniforms.push({ ...uniform, stage: metadata.stage, active, nativeType: type });",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 543,
+      "text": "          }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 621,
+      "text": "            .reduce((sum, uniform) => sum + uniform.activeCount * 4, 4 + (standard ? program.reflection.rasterUniforms.filter(uniform => uniform.stage === \"fragment\" && uniform.active).length : 0));",
+      "count": 4,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 636,
+      "text": "            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4 ||",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 637,
+      "text": "            program.reflection.rasterUniforms.some(uniform => uniform.active && uniform.name === actual.name &&",
+      "count": 402,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 638,
+      "text": "              actual.size === 1 && actual.type === uniform.nativeType);",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 641,
+      "text": "        if (standard) for (const stage of [\"vertex\", \"fragment\"]) {",
+      "count": 312,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 642,
+      "text": "          const components = program.reflection.uniforms.filter(uniform => uniform.stage === stage).reduce((sum, uniform) => sum + uniform.activeCount * 4, 0) +",
+      "count": 624,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 643,
+      "text": "            program.reflection.rasterUniforms.filter(uniform => uniform.stage === stage && uniform.active).reduce((sum, uniform) => sum + (uniform.type === \"vec2\" ? 2 : 1), 0) +",
+      "count": 624,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 644,
+      "text": "            (stage === \"fragment\" && blendFold ? 4 : 0);",
+      "count": 624,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 645,
+      "text": "          require(components <= hostUniformComponents[stage === \"vertex\" ? 0 : 1], \"shader-reflection-error\", \"Raster bindings exceed the host stage uniform limit.\");",
+      "count": 624,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 646,
+      "text": "        }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 829,
+      "text": "        if (standard) for (const uniform of program.rasterUniforms) {",
+      "count": 1199,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 830,
+      "text": "          if (uniform.semantic === \"POINT_SIZE\") gl.uniform2f(uniform.location, state.rasterizer?.pointSize ?? 1, state.rasterizer?.pointSizePerVertex ? 1 : 0);",
+      "count": 1199,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 831,
+      "text": "          else gl.uniform1f(uniform.location, state.winsysY);",
+      "count": 401,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 832,
+      "text": "        }",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 773,
+      "text": "  \"systemValues\", \"uniforms\", \"samplers\", \"uniformBlocks\", \"rasterUniforms\", \"broadcastColor0\", \"standardSemantics\"];",
+      "count": 1,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 799,
+      "text": "    require(input.semanticIndex === 0 && (stage === \"vertex\" && [\"VERTEXID\", \"INSTANCEID\"].includes(input.semantic) && input.type === \"int\" &&",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 800,
+      "text": "      input.name === (input.semantic === \"VERTEXID\" ? \"gl_VertexID\" : \"gl_InstanceID\") ||",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 801,
+      "text": "      stage === \"fragment\" && input.semantic === \"PCOORD\" && input.type === \"vec4\" && input.name === \"gl_PointCoord\"),",
+      "count": 130,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 819,
+      "text": "  } else if (input.semantic === \"PSIZE\") {",
+      "count": 3187,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 820,
+      "text": "    require(stage === \"vertex\" && output && input.semanticIndex === 0 && input.type === \"float\" && input.name === \"gl_PointSize\",",
+      "count": 1080,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 821,
+      "text": "      \"Invalid standard point-size declaration.\");",
+      "count": 1080,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 822,
+      "text": "  } else if (input.semantic === \"PCOORD\") {",
+      "count": 2771,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 823,
+      "text": "    require(stage === \"fragment\" && !output && input.semanticIndex === 0 && input.type === \"vec4\" &&",
+      "count": 989,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 824,
+      "text": "      input.name === \"gl_PointCoord\" && input.interpolation === \"linear\", \"Invalid standard point-coordinate declaration.\");",
+      "count": 989,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 825,
+      "text": "    interpolation = \"linear\";",
+      "count": 989,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 864,
+      "text": "    attributes.length === 0, \"Standard stage declarations disagree.\");",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 865,
+      "text": "  const pointCoord = [...inputs, ...systemValues].some(entry => entry.semantic === \"PCOORD\");",
+      "count": 16626,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 866,
+      "text": "  const expectedRaster = stage === \"vertex\" ? [{ name: \"wv_point_size\", type: \"vec2\", semantic: \"POINT_SIZE\" }] :",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 867,
+      "text": "    pointCoord ? [{ name: \"wv_point_coord_y\", type: \"float\", semantic: \"POINT_COORD_Y\" }] : [];",
+      "count": 2771,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 868,
+      "text": "  const rasterUniforms = array(input.rasterUniforms, 1).map(value => {",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 869,
+      "text": "    const entry = record(value, [\"name\", \"type\", \"semantic\"]);",
+      "count": 2771,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 870,
+      "text": "    return { name: entry.name, type: entry.type, semantic: entry.semantic };",
+      "count": 2771,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 871,
+      "text": "  });",
+      "count": 0,
+      "classification": "waived-structural",
+      "reason": "Header/enum declaration, comment, signature or brace; no independently executable runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 872,
+      "text": "  require(JSON.stringify(rasterUniforms) === JSON.stringify(expectedRaster), \"Standard raster uniform contract disagrees with its declarations.\");",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 903,
+      "text": "    uniforms, samplers, uniformBlocks, rasterUniforms, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });",
+      "count": 5542,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 154,
+      "text": "  // The selected standard facet binds fixed/per-vertex native point size.",
+      "count": 188,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 155,
+      "text": "  // Generic sprite-coordinate replacement remains outside this boundary.",
+      "count": 188,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 156,
+      "text": "  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0);",
+      "count": 188,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 163,
+      "text": "  p.require((p.standard ? Number.isFinite(pointSize) && pointSize > 0 : pointSize === 1) && spriteCoordEnable === 0 && stipple === 0xffff && lineWidth === 1 &&",
+      "count": 188,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 172,
+      "text": "    pointSizePerVertex: Boolean(bits & (1 << 24)), multisample: false, lineSmooth: false, lineStippleEnable: false,",
+      "count": 188,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "text": "      p.require((p.standard ? [0, 1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&",
+      "count": 1093,
+      "classification": "hit"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "line": 367,
+      "text": "      \"unsupported-feature\", p.standard ? \"Only core points, lines and triangles with indexed restart and without base offsets or stream output are supported.\" :",
+      "count": 1093,
+      "classification": "hit"
+    }
+  ],
+  "guardClassification": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 2313,
+      "classification": "executed-defensive-bound",
+      "reason": "The valid fragment grammar permits at most POSITION, PCOORD and 16 unique GENERIC input semantics, so all 32 physical slots cannot be occupied. The unused alias search is exercised with IN/SV collisions at indices 0 and 1 and IN31."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "lines": [
+        2314,
+        2315,
+        2317,
+        2325,
+        2355,
+        2357,
+        2361,
+        2386
+      ],
+      "classification": "executed-or-waived-trusted-validation-guard",
+      "reason": "Actual point arena OOM/recovery and upstream failure paths execute under the allocation harness; all builder kinds and large accepted streams execute. The parser/header/default-token defense is behind successful immutable pinned parsing. Fixed 8192-token capacity is checked on every builder call; bounds failures free the owned buffer and produce no output."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 540,
+      "classification": "executed-critic",
+      "reason": "An original declared but unused SV[1] PCOORD optimizes away POINT_COORD_Y; native reflection correctly records inactive, while POINT_SIZE remains required."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "lines": [
+        621,
+        622,
+        645
+      ],
+      "classification": "executed-critic",
+      "reason": "Real native POINTS with constant-color/alpha blending and active POINT_COORD_Y exercises the added component accounting. Explicitly recorded host-limit overrides reject vertex limit 1 and fragment blend limit 4 before native draw."
+    }
+  ],
+  "status": "passed",
+  "executed": 148,
+  "waivedStructural": 23,
+  "waivedDefensive": 2
+}

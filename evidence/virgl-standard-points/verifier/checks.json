@@ -1,0 +1,182 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "prediction": "retained compiler original log custody",
+      "verdict": "HELD",
+      "observed": {
+        "head": "53e01e081ca7495960c6c51a15b585d4b66c64fe",
+        "cases": 669,
+        "frames": 129,
+        "prefixSha256": "764166e711505a15b8b5bc7c2664f733ab86a7ebe819adfdb76d54d7ada6b040",
+        "exactSuccessAppend": true
+      },
+      "citation": "hot/retained-compiler/receipt.json"
+    },
+    {
+      "prediction": "retained assembly physical boundaries",
+      "verdict": "HELD",
+      "observed": {
+        "frames": 304,
+        "sha256": "8da3ba0332bb38a133e5362e2d18b174e1a57cdaab981c6b62ffa8cc7b33676c"
+      },
+      "citation": "hot/retained-assembly/physical-audit.json"
+    },
+    {
+      "prediction": "retained restart physical boundaries",
+      "verdict": "HELD",
+      "observed": {
+        "frames": 189,
+        "sha256": "7b0481da2fbad424b1182dac4c0b112b062adaa60e0620a18a471aa83fe96f9f"
+      },
+      "citation": "hot/retained-restart/physical-audit.json"
+    },
+    {
+      "prediction": "native sanitizer/allocation proof",
+      "verdict": "HELD",
+      "observed": {
+        "originalCases": 118,
+        "accepted": 98,
+        "equalNativeSanitized": true,
+        "faults": 78,
+        "recoveries": 78,
+        "pointArenaFailuresAtLines": [
+          65,
+          81
+        ]
+      },
+      "citation": "hot/retained-compiler/native/allocations.jsonl:65"
+    },
+    {
+      "prediction": "fixed original Wasm/native parity",
+      "verdict": "HELD",
+      "observed": {
+        "bytes": 16777216,
+        "pressureAllocations": 225,
+        "single": {
+          "ok": false,
+          "error": {
+            "code": "allocation-failed",
+            "message": "Wasm standard input allocation failed."
+          }
+        },
+        "pair": {
+          "ok": false,
+          "error": {
+            "code": "allocation-failed",
+            "message": "Wasm standard input allocation failed."
+          }
+        },
+        "recovered": true
+      },
+      "citation": "hot/native/node.json"
+    },
+    {
+      "prediction": "unchanged historical HELD seals",
+      "verdict": "HELD",
+      "observed": {
+        "records": 34
+      },
+      "citation": "hot/receipt.json#carriedVerifiedEvidence"
+    },
+    {
+      "prediction": "retained compiler original log custody",
+      "verdict": "HELD",
+      "observed": {
+        "head": "8ccd2036305321645d7f8b47cf7e2c1bcdced863",
+        "cases": 669,
+        "frames": 129,
+        "prefixSha256": "52958a27994c7b07760402dd02b5fd99074bf05d53f44ead10652f94ead6361c",
+        "exactSuccessAppend": true
+      },
+      "citation": "cold/retained-compiler/receipt.json"
+    },
+    {
+      "prediction": "retained assembly physical boundaries",
+      "verdict": "HELD",
+      "observed": {
+        "frames": 304,
+        "sha256": "8da3ba0332bb38a133e5362e2d18b174e1a57cdaab981c6b62ffa8cc7b33676c"
+      },
+      "citation": "cold/retained-assembly/physical-audit.json"
+    },
+    {
+      "prediction": "retained restart physical boundaries",
+      "verdict": "HELD",
+      "observed": {
+        "frames": 189,
+        "sha256": "7b0481da2fbad424b1182dac4c0b112b062adaa60e0620a18a471aa83fe96f9f"
+      },
+      "citation": "cold/retained-restart/physical-audit.json"
+    },
+    {
+      "prediction": "native sanitizer/allocation proof",
+      "verdict": "HELD",
+      "observed": {
+        "originalCases": 118,
+        "accepted": 98,
+        "equalNativeSanitized": true,
+        "faults": 78,
+        "recoveries": 78,
+        "pointArenaFailuresAtLines": [
+          65,
+          81
+        ]
+      },
+      "citation": "cold/retained-compiler/native/allocations.jsonl:65"
+    },
+    {
+      "prediction": "fixed original Wasm/native parity",
+      "verdict": "HELD",
+      "observed": {
+        "bytes": 16777216,
+        "pressureAllocations": 225,
+        "single": {
+          "ok": false,
+          "error": {
+            "code": "allocation-failed",
+            "message": "Wasm standard input allocation failed."
+          }
+        },
+        "pair": {
+          "ok": false,
+          "error": {
+            "code": "allocation-failed",
+            "message": "Wasm standard input allocation failed."
+          }
+        },
+        "recovered": true
+      },
+      "citation": "cold/native/node.json"
+    },
+    {
+      "prediction": "unchanged historical HELD seals",
+      "verdict": "HELD",
+      "observed": {
+        "records": 34
+      },
+      "citation": "cold/receipt.json#carriedVerifiedEvidence"
+    },
+    {
+      "prediction": "isolated source boundary",
+      "verdict": "HELD",
+      "observed": {
+        "vendorCratesWebGuestChanged": false,
+        "productionAuthority": false
+      },
+      "citation": "git diff c810cbef..3d9cfcd0"
+    },
+    {
+      "prediction": "honest harness-only carry",
+      "verdict": "HELD",
+      "observed": {
+        "originalMakePassed": false,
+        "originalExitCode": 2,
+        "originalFailureSha256": "7ab665bad1a029769f257377532519103e4a56c2a5040e82253b3255e90a42a0",
+        "receiptFailureSha256": "d76fbe4b34deb86ecbaf677edca2da2d1ae446653a4f8644c07af8084baf8840",
+        "carriedPhysicalHead": "b49bc887b60fe9d13eba84684d20598d4217d3ec"
+      },
+      "citation": "hot/harness-correction.json"
+    }
+  ]
+}

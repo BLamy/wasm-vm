@@ -36,18 +36,21 @@ def main(directory):
                 field=next((key for key,file in [('inputs','INPUT'),('outputs','OUTPUT'),('systemValues','SYSTEM_VALUE')] if d['file']==abi['TGSI_FILE_'+file]),None)
                 if field is None:continue
                 assert d['first']==d['last']
-                index=d['first'];semantic=next((s for s in ['POSITION','GENERIC','COLOR','VERTEXID','INSTANCEID'] if d['hasSemantic'] and d['semantic']==abi['TGSI_SEMANTIC_'+s]),'ATTRIBUTE')
+                index=d['first'];semantic=next((s for s in ['POSITION','GENERIC','COLOR','VERTEXID','INSTANCEID','PSIZE','PCOORD'] if d['hasSemantic'] and d['semantic']==abi['TGSI_SEMANTIC_'+s]),'ATTRIBUTE')
                 flat=semantic=='GENERIC' and ((d['interpolate']==abi['TGSI_INTERPOLATE_CONSTANT']) if field=='inputs' else fragments.get(d['sid'],False))
-                name={'ATTRIBUTE':f'in_{index}','POSITION':'gl_Position' if stage=='vertex' else 'gl_FragCoord','GENERIC':f'vso_g{d["sid"]}','COLOR':f'fsout_c{d["sid"]}','VERTEXID':'gl_VertexID','INSTANCEID':'gl_InstanceID'}[semantic]
-                item=dict(index=index,name=name,type='int' if field=='systemValues' else 'uvec4' if flat else 'vec4',semantic=semantic,semanticIndex=d['sid'],componentMask=d['mask'])
+                name={'ATTRIBUTE':f'in_{index}','POSITION':'gl_Position' if stage=='vertex' else 'gl_FragCoord','GENERIC':f'vso_g{d["sid"]}','COLOR':f'fsout_c{d["sid"]}','VERTEXID':'gl_VertexID','INSTANCEID':'gl_InstanceID','PSIZE':'gl_PointSize','PCOORD':'gl_PointCoord'}[semantic]
+                item=dict(index=index,name=name,type='float' if semantic=='PSIZE' else 'int' if field=='systemValues' and semantic!='PCOORD' else 'uvec4' if flat else 'vec4',semantic=semantic,semanticIndex=d['sid'],componentMask=d['mask'])
                 if field=='outputs':item['syntacticWriteMask']=oracle['outputWrites'][index]
                 if semantic=='GENERIC':item['interpolation']='flat' if flat else 'smooth'
                 if semantic=='POSITION' and stage=='fragment':item['interpolation']='linear'
+                if semantic=='PCOORD' and field=='inputs':item['interpolation']='linear'
                 expected[field].append(item)
             for field in expected:
                 expected[field]=sorted(expected[field],key=lambda d:d['index'])
                 assert metadata[field]==expected[field],(case['name'],field)
             assert metadata['attributes']==(expected['inputs'] if stage=='vertex' else [])
+            raster=[dict(name='wv_point_size',type='vec2',semantic='POINT_SIZE')] if stage=='vertex' else [dict(name='wv_point_coord_y',type='float',semantic='POINT_COORD_Y')] if any(d['semantic']=='PCOORD' for d in expected['inputs']+expected['systemValues']) else []
+            assert metadata['rasterUniforms']==raster,(case['name'],'rasterUniforms')
             assert metadata['uniforms']==([dict(name=('vs' if stage=='vertex' else 'fs')+'const0',type='uvec4[]',count=constants,encoding='raw-32bit-words')] if constants else [])
             assert [r['index'] for r in metadata['samplers']]==[i for i in range(16) if oracle['samplersUsed']&(1<<i)]
             source=case['a'] if at==0 else case['b']

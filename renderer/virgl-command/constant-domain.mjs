@@ -770,7 +770,7 @@ export function checkRasterBank(words, domain, counted = false, radial = false) 
 // independent; only the host-selected standard renderer calls these exports.
 export const STANDARD_SHADER_PROFILE = "virgl-webgl2-standard-gles3-v1";
 const STANDARD_METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes",
-  "systemValues", "uniforms", "samplers", "uniformBlocks", "broadcastColor0", "standardSemantics"];
+  "systemValues", "uniforms", "samplers", "uniformBlocks", "rasterUniforms", "broadcastColor0", "standardSemantics"];
 const STANDARD_SEMANTICS = Object.freeze({
   kind: "native-gles3-highp-v1", precision: "native-highp", undefinedDomains: "native-gles3",
   preciseQualifier: "no-gpu-shader5", registerStorage: "uvec4", flatVaryingStorage: "uvec4",
@@ -796,8 +796,9 @@ function standardIO(value, stage, file, paired) {
   else require(!Object.hasOwn(input, "syntacticWriteMask"), "Input declarations cannot carry write authority.");
   let interpolation = null;
   if (system) {
-    require(stage === "vertex" && ["VERTEXID", "INSTANCEID"].includes(input.semantic) && input.type === "int" &&
-      input.semanticIndex === 0 && input.name === (input.semantic === "VERTEXID" ? "gl_VertexID" : "gl_InstanceID"),
+    require(input.semanticIndex === 0 && (stage === "vertex" && ["VERTEXID", "INSTANCEID"].includes(input.semantic) && input.type === "int" &&
+      input.name === (input.semantic === "VERTEXID" ? "gl_VertexID" : "gl_InstanceID") ||
+      stage === "fragment" && input.semantic === "PCOORD" && input.type === "vec4" && input.name === "gl_PointCoord"),
     "Unknown standard system value.");
   } else if (stage === "vertex" && !output) {
     require(input.semantic === "ATTRIBUTE" && input.type === "vec4" && input.semanticIndex === 0 &&
@@ -815,6 +816,13 @@ function standardIO(value, stage, file, paired) {
         stage === "fragment" && !output && input.name === "gl_FragCoord" && input.interpolation === "linear"),
     "Invalid standard position declaration.");
     if (stage === "fragment") interpolation = "linear";
+  } else if (input.semantic === "PSIZE") {
+    require(stage === "vertex" && output && input.semanticIndex === 0 && input.type === "float" && input.name === "gl_PointSize",
+      "Invalid standard point-size declaration.");
+  } else if (input.semantic === "PCOORD") {
+    require(stage === "fragment" && !output && input.semanticIndex === 0 && input.type === "vec4" &&
+      input.name === "gl_PointCoord" && input.interpolation === "linear", "Invalid standard point-coordinate declaration.");
+    interpolation = "linear";
   } else {
     require(stage === "fragment" && output && input.semantic === "COLOR" &&
       input.semanticIndex === 0 && input.name === "fsout_c0" && input.type === "vec4",
@@ -853,7 +861,15 @@ function standardMetadata(value, stage, paired = false) {
     systemValues = standardIOArray(input.systemValues, stage, "systemValues", paired);
   require(stage === "vertex" ? outputs.filter(entry => entry.semantic === "POSITION").length === 1 &&
     JSON.stringify(attributes) === JSON.stringify(inputs) : outputs.length === 1 &&
-    attributes.length === 0 && systemValues.length === 0, "Standard stage declarations disagree.");
+    attributes.length === 0, "Standard stage declarations disagree.");
+  const pointCoord = [...inputs, ...systemValues].some(entry => entry.semantic === "PCOORD");
+  const expectedRaster = stage === "vertex" ? [{ name: "wv_point_size", type: "vec2", semantic: "POINT_SIZE" }] :
+    pointCoord ? [{ name: "wv_point_coord_y", type: "float", semantic: "POINT_COORD_Y" }] : [];
+  const rasterUniforms = array(input.rasterUniforms, 1).map(value => {
+    const entry = record(value, ["name", "type", "semantic"]);
+    return { name: entry.name, type: entry.type, semantic: entry.semantic };
+  });
+  require(JSON.stringify(rasterUniforms) === JSON.stringify(expectedRaster), "Standard raster uniform contract disagrees with its declarations.");
   const uniforms = array(input.uniforms, 1).map(value => {
     const entry = record(value, ["name", "type", "count", "encoding"]);
     require(entry.name === (stage === "vertex" ? "vsconst0" : "fsconst0") && entry.type === "uvec4[]" &&
@@ -884,7 +900,7 @@ function standardMetadata(value, stage, paired = false) {
   });
   require(stage !== "vertex" || uniformBlocks.length === 1, "Missing declared standard system block.");
   return standardFreeze({ profile: input.profile, stage, inputs, outputs, attributes, systemValues,
-    uniforms, samplers, uniformBlocks, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });
+    uniforms, samplers, uniformBlocks, rasterUniforms, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });
 }
 function standardBody(value, stage, paired) {
   const body = record(value, ["glsl", "metadata"]);

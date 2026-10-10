@@ -120,11 +120,19 @@ static bool declaration(const char **s, struct standard_profile *p)
       } else if (word(s, "INSTANCEID")) {
          if (p->stage || r.file != STD_SV) return false;
          io.semantic = STD_INSTANCEID;
+      } else if (word(s, "PSIZE")) {
+         if (p->stage || r.file != STD_OUT) return false;
+         io.semantic = STD_PSIZE;
+         if (take(s, '[') && (!number(s, 0, &sid) || !take(s, ']'))) return false;
+      } else if (word(s, "PCOORD")) {
+         if (!p->stage || (r.file != STD_IN && r.file != STD_SV)) return false;
+         io.semantic = STD_PCOORD;
+         if (take(s, '[') && (!number(s, 0, &sid) || !take(s, ']'))) return false;
       } else return false;
       io.sid = (uint8_t)sid;
       if (p->stage && r.file == STD_IN) {
          if (!take(s, ',')) return false;
-         if (io.semantic == STD_POSITION) { if (!word(s, "LINEAR")) return false; }
+         if (io.semantic == STD_POSITION || io.semantic == STD_PCOORD) { if (!word(s, "LINEAR")) return false; }
          else if (word(s, "CONSTANT")) io.flat = 1;
          else if (!word(s, "PERSPECTIVE")) return false;
       }
