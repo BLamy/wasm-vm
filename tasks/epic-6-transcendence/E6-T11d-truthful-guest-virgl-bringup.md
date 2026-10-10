@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11]
-blocked_on: E6-T11d11
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12]
+blocked_on: E6-T11d12
 estimate: S
 risk: high
 capstone: false
@@ -250,3 +250,30 @@ with `decodeStandardSubmission` or translate each `stage`/`text` through
 Ordered S prerequisite E6-T11d11 closes this single native point pipeline. The
 user's explicit request continues this graphics chain; complete API, typed caps,
 real guest initialization, scanout and demo deployment remain later gates.
+
+### 2026-10-10 — worker — native points verified; compact vertex fetch blocked
+
+E6-T11d11 is independently verified at
+`1fbdfa7e53ebe6e8ed4a80935687d8b71a797f42`. Pinned Mesa26.2.2's GLES3 predicate
+requires half-float vertex support, and its VirGL vertex-format predicate admits
+plain formats. The actual selected decoder still rejects all twenty original
+R/RG/RGB/RGBA16_FLOAT, 8_UNORM/SNORM and 16_UNORM/SNORM formats. Complete source
+and original packet identities are recorded in
+`evidence/virgl-production-readiness/standard-compact-vertex-gap.json`. Repro:
+
+```sh
+node --input-type=module <<'JS'
+import {decodeStandardSubmission} from './renderer/virgl-command/decoder.mjs';
+for(const base of [48,56,64,74,91])for(let n=0;n<4;n++){
+ const bytes=new Uint8Array(24),v=new DataView(bytes.buffer);
+ [0x50501,777,0,0,0,base+n].forEach((w,i)=>v.setUint32(i*4,w,true));
+ console.log(base+n,decodeStandardSubmission(bytes));
+}
+JS
+```
+
+Each result is `ok:false`, `unsupported-feature`. Ordered S prerequisite E6-T11d12
+adds native compact fetches and bounded stride-zero scalar conversion while
+retaining float32 and legacy admission. Additional full-API gaps stay gated; no
+capset, guest offload, deployment or performance claim follows. The production
+graphics chain remains ahead of unrelated queue work under the user's request.
