@@ -909,7 +909,10 @@ export function createWebGL2TransferBackend(gl) { return createTransferBackend(g
 
 export function createStandardColorTransferBackend(gl) { return createTransferBackend(gl, true); }
 
-function createTransferBackend(gl, colors) {
+/** Retained original texture jobs preserve raw buffer reads beside color images. */
+export function createStandardTextureTransferBackend(gl) { return createTransferBackend(gl, true, true); }
+
+function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
@@ -1206,11 +1209,11 @@ function createTransferBackend(gl, colors) {
               gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
             }
           }
-          check(); return guestReadback(meta.format, bytes);
+          check(); return rawBufferReadbacks && storage.kind === "buffer" ? bytes : guestReadback(meta.format, bytes);
         },
         beginReadback(storage, meta, layout) {
           check(); pixelState();
-          const entry = { buffer: null, sync: null, ready: false, bytes: scratchCharge(layout), format: meta.format };
+          const entry = { buffer: null, sync: null, ready: false, bytes: scratchCharge(layout), format: meta.format, ...(rawBufferReadbacks ? { rawBuffer: storage.kind === "buffer" } : {}) };
           pendingReads.add(entry);
           try {
             entry.buffer = gl.createBuffer();
@@ -1265,7 +1268,7 @@ function createTransferBackend(gl, colors) {
           check(); require(pendingReads.has(entry) && entry.ready, "backend-error", "Readback fence has not signaled.");
           const bytes = new Uint8Array(entry.bytes);
           gl.bindBuffer(gl.COPY_READ_BUFFER, entry.buffer);
-          gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, bytes); check(); return guestReadback(entry.format, bytes);
+          gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, bytes); check(); return entry.rawBuffer ? bytes : guestReadback(entry.format, bytes);
         },
         releaseReadback,
         dispose() {
