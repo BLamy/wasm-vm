@@ -1,0 +1,4116 @@
+{
+  "schema": "fresh-uniform-full-region-audit-v1",
+  "addedLines": {
+    "renderer/virgl-shader/standard_guard.c": [
+      70,
+      71,
+      72,
+      73,
+      74,
+      101
+    ],
+    "tools/virgl-standard-uniform/browser.mjs": [
+      18
+    ],
+    "tools/virgl-standard-uniform/cases.mjs": [
+      32,
+      42,
+      43,
+      44,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+    ],
+    "tools/virgl-standard-uniform/compiler.mjs": [
+      68,
+      69
+    ],
+    "tools/virgl-standard-uniform/hardware-fixtures.mjs": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80
+    ],
+    "tools/virgl-standard-uniform/pixels.mjs": [
+      53,
+      57
+    ],
+    "tools/virgl-standard-uniform/receipt.py": [
+      58,
+      59,
+      90,
+      92,
+      106,
+      185
+    ]
+  },
+  "hunks": [
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -70,3 +70,5 @@ static bool constant_index(const char **s, const struct standard_profile *p,"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -99 +101 @@ static bool constant_indices(const char **s, const struct standard_profile *p,"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/browser.mjs",
+      "hunk": "@@ -18 +18 @@ const report=await runVirglBrowser({options,task:'E6-T11d16',boundary:'Explicit"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/cases.mjs",
+      "hunk": "@@ -32 +32 @@ export function compilerCases() {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/cases.mjs",
+      "hunk": "@@ -42 +42,3 @@ export function compilerCases() {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/cases.mjs",
+      "hunk": "@@ -51,0 +54,7 @@ export function compilerCases() {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/compiler.mjs",
+      "hunk": "@@ -68,2 +68,2 @@ if(mode==='cases') {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/hardware-fixtures.mjs",
+      "hunk": "@@ -35,0 +36,11 @@ function atlasFragment(slot,count,shift,base,offset) {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/hardware-fixtures.mjs",
+      "hunk": "@@ -56,0 +68,13 @@ export function hardwareFixtures() {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/pixels.mjs",
+      "hunk": "@@ -53 +53 @@ async function audit(name,fault=false) {"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/pixels.mjs",
+      "hunk": "@@ -57 +57 @@ const pixels=frames.reduce((sum,frame)=>sum+frame.checkedPixels,0),words=frames."
+    },
+    {
+      "file": "tools/virgl-standard-uniform/receipt.py",
+      "hunk": "@@ -58,2 +58,2 @@ def main(directory):"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/receipt.py",
+      "hunk": "@@ -90 +90 @@ def main(directory):"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/receipt.py",
+      "hunk": "@@ -92 +92 @@ def main(directory):"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/receipt.py",
+      "hunk": "@@ -106 +106 @@ def main(directory):"
+    },
+    {
+      "file": "tools/virgl-standard-uniform/receipt.py",
+      "hunk": "@@ -185 +185 @@ def main(directory):"
+    }
+  ],
+  "llvmRegions": [
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        93,
+        1,
+        102,
+        2,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 2088,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 1369
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 2088
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 1369
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 2088
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 240
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        95,
+        4,
+        102,
+        2,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 2088,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 1359
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 2088
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 1359
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 2088
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 236
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        100,
+        5,
+        101,
+        4,
+        0,
+        0,
+        3
+      ],
+      "maxCount": 112,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 56
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        101,
+        4,
+        101,
+        54,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 112,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 56
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        101,
+        11,
+        101,
+        22,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 112,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 112
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 56
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        101,
+        26,
+        101,
+        54,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 72,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 72
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 72
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 30
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "region": [
+        101,
+        36,
+        101,
+        54,
+        0,
+        5,
+        1
+      ],
+      "maxCount": 72,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 72
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 72
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 30
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        63,
+        1,
+        90,
+        2,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 4176,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 2604
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 4176
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 2604
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 4176
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 420
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        66,
+        40,
+        77,
+        5,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 334,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 334
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 334
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        69,
+        7,
+        77,
+        5,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 330,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        70,
+        7,
+        70,
+        7,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 330,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        71,
+        11,
+        71,
+        19,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 330,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        71,
+        11,
+        71,
+        35,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 330,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 330
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        71,
+        23,
+        71,
+        35,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 48
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        71,
+        36,
+        71,
+        37,
+        0,
+        0,
+        3
+      ],
+      "maxCount": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        71,
+        37,
+        76,
+        8,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        72,
+        1,
+        73,
+        77,
+        0,
+        0,
+        2
+      ],
+      "maxCount": 0,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 0
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        14,
+        74,
+        42,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        14,
+        74,
+        86,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        46,
+        74,
+        86,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 212,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 212
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 212
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        57,
+        74,
+        65,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 212,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 212
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 212
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        67,
+        74,
+        68,
+        0,
+        0,
+        3
+      ],
+      "maxCount": 172,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 72
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        68,
+        74,
+        73,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 172,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 72
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        76,
+        74,
+        81,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 106,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 106
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 48
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        87,
+        74,
+        88,
+        0,
+        0,
+        3
+      ],
+      "maxCount": 22,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 16
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        88,
+        74,
+        100,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 22,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 16
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        95,
+        74,
+        95,
+        0,
+        0,
+        0
+      ],
+      "maxCount": 22,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 22
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 16
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "region": [
+        74,
+        101,
+        75,
+        10,
+        0,
+        0,
+        3
+      ],
+      "maxCount": 196,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "count": 196
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "count": 196
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "count": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "count": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "count": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "count": 104
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "count": 0
+        }
+      ]
+    }
+  ],
+  "llvmBranches": [
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "branch": [
+        101,
+        11,
+        101,
+        22,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 40,
+      "maxFalse": 72,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 40,
+          "false": 72
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 40,
+          "false": 72
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 26,
+          "false": 30
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 12
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_indices",
+      "branch": [
+        101,
+        26,
+        101,
+        54,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 72,
+      "maxFalse": 8,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 72,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 72,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 30,
+          "false": 0
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 4,
+          "false": 8
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "branch": [
+        71,
+        11,
+        71,
+        19,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 172,
+      "maxFalse": 218,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 112,
+          "false": 218
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 172,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 112,
+          "false": 218
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 172,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 72,
+          "false": 48
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "branch": [
+        71,
+        23,
+        71,
+        35,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 106,
+      "maxFalse": 112,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 106,
+          "false": 112
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 106,
+          "false": 112
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 48,
+          "false": 0
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "branch": [
+        74,
+        14,
+        74,
+        42,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 6,
+      "maxFalse": 212,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 6,
+          "false": 212
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 6,
+          "false": 212
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 0,
+          "false": 120
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "branch": [
+        74,
+        46,
+        74,
+        86,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 16,
+      "maxFalse": 196,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 16,
+          "false": 196
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 172
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 16,
+          "false": 196
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 0,
+          "false": 172
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 16,
+          "false": 104
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 0
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "function": "standard_guard.c:constant_index",
+      "branch": [
+        74,
+        57,
+        74,
+        65,
+        0,
+        0,
+        4
+      ],
+      "maxTrue": 172,
+      "maxFalse": 106,
+      "observations": [
+        {
+          "run": "hot",
+          "record": "coverage/matrix.json",
+          "true": 106,
+          "false": 106
+        },
+        {
+          "run": "hot",
+          "record": "coverage/allocations.json",
+          "true": 172,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "hot",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/matrix.json",
+          "true": 106,
+          "false": 106
+        },
+        {
+          "run": "cold",
+          "record": "coverage/allocations.json",
+          "true": 172,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "compiler-retained/coverage/allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/packed-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-matrix.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "cold",
+          "record": "coverage/integer-allocations.json",
+          "true": 0,
+          "false": 0
+        },
+        {
+          "run": "independent-original-offsets",
+          "record": "offsets-coverage.json",
+          "true": 72,
+          "false": 48
+        },
+        {
+          "run": "eight-direct-plain-limit-rejections",
+          "record": "narrow-coverage.json",
+          "true": 0,
+          "false": 0
+        }
+      ]
+    }
+  ],
+  "v8FullRanges": [],
+  "v8NarrowIntervals": [],
+  "reexports": [
+    {
+      "run": "hot",
+      "profile": "coverage/matrix",
+      "rawSha256": "f62daa5259f50f348b333071715b0aca2032f5db109f57166c048fd3307e304d",
+      "binarySha256": "b97098fe6047a3e2360634b6bd2628de57bb5079cf7a72b227e8f523857b31ba",
+      "completeExportEqual": true,
+      "exportSha256": "5735389730ac7f8eb58914ea8d5b3f79c7ac01a6c2ed0b1e09af75a453762c85"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/allocations",
+      "rawSha256": "8095acf432e168322c051c7ba1ee13bcad165d135f8195361dcde50a68af63cb",
+      "binarySha256": "6a1cd57e5dd091b54f6364188bdee15adb812030ee841dfac298bb34163317e8",
+      "completeExportEqual": true,
+      "exportSha256": "3ef4f52d3c669b442fbf6c82bcf082e2d9a1934830274ad3bbfe279e01f9bb76"
+    },
+    {
+      "run": "hot",
+      "profile": "compiler-retained/coverage/matrix",
+      "rawSha256": "2939439a2d13245b890a12534052fe02b2bf596d0553e5e378033726b6d6e325",
+      "binarySha256": "fa4ca9b0945c4b92901112315602c7c953d7e7d8da65cc8e34989cf438096081",
+      "completeExportEqual": true,
+      "exportSha256": "f6d9681e2ba5c8bb24563650a34d71f8c70dc56c522647e92502eadfe9c59423"
+    },
+    {
+      "run": "hot",
+      "profile": "compiler-retained/coverage/allocations",
+      "rawSha256": "c0cc0cefee731f96967b0ae186049022648bc55caf41e1b130372b83fd023370",
+      "binarySha256": "5eb9f07aa6cbb047cef50b02054c6292dbb61f50d00280b1f3722e9a09774614",
+      "completeExportEqual": true,
+      "exportSha256": "feb25a92f228bd337885cb1d01601280322ecce009748ff88be8c830ac7d118a"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/packed-matrix",
+      "rawSha256": "50369f40011d2d5fb70f8581661c9eaa49c94042ec0ec77fcfb13d9f0da92918",
+      "binarySha256": "d7bcf9d8c04923683899a9be290fd35f9a36e3b9261b3a58af5dcd9e3f3ba63c",
+      "completeExportEqual": true,
+      "exportSha256": "1b303bfeb9fbd0aab5f0cd4f766c5193539bd3a1582b4ed5eb0efd9275d74544"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/packed-allocations",
+      "rawSha256": "4719719adafcf6634ce7a5c1a917e6d2e01528e04ed95d7ac1e06c52c3b208ea",
+      "binarySha256": "01089fecf4079b50048d227e8285d936aa10103c8c14291ba28ccb4b380e3958",
+      "completeExportEqual": true,
+      "exportSha256": "f77f0cbaa1dea1fc6cece8444f1a7455cd9b633af3fda75107719e76cfb6b6c5"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/integer-matrix",
+      "rawSha256": "dc347e094cc09bff31e3b1e4b6d93e954d98a20ddbcc661b2020a483a2f687b3",
+      "binarySha256": "21da19215396bf1696f5ffb89fe43e44d0126080e47441aa8fdedc9423d059db",
+      "completeExportEqual": true,
+      "exportSha256": "e44ba8eab81cd3c78d02eaf535f23790b053bde8e02aa3d5b0edfbde73fe25a0"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/integer-allocations",
+      "rawSha256": "3f8c35a9358aa8a0522ffc874dba876883b42ef51cfe146a53233faed31e09eb",
+      "binarySha256": "3c73b6230a87fe51a494f021fb930bd7d0917879ce0eae69205396b30a4b8883",
+      "completeExportEqual": true,
+      "exportSha256": "c6ed3accfcdec2467dfb36035195d1e6b1fa0753e5d0439ba05ef151b356e893"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/matrix",
+      "rawSha256": "a73705285049835a36ab257c29db191fc55b68cab51bb831c0c807b5a65550a0",
+      "binarySha256": "d0c5050dda8b468f0e5ea84631801f2fde1cfeea853c61d924134c3a4fcf2e70",
+      "completeExportEqual": true,
+      "exportSha256": "9828932b760d810fcc8b3267b14c32238fb15e06bf6c74471969c777c44be084"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/allocations",
+      "rawSha256": "a51e6f140ff5c08fe375332fcba4f1c2821c618e22524a292e92b2c934d477c5",
+      "binarySha256": "226ec24067d328c43852a24cb786f57f026913021c1e385114efc92af5717c1a",
+      "completeExportEqual": true,
+      "exportSha256": "ac5e19be4a124fdca75271754a2bdce521876a5e91987a406dc0f250e68a19a4"
+    },
+    {
+      "run": "cold",
+      "profile": "compiler-retained/coverage/matrix",
+      "rawSha256": "afe0cbcc6c66488cb8572b295b749648d7ab60c06cc3509424aaea22275aaa50",
+      "binarySha256": "843b523eff6b6bd22216a80ac6d772b08ff71a956dc7f73df265607278488ebe",
+      "completeExportEqual": true,
+      "exportSha256": "a9fea59505b463e79973436e027c3c8476b1c0224a0e038ebdd37b440f476e38"
+    },
+    {
+      "run": "cold",
+      "profile": "compiler-retained/coverage/allocations",
+      "rawSha256": "89f61d07e8c2cdfbc9866cc846d3233e4c084f82ab404268516ae9c8e35296fc",
+      "binarySha256": "4d38a1f82fddaf2525ecca510568e178d069037940dd939aa79476fc63eae23f",
+      "completeExportEqual": true,
+      "exportSha256": "4ad0eb39053cb7513c53e56db637a42b9fb5525ce79279913d6e10e95a98b738"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/packed-matrix",
+      "rawSha256": "680a07336a6b5de8d0a0b8f41377ed6b71f84a1c001f5d738aecff47ec1d0f1c",
+      "binarySha256": "22fd506e8b5906d375ae2b43e11c6c3d74ad42ef25247b4d57358cd715b8ff84",
+      "completeExportEqual": true,
+      "exportSha256": "86081e0284357fb6ccf453f80093e5f0e102ebca1b14a0f47676747fee9df075"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/packed-allocations",
+      "rawSha256": "75a75f580389cc93a1931440785e6e5747e303330aa32aef35420f7cb398f18e",
+      "binarySha256": "6ce735a9a84dd6b4f0c46586bd5795d960abe30bace34d9642d1bb1ca3f16d60",
+      "completeExportEqual": true,
+      "exportSha256": "35f3c5433b24effe0293197b9a15f4cb69a0c5f80e4115da14a6765bd9b9576b"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/integer-matrix",
+      "rawSha256": "79eef043a571d9adcbce0baf378dc88561729f3b57f14d87f3aafb5235d96f2b",
+      "binarySha256": "091755a0315aa6487da44a312441b4506b073f90e89231f9cdaea0633bb6647c",
+      "completeExportEqual": true,
+      "exportSha256": "4fffc0e3a3d73f58d37ac666174b68a0321bf4a2840094cb9e9e17382633cb1c"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/integer-allocations",
+      "rawSha256": "a807a21a3a4cab71cbce4043aededfc2c9af6233a3a16bf40ff15df2e46b4e60",
+      "binarySha256": "97886082f0b94f113ccaa00b10a080a5dc92729af26965f11b99044c4bc3fcc9",
+      "completeExportEqual": true,
+      "exportSha256": "b5bdd24f939f64c612f178fe068cc7f18f94136cda7449bdc85162436f4c6d44"
+    }
+  ]
+}

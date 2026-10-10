@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15]
-blocked_on: E6-T11d15
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16]
+blocked_on: E6-T11d16
 estimate: S
 risk: high
 capstone: false
@@ -300,3 +300,10 @@ E6-T11d13 is independently verified at `8037ede91b4c8450e696811d33ac7d34235388ba
 ### 2026-10-10 — worker — integer boundary verified; packed fetch remains
 
 E6-T11d14 is independently verified at `23bf410f9e152d53e83e674717c647a4164dcde7`. The next direct original vertex-element probe still rejects the four native packed R10G10B10A2 forms. `evidence/virgl-production-readiness/standard-packed-vertex-gap.json` records their original packets and exact source/generated identities at that verified head. Reproduce at that head by importing `decodeStandardSubmission` from `renderer/virgl-command/decoder.mjs` and passing each literal `packetHex` as `Buffer.from(packetHex, 'hex')`; each returns `unsupported-feature`. Original formats 8/123/172/173 are UNORM/USCALED/SSCALED/SNORM with four fields in one four-byte element. Ordered S/high E6-T11d15 adds original native fetch and bounded retained constants; it grants no texture/API/capset or production guest claim.
+
+
+### 2026-10-10 — worker — packed fetch verified; dimensional constants gap
+
+E6-T11d15 is independently verified at `e118e4c2ddf83b2641fcca267025b1a6ef8fdad9`. The verified-head negative `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` pins six original dimensional constant shaders, original opcode27 and resource binding64, complete source/Wasm closure and Mesa26.2.2 source identities. Reproduce by calling the standard bridge on each recorded programs entry, `decodeStandardSubmission` on packetHex, and `computeTransferLayout` on its complete resource record. Dimensional constants reject unsupported-feature; opcode27 rejects unsupported-command; constant storage rejects unsupported-resource. Mesa's actual setter sends opcode27 for any GPU buffer, including slot0, and opcode12 for inline/unbind. Original TGSI brackets select slot first and vector second.
+
+Ordered S/high E6-T11d16 proves actual C/Wasm dimensional uniform-block emission. Original retained uniform-buffer bindings and WebGL buffer-role reuse are separate successors. The primary WebGL2 specification also forbids index/other-data cross-class copies; qualification must use proven storage adaptation, never assume direct GPU copies can cross those classes. No positive capset or actual guest draw follows from this negative observation. The user's production graphics request continues the ordered chain.

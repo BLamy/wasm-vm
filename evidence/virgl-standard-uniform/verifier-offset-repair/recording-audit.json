@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "nativeCases": 1016,
+  "hardwareFrames": 512,
+  "completePixelsIncludingFaults": 214296,
+  "originalStorageRecords": 780,
+  "workerFixtureImports": false,
+  "compilerOracleImports": false,
+  "authority": "isolated-standard-uniform-shader"
+}

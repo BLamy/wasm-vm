@@ -56,8 +56,11 @@ static void source(struct output *o, const struct standard_profile *p,
    const struct tgsi_src_register *r = &s->Register;
    char base[48];
    if (r->File == TGSI_FILE_CONSTANT) {
-      if (r->Indirect) snprintf(base, sizeof(base), "%sconst0[addr0]", p->stage ? "fs" : "vs");
-      else snprintf(base, sizeof(base), "%sconst0[%u]", p->stage ? "fs" : "vs", r->Index);
+      unsigned slot = r->Dimension ? (unsigned)s->Dimension.Index : 0;
+      if (r->Indirect && r->Index)
+         snprintf(base, sizeof(base), "%sconst%u[addr0 + (%d)]", p->stage ? "fs" : "vs", slot, r->Index);
+      else if (r->Indirect) snprintf(base, sizeof(base), "%sconst%u[addr0]", p->stage ? "fs" : "vs", slot);
+      else snprintf(base, sizeof(base), "%sconst%u[%u]", p->stage ? "fs" : "vs", slot, r->Index);
    } else named(p, r->File, r->Index, base);
    const char *lane = "xyzw";
    put(o, "uvec4 %s = (%s).%c%c%c%c;\n", variable, base,
@@ -85,7 +88,14 @@ static void interface(struct output *o, const struct standard_profile *p)
       }
    }
    if (p->broadcast) for (unsigned j = 1; j < 4; ++j) put(o, "layout(location=%u) out vec4 fsout_c%u;\n", j, j);
-   if (p->constants) put(o, "uniform uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", p->constants);
+   if (p->constants) {
+      if (p->buffer_zero) put(o, "layout(std140) uniform Virgl%sConst0 { uvec4 %sconst0[%u]; };\n",
+                              p->stage ? "FS" : "VS", p->stage ? "fs" : "vs", p->constants);
+      else put(o, "uniform uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", p->constants);
+   }
+   for (unsigned j = 1; j <= STANDARD_UNIFORM_SLOTS; ++j) if (p->uniform_counts[j])
+      put(o, "layout(std140) uniform Virgl%sConst%u { uvec4 %sconst%u[%u]; };\n",
+          p->stage ? "FS" : "VS", j, p->stage ? "fs" : "vs", j, p->uniform_counts[j]);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->used_samplers & (1u << j))
       put(o, "uniform highp sampler2D %ssamp%u;\n", p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");

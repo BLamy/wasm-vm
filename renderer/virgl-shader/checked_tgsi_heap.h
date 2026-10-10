@@ -8,7 +8,9 @@
 #ifndef BRIDGE_TGSI_SCRATCH_BYTES
 #define BRIDGE_TGSI_SCRATCH_BYTES 262144u
 #endif
+#define BRIDGE_TGSI_UNIFORM_SCRATCH_BYTES 2097152u
 void bridge_tgsi_scratch_begin(void);
+void bridge_tgsi_scratch_begin_uniform(void);
 void *bridge_tgsi_scratch_malloc(size_t bytes);
 void bridge_tgsi_scratch_free(void *pointer);
 bool bridge_tgsi_scratch_failed(void);

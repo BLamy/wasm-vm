@@ -2282,16 +2282,18 @@ static bool standard_constant_order(struct tgsi_token *tokens)
       if (parser.FullToken.Token.Type == TGSI_TOKEN_TYPE_INSTRUCTION) break;
       if (parser.FullToken.Token.Type != TGSI_TOKEN_TYPE_DECLARATION ||
           parser.FullToken.FullDeclaration.Declaration.File != TGSI_FILE_CONSTANT) continue;
-      if (!first) first = start;
       const struct tgsi_full_declaration *decl = &parser.FullToken.FullDeclaration;
+      if (decl->Declaration.Dimension && decl->Dim.Index2D) continue;
+      if (!first) first = start;
       if (decl->Range.Last || start == first) continue;
-      if (decl->Range.First || decl->Declaration.Dimension || parser.Position - start != 2) {
+      unsigned width = decl->Declaration.Dimension ? 3 : 2;
+      if (decl->Range.First || parser.Position - start != width) {
          ok = false; break;
       }
-      struct tgsi_token zero[2];
-      memcpy(zero, tokens + start, sizeof(zero));
-      memmove(tokens + first + 2, tokens + first, (start - first) * sizeof(*tokens));
-      memcpy(tokens + first, zero, sizeof(zero));
+      struct tgsi_token zero[3];
+      memcpy(zero, tokens + start, width * sizeof(*tokens));
+      memmove(tokens + first + width, tokens + first, (start - first) * sizeof(*tokens));
+      memcpy(tokens + first, zero, width * sizeof(*tokens));
       break;
    }
    tgsi_parse_free(&parser);
@@ -2366,7 +2368,9 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
                                     const struct vrend_fs_shader_info *fragment)
 {
    struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
-   bridge_tgsi_scratch_begin(); upstream_logged = false;
+   if (c->profile.uniform_buffers) bridge_tgsi_scratch_begin_uniform();
+   else bridge_tgsi_scratch_begin();
+   upstream_logged = false;
    if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)
       return error("translation-error", "Checked upstream TGSI parsing failed.");
    if (!standard_constant_order(tokens))
@@ -2396,9 +2400,24 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
    uint32_t declared_samplers = 0;
    for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i)
       if (c->profile.declared[STD_SAMP][i]) declared_samplers |= 1u << i;
+   uint32_t declared_uniforms = 0;
+   for (unsigned i = 1; i <= STANDARD_UNIFORM_SLOTS; ++i)
+      if (c->profile.uniform_counts[i]) declared_uniforms |= 1u << i;
    if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||
-       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers)
+       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers ||
+       c->info.ubo_used_mask != declared_uniforms || c->info.ubo_indirect)
       return error("translation-error", "Standard conversion failed or metadata/output bounds disagree.");
+   /* The pinned public info exposes a mask, but not the per-bank sizes. Check
+    * those independently emitted declarations before producing word storage. */
+   for (unsigned slot = 1; slot <= STANDARD_UNIFORM_SLOTS; ++slot) if (c->profile.uniform_counts[slot]) {
+      char declaration[128]; const char *prefix = c->profile.stage ? "fs" : "vs";
+      snprintf(declaration, sizeof(declaration), "uniform %subo%u { vec4 %subo%ucontents[%u]; };\n",
+               prefix, slot, prefix, slot, c->profile.uniform_counts[slot]);
+      unsigned matches = 0;
+      for (int i = 0; i < c->shader.num_strings; ++i)
+         matches += strstr(c->shader.strings[i].buf, declaration) != NULL;
+      if (matches != 1) return error("translation-error", "Upstream uniform bank size disagrees.");
+   }
    const char *emitted = standard_emit(&c->profile, tokens, &c->standard_source);
    return emitted ? error(emitted, "Standard word-storage emission failed.") : NULL;
 }
@@ -2464,12 +2483,14 @@ static void standard_result(const struct standard_conversion *c)
          else append("%c", ch);
       }
    }
-   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-standard-gles3-v1\",\"stage\":\"%s\",\"inputs\":", p->stage ? "fragment" : "vertex");
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
+          p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
+          p->stage ? "fragment" : "vertex");
    standard_io_json(p, STD_IN); append(",\"outputs\":"); standard_io_json(p, STD_OUT);
    append(",\"attributes\":"); if (p->stage) append("[]"); else standard_io_json(p, STD_IN);
    append(",\"systemValues\":"); standard_io_json(p, STD_SV);
    append(",\"uniforms\":[");
-   if (p->constants) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%u,\"encoding\":\"raw-32bit-words\"}", p->stage ? "fs" : "vs", p->constants);
+   if (p->constants && !p->buffer_zero) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%u,\"encoding\":\"raw-32bit-words\"}", p->stage ? "fs" : "vs", p->constants);
    append("],\"samplers\":["); bool comma = false;
    for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->used_samplers & (1u << i)) {
       append("%s{\"index\":%u,\"name\":\"%ssamp%u\",\"type\":\"sampler2D\"}", comma ? "," : "", i, p->stage ? "fs" : "vs", i);
@@ -2485,7 +2506,20 @@ static void standard_result(const struct standard_conversion *c)
       point_coord |= p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD;
    if (!p->stage) append("{\"name\":\"wv_point_size\",\"type\":\"vec2\",\"semantic\":\"POINT_SIZE\"}");
    else if (point_coord) append("{\"name\":\"wv_point_coord_y\",\"type\":\"float\",\"semantic\":\"POINT_COORD_Y\"}");
-   append("],\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
+   append("]");
+   if (p->uniform_buffers) {
+      append(",\"guestUniformBlocks\":["); bool comma = false;
+      for (unsigned i = 0; i <= STANDARD_UNIFORM_SLOTS; ++i) {
+         unsigned count = i ? p->uniform_counts[i] : p->buffer_zero ? p->constants : 0;
+         if (!count) continue;
+         append("%s{\"name\":\"Virgl%sConst%u\",\"stage\":\"%s\",\"slot\":%u,\"byteLength\":%u,\"encoding\":\"raw-32bit-words\",\"members\":[{\"name\":\"%sconst%u\",\"type\":\"uvec4[]\",\"count\":%u,\"offset\":0,\"arrayStride\":16}]}",
+                comma ? "," : "", p->stage ? "FS" : "VS", i, p->stage ? "fragment" : "vertex",
+                i, count * 16, p->stage ? "fs" : "vs", i, count);
+         comma = true;
+      }
+      append("]");
+   }
+   append(",\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
 }
 static const char *standard_input(struct standard_profile *p, const char *text, size_t length, char *owned)
 {
@@ -2499,12 +2533,12 @@ static const char *standard_input(struct standard_profile *p, const char *text, 
    if (!code) for (size_t i = 0; i < length; ++i) if (owned[i] == '\r') owned[i] = ' ';
    return code ? error(code, "TGSI is outside the bounded standard GLES3 grammar.") : NULL;
 }
-const char *bridge_translate_standard(int stage, const char *text, size_t length)
+static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers)
 {
    begin_response(false);
    if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
    char owned[BRIDGE_MAX_TEXT + 1];
-   struct standard_profile p = {.stage = stage};
+   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers};
    const char *failed = standard_input(&p, text, length, owned);
    if (failed) return response;
    struct standard_conversion *c = calloc(1, sizeof(*c));
@@ -2516,23 +2550,37 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length
    if (response_overflow) return error("translation-error", "Standard JSON output exceeded its bound.");
    return response;
 }
+const char *bridge_translate_standard(int stage, const char *text, size_t length)
+{
+   return standard_stage(stage, text, length, false);
+}
+const char *bridge_translate_standard_uniform(int stage, const char *text, size_t length)
+{
+   return standard_stage(stage, text, length, true);
+}
 static const char *standard_pair(const char *vertex_text, size_t vertex_length,
                                 const char *fragment_text, size_t fragment_length,
                                 uint32_t signed_inputs, uint32_t unsigned_inputs,
-                                uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs)
+                                uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                bool uniform_buffers, uint32_t buffer_zero_mask)
 {
    begin_response(true);
    if ((signed_inputs | unsigned_inputs | packed_signed_inputs | packed_normalized_inputs) > 0xffffu ||
        (signed_inputs & unsigned_inputs) || ((signed_inputs | unsigned_inputs) & packed_signed_inputs) ||
-       (packed_normalized_inputs & ~packed_signed_inputs))
+       (packed_normalized_inputs & ~packed_signed_inputs) || buffer_zero_mask > 3u)
       return error("invalid-input", "Vertex format masks must be compatible 16-bit masks.");
    char owned[2][BRIDGE_MAX_TEXT + 1];
-   struct standard_profile profiles[2] = {{.stage = 0}, {.stage = 1}};
+   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers},
+                                         {.stage = 1, .uniform_buffers = uniform_buffers}};
    const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
    if (!failed) failed = standard_input(&profiles[1], fragment_text, fragment_length, owned[1]);
    if (!failed && !standard_match(&profiles[0], &profiles[1]))
       failed = error("incompatible-interface", "Standard fragment inputs require matching declared vertex components.");
    if (failed) return response;
+   for (unsigned i = 0; i < 2; ++i) if (buffer_zero_mask & (1u << i)) {
+      if (!profiles[i].constants) return error("invalid-input", "Buffered slot zero requires a declared constant bank.");
+      profiles[i].buffer_zero = true;
+   }
    uint32_t declared_inputs = 0;
    for (unsigned i = 0; i < 16; ++i)
       if (profiles[0].declared[STD_IN][i]) declared_inputs |= 1u << i;
@@ -2567,14 +2615,14 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,
 const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
                                            const char *fragment_text, size_t fragment_length)
 {
-   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0);
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, 0);
 }
 const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,
                                                  const char *fragment_text, size_t fragment_length,
                                                  uint32_t signed_inputs, uint32_t unsigned_inputs)
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
-                        signed_inputs, unsigned_inputs, 0, 0);
+                        signed_inputs, unsigned_inputs, 0, 0, false, 0);
 }
 const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_text, size_t vertex_length,
                                                           const char *fragment_text, size_t fragment_length,
@@ -2582,5 +2630,15 @@ const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_tex
                                                           uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs)
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
-                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs);
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, 0);
+}
+const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size_t vertex_length,
+                                                   const char *fragment_text, size_t fragment_length,
+                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                   uint32_t buffer_zero_mask)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, buffer_zero_mask);
 }

@@ -1,0 +1,73 @@
+{
+  "status": "passed",
+  "recordedSourceHead": "01988ea2625edab1669efefec3b7daecd52d64df",
+  "gates": [
+    {
+      "run": "hot",
+      "family": "compiler-retained",
+      "cases": 669,
+      "hardwareFrames": 129,
+      "faults": 78,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "8411bdd471f6a4ceb2e6144f2576a6109b872d12e5697dcdfbdc68285c059c3e",
+      "allocationSha256": "0b52a6f8b08ea339c80d1e6f2baa165bd3db217bd14e0f1528f2507508098b65",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    },
+    {
+      "run": "hot",
+      "family": "retained-packed",
+      "cases": 59,
+      "hardwareFrames": 214,
+      "faults": 40,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "0b51c6cd04b7939b20731d926f183bcf76edb42957cdce6a339868eece31c7e7",
+      "allocationSha256": "b89ba6a10b77a18fcbde7f1807d65389af2c173752afd70c12d465e45424da5c",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    },
+    {
+      "run": "hot",
+      "family": "retained-integer",
+      "cases": 48,
+      "hardwareFrames": 348,
+      "faults": 40,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "f7d675a70fd41c404a228d42447d0b2b9c2982241cef80bf6d32adbb29db0229",
+      "allocationSha256": "47ad5c5a615c675167b245f4f74682a134d1aa6de4f4a5ab2d15ff99f684a6a8",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    },
+    {
+      "run": "cold",
+      "family": "compiler-retained",
+      "cases": 669,
+      "hardwareFrames": 129,
+      "faults": 78,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "8411bdd471f6a4ceb2e6144f2576a6109b872d12e5697dcdfbdc68285c059c3e",
+      "allocationSha256": "0b52a6f8b08ea339c80d1e6f2baa165bd3db217bd14e0f1528f2507508098b65",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    },
+    {
+      "run": "cold",
+      "family": "retained-packed",
+      "cases": 59,
+      "hardwareFrames": 214,
+      "faults": 40,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "0b51c6cd04b7939b20731d926f183bcf76edb42957cdce6a339868eece31c7e7",
+      "allocationSha256": "b89ba6a10b77a18fcbde7f1807d65389af2c173752afd70c12d465e45424da5c",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    },
+    {
+      "run": "cold",
+      "family": "retained-integer",
+      "cases": 48,
+      "hardwareFrames": 348,
+      "faults": 40,
+      "nativeSanitizedIdentical": true,
+      "nativeSha256": "f7d675a70fd41c404a228d42447d0b2b9c2982241cef80bf6d32adbb29db0229",
+      "allocationSha256": "47ad5c5a615c675167b245f4f74682a134d1aa6de4f4a5ab2d15ff99f684a6a8",
+      "oldAbiBoundary": "held from predecessor code/dependency/evidence identity plus affected exact-head re-execution"
+    }
+  ],
+  "productionScope": "no resources/API/capsets/guest/demo changes"
+}

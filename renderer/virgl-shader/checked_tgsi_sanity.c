@@ -9,17 +9,19 @@
 
 static unsigned char *scratch;
 static size_t scratch_used;
+static size_t scratch_budget = BRIDGE_TGSI_SCRATCH_BYTES;
 static bool scratch_failed;
 static jmp_buf exhausted;
 
-void bridge_tgsi_scratch_begin(void) { scratch_failed = false; }
+void bridge_tgsi_scratch_begin(void) { scratch_failed = false; scratch_budget = BRIDGE_TGSI_SCRATCH_BYTES; }
+void bridge_tgsi_scratch_begin_uniform(void) { scratch_failed = false; scratch_budget = BRIDGE_TGSI_UNIFORM_SCRATCH_BYTES; }
 bool bridge_tgsi_scratch_failed(void) { return scratch_failed; }
 void *bridge_tgsi_scratch_malloc(size_t bytes)
 {
    if (!scratch) return malloc(bytes);
    const size_t alignment = _Alignof(max_align_t);
    size_t aligned = (scratch_used + alignment - 1) / alignment * alignment;
-   if (aligned > BRIDGE_TGSI_SCRATCH_BYTES || bytes > BRIDGE_TGSI_SCRATCH_BYTES - aligned) {
+   if (aligned > scratch_budget || bytes > scratch_budget - aligned) {
       scratch_failed = true;
       longjmp(exhausted, 1);
    }
@@ -44,7 +46,7 @@ bool tgsi_sanity_check(const struct tgsi_token *tokens)
 {
    scratch_failed = false;
    scratch_used = 0;
-   scratch = malloc(BRIDGE_TGSI_SCRATCH_BYTES);
+   scratch = malloc(scratch_budget);
    if (!scratch) { scratch_failed = true; return false; }
    volatile bool valid = false;
    if (!setjmp(exhausted)) valid = upstream_tgsi_sanity_check(tokens);

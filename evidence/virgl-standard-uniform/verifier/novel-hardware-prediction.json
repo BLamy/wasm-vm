@@ -1,0 +1,6 @@
+{
+  "prediction": "Before independent native draws: unsigned high attribute15 yields ADDR0=1023 in VS; original offset-1023 selects VS slot12 vector0. FS base0 plus1023 selects last vector1023. XOR those raw words with last vector511 of each original slot0 bank. Across3 independent seeds, all4 slot0 masks and all4 byte shifts, every8x8 RGBA32F pixel equals independently computed four byte lanes. Native user blocks remain16384 bytes, slot0 blocks8192 bytes, all stride16/offset0; reversed stage binding order and nonzero range offsets cannot alter pixels. GPU storage preserves original snapshots after caller-array mutation. Sabotage of expected lane0 after real fence must reject original assertion, with cleanup still complete.",
+  "createdUtc": "2026-10-10T12:49:07.373805+00:00",
+  "beforeHardwareRun": true,
+  "refinedBeforeFinalRun": "Compose VS UADD, FS XOR then UADD to distinguish bank ordering and prevent XOR cancellation of the independent seeds. Expected unsigned arithmetic: ((VS12[0]+VS0[511]) XOR FS12[1023])+FS0[511] modulo2^32, projected by each byte shift."
+}

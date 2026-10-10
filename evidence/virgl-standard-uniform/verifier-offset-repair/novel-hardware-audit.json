@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "records": [
+    {
+      "record": "novel-final/report.json",
+      "sha256": "979c6afbead505d84b5b37b07950601e0fdfd88ac3a2e340deb3681be84e5a9c",
+      "frames": 64,
+      "completePixels": 256,
+      "nativeExecutableSha256": "9c264e4aaa94930a14911ef48e838f84c8b0316950b1b06fa29d9b7d4a738e63",
+      "headed": true,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "screenshot": {
+        "path": "browser.png",
+        "sha256": "871d6d3d741dc1e6a59fa3545973ed73e363b2044c8db7d362edae89dab0dbb9"
+      }
+    },
+    {
+      "record": "sabotage-final/report.json",
+      "sha256": "9c90756550ff7b579eb0f0de29b8fed252f2b2fdaa39a54215748cecb776977d",
+      "frames": 1,
+      "completePixels": 4,
+      "nativeExecutableSha256": "9c264e4aaa94930a14911ef48e838f84c8b0316950b1b06fa29d9b7d4a738e63",
+      "headed": true,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "screenshot": {
+        "path": "failure.png",
+        "sha256": "929fd3e2e665258876383884efa2b96d739f8d90f051f277519ce9af08b726c0"
+      }
+    }
+  ],
+  "completeHealthyPixels": 256,
+  "completeHealthyDraws": 64,
+  "afterFenceSabotageRejected": true,
+  "workerFixtureImports": false,
+  "independentPythonRawWordOracle": true,
+  "guestExecution": false,
+  "productionAuthority": false
+}

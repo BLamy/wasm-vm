@@ -54,8 +54,52 @@ static unsigned limit(const struct standard_profile *p, unsigned f)
    default: return 0;
    }
 }
-struct operand { unsigned file, first, last, mask; bool indirect; };
+struct operand { unsigned file, first, last, mask, slot; bool indirect, range; };
 enum operand_kind { DECL, DST, SRC };
+/* The first bracket is a vector for plain CONST, or the bank for dimensional
+ * CONST. The pinned parser puts the second bracket in Register.Index. */
+static bool constant_index(const char **s, const struct standard_profile *p,
+                           struct operand *r, enum operand_kind kind, unsigned maximum)
+{
+   uint32_t n;
+   r->first = r->last = 0; r->indirect = r->range = false;
+   if (kind == SRC && word(s, "ADDR")) {
+      if (!p->declared[STD_ADDR][0] || !take(s, '[') || !number(s, 0, &n) || !take(s, ']') ||
+          !take(s, '.') || !word(s, "x")) return false;
+      r->indirect = true;
+      bool positive = take(s, '+');
+      if (positive || take(s, '-')) {
+         /* Original Index is a signed16 relative offset, independent of the
+          * bank extent. parse_int consumes sign and digits as one token. */
+         if (!isdigit((unsigned char)**s) || !number(s, positive ? 32767 : 32768, &n)) return false;
+         r->first = r->last = n; /* magnitude; original parser owns the sign */
+      }
+   } else {
+      if (!number(s, maximum, &n)) return false;
+      r->first = r->last = n;
+      spaces(s);
+      if (!strncmp(*s, "..", 2)) {
+         if (kind != DECL) return false;
+         r->range = true;
+         *s += 2;
+         if (!number(s, maximum, &n) || n < r->first) return false;
+         r->last = n;
+      }
+   }
+   return take(s, ']');
+}
+static bool constant_indices(const char **s, const struct standard_profile *p,
+                             struct operand *r, enum operand_kind kind)
+{
+   if (!constant_index(s, p, r, kind, STANDARD_UNIFORM_VECTORS - 1)) return false;
+   if (take(s, '[')) {
+      if (r->indirect || r->range || r->first > STANDARD_UNIFORM_SLOTS) return false;
+      r->slot = r->first;
+      return constant_index(s, p, r, kind,
+                            (r->slot ? STANDARD_UNIFORM_VECTORS : STANDARD_CONSTANTS) - 1);
+   }
+   return r->indirect || r->last < STANDARD_CONSTANTS;
+}
 static bool reg(const char **at, const struct standard_profile *p, struct operand *r, enum operand_kind kind)
 {
    const char **s = at;
@@ -65,22 +109,26 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan
    if (f == STD_FILES || !take(s, '[')) return false;
    *r = (struct operand){.file = f, .mask = 15};
    uint32_t n;
-   if (kind == SRC && f == STD_CONST && word(s, "ADDR")) {
-      if (!p->declared[STD_ADDR][0] || !take(s, '[') || !number(s, 0, &n) || !take(s, ']') ||
-          !take(s, '.') || !word(s, "x")) return false;
-      r->indirect = true;
+   if (f == STD_CONST && p->uniform_buffers) {
+      if (!constant_indices(s, p, r, kind)) return false;
    } else {
-      if (!number(s, limit(p, f) - 1, &n)) return false;
-      r->first = r->last = n;
-      spaces(s);
-      if (!strncmp(*s, "..", 2)) {
-         if (kind != DECL || (f != STD_TEMP && f != STD_CONST)) return false;
-         *s += 2;
-         if (!number(s, limit(p, f) - 1, &n) || n < r->first) return false;
-         r->last = n;
+      if (kind == SRC && f == STD_CONST && word(s, "ADDR")) {
+         if (!p->declared[STD_ADDR][0] || !take(s, '[') || !number(s, 0, &n) || !take(s, ']') ||
+             !take(s, '.') || !word(s, "x")) return false;
+         r->indirect = true;
+      } else {
+         if (!number(s, limit(p, f) - 1, &n)) return false;
+         r->first = r->last = n;
+         spaces(s);
+         if (!strncmp(*s, "..", 2)) {
+            if (kind != DECL || (f != STD_TEMP && f != STD_CONST)) return false;
+            *s += 2;
+            if (!number(s, limit(p, f) - 1, &n) || n < r->first) return false;
+            r->last = n;
+         }
       }
+      if (!take(s, ']')) return false;
    }
-   if (!take(s, ']')) return false;
    if (take(s, '.')) {
       unsigned count = 0, last = 0; r->mask = 0;
       spaces(s);
@@ -144,6 +192,14 @@ static bool declaration(const char **s, struct standard_profile *p)
       if (!take(s, ',') || !word(s, "2D") || !take(s, ',') || !word(s, "FLOAT")) return false;
    } else if (r.mask != 15) return false;
    if (!ended(s)) return false;
+   if (r.file == STD_CONST && r.slot) {
+      /* Pinned vrend permits one complete declaration per user bank. */
+      if (p->uniform_counts[r.slot]) return false;
+      for (unsigned i = r.first; i <= r.last; ++i)
+         p->uniform_declared[r.slot - 1][i / 32] |= 1u << (i % 32);
+      p->uniform_counts[r.slot] = (uint16_t)(r.last + 1);
+      return true;
+   }
    for (unsigned i = r.first; i <= r.last; ++i) {
       if (p->declared[r.file][i]) return false;
       p->declared[r.file][i] = (uint8_t)r.mask;
@@ -267,8 +323,10 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
       if (absolute && source_type != TGSI_TYPE_FLOAT && source_type != TGSI_TYPE_UNTYPED) return false;
       struct operand r;
       if (!reg(s, p, &r, i < info->num_dst ? DST : SRC) || (absolute && !take(s, '|'))) return false;
-      if (r.indirect) { if (!p->constants) return false; }
-      else if (!p->declared[r.file][r.first]) return false;
+      if (r.indirect) { if (!(r.slot ? p->uniform_counts[r.slot] : p->constants)) return false; }
+      else if (r.file == STD_CONST && r.slot) {
+         if (!(p->uniform_declared[r.slot - 1][r.first / 32] & (1u << (r.first % 32)))) return false;
+      } else if (!p->declared[r.file][r.first]) return false;
       if (i < info->num_dst) {
          if (r.file != STD_TEMP && r.file != STD_OUT && r.file != STD_ADDR) return false;
          if (r.file == STD_ADDR && op != TGSI_OPCODE_UARL && op != TGSI_OPCODE_ARL) return false;

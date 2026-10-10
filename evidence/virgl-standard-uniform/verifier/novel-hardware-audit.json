@@ -1,0 +1,77 @@
+{
+  "status": "passed",
+  "frames": 48,
+  "pixels": 3072,
+  "seeds": [
+    323459790,
+    4027431614,
+    1371602926
+  ],
+  "distinctSeedPixels": true,
+  "nativeSourceEquality": true,
+  "reversedStageBindings": true,
+  "callerMutationRetainedHardwareWords": true,
+  "fullLimitUserStorageBytes": 16384,
+  "bufferedSlot0Bytes": 8192,
+  "headerAttribute15UnsignedMask": 32768,
+  "zeroVariants": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "saboteur": {
+    "status": "correctly-failed",
+    "fenced": {
+      "submitted": true,
+      "fenced": true,
+      "status": 37148,
+      "waits": 4
+    },
+    "cleaned": true,
+    "mismatches": [
+      {
+        "word": 0,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 4,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 8,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 12,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 16,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 20,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 24,
+        "expected": 56,
+        "actual": 57
+      },
+      {
+        "word": 28,
+        "expected": 56,
+        "actual": 57
+      }
+    ],
+    "source": "sabotage-final/report.json"
+  },
+  "promotionDeferred": "Task semantic refutation remains; retain replayable critic oracle for repair, no permanent suite promotion until correctness holds."
+}
