@@ -3,7 +3,7 @@ id: E6-T11d24
 epic: 6
 title: Execute original texture operations through retained image views
 priority: 525.027039000366
-status: pending
+status: in-progress
 depends_on: [E6-T11d23]
 estimate: S
 risk: high
@@ -39,3 +39,7 @@ Predict original operation/swizzle/query results and retained generations before
 The isolated D23 compiler's twenty negative predecessor inputs and its native/sanitized/Wasm/GPU proof do not activate an image consumer. Five complete selected original TXL/TXF/TXD/TXB/TXQ pairs produce the distinct profile, but the unchanged original uniform consumer rejects their metadata and pairs with unknown/accessor-property errors. The preparation record binds complete inputs, owned compiler outputs and runtime/generated source digests. Exact repro: pass each `response.fragment.metadata` to `parseStandardUniformShaderMetadata(..., 'fragment')`, and each `response`/`selectors` to `normalizeStandardUniformShaderPair`.
 
 D23 is independently verified at `71853cd302a2a39cd8f5af001fd8ad1b791b7da6` and its exclusive lease is released. The five original negative probes and all source digests were reproduced at that exact predecessor. Temporary prototypes remain outside the repository. The user's instruction continues the ordered production graphics chain; actual API/capsets, worker/scanout, guest Mesa/desktop and live deployment remain later gates.
+
+### 2026-10-10 — worker — active retained original texture boundary
+
+Verified D23 at `71853cd302a2a39cd8f5af001fd8ad1b791b7da6` released all repository/native proof leases. The negative consumer probe was reproduced before activation. This sole S/high task proceeds on `codex/virgl-standard-texture-consumer`; the original compiler, storage, cache and wire boundaries carry unchanged exact evidence.
