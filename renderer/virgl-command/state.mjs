@@ -131,8 +131,11 @@ export function createVirglStandardAsyncRenderer(options) {
 /** Host capabilities are trusted and non-reentrant. */
 function createRenderer(options, drawing, asynchronous = false, standard = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
+    const primitiveAssembly = standard ? config.primitiveAssembly ?? "native" : "native";
+    require(["native", "lists"].includes(primitiveAssembly), "invalid-input", "Unknown standard primitive assembly selection.");
+    const assemblyLists = primitiveAssembly === "lists";
     require(gl && typeof gl.createVertexArray === "function" && typeof gl.uniform4uiv === "function", "invalid-input", "A WebGL2 context is required.");
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
       bindings && typeof bindings.resolve === "function" && shaderBridge && typeof shaderBridge.translate === "function", "invalid-input", "Resource and shader capabilities are required.");
@@ -179,6 +182,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const error = gl.getError(); require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
     };
     check();
+    const provoking = assemblyLists ? gl.getExtension("WEBGL_provoking_vertex") : null;
+    require(!assemblyLists || provoking && typeof provoking.provokingVertexWEBGL === "function" &&
+      provoking.LAST_VERTEX_CONVENTION_WEBGL === 0x8e4e,
+    "unsupported-host", "Native list assembly requires an explicit last-vertex convention.");
     const maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
     const maxElementIndex = standard ? gl.getParameter(gl.MAX_ELEMENT_INDEX) : null;
     require(!standard || Number.isSafeInteger(maxElementIndex) && maxElementIndex >= 0 && maxElementIndex <= 0xffffffff,
@@ -846,6 +853,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         gl.viewport(...viewportRectangle(state.viewport));
         gl.depthRange(translate[2] - scale[2], translate[2] + scale[2]);
       } else { gl.viewport(0, 0, 0, 0); gl.depthRange(0, 1); }
+      if (plan && assemblyLists) provoking.provokingVertexWEBGL(provoking.LAST_VERTEX_CONVENTION_WEBGL);
       check();
       return stateKey;
     };
@@ -946,18 +954,50 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
       const stateKey = restore(sub, plan, constantAttributes);
-      const mode = gl[DRAW_MODES[fields.mode]];
+      const assembled = assemblyLists && [2, 6].includes(fields.mode);
+      const nativeMode = assembled ? fields.mode === 2 ? 1 : 4 : fields.mode;
+      const sourceIndex = i => !indices ? fields.start + i : indexSize === 1 ? indices.getUint8(i) :
+        indexSize === 2 ? indices.getUint16(i * 2, true) : indices.getUint32(i * 4, true);
+      const isRestart = value => fields.primitiveRestart && value === fields.restartIndex;
+      let nativeCount = fields.count;
+      if (assembled) {
+        nativeCount = 0; let length = 0;
+        for (let i = 0; i <= fields.count; i++) {
+          if (i === fields.count || isRestart(sourceIndex(i))) {
+            nativeCount += fields.mode === 2 ? length >= 2 ? length * 2 : 0 : Math.max(0, length - 2) * 3;
+            length = 0;
+          } else length++;
+        }
+        require(nativeCount <= fields.count * 3, "limit-exceeded", "Expanded native primitive work exceeds original source bound.");
+        normalize = true;
+      }
+      const mode = gl[DRAW_MODES[nativeMode]], nativeIndexed = fields.indexed || assembled;
       const nativeIndexSize = normalize ? 4 : indexSize, nativeIndexOffset = normalize ? 0 : indexOffset;
       const indexType = nativeIndexSize === 1 ? gl.UNSIGNED_BYTE : nativeIndexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
+      const originalIndexBuffer = normalize ? gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) : null;
       try {
         if (normalize) {
-          const byteLength = fields.count * 4;
+          const byteLength = nativeCount * 4;
           require(standard && job && job.normalizedIndices.length < drawLimits.drawsPerSubmission &&
-            byteLength <= drawLimits.indicesPerSubmission * 4 - job.normalizedBytes,
+            byteLength <= drawLimits.indicesPerSubmission * (assemblyLists ? 12 : 4) - job.normalizedBytes,
           "limit-exceeded", "Owned normalized index budget exceeded.");
           job.normalizationScratchBytes = byteLength;
-          const words = new Uint32Array(fields.count);
-          for (let i = 0; i < words.length; i++) {
+          const words = new Uint32Array(nativeCount);
+          if (assembled) {
+            let first = 0, previous = 0, length = 0, out = 0;
+            for (let i = 0; i <= fields.count; i++) {
+              if (i === fields.count || isRestart(sourceIndex(i))) {
+                if (fields.mode === 2 && length >= 2) { words[out++] = previous; words[out++] = first; }
+                length = 0;
+              } else {
+                const value = sourceIndex(i);
+                if (length === 0) first = value;
+                else if (fields.mode === 2) { words[out++] = previous; words[out++] = value; }
+                else if (length >= 2) { words[out++] = first; words[out++] = previous; words[out++] = value; }
+                previous = value; length++;
+              }
+            }
+          } else for (let i = 0; i < words.length; i++) {
             const offset = i * indexSize, value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);
             words[i] = fields.primitiveRestart && value === fields.restartIndex ? 0xffffffff : value;
           }
@@ -969,9 +1009,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
           gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, words, gl.STREAM_DRAW); check();
         }
-        if (fields.indexed) {
-          if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, nativeIndexOffset, instances);
-          else gl.drawElements(mode, fields.count, indexType, nativeIndexOffset);
+        if (nativeIndexed) {
+          if (instances > 1) gl.drawElementsInstanced(mode, nativeCount, indexType, nativeIndexOffset, instances);
+          else gl.drawElements(mode, nativeCount, indexType, nativeIndexOffset);
         } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
         else gl.drawArrays(mode, fields.start, fields.count);
       } finally {
@@ -979,7 +1019,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           job.normalizationScratchBytes = 0;
           // Detach from the VAO before any yield; native storage remains owned
           // until the job's final completion/drain or explicit disposal.
-          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexStorage.storage.buffer);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, originalIndexBuffer);
         }
       }
       work.drawCalls++;
@@ -990,7 +1030,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
         ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize,
           primitiveRestart: fields.primitiveRestart, restartIndex: fields.restartIndex, validIndexCount, restartCount,
-          normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? fields.count * 4 : 0 } : {}),
+          normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? nativeCount * 4 : 0,
+          ...(assemblyLists ? { primitiveAssembly, assembled, nativeMode, nativeCount, nativeIndexed, nativeVertexWork: nativeCount * instances } : {}) } : {}),
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
@@ -1312,7 +1353,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               job.phase = "waiting-attributes"; return jobStatus(job, "waiting-gpu");
             }
             if (!plan.index) {
-              issueDraw(plan, null, job.submission); advanceJob(job); budget--; continue;
+              issueDraw(plan, null, job.submission, null, job); advanceJob(job); budget--; continue;
             }
             require(plan.indexByteLength <= jobLimits.transferBytes, "limit-exceeded", "Index staging exceeds job byte limit.");
             const read = unwrap(asyncAccess.beginStorageRead(plan.index.lease,
@@ -1404,7 +1445,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const selected = id === undefined ? [...contexts.values()] : [contexts.get(id)];
         return success({ profile, disposed, limits, cacheLimits, hostUniformComponents, work: { ...work }, caches: cacheInspection(),
           debug: { activeFrame: activeFrame?.number ?? null, lastFrame: lastFrame?.number ?? null, complete: lastFrame?.complete ?? activeFrame?.complete ?? null },
-          ...(drawing ? { drawLimits } : {}),
+          ...(drawing ? { drawLimits } : {}), ...(standard ? { primitiveAssembly } : {}),
           ...(asynchronous ? { jobLimits, jobs: { active: activeJob === null ? 0 : 1, status: activeJob?.phase ?? "idle",
             appliedCommands: activeJob?.index ?? 0, commandCount: activeJob?.commands.length ?? 0,
             draws: activeJob?.submission.draws.length ?? 0,
