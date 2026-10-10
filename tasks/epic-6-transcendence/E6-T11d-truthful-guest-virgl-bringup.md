@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16]
-blocked_on: E6-T11d16
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17]
+blocked_on: E6-T11d17
 estimate: S
 risk: high
 capstone: false
@@ -307,3 +307,8 @@ E6-T11d14 is independently verified at `23bf410f9e152d53e83e674717c647a4164dcde7
 E6-T11d15 is independently verified at `e118e4c2ddf83b2641fcca267025b1a6ef8fdad9`. The verified-head negative `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` pins six original dimensional constant shaders, original opcode27 and resource binding64, complete source/Wasm closure and Mesa26.2.2 source identities. Reproduce by calling the standard bridge on each recorded programs entry, `decodeStandardSubmission` on packetHex, and `computeTransferLayout` on its complete resource record. Dimensional constants reject unsupported-feature; opcode27 rejects unsupported-command; constant storage rejects unsupported-resource. Mesa's actual setter sends opcode27 for any GPU buffer, including slot0, and opcode12 for inline/unbind. Original TGSI brackets select slot first and vector second.
 
 Ordered S/high E6-T11d16 proves actual C/Wasm dimensional uniform-block emission. Original retained uniform-buffer bindings and WebGL buffer-role reuse are separate successors. The primary WebGL2 specification also forbids index/other-data cross-class copies; qualification must use proven storage adaptation, never assume direct GPU copies can cross those classes. No positive capset or actual guest draw follows from this negative observation. The user's production graphics request continues the ordered chain.
+
+
+### 2026-10-10 — worker — uniform compiler verified; original retained binding gap
+
+E6-T11d16 is independently verified at `3ec060c46a9743a62306ae409d0bf1a548d4a616`, with its exclusive lease released and verdict published in open PR492. The historical standard decoder and resource factory still reject original opcode27 and target0/format64/bind64. Reproduce by decoding little-endian dwords `[0x5001b,0,1,16,16384,777]` through `decodeStandardSubmission`, or submitting the pinned uniform-buffer metadata in `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` to `computeTransferLayout`; command/resource runtime is unchanged through D16. Ordered S/high E6-T11d17 connects this one original packet-to-native retained range boundary. Element-array/data reuse, full GLES3/API/caps, actual RISC-V guest Mesa/kmscube/desktop, production worker scanout and live demo remain later qualification; no positive caps or guest rendering is claimed here.

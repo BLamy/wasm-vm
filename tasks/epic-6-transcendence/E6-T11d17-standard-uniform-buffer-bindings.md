@@ -1,0 +1,43 @@
+---
+id: E6-T11d17
+epic: 6
+title: Bind original retained constant buffers to native uniform ranges
+priority: 525.02703900036
+status: pending
+depends_on: [E6-T11d16]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Boundary
+
+One original packet-to-native-range boundary using the independently verified D16 compiler. Add explicitly host-selected resource, decoder and async renderer facets; preserve the admission and public shapes of existing factories. Original buffer target0/format64 accepts constant binding64 and vertex/constant80, and original vertex16 may serve uniform data. Creation binding is a hint within the WebGL other-data class. Element-array/data aliasing is an ordered successor; no forbidden cross-class copyBufferSubData.
+
+Original SET_UNIFORM_BUFFER27 is exactly five dwords: stage,index,offset,length,resource. Nonzero VS/FS bindings cover slots0..12, with nonempty ranges inside original allocation. Original resource0 unbind ignores incoming offset/length and canonicalizes both tozero. Empty inactive-stage/slot resets remain allowed within original15-slot reset limits. SET_CONSTANT_BUFFER12 inline/unbind clears the resource binding at that stage/slot; active inline words remain VS/FS slot0. Preserve all original words and byte offsets.
+
+Each subcontext owns independent retained leases for both stages13 banks. Public unref, detach and numeric ID reuse preserve the exact original native allocation; only explicit rebinding adopts a replacement. Bounded host-only range snapshots retain allocation/context/lease/revision/range while index and constant-attribute reads suspend. Reject released leases, destroyed/reused contexts and successful/failed uploads before native draws. Backing-only changes cannot affect GPU words. Submitted snapshots become bounded allocation holds until final draw fences/error drains/cancellation/disposal; later ordered uploads are legal. Share the existing ticket budget, deduplicate submitted allocation holds and unwind every partial capture/preparation failure exactlyonce. No CPU uniform mirror, shader execution or numerical certificates.
+
+Derive bufferZeroMask only from original bound state and declared stage-zero banks. Compose all four input-format masks and full sources/interface/subcontext identities in translation/program/draw-plan keys. Use both C-emitted stage bodies and validate canonical metadata after slot-zero promotion. System VirglBlock656 stays separately owned at binding0; guest banks get unique bindings1..26. Require actual limits for14VS/13FS/27combined blocks/bindings,16KiB blocks and query native offset alignment. Reflect complete native block/member type/count/stride/offset/size/stage references and reject unaccounted native blocks/uniforms. Missing referenced banks and short/unaligned/outside ranges fail before draw. Native-eliminated declarations need no backing. Retained but unreferenced native blocks may share bounded renderer-owned zero storage when the guest has no binding, justified by actual native draw behavior and never by source rewriting. Restore original ranges after host dirt, transfers, context switches and cache eviction.
+
+## Deterministic acceptance
+
+`make verify-E6-T11d17`
+
+Record original resource metadata/transfers/op27/inline12 and actual native draw packets through fixed-memory C/Wasm output. Compare full original uploaded and read GPU words, native indexed UBO ranges, complete member/block reflection and independently predicted full pixels. Exercise both stages slots0/1/12, first/last vectors, dynamic compensated signed16 offsets, all26 guest banks plus system simultaneously using13 shared stage resources, all four integer/packed format masks and both slot-zero variants. Test unused native-retained banks with and without guest binding, native-eliminated declarations where available, inline/resource transitions on identical shader bodies and repeated cold/warm/evicted cache/context restoration.
+
+Include exact/one-short ranges and alignment, original resource0 canonical unbind, malformed stages/slots/lengths/handles/roles, limits, strict descriptor/proxy/reentrant mutation, repeated varied delayed reads and partial read failures. Prove original storage survives unref/detach/ID reuse and explicit rebind selects replacement. Revisions including failed uploads, context destruction/reuse, released leases, cancellation, error/fence failures, resource/renderer disposal and every new cleanup branch are recorded with zero final budgets. Independent block-word/range/source-variant faults must complete actual draws/fences before original pixel assertions fail.
+
+Run affected resource and standard renderer gates once at frozen head; carry unchanged compiler/native/ASan/Wasm proofs by source/dependency/evidence digest rather than rerunning unrelated gates. Record full served/source/generated/Wasm/V8 custody, one final exact-head scrubbed pristine clone, seal the worker evidence and submit to a fresh adversarial verifier. This prerequisite is not yet reachable through the demo and supplies no production caps, actual guest execution or live deployment authority.
+
+## Adversarial verification
+
+Before inspecting evidence, predict concrete original resource generations/words, range offsets/lengths, member layout/stage flags, variants, held allocations and complete pixels. Authenticate source/generated/served/Wasm identities and cold clone. Attack all retained lifecycle transitions and partial failures under independent schedules, verify changed-code coverage, invent one bounded native GPU attack and sabotage its original pixel oracle after a completed fence. Carry unchanged HELD criteria by dependency/evidence digest. Promote only after correctness and coverage hold.
+
+## Verification log
+
+### 2026-10-10 — worker — ordered planning
+
+The user's instruction is to finish production guest graphics. D16's verified compiler prerequisite supplies no original resource binding. Literal original opcode27 still rejects in the historical standard decoder, and original target0/format64/bind64 rejects resource admission; reproduce the packet and metadata in `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` against those existing factories. Pinned Mesa26.2.2 `virgl_context.c:638-667` sends opcode27 for any GPU buffer includingCB0; `virgl_encode.c:1242-1256` defines its five words. Pinned vrend `vrend_renderer.c:3508` retains the original resource reference and ignores incoming range on resource0. Mesa `bufferobj.c:159-186` treats creation role as a hint. WebGL2 prohibits copying across element-array/other-data classes (https://registry.khronos.org/webgl/specs/latest/2.0/); aliasing remains a separate successor.
+
+A planning-only headed M4 Metal probe in `/tmp/wasmvm-unused-ubo-probe.mjs` shows an unused retained std140 block with both reference flagsfalse still makes an unbacked native draw return1282 after a signaled fence. This motivates recording a bounded zero-buffer policy for native-retained unreferenced declarations in this boundary. The confirming acceptance must capture full original C output/native reflection/pixels; the planning probe is not submission evidence. API/caps, original element-array/data reuse, actual RISC-V guest Mesa/kmscube/desktop, worker scanout and live demo remain ordered qualification work.
