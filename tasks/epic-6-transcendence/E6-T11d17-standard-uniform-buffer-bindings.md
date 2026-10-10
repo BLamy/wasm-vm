@@ -3,7 +3,7 @@ id: E6-T11d17
 epic: 6
 title: Bind original retained constant buffers to native uniform ranges
 priority: 525.02703900036
-status: in-progress
+status: implemented
 depends_on: [E6-T11d16]
 estimate: S
 risk: high
@@ -46,3 +46,70 @@ A planning-only headed M4 Metal probe in `/tmp/wasmvm-unused-ubo-probe.mjs` show
 ### 2026-10-10 — worker — activation
 
 Selected as the first eligible Next up entry after D16 fresh verification. Native stack layer `codex/virgl-standard-uniform-buffer-bindings` is rooted on the published compiler verdict. The original range boundary above is the only active task. Temporary iteration has already produced full original pixels on headed M4 Metal for buffered VS/FS → buffered VS with inline FS → both stages inline on identical original bodies; those scratch records are not submission evidence.
+
+### 2026-10-10 — worker — implemented; original retained ranges
+
+Runtime commit `e771e262a37f9ee387f434fc752bd777187edcd8`; frozen submission head
+`47eb713cb5a456c8723cc32463fb04a4afea9905`. The only later frozen changes repair
+the evidence coverage reader/receipt; decoder, resource and renderer bytes are
+identical. Recorded command:
+`VIRGL_UNIFORM_BINDINGS_EVIDENCE_DIR=target/evidence/virgl-standard-uniform-bindings-final make verify-E6-T11d17`.
+All runtime, actual fixed16MiB C/Wasm hardware, original pixel and affected old
+resource/standard renderer gates passed. The final coverage parser encountered
+an old resource coverage schema; commit47eb713c repairs that evidence-only reader
+and authenticates its explicit two-file incremental boundary. Missing proof was
+recorded with `python3 tools/virgl-command/standard-uniform-binding-coverage.py`
+and `standard-uniform-binding-receipt.py` against that same final directory;
+the original log preserves the parser failure. No runtime checks were restarted
+for that harness-only repair.
+
+The headed M4 Max Metal recording contains152 full16×16 frames,154 native draws,
+436 native guest-block bindings,38912 independently checked pixels and67 literal
+wire records. It exercises both stages slots0/1/12 at first/last vectors and
+all signed16 relative offset endpoints, all26 shared-bank bindings plus system,
+all four input-format masks including native and generic packed attributes,
+all four stage-zero variants, cold/warm/evicted programs, context/subcontext
+restoration,18 varied suspended-read lifetime actions, partial range/read budgets,
+native allocation/write/fence/read failures, submitted allocation holds and
+explicit resource-generation replacement. Every run records zero final resource,
+renderer and uniform range budgets. All three independent faults (original GPU
+word, native range offset, FS slot-zero compiler selection) complete actual
+native draws/fences before original pixel assertions fail.
+
+Two final unexecuted added-line samples were exercised in a focused recording:
+`node target/evidence/virgl-standard-uniform-bindings-final/supplement/record-supplement.mjs --output target/evidence/virgl-standard-uniform-bindings-final/supplement`.
+This recording changes only the served test harness; full generated/served
+harness, its body and hashes are sealed beside the immutable runtime closure.
+It proves shared zero-buffer allocation evicts a prior native system block at
+exact17040-byte budget, and actual fenced scanout/PBO reads share a two-ticket
+ceiling with pending original uniform ranges. Its independent literal packet,
+full native word/reflection/pixel audit adds3 frames/768 pixels. The sealed
+`original-oracle.mjs` extends only test-only handling of original shader-handle0
+unbind, and `independent-audit.mjs` records that extension explicitly. The combined
+complete V8 regions cover every added runtime line sample; full regions remain
+critic authority. Native-eliminated bank behavior remains conditional on actual
+native reflection; this Metal driver retained the unused declarations in these
+recordings, so no cross-host elimination claim is made.
+
+Pristine scrubbed proof:
+`python3 tools/virgl-command/standard-uniform-binding-cold.py --output target/evidence/virgl-standard-uniform-bindings-cold-final`.
+It runs `make verify-E6-T11d17` on final exact head47eb713c in a clean clone,
+passes the full affected gates and independent audits, and leaves the clone
+pristine. Unchanged D16 C/native/ASan/Wasm semantics are carried by complete
+source/dependency hashes and the existing worker-offset-repair archive
+`e481c471060723b3e183781836fa413eb76722ad53f8e97e2146308ad6046943`
+and fresh critic archive
+`66de35c269e44252dc302ddc152e93d0aa1cd02fe9d1cd9171247d91b0daf09e`.
+
+Seal: `evidence/virgl-standard-uniform-bindings/worker/`;
+6286 records,32965817 bytes; archive SHA-256
+`73a5bdfa08e5b7568b96017d471ac40cfbb8f5d087d52c1b2842cf6c2235d9d5`;
+index `93f1e05363dd0daced80f4a3229c4bc346410e38da3749288f03f4b20df3f7c4`;
+hot receipt `9c9ec43a23d94a605ff50d3e985781f50701eb3aefbea6ed8c94e22132b773ff`;
+cold report `d94cd5a48d2164cae9c9b76612cbce75f3711c3f3638bd5762c731aa55a5e0e1`;
+cold receipt `76d4b28c99c1f432801f8043f0a97fdc1996a838c98053753a832a0a49d95226`.
+Claim: the explicitly selected original packet/resource facet executes retained
+native uniform ranges while preserving raw guest words, selected C stage bodies,
+allocation identity, delayed-draw validation and bounded fence cleanup. This is
+an isolated prerequisite; production guest Mesa, complete API/caps, scanout worker
+integration, live deployment and a performance claim remain unqualified.
