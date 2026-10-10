@@ -1,0 +1,32 @@
+{
+  "schema": "virgl-original-c580-verifier-coordinate-probe-v1",
+  "status": "HELD",
+  "sourceMutation": "first live vso_g0.x -> vso_g0.y in generated fragment GLSL",
+  "mutatedTestSha256": "0bfa4a729a48fa1f5bce9c41ea1b61d578c830670d4a1b2fd1910e23e1bd6bb3",
+  "reportSha256": "6548bdd95963c370b9d721d50e95b898dcd95a128bb37b66a73208e1536d7573",
+  "physicalRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+  "firstMismatch": "bank0 near (0,1)",
+  "expected": [
+    1.0000002703979702,
+    0.9999998567894618,
+    0.9999999131590388,
+    1
+  ],
+  "actual": [
+    0,
+    0,
+    1,
+    1
+  ],
+  "compilationLogs": {
+    "vertex": "",
+    "fragment": "",
+    "link": ""
+  },
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "trackedChanges": []
+}

@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m4c]
+depends_on: [E6-T12g6m4c, E6-T12g6m5b]
 estimate: S
 risk: high
 capstone: false
@@ -36,6 +36,14 @@ oracle. Each finding names a report/trace point and digest. Unexecuted runtime
 hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
+
+### 2026-10-05 — worker — resumed after finite zero-cap proof
+
+The independent critic verified E6-T12g6m4c at `379c8707d792cffbfd9dbd326adbe093aee8f0dd`. This parent resumes full unchanged original-pair compilation and physical-body acceptance. Private exact-bank compilation by itself does not establish pixel correctness or live guest GPU offload.
+
+### 2026-10-05 — worker — full-body proof split
+
+The unchanged 403b/c580 pair compiles and physically links under all three complete captured paired banks, and a first real draw exposes the expected discard boundary. The 7bf4/92cb pair still rejects at pc221 `POW TEMP[172].x, TEMP[171].xxxx, CONST[6].xxxx` under each complete authenticated bank (1,957 captured draws). Its base is geometry-dependent `MAX(TEMP[170], -TEMP[170])`; exact bank words alone cannot bound every fragment input. Split E6-T12g6m5a for the first pair's full-source physical body and E6-T12g6m5b for the second pair's first geometry-dependent power domain. This parent keeps the final two-pair integration acceptance unchanged.
 
 ### 2026-10-04 — worker — prerequisite discovery
 

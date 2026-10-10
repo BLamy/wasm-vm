@@ -2069,3 +2069,7 @@ verify-E6-T12g6m4b:
 .PHONY: verify-E6-T12g6m4c
 verify-E6-T12g6m4c:
 	bash tools/verify-virgl-zero-cap.sh
+
+.PHONY: verify-E6-T12g6m5a
+verify-E6-T12g6m5a:
+	bash tools/verify-virgl-original-c580.sh
