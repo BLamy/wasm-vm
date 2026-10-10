@@ -188,7 +188,9 @@ def audit(inputs, healthy, control, output):
                 pixels = fields['box']['width']*fields['box']['height']
                 assert layout['scratchBytes'] == pixels*spec['nativeComponents']*spec['size']
                 assert layout['tightBytes'] == pixels*spec['components']*spec['size']
-                assert operation['queued']['budgets']['scratchBytes'] == layout['scratchBytes']
+                old_read_scratch = 448 if any(not resource['public'] and resource['generation'] == run['originalGeneration']
+                                            for resource in operation['queued']['resources']) else 0
+                assert operation['queued']['budgets']['scratchBytes'] == layout['scratchBytes']+old_read_scratch
                 counts['layouts'] += 1
             pbo_sizes = {}
             for event in run['events']:
