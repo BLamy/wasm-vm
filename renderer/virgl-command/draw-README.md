@@ -135,3 +135,21 @@ negative Y, adjacent state toggles and poisoned A/B/A restoration. Owned async
 arrays use the existing final completion fence without waiting for GPU indices.
 See [raster proof](../../tools/virgl-command/raster-README.md). This isolated
 renderer proof does not advertise guest caps or claim live frame rate.
+
+The verify-E6-T11d6 make target extends only the explicit standard async facet
+with native instanced triangle/strip draws and u8/u16/u32 indices. Wire instance
+counts zero/one execute one equivalent ordinary native draw; larger counts
+select instanced calls. Every vertex-instance pair is charged against the
+existing 65,536-work ceiling, including cumulative draws. Fetch bounds derive
+from the actual later-task GPU index snapshot and each wire divisor, ignoring
+range hints. The final read revision is validated immediately before draw.
+
+Wire divisors above 65,536 map to native divisor65,536: no admitted instance
+index reaches either divisor, so both fetch element zero. This avoids native
+signed-query saturation while preserving the entire admitted fetch domain.
+Recording includes both wire and bounded native divisors, real fetched extents,
+original owned input bytes, queried native bindings/bytes, full saved pixels,
+GPU calls and completion fences. The independent literal-packet oracle catches
+an actual served divisor corruption. Legacy factories retain their old grammar,
+result shape and behavior. Zero stride, other primitive modes, restart lowering
+and production capability negotiation remain subsequent boundaries.

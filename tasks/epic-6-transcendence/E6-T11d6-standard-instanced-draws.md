@@ -33,7 +33,10 @@ resource generation/content revision through native draw; reset/cancellation
 must drain and release it. Reject fixed restart sentinel explicitly until the
 ordered restart slice exists, since WebGL2 always enables restart.
 
-Restore every native divisor on each draw and context switch; include divisor,
+Restore every native divisor on each draw and context switch. Normalize wire
+divisors above the 65,536 total-work ceiling to that ceiling: all admitted
+instance indices are smaller, so both divisors select element zero. Record both
+the original wire divisor and the actual bounded native divisor; include divisor,
 instance/index width and native fetch ranges in deterministic draw recording.
 Use native gl_InstanceID and gl_VertexID without CPU shader evaluation. This
 slice does not grant positive caps or connect production device paths.
