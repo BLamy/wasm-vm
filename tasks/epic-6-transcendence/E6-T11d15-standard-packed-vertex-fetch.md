@@ -3,7 +3,7 @@ id: E6-T11d15
 epic: 6
 title: Execute original packed 10/10/10/2 vertex inputs on the GPU
 priority: 525.02703900033
-status: in-progress
+status: implemented
 depends_on: [E6-T11d14]
 estimate: S
 risk: high
@@ -41,3 +41,11 @@ E6-T11d14 is independently verified at `23bf410f9e152d53e83e674717c647a4164dcde7
 ### 2026-10-10 — worker — signed packed hardware discovery
 
 The ephemeral direct native signed REV implementation contradicted the original signed alpha contract on this host. `target/evidence/virgl-standard-packed-self-alpha/report.json` records a completed draw/fence with original alpha -2: direct binary32 word output expected bytes `[0,0,0,192]` and observed `[0,0,0,64]` (+2). The full provisional run also failed the signed alpha color pixels. The boundary therefore includes actual C-emitted GPU sign decoding from native unsigned unnormalized fields, selected only for signed packed arrays. This is a portable format path, with no host fingerprint or CPU array conversion. The subsequent ephemeral narrow sign run matched all 256 pixels; the expanded ephemeral matrix passed 210 frames, 15 pre-draw rejections, six pending ownership attacks and three ownership records. These self-checks guide implementation and are not final exact-head evidence.
+
+### 2026-10-10 — worker — implemented submission
+
+Frozen runtime/harness head: `e7a85906622794c60872876f9d3e80da83df9ccd`. Commands: `VIRGL_STANDARD_PACKED_EVIDENCE_DIR=target/evidence/virgl-standard-packed-final-hot make verify-E6-T11d15`; `python3 tools/virgl-command/standard-packed-cold.py --output target/evidence/virgl-standard-packed-final-cold`; `python3 tools/virgl-command/standard-packed-seal.py target/evidence/virgl-standard-packed-final-hot target/evidence/virgl-standard-packed-final-cold evidence/virgl-standard-packed/worker`. Both default acceptances passed at the same exact source head; the cold clone has empty before/after Git status and scrubbed environment.
+
+`evidence/virgl-standard-packed/worker/manifest.json`, `records.json` and `recording.tar.gz` seal 17,844 records. Archive SHA-256 `724887df2941202113d22fd297f8e3a5633ab0ddb409fd8ffa5ef260d4cc0113`; index `1c46154671bdbf7a2e743fbff97db333fee4ad28ac96aca5dcc22d9e1c9e6f85`; hot receipt `f25e1da2e1570ff7e48d11c10ecd9fe6422a25010e897a27339cb6812f5a2941`; cold report `8dbe00ca06db09938229d07fd2e8e0d7a6cfef63410600be66046ed6e90f7ae1`; cold receipt `ca81c3ebbe088cce3e376c4c3762637ceb23bbbde6bce22e71ebb94c228ac7be`. The hot receipt records 8,903 files, full served/source/compiler/blob custody, 61 V8 script records and 18 LLVM file records. Conservative optimized Wasm stack frames total 191,856 bytes against the fixed 262,144-byte stack.
+
+Each hot/cold run proves 59 original wire cases and 59 actual packed compiler cases, fixed-memory OOM recovery, 40 genuine packed allocation faults with exact recovery and source ownership, the retained 48-case typed compiler with all 40 allocation faults, and the full prescribed 669-case/129-frame standard compiler gate. The own headed M4 Metal matrix completes 214 original packed draws with 57,600 independently reconstructed pixels, original complete GPU storage, signed alpha/minima, all four formats, retained constants, high attribute15, mixed integer positions, array/constant/cache transitions, 15 pre-draw rejections, six pending lifetime attacks and native state restoration. All three packed faults complete real draw/fence work before failing original full pixels. Retained compact225/scalar391/integer348 physical matrices and their seven draw/fence faults pass at the same head. The recorded claim is this isolated packed fetch boundary; it grants no API/capset, production guest execution, deployment or MIPS authority. Fresh adversarial verification remains required.
