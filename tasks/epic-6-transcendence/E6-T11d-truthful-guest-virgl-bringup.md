@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9]
-blocked_on: E6-T11d9
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10]
+blocked_on: E6-T11d10
 estimate: S
 risk: high
 capstone: false
@@ -216,3 +216,23 @@ Ordered S prerequisite E6-T11d9 lowers only actual owned index streams and
 preserves valid disabled-restart u8/u16 maximum vertices. The explicit request
 continues this graphics chain; complete API, typed caps, actual guest rendering
 and production deployment remain later gates.
+
+### 2026-10-10 — worker — restart verified; original provoking identity gap
+
+E6-T11d9 is independently verified at
+`c378b55516f74a2da3612462104785fe6997fca1`. It deliberately grants no
+per-vertex provoking-state authority. The planning-only native flat-uvec4 probe
+in `evidence/virgl-production-readiness/standard-provoking-gap.json` records
+complete shaders, original indices/positions and full pixels on M4 Metal.
+Even with explicit LAST state, LINE_LOOP uses its first vertex and TRIANGLE_FAN
+uses the center. GLES3 table2.12 requires loop i+1 (closing vertex1) and fan i+2.
+Reproduce by writing that record's exact `script` to a local .mjs and running
+Node on this host; the record preserves its script digest and native pixels.
+This is a negative readiness observation, not a complete API or guest claim.
+
+Ordered S prerequisite E6-T11d10 selects bounded native line/triangle lists,
+restores LAST before native draws, and proves original vertex identities and
+flat/smooth outputs through original packets and physical GPU buffers. Its
+historical default native facet remains isolated and unchanged. The user's
+instruction continues this graphics chain; points, complete profile/typed caps,
+real guest initialization, scanout and demo deployment remain later gates.

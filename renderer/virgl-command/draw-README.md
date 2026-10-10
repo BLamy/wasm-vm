@@ -222,3 +222,29 @@ the actual native vertex ID and the original position record's ID tag. This
 proves index preservation without relying on a browser's flat-line provoking
 vertex convention. Core provoking-vertex qualification, complete GLES, actual
 guest Mesa, production negotiation and performance remain outside this facet.
+
+The trusted standard factory additionally accepts `primitiveAssembly: "lists"`.
+The historical default remains `"native"`; legacy factories reject this option.
+The list selection requires `WEBGL_provoking_vertex` and restores LAST before
+every draw. Original LINE_LOOP segments become native LINES, including their
+closing pair; original TRIANGLE_FAN segments become native TRIANGLES. Only exact
+enabled original restart words split segments. Arrays use `start + i`, and all
+emitted words retain their original vertex IDs, winding and shader inputs.
+Nothing evaluates a guest shader on the CPU.
+
+Two bounded passes count then write one u32 vector. A fan emits at most three
+times its source count, so the existing source-work ceiling derives at most
+786432 retained native bytes per job and 64 private buffers. The largest single
+65536-source fan emits 196602 indices/786408 bytes; 64 fans of 1024 sources each
+retain 784896 bytes. Every original word, restart and incomplete tail still
+charges source work times effective instances. The same D9 owner retains these
+buffers through completion/drain or explicit disposal. The original VAO index
+binding, including a retained binding on an array draw, is restored before any
+yield. CPU output scratch never crosses a yield.
+
+`make verify-E6-T11d10` uses original position ID tags plus per-vertex flat
+colors, smooth interpolation, winding/culling, FIRST-state poisoning and actual
+private GPU bytes. Original and native mode/count/indexed/work remain separate
+in draw summaries. The selected list boundary is an isolated prerequisite;
+complete API/profile qualification, production capsets, guest rendering and
+performance remain outstanding.

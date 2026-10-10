@@ -1,0 +1,60 @@
+{
+  "schema": "standard-assembly-verifier-predictions-v1",
+  "task": "E6-T11d10",
+  "createdAt": "2026-10-10T06:54:37.275338+00:00",
+  "beforeEvidence": true,
+  "workerSubmission": "391643b02e5b59018da3cae9f650122cc7d83172",
+  "seed": 795804360,
+  "predictions": [
+    {
+      "id": "P1-selection",
+      "prediction": "Before any real draw, unknown standard selection and legacy option return invalid-input; missing/wrong native provoking extension return unsupported-host. Historical default remains native.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P2-native-list-identity",
+      "prediction": "For each original enabled exact-marker segment, loop emits adjacent ordered original-ID pairs then last->first iff length>=2; fan emits (first,i,i+1) triples iff length>=3. Arrays retain start+i. No rebase and no output for tiny segments.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P3-native-state",
+      "prediction": "Immediately at every selected actual draw, including modes 1,3,4,5, native convention is LAST=0x8e4e. Restored native draw entry, mode,count,type,offset,instances and VAO EBO match independently derived original and private GPU bytes.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P4-pixels",
+      "prediction": "Before pixel inspection: original flat red is (original last primitive vertex*17 &255)/256; smooth pixels interpolate original attribute outputs, culling uses original winding. Loop closure and strict interiors must agree; triangle shared edges cannot be clear. Only declared half-open endpoints/outer triangle edges vary.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P5-bounds",
+      "prediction": "At actual source validation, all original words including markers/tails charge count*max(1,instances); native work <=3 source. 65536 fan indices produce 196602 u32 words=786408 bytes; 64 fans of1024 produce 784896 bytes/64 buffers. Tightened source/read/draw limits, short reads and nonrestart-u32-max reject before unsafe draw/allocation.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P6-ownership",
+      "prediction": "At every yield CPU vector charge is0, private storage is detached from actual original EBO (including arrays retaining an old binding), owned native<=786432 bytes/64 buffers, and remains alive until final completed drain or explicit disposal. All retained reads/native/CPU counters end0. Pending changes reject stale source; name reuse draws retained original generation; suffix cancellation/partial failure never draws.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P7-custody",
+      "prediction": "All10364 sealed records match index/archive hashes. Hot/cold actual browser runtime source digests equal frozen final source; physical freeze->cold-head changes only offline auditor label and receipt transport. Hot original full make exits2 after physical successes and is not passed; corrected narrow audit and pristine dc28 make pass with scrubbed env and empty before/after status.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P8-regression",
+      "prediction": "Both served list-order and FIRST regressions complete drawElementsInstanced and real final fence, then fail original pixel oracle. Physical list-order bytes differ in forward pair order; FIRST fault preserves list bytes but records0x8e4d; both differ at(3,2) expected[115,56,51,128] vs[99,56,51,128].",
+      "status": "PENDING"
+    },
+    {
+      "id": "P9-coverage",
+      "prediction": "Each changed executable hunk is exercised in authenticated exact-source V8 coverage; unreachable defensive guards and declarative option/output metadata are explicitly classified. Earlier compiler/resources/cache/decoder and D6-D9 seals stay byte-identical under predecessor authority.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P10-novel",
+      "prediction": "A newly seeded nonmonotonic wide-u32 custom-restart stream with nonzero original offsets, later read/fence schedule and FIRST poison retains exact original-ID native words and ordered flat/smooth/culling pixels; yield ownership and final release bounds hold.",
+      "status": "PENDING"
+    }
+  ]
+}
