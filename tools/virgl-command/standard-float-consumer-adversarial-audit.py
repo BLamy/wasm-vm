@@ -201,12 +201,38 @@ def physical_audit(folder):
     assert not record['browser']['headless'] and 'M4' in result['gpu'] and 'Metal' in result['gpu']
     assert not any(re.search(r'swiftshader|llvmpipe|softpipe|lavapipe|--disable-gpu(?:$|=)', arg, re.I) for arg in record['browser']['commandLine'])
     blobs = blob_data(folder, result); decoded = {}; rows = []; totals = dict(components=0, nativeComponents=0, publicBytes=0, paddingBytes=0)
-    previous = {}
+    previous = {}; lifetimes = []
     for index, run in enumerate(result['runs']):
         assert all(row['deleted'] == 1 for row in run['nativeObjects'])
         assert all(v == 0 for v in run['final']['resources']['budgets'].values()) and all(v == 0 for v in run['final']['renderer']['budgets'].values())
         if 'source' in run:
             decoded[index] = decode_original(run, blobs)
+        for action in run.get('actions',[]):
+            if action.get('kind')=='unequal-source-ID-reuse':
+                old,new=[r for r in run['created']if r['metadata']['id']==6]
+                assert old['generation']==run['sourceGeneration']and new['generation']==action['newGeneration']>old['generation']
+                assert (old['metadata']['width'],old['metadata']['height'],old['metadata']['lastLevel'])==(17,9,3)
+                assert (new['metadata']['width'],new['metadata']['height'],new['metadata']['lastLevel'])==(11,7,2)
+                assert {d['ctx']for d in run['history']if d['label'].endswith('after-reuse')}=={1,2}
+                for d in run['draws']:
+                    assert d['samplers'][0]['metadata']['width']==8 and d['samplers'][0]['metadata']['height']==4
+                lifetimes.append(dict(run=index,name=run['name'],kind=action['kind'],oldGeneration=old['generation'],newGeneration=new['generation'],nativeViewTextures=sorted({d['samplers'][0]['texture']for d in run['draws']})))
+            if action.get('kind')=='owned-final-fence-reuse':
+                assert action['before']['budgets']['imageHolds']==2 and action['renderer']['jobs']['status']=='finishing'
+                assert action['renderer']['jobs']['appliedCommands']==action['renderer']['jobs']['commandCount']==5
+                assert action['newGeneration']>run['sourceGeneration']
+                originals=[r for r in run['created']if r['metadata']['id']==1]; assert len(originals)==2 and originals[1]['generation']>originals[0]['generation']
+                assert (originals[0]['metadata']['width'],originals[0]['metadata']['height'])==(7,5)and(originals[1]['metadata']['width'],originals[1]['metadata']['height'])==(9,3)
+                target=next(a['texture']for a in run['allocations']if a['metadata']['id']==1 and a['metadata']['width']==7)
+                assert run['draws'][0]['native']['attachment']==target
+                terminal=next(h for h in run['history']if h['label'].startswith('queued-float-'))
+                mode=run['name'].split('-',2)[2]
+                assert terminal['result'].get('gpuComplete')if mode=='complete'else terminal['result']['error']['code']==('cancelled'if mode=='cancel'else'disposed')
+                if mode in ['complete','cancel']:
+                    assert terminal['result']['gpuComplete']and any(e['name']=='clientWaitSync'and e.get('label')==terminal['label']and e['delivered']in[37146,37148]for e in run['events'])
+                else:
+                    assert terminal['disposed']and not terminal['result'].get('gpuComplete',False)
+                lifetimes.append(dict(run=index,name=run['name'],kind=action['kind'],oldGeneration=run['sourceGeneration'],newGeneration=action['newGeneration'],heldAtFinishing=2,terminalCode=terminal['result'].get('error',{}).get('code','completed'),gpuComplete=terminal['result'].get('gpuComplete',False),explicitDisposal=mode.endswith('dispose')))
     for frame_index, frame in enumerate(result['frames']):
         run = result['runs'][frame['run']]; snapshots, uploads = decoded[frame['run']]
         snapshot = snapshots[frame['historyIndex']]; fmt = run['target']['format']; surface = snapshot['framebuffer']
@@ -219,6 +245,15 @@ def physical_audit(folder):
         else:
             assert snapshot['opcode'] == 8 and snapshot['words'][1:] == (0,6,4,0,1,0,0,0,0,0,0xffffffff,0)
             color, params = original_sample(run, snapshot, uploads, frame)
+            vertex_format=run.get('vertexFormat',31); assert snapshot['objects'][5,3]==(3,0,0,0,vertex_format)
+            positions=struct.unpack('<24'+('i'if vertex_format==200 else'f'),blobs[run['positions']['key']])
+            assert positions==(-1,-1,0,1,1,-1,0,1,1,1,0,1,-1,-1,0,1,1,1,0,1,-1,1,0,1)
+            native=next(d for d in run['draws']if d['label']==frame['label']); assert native['name']=='drawArrays'and native['args']==[4,0,6]
+            assert native['native']['level']==surface[3]and native['native']['viewport']==[0,0,run['width'],run['height']]
+            assert native['attributes'][0]['stride']==16 and native['attributes'][0]['offset']==0
+            assert blobs[native['attributes'][0]['bytes']['key']]==blobs[run['positions']['key']]
+            if vertex_format==200:
+                assert 'I2F OUT[0], IN[0]'in snapshot['shaders'][0]and any(r['request']['signedMask']==1 for r in run['requests'])
             blend = snapshot['blend']; mask = blend[3] >> 27 & 15 if blend else 15
             enabled = bool(blend and blend[3] & 1)
             assert mask == frame['mask'] and enabled == frame['blend']
@@ -276,7 +311,7 @@ def physical_audit(folder):
             totals[key] += row[key]
     if fault:
         assert any(row['mismatchCount'] for row in rows) and (result['sabotage'].get('fenceCompleted') or result['sabotage'].get('physicalFenceConsumed'))
-    return dict(path=folder.relative_to(ROOT).as_posix(), fault=record.get('fault'), rows=rows, **totals)
+    return dict(path=folder.relative_to(ROOT).as_posix(), fault=record.get('fault'), rows=rows, lifetimes=lifetimes, **totals)
 
 
 def nested_coverage(directory, extra=None):
