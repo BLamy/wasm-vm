@@ -1,0 +1,16 @@
+{
+  "schema": "original-buffer-role-seal-v1",
+  "task": "E6-T11d18",
+  "sourceHead": "ed017102fd01137a7f1ff55569e9bc69da149f11",
+  "records": 16096,
+  "archiveSha256": "c785984e6a27fd49a91b9e91b7b160a443e8ea3861d12a486c282a0efda50c8f",
+  "archiveBytes": 52104253,
+  "recordIndexSha256": "5d73e08e2ca930c1bcdc73ba4547d85b2740094f120cc86265f0ac149a7bc9de",
+  "hotReceiptSha256": "f33d06fd84f7425792eb2d5319d554294eca6713267393fbdb2d3fc417dc4877",
+  "coldReportSha256": "c05a77185ecdca6680d2c5e10d4037caf8da93fa4d464a69364bab4ad0a735ed",
+  "coldReceiptSha256": "0740b2c13baf6b34f0a2573bac7f03cae95c43b5feb1149d5d936981c1e16dde",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-buffer-roles",
+  "productionDrawAuthority": false
+}

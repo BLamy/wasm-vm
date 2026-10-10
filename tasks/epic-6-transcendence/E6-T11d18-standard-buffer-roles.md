@@ -3,7 +3,7 @@ id: E6-T11d18
 epic: 6
 title: Preserve original buffer identity across vertex index and uniform roles
 priority: 525.02703900037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d17]
 estimate: S
 risk: high
@@ -43,3 +43,19 @@ The user's explicit instruction to finish production guest graphics keeps this o
 ### 2026-10-10 — worker — activation
 
 Selected as the next eligible ordered graphics prerequisite under the user’s instruction to finish production guest graphics. D17 fresh verifier commit f489b8ed is the native stack parent. Original buffer identity and the existing private u32 index bridge are the only active boundary.
+
+### 2026-10-10 — worker — frozen original buffer-role submission
+
+Runtime and all acceptance sources are frozen at `ed017102fd01137a7f1ff55569e9bc69da149f11`, based on independently verified D17 `f489b8ed5599dfe9afeb7d7d1463655e768af418`. Commands:
+
+```sh
+VIRGL_BUFFER_ROLES_EVIDENCE_DIR=target/evidence/virgl-standard-buffer-roles-final make verify-E6-T11d18
+python3 tools/virgl-command/standard-buffer-role-cold.py --output target/evidence/virgl-standard-buffer-roles-cold-final
+python3 tools/virgl-command/standard-buffer-role-seal.py target/evidence/virgl-standard-buffer-roles-final target/evidence/virgl-standard-buffer-roles-cold-final evidence/virgl-standard-buffer-roles/worker
+```
+
+The recorded headed Chrome155/M4 Metal run contains 251 frames, 253 positive native draws, 74,496 independently checked pixels, 452 guest native uniform blocks and 14,665,228 audited original GPU bytes. All eight original creation hints, all three index widths, simultaneous overlapping vertex/index/VS/FS roles, real vertex IDs, restart/topology assembly, repeated draws, original generation replacement, native GPU-origin writes and all 18 delayed ownership schedules execute. All 157 positive private native index allocations retire once; final native allocation, draw/read ticket, lease, uniform-snapshot and index-byte budgets are zero. Both actual source-word and private-index corruptions complete native draws and fences before the unchanged original pixel oracle rejects them. Complete native words, reflection, original packets, full pixels, served/generated/Wasm identities and V8 regions are recorded. Every added runtime line has an execution sample; full nested regions remain the critic's coverage authority. The selected resource/renderer factories are the only runtime change; old factories retain their admissions and shape, and the affected D17 resource/uniform/packed and D10 restart/assembly acceptances pass on this frozen head.
+
+The sole final pristine scrubbed clone checked out the exact frozen head, removed inherited `RUST_LOG`, passed the complete same acceptance command and left the checkout clean before and after. Clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-uniform-bindings-cold-ywnma3kk/wasm-vm`; copied receipt and cold log are sealed. Worker archive `evidence/virgl-standard-buffer-roles/worker/recording.tar.gz` contains 16,096 records / 52,104,253 compressed bytes, SHA256 `c785984e6a27fd49a91b9e91b7b160a443e8ea3861d12a486c282a0efda50c8f`; record index SHA256 `5d73e08e2ca930c1bcdc73ba4547d85b2740094f120cc86265f0ac149a7bc9de`. Hot receipt SHA256 `f33d06fd84f7425792eb2d5319d554294eca6713267393fbdb2d3fc417dc4877`; cold report `c05a77185ecdca6680d2c5e10d4037caf8da93fa4d464a69364bab4ad0a735ed`; cold receipt `0740b2c13baf6b34f0a2573bac7f03cae95c43b5feb1149d5d936981c1e16dde`.
+
+Unchanged D16 compiler worker/critic archives (`e481c471060723b3e183781836fa413eb76722ad53f8e97e2146308ad6046943` / `66de35c269e44252dc302ddc152e93d0aa1cd02fe9d1cd9171247d91b0daf09e`) and D17 range worker/critic archives (`73a5bdfa08e5b7568b96017d471ac40cfbb8f5d087d52c1b2842cf6c2235d9d5` / `df3c55558fec56f14b838cc9c8f477fa4806a47657909c81696bcd595438542d`) are authenticated by the receipt and carried without changed dependency bytes. Production caps, worker imports, guest images, scanout, demo and deployment bytes are unchanged: this isolated prerequisite grants no production capability, actual guest execution, desktop offload or performance authority. Submit this diff and sealed evidence to a fresh adversarial verifier; only that session may set `verified`.
