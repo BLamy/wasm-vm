@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m4c, E6-T12g6m5b]
+depends_on: [E6-T12g6m4c, E6-T12g6m5b2]
 estimate: S
 risk: high
 capstone: false
