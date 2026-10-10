@@ -3,7 +3,7 @@ id: E6-T11d5
 epic: 6
 title: Execute standard guest shader bindings through owned renderer jobs
 priority: 525.027038
-status: pending
+status: in-progress
 depends_on: [E6-T11d4]
 estimate: S
 risk: high

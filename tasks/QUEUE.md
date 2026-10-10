@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d5** — Execute standard guest shader bindings through owned renderer jobs
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -646,7 +645,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027036` [E6-T11d3](epic-6-transcendence/E6-T11d3-float-vertex-fetch.md) — Execute scalar through four-component float vertex fetches *(deps: E6-T11d2)*
 - [x] `525.027037` [E6-T11d2](epic-6-transcendence/E6-T11d2-single-target-blend.md) — Execute single-target blend equations and factors for guest qualification *(deps: E6-T11d1)*
 - [x] `525.027037` [E6-T11d4](epic-6-transcendence/E6-T11d4-standard-shader-compiler.md) — Compile bounded ordinary guest shaders with standard WebGL2 semantics *(deps: E6-T11d3)*
-- [ ] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
+- [~] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
 - [b] `525.02704` [E6-T11d](epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md) — Advertise proven VirGL capabilities and initialize real guest Mesa *(deps: E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`
