@@ -2,6 +2,7 @@
 #define WASM_VM_VIRGL_SHADER_BRIDGE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define BRIDGE_MAX_TEXT 49152u
 #define BRIDGE_MAX_TOKENS 8192u
@@ -22,6 +23,16 @@
  * checked opcode set internally selects the legacy v5 or owned raw-bit stage;
  * callers cannot select a backend or bypass output-domain validation. */
 const char *bridge_translate(int stage, const char *text, size_t length);
+
+/* Explicit private conditional transaction. Components are canonical, unique
+ * stage-local slot-zero register/component/raw-word tuples (at most 46*4).
+ * Text and tuples are copied before compilation. An ordinary success keeps
+ * its original result; newly admitted results carry enforced exact-bank
+ * preconditions. This does not select a specialization for a renderer DRAW. */
+#define BRIDGE_MAX_EXACT_WORDS 184u
+struct bridge_exact_word { uint32_t reg, component, word; };
+const char *bridge_translate_exact(int stage, const char *text, size_t length,
+                                  const struct bridge_exact_word *components, size_t count);
 
 /* The two-stage API derives its interface from the fragment declarations.
  * Each text/stage retains the single-stage limits; no input/key is retained. */

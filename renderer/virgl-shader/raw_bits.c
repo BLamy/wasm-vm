@@ -17,6 +17,12 @@ static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_sou
       uint32_t value = ir->immediates[r->index][component];
       return (struct raw_lane){.zero = ~value, .one = value};
    }
+   if (r->file == CONST && ir->exact && (ir->exact->present[r->index] & (1u << component))) {
+      uint32_t value = ir->exact->words[r->index][component];
+      /* A raw fact carries no asserted floating range or output permission.
+       * Existing typed consumers still have to establish those independently. */
+      return (struct raw_lane){.zero = ~value, .one = value};
+   }
    if (r->file == IN) return (struct raw_lane){.origin = (1 + r->index * 4 + component) | RAW_OUTPUT};
    if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)
       return (struct raw_lane){.origin = RAW_FLOAT_CONDITIONAL | RAW_BANK_DEPENDENCY};
