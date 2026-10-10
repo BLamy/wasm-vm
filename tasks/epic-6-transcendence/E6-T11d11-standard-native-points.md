@@ -3,7 +3,7 @@ id: E6-T11d11
 epic: 6
 title: Execute bounded standard native point primitives and shader built-ins
 priority: 525.0270390002
-status: in-progress
+status: implemented
 depends_on: [E6-T11d10]
 estimate: S
 risk: high
@@ -116,3 +116,56 @@ near/far rejection alongside XY-outside coverage. No runtime workaround or
 unjustified edge waiver was added. A pending-read fixture was also corrected to
 exercise both actual waiting-index and waiting-attributes phases. The final
 submission must run the full task gate and pristine clone once at the frozen head.
+
+### 2026-10-10 — worker — submitted original native point evidence
+
+Runtime/compiler freeze: `53e01e081ca7495960c6c51a15b585d4b66c64fe`.
+Final receipt/harness freeze: `8ccd2036305321645d7f8b47cf7e2c1bcdced863`.
+The runtime is byte-identical between these heads. The hot original full
+`VIRGL_STANDARD_POINTS_EVIDENCE_DIR=target/evidence/virgl-standard-points-final
+make verify-E6-T11d11` exited 2 after its directly affected compiler submission
+passed: macOS Bash 3.2 rejected an empty flags array under `set -u`. Commit
+`b49bc887b60fe9d13eba84684d20598d4217d3ec` changes only the wrapper/receipt
+and resumes that passed compiler with `bash tools/verify-virgl-standard-points.sh
+--resume-compiler`. All remaining native/ABI, Wasm, original-point and retained
+list/restart hardware checks passed at b49bc887. Its final receipt then rejected
+the retained compiler's log: that historical receipt prints its one success line
+after hashing the log. Commit 8ccd2036 changes only the receipt; it authenticates
+that exact appended line against the claimed prefix digest and keeps its own
+receipt silent. It carries the unchanged b49bc887 physical recording under an
+explicit ancestor/diff/source check. Both original failures, commands and heads
+remain in the seal (`hot/harness-original-acceptance.log`,
+`hot/harness-receipt-failure.log`, `hot/harness-correction.json`). No failed full
+hot make is presented as successful.
+
+The corrected narrow receipt command passed. One final pristine clone runs the
+default complete `make verify-E6-T11d11` at 8ccd2036, with scrubbed environment;
+exit 0 and empty checkout status before/after. Command:
+`python3 tools/virgl-command/standard-point-cold.py --output
+target/evidence/virgl-standard-points-final-cold`. The hot/cold results each hold
+118 native/sanitized/original-Wasm point compiler cases, 78 actual allocation
+faults/recoveries including the bounded PCOORD validation arena, 38 literal wire
+cases, 24 typed metadata forgeries, 128 actual headed M4 Metal point frames,
+38400 independently derived full-frame pixels, 128 native point draws and 25
+private native index-buffer captures. Both source-uniform regressions finish
+native point draws/fences and fail the original size/Y pixel oracle. Read
+revision/reuse/cancellation, disposal, fixed/per-vertex selection and A/B/A state
+restoration preserve original uploads and release bounded ownership. New C/V8
+coverage, actual served source hashes, full blobs and screenshots are retained.
+Directly affected compiler 669/129-frame acceptance, legacy/raw/private anchors,
+retained 304-frame list and 189-frame default restart checks passed; historical
+HELD seals are byte-identical to c810cbef.
+
+Seal command: `python3 tools/virgl-command/standard-point-seal.py
+target/evidence/virgl-standard-points-final
+target/evidence/virgl-standard-points-final-cold
+evidence/virgl-standard-points/worker`. The committed worker seal has 13269
+records; archive SHA256
+`797426c742a74686db9e4dbdf02135a58b8d30fec3433cd17a4f73e3bb78f846`,
+index SHA256 `a0b3157348f6575e700686d6339c84a5c47b0b6ff236ccb6ff655481cba07ea4`.
+Hot receipt SHA256 `764c953dc19ebbedd340ea45cbcba9ddf64175114cd7ec140623db2ae140717a`;
+cold receipt SHA256 `99193c7b041e0e80638afb85af4501502e89b5bf801ab50e342552eb6726a0b0`.
+Inspect manifest/records and the sealed hot/cold paths to reproduce every result.
+This is an isolated standard native point claim. Complete API qualification,
+typed production capsets, actual guest offload, deployment and throughput remain
+outside its authority. Only a fresh critic may set verified.
