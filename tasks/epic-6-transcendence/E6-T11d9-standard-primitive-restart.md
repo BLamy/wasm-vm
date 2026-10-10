@@ -39,7 +39,11 @@ with actual maximum vertices or trust min/max hints.
 
 `make verify-E6-T11d9` runs literal original flags/index sizes in Node and the
 headed hardware browser. Independently reconstruct actual GPU source and any
-normalized GPU buffers, native modes/types/offsets/vertex IDs and full pixels.
+normalized GPU buffers, native modes/types/offsets/vertex IDs and full pixels. The independent original
+position record carries an exact ID tag; a native shader comparison guards clip W.
+Use constant per-instance flat colors so the index proof does not grant a
+separate provoking-vertex qualification. Binary instance tile spacing keeps
+triangle boundaries independent of subpixel quantization.
 Cover each supported line/triangle mode, enabled native/custom restart values,
 u8/u16/u32 originals, ordinary/instanced draws, leading/trailing/repeated/all
 restart, incomplete segments and high actual nonrestart vertices. Disabled

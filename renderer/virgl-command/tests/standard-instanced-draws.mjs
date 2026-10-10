@@ -390,11 +390,13 @@ export async function runAcceptance({smoke=false}={}) {
       c.same(r.trace.calls.length,0,label+" before native draw");done(r);
     }
     for(const size of [1,2,4]){
-      const base=size===1?252:size===2?65532:64,s=specimen({indexSize:size,base,divisors:[0,2,3]}),r=make(s);
+      // D9 preserves u8/u16 maximum vertices. Keep this retained negative a
+      // genuine one-byte-short source bound; u32max is still not a real index.
+      const base=size===1?252:size===2?65532:64,s=specimen({indexSize:size,base,divisors:[0,2,3],...(size<4?{shortSlot:0}:{})}),r=make(s);
       if(size===4)new DataView(s.data.get(6).buffer).setUint32(s.indexOffset,0xffffffff,true);
       const rec=await submit(r,1,join(setup(r,s),drawPacket(s)),"reject-fixed-sentinel-"+size);
       report.rejections.push({label:"fixed-sentinel-"+size,result:rec.result,history:r.history,events:r.trace.events,nativeDraws:r.trace.calls.map(({program,...a})=>a)});
-      c.same(rec.result.error.code,"unsupported-draw","fixed sentinel "+size+" fails explicitly");c.same(r.trace.calls.length,0,"fixed sentinel before draw");done(r);
+      c.same(rec.result.error.code,size<4?"out-of-bounds":"unsupported-draw","maximum index "+size+" bound fails explicitly");c.same(r.trace.calls.length,0,"maximum index before draw");done(r);
     }
     // Hints are structurally valid but deliberately false; actual bytes win.
     {const s=specimen({indexSize:4,hints:[90000,90000]}),r=make(s),rec=await submit(r,1,join(setup(r,s),drawPacket(s)),"false-large-hints");
