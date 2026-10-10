@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "task": "E6-T11d3",
+  "sourceHead": "2b720fcac4da27b57397aa70ed3ba84a4d2c0b1e",
+  "productionNegotiation": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 29441,
+      "sha256": "477d00979446df04d6850e42b8cec72b5b796ac884d83532bffaf5f061115a94"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 96648,
+      "sha256": "78e1a70588fb45370532068fae99131cfa5aec3e3b8e03556d8986a2248fbe08"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    }
+  ],
+  "records": [
+    {
+      "format": 28,
+      "words": [
+        328961,
+        777,
+        0,
+        0,
+        0,
+        28
+      ],
+      "bytesHex": "01050500090300000000000000000000000000001c000000",
+      "sha256": "188727b0c99833429213bdfa06cccaf95d43e2262df13e44d0a4726be219674a",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only per-vertex RG32/RGB32_FLOAT elements are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "format": 29,
+      "words": [
+        328961,
+        777,
+        0,
+        0,
+        0,
+        29
+      ],
+      "bytesHex": "01050500090300000000000000000000000000001d000000",
+      "sha256": "b560e31919525c0c923e4bc427a1b999ddcd6b069bd41add071b59986513e245",
+      "result": {
+        "ok": true,
+        "profile": "virgl-tiny-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 24,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 5,
+            "objectName": "VERTEX_ELEMENTS",
+            "byteOffset": 0,
+            "byteLength": 24,
+            "payloadDwords": 5,
+            "fields": {
+              "handle": 777,
+              "elements": [
+                {
+                  "sourceOffset": 0,
+                  "instanceDivisor": 0,
+                  "vertexBufferIndex": 0,
+                  "sourceFormat": 29
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "format": 30,
+      "words": [
+        328961,
+        777,
+        0,
+        0,
+        0,
+        30
+      ],
+      "bytesHex": "01050500090300000000000000000000000000001e000000",
+      "sha256": "768e3491deed22778f50020afb2eb949836537c79632818f29b66d969d26611f",
+      "result": {
+        "ok": true,
+        "profile": "virgl-tiny-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 24,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 5,
+            "objectName": "VERTEX_ELEMENTS",
+            "byteOffset": 0,
+            "byteLength": 24,
+            "payloadDwords": 5,
+            "fields": {
+              "handle": 777,
+              "elements": [
+                {
+                  "sourceOffset": 0,
+                  "instanceDivisor": 0,
+                  "vertexBufferIndex": 0,
+                  "sourceFormat": 30
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "format": 31,
+      "words": [
+        328961,
+        777,
+        0,
+        0,
+        0,
+        31
+      ],
+      "bytesHex": "01050500090300000000000000000000000000001f000000",
+      "sha256": "0b7db7de25a1e2a59a2858eccef30ad237ad569e25bee2bab53b6176cc9ce651",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only per-vertex RG32/RGB32_FLOAT elements are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}

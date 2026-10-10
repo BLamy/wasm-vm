@@ -243,8 +243,9 @@ function decodeObject(p, objectType) {
         const start = 2 + index * 4;
         const sourceOffset = p.u(start), instanceDivisor = p.u(start + 1), vertexBufferIndex = p.u(start + 2), sourceFormat = p.u(start + 3);
         p.require(vertexBufferIndex < LIMITS.vertexBuffers, "limit-exceeded", "Vertex buffer index exceeds profile limit.");
-        p.require(instanceDivisor === 0 && [29, 30].includes(sourceFormat), "unsupported-feature", "Only per-vertex RG32/RGB32_FLOAT elements are supported.");
-        p.require(sourceOffset <= MAX_U32 - (sourceFormat === 30 ? 12 : 8), "invalid-value", "Vertex element end overflows u32.");
+        p.require(instanceDivisor === 0 && [28, 29, 30, 31].includes(sourceFormat), "unsupported-feature", "Only per-vertex R32 through RGBA32_FLOAT elements are supported.");
+        p.require(sourceOffset % 4 === 0 && sourceOffset <= MAX_U32 - (sourceFormat - 27) * 4,
+          "invalid-value", "Vertex element offset must be float-aligned and its end must fit u32.");
         return { sourceOffset, instanceDivisor, vertexBufferIndex, sourceFormat };
       });
       return { handle, elements };

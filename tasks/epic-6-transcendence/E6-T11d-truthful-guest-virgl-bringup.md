@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2]
-blocked_on: E6-T11d2
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3]
+blocked_on: E6-T11d3
 estimate: S
 risk: high
 capstone: false
@@ -92,3 +92,15 @@ under the pinned Gallium enum and GLES2 contract. Ordered S prerequisite
 E6-T11d2 covers single-target equations/factors, including WebGL’s mixed constant
 restriction; it cannot grant production capsets by itself. The explicit user
 request to finish guest graphics continues this ordered graphics chain.
+
+### 2026-10-09 — worker — blend verified; next vertex-fetch boundary
+
+E6-T11d2 is independently verified at `bcdb8206`. The original scalar/four-lane
+float vertex formats 28/31 still reject, while 29/30 admit. The negative record
+`evidence/virgl-production-readiness/float-vertex-gap.json` binds original bytes
+and pinned source identities. Reproduce via `decodeSubmission` on little-endian
+dwords `[(5<<16)|(5<<8)|1,777,0,0,0,28]` and the same with final word 31. Both
+return `unsupported-feature: Only per-vertex RG32/RGB32_FLOAT elements are
+supported.` Ordered S prerequisite E6-T11d3 closes the scalar/four-component
+fetch family and independently proves missing lanes, fourth alpha and clip W.
+No complete API, production negotiation or guest rendering is claimed here.

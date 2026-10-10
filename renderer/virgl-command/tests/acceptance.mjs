@@ -502,7 +502,7 @@ export function runAcceptance(fixtures, options = {}) {
   reject(packet(1, 5, [1, ...Array(17).fill([0, 0, 0, 29]).flat()]), "vertex elements over count budget", "limit-exceeded");
   reject(packet(1, 5, [1, 0, 0, 16, 29]), "vertex element buffer index budget", "limit-exceeded");
   reject(packet(1, 5, [1, 0xffffffff, 0, 0, 29]), "vertex element address overflow", "invalid-value");
-  accept(packet(1, 5, [0xffffffff, 0xfffffff7, 0, 15, 29]), "vertex element final valid source and buffer index");
+  accept(packet(1, 5, [0xffffffff, 0xfffffff4, 0, 15, 29]), "vertex element final aligned source and buffer index");
   accept(packet(1, 5, [1, ...Array(16).fill([0, 0, 0, 29]).flat()]), "maximum vertex elements");
   accept(packet(6, 0, []), "empty vertex buffers");
   accept(packet(6, 0, Array(16).fill([16, 8, 0xffffffff]).flat()), "maximum vertex buffers");

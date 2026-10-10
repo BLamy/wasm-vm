@@ -84,11 +84,11 @@ for TRIANGLES, whereas this wire profile disables it. Silently passing that valu
 would change primitive assembly. See the Khronos WebGL2 specification section
 [PRIMITIVE_RESTART_FIXED_INDEX is always enabled](https://registry.khronos.org/webgl/specs/latest/2.0/).
 
-For every active RG32/RGB32_FLOAT attribute, validate the largest actual fetch:
+For every active R32/RG32/RGB32/RGBA32_FLOAT attribute, validate the largest actual fetch:
 
 ```
 offset = vertexBuffer.offset + vertexElement.sourceOffset
-elementBytes = 8 or 12
+elementBytes = 4, 8, 12 or 16
 actualMaxIndex <= floor((vertexStorageBytes - offset - elementBytes) / stride)
 ```
 

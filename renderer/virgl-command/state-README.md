@@ -159,7 +159,7 @@ inactive resets remain accepted.
 The active profile is one required normalized level-zero color surface
 (BGRX8, RGBA8 or B10G10R10X2), exact-matching color sampler
 views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers,
-RG32/RGB32_FLOAT vertex elements, float-aligned vertex strides at most255 bytes,
+R32/RG32/RGB32/RGBA32_FLOAT vertex elements, float-aligned vertex strides at most255 bytes,
 u16 indices or nonindexed triangles/strips, integer viewports with either Y sign
 and normalized GL depth range, additive alpha blend modes supported by the
 decoder, optional dithering/back-face culling/scissor, and Z16 depth testing.
