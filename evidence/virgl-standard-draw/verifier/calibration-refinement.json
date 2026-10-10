@@ -1,0 +1,15 @@
+{
+  "beforeQualifiedSabotage": true,
+  "prediction": "P9-sabotage/P11-novel",
+  "case": "critic-divisor-pixel-oracle",
+  "divisors": [
+    0,
+    2,
+    5
+  ],
+  "wireIN1End": 84,
+  "nativeCorruptDivisor": 1,
+  "corruptIN1End": 132,
+  "originalIN1Bytes": 132,
+  "demand": "A real draw must complete with incorrect tile colors and the named full-pixel oracle must reject."
+}

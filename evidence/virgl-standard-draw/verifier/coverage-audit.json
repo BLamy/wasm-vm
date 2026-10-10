@@ -1,0 +1,2793 @@
+{
+  "schema": "standard-draw-critic-coverage-v1",
+  "frozenHead": "c9963d71add68b550d9f26a2b9e9d417f3daa437",
+  "dependency": "761a912a88823954e3424f7b003c15887e7c9034",
+  "status": "passed",
+  "runtimeHunks": 20,
+  "runtimeAddedLines": 41,
+  "runtime": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "start": 249,
+      "length": 2,
+      "header": "@@ -249 +249,2 @@ function decodeObject(p, objectType) {",
+      "sourceSha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e",
+      "lines": [
+        {
+          "line": 249,
+          "text": "        p.require((p.standard || instanceDivisor === 0) && [28, 29, 30, 31].includes(sourceFormat), \"unsupported-feature\",",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 12969,
+              "endOffset": 12991,
+              "text": "p.require((p.standard ",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 12991,
+              "endOffset": 13015,
+              "text": "|| instanceDivisor === 0",
+              "proof": {
+                "count": 458,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 12991,
+                  "endOffset": 13015,
+                  "count": 458
+                }
+              }
+            },
+            {
+              "startOffset": 13015,
+              "endOffset": 13017,
+              "text": ") ",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 13017,
+              "endOffset": 13059,
+              "text": "&& [28, 29, 30, 31].includes(sourceFormat)",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 13059,
+              "endOffset": 13083,
+              "text": ", \"unsupported-feature\",",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 250,
+          "text": "          p.standard ? \"Only R32 through RGBA32_FLOAT elements are supported.\" : \"Only per-vertex R32 through RGBA32_FLOAT elements are supported.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 13094,
+              "endOffset": 13105,
+              "text": "p.standard ",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 13105,
+              "endOffset": 13162,
+              "text": "? \"Only R32 through RGBA32_FLOAT elements are supported.\"",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 13162,
+              "endOffset": 13163,
+              "text": " ",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            },
+            {
+              "startOffset": 13163,
+              "endOffset": 13231,
+              "text": ": \"Only per-vertex R32 through RGBA32_FLOAT elements are supported.\"",
+              "proof": {
+                "count": 458,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 13163,
+                  "endOffset": 13231,
+                  "count": 458
+                }
+              }
+            },
+            {
+              "startOffset": 13231,
+              "endOffset": 13233,
+              "text": ");",
+              "proof": {
+                "count": 752,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 12641,
+                  "endOffset": 13520,
+                  "count": 752
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "start": 363,
+      "length": 1,
+      "header": "@@ -362 +363 @@ function decodeFields(p, objectType) {",
+      "sourceSha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e",
+      "lines": [
+        {
+          "line": 363,
+          "text": "      p.require([4, 5].includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 20076,
+              "endOffset": 20115,
+              "text": "p.require([4, 5].includes(fields.mode) ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20115,
+              "endOffset": 20130,
+              "text": "&& (p.standard ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20130,
+              "endOffset": 20159,
+              "text": "|| fields.instanceCount === 1",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20159,
+              "endOffset": 20160,
+              "text": ")",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20160,
+              "endOffset": 20161,
+              "text": " ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20161,
+              "endOffset": 20186,
+              "text": "&& fields.indexBias === 0",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20186,
+              "endOffset": 20187,
+              "text": " ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20187,
+              "endOffset": 20189,
+              "text": "&&",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "start": 365,
+      "length": 2,
+      "header": "@@ -364 +365,2 @@ function decodeFields(p, objectType) {",
+      "sourceSha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e",
+      "lines": [
+        {
+          "line": 365,
+          "text": "      \"unsupported-feature\", p.standard ? \"Only triangles/strips without base offsets, restart or stream output are supported.\" :",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 20327,
+              "endOffset": 20361,
+              "text": "\"unsupported-feature\", p.standard ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20361,
+              "endOffset": 20448,
+              "text": "? \"Only triangles/strips without base offsets, restart or stream output are supported.\"",
+              "proof": {
+                "count": 51,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 20361,
+                  "endOffset": 20448,
+                  "count": 51
+                }
+              }
+            },
+            {
+              "startOffset": 20448,
+              "endOffset": 20449,
+              "text": " ",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20449,
+              "endOffset": 20450,
+              "text": ":",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 366,
+          "text": "        \"Only ordinary triangles/strips without instancing, restart or stream output are supported.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 20459,
+              "endOffset": 20551,
+              "text": "\"Only ordinary triangles/strips without instancing, restart or stream output are supported.\"",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            },
+            {
+              "startOffset": 20551,
+              "endOffset": 20553,
+              "text": ");",
+              "proof": {
+                "count": 68,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 19744,
+                  "endOffset": 20735,
+                  "count": 68
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "start": 382,
+      "length": 2,
+      "header": "@@ -380 +382,2 @@ function decodeFields(p, objectType) {",
+      "sourceSha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e",
+      "lines": [
+        {
+          "line": 382,
+          "text": "      p.require((p.standard ? [1, 2, 4] : [2]).includes(indexSize), \"unsupported-feature\",",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 21293,
+              "endOffset": 21315,
+              "text": "p.require((p.standard ",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            },
+            {
+              "startOffset": 21315,
+              "endOffset": 21326,
+              "text": "? [1, 2, 4]",
+              "proof": {
+                "count": 40,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 40
+                }
+              }
+            },
+            {
+              "startOffset": 21326,
+              "endOffset": 21327,
+              "text": " ",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            },
+            {
+              "startOffset": 21327,
+              "endOffset": 21332,
+              "text": ": [2]",
+              "proof": {
+                "count": 53,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 53
+                }
+              }
+            },
+            {
+              "startOffset": 21332,
+              "endOffset": 21377,
+              "text": ").includes(indexSize), \"unsupported-feature\",",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 383,
+          "text": "        p.standard ? \"Only u8/u16/u32 index buffers are supported.\" : \"Only u16 index buffers are supported.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 21386,
+              "endOffset": 21397,
+              "text": "p.standard ",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            },
+            {
+              "startOffset": 21397,
+              "endOffset": 21445,
+              "text": "? \"Only u8/u16/u32 index buffers are supported.\"",
+              "proof": {
+                "count": 40,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 40
+                }
+              }
+            },
+            {
+              "startOffset": 21445,
+              "endOffset": 21446,
+              "text": " ",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            },
+            {
+              "startOffset": 21446,
+              "endOffset": 21487,
+              "text": ": \"Only u16 index buffers are supported.\"",
+              "proof": {
+                "count": 53,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 53
+                }
+              }
+            },
+            {
+              "startOffset": 21487,
+              "endOffset": 21489,
+              "text": ");",
+              "proof": {
+                "count": 74,
+                "recording": "evidence/virgl-standard-draw/verifier/node-coverage/coverage-91098-1791606848060-0.json",
+                "recordingSha256": "17376fb2c20d413a68d2a1ac135bdab89190e8e24f444b8674abad87bf669004",
+                "range": {
+                  "startOffset": 20838,
+                  "endOffset": 21647,
+                  "count": 74
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 182,
+      "length": 3,
+      "header": "@@ -181,0 +182,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 182,
+          "text": "    const maxElementIndex = standard ? gl.getParameter(gl.MAX_ELEMENT_INDEX) : null;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 13227,
+              "endOffset": 13260,
+              "text": "const maxElementIndex = standard ",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            },
+            {
+              "startOffset": 13260,
+              "endOffset": 13299,
+              "text": "? gl.getParameter(gl.MAX_ELEMENT_INDEX)",
+              "proof": {
+                "count": 47,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 47
+                }
+              }
+            },
+            {
+              "startOffset": 13299,
+              "endOffset": 13300,
+              "text": " ",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            },
+            {
+              "startOffset": 13300,
+              "endOffset": 13306,
+              "text": ": null",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            },
+            {
+              "startOffset": 13306,
+              "endOffset": 13307,
+              "text": ";",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 183,
+          "text": "    require(!standard || Number.isSafeInteger(maxElementIndex) && maxElementIndex >= 0 && maxElementIndex <= 0xffffffff,",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 13312,
+              "endOffset": 13330,
+              "text": "require(!standard ",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            },
+            {
+              "startOffset": 13330,
+              "endOffset": 13371,
+              "text": "|| Number.isSafeInteger(maxElementIndex) ",
+              "proof": {
+                "count": 47,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 47
+                }
+              }
+            },
+            {
+              "startOffset": 13371,
+              "endOffset": 13394,
+              "text": "&& maxElementIndex >= 0",
+              "proof": {
+                "count": 46,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 13371,
+                  "endOffset": 13394,
+                  "count": 46
+                }
+              }
+            },
+            {
+              "startOffset": 13394,
+              "endOffset": 13395,
+              "text": " ",
+              "proof": {
+                "count": 47,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 47
+                }
+              }
+            },
+            {
+              "startOffset": 13395,
+              "endOffset": 13427,
+              "text": "&& maxElementIndex <= 0xffffffff",
+              "proof": {
+                "count": 45,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 13395,
+                  "endOffset": 13427,
+                  "count": 45
+                }
+              }
+            },
+            {
+              "startOffset": 13427,
+              "endOffset": 13428,
+              "text": ",",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 184,
+          "text": "      \"unsupported-host\", \"WebGL maximum element index must be a u32.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 13435,
+              "endOffset": 13501,
+              "text": "\"unsupported-host\", \"WebGL maximum element index must be a u32.\");",
+              "proof": {
+                "count": 52,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 8604,
+                  "endOffset": 102652,
+                  "count": 52
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 760,
+      "length": 3,
+      "header": "@@ -756,0 +760,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 760,
+          "text": "        // No admitted draw has an instance index >= the total-work ceiling.",
+          "classification": "structural/comment waiver",
+          "intervals": [
+            {
+              "startOffset": 58116,
+              "endOffset": 58184,
+              "text": "// No admitted draw has an instance index >= the total-work ceiling.",
+              "proof": {
+                "count": 678,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 57685,
+                  "endOffset": 58465,
+                  "count": 678
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 761,
+          "text": "        // Larger wire divisors therefore have the identical constant-zero fetch.",
+          "classification": "structural/comment waiver",
+          "intervals": [
+            {
+              "startOffset": 58193,
+              "endOffset": 58266,
+              "text": "// Larger wire divisors therefore have the identical constant-zero fetch.",
+              "proof": {
+                "count": 678,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 57685,
+                  "endOffset": 58465,
+                  "count": 678
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 762,
+          "text": "        if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 58275,
+              "endOffset": 58289,
+              "text": "if (standard) ",
+              "proof": {
+                "count": 678,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 57685,
+                  "endOffset": 58465,
+                  "count": 678
+                }
+              }
+            },
+            {
+              "startOffset": 58289,
+              "endOffset": 58401,
+              "text": "gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));",
+              "proof": {
+                "count": 399,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 57685,
+                  "endOffset": 58465,
+                  "count": 399
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 847,
+      "length": 2,
+      "header": "@@ -840,0 +847,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 847,
+          "text": "      // VirGL1.3 uses zero to select an ordinary draw, still with one instance.",
+          "classification": "structural/comment waiver",
+          "intervals": [
+            {
+              "startOffset": 64233,
+              "endOffset": 64307,
+              "text": "// VirGL1.3 uses zero to select an ordinary draw, still with one instance.",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 848,
+          "text": "      const instances = standard ? Math.max(1, fields.instanceCount) : 1;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 64314,
+              "endOffset": 64341,
+              "text": "const instances = standard ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 64341,
+              "endOffset": 64376,
+              "text": "? Math.max(1, fields.instanceCount)",
+              "proof": {
+                "count": 51,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 51
+                }
+              }
+            },
+            {
+              "startOffset": 64376,
+              "endOffset": 64377,
+              "text": " ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 64377,
+              "endOffset": 64380,
+              "text": ": 1",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 64380,
+              "endOffset": 64381,
+              "text": ";",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 851,
+      "length": 1,
+      "header": "@@ -843 +851 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 851,
+          "text": "      require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances),",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 64634,
+              "endOffset": 64698,
+              "text": "require(submission.draws.length < drawLimits.drawsPerSubmission ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 64698,
+              "endOffset": 64795,
+              "text": "&& fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances)",
+              "proof": {
+                "count": 131,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64698,
+                  "endOffset": 64795,
+                  "count": 131
+                }
+              }
+            },
+            {
+              "startOffset": 64795,
+              "endOffset": 64796,
+              "text": ",",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 887,
+      "length": 2,
+      "header": "@@ -879 +887,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 887,
+          "text": "      const indexSize = index?.fields.indexSize ?? 0;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68054,
+              "endOffset": 68077,
+              "text": "const indexSize = index",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 68077,
+              "endOffset": 68085,
+              "text": "?.fields",
+              "proof": {
+                "count": 115,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68077,
+                  "endOffset": 68085,
+                  "count": 115
+                }
+              }
+            },
+            {
+              "startOffset": 68085,
+              "endOffset": 68096,
+              "text": ".indexSize ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 68096,
+              "endOffset": 68100,
+              "text": "?? 0",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 68096,
+                  "endOffset": 68100,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 68100,
+              "endOffset": 68101,
+              "text": ";",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 888,
+          "text": "      require(!index || fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / indexSize),",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68108,
+              "endOffset": 68123,
+              "text": "require(!index ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 68123,
+              "endOffset": 68214,
+              "text": "|| fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / indexSize)",
+              "proof": {
+                "count": 115,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68123,
+                  "endOffset": 68214,
+                  "count": 115
+                }
+              }
+            },
+            {
+              "startOffset": 68214,
+              "endOffset": 68215,
+              "text": ",",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 890,
+      "length": 3,
+      "header": "@@ -881,2 +890,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 890,
+          "text": "      const indexByteLength = index ? fields.count * indexSize : 0;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68294,
+              "endOffset": 68324,
+              "text": "const indexByteLength = index ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 68324,
+              "endOffset": 68350,
+              "text": "? fields.count * indexSize",
+              "proof": {
+                "count": 113,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68324,
+                  "endOffset": 68350,
+                  "count": 113
+                }
+              }
+            },
+            {
+              "startOffset": 68350,
+              "endOffset": 68351,
+              "text": " ",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            },
+            {
+              "startOffset": 68351,
+              "endOffset": 68354,
+              "text": ": 0",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 68351,
+                  "endOffset": 68354,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 68354,
+              "endOffset": 68355,
+              "text": ";",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 891,
+          "text": "      return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68362,
+              "endOffset": 68460,
+              "text": "return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 892,
+          "text": "        surface, attributes, index, indexStorage, indexOffset, indexSize, indexByteLength,",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68469,
+              "endOffset": 68551,
+              "text": "surface, attributes, index, indexStorage, indexOffset, indexSize, indexByteLength,",
+              "proof": {
+                "count": 136,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 64153,
+                  "endOffset": 68602,
+                  "count": 136
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 896,
+      "length": 1,
+      "header": "@@ -886 +896 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 896,
+          "text": "      const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68663,
+              "endOffset": 68805,
+              "text": "const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 898,
+      "length": 3,
+      "header": "@@ -888,3 +898,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 898,
+          "text": "      let actualMinIndex = fields.indexed ? 0xffffffff : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 68922,
+              "endOffset": 68958,
+              "text": "let actualMinIndex = fields.indexed ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 68958,
+              "endOffset": 68970,
+              "text": "? 0xffffffff",
+              "proof": {
+                "count": 113,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68958,
+                  "endOffset": 68970,
+                  "count": 113
+                }
+              }
+            },
+            {
+              "startOffset": 68970,
+              "endOffset": 68971,
+              "text": " ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 68971,
+              "endOffset": 68985,
+              "text": ": fields.start",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 68971,
+                  "endOffset": 68985,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 68985,
+              "endOffset": 69019,
+              "text": ", actualMaxIndex = fields.indexed ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 69019,
+              "endOffset": 69022,
+              "text": "? 0",
+              "proof": {
+                "count": 113,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69019,
+                  "endOffset": 69022,
+                  "count": 113
+                }
+              }
+            },
+            {
+              "startOffset": 69022,
+              "endOffset": 69023,
+              "text": " ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 69023,
+              "endOffset": 69056,
+              "text": ": fields.start + fields.count - 1",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 69023,
+                  "endOffset": 69056,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 69056,
+              "endOffset": 69057,
+              "text": ";",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 899,
+          "text": "      for (let offset = 0; offset < indexByteLength; offset += indexSize) {",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 69064,
+              "endOffset": 69132,
+              "text": "for (let offset = 0; offset < indexByteLength; offset += indexSize) ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 69132,
+              "endOffset": 69133,
+              "text": "{",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 900,
+          "text": "        const value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 69142,
+              "endOffset": 69172,
+              "text": "const value = indexSize === 1 ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69172,
+              "endOffset": 69198,
+              "text": "? indices.getUint8(offset)",
+              "proof": {
+                "count": 28,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 69172,
+                  "endOffset": 69198,
+                  "count": 28
+                }
+              }
+            },
+            {
+              "startOffset": 69198,
+              "endOffset": 69199,
+              "text": " ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69199,
+              "endOffset": 69217,
+              "text": ": indexSize === 2 ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69217,
+              "endOffset": 69250,
+              "text": "? indices.getUint16(offset, true)",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69250,
+              "endOffset": 69251,
+              "text": " ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69251,
+              "endOffset": 69284,
+              "text": ": indices.getUint32(offset, true)",
+              "proof": {
+                "count": 97,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 69251,
+                  "endOffset": 69284,
+                  "count": 97
+                }
+              }
+            },
+            {
+              "startOffset": 69284,
+              "endOffset": 69285,
+              "text": ";",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 902,
+      "length": 3,
+      "header": "@@ -892,2 +902,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 902,
+          "text": "        // disables restart, so each index type's sentinel needs later lowering.",
+          "classification": "structural/comment waiver",
+          "intervals": [
+            {
+              "startOffset": 69374,
+              "endOffset": 69446,
+              "text": "// disables restart, so each index type's sentinel needs later lowering.",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 903,
+          "text": "        require(value !== 2 ** (indexSize * 8) - 1, \"unsupported-draw\", standard ?",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 69455,
+              "endOffset": 69528,
+              "text": "require(value !== 2 ** (indexSize * 8) - 1, \"unsupported-draw\", standard ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69528,
+              "endOffset": 69529,
+              "text": "?",
+              "proof": {
+                "count": 159,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 159
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 904,
+          "text": "          \"Fixed restart index requires unsupported primitive-restart lowering.\" : \"Index 0xffff requires unsupported primitive-restart lowering.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 69540,
+              "endOffset": 69610,
+              "text": "\"Fixed restart index requires unsupported primitive-restart lowering.\"",
+              "proof": {
+                "count": 159,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 159
+                }
+              }
+            },
+            {
+              "startOffset": 69610,
+              "endOffset": 69611,
+              "text": " ",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69611,
+              "endOffset": 69676,
+              "text": ": \"Index 0xffff requires unsupported primitive-restart lowering.\"",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            },
+            {
+              "startOffset": 69676,
+              "endOffset": 69678,
+              "text": ");",
+              "proof": {
+                "count": 670,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69132,
+                  "endOffset": 69794,
+                  "count": 670
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 907,
+      "length": 1,
+      "header": "@@ -895,0 +907 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 907,
+          "text": "      require(!standard || actualMaxIndex <= maxElementIndex, \"unsupported-draw\", \"Actual vertex index exceeds the native maximum element index.\");",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 69801,
+              "endOffset": 69819,
+              "text": "require(!standard ",
+              "proof": {
+                "count": 113,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69794,
+                  "endOffset": 69819,
+                  "count": 113
+                }
+              }
+            },
+            {
+              "startOffset": 69819,
+              "endOffset": 69855,
+              "text": "|| actualMaxIndex <= maxElementIndex",
+              "proof": {
+                "count": 42,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 69794,
+                  "endOffset": 69855,
+                  "count": 42
+                }
+              }
+            },
+            {
+              "startOffset": 69855,
+              "endOffset": 69942,
+              "text": ", \"unsupported-draw\", \"Actual vertex index exceeds the native maximum element index.\");",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 911,
+      "length": 2,
+      "header": "@@ -898,0 +911,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 911,
+          "text": "        const divisor = element.instanceDivisor;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 70191,
+              "endOffset": 70231,
+              "text": "const divisor = element.instanceDivisor;",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 912,
+          "text": "        const first = divisor ? 0 : actualMinIndex, last = divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 70240,
+              "endOffset": 70262,
+              "text": "const first = divisor ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70262,
+              "endOffset": 70265,
+              "text": "? 0",
+              "proof": {
+                "count": 71,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 70262,
+                  "endOffset": 70265,
+                  "count": 71
+                }
+              }
+            },
+            {
+              "startOffset": 70265,
+              "endOffset": 70266,
+              "text": " ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70266,
+              "endOffset": 70282,
+              "text": ": actualMinIndex",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70282,
+              "endOffset": 70299,
+              "text": ", last = divisor ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70299,
+              "endOffset": 70338,
+              "text": "? Math.floor((instances - 1) / divisor)",
+              "proof": {
+                "count": 71,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 70299,
+                  "endOffset": 70338,
+                  "count": 71
+                }
+              }
+            },
+            {
+              "startOffset": 70338,
+              "endOffset": 70339,
+              "text": " ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70339,
+              "endOffset": 70355,
+              "text": ": actualMaxIndex",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 70355,
+              "endOffset": 70356,
+              "text": ";",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 915,
+      "length": 1,
+      "header": "@@ -901 +915 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 915,
+          "text": "        require(last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 70518,
+              "endOffset": 70608,
+              "text": "require(last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 919,
+      "length": 2,
+      "header": "@@ -905 +919,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 919,
+          "text": "          stride, offset, components: vertexComponents(element), firstByte: offset + first * stride, requiredEnd: offset + last * stride + elementBytes,",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 70868,
+              "endOffset": 71010,
+              "text": "stride, offset, components: vertexComponents(element), firstByte: offset + first * stride, requiredEnd: offset + last * stride + elementBytes,",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 920,
+          "text": "          ...(standard ? { divisor, nativeDivisor: Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last } : {}) };",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71021,
+              "endOffset": 71034,
+              "text": "...(standard ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 71034,
+              "endOffset": 71155,
+              "text": "? { divisor, nativeDivisor: Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last }",
+              "proof": {
+                "count": 112,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 71034,
+                  "endOffset": 71155,
+                  "count": 112
+                }
+              }
+            },
+            {
+              "startOffset": 71155,
+              "endOffset": 71156,
+              "text": " ",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            },
+            {
+              "startOffset": 71156,
+              "endOffset": 71160,
+              "text": ": {}",
+              "proof": {
+                "count": 219,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71156,
+                  "endOffset": 71160,
+                  "count": 219
+                }
+              }
+            },
+            {
+              "startOffset": 71160,
+              "endOffset": 71164,
+              "text": ") };",
+              "proof": {
+                "count": 223,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 69986,
+                  "endOffset": 71172,
+                  "count": 223
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 926,
+      "length": 5,
+      "header": "@@ -911 +926,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 926,
+          "text": "      const indexType = indexSize === 1 ? gl.UNSIGNED_BYTE : indexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71462,
+              "endOffset": 71496,
+              "text": "const indexType = indexSize === 1 ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 71496,
+              "endOffset": 71514,
+              "text": "? gl.UNSIGNED_BYTE",
+              "proof": {
+                "count": 6,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 71496,
+                  "endOffset": 71514,
+                  "count": 6
+                }
+              }
+            },
+            {
+              "startOffset": 71514,
+              "endOffset": 71515,
+              "text": " ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 71515,
+              "endOffset": 71533,
+              "text": ": indexSize === 2 ",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71515,
+                  "endOffset": 71570,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 71533,
+              "endOffset": 71552,
+              "text": "? gl.UNSIGNED_SHORT",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71515,
+                  "endOffset": 71570,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 71552,
+              "endOffset": 71553,
+              "text": " ",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71515,
+                  "endOffset": 71570,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 71553,
+              "endOffset": 71570,
+              "text": ": gl.UNSIGNED_INT",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 71553,
+                  "endOffset": 71570,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 71570,
+              "endOffset": 71571,
+              "text": ";",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 927,
+          "text": "      if (fields.indexed) {",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71578,
+              "endOffset": 71598,
+              "text": "if (fields.indexed) ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 71598,
+              "endOffset": 71599,
+              "text": "{",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71598,
+                  "endOffset": 71789,
+                  "count": 109
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 928,
+          "text": "        if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, indexOffset, instances);",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71608,
+              "endOffset": 71627,
+              "text": "if (instances > 1) ",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71598,
+                  "endOffset": 71789,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 71627,
+              "endOffset": 71707,
+              "text": "gl.drawElementsInstanced(mode, fields.count, indexType, indexOffset, instances);",
+              "proof": {
+                "count": 29,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 71627,
+                  "endOffset": 71707,
+                  "count": 29
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 929,
+          "text": "        else gl.drawElements(mode, fields.count, indexType, indexOffset);",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71716,
+              "endOffset": 71781,
+              "text": "else gl.drawElements(mode, fields.count, indexType, indexOffset);",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71598,
+                  "endOffset": 71789,
+                  "count": 109
+                }
+              }
+            }
+          ]
+        },
+        {
+          "line": 930,
+          "text": "      } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 71788,
+              "endOffset": 71789,
+              "text": "}",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71598,
+                  "endOffset": 71789,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 71789,
+              "endOffset": 71814,
+              "text": " else if (instances > 1) ",
+              "proof": {
+                "count": 33,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+                "recordingSha256": "db73e0f3b711e060416e402b0b2c96c74c916d1cdfc48da04af29d502712318f",
+                "range": {
+                  "startOffset": 71789,
+                  "endOffset": 71942,
+                  "count": 33
+                }
+              }
+            },
+            {
+              "startOffset": 71814,
+              "endOffset": 71882,
+              "text": "gl.drawArraysInstanced(mode, fields.start, fields.count, instances);",
+              "proof": {
+                "count": 3,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 71814,
+                  "endOffset": 71942,
+                  "count": 3
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 935,
+      "length": 1,
+      "header": "@@ -916 +935 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 935,
+          "text": "      submission.indices += vertexWork;",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 72008,
+              "endOffset": 72041,
+              "text": "submission.indices += vertexWork;",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71942,
+                  "endOffset": 72292,
+                  "count": 109
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "start": 938,
+      "length": 1,
+      "header": "@@ -918,0 +938 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "sourceSha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "lines": [
+        {
+          "line": 938,
+          "text": "        ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize } : {}),",
+          "classification": "executed",
+          "intervals": [
+            {
+              "startOffset": 72279,
+              "endOffset": 72292,
+              "text": "...(standard ",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 71942,
+                  "endOffset": 72292,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 72292,
+              "endOffset": 72387,
+              "text": "? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize }",
+              "proof": {
+                "count": 38,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/hardware/browser-coverage.json",
+                "recordingSha256": "46198e19479a20e1a40185f7385c62c33329254802f6e192a3afeb5e97a116c7",
+                "range": {
+                  "startOffset": 71942,
+                  "endOffset": 72387,
+                  "count": 38
+                }
+              }
+            },
+            {
+              "startOffset": 72387,
+              "endOffset": 72388,
+              "text": " ",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            },
+            {
+              "startOffset": 72388,
+              "endOffset": 72392,
+              "text": ": {}",
+              "proof": {
+                "count": 109,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 72388,
+                  "endOffset": 72392,
+                  "count": 109
+                }
+              }
+            },
+            {
+              "startOffset": 72392,
+              "endOffset": 72394,
+              "text": "),",
+              "proof": {
+                "count": 114,
+                "recording": "evidence/virgl-standard-draw/verifier/unpacked/cold/retained-draw-replay/browser-coverage.json",
+                "recordingSha256": "aec3dff02e856a4ff29cb0a0596083b0159f9ebc9cd60423471181c2635cbdf4",
+                "range": {
+                  "startOffset": 68626,
+                  "endOffset": 73890,
+                  "count": 114
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "classification": "HELD"
+    }
+  ],
+  "nonRuntime": [
+    {
+      "path": "Makefile",
+      "start": 2136,
+      "length": 4,
+      "header": "@@ -2135,0 +2136,4 @@ verify-E6-T11d5-adversarial:",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Executed make verify-E6-T11d6 (original hot/cold and fresh replay); declarative target routes to recorded shell gate."
+    },
+    {
+      "path": "evidence/virgl-production-readiness/standard-draw-gap.json",
+      "start": 1,
+      "length": 142,
+      "header": "@@ -0,0 +1,142 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Historical negative literal packet metadata at dependency; not current capability proof or executable behavior."
+    },
+    {
+      "path": "evidence/virgl-standard-draw/worker/manifest.json",
+      "start": 1,
+      "length": 16,
+      "header": "@@ -0,0 +1,16 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Custody metadata only; independent digest/member/source authentication in authentication.json."
+    },
+    {
+      "path": "evidence/virgl-standard-draw/worker/records.json",
+      "start": 1,
+      "length": 3767,
+      "header": "@@ -0,0 +1,3767 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Custody index only; every member authenticated independently, including byte lengths and SHA256."
+    },
+    {
+      "path": "renderer/virgl-command/draw-README.md",
+      "start": 138,
+      "length": 18,
+      "header": "@@ -137,0 +138,18 @@ renderer proof does not advertise guest caps or claim live frame rate.",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Documentation only, matches the authenticated literal/native observations; no executable behavior."
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "start": 1,
+      "length": 431,
+      "header": "@@ -0,0 +1,431 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "runWireAcceptance is executed in Node (80 literal packets/160 predictions); runAcceptance and fixture/trace/drain/readback drivers execute in original hot/cold hardware and fresh replay. Browser V8 source/counts are preserved. Recording/diagnostic branches are harness-only; their failed-oracle path is exercised by real native sabotage."
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "start": 5,
+      "length": 1,
+      "header": "@@ -5 +5 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Declarative task bookkeeping regenerated by policy/build_queue; no runtime effect."
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "start": 649,
+      "length": 2,
+      "header": "@@ -649 +649,2 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Declarative task bookkeeping regenerated by policy/build_queue; no runtime effect."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "start": 7,
+      "length": 2,
+      "header": "@@ -7,2 +7,2 @@ status: blocked",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Declarative prerequisite and negative readiness history; production authority remains false/blocked, no runtime effect."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "start": 149,
+      "length": 19,
+      "header": "@@ -148,0 +149,19 @@ chain; actual guest Mesa initialization, API gaps and scanout remain later gates",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Declarative prerequisite and negative readiness history; production authority remains false/blocked, no runtime effect."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d6-standard-instanced-draws.md",
+      "start": 1,
+      "length": 144,
+      "header": "@@ -0,0 +1,144 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Acceptance/boundary/claim bookkeeping; all product criteria separately interrogated; no runtime effect."
+    },
+    {
+      "path": "tools/verify-virgl-standard-draw.mjs",
+      "start": 1,
+      "length": 127,
+      "header": "@@ -0,0 +1,127 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Node orchestrator executed for wire, normal headed hardware and served native sabotage in original hot/cold plus fresh replay. Saved source/coverage/browser/blobs/GPU/fence custody and actual reports prove the execution. Non-entry diagnostic timeout/catch handlers are narrowly waived as recording failure diagnostics, not product behavior."
+    },
+    {
+      "path": "tools/verify-virgl-standard-draw.sh",
+      "start": 1,
+      "length": 33,
+      "header": "@@ -0,0 +1,33 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Exact gate command executed in original hot/cold and fresh replay; closed recording markers, actual compiler build, retained gate reports and receipt are authenticated. Success escape error for undetected sabotage is a recording failure guard."
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-cold.py",
+      "start": 1,
+      "length": 74,
+      "header": "@@ -0,0 +1,74 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Executed once on final frozen head; exact clone path, clean before/after, scrubbed environment, logs and copied complete acceptance authenticated. Exception handling is recording failure diagnostic."
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-oracle.mjs",
+      "start": 1,
+      "length": 79,
+      "header": "@@ -0,0 +1,79 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Independent literal model/full image oracle executes for all37 frames plus real mutation in original hot/cold and fresh replay. Fresh Python implementation, importing no runtime/model, independently agrees on all bytes/fetches/pixels. Malformed model diagnostic guard is harness-only."
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-pixels.mjs",
+      "start": 1,
+      "length": 62,
+      "header": "@@ -0,0 +1,62 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Executed offline audit in original hot/cold and fresh replay; recomputation and mismatch rows are authenticated, independently checked again in Python."
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-receipt.py",
+      "start": 1,
+      "length": 161,
+      "header": "@@ -0,0 +1,161 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Executed after original hot/cold and fresh replay; all file/source/generated digests and conditions independently authenticated. Assertion/raise failure paths are custody diagnostics."
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-seal.py",
+      "start": 1,
+      "length": 83,
+      "header": "@@ -0,0 +1,83 @@",
+      "classification": "executed-harness/declarative-waiver",
+      "reason": "Executed original seal; every one of752 members/lengths/hashes/receipt/source closures independently reconstructed. Diagnostic rejects and metadata formatting are custody-only."
+    }
+  ],
+  "gaps": [],
+  "binaryWaiver": {
+    "path": "evidence/virgl-standard-draw/worker/recording.tar.gz",
+    "reason": "752 authenticated evidence members; data only, not executable runtime."
+  }
+}

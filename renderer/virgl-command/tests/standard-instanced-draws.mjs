@@ -429,3 +429,7 @@ export async function runAcceptance({smoke=false}={}) {
   }
   report.status="passed";return report;
 }
+
+// Shared physical fixture drivers for the separately promoted critic cases.
+export { checks, rig, meta, add, transfer, shader, clear, submit, dispose,
+  specimen, setup, physicalFrame, drawPacket, hex, blob };
