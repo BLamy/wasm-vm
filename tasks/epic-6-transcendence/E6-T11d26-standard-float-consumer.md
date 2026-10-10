@@ -102,3 +102,24 @@ This submission claims only the explicitly selected original floating2D consumer
 Production negotiation, actual guest Mesa/compositor, GPU worker/scanout, demo
 integration, deployment and performance remain unqualified. Only a fresh critic
 may set verified.
+
+### 2026-10-10 — critic — predictions and frozen independent attack
+
+Before inspecting recorded native states I wrote P1 custody/cold isolation, P2
+original admission/ranges, P3 unchanged native compiler/storage, P4 original
+output/filter/query/clear/blend inverse, P5 retained generations, P6 queued
+retirement, P7 GPU-only refresh, P8 extension/native failures and physical controls,
+P9 full nested coverage, and P10 an independent original-range/native sabotage
+prediction. The full pre-inspection prediction document is retained as
+`target/evidence/virgl-standard-float-consumer-verifier/predictions-before-evidence.json`.
+No runtime or compiler implementation has been edited by this critic.
+
+The promoted bounded attack uses different complete public words and backing
+layout, original NPOT33×19 source mips, a retained2..4 range, a different original
+swizzle and coordinates, both stages, and original RGBA32F target mip2. A native
+wrong filter receives the same original input/programs. The selected float color
+clear is additionally combined with an actual Z16 depth attachment; original
+LESS draws discriminate depths0.375 and0.75. Historical profile construction,
+positive nonfloating surface admission, format reinterpretation and one-byte
+submission-budget refusal are bounded preservation checks. This entry records
+predictions and the promoted harness only; no verdict is claimed.
